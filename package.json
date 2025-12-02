@@ -16,7 +16,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:ci": "vitest run --coverage && playwright test"
+    "test:all": "npm run test && npm run test:e2e",
+    "test:ci": "npm run test && node scripts/seed-ci-test-user.cjs && npm run test:e2e",
+    "test:ci:local": "npm run test && npm run test:e2e"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.80.0",

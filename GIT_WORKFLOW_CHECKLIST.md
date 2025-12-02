@@ -1,5 +1,7 @@
 # Git Workflow Checklist
 
+> **See also**: [TESTING.md](TESTING.md) for how to run tests | [CONTRIBUTING.md](CONTRIBUTING.md) for full contributor guide
+
 ## Before starting work
 - [ ] `git checkout main`
 - [ ] `git pull origin main`

@@ -1,16 +1,67 @@
-# React + Vite
+# BizScreen
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Digital signage and TV display management platform for vacation rentals and hospitality businesses.
 
-Currently, two official plugins are available:
+## Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+# Install dependencies
+npm install
 
-## React Compiler
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your Supabase credentials
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Start development server
+npm run dev
+```
 
-## Expanding the ESLint configuration
+## Scripts
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm test` | Run unit/integration tests |
+| `npm run test:e2e` | Run Playwright E2E tests |
+| `npm run test:all` | Run all tests (unit + E2E) |
+| `npm run test:ci` | Simulate CI locally (with Supabase seeding) |
+
+## Testing
+
+Run quick unit tests:
+```bash
+npm test
+```
+
+Run all tests locally:
+```bash
+npm run test:all
+```
+
+See **[TESTING.md](TESTING.md)** for complete testing documentation, including CI setup and troubleshooting.
+
+## Contributing
+
+We welcome contributions! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for:
+- Development setup
+- Git workflow
+- Code style guidelines
+
+## Tech Stack
+
+- **Frontend**: React 19, Vite, Tailwind CSS
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Testing**: Vitest, Playwright
+- **CI/CD**: GitHub Actions
+
+## Documentation
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contributor guide
+- [TESTING.md](TESTING.md) - Testing guide
+- [GIT_WORKFLOW_CHECKLIST.md](GIT_WORKFLOW_CHECKLIST.md) - Git workflow
+
+## License
+
+Private - All rights reserved.
