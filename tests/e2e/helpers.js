@@ -124,8 +124,50 @@ export async function waitForPageReady(page) {
   }
 }
 
+/**
+ * Navigate to a specific section of the app
+ *
+ * @param {import('@playwright/test').Page} page - Playwright page object
+ * @param {string} section - Section name: 'media', 'playlists', 'screens', 'layouts', 'schedules'
+ */
+export async function navigateToSection(page, section) {
+  const sectionPatterns = {
+    media: /media/i,
+    playlists: /playlists/i,
+    screens: /screens/i,
+    layouts: /layouts/i,
+    schedules: /schedules/i,
+    dashboard: /dashboard/i,
+  };
+
+  const pattern = sectionPatterns[section.toLowerCase()];
+  if (!pattern) {
+    throw new Error(`Unknown section: ${section}. Valid options: ${Object.keys(sectionPatterns).join(', ')}`);
+  }
+
+  // Click on the navigation item
+  const navButton = page.getByRole('button', { name: pattern }).first();
+  await navButton.click();
+
+  // Wait for the page to load
+  await page.waitForTimeout(500);
+  await waitForPageReady(page);
+}
+
+/**
+ * Generate a unique test name with timestamp
+ *
+ * @param {string} prefix - Prefix for the name
+ * @returns {string} Unique name
+ */
+export function generateTestName(prefix = 'Test') {
+  return `${prefix} ${Date.now()}`;
+}
+
 export default {
   loginAndPrepare,
   dismissAnyModals,
   waitForPageReady,
+  navigateToSection,
+  generateTestName,
 };
