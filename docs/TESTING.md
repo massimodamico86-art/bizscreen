@@ -292,7 +292,13 @@ Current thresholds (configured in `vitest.config.js`):
 - `/api/public/campaigns/trigger` - Campaign triggering
 
 **User Flows (E2E Tests)**:
-- Authentication flow
+- Authentication flow (comprehensive - Sprint 3)
+  - Login page UI and navigation
+  - Signup page UI with validation
+  - Password reset flow
+  - Session persistence across reload
+  - Protected route enforcement
+  - Logout flow
 - Onboarding and navigation
 - Content pipeline (playlists, layouts, screens)
 - Billing and plan management

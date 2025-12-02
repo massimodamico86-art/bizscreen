@@ -22,9 +22,11 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Validate required environment variables format
-if (!supabaseUrl.startsWith('https://')) {
-  console.error('❌ VITE_SUPABASE_URL must start with https://');
-  throw new Error('Invalid VITE_SUPABASE_URL: must start with https://');
+// Allow http:// for local development (localhost/127.0.0.1), require https:// for production
+const isLocalUrl = supabaseUrl.includes('localhost') || supabaseUrl.includes('127.0.0.1');
+if (!supabaseUrl.startsWith('https://') && !isLocalUrl) {
+  console.error('❌ VITE_SUPABASE_URL must start with https:// (or http:// for local development)');
+  throw new Error('Invalid VITE_SUPABASE_URL: must start with https:// (or http:// for local development)');
 }
 
 if (supabaseAnonKey.length < 20) {
