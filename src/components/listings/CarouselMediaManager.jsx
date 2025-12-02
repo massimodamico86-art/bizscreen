@@ -57,7 +57,7 @@ export const CarouselMediaManager = ({ formData, setFormData, showToast }) => {
                   }}
                   buttonText="Add Image"
                   buttonVariant="ghost"
-                  folder="hostops/carousel"
+                  folder="bizscreen/carousel"
                   transformation={{
                     width: 1200,
                     height: 800,

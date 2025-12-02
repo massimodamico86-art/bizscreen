@@ -1,20 +1,36 @@
+/**
+ * StatCard Component - Legacy wrapper
+ * Re-exports from design system with backwards-compatible prop mapping.
+ * New code should import directly from '../design-system' instead.
+ */
+import { StatCard as DSStatCard } from '../design-system';
 
-import Card from './Card';
+/**
+ * Legacy StatCard - wraps design system StatCard for backwards compatibility
+ * Maps 'trend' to 'change' and 'changeType', 'subtitle' to 'description'
+ */
+const StatCard = ({ title, value, icon: Icon, trend, subtitle, ...props }) => {
+  // Convert trend to change and changeType
+  let change = null;
+  let changeType = 'neutral';
 
-const StatCard = ({ title, value, icon: Icon, trend, subtitle }) => (
-  <Card className="p-4 sm:p-6 hover:shadow-md transition-shadow">
-    <div className="flex items-start justify-between mb-2">
-      <div className="text-xs sm:text-sm font-medium text-gray-600">{title}</div>
-      {Icon && <Icon size={18} className="sm:w-5 sm:h-5 text-gray-400" />}
-    </div>
-    <div className="text-2xl sm:text-3xl font-bold mb-1">{value}</div>
-    {trend !== undefined && (
-      <div className={`text-xs sm:text-sm font-medium ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-        {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}% from last month
-      </div>
-    )}
-    {subtitle && <div className="text-xs sm:text-sm text-gray-500">{subtitle}</div>}
-  </Card>
-);
+  if (trend !== undefined) {
+    const direction = trend >= 0 ? '↑' : '↓';
+    change = `${direction} ${Math.abs(trend)}% from last month`;
+    changeType = trend >= 0 ? 'positive' : 'negative';
+  }
+
+  return (
+    <DSStatCard
+      title={title}
+      value={value}
+      icon={Icon ? <Icon size={18} /> : undefined}
+      change={change}
+      changeType={changeType}
+      description={subtitle}
+      {...props}
+    />
+  );
+};
 
 export default StatCard;

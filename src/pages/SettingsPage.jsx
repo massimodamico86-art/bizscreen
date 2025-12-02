@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Bell, Eye, Globe, Shield, Activity, RotateCcw } from 'lucide-react';
-import Card from '../components/Card';
-import Button from '../components/Button';
+import { Card, Button } from '../design-system';
 import { getUserSettings, updateUserSettings, resetUserSettings } from '../services/userSettingsService';
 import { getActivityLog, formatActivity } from '../services/activityLogService';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { useTranslation } from '../i18n';
 
 const SettingsPage = ({ showToast }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('notifications');
   const [settings, setSettings] = useState(null);
   const [activityLog, setActivityLog] = useState([]);
@@ -13,10 +15,10 @@ const SettingsPage = ({ showToast }) => {
   const [saving, setSaving] = useState(false);
 
   const tabs = [
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'display', label: 'Display', icon: Eye },
-    { id: 'privacy', label: 'Privacy', icon: Shield },
-    { id: 'activity', label: 'Activity Log', icon: Activity }
+    { id: 'notifications', label: t('settings.tabs.notifications', 'Notifications'), icon: Bell },
+    { id: 'display', label: t('settings.tabs.display', 'Display'), icon: Eye },
+    { id: 'privacy', label: t('settings.tabs.privacy', 'Privacy'), icon: Shield },
+    { id: 'activity', label: t('settings.tabs.activity', 'Activity Log'), icon: Activity }
   ];
 
   useEffect(() => {
@@ -78,7 +80,7 @@ const SettingsPage = ({ showToast }) => {
   if (loading || !settings) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading settings...</div>
+        <div className="text-gray-500">{t('common.loading', 'Loading...')}</div>
       </div>
     );
   }
@@ -86,42 +88,45 @@ const SettingsPage = ({ showToast }) => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-gray-600">Manage your account preferences and settings</p>
+        <h1 className="text-2xl font-bold">{t('settings.title', 'Settings')}</h1>
+        <p className="text-gray-600">{t('settings.subtitle', 'Manage your account preferences and settings')}</p>
       </div>
 
       {/* Tabs */}
       <div className="border-b">
-        <div className="flex gap-4 overflow-x-auto">
+        <nav className="flex gap-4 overflow-x-auto" role="tablist" aria-label={t('settings.tabs.label', 'Settings tabs')}>
           {tabs.map(tab => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                aria-controls={`tabpanel-${tab.id}`}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <Icon size={18} />
+                <Icon size={18} aria-hidden="true" />
                 <span className="font-medium">{tab.label}</span>
               </button>
             );
           })}
-        </div>
+        </nav>
       </div>
 
       {/* Notifications Tab */}
       {activeTab === 'notifications' && (
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Notification Preferences</h2>
+          <h2 className="text-lg font-semibold mb-4">{t('settings.notifications.title', 'Notification Preferences')}</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium">Email Notifications</div>
-                <div className="text-sm text-gray-600">Receive notifications via email</div>
+                <div className="font-medium">{t('settings.notifications.email', 'Email Notifications')}</div>
+                <div className="text-sm text-gray-600">{t('settings.notifications.emailDesc', 'Receive notifications via email')}</div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -136,8 +141,8 @@ const SettingsPage = ({ showToast }) => {
 
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium">Guest Check-in Notifications</div>
-                <div className="text-sm text-gray-600">Get notified when guests check in</div>
+                <div className="font-medium">{t('settings.notifications.guestCheckin', 'Guest Check-in Notifications')}</div>
+                <div className="text-sm text-gray-600">{t('settings.notifications.guestCheckinDesc', 'Get notified when guests check in')}</div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -152,8 +157,8 @@ const SettingsPage = ({ showToast }) => {
 
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium">PMS Sync Notifications</div>
-                <div className="text-sm text-gray-600">Get notified when PMS sync completes</div>
+                <div className="font-medium">{t('settings.notifications.pmsSync', 'PMS Sync Notifications')}</div>
+                <div className="text-sm text-gray-600">{t('settings.notifications.pmsSyncDesc', 'Get notified when PMS sync completes')}</div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -168,8 +173,8 @@ const SettingsPage = ({ showToast }) => {
 
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium">TV Offline Notifications</div>
-                <div className="text-sm text-gray-600">Get notified when TV devices go offline</div>
+                <div className="font-medium">{t('settings.notifications.tvOffline', 'TV Offline Notifications')}</div>
+                <div className="text-sm text-gray-600">{t('settings.notifications.tvOfflineDesc', 'Get notified when TV devices go offline')}</div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -188,39 +193,28 @@ const SettingsPage = ({ showToast }) => {
       {/* Display Tab */}
       {activeTab === 'display' && (
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Display Preferences</h2>
+          <h2 className="text-lg font-semibold mb-4">{t('settings.display.title', 'Display Preferences')}</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Theme</label>
+              <label className="block text-sm font-medium mb-2">{t('settings.display.theme', 'Theme')}</label>
               <select
                 value={settings.theme}
                 onChange={(e) => handleSaveSettings({ theme: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               >
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-                <option value="auto">Auto (System)</option>
+                <option value="light">{t('settings.display.themeLight', 'Light')}</option>
+                <option value="dark">{t('settings.display.themeDark', 'Dark')}</option>
+                <option value="auto">{t('settings.display.themeAuto', 'Auto (System)')}</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Language</label>
-              <select
-                value={settings.language}
-                onChange={(e) => handleSaveSettings({ language: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              >
-                <option value="en">English</option>
-                <option value="es">Español</option>
-                <option value="fr">Français</option>
-                <option value="de">Deutsch</option>
-                <option value="it">Italiano</option>
-                <option value="pt">Português</option>
-              </select>
+              <label className="block text-sm font-medium mb-2">{t('settings.display.language', 'Language')}</label>
+              <LanguageSwitcher showLabel={false} />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Date Format</label>
+              <label className="block text-sm font-medium mb-2">{t('settings.display.dateFormat', 'Date Format')}</label>
               <select
                 value={settings.date_format}
                 onChange={(e) => handleSaveSettings({ date_format: e.target.value })}
@@ -233,14 +227,14 @@ const SettingsPage = ({ showToast }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Time Format</label>
+              <label className="block text-sm font-medium mb-2">{t('settings.display.timeFormat', 'Time Format')}</label>
               <select
                 value={settings.time_format}
                 onChange={(e) => handleSaveSettings({ time_format: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               >
-                <option value="12h">12-hour (AM/PM)</option>
-                <option value="24h">24-hour</option>
+                <option value="12h">{t('settings.display.time12h', '12-hour (AM/PM)')}</option>
+                <option value="24h">{t('settings.display.time24h', '24-hour')}</option>
               </select>
             </div>
           </div>
@@ -250,12 +244,12 @@ const SettingsPage = ({ showToast }) => {
       {/* Privacy Tab */}
       {activeTab === 'privacy' && (
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Privacy & Data</h2>
+          <h2 className="text-lg font-semibold mb-4">{t('settings.privacy.title', 'Privacy & Data')}</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium">Activity Tracking</div>
-                <div className="text-sm text-gray-600">Track your actions for activity log</div>
+                <div className="font-medium">{t('settings.privacy.activityTracking', 'Activity Tracking')}</div>
+                <div className="text-sm text-gray-600">{t('settings.privacy.activityTrackingDesc', 'Track your actions for activity log')}</div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -270,8 +264,8 @@ const SettingsPage = ({ showToast }) => {
 
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium">Analytics</div>
-                <div className="text-sm text-gray-600">Help us improve by sharing anonymous usage data</div>
+                <div className="font-medium">{t('settings.privacy.analytics', 'Analytics')}</div>
+                <div className="text-sm text-gray-600">{t('settings.privacy.analyticsDesc', 'Help us improve by sharing anonymous usage data')}</div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -285,9 +279,9 @@ const SettingsPage = ({ showToast }) => {
             </div>
 
             <div className="pt-4 border-t">
-              <h3 className="font-medium mb-2">Auto-Sync PMS</h3>
+              <h3 className="font-medium mb-2">{t('settings.privacy.autoSyncPms', 'Auto-Sync PMS')}</h3>
               <div className="flex items-center justify-between mb-3">
-                <div className="text-sm text-gray-600">Automatically sync reservations from PMS</div>
+                <div className="text-sm text-gray-600">{t('settings.privacy.autoSyncPmsDesc', 'Automatically sync reservations from PMS')}</div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
@@ -301,16 +295,16 @@ const SettingsPage = ({ showToast }) => {
 
               {settings.auto_sync_pms && (
                 <div>
-                  <label className="block text-sm font-medium mb-2">Sync Frequency</label>
+                  <label className="block text-sm font-medium mb-2">{t('settings.privacy.syncFrequency', 'Sync Frequency')}</label>
                   <select
                     value={settings.sync_frequency_hours}
                     onChange={(e) => handleSaveSettings({ sync_frequency_hours: parseInt(e.target.value) })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
-                    <option value="1">Every hour</option>
-                    <option value="6">Every 6 hours</option>
-                    <option value="12">Every 12 hours</option>
-                    <option value="24">Every 24 hours</option>
+                    <option value="1">{t('settings.privacy.everyHour', 'Every hour')}</option>
+                    <option value="6">{t('settings.privacy.every6Hours', 'Every 6 hours')}</option>
+                    <option value="12">{t('settings.privacy.every12Hours', 'Every 12 hours')}</option>
+                    <option value="24">{t('settings.privacy.every24Hours', 'Every 24 hours')}</option>
                   </select>
                 </div>
               )}
@@ -322,7 +316,7 @@ const SettingsPage = ({ showToast }) => {
       {/* Activity Log Tab */}
       {activeTab === 'activity' && (
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
+          <h2 className="text-lg font-semibold mb-4">{t('settings.activity.title', 'Recent Activity')}</h2>
           <div className="space-y-3">
             {activityLog.length > 0 ? (
               activityLog.map(activity => {
@@ -345,7 +339,7 @@ const SettingsPage = ({ showToast }) => {
               })
             ) : (
               <div className="text-center py-8 text-gray-500">
-                No activity recorded yet
+                {t('settings.activity.noActivity', 'No activity recorded yet')}
               </div>
             )}
           </div>
@@ -360,7 +354,7 @@ const SettingsPage = ({ showToast }) => {
           disabled={saving}
         >
           <RotateCcw size={16} />
-          Reset to Defaults
+          {t('settings.resetToDefaults', 'Reset to Defaults')}
         </Button>
       </div>
     </div>

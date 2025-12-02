@@ -26,7 +26,7 @@ export default function AdminTestPage() {
     try {
       // Create auth user via Supabase
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: 'testadmin@hostops.com',
+        email: 'testadmin@bizscreen.test',
         password: 'TestAdmin123!',
         options: {
           data: {
@@ -45,7 +45,7 @@ export default function AdminTestPage() {
 
       if (updateError) throw updateError;
 
-      setMessage(`✅ Admin created: testadmin@hostops.com (ID: ${authData.user.id})`);
+      setMessage(`✅ Admin created: testadmin@bizscreen.test (ID: ${authData.user.id})`);
       await loadUsers();
     } catch (err) {
       setError(err.message);
@@ -61,7 +61,7 @@ export default function AdminTestPage() {
     setMessage('');
 
     try {
-      const email = `testclient${clientNumber}@hostops.com`;
+      const email = `testclient${clientNumber}@bizscreen.test`;
 
       // Create auth user
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -284,9 +284,9 @@ export default function AdminTestPage() {
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="font-semibold text-blue-900 mb-3">Test User Credentials</h3>
           <div className="space-y-2 text-sm text-blue-800">
-            <p><strong>Admin:</strong> testadmin@hostops.com / TestAdmin123!</p>
-            <p><strong>Client 1:</strong> testclient1@hostops.com / TestClient123!</p>
-            <p><strong>Client 2:</strong> testclient2@hostops.com / TestClient123!</p>
+            <p><strong>Admin:</strong> testadmin@bizscreen.test / TestAdmin123!</p>
+            <p><strong>Client 1:</strong> testclient1@bizscreen.test / TestClient123!</p>
+            <p><strong>Client 2:</strong> testclient2@bizscreen.test / TestClient123!</p>
           </div>
         </div>
       </div>

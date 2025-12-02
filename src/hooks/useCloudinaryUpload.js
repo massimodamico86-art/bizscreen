@@ -18,11 +18,12 @@ import { useCallback } from 'react';
 export const useCloudinaryUpload = ({
   onSuccess,
   onError,
-  folder = 'hostops',
-  allowedFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-  maxFileSize = 10485760, // 10MB
-  multiple = false,
-  transformation = null
+  folder = 'bizscreen',
+  allowedFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mov', 'avi', 'webm', 'mp3', 'wav', 'ogg', 'pdf'],
+  maxFileSize = 104857600, // 100MB for videos
+  multiple = true,
+  transformation = null,
+  resourceType = 'auto' // 'auto', 'image', 'video', 'raw'
 } = {}) => {
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -53,7 +54,7 @@ export const useCloudinaryUpload = ({
       maxFileSize,
       clientAllowedFormats: allowedFormats,
       folder,
-      resourceType: 'image',
+      resourceType,
       // Styling
       theme: 'minimal',
       styles: {
@@ -132,21 +133,28 @@ export const useCloudinaryUpload = ({
 
         // Handle different events
         if (result.event === 'success') {
+          const info = result.info;
           const uploadedFile = {
-            url: result.info.secure_url,
-            publicId: result.info.public_id,
-            format: result.info.format,
-            width: result.info.width,
-            height: result.info.height,
-            size: result.info.bytes,
-            thumbnail: result.info.thumbnail_url,
+            url: info.secure_url,
+            publicId: info.public_id,
+            format: info.format,
+            width: info.width,
+            height: info.height,
+            size: info.bytes,
+            thumbnail: info.thumbnail_url,
+            // Resource type: image, video, raw
+            resourceType: info.resource_type,
+            // Duration in seconds (for video/audio)
+            duration: info.duration ? Math.round(info.duration) : null,
+            // Original filename
+            originalFilename: info.original_filename,
             // Optimized URL with auto format and quality
-            optimizedUrl: result.info.secure_url.replace('/upload/', '/upload/f_auto,q_auto/'),
+            optimizedUrl: info.secure_url.replace('/upload/', '/upload/f_auto,q_auto/'),
             // Transformed URL if transformation was specified
-            transformedUrl: result.info.eager?.[0]?.secure_url || result.info.secure_url
+            transformedUrl: info.eager?.[0]?.secure_url || info.secure_url
           };
 
-          console.log('Image uploaded successfully:', uploadedFile);
+          console.log('File uploaded successfully:', uploadedFile);
           onSuccess?.(uploadedFile);
         }
 
@@ -161,7 +169,7 @@ export const useCloudinaryUpload = ({
     );
 
     widget.open();
-  }, [cloudName, uploadPreset, folder, allowedFormats, maxFileSize, multiple, transformation, onSuccess, onError]);
+  }, [cloudName, uploadPreset, folder, allowedFormats, maxFileSize, multiple, transformation, resourceType, onSuccess, onError]);
 
   return openUploadWidget;
 };

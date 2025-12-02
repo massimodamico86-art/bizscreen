@@ -44,7 +44,7 @@ export const BackgroundImageSelector = ({ isOpen, onClose, currentImage, onSelec
           <ImageUploadButton
             onImageUploaded={handleImageUploaded}
             buttonText="Upload from Computer"
-            folder="hostops/backgrounds"
+            folder="bizscreen/backgrounds"
             transformation={{
               width: 1920,
               height: 1080,

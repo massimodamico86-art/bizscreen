@@ -1,5 +1,5 @@
--- HostOps Portal - Initial Database Schema
--- This migration creates all the core tables for the hostops-portal application
+-- BizScreen - Initial Database Schema
+-- This migration creates all the core tables for the BizScreen application
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

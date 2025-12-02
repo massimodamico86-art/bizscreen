@@ -1,5 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabase';
+import { createLogger } from '../utils/logger';
+import { startTrial } from '../services/billingService';
+
+const log = createLogger('AuthContext');
 
 // Auth context for user authentication and profile management
 const AuthContext = createContext({});
@@ -54,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     // Note: We check userProfile in the closure, but it's stable due to dependencies
     setUserProfile(prevProfile => {
       if (skipIfExists && prevProfile && !prevProfile.error) {
-        console.log('⏭️ [AuthContext] Skipping profile fetch - already loaded');
+        log.debug('Skipping profile fetch - already loaded');
         return prevProfile; // Return existing profile
       }
       return prevProfile; // Continue with fetch
@@ -72,12 +76,9 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      console.log(`🔍 [AuthContext] Fetching profile for user (attempt ${retryCount + 1}):`, userId);
-      console.log('🔍 [AuthContext] Using Supabase URL:', supabase.supabaseUrl);
-      console.log('🔍 [AuthContext] User email:', userEmail);
+      log.debug('Fetching profile', { userId, attempt: retryCount + 1 });
 
       // Build the query with minimal fields for faster response
-      console.log('🔍 [AuthContext] Query built, executing...');
       const { data, error } = await supabase
         .from('profiles')
         .select('id, email, full_name, role')
@@ -85,18 +86,11 @@ export const AuthProvider = ({ children }) => {
         .single();
 
       if (error) {
-        console.error('❌ [AuthContext] Profile fetch error:', error);
-        console.error('❌ [AuthContext] Error details:', {
-          message: error.message,
-          code: error.code,
-          details: error.details,
-          hint: error.hint,
-          supabaseUrl: supabase.supabaseUrl
-        });
+        log.error('Profile fetch error', { code: error.code, message: error.message });
 
         // PGRST116 = no rows returned - profile doesn't exist
         if (error.code === 'PGRST116') {
-          console.error('❌ CRITICAL: Profile not found for user', userId);
+          log.error('Profile not found', { userId });
           setUserProfile({
             error: true,
             errorMessage: 'Your profile was not created properly. Please contact support.',
@@ -114,10 +108,10 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      console.log('✅ [AuthContext] Profile fetched successfully:', data);
+      log.debug('Profile fetched successfully', { id: data?.id, role: data?.role });
       setUserProfile(data);
     } catch (err) {
-      console.error('❌ [AuthContext] Error fetching user profile:', err);
+      log.error('Error fetching user profile', { error: err.message });
       setUserProfile({
         error: true,
         errorMessage: `Unexpected error: ${err.message}`,
@@ -127,7 +121,7 @@ export const AuthProvider = ({ children }) => {
   }, []); // Empty dependencies - function is stable
 
   useEffect(() => {
-    console.log('🔄 AuthContext: Initializing auth...');
+    log.debug('Initializing auth');
 
     let mounted = true;
 
@@ -138,9 +132,9 @@ export const AuthProvider = ({ children }) => {
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
-          console.error('❌ AuthContext: Session error', error);
+          log.error('Session error', { error: error.message });
         } else {
-          console.log('✅ AuthContext: Session retrieved', { hasSession: !!session });
+          log.debug('Session retrieved', { hasSession: !!session });
         }
 
         if (!mounted) return;
@@ -151,7 +145,7 @@ export const AuthProvider = ({ children }) => {
           await fetchUserProfile(session.user.id, session.user.email);
         }
       } catch (error) {
-        console.error('❌ AuthContext: Init error', error);
+        log.error('Init error', { error: error.message });
       } finally {
         if (mounted) {
           setLoading(false);
@@ -163,7 +157,7 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log('🔔 Auth state changed:', _event, { hasSession: !!session });
+      log.debug('Auth state changed', { event: _event, hasSession: !!session });
 
       if (!mounted) return;
 
@@ -198,6 +192,21 @@ export const AuthProvider = ({ children }) => {
 
     // Profile will be automatically created by database trigger (010_auto_create_profiles.sql)
     // The trigger reads full_name from user metadata (raw_user_meta_data->>'full_name')
+
+    // Auto-start trial for new users (14-day starter trial)
+    // We don't await this to avoid blocking signup if trial start fails
+    if (data?.user) {
+      startTrial('starter', 14).then(result => {
+        if (result.success) {
+          log.debug('Trial started for new user', { trialEndsAt: result.trialEndsAt });
+        } else {
+          log.debug('Trial start skipped or failed', { error: result.error });
+        }
+      }).catch(err => {
+        // Don't block signup if trial start fails - user can start manually later
+        log.debug('Trial start error (non-blocking)', { error: err.message });
+      });
+    }
 
     return data;
   };

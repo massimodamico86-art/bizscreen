@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Search, Plus, Download, Filter, MapPin, Tv, Star, Users, Eye, Edit, Trash2 } from 'lucide-react';
+import { Search, Plus, Download, Filter, MapPin, Tv, Eye, Edit, Trash2 } from 'lucide-react';
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
-import Button from '../components/Button';
-import Card from '../components/Card';
-import Badge from '../components/Badge';
+import { Button, Card, Badge } from '../design-system';
+import { useTranslation } from '../i18n';
 import { PropertyDetailsModal } from '../components/listings/PropertyDetailsModal';
 import { TVPreviewModal } from '../components/listings/TVPreviewModal';
 import { AddListingModal } from '../components/listings/AddListingModal';
@@ -14,6 +13,7 @@ import { getSupabaseErrorMessage, logError } from '../utils/errorMessages';
 import { convertToLegacyFormat } from '../utils/mediaMigration';
 
 const ListingsPage = ({ showToast, listings, setListings }) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [selectedListing, setSelectedListing] = useState(null);
@@ -88,10 +88,10 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
 
       // Update local state
       setListings(listings.map(l => l.id === updatedListing.id ? updatedListing : l));
-      showToast('Listing saved successfully!');
+      showToast('Location saved successfully!');
     } catch (error) {
-      console.error('Error saving listing:', error);
-      showToast('Error saving listing: ' + error.message, 'error');
+      console.error('Error saving location:', error);
+      showToast('Error saving location: ' + error.message, 'error');
     } finally {
       setSaving(false);
     }
@@ -154,7 +154,7 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
 
       // Update local state
       setListings([data, ...listings]);
-      showToast('Listing created successfully!');
+      showToast('Location created successfully!');
     } catch (error) {
       logError(error, 'Add listing', { userId: user.id });
       const errorMessage = getSupabaseErrorMessage(error, 'create', 'listing');
@@ -163,7 +163,7 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
   };
 
   const handleDeleteListing = async (listingId) => {
-    if (!window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
+    if (!window.confirm('Are you sure you want to delete this location? This action cannot be undone.')) {
       return;
     }
 
@@ -179,7 +179,7 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
 
       // Update local state
       setListings(listings.filter(l => l.id !== listingId));
-      showToast('Listing deleted successfully');
+      showToast('Location deleted successfully');
     } catch (error) {
       logError(error, 'Delete listing', { listingId, userId: user.id });
       const errorMessage = getSupabaseErrorMessage(error, 'delete', 'listing');
@@ -194,24 +194,24 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
       <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Listings</h1>
-          <p className="text-gray-600">Manage your vacation rental properties</p>
+          <h1 className="text-2xl font-bold">Locations</h1>
+          <p className="text-gray-600">Manage your business locations and TV screens</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => {
             try {
               downloadListingsCSV(listings);
-              showToast(`Exported ${listings.length} listing(s) to CSV`);
+              showToast(`Exported ${listings.length} location(s) to CSV`);
             } catch (error) {
-              showToast('Error exporting listings: ' + error.message, 'error');
+              showToast('Error exporting locations: ' + error.message, 'error');
             }
           }}>
             <Download size={18} />
-            Export Listings
+            Export
           </Button>
           <Button onClick={() => setShowAddModal(true)}>
             <Plus size={18} />
-            Add Listing
+            Add Location
           </Button>
         </div>
       </div>
@@ -221,7 +221,7 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search listings..."
+            placeholder="Search locations..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
@@ -253,20 +253,9 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
                 </div>
                 <p className="text-gray-600 mb-3">{listing.description}</p>
                 <div className="flex items-center gap-6 text-sm text-gray-600 mb-4">
-                  <span>{listing.bedrooms} beds</span>
-                  <span>{listing.bathrooms} baths</span>
-                  <span>{listing.guests} guests</span>
                   <span className="flex items-center gap-1">
                     <Tv size={14} />
                     {listing.tvs} TVs
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Star size={14} className="text-yellow-400 fill-yellow-400" />
-                    {listing.rating} ({listing.reviews})
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Users size={14} className="text-blue-500" />
-                    {(listing.guestList || []).length} guests
                   </span>
                 </div>
                 <div className="flex items-center justify-end">

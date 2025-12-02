@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import Button from '../components/Button';
+import { Button, Alert } from '../design-system';
+import { useTranslation } from '../i18n';
 import { Mail } from 'lucide-react';
 
 export const LoginPage = () => {
+  const { t } = useTranslation();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -75,41 +77,33 @@ export const LoginPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
           <div className="flex items-center justify-center gap-2 mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl"></div>
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl" aria-hidden="true"></div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              hostOps
+              BizScreen
             </h1>
           </div>
 
           <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
-            Reset your password
+            {t('login.resetPassword.title', 'Reset your password')}
           </h2>
           <p className="text-gray-600 mb-6 text-center">
-            Enter your email and we'll send you a reset link
+            {t('login.resetPassword.subtitle', "Enter your email and we'll send you a reset link")}
           </p>
 
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              {error}
-            </div>
-          )}
-          {message && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-              {message}
-            </div>
-          )}
+          {error && <Alert variant="error" className="mb-4">{error}</Alert>}
+          {message && <Alert variant="success" className="mb-4">{message}</Alert>}
 
           <form onSubmit={handleForgotPassword} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
+                {t('login.emailLabel', 'Email Address')}
               </label>
               <input
                 type="email"
                 value={forgotPasswordEmail}
                 onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="you@example.com"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:ring-2 focus-visible:ring-blue-500"
+                placeholder={t('login.emailPlaceholder', 'Email address')}
                 required
               />
             </div>
@@ -119,7 +113,7 @@ export const LoginPage = () => {
               className="w-full"
               disabled={forgotPasswordLoading}
             >
-              {forgotPasswordLoading ? 'Sending...' : 'Send Reset Link'}
+              {forgotPasswordLoading ? t('login.sending', 'Sending...') : t('login.sendResetLink', 'Send Reset Link')}
             </Button>
           </form>
 
@@ -130,9 +124,9 @@ export const LoginPage = () => {
                 setError('');
                 setMessage('');
               }}
-              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+              className="text-blue-600 hover:text-blue-700 text-sm font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none rounded"
             >
-              Back to login
+              {t('login.backToLogin', 'Back to login')}
             </button>
           </div>
         </div>
@@ -145,47 +139,39 @@ export const LoginPage = () => {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl"></div>
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl" aria-hidden="true"></div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            hostOps
+            BizScreen
           </h1>
         </div>
 
         {/* Title */}
         <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
-          {isSignUp ? 'Create your account' : 'Welcome back'}
+          {isSignUp ? t('login.createAccount', 'Create your account') : t('login.welcomeBack', 'Welcome back')}
         </h2>
         <p className="text-gray-600 mb-6 text-center">
           {isSignUp
-            ? 'Sign up to get started with hostOps'
-            : 'Sign in to access your dashboard'}
+            ? t('login.signUpSubtitle', 'Sign up to get started with BizScreen')
+            : t('login.signInSubtitle', 'Sign in to access your dashboard')}
         </p>
 
         {/* Messages */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-            {error}
-          </div>
-        )}
-        {message && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-            {message}
-          </div>
-        )}
+        {error && <Alert variant="error" className="mb-4">{error}</Alert>}
+        {message && <Alert variant="success" className="mb-4">{message}</Alert>}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {isSignUp && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
+                {t('login.fullNameLabel', 'Full Name')}
               </label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="John Doe"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:ring-2 focus-visible:ring-blue-500"
+                placeholder={t('login.fullNamePlaceholder', 'John Doe')}
                 required={isSignUp}
               />
             </div>
@@ -193,28 +179,28 @@ export const LoginPage = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
+              {t('login.email', 'Email')}
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="you@example.com"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:ring-2 focus-visible:ring-blue-500"
+              placeholder={t('login.emailPlaceholder', 'Email address')}
               required
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              {t('login.password', 'Password')}
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="••••••••"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:ring-2 focus-visible:ring-blue-500"
+              placeholder={t('login.passwordPlaceholder', 'Password')}
               required
               minLength={6}
             />
@@ -225,7 +211,7 @@ export const LoginPage = () => {
             className="w-full"
             disabled={loading}
           >
-            {loading ? 'Please wait...' : isSignUp ? 'Sign Up' : 'Sign In'}
+            {loading ? t('login.pleaseWait', 'Please wait...') : isSignUp ? t('login.signUp', 'Sign Up') : t('login.signIn', 'Sign In')}
           </Button>
         </form>
 
@@ -234,9 +220,9 @@ export const LoginPage = () => {
           <div className="mt-4 text-center">
             <button
               onClick={() => setShowForgotPassword(true)}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none rounded"
             >
-              Forgot your password?
+              {t('login.forgotPassword', 'Forgot your password?')}
             </button>
           </div>
         )}
@@ -247,7 +233,7 @@ export const LoginPage = () => {
             <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Or continue with</span>
+            <span className="px-2 bg-white text-gray-500">{t('login.orContinueWith', 'Or continue with')}</span>
           </div>
         </div>
 
@@ -255,10 +241,10 @@ export const LoginPage = () => {
         <button
           onClick={handleOAuthSignIn}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
         >
-          <Mail size={20} className="text-red-500" />
-          <span className="font-medium text-gray-700">Continue with Google</span>
+          <Mail size={20} className="text-red-500" aria-hidden="true" />
+          <span className="font-medium text-gray-700">{t('login.continueWithGoogle', 'Continue with Google')}</span>
         </button>
 
         {/* Toggle Sign In/Sign Up */}
@@ -269,19 +255,19 @@ export const LoginPage = () => {
               setError('');
               setMessage('');
             }}
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none rounded"
           >
             {isSignUp
-              ? 'Already have an account? Sign in'
-              : "Don't have an account? Sign up"}
+              ? t('login.alreadyHaveAccount', 'Already have an account? Sign in')
+              : t('login.noAccount', "Don't have an account? Sign up")}
           </button>
         </div>
 
         {/* Demo Credentials */}
         <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-xs font-semibold text-gray-700 mb-2">Demo Credentials:</p>
-          <p className="text-xs text-gray-600">Email: test@hostops.com</p>
-          <p className="text-xs text-gray-600">Password: testpassword123</p>
+          <p className="text-xs font-semibold text-gray-700 mb-2">{t('login.demoCredentials', 'Demo Credentials:')}</p>
+          <p className="text-xs text-gray-600">{t('login.demoEmail', 'Email: demo@bizscreen.app')}</p>
+          <p className="text-xs text-gray-600">{t('login.demoPassword', 'Password: testpassword123')}</p>
         </div>
       </div>
     </div>

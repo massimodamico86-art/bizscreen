@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { replaceGuestPlaceholders } from "../utils/guestHelpers";
 
 export default function Layout3({ layout, guest }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const {
     showWelcomeMessage,
-    welcomeGreeting = "Welcome, {{Guest}}!",
+    welcomeGreeting = "Welcome!",
     welcomeMessage,
     showQRCodes,
     qrCodes = [],
@@ -29,38 +28,30 @@ export default function Layout3({ layout, guest }) {
   } = layout;
 
   // Dynamic font size for welcome greeting based on text length
-  // The goal is to make text as large as possible while fitting in the panel (w-1/3 = 640px with p-8 = 576px usable)
   const getGreetingFontSize = (text) => {
     if (!text) return 'text-5xl';
-    const processedText = replaceGuestPlaceholders(text, guest);
-    const length = processedText.length;
-
-    // Adjusted scaling to account for wrapping - being more conservative
-    if (length <= 8) return 'text-7xl';   // ~72px for very short text like "Welcome!"
-    if (length <= 12) return 'text-6xl';  // ~60px for "Hi John Doe"
-    if (length <= 18) return 'text-5xl';  // ~48px
-    if (length <= 25) return 'text-4xl';  // ~36px
-    if (length <= 35) return 'text-3xl';  // ~30px
-    if (length <= 45) return 'text-2xl';  // ~24px for "Welcome Massimooooooo..."
-    if (length <= 60) return 'text-xl';   // ~20px
-    if (length <= 80) return 'text-lg';   // ~18px
-    return 'text-base';                    // ~16px for very long text
+    const length = text.length;
+    if (length <= 8) return 'text-7xl';
+    if (length <= 12) return 'text-6xl';
+    if (length <= 18) return 'text-5xl';
+    if (length <= 25) return 'text-4xl';
+    if (length <= 35) return 'text-3xl';
+    if (length <= 45) return 'text-2xl';
+    if (length <= 60) return 'text-xl';
+    if (length <= 80) return 'text-lg';
+    return 'text-base';
   };
 
   // Dynamic font size for welcome message based on text length
-  // Allow up to ~10 rows by being more generous with font sizes
   const getMessageFontSize = (text) => {
     if (!text) return 'text-2xl';
-    const processedText = replaceGuestPlaceholders(text, guest);
-    const length = processedText.length;
-
-    // More generous sizing to fill the space and allow up to 10 rows
-    if (length <= 100) return 'text-3xl';   // ~30px for short messages
-    if (length <= 150) return 'text-2xl';   // ~24px
-    if (length <= 200) return 'text-xl';    // ~20px - your current message
-    if (length <= 300) return 'text-lg';    // ~18px
-    if (length <= 400) return 'text-base';  // ~16px for longer messages
-    return 'text-sm';                        // ~14px for very long messages
+    const length = text.length;
+    if (length <= 100) return 'text-3xl';
+    if (length <= 150) return 'text-2xl';
+    if (length <= 200) return 'text-xl';
+    if (length <= 300) return 'text-lg';
+    if (length <= 400) return 'text-base';
+    return 'text-sm';
   };
 
   // Get current date and time
@@ -136,11 +127,11 @@ export default function Layout3({ layout, guest }) {
           {showWelcomeMessage && (
             <div className="mb-6">
               <h1 className={`${getGreetingFontSize(welcomeGreeting)} font-bold mb-3 leading-tight break-words`}>
-                {replaceGuestPlaceholders(welcomeGreeting, guest)}
+                {welcomeGreeting}
               </h1>
               <p className={`${getMessageFontSize(welcomeMessage)} leading-relaxed text-white/85 break-words whitespace-normal`}>
-                {replaceGuestPlaceholders(welcomeMessage, guest) ||
-                  "Welcome to our Hawaiian haven. Enjoy gentle ocean breezes, lush landscapes, and tropical flavors as you unwind. We hope your stay is as warm and refreshing as the aloha spirit itself."}
+                {welcomeMessage ||
+                  "Thank you for visiting. We hope you enjoy your experience with us today."}
               </p>
             </div>
           )}
@@ -247,7 +238,7 @@ export default function Layout3({ layout, guest }) {
 
       {/* Footer */}
       <div className="absolute bottom-1 left-1/2 -translate-x-1/2 z-20 text-xs text-white/40">
-        powered by HostOps.com
+        powered by BizScreen
       </div>
     </div>
   );

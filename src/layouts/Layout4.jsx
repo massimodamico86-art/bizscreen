@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { replaceGuestPlaceholders } from "../utils/guestHelpers";
 
 export default function Layout4({ layout, guest }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const {
     showWelcomeMessage,
-    welcomeGreeting = "Hi {{Guest}}",
+    welcomeGreeting = "Welcome",
     welcomeMessage,
     showQRCodes,
     qrCodes = [],
@@ -34,15 +33,12 @@ export default function Layout4({ layout, guest }) {
   // Dynamic font size for welcome message based on text length
   const getMessageFontSize = (text) => {
     if (!text) return 'text-2xl';
-    const processedText = replaceGuestPlaceholders(text, guest);
-    const length = processedText.length;
-
-    // Sizing for left panel message area - larger sizes
-    if (length <= 150) return 'text-3xl';   // ~30px
-    if (length <= 250) return 'text-2xl';   // ~24px
-    if (length <= 400) return 'text-xl';    // ~20px
-    if (length <= 600) return 'text-lg';    // ~18px
-    return 'text-base';                      // ~16px
+    const length = text.length;
+    if (length <= 150) return 'text-3xl';
+    if (length <= 250) return 'text-2xl';
+    if (length <= 400) return 'text-xl';
+    if (length <= 600) return 'text-lg';
+    return 'text-base';
   };
 
   // Helper to format time
@@ -132,11 +128,11 @@ export default function Layout4({ layout, guest }) {
         {showWelcomeMessage && (
           <div>
             <h1 className="text-7xl font-bold mb-8 leading-tight break-words">
-              {replaceGuestPlaceholders(welcomeGreeting, guest)}
+              {welcomeGreeting}
             </h1>
             <p className={`${getMessageFontSize(welcomeMessage)} leading-relaxed text-white/90 break-words whitespace-normal`}>
-              {replaceGuestPlaceholders(welcomeMessage, guest) ||
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit."}
+              {welcomeMessage ||
+                "Thank you for visiting. We hope you enjoy your experience with us today."}
             </p>
           </div>
         )}
@@ -253,10 +249,7 @@ export default function Layout4({ layout, guest }) {
 
       {/* Footer */}
       <div className="absolute bottom-2 right-10 z-20 text-xs text-white/40 flex items-center gap-1">
-        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
-        </svg>
-        <span>WelcomeScreen</span>
+        <span>Powered by BizScreen</span>
       </div>
     </div>
   );

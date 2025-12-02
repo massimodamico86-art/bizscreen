@@ -33,11 +33,24 @@ export default function TV() {
     }
 
     let alive = true;
+    let contentHashRef = null;
     setLoading(true);
     setError("");
 
     // Save OTP to localStorage
     localStorage.setItem('tv_otp', otp);
+
+    // Helper to create content hash for change detection
+    const createContentHash = (payload) => {
+      if (!payload) return null;
+      return JSON.stringify({
+        layoutKey: payload.layout?.layout_key,
+        backgroundImage: payload.layout?.backgroundImage,
+        backgroundVideo: payload.layout?.backgroundVideo,
+        guestId: payload.guest?.id,
+        updatedAt: payload.layout?.updatedAt
+      });
+    };
 
     // Initial config fetch
     getConfig(otp)
@@ -46,6 +59,7 @@ export default function TV() {
         // payload shape: { guest, layout: {...} }
         console.log("TV loaded config:", payload?.layout?.layout_key, payload);
         setConfig(payload);
+        contentHashRef = createContentHash(payload);
         setError("");
       })
       .catch((e) => {
@@ -71,7 +85,27 @@ export default function TV() {
       }
     }, 60 * 1000); // 1 minute
 
-    // Refresh weather every 30 minutes
+    // Content polling - check for updates every 5 minutes
+    const contentPollInterval = setInterval(async () => {
+      if (!alive) return;
+
+      try {
+        const payload = await getConfig(otp);
+        if (!alive) return;
+
+        const newHash = createContentHash(payload);
+        if (newHash !== contentHashRef) {
+          console.log("Content updated at", new Date().toLocaleTimeString());
+          setConfig(payload);
+          contentHashRef = newHash;
+        }
+      } catch (e) {
+        console.error("Content poll error:", e);
+        // Don't clear OTP on poll errors - might be temporary
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+
+    // Refresh weather every 30 minutes (weather data changes less frequently)
     const weatherRefreshInterval = setInterval(() => {
       if (!alive) return;
 
@@ -80,6 +114,7 @@ export default function TV() {
           if (!alive) return;
           console.log("Weather refreshed at", new Date().toLocaleTimeString());
           setConfig(payload);
+          contentHashRef = createContentHash(payload);
         })
         .catch((e) => {
           console.error("Failed to refresh weather:", e);
@@ -89,6 +124,7 @@ export default function TV() {
     return () => {
       alive = false;
       clearInterval(pingInterval);
+      clearInterval(contentPollInterval);
       clearInterval(weatherRefreshInterval);
     };
   }, [otp]);
@@ -150,7 +186,7 @@ export default function TV() {
             Pair Your TV
           </h1>
           <p style={{ color: "#64748b", marginBottom: "2rem" }}>
-            Enter the 6-digit OTP code from your hostOps dashboard
+            Enter the 6-digit OTP code from your BizScreen dashboard
           </p>
 
           <form onSubmit={handlePairDevice}>

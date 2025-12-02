@@ -139,7 +139,7 @@ export function exportTVDevicesToCSV(devices) {
  */
 export function downloadListingsCSV(listings, filename) {
   const csv = exportListingsToCSV(listings);
-  const defaultFilename = `hostops-listings-${new Date().toISOString().split('T')[0]}.csv`;
+  const defaultFilename = `bizscreen-locations-${new Date().toISOString().split('T')[0]}.csv`;
   downloadCSV(csv, filename || defaultFilename);
 }
 
@@ -150,6 +150,6 @@ export function downloadListingsCSV(listings, filename) {
  */
 export function downloadGuestsCSV(guests, filename) {
   const csv = exportGuestsToCSV(guests);
-  const defaultFilename = `hostops-guests-${new Date().toISOString().split('T')[0]}.csv`;
+  const defaultFilename = `bizscreen-data-${new Date().toISOString().split('T')[0]}.csv`;
   downloadCSV(csv, filename || defaultFilename);
 }

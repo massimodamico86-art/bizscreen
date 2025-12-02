@@ -1,17 +1,29 @@
+/**
+ * Badge Component - Legacy wrapper
+ * Re-exports from design system with backwards-compatible prop mapping.
+ * New code should import directly from '../design-system' instead.
+ */
+import { Badge as DSBadge } from '../design-system';
 
+// Map legacy variants to design system variants
+const variantMap = {
+  default: 'default',
+  success: 'success',
+  warning: 'warning',
+  danger: 'error',  // 'danger' maps to 'error' in new design system
+  info: 'info',
+};
 
-const Badge = ({ children, variant = 'default' }) => {
-  const variants = {
-    default: 'bg-gray-100 text-gray-700',
-    success: 'bg-green-100 text-green-700',
-    warning: 'bg-yellow-100 text-yellow-700',
-    danger: 'bg-red-100 text-red-700',
-    info: 'bg-blue-100 text-blue-700'
-  };
+/**
+ * Legacy Badge - wraps design system Badge for backwards compatibility
+ */
+const Badge = ({ children, variant = 'default', ...props }) => {
+  const mappedVariant = variantMap[variant] || variant;
+
   return (
-    <span className={`${variants[variant]} px-2 py-1 rounded-full text-xs font-medium inline-block`}>
+    <DSBadge variant={mappedVariant} {...props}>
       {children}
-    </span>
+    </DSBadge>
   );
 };
 

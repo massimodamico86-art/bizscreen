@@ -1,29 +1,113 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { Home, BookOpen, DollarSign, Cable, CreditCard, Users, HelpCircle, Share2, Settings, ChevronRight, Building2, LogOut } from 'lucide-react';
+import {
+  Home,
+  LayoutDashboard,
+  Image,
+  Video,
+  Music,
+  FileText,
+  Globe,
+  Grid3X3,
+  ListVideo,
+  Layout,
+  Calendar,
+  Monitor,
+  Settings,
+  LogOut,
+  ChevronDown,
+  ChevronRight,
+  Building2,
+  CreditCard,
+  Users,
+  Palette,
+  X,
+  UserCheck,
+  Activity,
+  MapPin,
+  UsersRound,
+  BarChart3,
+  LayoutTemplate,
+  Wand2,
+  Zap,
+  Inbox,
+  Code,
+  Server,
+  Wrench,
+  HelpCircle,
+  Play,
+  Shield,
+  Briefcase,
+  Flag,
+} from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
+import { BrandingProvider, useBranding } from './contexts/BrandingContext';
+import { stopImpersonation, isImpersonating as checkIsImpersonating } from './services/tenantService';
 import { supabase } from './supabase';
 import Toast from './components/Toast';
 import { LoginPage } from './pages';
+import AnnouncementBanner from './components/AnnouncementBanner';
+import AnnouncementCenter from './components/AnnouncementCenter';
+import FeedbackWidget from './components/FeedbackWidget';
+import { I18nProvider, useTranslation } from './i18n';
 
 // Lazy load pages for better code splitting
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ListingsPage = lazy(() => import('./pages/ListingsPage'));
-const GuidebooksPage = lazy(() => import('./pages/GuidebooksPage'));
-const MonetizePage = lazy(() => import('./pages/MonetizePage'));
-const PMSPage = lazy(() => import('./pages/PMSPage'));
-const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'));
-const UsersPage = lazy(() => import('./pages/UsersPage'));
-const FAQsPage = lazy(() => import('./pages/FAQsPage'));
-const ReferPage = lazy(() => import('./pages/ReferPage'));
-const SetupPage = lazy(() => import('./pages/SetupPage'));
+const MediaLibraryPage = lazy(() => import('./pages/MediaLibraryPage'));
+const AppsPage = lazy(() => import('./pages/AppsPage'));
+const PlaylistsPage = lazy(() => import('./pages/PlaylistsPage'));
+const LayoutsPage = lazy(() => import('./pages/LayoutsPage'));
+const SchedulesPage = lazy(() => import('./pages/SchedulesPage'));
+const ScreensPage = lazy(() => import('./pages/ScreensPage'));
+const PlaylistEditorPage = lazy(() => import('./pages/PlaylistEditorPage'));
+const LayoutEditorPage = lazy(() => import('./pages/LayoutEditorPage'));
+const ScheduleEditorPage = lazy(() => import('./pages/ScheduleEditorPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const AccountPlanPage = lazy(() => import('./pages/AccountPlanPage'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const AdminTestPage = lazy(() => import('./pages/AdminTestPage'));
 const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage'));
 const SuperAdminDashboardPage = lazy(() => import('./pages/SuperAdminDashboardPage'));
+const ClientsPage = lazy(() => import('./pages/ClientsPage'));
+const BrandingSettingsPage = lazy(() => import('./pages/BrandingSettingsPage'));
+const ActivityLogPage = lazy(() => import('./pages/ActivityLogPage'));
+const TeamPage = lazy(() => import('./pages/TeamPage'));
+const LocationsPage = lazy(() => import('./pages/LocationsPage'));
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
+const TemplatesPage = lazy(() => import('./pages/TemplatesPage'));
+const ContentAssistantPage = lazy(() => import('./pages/ContentAssistantPage'));
+const ScreenGroupsPage = lazy(() => import('./pages/ScreenGroupsPage'));
+const CampaignsPage = lazy(() => import('./pages/CampaignsPage'));
+const CampaignEditorPage = lazy(() => import('./pages/CampaignEditorPage'));
+const ReviewInboxPage = lazy(() => import('./pages/ReviewInboxPage'));
+const DeveloperSettingsPage = lazy(() => import('./pages/DeveloperSettingsPage'));
+const WhiteLabelSettingsPage = lazy(() => import('./pages/WhiteLabelSettingsPage'));
+const StatusPage = lazy(() => import('./pages/StatusPage'));
+const OpsConsolePage = lazy(() => import('./pages/OpsConsolePage'));
+const TenantAdminPage = lazy(() => import('./pages/TenantAdminPage'));
+const HelpCenterPage = lazy(() => import('./pages/HelpCenterPage'));
+const DemoToolsPage = lazy(() => import('./pages/DemoToolsPage'));
+const EnterpriseSecurityPage = lazy(() => import('./pages/EnterpriseSecurityPage'));
+const ResellerDashboardPage = lazy(() => import('./pages/ResellerDashboardPage'));
+const ResellerBillingPage = lazy(() => import('./pages/ResellerBillingPage'));
+const ServiceQualityPage = lazy(() => import('./pages/ServiceQualityPage'));
+const FeatureFlagsPage = lazy(() => import('./pages/FeatureFlagsPage'));
 
-export default function HostOpsApp() {
+// Main app wrapper with I18nProvider and BrandingProvider
+export default function BizScreenApp() {
+  return (
+    <I18nProvider>
+      <BrandingProvider>
+        <BizScreenAppInner />
+      </BrandingProvider>
+    </I18nProvider>
+  );
+}
+
+function BizScreenAppInner() {
   const { user, loading: authLoading, signOut, userProfile: authUserProfile } = useAuth();
+  const { branding, isImpersonating, impersonatedClient, refreshBranding } = useBranding();
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [toast, setToast] = useState(null);
   const [listings, setListings] = useState([]);
@@ -37,6 +121,25 @@ export default function HostOpsApp() {
     if (hash && hash.includes('type=recovery')) {
       setIsPasswordReset(true);
     }
+  }, []);
+
+  // Handle hash-based navigation (for plan page from limit modals)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash === '#account-plan') {
+        setCurrentPage('account-plan');
+        // Clear the hash to avoid issues with browser back button
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    };
+
+    // Check initial hash on mount
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const showToast = (message, type = 'success') => {
@@ -232,17 +335,41 @@ export default function HostOpsApp() {
     }
   };
 
+  // Media submenu state
+  const [mediaExpanded, setMediaExpanded] = useState(false);
+
+  // Yodeck-style navigation with i18n
   const navigation = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'listings', label: 'Listings', icon: Building2 },
-    { id: 'guidebooks', label: 'Guidebooks', icon: BookOpen },
-    { id: 'monetize', label: 'Monetize', icon: DollarSign },
-    { id: 'pms', label: 'PMS Integration', icon: Cable },
-    { id: 'subscription', label: 'Subscription', icon: CreditCard },
-    { id: 'users', label: 'Users', icon: Users },
-    { id: 'faqs', label: 'FAQs', icon: HelpCircle },
-    { id: 'refer', label: 'Refer & Earn', icon: Share2 },
-    { id: 'setup', label: 'Setup', icon: Settings }
+    { id: 'dashboard', label: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard },
+    {
+      id: 'media',
+      label: t('nav.media', 'Media'),
+      icon: Image,
+      expandable: true,
+      subItems: [
+        { id: 'media-all', label: t('nav.allMedia', 'All Media'), icon: Grid3X3 },
+        { id: 'media-images', label: t('nav.images', 'Images'), icon: Image },
+        { id: 'media-videos', label: t('nav.videos', 'Videos'), icon: Video },
+        { id: 'media-audio', label: t('nav.audio', 'Audio'), icon: Music },
+        { id: 'media-documents', label: t('nav.documents', 'Documents'), icon: FileText },
+        { id: 'media-webpages', label: t('nav.webPages', 'Web Pages'), icon: Globe },
+      ]
+    },
+    { id: 'apps', label: t('nav.apps', 'Apps'), icon: Grid3X3 },
+    { id: 'playlists', label: t('nav.playlists', 'Playlists'), icon: ListVideo },
+    { id: 'layouts', label: t('nav.layouts', 'Layouts'), icon: Layout },
+    { id: 'schedules', label: t('nav.schedules', 'Schedules'), icon: Calendar },
+    { id: 'templates', label: t('nav.templates', 'Templates'), icon: LayoutTemplate },
+    { id: 'assistant', label: t('nav.aiAssistant', 'AI Assistant'), icon: Wand2 },
+    { id: 'screens', label: t('nav.screens', 'Screens'), icon: Monitor },
+    { id: 'screen-groups', label: t('nav.screenGroups', 'Screen Groups'), icon: Users },
+    { id: 'locations', label: t('nav.locations', 'Locations'), icon: MapPin },
+    { id: 'campaigns', label: t('nav.campaigns', 'Campaigns'), icon: Zap },
+    { id: 'review-inbox', label: t('nav.reviewInbox', 'Review Inbox'), icon: Inbox },
+    { id: 'analytics', label: t('nav.analytics', 'Analytics'), icon: BarChart3 },
+    { id: 'activity', label: t('nav.activityLog', 'Activity Log'), icon: Activity },
+    // Legacy pages (hidden but accessible)
+    // { id: 'listings', label: 'Locations', icon: Building2 },
   ];
 
   // Loading fallback component
@@ -255,19 +382,61 @@ export default function HostOpsApp() {
     </div>
   );
 
+  // Get media filter from page ID
+  const getMediaFilter = (pageId) => {
+    const filterMap = {
+      'media-all': null,
+      'media-images': 'image',
+      'media-videos': 'video',
+      'media-audio': 'audio',
+      'media-documents': 'document',
+      'media-webpages': 'web_page',
+    };
+    return filterMap[pageId] || null;
+  };
+
   const pages = {
     dashboard: <Suspense fallback={<PageLoader />}><DashboardPage setCurrentPage={setCurrentPage} showToast={showToast} listings={listings} setListings={setListings} /></Suspense>,
+    // Yodeck-style pages
+    'media-all': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter={null} /></Suspense>,
+    'media-images': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="image" /></Suspense>,
+    'media-videos': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="video" /></Suspense>,
+    'media-audio': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="audio" /></Suspense>,
+    'media-documents': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="document" /></Suspense>,
+    'media-webpages': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="web_page" /></Suspense>,
+    apps: <Suspense fallback={<PageLoader />}><AppsPage showToast={showToast} /></Suspense>,
+    playlists: <Suspense fallback={<PageLoader />}><PlaylistsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    layouts: <Suspense fallback={<PageLoader />}><LayoutsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    schedules: <Suspense fallback={<PageLoader />}><SchedulesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    screens: <Suspense fallback={<PageLoader />}><ScreensPage showToast={showToast} /></Suspense>,
+    // Legacy pages (still accessible)
     listings: <Suspense fallback={<PageLoader />}><ListingsPage showToast={showToast} listings={listings} setListings={setListings} /></Suspense>,
-    guidebooks: <Suspense fallback={<PageLoader />}><GuidebooksPage showToast={showToast} /></Suspense>,
-    monetize: <Suspense fallback={<PageLoader />}><MonetizePage showToast={showToast} /></Suspense>,
-    pms: <Suspense fallback={<PageLoader />}><PMSPage showToast={showToast} listings={listings} /></Suspense>,
-    subscription: <Suspense fallback={<PageLoader />}><SubscriptionPage showToast={showToast} /></Suspense>,
-    users: <Suspense fallback={<PageLoader />}><UsersPage showToast={showToast} /></Suspense>,
-    faqs: <Suspense fallback={<PageLoader />}><FAQsPage /></Suspense>,
-    refer: <Suspense fallback={<PageLoader />}><ReferPage showToast={showToast} /></Suspense>,
-    setup: <Suspense fallback={<PageLoader />}><SetupPage showToast={showToast} /></Suspense>,
     settings: <Suspense fallback={<PageLoader />}><SettingsPage showToast={showToast} /></Suspense>,
-    'admin-test': <Suspense fallback={<PageLoader />}><AdminTestPage /></Suspense>
+    'account-plan': <Suspense fallback={<PageLoader />}><AccountPlanPage showToast={showToast} /></Suspense>,
+    'admin-test': <Suspense fallback={<PageLoader />}><AdminTestPage /></Suspense>,
+    'clients': <Suspense fallback={<PageLoader />}><ClientsPage /></Suspense>,
+    'branding': <Suspense fallback={<PageLoader />}><BrandingSettingsPage /></Suspense>,
+    'activity': <Suspense fallback={<PageLoader />}><ActivityLogPage /></Suspense>,
+    'locations': <Suspense fallback={<PageLoader />}><LocationsPage showToast={showToast} /></Suspense>,
+    'team': <Suspense fallback={<PageLoader />}><TeamPage showToast={showToast} /></Suspense>,
+    'analytics': <Suspense fallback={<PageLoader />}><AnalyticsPage showToast={showToast} /></Suspense>,
+    'templates': <Suspense fallback={<PageLoader />}><TemplatesPage showToast={showToast} /></Suspense>,
+    'assistant': <Suspense fallback={<PageLoader />}><ContentAssistantPage showToast={showToast} /></Suspense>,
+    'screen-groups': <Suspense fallback={<PageLoader />}><ScreenGroupsPage showToast={showToast} /></Suspense>,
+    'campaigns': <Suspense fallback={<PageLoader />}><CampaignsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'review-inbox': <Suspense fallback={<PageLoader />}><ReviewInboxPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'developer': <Suspense fallback={<PageLoader />}><DeveloperSettingsPage showToast={showToast} /></Suspense>,
+    'white-label': <Suspense fallback={<PageLoader />}><WhiteLabelSettingsPage showToast={showToast} /></Suspense>,
+    'status': <Suspense fallback={<PageLoader />}><StatusPage /></Suspense>,
+    'ops-console': <Suspense fallback={<PageLoader />}><OpsConsolePage /></Suspense>,
+    'tenant-admin': <Suspense fallback={<PageLoader />}><TenantAdminPage showToast={showToast} /></Suspense>,
+    'help': <Suspense fallback={<PageLoader />}><HelpCenterPage onNavigate={setCurrentPage} /></Suspense>,
+    'demo-tools': <Suspense fallback={<PageLoader />}><DemoToolsPage showToast={showToast} /></Suspense>,
+    'enterprise-security': <Suspense fallback={<PageLoader />}><EnterpriseSecurityPage showToast={showToast} /></Suspense>,
+    'reseller-dashboard': <Suspense fallback={<PageLoader />}><ResellerDashboardPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'reseller-billing': <Suspense fallback={<PageLoader />}><ResellerBillingPage showToast={showToast} /></Suspense>,
+    'service-quality': <Suspense fallback={<PageLoader />}><ServiceQualityPage /></Suspense>,
+    'feature-flags': <Suspense fallback={<PageLoader />}><FeatureFlagsPage /></Suspense>
   };
 
   // Show password reset page if user clicked reset link
@@ -354,82 +523,334 @@ export default function HostOpsApp() {
   }
 
   // Route to role-specific dashboards
-  console.log('🔍 DEBUG: authUserProfile =', authUserProfile);
-  console.log('🔍 DEBUG: role =', authUserProfile?.role);
+  // When impersonating a client, super_admin/admin sees the client UI
+  const shouldShowClientUI =
+    authUserProfile?.role === 'client' ||
+    isImpersonating;
 
-  if (authUserProfile?.role === 'super_admin') {
-    console.log('✅ Routing to SuperAdminDashboard');
-    return (
-      <Suspense fallback={<PageLoader />}>
-        <SuperAdminDashboardPage />
-      </Suspense>
-    );
+  if (!shouldShowClientUI) {
+    // Show admin dashboards only when NOT impersonating
+    if (authUserProfile?.role === 'super_admin') {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <SuperAdminDashboardPage />
+        </Suspense>
+      );
+    }
+
+    if (authUserProfile?.role === 'admin') {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <AdminDashboardPage />
+        </Suspense>
+      );
+    }
   }
 
-  if (authUserProfile?.role === 'admin') {
-    console.log('✅ Routing to AdminDashboard');
-    return (
-      <Suspense fallback={<PageLoader />}>
-        <AdminDashboardPage />
-      </Suspense>
-    );
-  }
+  // Handle stop impersonation
+  const handleStopImpersonation = () => {
+    stopImpersonation();
+    refreshBranding();
+    window.location.reload();
+  };
 
-  console.log('✅ Routing to ClientDashboard (default)');
-  // Default: Client dashboard (existing UI)
+  // Client UI (shown for clients, or admins/super_admins when impersonating)
+
+  // Track announcement banner height for layout offset
+  const [announcementHeight, setAnnouncementHeight] = useState(0);
+  const topOffset = (isImpersonating ? 40 : 0) + announcementHeight;
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg"></div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">hostOps</h1>
+      {/* Skip to content link - accessibility */}
+      <a href="#main-content" className="skip-link">
+        {t('accessibility.skipToContent')}
+      </a>
+
+      {/* Announcement Banner - Top priority announcements */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <AnnouncementBanner onHeightChange={setAnnouncementHeight} />
+      </div>
+
+      {/* Impersonation Banner */}
+      {isImpersonating && (
+        <div
+          className="fixed left-0 right-0 bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-3 z-50 shadow-md"
+          style={{ top: announcementHeight }}
+        >
+          <UserCheck className="w-4 h-4" />
+          <span className="text-sm font-medium">
+            Acting as: {impersonatedClient?.businessName || 'Client'}
+          </span>
+          <button
+            onClick={handleStopImpersonation}
+            className="ml-4 flex items-center gap-1 px-3 py-1 bg-white/20 hover:bg-white/30 rounded text-sm transition-colors"
+          >
+            <X className="w-3 h-3" />
+            Stop
+          </button>
+        </div>
+      )}
+
+      <aside
+        className="w-64 bg-white border-r border-gray-100 flex flex-col shadow-sm"
+        style={{ marginTop: topOffset }}
+      >
+        {/* Logo & Brand */}
+        <div className="px-5 py-5 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {branding.logoUrl ? (
+                <img
+                  src={branding.logoUrl}
+                  alt={branding.businessName}
+                  className="w-9 h-9 rounded-xl object-contain shadow-sm"
+                />
+              ) : (
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-sm"
+                  style={{ backgroundColor: branding.primaryColor }}
+                >
+                  {(branding.businessName || 'B')[0].toUpperCase()}
+                </div>
+              )}
+              <h1
+                className="text-lg font-semibold tracking-tight"
+                style={{ color: branding.primaryColor }}
+              >
+                {branding.businessName}
+              </h1>
+            </div>
+            {/* Announcement Center */}
+            <AnnouncementCenter />
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto scrollbar-hide">
           {navigation.map(item => {
+            const Icon = item.icon;
+            const isActive = currentPage === item.id || (item.subItems && item.subItems.some(sub => sub.id === currentPage));
+            const isExpanded = item.expandable && (mediaExpanded || item.subItems?.some(sub => sub.id === currentPage));
+
+            if (item.expandable) {
+              return (
+                <div key={item.id}>
+                  <button
+                    onClick={() => setMediaExpanded(!mediaExpanded)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-150 ${
+                      isActive
+                        ? 'text-white font-medium shadow-sm'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                    style={isActive ? { backgroundColor: branding.primaryColor } : {}}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
+                      <span className="text-sm">{item.label}</span>
+                    </div>
+                    <ChevronDown
+                      size={14}
+                      className={`transition-transform duration-200 ${isExpanded ? 'rotate-0' : '-rotate-90'}`}
+                    />
+                  </button>
+                  {isExpanded && (
+                    <div className="ml-6 mt-0.5 space-y-0.5 border-l border-gray-100 pl-3">
+                      {item.subItems.map(subItem => {
+                        const SubIcon = subItem.icon;
+                        const isSubActive = currentPage === subItem.id;
+                        return (
+                          <button
+                            key={subItem.id}
+                            onClick={() => setCurrentPage(subItem.id)}
+                            className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-all duration-150 text-sm ${
+                              isSubActive
+                                ? 'text-white font-medium'
+                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                            }`}
+                            style={isSubActive ? { backgroundColor: branding.primaryColor } : {}}
+                          >
+                            <SubIcon size={14} className={isSubActive ? '' : 'text-gray-400'} />
+                            <span>{subItem.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => setCurrentPage(item.id)}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+                  isActive
+                    ? 'text-white font-medium shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+                style={isActive ? { backgroundColor: branding.primaryColor } : {}}
+              >
+                <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
+                <span className="text-sm">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Settings Section */}
+        <div className="px-3 py-3 border-t border-gray-100 space-y-0.5">
+          {/* Super Admin Tools Section */}
+          {authUserProfile?.role === 'super_admin' && !isImpersonating && (
+            <>
+              <p className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wider">{t('nav.admin', 'Admin')}</p>
+              {[
+                { id: 'clients', label: t('nav.clients', 'Clients'), icon: Users },
+                { id: 'status', label: t('nav.systemStatus', 'System Status'), icon: Server },
+                { id: 'ops-console', label: t('nav.opsConsole', 'Ops Console'), icon: Wrench },
+                { id: 'tenant-admin', label: t('nav.tenants', 'Tenants'), icon: Building2 },
+                { id: 'feature-flags', label: t('nav.featureFlags', 'Feature Flags'), icon: Flag },
+                { id: 'demo-tools', label: t('nav.demoTools', 'Demo Tools'), icon: Play },
+              ].map(item => {
+                const Icon = item.icon;
+                const isActive = currentPage === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentPage(item.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+                      isActive ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                    style={isActive ? { backgroundColor: branding.primaryColor } : {}}
+                  >
+                    <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
+                    <span className="text-sm">{item.label}</span>
+                  </button>
+                );
+              })}
+            </>
+          )}
+
+          {/* Settings Items */}
+          <p className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wider mt-2">{t('nav.settings', 'Settings')}</p>
+          {[
+            { id: 'account-plan', label: t('nav.planAndLimits', 'Plan & Limits'), icon: CreditCard },
+            { id: 'team', label: t('nav.team', 'Team'), icon: UsersRound },
+            { id: 'branding', label: t('nav.branding', 'Branding'), icon: Palette },
+            { id: 'settings', label: t('nav.settings', 'Settings'), icon: Settings },
+          ].map(item => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => setCurrentPage(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
-                  isActive
-                    ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-600 font-medium shadow-sm'
-                    : 'text-gray-700 hover:bg-gray-50'
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+                  isActive ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
+                style={isActive ? { backgroundColor: branding.primaryColor } : {}}
               >
-                <Icon size={20} />
-                <span>{item.label}</span>
+                <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
+                <span className="text-sm">{item.label}</span>
               </button>
             );
           })}
-        </nav>
 
-        <div className="p-4 border-t border-gray-200 space-y-2">
-          {/* Settings Button */}
+          {/* Developer & Advanced */}
+          {(userProfile?.role === 'client' || userProfile?.role === 'admin' || userProfile?.role === 'super_admin') && (
+            <>
+              {[
+                { id: 'developer', label: t('nav.developer', 'Developer'), icon: Code },
+                { id: 'white-label', label: t('nav.whiteLabel', 'White-Label'), icon: Globe },
+              ].map(item => {
+                const Icon = item.icon;
+                const isActive = currentPage === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentPage(item.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+                      isActive ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                    style={isActive ? { backgroundColor: branding.primaryColor } : {}}
+                  >
+                    <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
+                    <span className="text-sm">{item.label}</span>
+                  </button>
+                );
+              })}
+            </>
+          )}
+
+          {/* Enterprise Security */}
+          {(userProfile?.subscription_tier === 'pro' || userProfile?.subscription_tier === 'enterprise' || userProfile?.role === 'super_admin') && (
+            <button
+              onClick={() => setCurrentPage('enterprise-security')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+                currentPage === 'enterprise-security' ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              }`}
+              style={currentPage === 'enterprise-security' ? { backgroundColor: branding.primaryColor } : {}}
+            >
+              <Shield size={18} className={currentPage === 'enterprise-security' ? '' : 'text-gray-400'} />
+              <span className="text-sm">{t('nav.enterprise', 'Enterprise')}</span>
+            </button>
+          )}
+
+          {/* Service Quality */}
+          {(userProfile?.role === 'admin' || userProfile?.role === 'super_admin' || userProfile?.subscription_tier === 'enterprise') && (
+            <button
+              onClick={() => setCurrentPage('service-quality')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+                currentPage === 'service-quality' ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              }`}
+              style={currentPage === 'service-quality' ? { backgroundColor: branding.primaryColor } : {}}
+            >
+              <Activity size={18} className={currentPage === 'service-quality' ? '' : 'text-gray-400'} />
+              <span className="text-sm">{t('nav.serviceQuality', 'Service Quality')}</span>
+            </button>
+          )}
+
+          {/* Help Center */}
           <button
-            onClick={() => setCurrentPage('settings')}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-              currentPage === 'settings'
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-700 hover:bg-gray-100'
+            onClick={() => setCurrentPage('help')}
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+              currentPage === 'help' ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`}
+            style={currentPage === 'help' ? { backgroundColor: branding.primaryColor } : {}}
           >
-            <Settings size={20} />
-            <span className="font-medium">Settings</span>
+            <HelpCircle size={18} className={currentPage === 'help' ? '' : 'text-gray-400'} />
+            <span className="text-sm">{t('nav.helpCenter', 'Help Center')}</span>
           </button>
 
-          {/* User Profile */}
-          <div className="flex items-center gap-3 p-2 rounded-lg">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
+          {/* Reseller Portal */}
+          {(userProfile?.is_reseller || authUserProfile?.role === 'super_admin') && (
+            <button
+              onClick={() => setCurrentPage('reseller-dashboard')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+                currentPage === 'reseller-dashboard' || currentPage === 'reseller-billing'
+                  ? 'text-white font-medium shadow-sm'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              }`}
+              style={currentPage === 'reseller-dashboard' || currentPage === 'reseller-billing' ? { backgroundColor: branding.primaryColor } : {}}
+            >
+              <Briefcase size={18} className={currentPage === 'reseller-dashboard' || currentPage === 'reseller-billing' ? '' : 'text-gray-400'} />
+              <span className="text-sm">{t('nav.resellerPortal', 'Reseller Portal')}</span>
+            </button>
+          )}
+        </div>
+
+        {/* User Profile */}
+        <div className="px-3 py-3 border-t border-gray-100">
+          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors">
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center text-white font-medium text-sm shadow-sm"
+              style={{ backgroundColor: branding.primaryColor }}
+            >
               {(userProfile?.full_name || user.email || 'U')[0].toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-sm truncate">{userProfile?.full_name || 'User'}</div>
+              <div className="font-medium text-sm text-gray-900 truncate">{userProfile?.full_name || 'User'}</div>
               <div className="text-xs text-gray-500 truncate">{user.email}</div>
             </div>
             <button
@@ -437,27 +858,65 @@ export default function HostOpsApp() {
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               title="Sign out"
             >
-              <LogOut size={18} className="text-gray-400" />
+              <LogOut size={16} className="text-gray-400" />
             </button>
           </div>
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto">
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 flex items-center justify-between">
-          <span className="text-sm">Love hostOps? Refer friends and earn $9.99 credit</span>
-          <button
-            onClick={() => setCurrentPage('refer')}
-            className="text-sm font-medium hover:underline flex items-center gap-1"
-          >
-            Refer Now
-            <ChevronRight size={16} />
-          </button>
-        </div>
+      <main id="main-content" className="flex-1 overflow-auto bg-gray-50" style={{ marginTop: topOffset }}>
         <div className="p-6">
-          {pages[currentPage]}
+          {pages[currentPage] || (
+            // Handle dynamic editor routes
+            currentPage.startsWith('playlist-editor-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <PlaylistEditorPage
+                  playlistId={currentPage.replace('playlist-editor-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('layout-editor-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <LayoutEditorPage
+                  layoutId={currentPage.replace('layout-editor-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('schedule-editor-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <ScheduleEditorPage
+                  scheduleId={currentPage.replace('schedule-editor-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('campaign-editor-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <CampaignEditorPage
+                  campaignId={currentPage.replace('campaign-editor-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500">Page not found: {currentPage}</p>
+                <button
+                  onClick={() => setCurrentPage('dashboard')}
+                  className="mt-4 text-orange-600 hover:underline"
+                >
+                  Go to Dashboard
+                </button>
+              </div>
+            )
+          )}
         </div>
       </main>
+
+      {/* Feedback Widget */}
+      <FeedbackWidget position="bottom-right" />
 
       {toast && (
         <Toast

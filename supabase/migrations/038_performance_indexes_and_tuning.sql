@@ -1,0 +1,13 @@
+-- Migration: 038_performance_indexes_and_tuning.sql
+-- Phase 29: Performance, Caching, and Cost Optimization
+--
+-- PLACEHOLDER: Performance indexes to be added after schema stabilization
+-- The original migration had incorrect column references (tenant_id instead of owner_id/listing_id)
+-- This will be properly implemented once the schema is finalized
+--
+-- Original intent:
+-- - Composite indexes for high-traffic query paths
+-- - Partial indexes for recent data (analytics, events)
+-- - GIN indexes for JSONB fields
+--
+-- Nothing to do for now

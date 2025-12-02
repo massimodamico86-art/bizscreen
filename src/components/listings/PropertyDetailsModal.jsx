@@ -6,19 +6,16 @@ import Badge from '../Badge';
 import Card from '../Card';
 import Toast from '../Toast';
 import { BackgroundMusicSelector } from './BackgroundMusicSelector';
-import { GuestEditModal } from './GuestEditModal';
 import { ImageUploadModal } from './ImageUploadModal';
 import { TVPreviewModal } from './TVPreviewModal';
 import { TVDeviceManagement } from './TVDeviceManagement';
 import { WelcomeMessageForm } from './WelcomeMessageForm';
 import { MediaSection } from './MediaSection';
 import { QRCodeManager } from './QRCodeManager';
-import { GuestListTab } from './GuestListTab';
 import ImageUploadButton from '../ImageUploadButton';
 import ScaledStage from '../../ScaledStage';
 import { Layout1, Layout2, Layout3, Layout4 } from '../../layouts';
 import { getWeather } from '../../services/weatherService';
-import { getActiveGuestForLayout } from '../../utils/guestHelpers';
 import { useMediaPlayback } from '../../hooks/useMediaPlayback';
 import { migrateToUnifiedMedia } from '../../utils/mediaMigration';
 import { DEFAULT_UNIFIED_MEDIA_STATE } from '../../types/media';
@@ -76,8 +73,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
   };
 
   const tabs = [
-    { id: 'display', label: 'Display Settings' },
-    { id: 'guests', label: 'Guest List' }
+    { id: 'display', label: 'Display Settings' }
   ];
 
   return (
@@ -144,7 +140,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
                 {/* Right Side - Listing Details */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Listing name*</label>
+                    <label className="block text-sm font-medium mb-2">Location name*</label>
                     <input
                       type="text"
                       value={formData.name}
@@ -152,7 +148,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
                         setFormData({ ...formData, name: e.target.value })
                       }
                       className="w-full px-4 py-2 border rounded-lg"
-                      placeholder="Enter listing name"
+                      placeholder="Enter location name"
                     />
                   </div>
                   
@@ -171,7 +167,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
                   
                   <div>
                     <label className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Listing status</span>
+                      <span className="text-sm font-medium">Location status</span>
                       <div className="flex items-center gap-2">
                         <label className="relative inline-flex items-center cursor-pointer">
                           <input
@@ -204,7 +200,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
                     }
                     className="w-full px-4 py-2 border rounded-lg"
                     rows={3}
-                    placeholder="Enter property description"
+                    placeholder="Enter location description"
                   />
                 </div>
               </div>
@@ -263,8 +259,8 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
                     logo: formData.logo
                   };
 
-                  // Get active guest using utility function
-                  const guestData = getActiveGuestForLayout(formData.guestList);
+                  // No guest data in BizScreen
+                  const guestData = null;
 
                   // Render the appropriate layout component
                   switch(layout.id) {
@@ -330,7 +326,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
                 <div className="text-blue-600 mt-0.5">ℹ️</div>
                 <div className="flex-1 text-sm text-blue-800">
-                  Download HostOps TV app on your TV!
+                  Download the BizScreen TV app on your TV!
                 </div>
               </div>
 
@@ -444,7 +440,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
                           }}
                           buttonText="Upload"
                           buttonVariant="outline"
-                          folder="hostops/logos"
+                          folder="bizscreen/logos"
                           transformation={{
                             width: 400,
                             height: 400,
@@ -779,8 +775,8 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
                               logo: formData.logo
                             };
 
-                            // Get active guest using utility function
-                            const guestData = getActiveGuestForLayout(formData.guestList);
+                            // No guest data in BizScreen
+                            const guestData = null;
 
                             // Render the selected layout
                             switch(formData.tvLayout) {
@@ -803,14 +799,6 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
                 </div>
               </div>
             </>
-          )}
-
-          {activeTab === 'guests' && (
-            <GuestListTab
-              formData={formData}
-              setFormData={updateFormData}
-              showToast={showToast}
-            />
           )}
 
           <div className="flex gap-2 justify-end pt-4 border-t">

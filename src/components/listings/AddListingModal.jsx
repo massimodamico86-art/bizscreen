@@ -20,7 +20,7 @@ export const AddListingModal = ({ onClose, onAdd, showToast }) => {
 
     // Required field validation
     if (!formData.name.trim()) {
-      showToast('Please enter a listing name', 'error');
+      showToast('Please enter a location name', 'error');
       return;
     }
     if (!formData.address.trim()) {
@@ -75,7 +75,7 @@ export const AddListingModal = ({ onClose, onAdd, showToast }) => {
       await onAdd(sanitizedData);
       onClose();
     } catch (error) {
-      showToast('Error creating listing: ' + error.message, 'error');
+      showToast('Error creating location: ' + error.message, 'error');
     } finally {
       setSaving(false);
     }
@@ -84,7 +84,7 @@ export const AddListingModal = ({ onClose, onAdd, showToast }) => {
   return (
     <SimpleModal onClose={onClose} maxWidth="max-w-2xl">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Add New Listing</h2>
+        <h2 className="text-2xl font-bold">Add New Location</h2>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
           <X size={24} />
         </button>
@@ -186,7 +186,7 @@ export const AddListingModal = ({ onClose, onAdd, showToast }) => {
             Cancel
           </Button>
           <Button type="submit" disabled={saving}>
-            {saving ? 'Creating...' : 'Create Listing'}
+            {saving ? 'Creating...' : 'Create Location'}
           </Button>
         </div>
       </form>

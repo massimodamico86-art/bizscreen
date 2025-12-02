@@ -1,0 +1,14 @@
+-- =====================================================
+-- CREATE TEST USERS FOR ROLE TESTING
+-- =====================================================
+-- This is a MANUAL script for creating test users.
+-- Test user already created in 050_seed_data.sql
+--
+-- For additional test users, use the Supabase Dashboard:
+-- Authentication → Users → Add User
+--
+-- Email: admin@bizscreen.test, Password: TestAdmin123!
+-- Email: client@bizscreen.test, Password: TestClient123!
+-- =====================================================
+
+-- No automatic user creation - handled manually or via 050_seed_data.sql

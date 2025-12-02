@@ -1,21 +1,391 @@
+/* ============================================
+ * BizScreen Global Styles
+ *
+ * A premium, Apple-like design system
+ * ============================================ */
+
+/* Import design tokens */
+@import './design-system/tokens.css';
+
+/* Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-* {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+/* ============================================
+ * BASE STYLES
+ * ============================================ */
+@layer base {
+  /* Reset and base typography */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(var(--color-bg-secondary));
+    color: rgb(var(--color-text-primary));
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /* Typography scale */
+  h1 {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-semibold);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: rgb(var(--color-text-primary));
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-semibold);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: rgb(var(--color-text-primary));
+  }
+
+  h3 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    line-height: var(--leading-snug);
+    color: rgb(var(--color-text-primary));
+  }
+
+  h4 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-medium);
+    line-height: var(--leading-snug);
+    color: rgb(var(--color-text-primary));
+  }
+
+  h5, h6 {
+    font-size: var(--text-base);
+    font-weight: var(--font-medium);
+    line-height: var(--leading-normal);
+    color: rgb(var(--color-text-primary));
+  }
+
+  p {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: rgb(var(--color-text-secondary));
+  }
+
+  /* Links */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    outline: 2px solid rgb(var(--color-border-focus));
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Skip to content link - accessibility */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 0.75rem 1.5rem;
+    background-color: rgb(var(--color-primary-600, 37 99 235));
+    color: white;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: top 0.2s ease-in-out;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: rgb(var(--color-info-100));
+    color: rgb(var(--color-info-700));
+  }
+
+  /* Scrollbar styling (subtle) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--color-gray-300));
+    border-radius: var(--radius-full);
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--color-gray-400));
+  }
+
+  /* Form elements base reset */
+  input,
+  textarea,
+  select,
+  button {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  /* Remove default button styles */
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  /* Image optimization */
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Table base */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
 }
 
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
+/* ============================================
+ * COMPONENT LAYER
+ * Reusable component patterns
+ * ============================================ */
+@layer components {
+  /* Text utility classes */
+  .text-heading {
+    @apply text-gray-900 font-semibold tracking-tight;
+  }
+
+  .text-body {
+    @apply text-gray-600 leading-relaxed;
+  }
+
+  .text-caption {
+    @apply text-sm text-gray-500;
+  }
+
+  .text-label {
+    @apply text-sm font-medium text-gray-700;
+  }
+
+  /* Interactive states */
+  .interactive {
+    @apply transition-colors duration-150 ease-out cursor-pointer;
+  }
+
+  .interactive-scale {
+    @apply transition-all duration-150 ease-out cursor-pointer;
+  }
+
+  .interactive-scale:hover {
+    @apply scale-[1.02];
+  }
+
+  .interactive-scale:active {
+    @apply scale-[0.98];
+  }
+
+  /* Card patterns */
+  .card {
+    @apply bg-white rounded-xl border border-gray-200;
+  }
+
+  .card-elevated {
+    @apply bg-white rounded-xl shadow-sm border-0;
+  }
+
+  .card-interactive {
+    @apply card transition-all duration-150 ease-out;
+  }
+
+  .card-interactive:hover {
+    @apply shadow-md border-gray-300;
+  }
+
+  /* Input base */
+  .input-base {
+    @apply w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-900
+           placeholder:text-gray-400 transition-colors duration-100
+           focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500;
+  }
+
+  .input-base:disabled {
+    @apply bg-gray-50 text-gray-400 cursor-not-allowed;
+  }
+
+  /* Button base patterns */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-lg
+           transition-all duration-150 ease-out
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+
+  .btn-md {
+    @apply px-4 py-2 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-5 py-2.5 text-base;
+  }
+
+  /* Divider */
+  .divider {
+    @apply h-px bg-gray-200 border-0;
+  }
+
+  .divider-vertical {
+    @apply w-px bg-gray-200 border-0 self-stretch;
+  }
+
+  /* Glass effect (for overlays) */
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100
+           bg-[length:200%_100%] animate-shimmer rounded;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  /* Badge patterns */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full;
+  }
+
+  .badge-neutral {
+    @apply bg-gray-100 text-gray-700;
+  }
+
+  .badge-success {
+    @apply bg-green-50 text-green-700;
+  }
+
+  .badge-warning {
+    @apply bg-amber-50 text-amber-700;
+  }
+
+  .badge-error {
+    @apply bg-red-50 text-red-700;
+  }
+
+  .badge-info {
+    @apply bg-blue-50 text-blue-700;
+  }
 }
 
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
+/* ============================================
+ * UTILITY LAYER
+ * Additional utilities
+ * ============================================ */
+@layer utilities {
+  /* Smooth scroll */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Safe area padding for mobile */
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  /* Text balance (for headings) */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Aspect ratios */
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+
+  .aspect-portrait {
+    aspect-ratio: 9 / 16;
+  }
+
+  /* No select */
+  .select-none {
+    user-select: none;
+  }
+
+  /* Touch manipulation for mobile */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
 }

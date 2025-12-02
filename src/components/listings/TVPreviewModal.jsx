@@ -4,7 +4,6 @@ import ScaledStage from '../../ScaledStage';
 import { Layout1, Layout2, Layout3, Layout4 } from '../../layouts';
 import { getConfig } from '../../getConfig';
 import { getWeather } from '../../services/weatherService';
-import { getActiveGuestForLayout } from '../../utils/guestHelpers';
 import { useMediaPlayback } from '../../hooks/useMediaPlayback';
 import { DEFAULT_UNIFIED_MEDIA_STATE } from '../../types/media';
 
@@ -80,8 +79,8 @@ export const TVPreviewModal = ({ listing, onClose }) => {
     logo: listing.logo
   };
 
-  // Get active guest using utility function
-  const guestData = getActiveGuestForLayout(listing.guestList);
+  // No guest data in BizScreen
+  const guestData = null;
 
   return (
     <Modal isOpen={true} onClose={onClose} title={`TV Preview - ${listing.name} (${layout})`} size="xlarge">
@@ -91,7 +90,7 @@ export const TVPreviewModal = ({ listing, onClose }) => {
         </ScaledStage>
       </div>
       <div className="mt-4 text-center text-sm text-gray-600">
-        This is how your property will appear on guest TVs using {layout}
+        This is how your screen will appear on TVs using {layout}
       </div>
     </Modal>
   );

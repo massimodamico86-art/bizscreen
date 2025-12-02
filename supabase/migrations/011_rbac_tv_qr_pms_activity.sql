@@ -157,34 +157,12 @@ USING (
 );
 
 -- ============================================
--- ACTIVITY LOG RBAC POLICIES
--- ============================================
-
--- Drop old policies (from 007_activity_log.sql)
-DROP POLICY IF EXISTS "Users can view their own activity log" ON activity_log;
-DROP POLICY IF EXISTS "Users can insert their own activity log" ON activity_log;
-
--- SELECT: Users see own logs, admins see managed clients' logs, super_admins see all
-CREATE POLICY "activity_log_select_policy" ON activity_log FOR SELECT
-USING (
-  user_id = auth.uid()
-  OR is_super_admin()
-  OR (is_admin() AND user_id IN (SELECT client_id FROM get_my_client_ids()))
-);
-
--- INSERT: Only the user themselves can insert their own activity logs
--- (System triggers handle this automatically, but allow manual inserts too)
-CREATE POLICY "activity_log_insert_policy" ON activity_log FOR INSERT
-WITH CHECK (user_id = auth.uid());
-
--- ============================================
 -- COMMENTS
 -- ============================================
 
 COMMENT ON POLICY "tv_devices_select_policy" ON tv_devices IS 'RBAC: Clients see own TV devices, admins see managed clients devices, super_admins see all';
 COMMENT ON POLICY "qr_codes_select_policy" ON qr_codes IS 'RBAC: Clients see own QR codes, admins see managed clients codes, super_admins see all';
 COMMENT ON POLICY "pms_connections_select_policy" ON pms_connections IS 'RBAC: Clients see own PMS connections, admins see managed clients connections, super_admins see all';
-COMMENT ON POLICY "activity_log_select_policy" ON activity_log IS 'RBAC: Users see own activity, admins see managed clients activity, super_admins see all';
 
 -- ============================================
 -- VERIFY RLS IS ENABLED
@@ -194,7 +172,6 @@ COMMENT ON POLICY "activity_log_select_policy" ON activity_log IS 'RBAC: Users s
 ALTER TABLE tv_devices ENABLE ROW LEVEL SECURITY;
 ALTER TABLE qr_codes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE pms_connections ENABLE ROW LEVEL SECURITY;
-ALTER TABLE activity_log ENABLE ROW LEVEL SECURITY;
 
 -- ============================================
 -- MIGRATION COMPLETE
@@ -203,10 +180,9 @@ ALTER TABLE activity_log ENABLE ROW LEVEL SECURITY;
 -- ✅ tv_devices (4 policies: SELECT, INSERT, UPDATE, DELETE)
 -- ✅ qr_codes (4 policies: SELECT, INSERT, UPDATE, DELETE)
 -- ✅ pms_connections (4 policies: SELECT, INSERT, UPDATE, DELETE)
--- ✅ activity_log (2 policies: SELECT, INSERT)
 --
 -- All policies follow the pattern:
--- - Clients: Access own data (via owner_id or user_id)
+-- - Clients: Access own data (via owner_id)
 -- - Admins: Access managed clients' data (via get_my_client_ids())
 -- - Super Admins: Access all data (via is_super_admin())
 -- ============================================

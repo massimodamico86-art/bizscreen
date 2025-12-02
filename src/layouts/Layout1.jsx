@@ -1,9 +1,7 @@
-import { replaceGuestPlaceholders } from "../utils/guestHelpers";
-
 export default function Layout1({ layout = {}, guest = null }) {
   const {
     showWelcomeMessage,
-    welcomeGreeting = "Welcome, {{Guest}}!",
+    welcomeGreeting = "Welcome!",
     welcomeMessage,
     showQRCodes,
     qrCodes = [],
@@ -129,11 +127,11 @@ export default function Layout1({ layout = {}, guest = null }) {
         {showWelcomeMessage && (
           <div className="mb-10">
             <h1 className="text-7xl font-bold mb-6 leading-tight drop-shadow-2xl break-words">
-              {replaceGuestPlaceholders(welcomeGreeting, guest)}
+              {welcomeGreeting}
             </h1>
             <p className="text-3xl leading-relaxed text-white/95 drop-shadow-lg font-light break-words whitespace-normal">
-              {replaceGuestPlaceholders(welcomeMessage, guest) ||
-                "We're delighted to have you at our Napa Valley Chateau. Make yourselves at home and enjoy the stunning views and peaceful surroundings. Whether you're here to relax, drink, or explore, we hope you have a wonderful stay."}
+              {welcomeMessage ||
+                "Thank you for visiting. We hope you enjoy your experience with us today."}
             </p>
           </div>
         )}
@@ -200,7 +198,7 @@ export default function Layout1({ layout = {}, guest = null }) {
       <div className="absolute bottom-10 right-10 z-10 text-right text-base text-white/90">
         <div className="flex items-center gap-2 justify-end font-medium">
           <span>Powered by</span>
-          <span className="font-bold">HostOps.com</span>
+          <span className="font-bold">BizScreen</span>
         </div>
       </div>
     </div>

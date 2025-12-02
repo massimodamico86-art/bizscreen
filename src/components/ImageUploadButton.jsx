@@ -19,7 +19,7 @@ export const ImageUploadButton = ({
   onImageUploaded,
   buttonText = 'Upload Image',
   buttonVariant = 'secondary',
-  folder = 'hostops',
+  folder = 'bizscreen',
   multiple = false,
   transformation = null,
   className = ''

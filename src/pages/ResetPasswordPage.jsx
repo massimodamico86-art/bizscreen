@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import Button from '../components/Button';
+import { Button, Alert } from '../design-system';
+import { useTranslation } from '../i18n';
 import { CheckCircle } from 'lucide-react';
 
 export const ResetPasswordPage = ({ onSuccess }) => {
+  const { t } = useTranslation();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -55,13 +57,13 @@ export const ResetPasswordPage = ({ onSuccess }) => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 text-center">
           <div className="flex justify-center mb-4">
-            <CheckCircle size={64} className="text-green-500" />
+            <CheckCircle size={64} className="text-green-500" aria-hidden="true" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Password Reset Successful!
-          </h2>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            {t('resetPassword.successTitle', 'Password Reset Successful!')}
+          </h1>
           <p className="text-gray-600 mb-6">
-            Your password has been updated. Redirecting to dashboard...
+            {t('resetPassword.successMessage', 'Your password has been updated. Redirecting to dashboard...')}
           </p>
         </div>
       </div>
@@ -73,54 +75,50 @@ export const ResetPasswordPage = ({ onSuccess }) => {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl"></div>
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl" aria-hidden="true"></div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            hostOps
+            BizScreen
           </h1>
         </div>
 
         {/* Title */}
         <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
-          Set new password
+          {t('resetPassword.title', 'Set new password')}
         </h2>
         <p className="text-gray-600 mb-6 text-center">
-          Enter your new password below
+          {t('resetPassword.subtitle', 'Enter your new password below')}
         </p>
 
         {/* Error Message */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-            {error}
-          </div>
-        )}
+        {error && <Alert variant="error" className="mb-4">{error}</Alert>}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              New Password
+              {t('resetPassword.newPasswordLabel', 'New Password')}
             </label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:ring-2 focus-visible:ring-blue-500"
               placeholder="••••••••"
               required
               minLength={6}
             />
-            <p className="text-xs text-gray-500 mt-1">At least 6 characters</p>
+            <p className="text-xs text-gray-500 mt-1">{t('resetPassword.minChars', 'At least 6 characters')}</p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm New Password
+              {t('resetPassword.confirmPasswordLabel', 'Confirm New Password')}
             </label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:ring-2 focus-visible:ring-blue-500"
               placeholder="••••••••"
               required
               minLength={6}
@@ -132,16 +130,16 @@ export const ResetPasswordPage = ({ onSuccess }) => {
             className="w-full"
             disabled={loading || !user}
           >
-            {loading ? 'Updating...' : 'Update Password'}
+            {loading ? t('resetPassword.updating', 'Updating...') : t('resetPassword.updatePassword', 'Update Password')}
           </Button>
         </form>
 
         {/* Password Requirements */}
         <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-xs font-semibold text-gray-700 mb-2">Password Requirements:</p>
+          <p className="text-xs font-semibold text-gray-700 mb-2">{t('resetPassword.requirementsTitle', 'Password Requirements:')}</p>
           <ul className="text-xs text-gray-600 space-y-1">
-            <li>• At least 6 characters long</li>
-            <li>• Passwords must match</li>
+            <li>{t('resetPassword.requirement1', '• At least 6 characters long')}</li>
+            <li>{t('resetPassword.requirement2', '• Passwords must match')}</li>
           </ul>
         </div>
       </div>

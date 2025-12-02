@@ -277,7 +277,7 @@ export const MediaSection = ({ unifiedMediaState, onChange, showToast }) => {
                     onImageUploaded={handleImageUpload}
                     buttonText="Upload"
                     buttonVariant="ghost"
-                    folder="hostops/media"
+                    folder="bizscreen/media"
                     transformation={{
                       width: 1920,
                       height: 1080,

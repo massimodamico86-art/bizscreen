@@ -122,14 +122,6 @@ DROP POLICY IF EXISTS "pms_connections_insert_policy" ON pms_connections;
 DROP POLICY IF EXISTS "pms_connections_update_policy" ON pms_connections;
 DROP POLICY IF EXISTS "pms_connections_delete_policy" ON pms_connections;
 
--- ACTIVITY_LOG: Drop all possible policy names (from 007, 011)
-DROP POLICY IF EXISTS "Users can view their own activity log" ON activity_log;
-DROP POLICY IF EXISTS "Users can insert their own activity log" ON activity_log;
-DROP POLICY IF EXISTS "activity_log_select_policy" ON activity_log;
-DROP POLICY IF EXISTS "activity_log_insert_policy" ON activity_log;
-DROP POLICY IF EXISTS "activity_log_update_policy" ON activity_log;
-DROP POLICY IF EXISTS "activity_log_delete_policy" ON activity_log;
-
 -- ============================================
 -- CREATE FINAL CANONICAL POLICIES
 -- ============================================
@@ -386,39 +378,6 @@ USING (
 );
 
 -- ============================================
--- ACTIVITY_LOG TABLE (4 policies)
--- ============================================
--- FIX: Add explicit UPDATE/DELETE policies for super_admin
-
-CREATE POLICY "activity_log_select_policy"
-ON activity_log FOR SELECT
-USING (
-  user_id = auth.uid()                                 -- Users see own activity
-  OR is_super_admin()                                  -- Super admins see all
-  OR (is_admin() AND user_id IN (SELECT client_id FROM get_my_client_ids()))  -- Admins see managed clients' activity
-);
-
-CREATE POLICY "activity_log_insert_policy"
-ON activity_log FOR INSERT
-WITH CHECK (
-  user_id = auth.uid()                                 -- Users can log own activity
-);
-
--- NEW: Allow super_admin to update activity logs (for corrections)
-CREATE POLICY "activity_log_update_policy"
-ON activity_log FOR UPDATE
-USING (
-  is_super_admin()                                     -- Only super admins can modify logs
-);
-
--- NEW: Allow super_admin to delete activity logs
-CREATE POLICY "activity_log_delete_policy"
-ON activity_log FOR DELETE
-USING (
-  is_super_admin()                                     -- Only super admins can delete logs
-);
-
--- ============================================
 -- VERIFY RLS IS ENABLED ON ALL TABLES
 -- ============================================
 
@@ -428,7 +387,6 @@ ALTER TABLE guests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tv_devices ENABLE ROW LEVEL SECURITY;
 ALTER TABLE qr_codes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE pms_connections ENABLE ROW LEVEL SECURITY;
-ALTER TABLE activity_log ENABLE ROW LEVEL SECURITY;
 
 -- ============================================
 -- ADD POLICY COMMENTS FOR DOCUMENTATION
@@ -449,11 +407,6 @@ COMMENT ON POLICY "tv_devices_select_policy" ON tv_devices IS 'RBAC: Access tied
 COMMENT ON POLICY "qr_codes_select_policy" ON qr_codes IS 'RBAC: Access tied to listing ownership';
 COMMENT ON POLICY "pms_connections_select_policy" ON pms_connections IS 'RBAC: Access tied to listing ownership';
 
-COMMENT ON POLICY "activity_log_select_policy" ON activity_log IS 'RBAC: Users see own, admins see managed clients, super_admins see all';
-COMMENT ON POLICY "activity_log_insert_policy" ON activity_log IS 'RBAC: Users can insert own activity logs';
-COMMENT ON POLICY "activity_log_update_policy" ON activity_log IS 'RBAC: Only super_admins can modify activity logs';
-COMMENT ON POLICY "activity_log_delete_policy" ON activity_log IS 'RBAC: Only super_admins can delete activity logs';
-
 -- ============================================
 -- MIGRATION COMPLETE
 -- ============================================
@@ -465,8 +418,7 @@ COMMENT ON POLICY "activity_log_delete_policy" ON activity_log IS 'RBAC: Only su
 -- - tv_devices: 4 policies (SELECT, INSERT, UPDATE, DELETE)
 -- - qr_codes: 4 policies (SELECT, INSERT, UPDATE, DELETE)
 -- - pms_connections: 4 policies (SELECT, INSERT, UPDATE, DELETE)
--- - activity_log: 4 policies (SELECT, INSERT, UPDATE, DELETE)
--- Total: 28 policies
+-- Total: 24 policies
 
 -- All policies follow the RBAC pattern:
 -- ✅ Clients: Access own data

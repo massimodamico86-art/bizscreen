@@ -95,8 +95,3 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Grant permissions
 GRANT ALL ON public.user_settings TO authenticated;
 GRANT EXECUTE ON FUNCTION public.get_or_create_user_settings() TO authenticated;
-
--- Log settings changes
-CREATE TRIGGER log_user_settings_changes
-  AFTER INSERT OR UPDATE OR DELETE ON public.user_settings
-  FOR EACH ROW EXECUTE FUNCTION public.auto_log_changes();
