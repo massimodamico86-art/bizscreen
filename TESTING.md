@@ -221,7 +221,7 @@ describe('myService', () => {
 ```javascript
 // tests/e2e/myFeature.spec.js
 import { test, expect } from '@playwright/test';
-import { loginAndPrepare } from './helpers.js';
+import { loginAndPrepare, navigateToSection } from './helpers.js';
 
 test.describe('My Feature', () => {
   test.beforeEach(async ({ page }) => {
@@ -229,11 +229,22 @@ test.describe('My Feature', () => {
   });
 
   test('should work', async ({ page }) => {
+    await navigateToSection(page, 'media');
     await page.getByRole('button', { name: /my button/i }).click();
     await expect(page.getByText(/success/i)).toBeVisible();
   });
 });
 ```
+
+## E2E Test Helpers
+
+The `tests/e2e/helpers.js` file provides:
+
+- `loginAndPrepare(page)` - Logs in and dismisses modals
+- `dismissAnyModals(page)` - Closes any open modal dialogs
+- `waitForPageReady(page)` - Waits for loading states to complete
+- `navigateToSection(page, section)` - Navigates to 'media', 'playlists', 'screens', etc.
+- `generateTestName(prefix)` - Creates unique names with timestamps
 
 ## Test Coverage
 
@@ -262,7 +273,7 @@ This section tracks our test coverage goals and implementation roadmap.
 
 | Layer | Files | Test Cases | Coverage |
 |-------|-------|------------|----------|
-| E2E (Playwright) | 6 | ~35 | Auth, navigation, basic CRUD |
+| E2E (Playwright) | 10 | ~100 | Auth, navigation, media, playlists, screens, CRUD |
 | Integration | 6 | ~25 | Billing/Campaigns APIs, RLS isolation |
 | Unit | 4 | ~50 | Services: license, billing, reseller, player |
 
@@ -285,36 +296,49 @@ This section tracks our test coverage goals and implementation roadmap.
    - Time-based campaign/schedule filtering
    - Graceful fallback behavior
 
-### Sprint 2: Core User Flow E2E
+### Sprint 2: Core User Flow E2E (Complete)
 
 **Goal**: Cover critical happy paths end-to-end
 
-4. **Media upload test** (planned)
-   - Upload image/video via UI
-   - Verify appears in library
+4. **media.spec.js** - Media Library (10 tests)
+   - Navigate to media library
+   - Open Add Media modal
+   - Switch between upload/web page tabs
+   - Note: Actual file upload uses Cloudinary widget (external)
 
-5. **Playlist management test** (planned)
-   - Create playlist, add media items
-   - Reorder items, delete playlist
+5. **playlists.spec.js** - Playlist CRUD (10 tests)
+   - Create blank playlist with unique name
+   - Open template picker
+   - Delete playlist with confirmation
 
-6. **Screen assignment test** (planned)
-   - Navigate to screen
-   - Assign playlist
-   - Verify assignment persists
+6. **screen-assignments.spec.js** - Screen Management (9 tests)
+   - Create new screen with pairing code
+   - Assign playlist to screen via dropdown
+   - Verify assignment persists after refresh
+   - View screen status (online/offline)
 
-### Sprint 3: Auth & Onboarding
+### Sprint 3: Auth & Session E2E (Complete)
 
 **Goal**: Complete authentication coverage
 
-7. **Sign up flow** (planned)
-8. **Password reset flow** (planned)
-9. **Session persistence** (planned)
+7. **auth.spec.js** - Authentication (32 tests)
+   - Login page UI and form validation
+   - Signup page with field validation
+   - Password reset flow
+   - Session persistence across page reload
+   - Protected route enforcement
+   - Logout flow
+
+### Skipped Tests
+
+- **Loading state tests** - Too flaky in fast local environments (loading spinner disappears before assertion)
+- **OAuth tests** - Requires Google OAuth configuration (TODO: add when OAuth is set up)
 
 ### Recommended Test Targets
 
 | Metric | Current | Target |
 |--------|---------|--------|
-| E2E test cases | 35 | 50+ |
+| E2E test cases | 100+ | 120+ |
 | Integration tests with real assertions | 40+ | 50+ |
 | Unit test coverage | Good | Maintain |
 | Placeholder tests | 0 | 0 |
