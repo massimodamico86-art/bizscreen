@@ -131,8 +131,24 @@ export async function waitForPageReady(page) {
  * @param {string} section - Section name: 'media', 'playlists', 'screens', 'layouts', 'schedules'
  */
 export async function navigateToSection(page, section) {
+  const sectionLower = section.toLowerCase();
+
+  // Media is an expandable menu - need to click "Media" then "All Media"
+  if (sectionLower === 'media') {
+    // First expand the Media menu
+    const mediaButton = page.locator('button:has-text("Media")').first();
+    await mediaButton.click();
+    await page.waitForTimeout(300);
+
+    // Then click on "All Media" sub-item
+    const allMediaButton = page.locator('button:has-text("All Media")').first();
+    await allMediaButton.click();
+    await page.waitForTimeout(500);
+    await waitForPageReady(page);
+    return;
+  }
+
   const sectionPatterns = {
-    media: /media/i,
     playlists: /playlists/i,
     screens: /screens/i,
     layouts: /layouts/i,
@@ -140,9 +156,9 @@ export async function navigateToSection(page, section) {
     dashboard: /dashboard/i,
   };
 
-  const pattern = sectionPatterns[section.toLowerCase()];
+  const pattern = sectionPatterns[sectionLower];
   if (!pattern) {
-    throw new Error(`Unknown section: ${section}. Valid options: ${Object.keys(sectionPatterns).join(', ')}`);
+    throw new Error(`Unknown section: ${section}. Valid options: media, ${Object.keys(sectionPatterns).join(', ')}`);
   }
 
   // Click on the navigation item
