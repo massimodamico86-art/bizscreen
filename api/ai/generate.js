@@ -1,8 +1,9 @@
 /**
  * AI Content Generation API
- * Protected by the ai_assistant feature flag
+ * Protected by the ai_assistant feature flag AND quota enforcement
  *
  * This endpoint is only available to users on Pro, Enterprise, or Reseller plans.
+ * Usage is tracked and enforced against monthly quotas.
  *
  * Usage:
  *   POST /api/ai/generate
@@ -10,17 +11,22 @@
  *   Body: { prompt: string, type: 'playlist' | 'content' | 'schedule' }
  */
 
-import { checkFeatureOrThrow, requireFeature } from '../lib/featureCheck.js';
+import { checkFeatureOrThrow } from '../lib/featureCheck.js';
+import { withQuotaCheck, trackUsage, QuotaExceededError } from '../lib/usageTracker.js';
 
 /**
- * Handler wrapped with feature check using requireFeature middleware
+ * Handler wrapped with quota check using withQuotaCheck middleware
+ * This enforces both feature flag AND quota limits
  */
-export default requireFeature('ai_assistant', async (req, res) => {
+export default withQuotaCheck('ai_assistant', async (req, res, context, quotaStatus) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
+    // First check feature flag
+    await checkFeatureOrThrow(req, 'ai_assistant');
+
     const { prompt, type = 'content' } = req.body;
 
     if (!prompt) {
@@ -62,15 +68,36 @@ export default requireFeature('ai_assistant', async (req, res) => {
       },
     };
 
-    return res.status(200).json(mockResponses[type] || mockResponses.content);
+    const response = mockResponses[type] || mockResponses.content;
+
+    // Add quota info to response
+    return res.status(200).json({
+      ...response,
+      _quota: quotaStatus
+        ? {
+            used: quotaStatus.currentUsage + 1,
+            limit: quotaStatus.quota,
+            remaining: quotaStatus.remaining,
+            isUnlimited: quotaStatus.isUnlimited,
+          }
+        : null,
+    });
   } catch (error) {
+    if (error.code === 'FEATURE_NOT_ENABLED') {
+      return res.status(403).json({
+        error: error.message,
+        code: error.code,
+        featureKey: error.featureKey,
+        currentPlan: error.currentPlan,
+      });
+    }
     console.error('AI generation error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 /**
- * Alternative handler using checkFeatureOrThrow directly
+ * Alternative handler using direct checks
  * (shown for documentation purposes)
  */
 export async function handleWithDirectCheck(req, res) {
@@ -87,6 +114,15 @@ export async function handleWithDirectCheck(req, res) {
         code: error.code,
         featureKey: error.featureKey,
         currentPlan: error.currentPlan,
+      });
+    }
+    if (error instanceof QuotaExceededError) {
+      return res.status(429).json({
+        error: error.message,
+        code: error.code,
+        featureKey: error.featureKey,
+        currentUsage: error.currentUsage,
+        quota: error.quota,
       });
     }
     return res.status(500).json({ error: 'Internal server error' });

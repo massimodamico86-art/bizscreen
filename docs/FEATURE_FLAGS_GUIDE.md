@@ -263,6 +263,20 @@ The following features are currently gated with the feature flag system:
 | Enterprise Security | `enterprise_sso` | Enterprise | Navigation + Page | - |
 | Reseller Portal | `reseller_portal` | Reseller | Navigation + Page | `/api/reseller/clients` |
 | Activity Log | `audit_logs` | Enterprise | Navigation | - |
+| Usage Dashboard | `usage_dashboard` | Starter | Navigation + Page | `/api/usage/summary` |
+
+## Wired Features (Phase 16)
+
+The following features now have quota tracking and enforcement:
+
+| Feature | Key | Quota API Protection |
+|---------|-----|---------------------|
+| AI Assistant | `ai_assistant` | `/api/ai/generate` - with quota |
+| Campaigns | `campaigns` | `/api/campaigns/create` - with quota |
+| Screen Groups | `screen_groups` | `/api/screens/group` - with quota |
+| Audit Logs | `audit_logs` | `/api/audit/log` - with quota |
+
+See [QUOTAS_AND_USAGE.md](./QUOTAS_AND_USAGE.md) for detailed quota documentation.
 
 ### How to Toggle Features
 
