@@ -1,24 +1,29 @@
 /**
  * AppRouter - Main router with marketing, auth, and app routes
+ *
+ * Performance optimizations:
+ * - All pages are lazy loaded for optimal code splitting
+ * - Marketing pages load separately from app pages
+ * - Auth pages are in their own chunks
  */
 
 import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-// Marketing pages
-import MarketingLayout from '../marketing/MarketingLayout';
-import HomePage from '../marketing/HomePage';
-import PricingPage from '../marketing/PricingPage';
-import FeaturesPage from '../marketing/FeaturesPage';
+// Marketing pages (lazy loaded)
+const MarketingLayout = lazy(() => import('../marketing/MarketingLayout'));
+const HomePage = lazy(() => import('../marketing/HomePage'));
+const PricingPage = lazy(() => import('../marketing/PricingPage'));
+const FeaturesPage = lazy(() => import('../marketing/FeaturesPage'));
 
-// Auth pages
-import LoginPage from '../auth/LoginPage';
-import SignupPage from '../auth/SignupPage';
-import ResetPasswordPage from '../auth/ResetPasswordPage';
-import UpdatePasswordPage from '../auth/UpdatePasswordPage';
-import AuthCallbackPage from '../auth/AuthCallbackPage';
-import AcceptInvitePage from '../auth/AcceptInvitePage';
+// Auth pages (lazy loaded)
+const LoginPage = lazy(() => import('../auth/LoginPage'));
+const SignupPage = lazy(() => import('../auth/SignupPage'));
+const ResetPasswordPage = lazy(() => import('../auth/ResetPasswordPage'));
+const UpdatePasswordPage = lazy(() => import('../auth/UpdatePasswordPage'));
+const AuthCallbackPage = lazy(() => import('../auth/AuthCallbackPage'));
+const AcceptInvitePage = lazy(() => import('../auth/AcceptInvitePage'));
 
 // App (lazy loaded)
 const App = lazy(() => import('../App'));
@@ -67,25 +72,29 @@ function PublicRoute({ children }) {
   return children;
 }
 
-// Marketing page wrapper
+// Marketing page wrapper with Suspense for lazy loaded layout
 function MarketingPage({ children }) {
   return (
-    <MarketingLayout>
-      {children}
-    </MarketingLayout>
+    <Suspense fallback={<LoadingSpinner />}>
+      <MarketingLayout>
+        {children}
+      </MarketingLayout>
+    </Suspense>
   );
 }
 
 export default function AppRouter() {
   return (
     <Routes>
-      {/* Marketing Routes (logged out) */}
+      {/* Marketing Routes (logged out) - all lazy loaded */}
       <Route
         path="/"
         element={
           <PublicRoute>
             <MarketingPage>
-              <HomePage />
+              <Suspense fallback={<LoadingSpinner />}>
+                <HomePage />
+              </Suspense>
             </MarketingPage>
           </PublicRoute>
         }
@@ -94,7 +103,9 @@ export default function AppRouter() {
         path="/pricing"
         element={
           <MarketingPage>
-            <PricingPage />
+            <Suspense fallback={<LoadingSpinner />}>
+              <PricingPage />
+            </Suspense>
           </MarketingPage>
         }
       />
@@ -102,17 +113,21 @@ export default function AppRouter() {
         path="/features"
         element={
           <MarketingPage>
-            <FeaturesPage />
+            <Suspense fallback={<LoadingSpinner />}>
+              <FeaturesPage />
+            </Suspense>
           </MarketingPage>
         }
       />
 
-      {/* Auth Routes */}
+      {/* Auth Routes - all lazy loaded */}
       <Route
         path="/auth/login"
         element={
           <PublicRoute>
-            <LoginPage />
+            <Suspense fallback={<LoadingSpinner />}>
+              <LoginPage />
+            </Suspense>
           </PublicRoute>
         }
       />
@@ -120,14 +135,16 @@ export default function AppRouter() {
         path="/auth/signup"
         element={
           <PublicRoute>
-            <SignupPage />
+            <Suspense fallback={<LoadingSpinner />}>
+              <SignupPage />
+            </Suspense>
           </PublicRoute>
         }
       />
-      <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
-      <Route path="/auth/update-password" element={<UpdatePasswordPage />} />
-      <Route path="/auth/callback" element={<AuthCallbackPage />} />
-      <Route path="/auth/accept-invite" element={<AcceptInvitePage />} />
+      <Route path="/auth/reset-password" element={<Suspense fallback={<LoadingSpinner />}><ResetPasswordPage /></Suspense>} />
+      <Route path="/auth/update-password" element={<Suspense fallback={<LoadingSpinner />}><UpdatePasswordPage /></Suspense>} />
+      <Route path="/auth/callback" element={<Suspense fallback={<LoadingSpinner />}><AuthCallbackPage /></Suspense>} />
+      <Route path="/auth/accept-invite" element={<Suspense fallback={<LoadingSpinner />}><AcceptInvitePage /></Suspense>} />
 
       {/* App Routes (protected) */}
       <Route

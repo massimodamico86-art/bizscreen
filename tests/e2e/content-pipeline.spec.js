@@ -87,9 +87,9 @@ test.describe('Content Pipeline', () => {
     test('can access schedules page', async ({ page }) => {
       await page.getByRole('button', { name: /schedules/i }).click();
 
-      // Use heading role to avoid matching sidebar button
+      // Use exact heading match to avoid matching "No Schedules Yet" empty state
       const mainContent = page.locator('main');
-      await expect(mainContent.getByRole('heading', { name: /schedules/i })).toBeVisible({ timeout: 5000 });
+      await expect(mainContent.getByRole('heading', { name: 'Schedules', exact: true })).toBeVisible({ timeout: 5000 });
     });
   });
 
