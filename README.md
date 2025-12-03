@@ -60,14 +60,22 @@ We welcome contributions! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for:
 
 - **Health Check**: `GET /api/health` returns status, version, and timestamp
 - **Error Boundary**: Global error boundary with centralized logging
-- **Smoke Tests**: Critical-path E2E tests run on every CI build
+- **Smoke Tests**: Critical-path E2E tests in `tests/e2e/smoke.spec.js`
 - **Browser Logging**: Frontend errors are captured and forwarded to `/api/logs/browser`
+- **CI Pipeline**: GitHub Actions runs unit/integration + E2E jobs in parallel on every PR
 
 ## Documentation
 
+### Development
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contributor guide
-- [TESTING.md](TESTING.md) - Testing guide
+- [TESTING.md](docs/TESTING.md) - Testing guide
 - [GIT_WORKFLOW_CHECKLIST.md](GIT_WORKFLOW_CHECKLIST.md) - Git workflow
+- [CHANGELOG.md](CHANGELOG.md) - Version history
+
+### Operations
+- [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) - How to cut a release
+- [PRODUCTION_RUNBOOK.md](PRODUCTION_RUNBOOK.md) - Operating the system
+- [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md) - Handling incidents
 
 ## License
 
