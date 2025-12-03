@@ -414,3 +414,137 @@ const stats = getCacheStats();
 2. Implement exponential backoff
 3. Consider caching to reduce requests
 4. Contact support for enterprise limits
+
+---
+
+## Load Testing (Phase 13)
+
+### Overview
+
+BizScreen includes a comprehensive load testing suite for validating scalability and identifying bottlenecks.
+
+### Prerequisites
+
+```bash
+# Install autocannon globally
+npm install -g autocannon
+
+# Install k6 (macOS)
+brew install k6
+```
+
+### Running Load Tests
+
+```bash
+# Run all tests
+npm run load-test
+
+# Quick mode (10s duration)
+npm run load-test:quick
+
+# Individual tests
+npm run load-test:auth        # Auth burst simulation
+npm run load-test:heartbeat   # Screen heartbeat at scale
+npm run load-test:playlist    # Content resolution
+npm run load-test:media       # Media library listing
+```
+
+### Test Scenarios
+
+| Test | Tool | Description | p95 Target |
+|------|------|-------------|------------|
+| `auth-burst.js` | autocannon | Login burst simulation | < 200ms |
+| `heartbeat.js` | k6 | Screen heartbeat at scale | < 100ms |
+| `playlist-resolution.js` | k6 | Content resolution for players | < 150ms |
+| `media-library.js` | autocannon | Media library listing | < 300ms |
+
+### Custom Configuration
+
+```bash
+# Custom base URL
+BASE_URL=https://staging.bizscreen.app npm run load-test
+
+# Custom duration
+DURATION=60s npm run load-test:heartbeat
+
+# More virtual users
+VUS=100 npm run load-test:heartbeat
+```
+
+### Baseline Reports
+
+Load test results are saved to `load-tests/results/baseline-report.json`.
+
+---
+
+## LRU Cache Implementation (Phase 13)
+
+### Server-Side LRU Cache
+
+**Location**: `api/lib/lruCache.js`
+
+An O(1) LRU cache using doubly-linked list + Map for optimal performance in serverless environments.
+
+#### Cache Instances
+
+| Cache | Max Size | Default TTL | Use Case |
+|-------|----------|-------------|----------|
+| `player` | 500 | 60s | Content resolution for screens |
+| `lists` | 1000 | 2 min | Screen, playlist, media lists |
+| `templates` | 200 | 5 min | Template definitions |
+| `dashboard` | 500 | 2 min | Dashboard stats and counts |
+| `user` | 500 | 2 min | User profiles and permissions |
+
+#### Usage
+
+```javascript
+import { cachedGetScreens, invalidateScreenCaches } from '../api/lib/lruCache.js';
+
+// Cached fetch
+const screens = await cachedGetScreens(tenantId, async () => {
+  const { data } = await supabase.from('screens').select('*');
+  return data;
+});
+
+// Invalidate after write
+invalidateScreenCaches(tenantId);
+```
+
+### Client-Side Service Cache
+
+**Location**: `src/services/cacheService.js`
+
+Frontend services use a similar LRU cache to reduce redundant API calls.
+
+```javascript
+import { cachedFetchScreens, invalidateScreensCache } from './services/cacheService.js';
+
+// Cached service call
+const screens = await cachedFetchScreens(() => screenService.getAll());
+
+// Invalidate after mutation
+await invalidateScreensCache();
+```
+
+---
+
+## CDN & Static Asset Caching (Phase 13)
+
+### Cache Headers (vercel.json)
+
+| Resource | Cache-Control | Notes |
+|----------|---------------|-------|
+| `/fonts/*` | 1 year, immutable | Font files never change |
+| `/images/*` | 1 year, immutable | Static images |
+| `*.woff2, *.woff` | 1 year, immutable | Web fonts |
+| `*.png, *.jpg, *.svg` | 1 year, immutable | Image assets |
+| `/index.html` | 1 hour, stale-while-revalidate | SPA entry point |
+| `/api/health` | no-cache | Health checks |
+
+### Stale-While-Revalidate
+
+The SWR pattern serves cached content while fetching fresh content in the background:
+
+```
+Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400
+```

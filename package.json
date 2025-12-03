@@ -19,7 +19,13 @@
     "test:all": "npm run test && npm run test:e2e",
     "test:ci": "npm run test && node scripts/seed-ci-test-user.cjs && npm run test:e2e",
     "test:ci:local": "npm run test && npm run test:e2e",
-    "generate:sitemap": "node scripts/generate-sitemap.cjs"
+    "generate:sitemap": "node scripts/generate-sitemap.cjs",
+    "load-test": "node load-tests/run-all.js",
+    "load-test:quick": "node load-tests/run-all.js --quick",
+    "load-test:auth": "node load-tests/auth-burst.js",
+    "load-test:heartbeat": "k6 run load-tests/heartbeat.js",
+    "load-test:playlist": "k6 run load-tests/playlist-resolution.js",
+    "load-test:media": "node load-tests/media-library.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.80.0",
