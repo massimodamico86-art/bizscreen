@@ -7,6 +7,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, User, Building2, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import AuthLayout from './AuthLayout';
 import { signUp, isEmailConfirmationPending } from '../services/authService';
+import Seo from '../components/Seo';
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -75,10 +76,12 @@ export default function SignupPage() {
   // Show confirmation message after signup
   if (emailSent) {
     return (
-      <AuthLayout
-        title="Check your email"
-        subtitle="We've sent you a confirmation link"
-      >
+      <>
+        <Seo pageKey="signup" />
+        <AuthLayout
+          title="Check your email"
+          subtitle="We've sent you a confirmation link"
+        >
         <div className="text-center space-y-6">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
             <CheckCircle className="w-8 h-8 text-green-600" />
@@ -107,15 +110,18 @@ export default function SignupPage() {
             </button>
           </p>
         </div>
-      </AuthLayout>
+        </AuthLayout>
+      </>
     );
   }
 
   return (
-    <AuthLayout
-      title="Create your account"
-      subtitle={selectedPlan ? `Starting with ${selectedPlan} plan` : 'Start free today'}
-    >
+    <>
+      <Seo pageKey="signup" />
+      <AuthLayout
+        title="Create your account"
+        subtitle={selectedPlan ? `Starting with ${selectedPlan} plan` : 'Start free today'}
+      >
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Error Message */}
         {error && (
@@ -254,6 +260,7 @@ export default function SignupPage() {
           Sign in
         </Link>
       </form>
-    </AuthLayout>
+      </AuthLayout>
+    </>
   );
 }

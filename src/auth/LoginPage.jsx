@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from './AuthLayout';
 import { signIn } from '../services/authService';
+import Seo from '../components/Seo';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -41,10 +42,12 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout
-      title="Welcome back"
-      subtitle="Log in to your BizScreen account"
-    >
+    <>
+      <Seo pageKey="login" />
+      <AuthLayout
+        title="Welcome back"
+        subtitle="Log in to your BizScreen account"
+      >
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Error Message */}
         {error && (
@@ -141,5 +144,6 @@ export default function LoginPage() {
         </Link>
       </form>
     </AuthLayout>
+    </>
   );
 }

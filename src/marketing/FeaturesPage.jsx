@@ -19,6 +19,7 @@ import {
   ArrowRight,
   CheckCircle
 } from 'lucide-react';
+import Seo from '../components/Seo';
 
 const features = [
   {
@@ -83,6 +84,7 @@ const compatibility = [
 export default function FeaturesPage() {
   return (
     <div>
+      <Seo pageKey="features" />
       {/* Header */}
       <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

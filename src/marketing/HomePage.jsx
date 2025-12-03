@@ -18,6 +18,7 @@ import {
   GraduationCap,
   Hotel
 } from 'lucide-react';
+import Seo from '../components/Seo';
 
 const useCases = [
   { icon: UtensilsCrossed, title: 'Restaurants', description: 'Digital menu boards and promotions' },
@@ -47,6 +48,7 @@ const features = [
 export default function HomePage() {
   return (
     <div>
+      <Seo pageKey="home" />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">

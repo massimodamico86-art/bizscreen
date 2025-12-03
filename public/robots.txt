@@ -1,0 +1,26 @@
+# BizScreen Robots.txt
+# https://bizscreen.app
+
+User-agent: *
+Allow: /
+
+# Protected application routes (require authentication)
+Disallow: /app/
+Disallow: /app/*
+
+# API routes
+Disallow: /api/
+
+# Player routes (token-based, not for indexing)
+Disallow: /tv/
+Disallow: /player/
+Disallow: /preview/
+
+# Auth utility routes
+Disallow: /auth/callback
+Disallow: /auth/update-password
+Disallow: /auth/reset-password
+Disallow: /auth/accept-invite
+
+# Sitemap location
+Sitemap: https://bizscreen.app/sitemap.xml
