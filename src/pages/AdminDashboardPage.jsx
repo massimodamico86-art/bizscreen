@@ -165,7 +165,7 @@ export default function AdminDashboardPage() {
 
             {clients.length === 0 ? (
               <EmptyState
-                icon={Users}
+                icon={<Users className="w-12 h-12" />}
                 title={t('admin.noClientsAssigned', 'No Clients Assigned')}
                 description={t('admin.noClientsDesc', "You don't have any clients assigned yet. Contact your administrator to get started.")}
               />

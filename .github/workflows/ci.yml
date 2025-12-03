@@ -10,10 +10,54 @@ env:
   CI: true
 
 jobs:
-  tests:
-    name: Run Tests
+  # =============================================================================
+  # JOB 1: UNIT & INTEGRATION TESTS
+  # =============================================================================
+  # Runs unit and integration tests in parallel with E2E tests.
+  # This job is fast (~1-2 minutes) and provides early feedback.
+  # =============================================================================
+  unit_integration:
+    name: Unit & Integration Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Run unit & integration tests
+        run: npm test -- --run
+
+  # =============================================================================
+  # JOB 2: E2E TESTS (includes smoke tests)
+  # =============================================================================
+  # Runs Playwright E2E tests including production smoke tests.
+  # Smoke tests (smoke.spec.js) verify critical paths are working.
+  # Runs in parallel with unit_integration job for faster CI.
+  # =============================================================================
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
@@ -55,10 +99,6 @@ jobs:
         if: steps.cache-playwright.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
-      - name: Run unit tests
-        run: npm test -- --run
-        continue-on-error: false
-
       # =============================================================================
       # SUPABASE TEST DATA PREPARATION
       # =============================================================================
@@ -81,6 +121,9 @@ jobs:
           TEST_CLIENT_EMAIL: ${{ secrets.TEST_CLIENT_EMAIL }}
           TEST_CLIENT_PASSWORD: ${{ secrets.TEST_CLIENT_PASSWORD }}
 
+      # =============================================================================
+      # RUN E2E TESTS (includes smoke.spec.js for production readiness)
+      # =============================================================================
       - name: Run E2E tests
         run: npm run test:e2e
         env:
