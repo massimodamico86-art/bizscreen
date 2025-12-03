@@ -114,6 +114,8 @@ function BizScreenAppInner() {
   const [loadingData, setLoadingData] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const [isPasswordReset, setIsPasswordReset] = useState(false);
+  // Track announcement banner height for layout offset - must be before early returns
+  const [announcementHeight, setAnnouncementHeight] = useState(0);
 
   // Check if URL has password reset hash
   useEffect(() => {
@@ -555,9 +557,6 @@ function BizScreenAppInner() {
   };
 
   // Client UI (shown for clients, or admins/super_admins when impersonating)
-
-  // Track announcement banner height for layout offset
-  const [announcementHeight, setAnnouncementHeight] = useState(0);
   const topOffset = (isImpersonating ? 40 : 0) + announcementHeight;
 
   return (
