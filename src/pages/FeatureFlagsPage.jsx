@@ -30,6 +30,7 @@ import {
   FlaskConical,
   MessageSquare,
   Megaphone,
+  Bug,
   Plus,
   Pencil,
   Trash2,
@@ -70,12 +71,14 @@ import {
   updateAnnouncement,
   deleteAnnouncement,
 } from '../services/feedbackService';
+import FeatureFlagsDebug from '../components/FeatureFlagsDebug';
 
 const tabs = [
   { id: 'flags', label: 'Feature Flags', icon: Flag },
   { id: 'experiments', label: 'Experiments', icon: FlaskConical },
   { id: 'feedback', label: 'Feedback', icon: MessageSquare },
   { id: 'announcements', label: 'Announcements', icon: Megaphone },
+  { id: 'debug', label: 'Debug', icon: Bug },
 ];
 
 export default function FeatureFlagsPage() {
@@ -239,6 +242,7 @@ export default function FeatureFlagsPage() {
                 }}
               />
             )}
+            {activeTab === 'debug' && <FeatureFlagsDebug />}
           </>
         )}
 
