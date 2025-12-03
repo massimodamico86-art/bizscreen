@@ -179,6 +179,29 @@ async function main() {
       }
     }
 
+    // Verify the user can login
+    console.log('\n3. Verifying login works...');
+    const loginResponse = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: {
+        'apikey': process.env.SUPABASE_ANON_KEY || serviceRoleKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: testEmail,
+        password: testPassword
+      })
+    });
+
+    if (loginResponse.ok) {
+      console.log('   ✓ Login verification successful!');
+    } else {
+      const errorText = await loginResponse.text();
+      console.error(`   ✗ Login verification FAILED: ${loginResponse.status} ${errorText}`);
+      console.error('   This is why E2E tests will fail - login is not working');
+      process.exit(1);
+    }
+
     console.log('\n✓ CI test user seeding complete!');
     console.log(`  User ID: ${userId}`);
     console.log(`  Email: ${testEmail}`);
