@@ -7,11 +7,15 @@ import { test, expect } from '@playwright/test';
 import { loginAndPrepare } from './helpers.js';
 
 test.describe('Onboarding Flow', () => {
-  // Skip these tests if no test credentials are configured
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  // Skip if client credentials not configured
+  test.skip(() => !process.env.TEST_CLIENT_EMAIL, 'Client test credentials not configured');
 
   test.beforeEach(async ({ page }) => {
-    await loginAndPrepare(page);
+    // Login with CLIENT credentials (not admin)
+    await loginAndPrepare(page, {
+      email: process.env.TEST_CLIENT_EMAIL,
+      password: process.env.TEST_CLIENT_PASSWORD
+    });
   });
 
   test('displays dashboard after login', async ({ page }) => {

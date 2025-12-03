@@ -2,15 +2,21 @@
  * Content Pipeline E2E Tests
  *
  * Tests the content creation flow: Media → Playlist → Layout → Screen
+ * Requires CLIENT role user (not admin) to see the client sidebar.
  */
 import { test, expect } from '@playwright/test';
 import { loginAndPrepare } from './helpers.js';
 
 test.describe('Content Pipeline', () => {
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  // Skip if client credentials not configured
+  test.skip(() => !process.env.TEST_CLIENT_EMAIL, 'Client test credentials not configured');
 
   test.beforeEach(async ({ page }) => {
-    await loginAndPrepare(page);
+    // Login with CLIENT credentials (not admin)
+    await loginAndPrepare(page, {
+      email: process.env.TEST_CLIENT_EMAIL,
+      password: process.env.TEST_CLIENT_PASSWORD
+    });
   });
 
   test.describe('Playlists', () => {

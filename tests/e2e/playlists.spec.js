@@ -11,10 +11,15 @@ import { test, expect } from '@playwright/test';
 import { loginAndPrepare, navigateToSection, waitForPageReady } from './helpers.js';
 
 test.describe('Playlists', () => {
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  // Skip if client credentials not configured
+  test.skip(() => !process.env.TEST_CLIENT_EMAIL, 'Client test credentials not configured');
 
   test.beforeEach(async ({ page }) => {
-    await loginAndPrepare(page);
+    // Login with CLIENT credentials (not admin)
+    await loginAndPrepare(page, {
+      email: process.env.TEST_CLIENT_EMAIL,
+      password: process.env.TEST_CLIENT_PASSWORD
+    });
   });
 
   test('can navigate to playlists page', async ({ page }) => {
