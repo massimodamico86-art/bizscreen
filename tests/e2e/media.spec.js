@@ -36,16 +36,16 @@ test.describe('Media Library', () => {
   test('shows Add Media button', async ({ page }) => {
     await navigateToSection(page, 'media');
 
-    // Should have Add Media button
-    const addButton = page.getByRole('button', { name: /add media/i });
+    // Should have Add Media button (use text locator for button with icon)
+    const addButton = page.locator('button:has-text("Add Media")').first();
     await expect(addButton).toBeVisible({ timeout: 5000 });
   });
 
   test('opens Add Media modal when clicking Add Media button', async ({ page }) => {
     await navigateToSection(page, 'media');
 
-    // Click Add Media button
-    await page.getByRole('button', { name: /add media/i }).first().click();
+    // Click Add Media button (use text locator for button with icon)
+    await page.locator('button:has-text("Add Media")').first().click();
 
     // Should show the upload modal
     await expect(page.getByText(/upload files/i)).toBeVisible({ timeout: 5000 });
@@ -54,8 +54,8 @@ test.describe('Media Library', () => {
   test('Add Media modal has upload and web page tabs', async ({ page }) => {
     await navigateToSection(page, 'media');
 
-    // Click Add Media button
-    await page.getByRole('button', { name: /add media/i }).first().click();
+    // Click Add Media button (use text locator for button with icon)
+    await page.locator('button:has-text("Add Media")').first().click();
 
     // Should have both tabs
     await expect(page.getByText(/upload files/i)).toBeVisible();
@@ -65,8 +65,8 @@ test.describe('Media Library', () => {
   test('can switch to Web Page URL tab in Add Media modal', async ({ page }) => {
     await navigateToSection(page, 'media');
 
-    // Click Add Media button
-    await page.getByRole('button', { name: /add media/i }).first().click();
+    // Click Add Media button (use text locator for button with icon)
+    await page.locator('button:has-text("Add Media")').first().click();
 
     // Click on Web Page URL tab
     await page.getByText(/web page url/i).click();
@@ -78,8 +78,8 @@ test.describe('Media Library', () => {
   test('can close Add Media modal', async ({ page }) => {
     await navigateToSection(page, 'media');
 
-    // Click Add Media button
-    await page.getByRole('button', { name: /add media/i }).first().click();
+    // Click Add Media button (use text locator for button with icon)
+    await page.locator('button:has-text("Add Media")').first().click();
 
     // Modal should be visible
     await expect(page.getByText(/upload files/i)).toBeVisible();
