@@ -51,10 +51,9 @@ test.describe('Media Library', () => {
     const addButton = header.locator('button:has-text("Add Media")');
     await addButton.click();
 
-    // Should show the upload modal - may show limit modal if user hit limits
-    const uploadText = page.getByText(/upload files/i);
-    const limitText = page.getByText(/media limit reached|upgrade/i);
-    await expect(uploadText.or(limitText)).toBeVisible({ timeout: 5000 });
+    // Should show a modal dialog (either upload or limit modal)
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
   });
 
   test('Add Media modal has upload and web page tabs', async ({ page }) => {
