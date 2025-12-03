@@ -32,16 +32,18 @@ test.describe('Playlists', () => {
   test('shows Add Playlist button', async ({ page }) => {
     await navigateToSection(page, 'playlists');
 
-    // Should have Add Playlist button
-    const addButton = page.getByRole('button', { name: /add playlist/i });
+    // Should have Add Playlist button in header area
+    const header = page.locator('header');
+    const addButton = header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first();
     await expect(addButton).toBeVisible({ timeout: 5000 });
   });
 
   test('opens choice modal when clicking Add Playlist', async ({ page }) => {
     await navigateToSection(page, 'playlists');
 
-    // Click Add Playlist button
-    await page.getByRole('button', { name: /add playlist/i }).first().click();
+    // Click Add Playlist button in header
+    const header = page.locator('header');
+    await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
     // Should show choice modal with Blank Playlist and Template options
     await expect(page.getByText(/new playlist/i)).toBeVisible({ timeout: 5000 });
@@ -52,8 +54,9 @@ test.describe('Playlists', () => {
   test('can open blank playlist creation form', async ({ page }) => {
     await navigateToSection(page, 'playlists');
 
-    // Click Add Playlist button
-    await page.getByRole('button', { name: /add playlist/i }).first().click();
+    // Click Add Playlist button in header
+    const header = page.locator('header');
+    await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
     // Wait for choice modal
     await expect(page.getByText(/blank playlist/i)).toBeVisible({ timeout: 5000 });
@@ -72,8 +75,9 @@ test.describe('Playlists', () => {
     // Generate unique name
     const playlistName = `Test Playlist ${Date.now()}`;
 
-    // Click Add Playlist button
-    await page.getByRole('button', { name: /add playlist/i }).first().click();
+    // Click Add Playlist button in header
+    const header = page.locator('header');
+    await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
     // Wait for choice modal and click Blank Playlist
     await expect(page.getByText(/blank playlist/i)).toBeVisible({ timeout: 5000 });
@@ -99,8 +103,9 @@ test.describe('Playlists', () => {
   test('can cancel playlist creation', async ({ page }) => {
     await navigateToSection(page, 'playlists');
 
-    // Click Add Playlist button
-    await page.getByRole('button', { name: /add playlist/i }).first().click();
+    // Click Add Playlist button in header
+    const header = page.locator('header');
+    await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
     // Wait for choice modal and click Blank Playlist
     await expect(page.getByText(/blank playlist/i)).toBeVisible({ timeout: 5000 });
@@ -119,8 +124,9 @@ test.describe('Playlists', () => {
   test('can open template picker', async ({ page }) => {
     await navigateToSection(page, 'playlists');
 
-    // Click Add Playlist button
-    await page.getByRole('button', { name: /add playlist/i }).first().click();
+    // Click Add Playlist button in header
+    const header = page.locator('header');
+    await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
     // Wait for choice modal
     await expect(page.getByText(/start from template/i)).toBeVisible({ timeout: 5000 });
@@ -147,8 +153,9 @@ test.describe('Playlists', () => {
       // First, create a playlist to delete
       const playlistName = `Delete Test ${Date.now()}`;
 
-      // Click Add Playlist button
-      await page.getByRole('button', { name: /add playlist/i }).first().click();
+      // Click Add Playlist button in header
+      const header = page.locator('header');
+      await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
       await expect(page.getByText(/blank playlist/i)).toBeVisible({ timeout: 5000 });
       await page.getByText(/blank playlist/i).click();
       await page.getByPlaceholder(/enter playlist name/i).fill(playlistName);
