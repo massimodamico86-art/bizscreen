@@ -92,6 +92,7 @@ export const PLANS = {
       'screen_groups',
       'basic_analytics',
       'email_support',
+      'usage_dashboard',
     ],
     displayOrder: 2,
     recommended: false,
@@ -128,6 +129,7 @@ export const PLANS = {
       'api_access',
       'webhooks',
       'priority_support',
+      'usage_dashboard',
     ],
     displayOrder: 3,
     recommended: true,
@@ -171,6 +173,7 @@ export const PLANS = {
       'sla_guarantee',
       'dedicated_support',
       'pms_integration',
+      'usage_dashboard',
     ],
     displayOrder: 4,
     recommended: false,
@@ -213,6 +216,7 @@ export const PLANS = {
       'white_label',
       'custom_domains',
       'priority_support',
+      'usage_dashboard',
     ],
     displayOrder: 5,
     recommended: false,
@@ -263,7 +267,104 @@ export const Feature = {
   CLIENT_MANAGEMENT: 'client_management',
   LICENSE_MANAGEMENT: 'license_management',
   RESELLER_BILLING: 'reseller_billing',
+
+  // Usage & Billing features
+  USAGE_DASHBOARD: 'usage_dashboard',
 };
+
+// ============================================================================
+// QUOTA DEFINITIONS
+// ============================================================================
+
+/**
+ * Monthly quotas per plan per feature
+ * null = unlimited
+ */
+export const PLAN_QUOTAS = {
+  [PlanSlug.FREE]: {
+    ai_assistant: 10,
+    campaigns: 2,
+    audit_logs: 100,
+    api_calls: 100,
+    screen_groups: 1,
+    bulk_operations: 5,
+    webhooks: 10,
+  },
+
+  [PlanSlug.STARTER]: {
+    ai_assistant: 50,
+    campaigns: 10,
+    audit_logs: 1000,
+    api_calls: 1000,
+    screen_groups: 10,
+    bulk_operations: 50,
+    webhooks: 100,
+  },
+
+  [PlanSlug.PRO]: {
+    ai_assistant: 200,
+    campaigns: 50,
+    audit_logs: 10000,
+    api_calls: 10000,
+    screen_groups: 100,
+    bulk_operations: 500,
+    webhooks: 1000,
+  },
+
+  [PlanSlug.ENTERPRISE]: {
+    ai_assistant: null, // Unlimited
+    campaigns: null,
+    audit_logs: null,
+    api_calls: null,
+    screen_groups: null,
+    bulk_operations: null,
+    webhooks: null,
+  },
+
+  [PlanSlug.RESELLER]: {
+    ai_assistant: null, // Unlimited
+    campaigns: null,
+    audit_logs: null,
+    api_calls: null,
+    screen_groups: null,
+    bulk_operations: null,
+    webhooks: null,
+  },
+};
+
+/**
+ * Quota feature names for display
+ */
+export const QUOTA_FEATURE_NAMES = {
+  ai_assistant: 'AI Assistant Requests',
+  campaigns: 'Campaign Creations',
+  audit_logs: 'Audit Log Entries',
+  api_calls: 'API Calls',
+  screen_groups: 'Screen Group Operations',
+  bulk_operations: 'Bulk Operations',
+  webhooks: 'Webhook Deliveries',
+};
+
+/**
+ * Get quota for a feature based on plan
+ * @param {string} featureKey
+ * @param {string} planSlug
+ * @returns {number|null} Quota limit or null for unlimited
+ */
+export function getQuotaForFeature(featureKey, planSlug) {
+  const planQuotas = PLAN_QUOTAS[planSlug] || PLAN_QUOTAS[PlanSlug.FREE];
+  return planQuotas[featureKey] ?? null;
+}
+
+/**
+ * Check if a quota is unlimited
+ * @param {string} featureKey
+ * @param {string} planSlug
+ * @returns {boolean}
+ */
+export function isQuotaUnlimited(featureKey, planSlug) {
+  return getQuotaForFeature(featureKey, planSlug) === null;
+}
 
 /**
  * Feature metadata for UI display
@@ -403,6 +504,11 @@ export const FEATURE_METADATA = {
     name: 'SLA Guarantee',
     description: '99.9% uptime guarantee with credits',
     category: 'support',
+  },
+  [Feature.USAGE_DASHBOARD]: {
+    name: 'Usage Dashboard',
+    description: 'View usage analytics and quota status',
+    category: 'analytics',
   },
 };
 
@@ -548,6 +654,8 @@ export default {
   PLAN_ORDER,
   Feature,
   FEATURE_METADATA,
+  PLAN_QUOTAS,
+  QUOTA_FEATURE_NAMES,
   getPlanFeatures,
   isPlanFeature,
   getMinimumPlanForFeature,
@@ -557,4 +665,6 @@ export default {
   getAllPlans,
   groupFeaturesByCategory,
   formatPlanPrice,
+  getQuotaForFeature,
+  isQuotaUnlimited,
 };
