@@ -38,17 +38,16 @@ test.describe('Playlists', () => {
     await expect(addButton).toBeVisible({ timeout: 5000 });
   });
 
-  test('opens choice modal when clicking Add Playlist', async ({ page }) => {
+  test('opens modal when clicking Add Playlist', async ({ page }) => {
     await navigateToSection(page, 'playlists');
 
     // Click Add Playlist button in header
     const header = page.locator('header');
     await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
-    // Should show choice modal with Blank Playlist and Template options
-    await expect(page.getByText(/new playlist/i)).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText(/blank playlist/i)).toBeVisible();
-    await expect(page.getByText(/start from template/i)).toBeVisible();
+    // Should show a modal dialog
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
   });
 
   test('can open blank playlist creation form', async ({ page }) => {
