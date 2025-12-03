@@ -1,14 +1,22 @@
 /**
  * Billing & Plans E2E Tests
+ *
+ * These tests require a CLIENT role user (not admin) to see the client sidebar
+ * with the "Plan & Limits" button. Uses TEST_CLIENT_EMAIL/TEST_CLIENT_PASSWORD.
  */
 import { test, expect } from '@playwright/test';
 import { loginAndPrepare } from './helpers.js';
 
 test.describe('Billing & Plans', () => {
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  // Skip if client credentials not configured
+  test.skip(() => !process.env.TEST_CLIENT_EMAIL, 'Client test credentials not configured');
 
   test.beforeEach(async ({ page }) => {
-    await loginAndPrepare(page);
+    // Login with CLIENT credentials (not admin)
+    await loginAndPrepare(page, {
+      email: process.env.TEST_CLIENT_EMAIL,
+      password: process.env.TEST_CLIENT_PASSWORD
+    });
   });
 
   test('can access Plan & Limits page', async ({ page }) => {

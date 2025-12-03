@@ -202,10 +202,133 @@ async function main() {
       process.exit(1);
     }
 
-    console.log('\n✓ CI test user seeding complete!');
+    console.log('\n✓ Admin test user seeding complete!');
     console.log(`  User ID: ${userId}`);
     console.log(`  Email: ${testEmail}`);
     console.log(`  Role: admin`);
+
+    // Step 4: Create a CLIENT test user for billing/client UI tests
+    const clientEmail = process.env.TEST_CLIENT_EMAIL;
+    const clientPassword = process.env.TEST_CLIENT_PASSWORD;
+
+    if (clientEmail && clientPassword) {
+      console.log('\n4. Creating client test user...');
+      console.log(`   Client email: ${clientEmail}`);
+
+      // Check if client user exists
+      const clientListResponse = await fetch(`${supabaseUrl}/auth/v1/admin/users?page=1&per_page=50`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${serviceRoleKey}`,
+          'apikey': serviceRoleKey,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (clientListResponse.ok) {
+        const { users: allUsers } = await clientListResponse.json();
+        const existingClient = allUsers?.find(u => u.email === clientEmail);
+
+        let clientUserId;
+
+        if (existingClient) {
+          console.log(`   Client user exists with ID: ${existingClient.id}`);
+          clientUserId = existingClient.id;
+
+          // Update password
+          await fetch(`${supabaseUrl}/auth/v1/admin/users/${clientUserId}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${serviceRoleKey}`,
+              'apikey': serviceRoleKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              password: clientPassword,
+              email_confirm: true
+            })
+          });
+        } else {
+          // Create client user
+          const createClientResponse = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${serviceRoleKey}`,
+              'apikey': serviceRoleKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              email: clientEmail,
+              password: clientPassword,
+              email_confirm: true,
+              user_metadata: { full_name: 'CI Client User' }
+            })
+          });
+
+          if (createClientResponse.ok) {
+            const newClient = await createClientResponse.json();
+            clientUserId = newClient.id;
+            console.log(`   Created client user with ID: ${clientUserId}`);
+          } else {
+            console.warn('   Warning: Could not create client user');
+          }
+        }
+
+        // Ensure client profile exists with role 'client'
+        if (clientUserId) {
+          const clientProfileResponse = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${clientUserId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${serviceRoleKey}`,
+              'apikey': serviceRoleKey,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (clientProfileResponse.ok) {
+            const clientProfiles = await clientProfileResponse.json();
+            if (clientProfiles.length === 0) {
+              // Create profile
+              await fetch(`${supabaseUrl}/rest/v1/profiles`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${serviceRoleKey}`,
+                  'apikey': serviceRoleKey,
+                  'Content-Type': 'application/json',
+                  'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                  id: clientUserId,
+                  email: clientEmail,
+                  full_name: 'CI Client User',
+                  role: 'client'
+                })
+              });
+              console.log('   Client profile created');
+            } else if (clientProfiles[0].role !== 'client') {
+              // Update role to client
+              await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${clientUserId}`, {
+                method: 'PATCH',
+                headers: {
+                  'Authorization': `Bearer ${serviceRoleKey}`,
+                  'apikey': serviceRoleKey,
+                  'Content-Type': 'application/json',
+                  'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({ role: 'client' })
+              });
+              console.log('   Client profile role updated');
+            }
+          }
+
+          console.log('   ✓ Client test user ready');
+        }
+      }
+    } else {
+      console.log('\n4. Skipping client user (TEST_CLIENT_EMAIL/TEST_CLIENT_PASSWORD not set)');
+    }
+
+    console.log('\n✓ All test users seeding complete!');
 
   } catch (error) {
     console.error('\n✗ Error seeding test user:', error.message);
