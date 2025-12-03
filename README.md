@@ -61,8 +61,10 @@ We welcome contributions! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for:
 - **Health Check**: `GET /api/health` returns status, version, and timestamp
 - **Error Boundary**: Global error boundary with centralized logging
 - **Smoke Tests**: Critical-path E2E tests in `tests/e2e/smoke.spec.js`
+- **Performance Tests**: Bundle size and load time verification in `tests/e2e/performance.spec.js`
 - **Browser Logging**: Frontend errors are captured and forwarded to `/api/logs/browser`
 - **CI Pipeline**: GitHub Actions runs unit/integration + E2E jobs in parallel on every PR
+- **Code Splitting**: All pages are lazy-loaded for optimal initial bundle size
 
 ## Documentation
 
@@ -76,6 +78,7 @@ We welcome contributions! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for:
 - [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) - How to cut a release
 - [PRODUCTION_RUNBOOK.md](PRODUCTION_RUNBOOK.md) - Operating the system
 - [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md) - Handling incidents
+- [PERFORMANCE_BUDGET.md](PERFORMANCE_BUDGET.md) - Performance targets and optimization
 
 ## License
 

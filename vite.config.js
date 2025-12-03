@@ -1,9 +1,20 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Bundle analyzer - generates reports in /perf-reports
+    visualizer({
+      filename: 'perf-reports/bundle-stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+      template: 'treemap', // or 'sunburst', 'network'
+    }),
+  ],
   build: {
     // Increase warning limit since we have intentionally large pages
     chunkSizeWarningLimit: 600,
@@ -17,6 +28,10 @@ export default defineConfig({
           'vendor-supabase': ['@supabase/supabase-js'],
           // UI icons (large, rarely changes)
           'vendor-icons': ['lucide-react'],
+          // Animation library (load on-demand)
+          'vendor-motion': ['framer-motion'],
+          // QR code generation (used for screen pairing)
+          'vendor-qrcode': ['qrcode'],
         },
       },
     },
