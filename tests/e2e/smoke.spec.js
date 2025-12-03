@@ -94,8 +94,9 @@ test.describe('Production Smoke Tests', () => {
       // Should not show error boundary
       await expect(page.locator('body')).not.toContainText('Something Went Wrong');
 
-      // Should show screens heading
-      await expect(page.getByRole('heading', { name: /screens/i })).toBeVisible({ timeout: 5000 });
+      // Should show main content and screens heading (longer timeout for CI)
+      await expect(page.locator('main')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('heading', { name: /screens/i })).toBeVisible({ timeout: 10000 });
     });
 
     test('playlists page loads via URL', async ({ page }) => {
@@ -105,8 +106,9 @@ test.describe('Production Smoke Tests', () => {
       // Should not show error boundary
       await expect(page.locator('body')).not.toContainText('Something Went Wrong');
 
-      // Should show playlists heading
-      await expect(page.getByRole('heading', { name: /playlists/i })).toBeVisible({ timeout: 5000 });
+      // Should show main content and playlists heading (longer timeout for CI)
+      await expect(page.locator('main')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('heading', { name: /playlists/i })).toBeVisible({ timeout: 10000 });
     });
   });
 
