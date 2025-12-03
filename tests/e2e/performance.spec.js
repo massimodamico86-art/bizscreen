@@ -11,7 +11,7 @@
  * - JavaScript bundle: < 500KB total (gzipped)
  */
 
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 // Helper to get performance metrics from the browser
 async function getPerformanceMetrics(page) {
