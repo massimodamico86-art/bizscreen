@@ -25,9 +25,9 @@ test.describe('Screen Assignments', () => {
   test('can navigate to screens page', async ({ page }) => {
     await navigateToSection(page, 'screens');
 
-    // Should show screens page - look for heading in main content, not sidebar
+    // Should show screens page - look for h1 with "Screens" text in main content
     const mainContent = page.locator('main');
-    await expect(mainContent.getByRole('heading', { name: /screens/i })).toBeVisible({ timeout: 5000 });
+    await expect(mainContent.locator('h1:has-text("Screens")')).toBeVisible({ timeout: 5000 });
   });
 
   test('shows Add Screen button', async ({ page }) => {
