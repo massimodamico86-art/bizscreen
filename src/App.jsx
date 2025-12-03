@@ -48,7 +48,7 @@ import { LoginPage } from './pages';
 import AnnouncementBanner from './components/AnnouncementBanner';
 import AnnouncementCenter from './components/AnnouncementCenter';
 import FeedbackWidget from './components/FeedbackWidget';
-import { I18nProvider, useTranslation } from './i18n';
+import { useTranslation } from './i18n';
 
 // Lazy load pages for better code splitting
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
@@ -93,14 +93,12 @@ const ResellerBillingPage = lazy(() => import('./pages/ResellerBillingPage'));
 const ServiceQualityPage = lazy(() => import('./pages/ServiceQualityPage'));
 const FeatureFlagsPage = lazy(() => import('./pages/FeatureFlagsPage'));
 
-// Main app wrapper with I18nProvider and BrandingProvider
+// Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
 export default function BizScreenApp() {
   return (
-    <I18nProvider>
-      <BrandingProvider>
-        <BizScreenAppInner />
-      </BrandingProvider>
-    </I18nProvider>
+    <BrandingProvider>
+      <BizScreenAppInner />
+    </BrandingProvider>
   );
 }
 
