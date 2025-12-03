@@ -49,6 +49,9 @@ import AnnouncementBanner from './components/AnnouncementBanner';
 import AnnouncementCenter from './components/AnnouncementCenter';
 import FeedbackWidget from './components/FeedbackWidget';
 import { useTranslation } from './i18n';
+import { useFeatureFlags } from './hooks/useFeatureFlag';
+import { Feature } from './config/plans';
+import { FeatureGate, FeatureUpgradePrompt } from './components/FeatureGate';
 
 // Lazy load pages for better code splitting
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
@@ -106,6 +109,22 @@ function BizScreenAppInner() {
   const { user, loading: authLoading, signOut, userProfile: authUserProfile } = useAuth();
   const { branding, isImpersonating, impersonatedClient, refreshBranding } = useBranding();
   const { t } = useTranslation();
+
+  // Feature flags for gating premium features
+  const featureFlags = useFeatureFlags([
+    Feature.AI_ASSISTANT,
+    Feature.CAMPAIGNS,
+    Feature.ADVANCED_ANALYTICS,
+    Feature.SCREEN_GROUPS,
+    Feature.ADVANCED_SCHEDULING,
+    Feature.ENTERPRISE_SSO,
+    Feature.RESELLER_PORTAL,
+    Feature.API_ACCESS,
+    Feature.WEBHOOKS,
+    Feature.WHITE_LABEL,
+    Feature.AUDIT_LOGS,
+  ]);
+
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [toast, setToast] = useState(null);
   const [listings, setListings] = useState([]);
@@ -338,7 +357,7 @@ function BizScreenAppInner() {
   // Media submenu state
   const [mediaExpanded, setMediaExpanded] = useState(false);
 
-  // Yodeck-style navigation with i18n
+  // Yodeck-style navigation with i18n and feature gating
   const navigation = [
     { id: 'dashboard', label: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard },
     {
@@ -360,14 +379,14 @@ function BizScreenAppInner() {
     { id: 'layouts', label: t('nav.layouts', 'Layouts'), icon: Layout },
     { id: 'schedules', label: t('nav.schedules', 'Schedules'), icon: Calendar },
     { id: 'templates', label: t('nav.templates', 'Templates'), icon: LayoutTemplate },
-    { id: 'assistant', label: t('nav.aiAssistant', 'AI Assistant'), icon: Wand2 },
+    { id: 'assistant', label: t('nav.aiAssistant', 'AI Assistant'), icon: Wand2, feature: Feature.AI_ASSISTANT, tier: 'Pro' },
     { id: 'screens', label: t('nav.screens', 'Screens'), icon: Monitor },
-    { id: 'screen-groups', label: t('nav.screenGroups', 'Screen Groups'), icon: Users },
+    { id: 'screen-groups', label: t('nav.screenGroups', 'Screen Groups'), icon: Users, feature: Feature.SCREEN_GROUPS, tier: 'Starter' },
     { id: 'locations', label: t('nav.locations', 'Locations'), icon: MapPin },
-    { id: 'campaigns', label: t('nav.campaigns', 'Campaigns'), icon: Zap },
+    { id: 'campaigns', label: t('nav.campaigns', 'Campaigns'), icon: Zap, feature: Feature.CAMPAIGNS, tier: 'Pro' },
     { id: 'review-inbox', label: t('nav.reviewInbox', 'Review Inbox'), icon: Inbox },
-    { id: 'analytics', label: t('nav.analytics', 'Analytics'), icon: BarChart3 },
-    { id: 'activity', label: t('nav.activityLog', 'Activity Log'), icon: Activity },
+    { id: 'analytics', label: t('nav.analytics', 'Analytics'), icon: BarChart3, feature: Feature.ADVANCED_ANALYTICS, tier: 'Pro' },
+    { id: 'activity', label: t('nav.activityLog', 'Activity Log'), icon: Activity, feature: Feature.AUDIT_LOGS, tier: 'Enterprise' },
     // Legacy pages (hidden but accessible)
     // { id: 'listings', label: 'Locations', icon: Building2 },
   ];
@@ -419,22 +438,22 @@ function BizScreenAppInner() {
     'activity': <Suspense fallback={<PageLoader />}><ActivityLogPage /></Suspense>,
     'locations': <Suspense fallback={<PageLoader />}><LocationsPage showToast={showToast} /></Suspense>,
     'team': <Suspense fallback={<PageLoader />}><TeamPage showToast={showToast} /></Suspense>,
-    'analytics': <Suspense fallback={<PageLoader />}><AnalyticsPage showToast={showToast} /></Suspense>,
+    'analytics': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsPage showToast={showToast} /></FeatureGate></Suspense>,
     'templates': <Suspense fallback={<PageLoader />}><TemplatesPage showToast={showToast} /></Suspense>,
-    'assistant': <Suspense fallback={<PageLoader />}><ContentAssistantPage showToast={showToast} /></Suspense>,
-    'screen-groups': <Suspense fallback={<PageLoader />}><ScreenGroupsPage showToast={showToast} /></Suspense>,
-    'campaigns': <Suspense fallback={<PageLoader />}><CampaignsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'assistant': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.AI_ASSISTANT} fallback={<FeatureUpgradePrompt feature={Feature.AI_ASSISTANT} onNavigate={() => setCurrentPage('account-plan')} />}><ContentAssistantPage showToast={showToast} /></FeatureGate></Suspense>,
+    'screen-groups': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.SCREEN_GROUPS} fallback={<FeatureUpgradePrompt feature={Feature.SCREEN_GROUPS} onNavigate={() => setCurrentPage('account-plan')} />}><ScreenGroupsPage showToast={showToast} /></FeatureGate></Suspense>,
+    'campaigns': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.CAMPAIGNS} fallback={<FeatureUpgradePrompt feature={Feature.CAMPAIGNS} onNavigate={() => setCurrentPage('account-plan')} />}><CampaignsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'review-inbox': <Suspense fallback={<PageLoader />}><ReviewInboxPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'developer': <Suspense fallback={<PageLoader />}><DeveloperSettingsPage showToast={showToast} /></Suspense>,
-    'white-label': <Suspense fallback={<PageLoader />}><WhiteLabelSettingsPage showToast={showToast} /></Suspense>,
+    'developer': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.API_ACCESS} fallback={<FeatureUpgradePrompt feature={Feature.API_ACCESS} onNavigate={() => setCurrentPage('account-plan')} />}><DeveloperSettingsPage showToast={showToast} /></FeatureGate></Suspense>,
+    'white-label': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.WHITE_LABEL} fallback={<FeatureUpgradePrompt feature={Feature.WHITE_LABEL} onNavigate={() => setCurrentPage('account-plan')} />}><WhiteLabelSettingsPage showToast={showToast} /></FeatureGate></Suspense>,
     'status': <Suspense fallback={<PageLoader />}><StatusPage /></Suspense>,
     'ops-console': <Suspense fallback={<PageLoader />}><OpsConsolePage /></Suspense>,
     'tenant-admin': <Suspense fallback={<PageLoader />}><TenantAdminPage showToast={showToast} /></Suspense>,
     'help': <Suspense fallback={<PageLoader />}><HelpCenterPage onNavigate={setCurrentPage} /></Suspense>,
     'demo-tools': <Suspense fallback={<PageLoader />}><DemoToolsPage showToast={showToast} /></Suspense>,
-    'enterprise-security': <Suspense fallback={<PageLoader />}><EnterpriseSecurityPage showToast={showToast} /></Suspense>,
-    'reseller-dashboard': <Suspense fallback={<PageLoader />}><ResellerDashboardPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'reseller-billing': <Suspense fallback={<PageLoader />}><ResellerBillingPage showToast={showToast} /></Suspense>,
+    'enterprise-security': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ENTERPRISE_SSO} fallback={<FeatureUpgradePrompt feature={Feature.ENTERPRISE_SSO} onNavigate={() => setCurrentPage('account-plan')} />}><EnterpriseSecurityPage showToast={showToast} /></FeatureGate></Suspense>,
+    'reseller-dashboard': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerDashboardPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
+    'reseller-billing': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerBillingPage showToast={showToast} /></FeatureGate></Suspense>,
     'service-quality': <Suspense fallback={<PageLoader />}><ServiceQualityPage /></Suspense>,
     'feature-flags': <Suspense fallback={<PageLoader />}><FeatureFlagsPage /></Suspense>
   };
@@ -630,6 +649,11 @@ function BizScreenAppInner() {
             const isActive = currentPage === item.id || (item.subItems && item.subItems.some(sub => sub.id === currentPage));
             const isExpanded = item.expandable && (mediaExpanded || item.subItems?.some(sub => sub.id === currentPage));
 
+            // Check if feature is enabled (if item has a feature requirement)
+            const isFeatureEnabled = !item.feature || featureFlags[item.feature];
+            const isSuperAdmin = authUserProfile?.role === 'super_admin';
+            const canAccess = isFeatureEnabled || isSuperAdmin;
+
             if (item.expandable) {
               return (
                 <div key={item.id}>
@@ -681,16 +705,24 @@ function BizScreenAppInner() {
             return (
               <button
                 key={item.id}
-                onClick={() => setCurrentPage(item.id)}
+                onClick={() => canAccess ? setCurrentPage(item.id) : null}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
                   isActive
                     ? 'text-white font-medium shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    : canAccess
+                      ? 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      : 'text-gray-400 cursor-not-allowed opacity-60'
                 }`}
                 style={isActive ? { backgroundColor: branding.primaryColor } : {}}
+                title={!canAccess ? `Upgrade to ${item.tier} plan to access this feature` : ''}
               >
-                <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
-                <span className="text-sm">{item.label}</span>
+                <Icon size={18} className={isActive ? '' : canAccess ? 'text-gray-400' : 'text-gray-300'} />
+                <span className="text-sm flex-1">{item.label}</span>
+                {item.tier && !canAccess && (
+                  <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded font-medium">
+                    {item.tier}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -780,8 +812,8 @@ function BizScreenAppInner() {
             </>
           )}
 
-          {/* Enterprise Security */}
-          {(userProfile?.subscription_tier === 'pro' || userProfile?.subscription_tier === 'enterprise' || userProfile?.role === 'super_admin') && (
+          {/* Enterprise Security - gated by feature flag */}
+          {(featureFlags[Feature.ENTERPRISE_SSO] || authUserProfile?.role === 'super_admin') && (
             <button
               onClick={() => setCurrentPage('enterprise-security')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
@@ -794,8 +826,8 @@ function BizScreenAppInner() {
             </button>
           )}
 
-          {/* Service Quality */}
-          {(userProfile?.role === 'admin' || userProfile?.role === 'super_admin' || userProfile?.subscription_tier === 'enterprise') && (
+          {/* Service Quality - gated by admin role or enterprise plan */}
+          {(userProfile?.role === 'admin' || authUserProfile?.role === 'super_admin' || featureFlags[Feature.ENTERPRISE_SSO]) && (
             <button
               onClick={() => setCurrentPage('service-quality')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
@@ -820,8 +852,8 @@ function BizScreenAppInner() {
             <span className="text-sm">{t('nav.helpCenter', 'Help Center')}</span>
           </button>
 
-          {/* Reseller Portal */}
-          {(userProfile?.is_reseller || authUserProfile?.role === 'super_admin') && (
+          {/* Reseller Portal - gated by feature flag */}
+          {(featureFlags[Feature.RESELLER_PORTAL] || authUserProfile?.role === 'super_admin') && (
             <button
               onClick={() => setCurrentPage('reseller-dashboard')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${

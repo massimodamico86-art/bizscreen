@@ -248,6 +248,90 @@ Run tests:
 npm run test:unit -- tests/unit/config
 ```
 
+## Wired Features (Phase 15)
+
+The following features are currently gated with the feature flag system:
+
+| Feature | Key | Plan Required | UI Location | API Protection |
+|---------|-----|---------------|-------------|----------------|
+| AI Assistant | `ai_assistant` | Pro | Navigation + Page | `/api/ai/generate` |
+| Campaigns | `campaigns` | Pro | Navigation + Page | - |
+| Advanced Analytics | `advanced_analytics` | Pro | Navigation + Page | - |
+| Screen Groups | `screen_groups` | Starter | Navigation + Page | - |
+| Developer Settings | `api_access` | Pro | Page | - |
+| White-Label | `white_label` | Enterprise | Page | - |
+| Enterprise Security | `enterprise_sso` | Enterprise | Navigation + Page | - |
+| Reseller Portal | `reseller_portal` | Reseller | Navigation + Page | `/api/reseller/clients` |
+| Activity Log | `audit_logs` | Enterprise | Navigation | - |
+
+### How to Toggle Features
+
+**For a specific tenant (database override):**
+```sql
+-- Enable AI Assistant for a FREE plan tenant
+INSERT INTO feature_flag_overrides (tenant_id, feature_flag_id, enabled)
+SELECT 'tenant-uuid', id, true
+FROM feature_flags
+WHERE key = 'feature.ai_assistant';
+```
+
+**Via Debug Panel (dev mode only):**
+1. Navigate to Admin → Feature Flags → Debug tab
+2. Use the Plan Simulator to test different plan levels
+3. Click "Override" on specific features for local testing
+
+## How to Gate a New Feature (Checklist)
+
+1. **Add feature key** to `src/config/plans.js`:
+   ```javascript
+   export const Feature = {
+     // ...existing
+     MY_NEW_FEATURE: 'my_new_feature',
+   };
+   ```
+
+2. **Add to appropriate plans** in `src/config/plans.js`:
+   ```javascript
+   [PlanSlug.PRO]: {
+     features: [
+       // ...existing
+       Feature.MY_NEW_FEATURE,
+     ],
+   },
+   ```
+
+3. **Add server-side mapping** in `api/lib/featureCheck.js`:
+   ```javascript
+   const PLAN_FEATURES = {
+     [PlanSlug.PRO]: [
+       // ...existing
+       'my_new_feature',
+     ],
+   };
+   ```
+
+4. **Gate in UI** using one of these methods:
+   ```jsx
+   // Option A: FeatureGate component
+   <FeatureGate feature={Feature.MY_NEW_FEATURE}>
+     <MyComponent />
+   </FeatureGate>
+
+   // Option B: useFeatureFlag hook
+   const hasFeature = useFeatureFlag(Feature.MY_NEW_FEATURE);
+   if (!hasFeature) return <UpgradePrompt />;
+   ```
+
+5. **Gate in API** (if applicable):
+   ```javascript
+   import { checkFeatureOrThrow } from '../lib/featureCheck.js';
+
+   export default async function handler(req, res) {
+     await checkFeatureOrThrow(req, 'my_new_feature');
+     // ...rest of handler
+   }
+   ```
+
 ## Best Practices
 
 1. **Always check on the server** - Client-side checks are for UX, server-side checks are for security
@@ -255,3 +339,4 @@ npm run test:unit -- tests/unit/config
 3. **Provide fallbacks** - Always handle the disabled case gracefully
 4. **Consider upgrade prompts** - Guide users to upgrade when appropriate
 5. **Document new features** - Update this guide when adding features
+6. **Super admins bypass all checks** - Use for testing and support purposes
