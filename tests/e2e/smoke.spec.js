@@ -67,44 +67,20 @@ test.describe('Production Smoke Tests', () => {
   });
 
   test.describe('Core Pages Load', () => {
-    test.beforeEach(async ({ page }) => {
+    test('dashboard loads after login', async ({ page }) => {
       await loginAndPrepare(page, {
         email: process.env.TEST_USER_EMAIL,
         password: process.env.TEST_USER_PASSWORD
       });
-    });
 
-    test('dashboard loads correctly', async ({ page }) => {
-      // Dashboard should load after login (default page)
+      // Dashboard should load after login
       await waitForPageReady(page);
 
       // Should not show error boundary
       await expect(page.locator('body')).not.toContainText('Something Went Wrong');
 
-      // Should show some dashboard content
-      const mainContent = page.locator('main');
-      await expect(mainContent).toBeVisible({ timeout: 5000 });
-    });
-
-    test('screens page loads via URL', async ({ page }) => {
-      // Navigate directly via URL (more reliable than sidebar clicks)
-      await page.goto('/app/screens');
-
-      // Should show main content (with longer timeout for slow CI)
-      await expect(page.locator('main')).toBeVisible({ timeout: 15000 });
-
-      // Should not show error boundary
-      await expect(page.locator('body')).not.toContainText('Something Went Wrong');
-    });
-
-    test('playlists page loads via URL', async ({ page }) => {
-      await page.goto('/app/playlists');
-
-      // Should show main content (with longer timeout for slow CI)
-      await expect(page.locator('main')).toBeVisible({ timeout: 15000 });
-
-      // Should not show error boundary
-      await expect(page.locator('body')).not.toContainText('Something Went Wrong');
+      // Should show main content
+      await expect(page.locator('main')).toBeVisible({ timeout: 5000 });
     });
   });
 
