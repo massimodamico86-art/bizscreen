@@ -12,15 +12,19 @@ test.describe('Billing & Plans', () => {
   });
 
   test('can access Plan & Limits page', async ({ page }) => {
-    // Click on Plan & Limits in sidebar
-    await page.getByRole('button', { name: /plan|limits/i }).click();
+    // Click on Plan & Limits in sidebar - use text locator for nested span
+    const planButton = page.locator('button:has-text("Plan & Limits")').first();
+    await planButton.scrollIntoViewIfNeeded();
+    await planButton.click();
 
     // Should show plan information
-    await expect(page.getByText(/plan|subscription|billing/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/plan|subscription|billing/i).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('shows current plan information', async ({ page }) => {
-    await page.getByRole('button', { name: /plan|limits/i }).click();
+    const planButton = page.locator('button:has-text("Plan & Limits")').first();
+    await planButton.scrollIntoViewIfNeeded();
+    await planButton.click();
 
     // Should display plan tier - look for plan name in main content area
     const mainContent = page.locator('main');
@@ -29,7 +33,9 @@ test.describe('Billing & Plans', () => {
   });
 
   test('shows usage limits', async ({ page }) => {
-    await page.getByRole('button', { name: /plan|limits/i }).click();
+    const planButton = page.locator('button:has-text("Plan & Limits")').first();
+    await planButton.scrollIntoViewIfNeeded();
+    await planButton.click();
 
     // Should show usage limits section - look for limit indicators in main content
     const mainContent = page.locator('main');
@@ -38,7 +44,9 @@ test.describe('Billing & Plans', () => {
   });
 
   test('shows upgrade options if on free plan', async ({ page }) => {
-    await page.getByRole('button', { name: /plan|limits/i }).click();
+    const planButton = page.locator('button:has-text("Plan & Limits")').first();
+    await planButton.scrollIntoViewIfNeeded();
+    await planButton.click();
 
     // Should have upgrade button if applicable
     const upgradeButton = page.getByRole('button', { name: /upgrade/i });
@@ -48,9 +56,11 @@ test.describe('Billing & Plans', () => {
   });
 
   test('displays plan comparison', async ({ page }) => {
-    await page.getByRole('button', { name: /plan|limits/i }).click();
+    const planButton = page.locator('button:has-text("Plan & Limits")').first();
+    await planButton.scrollIntoViewIfNeeded();
+    await planButton.click();
 
     // Should show plan features or comparison
-    await expect(page.getByText(/features|included|limits/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/features|included|limits/i).first()).toBeVisible({ timeout: 5000 });
   });
 });
