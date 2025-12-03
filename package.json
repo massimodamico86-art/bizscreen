@@ -16,6 +16,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
+    "test:e2e:retry": "playwright test --retries=3 --repeat-each=2",
     "test:all": "npm run test && npm run test:e2e",
     "test:ci": "npm run test && node scripts/seed-ci-test-user.cjs && npm run test:e2e",
     "test:ci:local": "npm run test && npm run test:e2e"

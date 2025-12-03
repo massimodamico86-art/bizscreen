@@ -69,6 +69,9 @@ npm run test:e2e:ui
 
 # Run E2E tests in headed mode (see browser)
 npm run test:e2e:headed
+
+# Run E2E tests with flake detection (multiple retries and repeats)
+npm run test:e2e:retry
 ```
 
 ### All Tests (CI Mode)
@@ -246,22 +249,48 @@ PLAYWRIGHT_BASE_URL=http://localhost:5173
 
 ## CI Behavior
 
+### Parallel Job Structure
+
+CI runs two jobs in parallel for faster feedback:
+
+1. **`unit_integration`** (~1-2 minutes)
+   - Runs unit and integration tests via Vitest
+   - Fast feedback on code correctness
+   - Caches node_modules for speed
+
+2. **`e2e`** (~3-5 minutes)
+   - Runs Playwright E2E tests
+   - Requires Supabase test data preparation
+   - Caches Playwright browsers
+   - Uses 2 parallel workers in CI
+
 ### On Every Push/PR
 
-1. **Unit Tests**: Run immediately after lint
-2. **Integration Tests**: Run immediately after lint
-3. **Coverage Report**: Generated and uploaded as artifact
+Both jobs run in parallel:
+- **Unit/Integration Job**: Installs deps, runs `npm test -- --run`
+- **E2E Job**: Installs deps + Playwright, seeds test data, runs E2E tests
 
-### Build-Dependent Tests
+### Artifacts
 
-1. **E2E Tests**: Run after build completes
-2. **Playwright Report**: Uploaded on failure
+On failure, the following artifacts are uploaded:
+- `playwright-report/` - HTML report with screenshots
+- `test-results/` - Raw test results and traces
 
 ### Deployment Gates
 
-- Preview deploys require: build + unit tests + integration tests + E2E tests
-- Staging deploys require: build + unit tests + integration tests + E2E tests
-- Production deploys require: build + all tests + security audit
+- Preview deploys require: unit tests + integration tests + E2E tests (all green)
+- Staging deploys require: unit tests + integration tests + E2E tests (all green)
+- Production deploys require: all tests + security audit
+
+### Flake Detection
+
+Use the flake detection script to identify unreliable tests:
+
+```bash
+npm run test:e2e:retry
+```
+
+This runs each test twice with 3 retries. If a test fails intermittently, it's flagged as flaky.
 
 ## Coverage Thresholds
 

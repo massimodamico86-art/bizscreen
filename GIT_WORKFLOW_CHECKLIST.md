@@ -16,8 +16,17 @@
 - [ ] Run tests:
   - `npm test` (unit/integration)
   - `npm run test:e2e` (E2E with Playwright)
+  - `npm run test:e2e:retry` (optional: detect flaky tests)
 - [ ] `git diff` and review changes
 - [ ] `git push -u origin feature/<short-descriptive-name>`
+
+## CI Pipeline
+
+After pushing, two CI jobs run **in parallel**:
+1. **Unit & Integration Tests** (~1-2 min) - fast feedback
+2. **E2E Tests** (~3-5 min) - full browser tests
+
+Both must pass for the PR to be merge-ready.
 
 ## Creating a PR
 - [ ] Open PR: `feature/<name>` → `main`

@@ -19,8 +19,8 @@ export default defineConfig({
   // Retry on CI only
   retries: process.env.CI ? 2 : 0,
 
-  // Limit parallel workers on CI
-  workers: process.env.CI ? 1 : undefined,
+  // Limit parallel workers on CI (2 workers for better parallelization)
+  workers: process.env.CI ? 2 : undefined,
 
   // Reporter to use
   reporter: [
@@ -65,6 +65,6 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000
+    timeout: 90 * 1000  // 90 seconds (reduced from 120s for faster CI)
   }
 });
