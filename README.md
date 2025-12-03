@@ -56,6 +56,13 @@ We welcome contributions! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for:
 - **Testing**: Vitest, Playwright
 - **CI/CD**: GitHub Actions
 
+## Production Readiness
+
+- **Health Check**: `GET /api/health` returns status, version, and timestamp
+- **Error Boundary**: Global error boundary with centralized logging
+- **Smoke Tests**: Critical-path E2E tests run on every CI build
+- **Browser Logging**: Frontend errors are captured and forwarded to `/api/logs/browser`
+
 ## Documentation
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contributor guide

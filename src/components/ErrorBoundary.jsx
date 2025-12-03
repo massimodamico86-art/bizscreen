@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { logError } from '../utils/logger';
 
 export class ErrorBoundary extends Component {
   constructor(props) {
@@ -11,10 +12,12 @@ export class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-
-    // You can also log the error to an error reporting service here
-    // Example: logErrorToService(error, errorInfo);
+    // Log to centralized logger (will report to backend in production)
+    logError(error, {
+      componentStack: errorInfo?.componentStack,
+      source: 'ErrorBoundary',
+      severe: true
+    });
   }
 
   render() {
@@ -28,15 +31,9 @@ export class ErrorBoundary extends Component {
               </svg>
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Something Went Wrong</h2>
-            <p className="text-gray-600 mb-4">
-              {this.state.error?.message || 'An unexpected error occurred'}
+            <p className="text-gray-600 mb-6">
+              We encountered an unexpected error. Please try refreshing the page.
             </p>
-            <div className="bg-gray-100 rounded p-4 mb-4 text-left">
-              <p className="text-sm text-gray-700 font-mono mb-2">Error Details:</p>
-              <p className="text-xs text-gray-600 font-mono break-all">
-                {this.state.error?.stack?.split('\n')[0] || 'No stack trace available'}
-              </p>
-            </div>
             <div className="flex gap-2">
               <button
                 onClick={() => window.location.reload()}

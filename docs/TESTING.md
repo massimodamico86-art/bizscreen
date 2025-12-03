@@ -254,8 +254,23 @@ PLAYWRIGHT_BASE_URL=http://localhost:5173
 
 ### Build-Dependent Tests
 
-1. **E2E Tests**: Run after build completes
+1. **E2E Tests**: Run after build completes (includes smoke tests)
 2. **Playwright Report**: Uploaded on failure
+
+### Production Smoke Tests
+
+The smoke test suite (`tests/e2e/smoke.spec.js`) verifies critical paths are working:
+
+- **Application Health**: App loads without fatal errors, static assets load correctly
+- **Authentication Flow**: Login completes successfully
+- **Core Navigation**: Dashboard, media library, screens, and playlists are accessible
+- **Error Handling**: No JavaScript errors in console on main pages
+- **UI Responsiveness**: Sidebar navigation and button interactions work
+
+Smoke tests run as part of the E2E job and are designed to:
+- Complete quickly (< 60 seconds total)
+- Fail fast on critical issues
+- Skip gracefully when test credentials aren't configured
 
 ### Deployment Gates
 

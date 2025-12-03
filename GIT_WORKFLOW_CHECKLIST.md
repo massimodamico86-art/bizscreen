@@ -15,9 +15,21 @@
 ## Before pushing
 - [ ] Run tests:
   - `npm test` (unit/integration)
-  - `npm run test:e2e` (E2E with Playwright)
+  - `npm run test:e2e` (E2E with Playwright, includes smoke tests)
 - [ ] `git diff` and review changes
 - [ ] `git push -u origin feature/<short-descriptive-name>`
+
+## CI Pipeline
+
+The CI workflow runs two parallel jobs on every push/PR to `main`:
+
+1. **Unit & Integration Tests** (~1-2 min) - Fast feedback on code logic
+2. **E2E Tests** (~5-10 min) - Full browser tests including production smoke tests
+
+Both jobs must pass before merging. The smoke tests (`smoke.spec.js`) verify critical paths:
+- App loads without errors
+- Authentication works
+- Core navigation is accessible
 
 ## Creating a PR
 - [ ] Open PR: `feature/<name>` → `main`
