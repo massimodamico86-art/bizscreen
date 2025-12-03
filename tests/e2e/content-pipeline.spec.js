@@ -61,7 +61,9 @@ test.describe('Content Pipeline', () => {
     test('can access layouts page', async ({ page }) => {
       await page.getByRole('button', { name: /layouts/i }).click();
 
-      await expect(page.getByText(/layouts/i)).toBeVisible({ timeout: 5000 });
+      // Use heading role to avoid matching sidebar button and count text
+      const mainContent = page.locator('main');
+      await expect(mainContent.getByRole('heading', { name: /layouts/i })).toBeVisible({ timeout: 5000 });
     });
 
     test('can create a new layout', async ({ page }) => {
@@ -85,7 +87,9 @@ test.describe('Content Pipeline', () => {
     test('can access schedules page', async ({ page }) => {
       await page.getByRole('button', { name: /schedules/i }).click();
 
-      await expect(page.getByText(/schedules/i)).toBeVisible({ timeout: 5000 });
+      // Use heading role to avoid matching sidebar button
+      const mainContent = page.locator('main');
+      await expect(mainContent.getByRole('heading', { name: /schedules/i })).toBeVisible({ timeout: 5000 });
     });
   });
 
@@ -93,7 +97,9 @@ test.describe('Content Pipeline', () => {
     test('can access screens page', async ({ page }) => {
       await page.getByRole('button', { name: /screens/i }).click();
 
-      await expect(page.getByText(/screens/i)).toBeVisible({ timeout: 5000 });
+      // Use heading role to avoid matching sidebar button
+      const mainContent = page.locator('main');
+      await expect(mainContent.getByRole('heading', { name: /screens/i })).toBeVisible({ timeout: 5000 });
     });
 
     test('shows screen pairing option', async ({ page }) => {
