@@ -38,6 +38,7 @@ import {
   Shield,
   Briefcase,
   Flag,
+  Gauge,
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { BrandingProvider, useBranding } from './contexts/BrandingContext';
@@ -95,6 +96,11 @@ const ResellerDashboardPage = lazy(() => import('./pages/ResellerDashboardPage')
 const ResellerBillingPage = lazy(() => import('./pages/ResellerBillingPage'));
 const ServiceQualityPage = lazy(() => import('./pages/ServiceQualityPage'));
 const FeatureFlagsPage = lazy(() => import('./pages/FeatureFlagsPage'));
+const UsageDashboardPage = lazy(() => import('./pages/UsageDashboardPage'));
+const AdminTenantsListPage = lazy(() => import('./pages/Admin/AdminTenantsListPage'));
+const AdminTenantDetailPage = lazy(() => import('./pages/Admin/AdminTenantDetailPage'));
+const AdminAuditLogsPage = lazy(() => import('./pages/Admin/AdminAuditLogsPage'));
+const AdminSystemEventsPage = lazy(() => import('./pages/Admin/AdminSystemEventsPage'));
 
 // Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
 export default function BizScreenApp() {
@@ -123,6 +129,7 @@ function BizScreenAppInner() {
     Feature.WEBHOOKS,
     Feature.WHITE_LABEL,
     Feature.AUDIT_LOGS,
+    Feature.USAGE_DASHBOARD,
   ]);
 
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -455,7 +462,11 @@ function BizScreenAppInner() {
     'reseller-dashboard': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerDashboardPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'reseller-billing': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerBillingPage showToast={showToast} /></FeatureGate></Suspense>,
     'service-quality': <Suspense fallback={<PageLoader />}><ServiceQualityPage /></Suspense>,
-    'feature-flags': <Suspense fallback={<PageLoader />}><FeatureFlagsPage /></Suspense>
+    'feature-flags': <Suspense fallback={<PageLoader />}><FeatureFlagsPage /></Suspense>,
+    'usage': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.USAGE_DASHBOARD} fallback={<FeatureUpgradePrompt feature={Feature.USAGE_DASHBOARD} onNavigate={() => setCurrentPage('account-plan')} />}><UsageDashboardPage showToast={showToast} /></FeatureGate></Suspense>,
+    'admin-tenants': <Suspense fallback={<PageLoader />}><AdminTenantsListPage onNavigate={setCurrentPage} showToast={showToast} /></Suspense>,
+    'admin-audit-logs': <Suspense fallback={<PageLoader />}><AdminAuditLogsPage onBack={() => setCurrentPage('admin-tenants')} showToast={showToast} /></Suspense>,
+    'admin-system-events': <Suspense fallback={<PageLoader />}><AdminSystemEventsPage onBack={() => setCurrentPage('admin-tenants')} showToast={showToast} /></Suspense>,
   };
 
   // Show password reset page if user clicked reset link
@@ -736,6 +747,9 @@ function BizScreenAppInner() {
               <p className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wider">{t('nav.admin', 'Admin')}</p>
               {[
                 { id: 'clients', label: t('nav.clients', 'Clients'), icon: Users },
+                { id: 'admin-tenants', label: t('nav.adminTenants', 'Admin Panel'), icon: Shield },
+                { id: 'admin-audit-logs', label: t('nav.auditLogs', 'Audit Logs'), icon: FileText },
+                { id: 'admin-system-events', label: t('nav.systemEvents', 'System Events'), icon: Activity },
                 { id: 'status', label: t('nav.systemStatus', 'System Status'), icon: Server },
                 { id: 'ops-console', label: t('nav.opsConsole', 'Ops Console'), icon: Wrench },
                 { id: 'tenant-admin', label: t('nav.tenants', 'Tenants'), icon: Building2 },
@@ -765,23 +779,37 @@ function BizScreenAppInner() {
           <p className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wider mt-2">{t('nav.settings', 'Settings')}</p>
           {[
             { id: 'account-plan', label: t('nav.planAndLimits', 'Plan & Limits'), icon: CreditCard },
+            { id: 'usage', label: t('nav.usage', 'Usage & Quotas'), icon: Gauge, feature: Feature.USAGE_DASHBOARD, tier: 'Starter' },
             { id: 'team', label: t('nav.team', 'Team'), icon: UsersRound },
             { id: 'branding', label: t('nav.branding', 'Branding'), icon: Palette },
             { id: 'settings', label: t('nav.settings', 'Settings'), icon: Settings },
           ].map(item => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
+            const isFeatureEnabled = !item.feature || featureFlags[item.feature];
+            const isSuperAdmin = authUserProfile?.role === 'super_admin';
+            const canAccess = isFeatureEnabled || isSuperAdmin;
             return (
               <button
                 key={item.id}
-                onClick={() => setCurrentPage(item.id)}
+                onClick={() => canAccess ? setCurrentPage(item.id) : null}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
-                  isActive ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  isActive
+                    ? 'text-white font-medium shadow-sm'
+                    : canAccess
+                      ? 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      : 'text-gray-400 cursor-not-allowed opacity-60'
                 }`}
                 style={isActive ? { backgroundColor: branding.primaryColor } : {}}
+                title={!canAccess ? `Upgrade to ${item.tier} plan to access this feature` : ''}
               >
-                <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
-                <span className="text-sm">{item.label}</span>
+                <Icon size={18} className={isActive ? '' : canAccess ? 'text-gray-400' : 'text-gray-300'} />
+                <span className="text-sm flex-1">{item.label}</span>
+                {item.tier && !canAccess && (
+                  <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded font-medium">
+                    {item.tier}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -925,6 +953,14 @@ function BizScreenAppInner() {
               <Suspense fallback={<PageLoader />}>
                 <CampaignEditorPage
                   campaignId={currentPage.replace('campaign-editor-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('admin-tenant-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <AdminTenantDetailPage
+                  tenantId={currentPage.replace('admin-tenant-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />

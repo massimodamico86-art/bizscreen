@@ -2,8 +2,12 @@
  * Usage Dashboard E2E Tests
  * Phase 16: End-to-end tests for usage dashboard functionality
  *
- * Note: These tests are skipped until the /usage route is wired up in the app router.
- * The UsageDashboardPage component exists but needs to be added to navigation.
+ * Note: These tests are skipped because the app uses state-based navigation (setCurrentPage)
+ * rather than URL routing. To test the Usage Dashboard, tests need to:
+ * 1. Login to the app
+ * 2. Click on "Usage & Quotas" in the Settings section of the sidebar
+ *
+ * The UsageDashboardPage is accessible via the sidebar navigation for Starter+ plans.
  */
 
 import { test, expect } from '@playwright/test';
