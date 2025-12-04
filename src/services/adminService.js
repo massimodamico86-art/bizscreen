@@ -292,3 +292,199 @@ export const getAllManagedListings = async () => {
   if (error) throw error;
   return data;
 };
+
+// ============================================================================
+// PHASE 17: ADMIN PANEL & TENANT MANAGEMENT
+// ============================================================================
+
+/**
+ * Get authorization headers for API calls
+ */
+async function getAuthHeaders() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new Error('Not authenticated');
+  }
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${session.access_token}`,
+  };
+}
+
+/**
+ * Make authenticated API call
+ */
+async function apiCall(endpoint, options = {}) {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`/api${endpoint}`, {
+    ...options,
+    headers: {
+      ...headers,
+      ...options.headers,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'API request failed');
+  }
+
+  return data;
+}
+
+// ============================================================================
+// TENANT MANAGEMENT
+// ============================================================================
+
+/**
+ * List all tenants with pagination and filters
+ */
+export async function listTenants(options = {}) {
+  const params = new URLSearchParams();
+  if (options.page) params.set('page', options.page);
+  if (options.limit) params.set('limit', options.limit);
+  if (options.search) params.set('search', options.search);
+  if (options.plan) params.set('plan', options.plan);
+  if (options.status) params.set('status', options.status);
+
+  const response = await apiCall(`/admin/tenants/list?${params.toString()}`);
+  return response.data;
+}
+
+/**
+ * Get detailed tenant information
+ */
+export async function getTenantById(tenantId) {
+  const response = await apiCall(`/admin/tenants/get?id=${tenantId}`);
+  return response.data;
+}
+
+/**
+ * Update tenant's subscription plan
+ */
+export async function updateTenantPlan(tenantId, planSlug, reason = '') {
+  const response = await apiCall('/admin/tenants/update-plan', {
+    method: 'POST',
+    body: JSON.stringify({ tenantId, planSlug, reason }),
+  });
+  return response.data;
+}
+
+/**
+ * Suspend or unsuspend a tenant
+ */
+export async function suspendTenant(tenantId, action, reason = '') {
+  const response = await apiCall('/admin/tenants/suspend', {
+    method: 'POST',
+    body: JSON.stringify({ tenantId, action, reason }),
+  });
+  return response.data;
+}
+
+// ============================================================================
+// FEATURE FLAG OVERRIDES
+// ============================================================================
+
+/**
+ * Override a feature flag for a tenant
+ */
+export async function overrideFeatureFlag(tenantId, featureKey, enabled, reason = '') {
+  const response = await apiCall('/admin/tenants/override-feature', {
+    method: 'POST',
+    body: JSON.stringify({ tenantId, featureKey, enabled, reason }),
+  });
+  return response.data;
+}
+
+// ============================================================================
+// QUOTA OVERRIDES
+// ============================================================================
+
+/**
+ * Override a quota for a tenant
+ */
+export async function overrideQuota(tenantId, featureKey, options = {}) {
+  const { monthlyLimit, isUnlimited, reason, expiresAt } = options;
+  const response = await apiCall('/admin/tenants/override-quota', {
+    method: 'POST',
+    body: JSON.stringify({
+      tenantId,
+      featureKey,
+      monthlyLimit,
+      isUnlimited,
+      reason,
+      expiresAt,
+    }),
+  });
+  return response.data;
+}
+
+// ============================================================================
+// USER MANAGEMENT (ADMIN PANEL)
+// ============================================================================
+
+/**
+ * Reset a user's password
+ */
+export async function resetUserPassword(userId, sendEmail = true) {
+  const response = await apiCall('/admin/users/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ userId, sendEmail }),
+  });
+  return response.data;
+}
+
+/**
+ * Disable or enable a user
+ */
+export async function disableUser(userId, action, reason = '') {
+  const response = await apiCall('/admin/users/disable', {
+    method: 'POST',
+    body: JSON.stringify({ userId, action, reason }),
+  });
+  return response.data;
+}
+
+// ============================================================================
+// SCREEN MANAGEMENT
+// ============================================================================
+
+/**
+ * Force reboot a screen
+ */
+export async function rebootScreen(screenId, reason = '') {
+  const response = await apiCall('/admin/screens/reboot', {
+    method: 'POST',
+    body: JSON.stringify({ screenId, reason }),
+  });
+  return response.data;
+}
+
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+
+export const PLAN_OPTIONS = [
+  { value: 'free', label: 'Free' },
+  { value: 'starter', label: 'Starter' },
+  { value: 'pro', label: 'Pro' },
+  { value: 'enterprise', label: 'Enterprise' },
+  { value: 'reseller', label: 'Reseller' },
+];
+
+export const TENANT_STATUS_OPTIONS = [
+  { value: 'active', label: 'Active', color: 'green' },
+  { value: 'suspended', label: 'Suspended', color: 'red' },
+  { value: 'pending', label: 'Pending', color: 'yellow' },
+];
+
+export const QUOTA_FEATURE_NAMES = {
+  ai_assistant: 'AI Assistant Requests',
+  campaigns: 'Campaign Creations',
+  audit_logs: 'Audit Log Entries',
+  api_calls: 'API Calls',
+  screen_groups: 'Screen Group Operations',
+  bulk_operations: 'Bulk Operations',
+  webhooks: 'Webhook Deliveries',
+};
