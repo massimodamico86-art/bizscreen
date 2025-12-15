@@ -335,10 +335,11 @@ class MainActivity : Activity() {
     }
 
     @SuppressLint("WakelockTimeout")
+    @Suppress("DEPRECATION")
     private fun acquireWakeLock() {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = powerManager.newWakeLock(
-            PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+            PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
             "BizScreen::PlayerWakeLock"
         )
         wakeLock.acquire()

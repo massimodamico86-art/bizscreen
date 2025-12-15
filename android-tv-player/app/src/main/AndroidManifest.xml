@@ -14,7 +14,6 @@
 
     <!-- Foreground service for kiosk mode -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <!-- TV features (optional - allows app to run on phones too) -->
     <uses-feature
@@ -90,12 +89,8 @@
         <!-- Kiosk Foreground Service -->
         <service
             android:name=".KioskService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="digital_signage_kiosk" />
-        </service>
+            android:exported="false" />
+
 
     </application>
 
