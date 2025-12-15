@@ -39,17 +39,17 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "MainActivity onCreate")
 
-        // Hide system UI for immersive mode
+        // Keep screen on
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        // Setup WebView first (sets content view)
+        setupWebView()
+
+        // Hide system UI for immersive mode (after content is set)
         enterImmersiveMode()
 
         // Acquire wake lock to prevent sleep
         acquireWakeLock()
-
-        // Keep screen on
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-        // Setup WebView
-        setupWebView()
 
         // Check kiosk mode preference
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -349,14 +349,6 @@ class MainActivity : Activity() {
     private fun startKioskMode() {
         Log.d(TAG, "Starting kiosk mode")
 
-        // Start foreground service to maintain kiosk mode
-        val serviceIntent = Intent(this, KioskService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent)
-        } else {
-            startService(serviceIntent)
-        }
-
         // Pin app to screen (requires device owner)
         val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val componentName = ComponentName(this, DeviceAdminReceiver::class.java)
@@ -365,8 +357,21 @@ class MainActivity : Activity() {
             Log.d(TAG, "Device owner - enabling lock task mode")
             dpm.setLockTaskPackages(componentName, arrayOf(packageName))
             startLockTask()
+
+            // Only start foreground service when device owner (kiosk actually works)
+            // Note: On Android 14+, foreground services require a type
+            try {
+                val serviceIntent = Intent(this, KioskService::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(serviceIntent)
+                } else {
+                    startService(serviceIntent)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not start kiosk service", e)
+            }
         } else {
-            Log.d(TAG, "Not device owner - kiosk mode limited")
+            Log.d(TAG, "Not device owner - kiosk mode limited (no lock task)")
         }
     }
 
