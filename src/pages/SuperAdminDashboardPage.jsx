@@ -7,7 +7,9 @@ import {
   getAllClients,
   getUnassignedClients,
   assignClientToAdmin,
-  unassignClient
+  unassignClient,
+  createAdminUser,
+  createClientUser
 } from '../services/adminService';
 import ErrorBoundary from '../components/ErrorBoundary';
 import {
@@ -22,6 +24,9 @@ import {
   UserCheck,
   ChevronRight,
   LayoutTemplate,
+  X,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 export default function SuperAdminDashboardPage({ onNavigate }) {
@@ -39,9 +44,30 @@ export default function SuperAdminDashboardPage({ onNavigate }) {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview'); // overview, admins, clients
 
+  // Modal states
+  const [createAdminModal, setCreateAdminModal] = useState(false);
+  const [createClientModal, setCreateClientModal] = useState(false);
+
+  // Form states for create user
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserPassword, setNewUserPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [assignToAdmin, setAssignToAdmin] = useState(''); // For new clients
+  const [actionLoading, setActionLoading] = useState(false);
+  const [actionSuccess, setActionSuccess] = useState('');
+
   useEffect(() => {
     fetchSuperAdminData();
   }, []);
+
+  // Clear success message after 3 seconds
+  useEffect(() => {
+    if (actionSuccess) {
+      const timer = setTimeout(() => setActionSuccess(''), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [actionSuccess]);
 
   const fetchSuperAdminData = async () => {
     setLoading(true);
@@ -90,6 +116,75 @@ export default function SuperAdminDashboardPage({ onNavigate }) {
       await fetchSuperAdminData();
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  // Reset form fields
+  const resetCreateForm = () => {
+    setNewUserEmail('');
+    setNewUserName('');
+    setNewUserPassword('');
+    setShowPassword(false);
+    setAssignToAdmin('');
+  };
+
+  // Handle Create Admin
+  const handleCreateAdmin = async () => {
+    if (!newUserEmail || !newUserPassword) {
+      setError('Email and password are required');
+      return;
+    }
+
+    if (newUserPassword.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+
+    setActionLoading(true);
+    setError('');
+
+    try {
+      await createAdminUser(newUserEmail, newUserPassword, newUserName);
+
+      setActionSuccess(`Admin "${newUserName || newUserEmail}" created successfully!`);
+      setCreateAdminModal(false);
+      resetCreateForm();
+      fetchSuperAdminData();
+    } catch (err) {
+      console.error('Error creating admin:', err);
+      setError(err.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Handle Create Client
+  const handleCreateClient = async () => {
+    if (!newUserEmail || !newUserPassword) {
+      setError('Email and password are required');
+      return;
+    }
+
+    if (newUserPassword.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+
+    setActionLoading(true);
+    setError('');
+
+    try {
+      await createClientUser(newUserEmail, newUserPassword, newUserName, assignToAdmin || null);
+
+      setActionSuccess(`Client "${newUserName || newUserEmail}" created successfully!`);
+      setCreateClientModal(false);
+      resetCreateForm();
+      fetchSuperAdminData();
+    } catch (err) {
+      console.error('Error creating client:', err);
+      setError(err.message);
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -341,7 +436,10 @@ export default function SuperAdminDashboardPage({ onNavigate }) {
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">Admin Management</h3>
-                  <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium">
+                  <button
+                    onClick={() => setCreateAdminModal(true)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium"
+                  >
                     + Create Admin
                   </button>
                 </div>
@@ -394,7 +492,10 @@ export default function SuperAdminDashboardPage({ onNavigate }) {
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">Client Management</h3>
-                  <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium">
+                  <button
+                    onClick={() => setCreateClientModal(true)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium"
+                  >
                     + Create Client
                   </button>
                 </div>
@@ -468,6 +569,224 @@ export default function SuperAdminDashboardPage({ onNavigate }) {
             )}
           </div>
         </div>
+
+        {/* Success Message Toast */}
+        {actionSuccess && (
+          <div className="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            {actionSuccess}
+          </div>
+        )}
+
+        {/* Create Admin Modal */}
+        {createAdminModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+              <div className="flex items-center justify-between px-6 py-4 border-b">
+                <h3 className="text-lg font-semibold text-gray-900">Create Admin User</h3>
+                <button
+                  onClick={() => { setCreateAdminModal(false); resetCreateForm(); }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                {error && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    value={newUserEmail}
+                    onChange={(e) => setNewUserEmail(e.target.value)}
+                    placeholder="admin@example.com"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={newUserName}
+                    onChange={(e) => setNewUserName(e.target.value)}
+                    placeholder="John Smith"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={newUserPassword}
+                      onChange={(e) => setNewUserPassword(e.target.value)}
+                      placeholder="Minimum 8 characters"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-purple-50 rounded-lg p-3">
+                  <p className="text-sm text-purple-800">
+                    <strong>Admin permissions:</strong> Can manage assigned clients, view reports, and access admin tools.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50">
+                <button
+                  onClick={() => { setCreateAdminModal(false); resetCreateForm(); }}
+                  className="px-4 py-2 text-gray-700 hover:text-gray-900 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateAdmin}
+                  disabled={actionLoading}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium disabled:opacity-50"
+                >
+                  {actionLoading ? 'Creating...' : 'Create Admin'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Create Client Modal */}
+        {createClientModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+              <div className="flex items-center justify-between px-6 py-4 border-b">
+                <h3 className="text-lg font-semibold text-gray-900">Create Client User</h3>
+                <button
+                  onClick={() => { setCreateClientModal(false); resetCreateForm(); }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                {error && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    value={newUserEmail}
+                    onChange={(e) => setNewUserEmail(e.target.value)}
+                    placeholder="client@example.com"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={newUserName}
+                    onChange={(e) => setNewUserName(e.target.value)}
+                    placeholder="Client Name"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={newUserPassword}
+                      onChange={(e) => setNewUserPassword(e.target.value)}
+                      placeholder="Minimum 8 characters"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Assign to Admin (optional)
+                  </label>
+                  <select
+                    value={assignToAdmin}
+                    onChange={(e) => setAssignToAdmin(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  >
+                    <option value="">Leave unassigned</option>
+                    {admins.map(admin => (
+                      <option key={admin.id} value={admin.id}>
+                        {admin.full_name || admin.email}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="bg-green-50 rounded-lg p-3">
+                  <p className="text-sm text-green-800">
+                    <strong>Client permissions:</strong> Can manage their own screens, playlists, and content.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50">
+                <button
+                  onClick={() => { setCreateClientModal(false); resetCreateForm(); }}
+                  className="px-4 py-2 text-gray-700 hover:text-gray-900 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateClient}
+                  disabled={actionLoading}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium disabled:opacity-50"
+                >
+                  {actionLoading ? 'Creating...' : 'Create Client'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         </div>
       </div>
     </ErrorBoundary>
