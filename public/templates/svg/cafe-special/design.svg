@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coffeeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A3728;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2D1F14;stop-opacity:1" />
+    </linearGradient>
+    <style>
+      .script { font-family: 'Georgia', serif; font-style: italic; }
+      .heading { font-family: 'Arial Black', Arial, sans-serif; font-weight: 900; }
+      .body { font-family: 'Arial', sans-serif; font-weight: 400; }
+      .price { font-family: 'Arial', sans-serif; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1920" fill="url(#coffeeGradient)"/>
+
+  <!-- Decorative pattern -->
+  <circle cx="100" cy="200" r="150" fill="rgba(255,255,255,0.03)"/>
+  <circle cx="980" cy="1700" r="200" fill="rgba(255,255,255,0.03)"/>
+
+  <!-- Top decoration -->
+  <rect x="100" y="80" width="880" height="4" fill="#D4A574"/>
+
+  <!-- Header -->
+  <text x="540" y="200" text-anchor="middle" class="script" fill="#D4A574" font-size="72">Today's Special</text>
+
+  <!-- Main item -->
+  <rect x="80" y="280" width="920" height="500" rx="20" fill="rgba(255,255,255,0.08)"/>
+
+  <!-- Coffee cup icon placeholder -->
+  <circle cx="540" cy="400" r="80" fill="rgba(212,165,116,0.2)" stroke="#D4A574" stroke-width="3"/>
+  <text x="540" y="420" text-anchor="middle" class="body" fill="#D4A574" font-size="48">&#9749;</text>
+
+  <text x="540" y="560" text-anchor="middle" class="heading" fill="white" font-size="56">CARAMEL LATTE</text>
+  <text x="540" y="640" text-anchor="middle" class="body" fill="rgba(255,255,255,0.7)" font-size="28">Rich espresso with creamy caramel</text>
+  <text x="540" y="690" text-anchor="middle" class="body" fill="rgba(255,255,255,0.7)" font-size="28">and steamed milk</text>
+
+  <text x="540" y="760" text-anchor="middle" class="price" fill="#D4A574" font-size="64">$4.99</text>
+
+  <!-- Divider -->
+  <line x1="200" y1="860" x2="880" y2="860" stroke="#D4A574" stroke-width="2"/>
+
+  <!-- Additional items -->
+  <text x="540" y="960" text-anchor="middle" class="script" fill="#D4A574" font-size="48">Also try...</text>
+
+  <!-- Item 1 -->
+  <rect x="80" y="1020" width="920" height="160" rx="15" fill="rgba(255,255,255,0.05)"/>
+  <text x="140" y="1100" class="heading" fill="white" font-size="36">Vanilla Cold Brew</text>
+  <text x="140" y="1140" class="body" fill="rgba(255,255,255,0.6)" font-size="24">Smooth and refreshing</text>
+  <text x="920" y="1115" text-anchor="end" class="price" fill="#D4A574" font-size="40">$3.99</text>
+
+  <!-- Item 2 -->
+  <rect x="80" y="1210" width="920" height="160" rx="15" fill="rgba(255,255,255,0.05)"/>
+  <text x="140" y="1290" class="heading" fill="white" font-size="36">Mocha Frappe</text>
+  <text x="140" y="1330" class="body" fill="rgba(255,255,255,0.6)" font-size="24">Chocolate coffee bliss</text>
+  <text x="920" y="1305" text-anchor="end" class="price" fill="#D4A574" font-size="40">$5.49</text>
+
+  <!-- Item 3 -->
+  <rect x="80" y="1400" width="920" height="160" rx="15" fill="rgba(255,255,255,0.05)"/>
+  <text x="140" y="1480" class="heading" fill="white" font-size="36">Chai Tea Latte</text>
+  <text x="140" y="1520" class="body" fill="rgba(255,255,255,0.6)" font-size="24">Spiced and cozy</text>
+  <text x="920" y="1495" text-anchor="end" class="price" fill="#D4A574" font-size="40">$4.29</text>
+
+  <!-- Footer -->
+  <rect x="100" y="1640" width="880" height="4" fill="#D4A574"/>
+
+  <text x="540" y="1720" text-anchor="middle" class="body" fill="rgba(255,255,255,0.5)" font-size="28">Open Daily 6AM - 8PM</text>
+  <text x="540" y="1780" text-anchor="middle" class="script" fill="#D4A574" font-size="40">THE DAILY GRIND CAFE</text>
+
+  <!-- WiFi info -->
+  <rect x="340" y="1830" width="400" height="60" rx="30" fill="rgba(255,255,255,0.1)"/>
+  <text x="540" y="1870" text-anchor="middle" class="body" fill="rgba(255,255,255,0.7)" font-size="24">WiFi: CafeGuest</text>
+</svg>

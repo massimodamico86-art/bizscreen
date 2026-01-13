@@ -73,21 +73,17 @@ export async function recordClientEvent(featureKey, metadata = {}) {
       return;
     }
 
-    // Get user's tenant ID from profile
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('tenant_id')
-      .eq('id', session.user.id)
-      .single();
+    // In this schema, user.id IS the tenant_id for clients
+    const tenantId = session.user.user_metadata?.tenant_id || session.user.id;
 
-    if (!profile?.tenant_id) {
+    if (!tenantId) {
       console.warn('No tenant found, skipping client event recording');
       return;
     }
 
     // Record usage event via RPC
     await supabase.rpc('record_usage_event', {
-      p_tenant_id: profile.tenant_id,
+      p_tenant_id: tenantId,
       p_feature_key: featureKey,
       p_quantity: 1,
       p_metadata: {

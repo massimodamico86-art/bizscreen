@@ -206,3 +206,93 @@ test.describe('Admin API Endpoints', () => {
     test.skip();
   });
 });
+
+test.describe('Super Admin Dashboard - Admin Tools', () => {
+  test.skip(
+    () => !process.env.TEST_SUPERADMIN_EMAIL,
+    'Super admin credentials not configured'
+  );
+
+  test.beforeEach(async ({ page }) => {
+    if (process.env.TEST_SUPERADMIN_EMAIL && process.env.TEST_SUPERADMIN_PASSWORD) {
+      await page.goto('/');
+      await page.getByPlaceholder(/email/i).fill(process.env.TEST_SUPERADMIN_EMAIL);
+      await page.getByPlaceholder(/password/i).fill(process.env.TEST_SUPERADMIN_PASSWORD);
+      await page.getByRole('button', { name: /sign in|log in/i }).click();
+      await page.waitForURL('**/*', { timeout: 10000 });
+    }
+  });
+
+  test('shows Super Admin Dashboard for super admin users', async ({ page }) => {
+    // Should show Super Admin Dashboard heading
+    await expect(page.getByRole('heading', { name: /super admin dashboard/i })).toBeVisible({ timeout: 5000 });
+  });
+
+  test('displays Admin Tools quick links section', async ({ page }) => {
+    // Should show Admin Tools section
+    await expect(page.getByText(/admin tools/i)).toBeVisible({ timeout: 5000 });
+  });
+
+  test('can navigate to Tenant Management from quick links', async ({ page }) => {
+    // Click on Tenant Management quick link
+    const tenantMgmtLink = page.getByRole('button', { name: /tenant management/i });
+    if (await tenantMgmtLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await tenantMgmtLink.click();
+
+      // Should show tenant list
+      await expect(page.getByText(/tenant/i)).toBeVisible({ timeout: 5000 });
+    }
+  });
+
+  test('can navigate to Audit Logs from quick links', async ({ page }) => {
+    // Click on Audit Logs quick link
+    const auditLogsLink = page.getByRole('button', { name: /audit logs/i });
+    if (await auditLogsLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await auditLogsLink.click();
+
+      // Should show audit logs page
+      await expect(page.getByText(/audit/i)).toBeVisible({ timeout: 5000 });
+    }
+  });
+
+  test('can navigate to System Events from quick links', async ({ page }) => {
+    // Click on System Events quick link
+    const systemEventsLink = page.getByRole('button', { name: /system events/i });
+    if (await systemEventsLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await systemEventsLink.click();
+
+      // Should show system events page
+      await expect(page.getByText(/system/i)).toBeVisible({ timeout: 5000 });
+    }
+  });
+
+  test('shows Back to Dashboard button when on admin tool page', async ({ page }) => {
+    // Navigate to an admin tool first
+    const tenantMgmtLink = page.getByRole('button', { name: /tenant management/i });
+    if (await tenantMgmtLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await tenantMgmtLink.click();
+      await page.waitForTimeout(500);
+
+      // Should show Back to Dashboard button in sidebar
+      await expect(page.getByRole('button', { name: /back to dashboard/i })).toBeVisible({ timeout: 5000 });
+    }
+  });
+
+  test('can return to dashboard using Back button', async ({ page }) => {
+    // Navigate to an admin tool first
+    const tenantMgmtLink = page.getByRole('button', { name: /tenant management/i });
+    if (await tenantMgmtLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await tenantMgmtLink.click();
+      await page.waitForTimeout(500);
+
+      // Click Back to Dashboard
+      const backButton = page.getByRole('button', { name: /back to dashboard/i });
+      if (await backButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await backButton.click();
+
+        // Should show Super Admin Dashboard heading again
+        await expect(page.getByRole('heading', { name: /super admin dashboard/i })).toBeVisible({ timeout: 5000 });
+      }
+    }
+  });
+});

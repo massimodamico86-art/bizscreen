@@ -1,0 +1,6 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="4" fill="white"/>
+  <rect x="2" y="2" width="44" height="44" rx="4" stroke="#000" stroke-width="2"/>
+  <text x="24" y="22" font-family="Times, serif" font-size="8" fill="black" text-anchor="middle">The New York</text>
+  <text x="24" y="32" font-family="Old English Text MT, Times" font-size="10" font-weight="bold" fill="black" text-anchor="middle">Times</text>
+</svg>

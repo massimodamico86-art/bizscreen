@@ -11,7 +11,9 @@ import {
   MapPin,
   Check,
   ChevronRight,
-  Layers
+  Layers,
+  Play,
+  XCircle
 } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 import { useTranslation } from '../i18n';
@@ -29,7 +31,7 @@ import {
   EmptyState
 } from '../design-system';
 import {
-  fetchScreenGroups,
+  fetchScreenGroupsWithScenes,
   getScreenGroup,
   createScreenGroup,
   updateScreenGroup,
@@ -37,7 +39,8 @@ import {
   getScreensInGroup,
   getUnassignedScreens,
   assignScreensToGroup,
-  removeScreensFromGroup
+  removeScreensFromGroup,
+  unpublishSceneFromGroup
 } from '../services/screenGroupService';
 import { fetchLocations } from '../services/locationService';
 import { canEditScreens } from '../services/permissionsService';
@@ -73,10 +76,15 @@ const ScreenGroupsPage = ({ showToast }) => {
     try {
       setLoading(true);
       const [groupsData, locationsData] = await Promise.all([
-        fetchScreenGroups({ locationId: locationFilter || null, search }),
+        fetchScreenGroupsWithScenes(),
         fetchLocations()
       ]);
-      setGroups(groupsData);
+      // Filter by location if needed
+      let filtered = groupsData;
+      if (locationFilter) {
+        filtered = groupsData.filter(g => g.location_id === locationFilter);
+      }
+      setGroups(filtered);
       setLocations(locationsData);
     } catch (error) {
       console.error('Error loading screen groups:', error);
@@ -84,6 +92,18 @@ const ScreenGroupsPage = ({ showToast }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClearScene = async (groupId) => {
+    try {
+      await unpublishSceneFromGroup(groupId);
+      showToast?.(t('screenGroups.sceneCleared', 'Scene cleared from group'));
+      loadData();
+    } catch (error) {
+      console.error('Error clearing scene:', error);
+      showToast?.(t('screenGroups.clearError', 'Error clearing scene: {{error}}', { error: error.message }), 'error');
+    }
+    setOpenMenuId(null);
   };
 
   useEffect(() => {
@@ -196,6 +216,7 @@ const ScreenGroupsPage = ({ showToast }) => {
                     <th scope="col" className="p-4 font-medium">{t('screenGroups.name', 'NAME')}</th>
                     <th scope="col" className="p-4 font-medium">{t('screenGroups.location', 'LOCATION')}</th>
                     <th scope="col" className="p-4 font-medium">{t('screenGroups.screens', 'SCREENS')}</th>
+                    <th scope="col" className="p-4 font-medium">{t('screenGroups.activeScene', 'ACTIVE SCENE')}</th>
                     <th scope="col" className="p-4 font-medium">{t('screenGroups.descriptionCol', 'DESCRIPTION')}</th>
                     <th scope="col" className="p-4 font-medium w-20">{t('common.actions', 'ACTIONS')}</th>
                   </tr>
@@ -239,13 +260,34 @@ const ScreenGroupsPage = ({ showToast }) => {
                           aria-label={t('screenGroups.manageScreensFor', 'Manage screens for {{name}}', { name: group.name })}
                         >
                           <Monitor size={14} aria-hidden="true" />
-                          <span className="font-medium">{group.screen_count || 0}</span>
+                          <span className="font-medium">{group.device_count || 0}</span>
                           <span className="text-gray-500">{t('screenGroups.screensLabel', 'screens')}</span>
                           {group.online_count > 0 && (
                             <span className="text-green-600 text-xs">({t('screenGroups.onlineCount', '{{count}} online', { count: group.online_count })})</span>
                           )}
                           <ChevronRight size={14} className="text-gray-400" aria-hidden="true" />
                         </button>
+                      </td>
+                      <td className="p-4">
+                        {group.active_scene_id ? (
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-lg">
+                            <Play size={14} className="text-green-600" aria-hidden="true" />
+                            <span className="font-medium text-green-700 truncate max-w-[150px]">
+                              {group.active_scene_name || t('screenGroups.scene', 'Scene')}
+                            </span>
+                            {canEdit && (
+                              <button
+                                onClick={() => handleClearScene(group.id)}
+                                className="ml-1 p-0.5 hover:bg-green-100 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
+                                aria-label={t('screenGroups.clearScene', 'Clear scene')}
+                              >
+                                <XCircle size={14} className="text-green-600" aria-hidden="true" />
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 text-sm">{t('screenGroups.noScene', 'No scene')}</span>
+                        )}
                       </td>
                       <td className="p-4 text-gray-600 text-sm max-w-xs truncate">
                         {group.description || '-'}

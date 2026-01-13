@@ -68,6 +68,19 @@ export { Alert, Banner } from './components/Alert';
 // EmptyState
 export { EmptyState, Placeholder } from './components/EmptyState';
 
+// Tabs
+export { Tabs, PillTabs } from './components/Tabs';
+
+// Filter Components
+export { FilterChips, ToggleChips } from './components/FilterChips';
+export { SearchBar } from './components/SearchBar';
+
+// Template Components
+export { TemplateCard, TemplateCardGrid, TemplateCardSkeleton } from './components/TemplateCard';
+
+// Layout Creation
+export { CreateLayoutModal, ORIENTATION_PRESETS } from './components/CreateLayoutModal';
+
 // Illustrations
 export {
   PlaylistIllustration,

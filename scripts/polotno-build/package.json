@@ -1,0 +1,20 @@
+{
+  "name": "polotno-standalone",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "polotno": "^2.10.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "mobx": "^6.10.2",
+    "mobx-react-lite": "^4.0.5"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-react": "^4.2.0"
+  }
+}

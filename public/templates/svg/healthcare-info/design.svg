@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="#f8fafc"/>
+
+  <!-- Top header bar -->
+  <rect x="0" y="0" width="1920" height="120" fill="#0891b2"/>
+
+  <!-- Logo area -->
+  <circle cx="120" cy="60" r="40" fill="#ffffff" opacity="0.2"/>
+  <text x="120" y="70" font-family="Open Sans, sans-serif" font-size="32" font-weight="700" fill="#ffffff" text-anchor="middle">+</text>
+
+  <!-- Clinic name -->
+  <text x="200" y="50" font-family="Open Sans, sans-serif" font-size="28" font-weight="700" fill="#ffffff">CITY MEDICAL CENTER</text>
+  <text x="200" y="85" font-family="Open Sans, sans-serif" font-size="18" font-weight="400" fill="#ffffff" opacity="0.9">Caring for Your Health Since 1985</text>
+
+  <!-- Contact in header -->
+  <text x="1750" y="50" font-family="Open Sans, sans-serif" font-size="18" font-weight="600" fill="#ffffff" text-anchor="end">Emergency: 911</text>
+  <text x="1750" y="85" font-family="Open Sans, sans-serif" font-size="18" font-weight="400" fill="#ffffff" opacity="0.9" text-anchor="end">Appointments: (555) 234-5678</text>
+
+  <!-- Main title -->
+  <text x="960" y="220" font-family="Open Sans, sans-serif" font-size="48" font-weight="700" fill="#0891b2" text-anchor="middle">Our Services</text>
+  <rect x="860" y="240" width="200" height="4" rx="2" fill="#0891b2"/>
+
+  <!-- Services grid -->
+  <!-- Row 1 -->
+  <rect x="100" y="300" width="400" height="200" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="100" y="300" width="400" height="8" rx="4" fill="#0891b2"/>
+  <text x="300" y="380" font-family="Open Sans, sans-serif" font-size="24" font-weight="700" fill="#1e293b" text-anchor="middle">Primary Care</text>
+  <text x="300" y="420" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">General health checkups and</text>
+  <text x="300" y="445" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">preventive care services</text>
+
+  <rect x="540" y="300" width="400" height="200" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="540" y="300" width="400" height="8" rx="4" fill="#0d9488"/>
+  <text x="740" y="380" font-family="Open Sans, sans-serif" font-size="24" font-weight="700" fill="#1e293b" text-anchor="middle">Pediatrics</text>
+  <text x="740" y="420" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">Specialized care for infants,</text>
+  <text x="740" y="445" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">children, and adolescents</text>
+
+  <rect x="980" y="300" width="400" height="200" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="980" y="300" width="400" height="8" rx="4" fill="#7c3aed"/>
+  <text x="1180" y="380" font-family="Open Sans, sans-serif" font-size="24" font-weight="700" fill="#1e293b" text-anchor="middle">Cardiology</text>
+  <text x="1180" y="420" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">Heart health diagnostics</text>
+  <text x="1180" y="445" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">and treatment</text>
+
+  <rect x="1420" y="300" width="400" height="200" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="1420" y="300" width="400" height="8" rx="4" fill="#dc2626"/>
+  <text x="1620" y="380" font-family="Open Sans, sans-serif" font-size="24" font-weight="700" fill="#1e293b" text-anchor="middle">Urgent Care</text>
+  <text x="1620" y="420" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">Walk-in care for non-life</text>
+  <text x="1620" y="445" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">threatening emergencies</text>
+
+  <!-- Row 2 -->
+  <rect x="320" y="540" width="400" height="200" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="320" y="540" width="400" height="8" rx="4" fill="#ea580c"/>
+  <text x="520" y="620" font-family="Open Sans, sans-serif" font-size="24" font-weight="700" fill="#1e293b" text-anchor="middle">Orthopedics</text>
+  <text x="520" y="660" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">Bone, joint, and muscle</text>
+  <text x="520" y="685" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">care and rehabilitation</text>
+
+  <rect x="760" y="540" width="400" height="200" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="760" y="540" width="400" height="8" rx="4" fill="#16a34a"/>
+  <text x="960" y="620" font-family="Open Sans, sans-serif" font-size="24" font-weight="700" fill="#1e293b" text-anchor="middle">Laboratory</text>
+  <text x="960" y="660" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">Full-service diagnostic</text>
+  <text x="960" y="685" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">testing and imaging</text>
+
+  <rect x="1200" y="540" width="400" height="200" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="1200" y="540" width="400" height="8" rx="4" fill="#2563eb"/>
+  <text x="1400" y="620" font-family="Open Sans, sans-serif" font-size="24" font-weight="700" fill="#1e293b" text-anchor="middle">Mental Health</text>
+  <text x="1400" y="660" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">Counseling and psychiatric</text>
+  <text x="1400" y="685" font-family="Open Sans, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">services</text>
+
+  <!-- Hours section -->
+  <rect x="100" y="800" width="800" height="180" rx="12" fill="#0891b2" opacity="0.1"/>
+  <text x="500" y="860" font-family="Open Sans, sans-serif" font-size="28" font-weight="700" fill="#0891b2" text-anchor="middle">Hours of Operation</text>
+  <text x="500" y="910" font-family="Open Sans, sans-serif" font-size="20" font-weight="400" fill="#1e293b" text-anchor="middle">Monday - Friday: 8:00 AM - 8:00 PM</text>
+  <text x="500" y="945" font-family="Open Sans, sans-serif" font-size="20" font-weight="400" fill="#1e293b" text-anchor="middle">Saturday - Sunday: 9:00 AM - 5:00 PM</text>
+
+  <!-- Address section -->
+  <rect x="1020" y="800" width="800" height="180" rx="12" fill="#0891b2" opacity="0.1"/>
+  <text x="1420" y="860" font-family="Open Sans, sans-serif" font-size="28" font-weight="700" fill="#0891b2" text-anchor="middle">Visit Us</text>
+  <text x="1420" y="910" font-family="Open Sans, sans-serif" font-size="20" font-weight="400" fill="#1e293b" text-anchor="middle">456 Healthcare Boulevard, Suite 100</text>
+  <text x="1420" y="945" font-family="Open Sans, sans-serif" font-size="20" font-weight="400" fill="#1e293b" text-anchor="middle">Medical City, MC 12345</text>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="1020" width="1920" height="60" fill="#0891b2"/>
+  <text x="960" y="1058" font-family="Open Sans, sans-serif" font-size="20" font-weight="400" fill="#ffffff" text-anchor="middle">www.citymedicalcenter.com | insurance@citymedical.com</text>
+</svg>

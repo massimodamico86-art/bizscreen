@@ -21,7 +21,8 @@ export const DAYS_OF_WEEK = [
 export const TARGET_TYPES = {
   PLAYLIST: 'playlist',
   LAYOUT: 'layout',
-  MEDIA: 'media'
+  MEDIA: 'media',
+  SCENE: 'scene'
 };
 
 /**
@@ -120,11 +121,18 @@ export async function fetchScheduleWithEntries(id) {
         id,
         target_type,
         target_id,
-        days_of_week,
+        content_type,
+        content_id,
+        start_date,
+        end_date,
         start_time,
         end_time,
+        days_of_week,
         priority,
-        is_active
+        is_active,
+        event_type,
+        repeat_type,
+        repeat_config
       )
     `)
     .eq('id', id)
@@ -144,29 +152,35 @@ export async function fetchScheduleWithEntries(id) {
 }
 
 /**
- * Fetch schedule with entries and resolved target info (playlist/layout/media names)
+ * Fetch schedule with entries and resolved target info (playlist/layout/media/scene names)
  */
 export async function fetchScheduleWithEntriesResolved(id) {
   const schedule = await fetchScheduleWithEntries(id);
   if (!schedule || !schedule.schedule_entries) return schedule;
 
-  // Collect unique target IDs by type
+  // Collect unique content IDs by type (prefer content_type/content_id, fall back to target_type/target_id)
   const playlistIds = [];
   const layoutIds = [];
   const mediaIds = [];
+  const sceneIds = [];
 
   for (const entry of schedule.schedule_entries) {
-    if (entry.target_type === TARGET_TYPES.PLAYLIST && entry.target_id) {
-      playlistIds.push(entry.target_id);
-    } else if (entry.target_type === TARGET_TYPES.LAYOUT && entry.target_id) {
-      layoutIds.push(entry.target_id);
-    } else if (entry.target_type === TARGET_TYPES.MEDIA && entry.target_id) {
-      mediaIds.push(entry.target_id);
+    const contentType = entry.content_type || entry.target_type;
+    const contentId = entry.content_id || entry.target_id;
+
+    if (contentType === 'playlist' && contentId) {
+      playlistIds.push(contentId);
+    } else if (contentType === 'layout' && contentId) {
+      layoutIds.push(contentId);
+    } else if (contentType === 'media' && contentId) {
+      mediaIds.push(contentId);
+    } else if (contentType === 'scene' && contentId) {
+      sceneIds.push(contentId);
     }
   }
 
   // Fetch all related items in parallel
-  const [playlistsResult, layoutsResult, mediaResult] = await Promise.all([
+  const [playlistsResult, layoutsResult, mediaResult, scenesResult] = await Promise.all([
     playlistIds.length > 0
       ? supabase.from('playlists').select('id, name').in('id', playlistIds)
       : { data: [] },
@@ -175,6 +189,9 @@ export async function fetchScheduleWithEntriesResolved(id) {
       : { data: [] },
     mediaIds.length > 0
       ? supabase.from('media_assets').select('id, name, type, thumbnail_url').in('id', mediaIds)
+      : { data: [] },
+    sceneIds.length > 0
+      ? supabase.from('scenes').select('id, name, business_type, is_active').in('id', sceneIds)
       : { data: [] }
   ]);
 
@@ -182,16 +199,22 @@ export async function fetchScheduleWithEntriesResolved(id) {
   const playlistMap = Object.fromEntries((playlistsResult.data || []).map(p => [p.id, p]));
   const layoutMap = Object.fromEntries((layoutsResult.data || []).map(l => [l.id, l]));
   const mediaMap = Object.fromEntries((mediaResult.data || []).map(m => [m.id, m]));
+  const sceneMap = Object.fromEntries((scenesResult.data || []).map(s => [s.id, s]));
 
   // Enrich entries with target info
   schedule.schedule_entries = schedule.schedule_entries.map(entry => {
+    const contentType = entry.content_type || entry.target_type;
+    const contentId = entry.content_id || entry.target_id;
+
     let target = null;
-    if (entry.target_type === TARGET_TYPES.PLAYLIST) {
-      target = playlistMap[entry.target_id];
-    } else if (entry.target_type === TARGET_TYPES.LAYOUT) {
-      target = layoutMap[entry.target_id];
-    } else if (entry.target_type === TARGET_TYPES.MEDIA) {
-      target = mediaMap[entry.target_id];
+    if (contentType === 'playlist') {
+      target = playlistMap[contentId];
+    } else if (contentType === 'layout') {
+      target = layoutMap[contentId];
+    } else if (contentType === 'media') {
+      target = mediaMap[contentId];
+    } else if (contentType === 'scene') {
+      target = sceneMap[contentId];
     }
     return { ...entry, target };
   });
@@ -239,15 +262,34 @@ export async function updateSchedule(id, updates) {
  * Create a new schedule entry
  */
 export async function createScheduleEntry(scheduleId, entryData = {}) {
+  // Build repeat_config from individual fields if provided
+  const repeatConfig = {};
+  if (entryData.repeat_every) repeatConfig.repeat_every = entryData.repeat_every;
+  if (entryData.repeat_unit) repeatConfig.repeat_unit = entryData.repeat_unit;
+  if (entryData.repeat_until) repeatConfig.repeat_until = entryData.repeat_until;
+  if (entryData.repeat_until_date) repeatConfig.repeat_until_date = entryData.repeat_until_date;
+  if (entryData.repeat_until_count) repeatConfig.repeat_until_count = entryData.repeat_until_count;
+
   const data = {
     schedule_id: scheduleId,
-    target_type: entryData.target_type || TARGET_TYPES.PLAYLIST,
+    // Content type - what to play (playlist, layout, media)
+    content_type: entryData.content_type || entryData.target_type || 'playlist',
+    content_id: entryData.content_id || entryData.target_id || null,
+    // Target type - where to play (for backwards compatibility)
+    target_type: entryData.target_type || 'all',
     target_id: entryData.target_id || null,
-    days_of_week: entryData.days_of_week || [1, 2, 3, 4, 5], // Default weekdays
+    // Timing
+    start_date: entryData.start_date || null,
+    end_date: entryData.end_date || null,
     start_time: entryData.start_time || '09:00',
     end_time: entryData.end_time || '17:00',
+    days_of_week: entryData.days_of_week || [1, 2, 3, 4, 5], // Default weekdays
+    // Settings
     priority: entryData.priority ?? 0,
-    is_active: entryData.is_active ?? true
+    is_active: entryData.is_active ?? true,
+    event_type: entryData.event_type || 'content', // 'content' or 'screen_off'
+    repeat_type: entryData.repeat_type || 'none',
+    repeat_config: Object.keys(repeatConfig).length > 0 ? repeatConfig : (entryData.repeat_config || {})
   };
 
   const { data: result, error } = await supabase
@@ -265,8 +307,10 @@ export async function createScheduleEntry(scheduleId, entryData = {}) {
  */
 export async function updateScheduleEntry(entryId, updates) {
   const allowedFields = [
-    'target_type', 'target_id', 'days_of_week',
-    'start_time', 'end_time', 'priority', 'is_active'
+    'target_type', 'target_id', 'content_type', 'content_id',
+    'start_date', 'end_date', 'start_time', 'end_time',
+    'days_of_week', 'priority', 'is_active',
+    'event_type', 'repeat_type', 'repeat_config'
   ];
 
   const filteredUpdates = {};
@@ -274,6 +318,17 @@ export async function updateScheduleEntry(entryId, updates) {
     if (key in updates) {
       filteredUpdates[key] = updates[key];
     }
+  }
+
+  // Build repeat_config from individual fields if provided
+  if (updates.repeat_every || updates.repeat_unit || updates.repeat_until || updates.repeat_until_date || updates.repeat_until_count) {
+    filteredUpdates.repeat_config = {
+      repeat_every: updates.repeat_every,
+      repeat_unit: updates.repeat_unit,
+      repeat_until: updates.repeat_until,
+      repeat_until_date: updates.repeat_until_date,
+      repeat_until_count: updates.repeat_until_count
+    };
   }
 
   const { data, error } = await supabase
@@ -378,4 +433,146 @@ export function formatTimeRange(startTime, endTime) {
   if (!startTime) return `Until ${formatTime(endTime)}`;
   if (!endTime) return `From ${formatTime(startTime)}`;
   return `${formatTime(startTime)} - ${formatTime(endTime)}`;
+}
+
+/**
+ * Fetch schedules with usage info (device/group counts)
+ */
+export async function fetchSchedulesWithUsage() {
+  const { data, error } = await supabase
+    .from('v_schedules_with_usage')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Assign a schedule to a device
+ * @param {string} deviceId - Device ID
+ * @param {string|null} scheduleId - Schedule ID or null to clear
+ */
+export async function assignScheduleToDevice(deviceId, scheduleId) {
+  if (!deviceId) throw new Error('Device ID is required');
+
+  const { data, error } = await supabase
+    .rpc('assign_schedule_to_device', {
+      p_device_id: deviceId,
+      p_schedule_id: scheduleId
+    });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Assign a schedule to a screen group
+ * @param {string} groupId - Screen group ID
+ * @param {string|null} scheduleId - Schedule ID or null to clear
+ */
+export async function assignScheduleToGroup(groupId, scheduleId) {
+  if (!groupId) throw new Error('Group ID is required');
+
+  const { data, error } = await supabase
+    .rpc('assign_schedule_to_group', {
+      p_group_id: groupId,
+      p_schedule_id: scheduleId
+    });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Get schedule preview for a specific date
+ * @param {string} scheduleId - Schedule ID
+ * @param {string} timezone - Timezone (default: UTC)
+ * @param {string} date - Date in YYYY-MM-DD format
+ */
+export async function getSchedulePreview(scheduleId, timezone = 'UTC', date = null) {
+  if (!scheduleId) throw new Error('Schedule ID is required');
+
+  const params = {
+    p_schedule_id: scheduleId,
+    p_timezone: timezone
+  };
+
+  if (date) {
+    params.p_date = date;
+  }
+
+  const { data, error } = await supabase
+    .rpc('get_schedule_preview', params);
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Get devices using a specific schedule
+ * @param {string} scheduleId - Schedule ID
+ */
+export async function getDevicesWithSchedule(scheduleId) {
+  const { data, error } = await supabase
+    .from('tv_devices')
+    .select('id, device_name, is_online, location:locations(id, name)')
+    .eq('assigned_schedule_id', scheduleId)
+    .order('device_name');
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Get screen groups using a specific schedule
+ * @param {string} scheduleId - Schedule ID
+ */
+export async function getGroupsWithSchedule(scheduleId) {
+  const { data, error } = await supabase
+    .from('screen_groups')
+    .select('id, name, location:locations(id, name)')
+    .eq('assigned_schedule_id', scheduleId)
+    .order('name');
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Get all scenes for dropdown selection
+ */
+export async function getScenesForSchedule() {
+  const { data, error } = await supabase
+    .from('scenes')
+    .select('id, name, business_type, is_active')
+    .eq('is_active', true)
+    .order('name');
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Create a schedule with initial scene entries
+ * @param {Object} scheduleData - Schedule data with entries
+ */
+export async function createScheduleWithEntries({ name, description, timezone = 'UTC', entries = [] }) {
+  // Create the schedule
+  const schedule = await createSchedule({ name, description });
+
+  // Update timezone if provided
+  if (timezone !== 'UTC') {
+    await supabase
+      .from('schedules')
+      .update({ timezone })
+      .eq('id', schedule.id);
+  }
+
+  // Create all entries
+  for (const entry of entries) {
+    await createScheduleEntry(schedule.id, entry);
+  }
+
+  return fetchScheduleWithEntriesResolved(schedule.id);
 }

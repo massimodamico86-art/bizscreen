@@ -1,0 +1,1 @@
+jsonp_callback_49150({"status":"success","data":{"session_for":10505455,"session_cookie":[],"session_storage":[],"session_data":{"notifications":false,"announcement":false,"popups":false,"button":true,"valid_until":"2025-12-07T22:17:25Z"},"session_auth":false,"session_info":{"safe_mode":false}}})

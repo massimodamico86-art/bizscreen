@@ -3,6 +3,10 @@
 -- ============================================================================
 -- This migration creates the infrastructure for tracking feature usage,
 -- enforcing quotas, and preparing for metered billing.
+--
+-- TENANT MODEL: profiles-as-tenant
+-- tenant_id references profiles(id) - the profile IS the tenant/owner.
+-- This aligns with organization_members and locations from migration 021.
 -- ============================================================================
 
 -- ============================================================================
@@ -11,7 +15,8 @@
 
 CREATE TABLE IF NOT EXISTS public.usage_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+    -- tenant_id = profile ID of the business owner (profiles-as-tenant pattern)
+    tenant_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     feature_key TEXT NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1,
     metadata JSONB DEFAULT '{}',
@@ -44,9 +49,9 @@ CREATE INDEX IF NOT EXISTS idx_usage_events_created_at
 CREATE INDEX IF NOT EXISTS idx_usage_events_tenant_id
     ON public.usage_events (tenant_id);
 
--- Monthly aggregation optimization (partition by month)
-CREATE INDEX IF NOT EXISTS idx_usage_events_monthly
-    ON public.usage_events (tenant_id, feature_key, date_trunc('month', created_at));
+-- Monthly aggregation: The idx_usage_events_tenant_feature_time composite index
+-- already efficiently covers monthly aggregation queries.
+-- A date_trunc expression index would require an IMMUTABLE wrapper function.
 
 -- ============================================================================
 -- 3. QUOTA OVERRIDES TABLE
@@ -54,7 +59,8 @@ CREATE INDEX IF NOT EXISTS idx_usage_events_monthly
 
 CREATE TABLE IF NOT EXISTS public.quota_overrides (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+    -- tenant_id = profile ID of the business owner (profiles-as-tenant pattern)
+    tenant_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     feature_key TEXT NOT NULL,
     monthly_limit INTEGER, -- NULL = unlimited
     is_unlimited BOOLEAN DEFAULT false,
@@ -296,42 +302,40 @@ COMMENT ON VIEW public.usage_monthly_summary IS 'Aggregated monthly usage per te
 -- ============================================================================
 -- 6. ROW LEVEL SECURITY
 -- ============================================================================
+-- Uses profiles-as-tenant pattern:
+-- - tenant_id = profile ID of the business owner
+-- - User can access if: they ARE the tenant, OR are a team member, OR are super_admin
+-- - Leverages helper functions from migration 021: is_tenant_member(), is_super_admin()
+-- ============================================================================
 
 -- Enable RLS on usage_events
 ALTER TABLE public.usage_events ENABLE ROW LEVEL SECURITY;
 
--- Policy: Users can only see their own tenant's usage events
+-- Policy: Users can view their own tenant's usage events
+-- Covers: tenant owner, team members, and super_admins
 CREATE POLICY "Users can view own tenant usage"
     ON public.usage_events
     FOR SELECT
     USING (
-        tenant_id IN (
-            SELECT p.tenant_id FROM public.profiles p
-            WHERE p.id = auth.uid()
-        )
+        -- User IS the tenant owner
+        tenant_id = auth.uid()
+        -- OR user is a team member of this tenant
+        OR is_tenant_member(tenant_id)
+        -- OR user is super_admin (can see all)
+        OR is_super_admin()
     );
 
--- Policy: Only authenticated users can insert events (via RPC)
+-- Policy: Authenticated users can insert events for their tenant
 CREATE POLICY "Authenticated users can insert usage events"
     ON public.usage_events
     FOR INSERT
     WITH CHECK (
-        tenant_id IN (
-            SELECT p.tenant_id FROM public.profiles p
-            WHERE p.id = auth.uid()
-        )
-    );
-
--- Policy: Super admins can view all usage events
-CREATE POLICY "Super admins can view all usage"
-    ON public.usage_events
-    FOR SELECT
-    USING (
-        EXISTS (
-            SELECT 1 FROM public.profiles p
-            WHERE p.id = auth.uid()
-            AND p.role = 'super_admin'
-        )
+        -- User IS the tenant owner
+        tenant_id = auth.uid()
+        -- OR user is a team member of this tenant
+        OR is_tenant_member(tenant_id)
+        -- OR user is super_admin
+        OR is_super_admin()
     );
 
 -- Enable RLS on quota_overrides
@@ -342,23 +346,20 @@ CREATE POLICY "Users can view own tenant quota overrides"
     ON public.quota_overrides
     FOR SELECT
     USING (
-        tenant_id IN (
-            SELECT p.tenant_id FROM public.profiles p
-            WHERE p.id = auth.uid()
-        )
+        -- User IS the tenant owner
+        tenant_id = auth.uid()
+        -- OR user is a team member of this tenant
+        OR is_tenant_member(tenant_id)
+        -- OR user is super_admin
+        OR is_super_admin()
     );
 
--- Policy: Only super admins can manage quota overrides
+-- Policy: Only super admins can manage (insert/update/delete) quota overrides
 CREATE POLICY "Super admins can manage quota overrides"
     ON public.quota_overrides
     FOR ALL
-    USING (
-        EXISTS (
-            SELECT 1 FROM public.profiles p
-            WHERE p.id = auth.uid()
-            AND p.role = 'super_admin'
-        )
-    );
+    USING (is_super_admin())
+    WITH CHECK (is_super_admin());
 
 -- ============================================================================
 -- 7. TRIGGERS
@@ -386,7 +387,7 @@ CREATE TRIGGER quota_overrides_updated_at
 DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'feature_flags') THEN
-        INSERT INTO public.feature_flags (key, name, description, category, is_enabled, created_at)
+        INSERT INTO public.feature_flags (key, name, description, category, default_enabled, created_at)
         VALUES (
             'feature.usage_dashboard',
             'Usage Dashboard',

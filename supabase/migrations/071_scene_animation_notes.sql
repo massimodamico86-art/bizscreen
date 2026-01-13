@@ -1,0 +1,58 @@
+-- =============================================================================
+-- PHASE 5: Scene Animation Schema Documentation
+-- =============================================================================
+-- This migration documents the animation extension to the design_json schema
+-- used in scene_slides. No actual schema changes are needed since design_json
+-- is already JSONB and backward compatible.
+--
+-- design_json structure (extended):
+-- {
+--   "background": {
+--     "type": "solid" | "gradient" | "image",
+--     "color": "#RRGGBB",
+--     "from"?: "#RRGGBB",
+--     "to"?: "#RRGGBB",
+--     "direction"?: "180deg",
+--     "url"?: "https://..."
+--   },
+--   "blocks": [
+--     {
+--       "id": "blk_xxx",
+--       "type": "text" | "image" | "shape" | "widget",
+--       "x": 0.0-1.0,
+--       "y": 0.0-1.0,
+--       "width": 0.0-1.0,
+--       "height": 0.0-1.0,
+--       "layer": 1,
+--       "props": { ... },
+--
+--       -- NEW: Block-level animation
+--       "animation"?: {
+--         "type": "none" | "fade" | "slide" | "zoom" | "pop",
+--         "direction"?: "up" | "down" | "left" | "right",  -- for slide animation
+--         "delayMs"?: 0-2000,      -- default 0
+--         "durationMs"?: 300-2000  -- default 600
+--       }
+--     }
+--   ],
+--
+--   -- NEW: Slide-level transition
+--   "transition"?: {
+--     "type": "none" | "fade" | "slide" | "zoom",
+--     "durationMs"?: 300-1500  -- default 700
+--   }
+-- }
+--
+-- Notes:
+-- - Old slides without animation/transition fields will work normally (appear instantly)
+-- - Animation types:
+--   - none: No animation (instant)
+--   - fade: Opacity fade in (0 → 1)
+--   - slide: Slide in from direction (default: up)
+--   - zoom: Scale from 0.8 → 1.0 with slight fade
+--   - pop: Scale from 0.5 → 1.05 → 1.0 with bounce
+-- - Transitions are applied when navigating between slides
+-- - Block animations trigger on slide entry
+
+-- Add comment for documentation purposes
+COMMENT ON TABLE scene_slides IS 'Stores slides for scenes with design_json containing layout blocks. Phase 5 adds optional animation and transition properties.';

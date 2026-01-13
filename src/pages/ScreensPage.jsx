@@ -1,3 +1,40 @@
+/**
+ * ScreensPage.jsx
+ * Screen management page for TV device pairing, assignment, and control.
+ *
+ * This is the primary view for managing digital signage screens. It provides:
+ * - Screen listing with filtering and search
+ * - OTP-based TV pairing (create screen → show code → TV enters code)
+ * - Playlist/Layout/Schedule assignment to screens
+ * - Device commands (reboot, reload, clear cache, kiosk mode)
+ * - Screen analytics and status monitoring
+ *
+ * Sub-components (defined in this file):
+ * - DemoPairingBanner: Shows pairing hint for demo screens
+ * - LimitWarningBanner: Shows plan limit warning
+ * - NoScreensState: Empty state when no screens exist
+ * - PromoCards: Promotional cards in empty state
+ * - ScreenRow: Table row for each screen
+ * - ScreenActionMenu: Context menu for screen actions
+ * - AddScreenModal: Modal to create new screen
+ * - LimitReachedModal: Modal when screen limit hit
+ * - AnalyticsModal: Screen playback analytics
+ * - ScreensErrorState: Error UI with retry
+ * - KioskModeModal: Configure kiosk mode
+ *
+ * Data Flow:
+ * 1. Component mounts → loadData() fetches screens, playlists, layouts, schedules
+ * 2. Real-time updates via Supabase channel subscription
+ * 3. User actions → service calls → optimistic updates → toast notifications
+ *
+ * Error Handling:
+ * - Network errors show inline ScreensErrorState with retry
+ * - Operation errors show toast notifications
+ * - All array data has safe defaults (empty array fallbacks)
+ *
+ * @see screenService.js for API operations
+ * @see ScreenDetailDrawer.jsx for detailed screen view
+ */
 import { useState, useEffect, useMemo } from 'react';
 import {
   Search,
@@ -40,6 +77,7 @@ import { useTranslation } from '../i18n';
 import {
   fetchScreens as fetchScreensService,
   createScreen,
+  updateScreen,
   deleteScreen,
   assignPlaylistToScreen,
   assignLayoutToScreen,
@@ -64,6 +102,10 @@ import { fetchLocations, assignScreenToLocation } from '../services/locationServ
 import { getScreenAnalytics, formatDuration, getUptimeColor, DATE_RANGES } from '../services/analyticsService';
 import { fetchScreenGroups } from '../services/screenGroupService';
 import ScreenDetailDrawer from '../components/ScreenDetailDrawer';
+import YodeckEmptyState from '../components/YodeckEmptyState';
+import { PlayerStatusBadge, getPlayerStatus } from '../components/screens/PlayerStatusBadge';
+import { ScreensFooterCards } from '../components/screens/ScreensFooterCards';
+import { InsertContentModal } from '../components/modals/InsertContentModal';
 
 // Design system imports
 import {
@@ -87,82 +129,91 @@ import { EmptyState } from '../design-system';
 // --------------------------------------------------------------------------
 
 // Demo pairing hint banner
-const DemoPairingBanner = ({ screen, onCopy }) => (
-  <Banner
-    variant="info"
-    icon={<Info size={20} />}
-    title="Ready to pair your TV?"
-    onDismiss={null}
-  >
-    <p className="text-sm text-gray-600 mb-3">
-      On your TV browser, open{' '}
-      <code className="bg-blue-100 px-2 py-0.5 rounded text-blue-800 font-mono text-sm">
-        {window.location.origin}/player
-      </code>{' '}
-      and enter the pairing code below.
-    </p>
-    <Inline gap="md">
-      <div className="bg-white rounded-lg px-4 py-2 border border-blue-200 inline-flex items-center gap-3">
-        <code className="text-2xl font-mono font-bold tracking-widest text-gray-900">
-          {screen.otp_code}
-        </code>
-        <button
-          onClick={() => onCopy(screen.otp_code)}
-          className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title="Copy code"
+const DemoPairingBanner = ({ screen, onCopy }) => {
+  // Guard against missing screen or otp_code
+  if (!screen?.otp_code) return null;
+
+  return (
+    <Banner
+      variant="info"
+      icon={<Info size={20} />}
+      title="Ready to pair your TV?"
+      onDismiss={null}
+    >
+      <p className="text-sm text-gray-600 mb-3">
+        On your TV browser, open{' '}
+        <code className="bg-blue-100 px-2 py-0.5 rounded text-blue-800 font-mono text-sm">
+          {window.location.origin}/player
+        </code>{' '}
+        and enter the pairing code below.
+      </p>
+      <Inline gap="md">
+        <div className="bg-white rounded-lg px-4 py-2 border border-blue-200 inline-flex items-center gap-3">
+          <code className="text-2xl font-mono font-bold tracking-widest text-gray-900">
+            {screen.otp_code}
+          </code>
+          <button
+            onClick={() => onCopy(screen.otp_code)}
+            className="p-1.5 hover:bg-gray-100 rounded transition-colors"
+            title="Copy code"
+          >
+            <Copy size={16} className="text-gray-500" />
+          </button>
+        </div>
+        <Button
+          as="a"
+          href="/player"
+          target="_blank"
+          rel="noopener noreferrer"
+          size="sm"
         >
-          <Copy size={16} className="text-gray-500" />
-        </button>
-      </div>
-      <Button
-        as="a"
-        href="/player"
-        target="_blank"
-        rel="noopener noreferrer"
-        size="sm"
-      >
-        <ExternalLink size={16} />
-        Open Player
-      </Button>
-    </Inline>
-  </Banner>
-);
+          <ExternalLink size={16} />
+          Open Player
+        </Button>
+      </Inline>
+    </Banner>
+  );
+};
 
 // Limit warning banner
-const LimitWarningBanner = ({ limits, onUpgrade }) => (
-  <Banner
-    variant="warning"
-    icon={<AlertTriangle size={20} />}
-    title="Screen limit reached"
-    action={
-      <Button variant="secondary" size="sm" onClick={onUpgrade}>
-        <Zap size={16} />
-        Upgrade
-      </Button>
-    }
-  >
-    You've reached the maximum of {limits?.maxScreens} screen{limits?.maxScreens !== 1 ? 's' : ''} for your {limits?.planName} plan.
-    Upgrade to add more screens.
-  </Banner>
-);
+const LimitWarningBanner = ({ limits, onUpgrade }) => {
+  // Guard against missing limits
+  if (!limits) return null;
 
-// Empty state for no screens
+  const maxScreens = limits.maxScreens ?? 0;
+  const planName = limits.planName || 'current';
+
+  return (
+    <Banner
+      variant="warning"
+      icon={<AlertTriangle size={20} />}
+      title="Screen limit reached"
+      action={
+        <Button variant="secondary" size="sm" onClick={onUpgrade}>
+          <Zap size={16} />
+          Upgrade
+        </Button>
+      }
+    >
+      You've reached the maximum of {maxScreens} screen{maxScreens !== 1 ? 's' : ''} for your {planName} plan.
+      Upgrade to add more screens.
+    </Banner>
+  );
+};
+
+// Empty state for no screens - uses YodeckEmptyState component
 const NoScreensState = ({ onAddScreen }) => (
-  <Card variant="outlined" className="p-12 text-center">
-    <div className="w-64 h-40 mx-auto mb-6 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-      <div className="text-center">
-        <Monitor size={48} className="mx-auto text-gray-400 mb-2" />
-        <div className="text-orange-500 font-bold text-lg">BizScreen</div>
-      </div>
-    </div>
-    <h2 className="text-xl font-bold text-gray-900 mb-2">You don't have any Screens.</h2>
-    <p className="text-gray-600 max-w-md mx-auto mb-6">
-      Your BizScreen <strong>Screens</strong> are paired with your physical devices, through a unique registration code. Add one to get started, and push changes instantly.
-    </p>
-    <Button onClick={onAddScreen}>
-      <Plus size={18} />
-      Add Screen
-    </Button>
+  <Card variant="outlined" className="p-6">
+    <YodeckEmptyState
+      type="screens"
+      title="No Screens Connected"
+      description="Add a screen to get a pairing code. Enter the code on your TV or display, then assign a playlist, layout, or schedule to start playing content."
+      actionLabel="Add Your First Screen"
+      onAction={onAddScreen}
+      showTourLink={true}
+      tourLinkText="Learn how to pair a TV →"
+      onTourClick={() => window.open('https://docs.bizscreen.io/screens', '_blank')}
+    />
   </Card>
 );
 
@@ -200,14 +251,14 @@ const PromoCards = () => (
   </Grid>
 );
 
-// Screen table row
+// Screen table row - Yodeck-style with updated columns
 const ScreenRow = ({
   screen,
-  locations,
-  screenGroups,
-  playlists,
-  layouts,
-  schedules,
+  locations = [],
+  screenGroups = [],
+  playlists = [],
+  layouts = [],
+  schedules = [],
   assigningPlaylist,
   assigningLayout,
   assigningSchedule,
@@ -224,22 +275,38 @@ const ScreenRow = ({
   onDeviceCommand,
   onOpenKiosk,
   onDelete,
+  onOpenContentPicker,
   commandingDevice,
 }) => {
-  const online = isScreenOnline(screen);
+  // Guard against null/undefined screen
+  if (!screen) return null;
+
+  const playerStatus = getPlayerStatus(screen);
+  const deviceName = screen.device_name || 'Unnamed Screen';
+
+  // Get content display text
+  const getContentDisplay = () => {
+    if (screen.assigned_playlist?.name) {
+      return screen.assigned_playlist.name;
+    }
+    if (screen.assigned_layout?.name) {
+      return screen.assigned_layout.name;
+    }
+    return 'No Content Assigned';
+  };
 
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
       {/* Screen Name */}
-      <td className="p-4">
+      <td className="px-4 py-4">
         <Inline gap="sm" align="center">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-            online ? 'bg-green-100' : 'bg-gray-100'
+          <div className={`w-10 h-10 rounded flex items-center justify-center ${
+            playerStatus === 'online' ? 'bg-green-100' : 'bg-gray-100'
           }`}>
-            <Monitor size={20} className={online ? 'text-green-600' : 'text-gray-400'} />
+            <Monitor size={20} className={playerStatus === 'online' ? 'text-green-600' : 'text-gray-400'} />
           </div>
           <div>
-            <span className="font-medium text-gray-900">{screen.device_name}</span>
+            <span className="font-medium text-gray-900">{deviceName}</span>
             {screen.model && (
               <p className="text-xs text-gray-500">{screen.model}</p>
             )}
@@ -247,138 +314,55 @@ const ScreenRow = ({
         </Inline>
       </td>
 
-      {/* Location */}
-      <td className="p-4">
-        <Inline gap="xs" align="center">
-          <MapPin size={14} className="text-blue-500 shrink-0" />
-          <select
-            value={screen.location_id || ''}
-            onChange={(e) => onAssignLocation(screen.id, e.target.value || null)}
-            className="flex-1 max-w-[140px] px-2 py-1 border border-gray-200 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-          >
-            <option value="">Unassigned</option>
-            {locations.map(loc => (
-              <option key={loc.id} value={loc.id}>{loc.name}</option>
-            ))}
-          </select>
-        </Inline>
+      {/* Player Status - Yodeck-style badge */}
+      <td className="px-4 py-4">
+        <PlayerStatusBadge status={playerStatus} />
       </td>
 
-      {/* Group */}
-      <td className="p-4">
-        {screen.screen_group_id ? (
-          <Inline gap="xs" align="center">
-            <Users size={14} className="text-indigo-500 shrink-0" />
-            <span className="text-sm text-gray-900">
-              {screenGroups.find(g => g.id === screen.screen_group_id)?.name || 'Unknown'}
-            </span>
-          </Inline>
-        ) : (
-          <span className="text-sm text-gray-400">—</span>
-        )}
-      </td>
-
-      {/* Content (Playlist + Layout) */}
-      <td className="p-4">
-        <Stack gap="xs">
-          {/* Playlist */}
-          <Inline gap="xs" align="center">
-            <ListVideo size={14} className="text-orange-500 shrink-0" />
-            <select
-              value={screen.assigned_playlist_id || ''}
-              onChange={(e) => onAssignPlaylist(screen.id, e.target.value || null)}
-              disabled={assigningPlaylist === screen.id}
-              className={`flex-1 max-w-[160px] px-2 py-1 border border-gray-200 rounded text-xs focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white ${
-                assigningPlaylist === screen.id ? 'opacity-50' : ''
-              }`}
-            >
-              <option value="">No playlist</option>
-              {playlists.map(playlist => (
-                <option key={playlist.id} value={playlist.id}>{playlist.name}</option>
-              ))}
-            </select>
-            {assigningPlaylist === screen.id && (
-              <Loader2 size={12} className="animate-spin text-orange-500" />
-            )}
-          </Inline>
-          {/* Layout */}
-          <Inline gap="xs" align="center">
-            <Layout size={14} className="text-purple-500 shrink-0" />
-            <select
-              value={screen.assigned_layout_id || ''}
-              onChange={(e) => onAssignLayout(screen.id, e.target.value || null)}
-              disabled={assigningLayout === screen.id}
-              className={`flex-1 max-w-[160px] px-2 py-1 border border-gray-200 rounded text-xs focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white ${
-                assigningLayout === screen.id ? 'opacity-50' : ''
-              }`}
-            >
-              <option value="">No layout</option>
-              {layouts.map(layout => (
-                <option key={layout.id} value={layout.id}>{layout.name}</option>
-              ))}
-            </select>
-            {assigningLayout === screen.id && (
-              <Loader2 size={12} className="animate-spin text-purple-500" />
-            )}
-          </Inline>
-        </Stack>
-      </td>
-
-      {/* Schedule */}
-      <td className="p-4">
-        <Inline gap="xs" align="center">
-          <Calendar size={14} className="text-teal-500 shrink-0" />
-          <select
-            value={screen.assigned_schedule_id || ''}
-            onChange={(e) => onAssignSchedule(screen.id, e.target.value || null)}
-            disabled={assigningSchedule === screen.id}
-            className={`flex-1 max-w-[160px] px-2 py-1 border border-gray-200 rounded text-xs focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white ${
-              assigningSchedule === screen.id ? 'opacity-50' : ''
-            }`}
-          >
-            <option value="">No schedule</option>
-            {schedules.map(schedule => (
-              <option key={schedule.id} value={schedule.id}>{schedule.name}</option>
-            ))}
-          </select>
-          {assigningSchedule === screen.id && (
-            <Loader2 size={12} className="animate-spin text-teal-500" />
+      {/* Player Type */}
+      <td className="px-4 py-4">
+        <div className="flex items-center justify-center">
+          {screen.device_info?.platform ? (
+            <span className="text-sm text-gray-600 capitalize">{screen.device_info.platform}</span>
+          ) : (
+            <Monitor size={18} className="text-gray-400" />
           )}
-        </Inline>
+        </div>
       </td>
 
-      {/* Status */}
-      <td className="p-4">
-        <StatusBadge status={online ? 'online' : 'offline'} />
+      {/* ID */}
+      <td className="px-4 py-4">
+        <span className="text-sm text-gray-600 font-mono">
+          {screen.id?.slice(0, 8) || '-'}
+        </span>
       </td>
 
-      {/* Pairing Code */}
-      <td className="p-4">
-        {screen.otp_code ? (
-          <Inline gap="xs" align="center">
-            <code className="px-2 py-1 bg-gray-100 rounded font-mono text-sm">
-              {screen.otp_code}
-            </code>
-            <button
-              onClick={() => onCopyCode(screen.otp_code)}
-              className="p-1 hover:bg-gray-100 rounded transition-colors"
-              title="Copy code"
-            >
-              <Copy size={14} className="text-gray-400" />
-            </button>
-          </Inline>
-        ) : (
-          <span className="text-gray-400">-</span>
-        )}
+      {/* Screen Content */}
+      <td className="px-4 py-4">
+        <button
+          onClick={() => onOpenContentPicker?.(screen)}
+          className={`text-sm hover:underline ${
+            screen.assigned_playlist_id || screen.assigned_layout_id
+              ? 'text-gray-900'
+              : 'text-gray-400'
+          }`}
+        >
+          {getContentDisplay()}
+        </button>
       </td>
 
-      {/* Last Seen */}
-      <td className="p-4 text-gray-600 text-sm">
-        {formatLastSeen(screen.last_seen)}
+      {/* Working Hours */}
+      <td className="px-4 py-4">
+        <span className="text-sm text-gray-600">
+          {screen.working_hours?.enabled
+            ? `${screen.working_hours.start || '09:00'} - ${screen.working_hours.end || '18:00'}`
+            : 'Global Working Hours'
+          }
+        </span>
       </td>
 
       {/* Actions */}
-      <td className="p-4">
+      <td className="px-4 py-4">
         <div className="relative">
           <button
             onClick={() => onActionMenuToggle(screen.id)}
@@ -395,7 +379,7 @@ const ScreenRow = ({
               onEdit={() => { onActionMenuToggle(null); onEdit(screen); }}
               onViewDetails={() => { onActionMenuToggle(null); onViewDetails(screen); }}
               onViewAnalytics={() => { onActionMenuToggle(null); onViewAnalytics(screen); }}
-              onDeviceCommand={(cmd) => { onActionMenuToggle(null); onDeviceCommand(screen.id, cmd, screen.device_name); }}
+              onDeviceCommand={(cmd) => { onActionMenuToggle(null); onDeviceCommand(screen.id, cmd, deviceName); }}
               onOpenKiosk={() => { onActionMenuToggle(null); onOpenKiosk(screen); }}
               onDelete={() => { onActionMenuToggle(null); onDelete(screen.id); }}
             />
@@ -599,6 +583,13 @@ const AddScreenModal = ({ open, onClose, onSubmit, creating, createdScreen, onCo
                 <li>Your screen will start displaying content</li>
               </ol>
             </div>
+
+            <div className="bg-blue-50 rounded-lg p-4 text-left border border-blue-100">
+              <h4 className="font-medium text-blue-800 text-sm mb-2">What's next?</h4>
+              <p className="text-sm text-blue-700">
+                Once connected, assign a <strong>playlist</strong>, <strong>layout</strong>, or <strong>schedule</strong> to this screen from the table view.
+              </p>
+            </div>
           </Stack>
         )}
       </ModalContent>
@@ -618,7 +609,7 @@ const AddScreenModal = ({ open, onClose, onSubmit, creating, createdScreen, onCo
             </Button>
           </>
         ) : (
-          <Button onClick={handleClose} className="w-full">Done</Button>
+          <Button onClick={handleClose} className="w-full">Done – View Screen</Button>
         )}
       </ModalFooter>
     </Modal>
@@ -821,6 +812,212 @@ const AnalyticsModal = ({ screen, data, loading, range, onRangeChange, onClose }
   );
 };
 
+// Screens Error State
+const ScreensErrorState = ({ error, onRetry, t }) => {
+  const [retrying, setRetrying] = useState(false);
+
+  const handleRetry = async () => {
+    setRetrying(true);
+    await onRetry();
+    setRetrying(false);
+  };
+
+  return (
+    <Card className="bg-gradient-to-r from-red-50 to-orange-50 border-red-200">
+      <div className="p-6 flex items-start gap-4">
+        <div className="p-3 bg-red-100 rounded-xl flex-shrink-0">
+          <AlertTriangle className="w-7 h-7 text-red-600" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-xl font-semibold text-gray-900 mb-1">
+            {t('screens.errorTitle', "Couldn't load screens")}
+          </h2>
+          <p className="text-gray-600 mb-4">
+            {t('screens.errorDescription', "We're having trouble loading your screens. This might be a temporary issue.")}
+          </p>
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg mb-4 font-mono">
+              {error}
+            </p>
+          )}
+          <Button
+            onClick={handleRetry}
+            disabled={retrying}
+            variant="secondary"
+          >
+            {retrying ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {t('common.retrying', 'Retrying...')}
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4" />
+                {t('common.tryAgain', 'Try Again')}
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+// Edit Screen Modal
+const EditScreenModal = ({
+  screen,
+  locations,
+  screenGroups,
+  playlists,
+  layouts,
+  onClose,
+  onSubmit,
+  saving,
+}) => {
+  const [name, setName] = useState(screen?.device_name || '');
+  const [locationId, setLocationId] = useState(screen?.location_id || '');
+  const [groupId, setGroupId] = useState(screen?.screen_group_id || '');
+  const [playlistId, setPlaylistId] = useState(screen?.assigned_playlist_id || '');
+  const [layoutId, setLayoutId] = useState(screen?.assigned_layout_id || '');
+
+  useEffect(() => {
+    if (screen) {
+      setName(screen.device_name || '');
+      setLocationId(screen.location_id || '');
+      setGroupId(screen.screen_group_id || '');
+      setPlaylistId(screen.assigned_playlist_id || '');
+      setLayoutId(screen.assigned_layout_id || '');
+    }
+  }, [screen]);
+
+  if (!screen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({
+      id: screen.id,
+      name: name.trim(),
+      locationId: locationId || null,
+      groupId: groupId || null,
+      playlistId: playlistId || null,
+      layoutId: layoutId || null,
+    });
+  };
+
+  return (
+    <Modal open={!!screen} onClose={onClose} size="md">
+      <ModalHeader>
+        <Inline gap="sm" align="center">
+          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <Edit size={20} className="text-blue-600" />
+          </div>
+          <div>
+            <ModalTitle>Edit Screen</ModalTitle>
+            <ModalDescription>{screen.device_name}</ModalDescription>
+          </div>
+        </Inline>
+      </ModalHeader>
+
+      <form onSubmit={handleSubmit}>
+        <ModalContent>
+          <Stack gap="md">
+            {/* Screen Name */}
+            <FormField label="Screen Name" required>
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Lobby TV"
+              />
+            </FormField>
+
+            {/* Location */}
+            <FormField label="Location">
+              <Select
+                value={locationId}
+                onChange={(e) => setLocationId(e.target.value)}
+              >
+                <option value="">No location</option>
+                {(locations || []).map((loc) => (
+                  <option key={loc.id} value={loc.id}>{loc.name}</option>
+                ))}
+              </Select>
+            </FormField>
+
+            {/* Screen Group */}
+            <FormField label="Screen Group">
+              <Select
+                value={groupId}
+                onChange={(e) => setGroupId(e.target.value)}
+              >
+                <option value="">No group</option>
+                {(screenGroups || []).map((group) => (
+                  <option key={group.id} value={group.id}>{group.name}</option>
+                ))}
+              </Select>
+            </FormField>
+
+            <hr className="border-gray-200" />
+
+            <h4 className="font-medium text-gray-900">Content Assignment</h4>
+            <p className="text-sm text-gray-500 -mt-2">
+              Assign a playlist or layout to display on this screen.
+            </p>
+
+            {/* Playlist */}
+            <FormField label="Playlist">
+              <Select
+                value={playlistId}
+                onChange={(e) => {
+                  setPlaylistId(e.target.value);
+                  if (e.target.value) setLayoutId(''); // Clear layout if playlist selected
+                }}
+              >
+                <option value="">No playlist</option>
+                {(playlists || []).map((pl) => (
+                  <option key={pl.id} value={pl.id}>{pl.name}</option>
+                ))}
+              </Select>
+            </FormField>
+
+            {/* Layout */}
+            <FormField label="Layout">
+              <Select
+                value={layoutId}
+                onChange={(e) => {
+                  setLayoutId(e.target.value);
+                  if (e.target.value) setPlaylistId(''); // Clear playlist if layout selected
+                }}
+              >
+                <option value="">No layout</option>
+                {(layouts || []).map((layout) => (
+                  <option key={layout.id} value={layout.id}>{layout.name}</option>
+                ))}
+              </Select>
+            </FormField>
+
+            {/* OTP Code Display */}
+            {screen.otp_code && (
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Pairing Code</p>
+                <code className="text-xl font-mono font-bold tracking-widest text-gray-900">
+                  {screen.otp_code}
+                </code>
+              </div>
+            )}
+          </Stack>
+        </ModalContent>
+
+        <ModalFooter>
+          <Button variant="ghost" type="button" onClick={onClose}>Cancel</Button>
+          <Button type="submit" disabled={!name.trim() || saving} loading={saving}>
+            Save Changes
+          </Button>
+        </ModalFooter>
+      </form>
+    </Modal>
+  );
+};
+
 // Kiosk Mode Modal
 const KioskModeModal = ({ screen, onClose, onSubmit }) => {
   const [enabled, setEnabled] = useState(screen?.kiosk_mode_enabled || false);
@@ -916,6 +1113,7 @@ const ScreensPage = ({ showToast }) => {
   const [schedules, setSchedules] = useState([]);
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [locationFilter, setLocationFilter] = useState('all');
   const [groupFilter, setGroupFilter] = useState('all');
@@ -923,6 +1121,7 @@ const ScreensPage = ({ showToast }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [actionMenuId, setActionMenuId] = useState(null);
   const [editingScreen, setEditingScreen] = useState(null);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   // Add screen modal state
   const [newScreenName, setNewScreenName] = useState('');
@@ -951,6 +1150,10 @@ const ScreensPage = ({ showToast }) => {
   // Screen detail drawer state
   const [detailScreen, setDetailScreen] = useState(null);
 
+  // Content picker modal state (Yodeck-style)
+  const [showContentPicker, setShowContentPicker] = useState(false);
+  const [contentPickerScreen, setContentPickerScreen] = useState(null);
+
   // Fetch screens and playlists
   useEffect(() => {
     loadData();
@@ -973,16 +1176,23 @@ const ScreensPage = ({ showToast }) => {
 
   const loadData = async () => {
     setLoading(true);
-    await Promise.all([
-      loadScreens(),
-      loadPlaylists(),
-      loadLayouts(),
-      loadSchedules(),
-      loadLimits(),
-      loadLocations(),
-      loadScreenGroups(),
-    ]);
-    setLoading(false);
+    setError(null);
+    try {
+      await Promise.all([
+        loadScreens(),
+        loadPlaylists(),
+        loadLayouts(),
+        loadSchedules(),
+        loadLimits(),
+        loadLocations(),
+        loadScreenGroups(),
+      ]);
+    } catch (err) {
+      console.error('Error loading screens data:', err);
+      setError(err.message || 'Failed to load screens data');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loadScreenGroups = async () => {
@@ -1016,9 +1226,10 @@ const ScreensPage = ({ showToast }) => {
     try {
       const data = await fetchScreensService();
       setScreens(data || []);
-    } catch (error) {
-      console.error('Error fetching screens:', error);
-      showToast?.('Error loading screens: ' + error.message, 'error');
+    } catch (err) {
+      console.error('Error fetching screens:', err);
+      // Re-throw to let loadData catch it for inline error UI
+      throw err;
     }
   };
 
@@ -1113,6 +1324,48 @@ const ScreensPage = ({ showToast }) => {
       showToast?.('Error creating screen: ' + error.message, 'error');
     } finally {
       setCreatingScreen(false);
+    }
+  };
+
+  const handleEditScreen = async (data) => {
+    try {
+      setSavingEdit(true);
+      await updateScreen(data.id, {
+        device_name: data.name,
+        location_id: data.locationId,
+        screen_group_id: data.groupId,
+        assigned_playlist_id: data.playlistId,
+        assigned_layout_id: data.layoutId,
+      });
+
+      // Update local state
+      setScreens((prev) =>
+        prev.map((s) => {
+          if (s.id === data.id) {
+            const playlist = playlists.find((p) => p.id === data.playlistId);
+            const layout = layouts.find((l) => l.id === data.layoutId);
+            return {
+              ...s,
+              device_name: data.name,
+              location_id: data.locationId,
+              screen_group_id: data.groupId,
+              assigned_playlist_id: data.playlistId,
+              assigned_playlist: playlist ? { id: playlist.id, name: playlist.name } : null,
+              assigned_layout_id: data.layoutId,
+              assigned_layout: layout ? { id: layout.id, name: layout.name } : null,
+            };
+          }
+          return s;
+        })
+      );
+
+      showToast?.('Screen updated successfully');
+      setEditingScreen(null);
+    } catch (error) {
+      console.error('Error updating screen:', error);
+      showToast?.('Error updating screen: ' + error.message, 'error');
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -1283,6 +1536,33 @@ const ScreensPage = ({ showToast }) => {
     showToast?.('OTP code copied to clipboard');
   };
 
+  // Content picker handlers
+  const handleOpenContentPicker = (screen) => {
+    setContentPickerScreen(screen);
+    setShowContentPicker(true);
+  };
+
+  const handleContentSelected = async (content, contentType) => {
+    if (!contentPickerScreen) return;
+
+    try {
+      if (contentType === 'playlists') {
+        await handleAssignPlaylist(contentPickerScreen.id, content.id);
+      } else if (contentType === 'layouts') {
+        await handleAssignLayout(contentPickerScreen.id, content.id);
+      } else if (contentType === 'media') {
+        // For single media, we could create an on-the-fly playlist or assign directly
+        // For now, show a message
+        showToast?.('To display media, add it to a playlist first');
+      } else if (contentType === 'apps') {
+        showToast?.('To display apps, add them to a playlist or layout first');
+      }
+    } catch (error) {
+      console.error('Error assigning content:', error);
+      showToast?.('Error assigning content', 'error');
+    }
+  };
+
   const onlineCount = screens.filter(isScreenOnline).length;
   const offlineCount = screens.length - onlineCount;
   const limitReached = limits ? hasReachedLimit(limits.maxScreens, screens.length) : false;
@@ -1334,7 +1614,7 @@ const ScreensPage = ({ showToast }) => {
           )}
 
           {/* Empty State */}
-          {screens.length === 0 && !loading && (
+          {screens.length === 0 && !loading && !error && (
             <>
               <NoScreensState onAddScreen={handleAddScreen} />
               <PromoCards />
@@ -1396,26 +1676,29 @@ const ScreensPage = ({ showToast }) => {
             </Inline>
           )}
 
+          {/* Error State */}
+          {error && !loading && screens.length === 0 && (
+            <ScreensErrorState error={error} onRetry={loadData} t={t} />
+          )}
+
           {/* Screens Table */}
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
             </div>
-          ) : screens.length > 0 && (
+          ) : !error && screens.length > 0 && (
             <Card variant="outlined">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
-                      <th className="p-4 font-medium">Screen</th>
-                      <th className="p-4 font-medium">Location</th>
-                      <th className="p-4 font-medium">Group</th>
-                      <th className="p-4 font-medium">Content</th>
-                      <th className="p-4 font-medium">Schedule</th>
-                      <th className="p-4 font-medium">Status</th>
-                      <th className="p-4 font-medium">Pairing Code</th>
-                      <th className="p-4 font-medium">Last Seen</th>
-                      <th className="p-4 font-medium w-20">Actions</th>
+                      <th className="px-4 py-3 font-medium">Name</th>
+                      <th className="px-4 py-3 font-medium">Player Status</th>
+                      <th className="px-4 py-3 font-medium">Player Type</th>
+                      <th className="px-4 py-3 font-medium">ID</th>
+                      <th className="px-4 py-3 font-medium">Screen Content</th>
+                      <th className="px-4 py-3 font-medium">Working Hours</th>
+                      <th className="px-4 py-3 font-medium w-16"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1444,6 +1727,7 @@ const ScreensPage = ({ showToast }) => {
                         onDeviceCommand={handleDeviceCommand}
                         onOpenKiosk={setShowKioskModal}
                         onDelete={handleDelete}
+                        onOpenContentPicker={handleOpenContentPicker}
                         commandingDevice={commandingDevice}
                       />
                     ))}
@@ -1488,6 +1772,17 @@ const ScreensPage = ({ showToast }) => {
         onSubmit={handleKioskModeSubmit}
       />
 
+      <EditScreenModal
+        screen={editingScreen}
+        locations={locations}
+        screenGroups={screenGroups}
+        playlists={playlists}
+        layouts={layouts}
+        onClose={() => setEditingScreen(null)}
+        onSubmit={handleEditScreen}
+        saving={savingEdit}
+      />
+
       {/* Screen Detail Drawer */}
       {detailScreen && (
         <ScreenDetailDrawer
@@ -1496,6 +1791,26 @@ const ScreensPage = ({ showToast }) => {
           showToast={showToast}
         />
       )}
+
+      {/* Insert Content Modal (Yodeck-style) */}
+      <InsertContentModal
+        open={showContentPicker}
+        onClose={() => {
+          setShowContentPicker(false);
+          setContentPickerScreen(null);
+        }}
+        onSelect={handleContentSelected}
+        initialTab="playlists"
+        title={`Assign Content to ${contentPickerScreen?.device_name || 'Screen'}`}
+        allowedTabs={['playlists', 'layouts']}
+      />
+
+      {/* Yodeck-style Footer Cards */}
+      <ScreensFooterCards
+        onUpgrade={() => window.location.hash = '#account-plan'}
+        onBuyPlayer={() => window.open('https://bizscreen.io/players', '_blank')}
+        onAddScreen={() => setShowAddModal(true)}
+      />
     </PageLayout>
   );
 };

@@ -4,6 +4,7 @@
  * Provides functions to submit user feedback and manage in-app announcements.
  */
 import { supabase } from '../supabase';
+import { uploadBase64ToCloudinary, isCloudinaryConfigured } from './cloudinaryService';
 
 // In-memory cache for announcements
 let announcementCache = {
@@ -44,17 +45,9 @@ async function getCurrentTenantId() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  let tenantId = user.user_metadata?.tenant_id;
-  if (!tenantId) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('tenant_id')
-      .eq('id', user.id)
-      .single();
-    tenantId = profile?.tenant_id;
-  }
-
-  return tenantId;
+  // In this schema, user.id IS the tenant_id for clients
+  // (profiles.id = auth.users.id = tenant identifier)
+  return user.user_metadata?.tenant_id || user.id;
 }
 
 /**
@@ -68,7 +61,7 @@ async function getCurrentPlan(tenantId) {
   const { data: subscription } = await supabase
     .from('subscriptions')
     .select('plan_id, plans(slug)')
-    .eq('tenant_id', tenantId)
+    .eq('owner_id', tenantId)
     .in('status', ['active', 'trialing'])
     .order('created_at', { ascending: false })
     .limit(1)
@@ -154,11 +147,24 @@ export async function submitBugReport(description, screenshotDataUrl, additional
     ...additionalContext,
   };
 
-  // If screenshot provided, we'd upload it to storage first
-  // For now, just note that it was included
+  // Upload screenshot to Cloudinary if provided
   if (screenshotDataUrl) {
     context.screenshotIncluded = true;
-    // TODO: Upload to storage and include URL
+
+    if (isCloudinaryConfigured()) {
+      try {
+        const screenshotUrl = await uploadBase64ToCloudinary(screenshotDataUrl, {
+          folder: 'feedback-screenshots',
+          resourceType: 'image',
+        });
+        context.screenshotUrl = screenshotUrl;
+      } catch (uploadError) {
+        console.warn('Failed to upload screenshot:', uploadError);
+        context.screenshotUploadFailed = true;
+      }
+    } else {
+      context.screenshotUploadSkipped = 'cloudinary_not_configured';
+    }
   }
 
   return submitFeedback({

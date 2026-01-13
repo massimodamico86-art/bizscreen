@@ -370,3 +370,36 @@ export async function duplicatePlaylist(id) {
 
   return newPlaylist;
 }
+
+/**
+ * Save a playlist as a reusable template
+ * @param {string} playlistId - The playlist ID to save as template
+ * @param {Object} options - Template options
+ * @param {string} options.name - Template name
+ * @param {string} [options.description] - Template description
+ * @param {string} [options.categoryId] - Category UUID
+ * @param {string} [options.thumbnailUrl] - Thumbnail URL
+ * @returns {Promise<{success: boolean, template_id: string, template_slug: string}>}
+ */
+export async function savePlaylistAsTemplate(playlistId, { name, description, categoryId, thumbnailUrl } = {}) {
+  const { data, error } = await supabase.rpc('save_playlist_as_template', {
+    p_playlist_id: playlistId,
+    p_name: name,
+    p_description: description || null,
+    p_category_id: categoryId || null,
+    p_thumbnail_url: thumbnailUrl || null,
+  });
+
+  if (error) throw error;
+
+  // Log activity
+  await logActivity({
+    action: ACTIONS.CREATE,
+    resourceType: RESOURCE_TYPES.TEMPLATE,
+    resourceId: data.template_id,
+    resourceName: name,
+    details: { from_playlist: playlistId, item_count: data.item_count },
+  });
+
+  return data;
+}

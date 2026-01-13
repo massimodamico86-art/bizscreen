@@ -133,6 +133,7 @@ export const PageHeader = forwardRef(function PageHeader(
 
 /**
  * Main content area wrapper
+ * Note: Uses <div> instead of <main> because App.jsx already provides the semantic <main> wrapper
  */
 export const PageContent = forwardRef(function PageContent(
   {
@@ -143,13 +144,13 @@ export const PageContent = forwardRef(function PageContent(
   ref
 ) {
   return (
-    <main
+    <div
       ref={ref}
       className={`${className}`}
       {...props}
     >
       {children}
-    </main>
+    </div>
   );
 });
 
@@ -457,4 +458,58 @@ export const Divider = forwardRef(function Divider(
   );
 });
 
-export default PageLayout;
+/**
+ * Convenience wrapper that combines PageLayout with PageHeader
+ * Accepts title, description, actions props directly
+ */
+const PageLayoutWithHeader = forwardRef(function PageLayoutWithHeader(
+  {
+    title,
+    description,
+    actions,
+    backButton,
+    breadcrumbs,
+    children,
+    className = '',
+    maxWidth = 'default',
+    padding = 'default',
+    ...props
+  },
+  ref
+) {
+  // If no title provided, just render basic PageLayout
+  if (!title && !description && !actions) {
+    return (
+      <PageLayout
+        ref={ref}
+        className={className}
+        maxWidth={maxWidth}
+        padding={padding}
+        {...props}
+      >
+        {children}
+      </PageLayout>
+    );
+  }
+
+  return (
+    <PageLayout
+      ref={ref}
+      className={className}
+      maxWidth={maxWidth}
+      padding={padding}
+      {...props}
+    >
+      <PageHeader
+        title={title}
+        description={description}
+        actions={actions}
+        backButton={backButton}
+        breadcrumbs={breadcrumbs}
+      />
+      {children}
+    </PageLayout>
+  );
+});
+
+export default PageLayoutWithHeader;

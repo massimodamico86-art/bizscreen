@@ -1,17 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   ArrowLeft,
   Plus,
   Trash2,
-  Save,
   X,
   Calendar,
   Clock,
-  ListVideo,
-  Grid3X3,
-  Image,
-  Search,
-  ChevronDown
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  AlertCircle,
+  RefreshCw,
+  Power,
+  Monitor,
+  Info
 } from 'lucide-react';
 import {
   fetchScheduleWithEntriesResolved,
@@ -19,69 +21,156 @@ import {
   createScheduleEntry,
   updateScheduleEntry,
   deleteScheduleEntry,
-  DAYS_OF_WEEK,
-  TARGET_TYPES,
-  formatDaysOfWeek,
-  formatTimeRange
+  TARGET_TYPES
 } from '../services/scheduleService';
 import { supabase } from '../supabase';
-import { Button, Card, Badge } from '../design-system';
+import { Button, Card } from '../design-system';
 import { useTranslation } from '../i18n';
+
+// Yodeck-style repeat options
+const REPEAT_OPTIONS = [
+  { value: 'none', label: 'Does not repeat' },
+  { value: 'daily', label: 'Daily (Mon-Sun)' },
+  { value: 'weekday', label: 'Every weekday (Mon-Fri)' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'yearly', label: 'Annually' },
+  { value: 'custom', label: 'Custom' }
+];
+
+const REPEAT_UNITS = [
+  { value: 'day', label: 'Day' },
+  { value: 'week', label: 'Week' },
+  { value: 'month', label: 'Month' },
+  { value: 'year', label: 'Year' }
+];
+
+const REPEAT_UNTIL_OPTIONS = [
+  { value: 'forever', label: 'Forever' },
+  { value: 'date', label: 'On date' },
+  { value: 'count', label: 'After occurrences' }
+];
+
+// Helper to format time to 12-hour format
+const formatTime12 = (time24) => {
+  if (!time24) return '';
+  const [hours, minutes] = time24.split(':');
+  const h = parseInt(hours);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${minutes} ${ampm}`;
+};
+
+// Helper to get week dates
+const getWeekDates = (date) => {
+  const start = new Date(date);
+  const day = start.getDay();
+  const diff = start.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Monday start
+  start.setDate(diff);
+
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+};
+
+// Format date for display
+const formatDateShort = (date) => {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${days[date.getDay()]} ${date.getMonth() + 1}/${date.getDate()}`;
+};
+
+const formatDateInput = (date) => {
+  return date.toISOString().split('T')[0];
+};
+
+const formatDateDisplay = (dateStr) => {
+  const date = new Date(dateStr + 'T00:00:00');
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+};
+
+// Time slots for calendar
+const TIME_SLOTS = [];
+for (let h = 8; h <= 19; h++) {
+  TIME_SLOTS.push(`${h.toString().padStart(2, '0')}:00`);
+}
 
 const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
   const { t } = useTranslation();
   const [schedule, setSchedule] = useState(null);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [showEntryModal, setShowEntryModal] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
   const [editingEntry, setEditingEntry] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
 
-  // For entry modal
+  // Calendar state
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [viewMode, setViewMode] = useState('week'); // 'week' or 'day'
+
+  // Content options
   const [playlists, setPlaylists] = useState([]);
   const [layouts, setLayouts] = useState([]);
-  const [mediaAssets, setMediaAssets] = useState([]);
-  const [entryForm, setEntryForm] = useState({
-    target_type: TARGET_TYPES.PLAYLIST,
-    target_id: '',
-    days_of_week: [1, 2, 3, 4, 5],
-    start_time: '09:00',
-    end_time: '17:00',
-    priority: 0,
-    is_active: true
+  const [scenes, setScenes] = useState([]);
+
+  // New Event form - Yodeck style
+  const [eventForm, setEventForm] = useState({
+    eventType: 'content', // 'content' or 'screenOff'
+    contentType: '',
+    contentId: '',
+    startDate: formatDateInput(new Date()),
+    startTime: '08:00',
+    endDate: formatDateInput(new Date()),
+    endTime: '08:30',
+    repeat: 'none',
+    repeatEvery: 1,
+    repeatUnit: 'day',
+    repeatUntil: 'forever',
+    repeatUntilDate: '',
+    repeatUntilCount: 10
   });
+
+  const weekDates = useMemo(() => getWeekDates(currentDate), [currentDate]);
 
   useEffect(() => {
     if (scheduleId) {
       loadSchedule();
+      loadContentOptions();
     }
   }, [scheduleId]);
 
   const loadSchedule = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await fetchScheduleWithEntriesResolved(scheduleId);
       setSchedule(data);
       setEntries(data.schedule_entries || []);
-    } catch (error) {
-      console.error('Error loading schedule:', error);
-      showToast?.('Error loading schedule: ' + error.message, 'error');
+    } catch (err) {
+      console.error('Error loading schedule:', err);
+      setError(err.message || 'Failed to load schedule');
     } finally {
       setLoading(false);
     }
   };
 
-  const loadTargetOptions = async () => {
-    const [playlistsResult, layoutsResult, mediaResult] = await Promise.all([
+  const loadContentOptions = async () => {
+    const [playlistsResult, layoutsResult, scenesResult] = await Promise.all([
       supabase.from('playlists').select('id, name').order('name'),
       supabase.from('layouts').select('id, name').order('name'),
-      supabase.from('media_assets').select('id, name, type, thumbnail_url').order('name')
+      supabase.from('scenes').select('id, name').eq('is_active', true).order('name')
     ]);
-
     setPlaylists(playlistsResult.data || []);
     setLayouts(layoutsResult.data || []);
-    setMediaAssets(mediaResult.data || []);
+    setScenes(scenesResult.data || []);
   };
 
   const handleSave = async () => {
@@ -101,117 +190,159 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
     }
   };
 
-  const openEntryModal = async (entry = null) => {
-    await loadTargetOptions();
+  const openNewEventModal = (date, time) => {
+    const startDate = date ? formatDateInput(date) : formatDateInput(new Date());
+    const startTime = time || '08:00';
+    const endTime = time ?
+      `${(parseInt(time.split(':')[0]) + 1).toString().padStart(2, '0')}:00` :
+      '09:00';
 
-    if (entry) {
-      setEditingEntry(entry);
-      setEntryForm({
-        target_type: entry.target_type,
-        target_id: entry.target_id || '',
-        days_of_week: entry.days_of_week || [1, 2, 3, 4, 5],
-        start_time: entry.start_time || '09:00',
-        end_time: entry.end_time || '17:00',
-        priority: entry.priority || 0,
-        is_active: entry.is_active ?? true
-      });
-    } else {
-      setEditingEntry(null);
-      setEntryForm({
-        target_type: TARGET_TYPES.PLAYLIST,
-        target_id: '',
-        days_of_week: [1, 2, 3, 4, 5],
-        start_time: '09:00',
-        end_time: '17:00',
-        priority: 0,
-        is_active: true
-      });
-    }
-    setShowEntryModal(true);
+    setEditingEntry(null);
+    setEventForm({
+      eventType: 'content',
+      contentType: '',
+      contentId: '',
+      startDate,
+      startTime,
+      endDate: startDate,
+      endTime,
+      repeat: 'none',
+      repeatEvery: 1,
+      repeatUnit: 'day',
+      repeatUntil: 'forever',
+      repeatUntilDate: '',
+      repeatUntilCount: 10
+    });
+    setShowEventModal(true);
   };
 
-  const handleSaveEntry = async () => {
-    if (!entryForm.target_id) {
+  const openEditEventModal = (entry) => {
+    setEditingEntry(entry);
+    // Parse repeat_config JSONB
+    const repeatConfig = entry.repeat_config || {};
+    setEventForm({
+      eventType: entry.event_type === 'screen_off' ? 'screenOff' : 'content',
+      contentType: entry.content_type || entry.target_type || '',
+      contentId: entry.content_id || entry.target_id || '',
+      startDate: entry.start_date || formatDateInput(new Date()),
+      startTime: entry.start_time || '08:00',
+      endDate: entry.end_date || entry.start_date || formatDateInput(new Date()),
+      endTime: entry.end_time || '09:00',
+      repeat: entry.repeat_type || 'none',
+      repeatEvery: repeatConfig.repeat_every || 1,
+      repeatUnit: repeatConfig.repeat_unit || 'day',
+      repeatUntil: repeatConfig.repeat_until || 'forever',
+      repeatUntilDate: repeatConfig.repeat_until_date || '',
+      repeatUntilCount: repeatConfig.repeat_until_count || 10
+    });
+    setShowEventModal(true);
+  };
+
+  const handleSaveEvent = async () => {
+    if (eventForm.eventType === 'content' && !eventForm.contentId) {
       showToast?.('Please select content to display', 'error');
       return;
     }
 
     try {
+      const entryData = {
+        // Content info
+        content_type: eventForm.eventType === 'screenOff' ? null : eventForm.contentType,
+        content_id: eventForm.eventType === 'screenOff' ? null : eventForm.contentId,
+        // Also set target_type/target_id for backwards compatibility
+        target_type: eventForm.eventType === 'screenOff' ? 'all' : eventForm.contentType,
+        target_id: eventForm.eventType === 'screenOff' ? null : eventForm.contentId,
+        // Timing
+        start_date: eventForm.startDate,
+        start_time: eventForm.startTime,
+        end_date: eventForm.endDate,
+        end_time: eventForm.endTime,
+        // Event type
+        event_type: eventForm.eventType === 'screenOff' ? 'screen_off' : 'content',
+        // Repeat settings
+        repeat_type: eventForm.repeat,
+        repeat_every: eventForm.repeatEvery,
+        repeat_unit: eventForm.repeatUnit,
+        repeat_until: eventForm.repeatUntil,
+        repeat_until_date: eventForm.repeatUntilDate || null,
+        repeat_until_count: eventForm.repeatUntilCount,
+        is_active: true,
+        // Convert to days_of_week for backwards compatibility
+        days_of_week: eventForm.repeat === 'weekday' ? [1,2,3,4,5] : [0,1,2,3,4,5,6]
+      };
+
       if (editingEntry) {
-        await updateScheduleEntry(editingEntry.id, entryForm);
-        // Reload to get resolved target info
-        await loadSchedule();
-        showToast?.('Entry updated');
+        await updateScheduleEntry(editingEntry.id, entryData);
+        showToast?.('Event updated');
       } else {
-        await createScheduleEntry(scheduleId, entryForm);
-        await loadSchedule();
-        showToast?.('Entry added');
+        await createScheduleEntry(scheduleId, entryData);
+        showToast?.('Event added');
       }
-      setShowEntryModal(false);
+
+      await loadSchedule();
+      setShowEventModal(false);
     } catch (error) {
-      console.error('Error saving entry:', error);
-      showToast?.('Error saving entry: ' + error.message, 'error');
+      console.error('Error saving event:', error);
+      showToast?.('Error saving event: ' + error.message, 'error');
     }
   };
 
   const handleDeleteEntry = async (entryId) => {
-    if (!window.confirm('Are you sure you want to delete this entry?')) return;
-
+    if (!window.confirm('Are you sure you want to delete this event?')) return;
     try {
       await deleteScheduleEntry(entryId);
       setEntries(prev => prev.filter(e => e.id !== entryId));
-      showToast?.('Entry deleted');
+      showToast?.('Event deleted');
     } catch (error) {
-      console.error('Error deleting entry:', error);
-      showToast?.('Error deleting entry: ' + error.message, 'error');
+      console.error('Error deleting event:', error);
+      showToast?.('Error deleting event: ' + error.message, 'error');
     }
   };
 
-  const toggleDay = (day) => {
-    setEntryForm(prev => {
-      const days = prev.days_of_week.includes(day)
-        ? prev.days_of_week.filter(d => d !== day)
-        : [...prev.days_of_week, day].sort((a, b) => a - b);
-      return { ...prev, days_of_week: days };
+  const navigateWeek = (direction) => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() + (direction * 7));
+    setCurrentDate(newDate);
+  };
+
+  const goToToday = () => {
+    setCurrentDate(new Date());
+  };
+
+  const getContentOptions = () => {
+    switch (eventForm.contentType) {
+      case 'playlist': return playlists;
+      case 'layout': return layouts;
+      case 'scene': return scenes;
+      default: return [];
+    }
+  };
+
+  // Format week range for header
+  const weekRangeText = useMemo(() => {
+    const start = weekDates[0];
+    const end = weekDates[6];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    if (start.getMonth() === end.getMonth()) {
+      return `${months[start.getMonth()]} ${start.getDate()} – ${end.getDate()}, ${start.getFullYear()}`;
+    }
+    return `${months[start.getMonth()]} ${start.getDate()} – ${months[end.getMonth()]} ${end.getDate()}, ${start.getFullYear()}`;
+  }, [weekDates]);
+
+  // Get events for a specific day and time slot
+  const getEventsForSlot = (date, timeSlot) => {
+    const slotHour = parseInt(timeSlot.split(':')[0]);
+    const dateStr = formatDateInput(date);
+
+    return entries.filter(entry => {
+      const entryDate = entry.start_date || dateStr;
+      const entryStartHour = parseInt((entry.start_time || '00:00').split(':')[0]);
+      const entryEndHour = parseInt((entry.end_time || '23:59').split(':')[0]);
+
+      // Check if entry falls on this date and time
+      return entryDate === dateStr && slotHour >= entryStartHour && slotHour < entryEndHour;
     });
-  };
-
-  const setWeekdays = () => {
-    setEntryForm(prev => ({ ...prev, days_of_week: [1, 2, 3, 4, 5] }));
-  };
-
-  const setWeekends = () => {
-    setEntryForm(prev => ({ ...prev, days_of_week: [0, 6] }));
-  };
-
-  const setEveryDay = () => {
-    setEntryForm(prev => ({ ...prev, days_of_week: [0, 1, 2, 3, 4, 5, 6] }));
-  };
-
-  const getTargetIcon = (targetType) => {
-    switch (targetType) {
-      case TARGET_TYPES.PLAYLIST:
-        return <ListVideo size={16} className="text-orange-600" />;
-      case TARGET_TYPES.LAYOUT:
-        return <Grid3X3 size={16} className="text-purple-600" />;
-      case TARGET_TYPES.MEDIA:
-        return <Image size={16} className="text-blue-600" />;
-      default:
-        return null;
-    }
-  };
-
-  const getTargetOptions = () => {
-    switch (entryForm.target_type) {
-      case TARGET_TYPES.PLAYLIST:
-        return playlists;
-      case TARGET_TYPES.LAYOUT:
-        return layouts;
-      case TARGET_TYPES.MEDIA:
-        return mediaAssets;
-      default:
-        return [];
-    }
   };
 
   if (loading) {
@@ -222,333 +353,493 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
     );
   }
 
-  if (!schedule) {
+  if (error) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">Schedule not found</p>
-        <Button onClick={() => onNavigate?.('schedules')} className="mt-4">
-          Back to Schedules
-        </Button>
-      </div>
+      <Card className="p-8 max-w-md mx-auto mt-12">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Unable to load schedule</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <div className="flex gap-2 justify-center">
+            <Button variant="secondary" onClick={() => onNavigate?.('schedules')}>
+              <ArrowLeft size={16} />
+              Back to Schedules
+            </Button>
+            <Button onClick={loadSchedule}>
+              <RefreshCw size={16} />
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="h-full flex flex-col -m-6">
+      {/* Top Header - Yodeck style */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
+          {/* Back link */}
           <button
             onClick={() => onNavigate?.('schedules')}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
           >
-            <ArrowLeft size={20} />
+            <ChevronLeft size={16} />
+            All Schedules
           </button>
-          <div>
-            <input
-              type="text"
-              value={schedule.name}
-              onChange={(e) => {
-                setSchedule(prev => ({ ...prev, name: e.target.value }));
-                setIsDirty(true);
-              }}
-              className="text-2xl font-bold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-orange-500 rounded px-2 -ml-2"
-            />
-            <p className="text-gray-500 text-sm">{entries.length} schedule entr{entries.length !== 1 ? 'ies' : 'y'}</p>
-          </div>
+
+          {/* Schedule name */}
+          <input
+            type="text"
+            value={schedule?.name || ''}
+            onChange={(e) => {
+              setSchedule(prev => ({ ...prev, name: e.target.value }));
+              setIsDirty(true);
+            }}
+            className="text-base font-medium text-gray-900 bg-white border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 w-48"
+          />
         </div>
+
+        {/* Action buttons */}
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            onClick={() => onNavigate?.('schedules')}
-          >
+          <Button variant="secondary" onClick={() => onNavigate?.('schedules')}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={saving || !isDirty}>
-            <Save size={18} />
+          <Button onClick={handleSave} disabled={saving}>
             {saving ? 'Saving...' : 'Save'}
           </Button>
         </div>
       </div>
 
-      {/* Schedule Info */}
-      <Card className="p-4">
-        <div className="flex items-start gap-4">
-          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-            schedule.is_active ? 'bg-teal-100' : 'bg-gray-100'
-          }`}>
-            <Calendar size={24} className={schedule.is_active ? 'text-teal-600' : 'text-gray-400'} />
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <Badge variant={schedule.is_active ? 'success' : 'default'}>
-                {schedule.is_active ? 'Active' : 'Paused'}
-              </Badge>
-            </div>
-            <textarea
-              value={schedule.description || ''}
-              onChange={(e) => {
-                setSchedule(prev => ({ ...prev, description: e.target.value }));
-                setIsDirty(true);
-              }}
-              placeholder="Add a description..."
-              rows={2}
-              className="w-full text-sm text-gray-600 bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-orange-500 rounded resize-none"
-            />
-          </div>
-        </div>
-      </Card>
-
-      {/* Schedule Entries */}
-      <Card className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-medium text-gray-900">Schedule Entries</h3>
-          <Button size="sm" onClick={() => openEntryModal()}>
-            <Plus size={16} />
-            Add Entry
-          </Button>
-        </div>
-
-        {entries.length === 0 ? (
-          <div className="text-center py-8">
-            <Clock size={48} className="mx-auto mb-4 text-gray-300" />
-            <p className="text-gray-500 mb-4">No schedule entries yet</p>
-            <Button onClick={() => openEntryModal()}>
-              <Plus size={18} />
-              Add Your First Entry
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {entries.map((entry) => (
-              <div
-                key={entry.id}
-                className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mt-1">
-                      {getTargetIcon(entry.target_type)}
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900 flex items-center gap-2">
-                        {entry.target?.name || 'No content assigned'}
-                        {!entry.is_active && (
-                          <Badge variant="default" className="text-xs">Disabled</Badge>
-                        )}
-                      </div>
-                      <div className="text-sm text-gray-500 mt-1">
-                        <span className="capitalize">{entry.target_type}</span>
-                        {' • '}
-                        {formatDaysOfWeek(entry.days_of_week)}
-                        {' • '}
-                        {formatTimeRange(entry.start_time, entry.end_time)}
-                      </div>
-                      {entry.priority > 0 && (
-                        <div className="text-xs text-gray-400 mt-1">
-                          Priority: {entry.priority}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => openEntryModal(entry)}
-                    >
-                      Edit
-                    </Button>
-                    <button
-                      onClick={() => handleDeleteEntry(entry.id)}
-                      className="p-1 text-gray-400 hover:text-red-500"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
-
-      {/* Entry Modal */}
-      {showEntryModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-bold">
-                {editingEntry ? 'Edit Entry' : 'Add Schedule Entry'}
-              </h2>
+      {/* Main content area */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Calendar section */}
+        <div className="flex-1 flex flex-col bg-white">
+          {/* Calendar toolbar */}
+          <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {/* Add event button */}
               <button
-                onClick={() => setShowEntryModal(false)}
-                className="p-1 hover:bg-gray-100 rounded"
+                onClick={() => openNewEventModal()}
+                className="w-8 h-8 bg-[#f26f21] text-white rounded-lg flex items-center justify-center hover:bg-[#e05a10] transition-colors"
               >
-                <X size={20} className="text-gray-400" />
+                <Plus size={18} />
+              </button>
+
+              {/* Today button */}
+              <button
+                onClick={goToToday}
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Today
+              </button>
+
+              {/* Navigation */}
+              <button
+                onClick={() => navigateWeek(-1)}
+                className="p-1.5 hover:bg-gray-100 rounded"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button
+                onClick={() => navigateWeek(1)}
+                className="p-1.5 hover:bg-gray-100 rounded"
+              >
+                <ChevronRight size={18} />
               </button>
             </div>
 
-            <div className="p-4 space-y-6">
-              {/* Content Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Content Type
-                </label>
-                <div className="flex gap-2">
-                  {[
-                    { type: TARGET_TYPES.PLAYLIST, label: 'Playlist', icon: ListVideo },
-                    { type: TARGET_TYPES.LAYOUT, label: 'Layout', icon: Grid3X3 },
-                    { type: TARGET_TYPES.MEDIA, label: 'Media', icon: Image }
-                  ].map(({ type, label, icon: Icon }) => (
-                    <button
-                      key={type}
-                      onClick={() => setEntryForm(prev => ({ ...prev, target_type: type, target_id: '' }))}
-                      className={`flex-1 p-3 rounded-lg border-2 transition-colors ${
-                        entryForm.target_type === type
-                          ? 'border-orange-500 bg-orange-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
+            {/* Week range */}
+            <div className="text-base font-medium text-gray-900">
+              {weekRangeText}
+            </div>
+
+            {/* View mode */}
+            <div className="relative">
+              <select
+                value={viewMode}
+                onChange={(e) => setViewMode(e.target.value)}
+                className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1.5 pr-8 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              >
+                <option value="week">Week</option>
+                <option value="day">Day</option>
+              </select>
+              <ChevronDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Calendar grid */}
+          <div className="flex-1 overflow-auto">
+            <div className="min-w-[800px]">
+              {/* Day headers */}
+              <div className="grid grid-cols-8 border-b border-gray-200 bg-gray-50 sticky top-0 z-10">
+                <div className="p-2"></div>
+                {weekDates.map((date, i) => {
+                  const isToday = formatDateInput(date) === formatDateInput(new Date());
+                  return (
+                    <div
+                      key={i}
+                      className={`p-2 text-center text-sm border-l border-gray-200 ${isToday ? 'bg-orange-50' : ''}`}
                     >
-                      <Icon size={20} className="mx-auto mb-1" />
-                      <span className="text-sm">{label}</span>
-                    </button>
-                  ))}
+                      <div className={`font-medium ${isToday ? 'text-[#f26f21]' : 'text-gray-900'}`}>
+                        {formatDateShort(date)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Time slots */}
+              {TIME_SLOTS.map((timeSlot) => (
+                <div key={timeSlot} className="grid grid-cols-8 border-b border-gray-100">
+                  {/* Time label */}
+                  <div className="p-2 text-xs text-gray-500 text-right pr-3">
+                    {formatTime12(timeSlot)}
+                  </div>
+
+                  {/* Day cells */}
+                  {weekDates.map((date, dayIndex) => {
+                    const events = getEventsForSlot(date, timeSlot);
+                    const isToday = formatDateInput(date) === formatDateInput(new Date());
+
+                    return (
+                      <div
+                        key={dayIndex}
+                        className={`min-h-[50px] border-l border-gray-200 relative cursor-pointer hover:bg-gray-50 ${isToday ? 'bg-orange-50/30' : ''}`}
+                        onClick={() => openNewEventModal(date, timeSlot)}
+                      >
+                        {events.map((event, eventIndex) => (
+                          <div
+                            key={event.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditEventModal(event);
+                            }}
+                            className={`absolute inset-x-1 top-1 p-1 rounded text-xs font-medium cursor-pointer ${
+                              event.event_type === 'screen_off'
+                                ? 'bg-gray-200 text-gray-700'
+                                : 'bg-[#f26f21] text-white'
+                            }`}
+                            style={{
+                              zIndex: eventIndex + 1,
+                              maxHeight: 'calc(100% - 8px)'
+                            }}
+                          >
+                            {formatTime12(event.start_time)} - {formatTime12(event.end_time)}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
                 </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right sidebar - Events List */}
+        <div className="w-72 border-l border-gray-200 bg-white flex flex-col">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium text-gray-900">Events List</h3>
+              <button className="text-gray-400 hover:text-gray-600">
+                <Info size={16} />
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              View all past and future events in this schedule. The order shows priority for display during overlaps.
+            </p>
+          </div>
+
+          <div className="p-4 border-b border-gray-200">
+            <div className="text-xs text-gray-500 mb-2">Events Style</div>
+            <div className="flex gap-2">
+              <div className="w-4 h-4 rounded-full bg-white border border-gray-300"></div>
+              <div className="w-4 h-4 rounded-full bg-[#f26f21]"></div>
+            </div>
+          </div>
+
+          {/* Scheduled Events */}
+          <div className="flex-1 overflow-auto">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-medium text-gray-900">Scheduled Events</h4>
+                <ChevronDown size={16} className="text-gray-400" />
               </div>
 
-              {/* Content Selection */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select {entryForm.target_type}
-                </label>
-                <select
-                  value={entryForm.target_id}
-                  onChange={(e) => setEntryForm(prev => ({ ...prev, target_id: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                >
-                  <option value="">Select...</option>
-                  {getTargetOptions().map(item => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Days of Week */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Days
-                </label>
-                <div className="flex gap-1 mb-2">
-                  {DAYS_OF_WEEK.map(day => (
-                    <button
-                      key={day.value}
-                      onClick={() => toggleDay(day.value)}
-                      className={`w-10 h-10 rounded-full text-sm font-medium transition-colors ${
-                        entryForm.days_of_week.includes(day.value)
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
+              {entries.length === 0 ? (
+                <div className="text-center py-8">
+                  <Calendar size={32} className="mx-auto mb-2 text-gray-300" />
+                  <p className="text-sm text-gray-500">No events scheduled</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {entries.map(entry => (
+                    <div
+                      key={entry.id}
+                      className="p-3 border border-gray-200 rounded-lg hover:border-gray-300 cursor-pointer"
+                      onClick={() => openEditEventModal(entry)}
                     >
-                      {day.short.charAt(0)}
-                    </button>
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm text-gray-900 truncate">
+                            {entry.event_type === 'screen_off' ? 'Screen Off' : (entry.target?.name || 'No content')}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-0.5">
+                            {formatTime12(entry.start_time)} - {formatTime12(entry.end_time)}
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteEntry(entry.id);
+                          }}
+                          className="p-1 text-gray-400 hover:text-red-500"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
                   ))}
                 </div>
-                <div className="flex gap-2 text-sm">
-                  <button
-                    onClick={setWeekdays}
-                    className="text-orange-600 hover:underline"
-                  >
-                    Weekdays
-                  </button>
-                  <button
-                    onClick={setWeekends}
-                    className="text-orange-600 hover:underline"
-                  >
-                    Weekends
-                  </button>
-                  <button
-                    onClick={setEveryDay}
-                    className="text-orange-600 hover:underline"
-                  >
-                    Every day
-                  </button>
-                </div>
-              </div>
+              )}
+            </div>
 
-              {/* Time Range */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Start Time
-                  </label>
-                  <input
-                    type="time"
-                    value={entryForm.start_time}
-                    onChange={(e) => setEntryForm(prev => ({ ...prev, start_time: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  />
+            {/* Filler Content */}
+            <div className="p-4 border-t border-gray-200">
+              <div className="p-3 border-2 border-dashed border-orange-200 rounded-lg bg-orange-50">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#f26f21]"></div>
+                  <span className="font-medium text-sm text-gray-900">Filler Content</span>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    End Time
-                  </label>
-                  <input
-                    type="time"
-                    value={entryForm.end_time}
-                    onChange={(e) => setEntryForm(prev => ({ ...prev, end_time: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  />
-                </div>
-              </div>
-
-              {/* Priority */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Priority
-                </label>
-                <input
-                  type="number"
-                  value={entryForm.priority}
-                  onChange={(e) => setEntryForm(prev => ({ ...prev, priority: parseInt(e.target.value) || 0 }))}
-                  min={0}
-                  max={100}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                />
                 <p className="text-xs text-gray-500 mt-1">
-                  Higher priority entries take precedence when schedules overlap
+                  Shown on the screens when no events are scheduled
                 </p>
               </div>
+            </div>
+          </div>
 
-              {/* Active Toggle */}
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">Active</span>
-                <button
-                  onClick={() => setEntryForm(prev => ({ ...prev, is_active: !prev.is_active }))}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    entryForm.is_active ? 'bg-orange-500' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      entryForm.is_active ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
+          {/* View assigned screens */}
+          <div className="p-4 border-t border-gray-200">
+            <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
+              <Monitor size={14} />
+              View assigned screens
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* New Event Modal - Yodeck style */}
+      {showEventModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden">
+            {/* Modal header */}
+            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {editingEntry ? 'Edit Event' : 'New Event'}
+              </h2>
+              <button
+                onClick={() => setShowEventModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal content */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+              {/* SETTINGS section */}
+              <div className="mb-6">
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">Settings</h3>
+
+                {/* Event Type */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Type</label>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="eventType"
+                        checked={eventForm.eventType === 'content'}
+                        onChange={() => setEventForm(prev => ({ ...prev, eventType: 'content' }))}
+                        className="w-4 h-4 text-[#f26f21] focus:ring-[#f26f21]"
+                      />
+                      <span className="text-sm text-gray-700">Schedule Content</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="eventType"
+                        checked={eventForm.eventType === 'screenOff'}
+                        onChange={() => setEventForm(prev => ({ ...prev, eventType: 'screenOff' }))}
+                        className="w-4 h-4 text-[#f26f21] focus:ring-[#f26f21]"
+                      />
+                      <span className="text-sm text-gray-700">Turn screen Off</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Content selection - only show for content type */}
+                {eventForm.eventType === 'content' && (
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                    <div className="flex gap-2">
+                      <select
+                        value={eventForm.contentType}
+                        onChange={(e) => setEventForm(prev => ({ ...prev, contentType: e.target.value, contentId: '' }))}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                      >
+                        <option value="">Select Type</option>
+                        <option value="playlist">Playlist</option>
+                        <option value="layout">Layout</option>
+                        <option value="scene">Scene</option>
+                      </select>
+                      {eventForm.contentType && (
+                        <select
+                          value={eventForm.contentId}
+                          onChange={(e) => setEventForm(prev => ({ ...prev, contentId: e.target.value }))}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                        >
+                          <option value="">Select {eventForm.contentType}</option>
+                          {getContentOptions().map(item => (
+                            <option key={item.id} value={item.id}>{item.name}</option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                    {!eventForm.contentId && eventForm.contentType && (
+                      <p className="text-xs text-gray-400 mt-1">No Content Assigned</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Event Starts */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Starts</label>
+                  <div className="flex gap-2">
+                    <div className="flex-1 relative">
+                      <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="date"
+                        value={eventForm.startDate}
+                        onChange={(e) => setEventForm(prev => ({ ...prev, startDate: e.target.value }))}
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                      />
+                    </div>
+                    <div className="w-32 relative">
+                      <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="time"
+                        value={eventForm.startTime}
+                        onChange={(e) => setEventForm(prev => ({ ...prev, startTime: e.target.value }))}
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Event Ends */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Ends</label>
+                  <div className="flex gap-2">
+                    <div className="flex-1 relative">
+                      <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="date"
+                        value={eventForm.endDate}
+                        onChange={(e) => setEventForm(prev => ({ ...prev, endDate: e.target.value }))}
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                      />
+                    </div>
+                    <div className="w-32 relative">
+                      <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="time"
+                        value={eventForm.endTime}
+                        onChange={(e) => setEventForm(prev => ({ ...prev, endTime: e.target.value }))}
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* REPEAT OPTIONS section */}
+              <div>
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">Repeat Options</h3>
+
+                {/* Repeat dropdown */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Repeat</label>
+                  <select
+                    value={eventForm.repeat}
+                    onChange={(e) => setEventForm(prev => ({ ...prev, repeat: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                  >
+                    {REPEAT_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Custom repeat options */}
+                {eventForm.repeat === 'custom' && (
+                  <>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Repeat Every</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          min={1}
+                          value={eventForm.repeatEvery}
+                          onChange={(e) => setEventForm(prev => ({ ...prev, repeatEvery: parseInt(e.target.value) || 1 }))}
+                          className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                        />
+                        <select
+                          value={eventForm.repeatUnit}
+                          onChange={(e) => setEventForm(prev => ({ ...prev, repeatUnit: e.target.value }))}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                        >
+                          {REPEAT_UNITS.map(unit => (
+                            <option key={unit.value} value={unit.value}>{unit.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Repeat Until</label>
+                      <select
+                        value={eventForm.repeatUntil}
+                        onChange={(e) => setEventForm(prev => ({ ...prev, repeatUntil: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
+                      >
+                        {REPEAT_UNTIL_OPTIONS.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {/* Timezone note */}
+                <p className="text-xs text-gray-500">
+                  The schedule runs on the screens' local time zone.
+                </p>
               </div>
             </div>
 
-            <div className="p-4 border-t flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowEntryModal(false)}>
+            {/* Modal footer */}
+            <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => setShowEventModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSaveEntry}>
-                {editingEntry ? 'Update Entry' : 'Add Entry'}
+              <Button onClick={handleSaveEvent}>
+                Save
               </Button>
             </div>
-          </Card>
+          </div>
         </div>
       )}
     </div>

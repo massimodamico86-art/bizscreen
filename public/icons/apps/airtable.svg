@@ -1,0 +1,6 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="4" fill="#FCB400"/>
+  <path d="M24 8L40 16v16l-16 8-16-8V16l16-8z" fill="white"/>
+  <path d="M24 8L40 16v16l-16 8V24" fill="#18BFFF"/>
+  <path d="M24 8L8 16v16l16 8V24" fill="#FF6E65"/>
+</svg>

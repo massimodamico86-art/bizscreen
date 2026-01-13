@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Loader2,
   AlertTriangle,
+  AlertCircle,
   Sparkles,
   Crown,
   Zap,
@@ -66,6 +67,7 @@ const AccountPlanPage = ({ showToast }) => {
   const [plans, setPlans] = useState([]);
   const [usage, setUsage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [upgrading, setUpgrading] = useState(null);
   const [openingPortal, setOpeningPortal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -80,6 +82,7 @@ const AccountPlanPage = ({ showToast }) => {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [subData, plansData, usageData] = await Promise.all([
         getCurrentSubscription(),
         fetchPlans(),
@@ -88,9 +91,10 @@ const AccountPlanPage = ({ showToast }) => {
       setSubscription(subData);
       setPlans(plansData);
       setUsage(usageData);
-    } catch (error) {
-      console.error('Error loading plan data:', error);
-      showToast?.(t('accountPlan.errorLoading', 'Error loading plan data: {{message}}', { message: error.message }), 'error');
+    } catch (err) {
+      console.error('Error loading plan data:', err);
+      setError(err.message || 'Failed to load plan data');
+      showToast?.(t('accountPlan.errorLoading', 'Error loading plan data: {{message}}', { message: err.message }), 'error');
     } finally {
       setLoading(false);
     }
@@ -143,6 +147,32 @@ const AccountPlanPage = ({ showToast }) => {
           <div className="flex items-center justify-center h-64">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600" aria-label={t('common.loading', 'Loading')} />
           </div>
+        </PageContent>
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout>
+        <PageHeader
+          title={t('accountPlan.title', 'Plan & Billing')}
+          description={t('accountPlan.description', 'Manage your subscription and view usage limits')}
+        />
+        <PageContent>
+          <Card className="p-8 max-w-md mx-auto">
+            <div className="text-center">
+              <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t('accountPlan.errorTitle', 'Unable to load plan data')}
+              </h3>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <Button onClick={loadData} variant="outline">
+                <RefreshCw size={16} />
+                {t('common.tryAgain', 'Try Again')}
+              </Button>
+            </div>
+          </Card>
         </PageContent>
       </PageLayout>
     );

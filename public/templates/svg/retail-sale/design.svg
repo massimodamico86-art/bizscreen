@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F7931E;stop-opacity:1" />
+    </linearGradient>
+    <style>
+      .title { font-family: 'Arial Black', Arial, sans-serif; font-weight: 900; }
+      .subtitle { font-family: 'Arial', sans-serif; font-weight: 700; }
+      .body { font-family: 'Arial', sans-serif; font-weight: 400; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="url(#bgGradient)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="150" cy="150" r="200" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="1800" cy="900" r="250" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="1700" cy="200" r="100" fill="rgba(255,255,255,0.08)"/>
+
+  <!-- Main content area -->
+  <rect x="100" y="150" width="1720" height="780" rx="20" fill="rgba(255,255,255,0.95)"/>
+
+  <!-- SALE Badge -->
+  <rect x="100" y="150" width="300" height="100" fill="#E53935"/>
+  <text x="250" y="220" text-anchor="middle" class="title" fill="white" font-size="48">SALE</text>
+
+  <!-- Main discount text -->
+  <text x="960" y="400" text-anchor="middle" class="title" fill="#E53935" font-size="180">50% OFF</text>
+
+  <!-- Subtitle -->
+  <text x="960" y="520" text-anchor="middle" class="subtitle" fill="#333333" font-size="48">ON ALL SELECTED ITEMS</text>
+
+  <!-- Description -->
+  <text x="960" y="620" text-anchor="middle" class="body" fill="#666666" font-size="32">Limited time offer. While supplies last.</text>
+
+  <!-- CTA Button -->
+  <rect x="760" y="700" width="400" height="80" rx="40" fill="#E53935"/>
+  <text x="960" y="755" text-anchor="middle" class="subtitle" fill="white" font-size="32">SHOP NOW</text>
+
+  <!-- Store info -->
+  <text x="960" y="880" text-anchor="middle" class="body" fill="#999999" font-size="24">Visit us at www.yourstore.com</text>
+
+  <!-- Corner decorations -->
+  <polygon points="1720,150 1820,150 1820,250" fill="#E53935"/>
+  <polygon points="100,830 100,930 200,930" fill="#E53935"/>
+</svg>

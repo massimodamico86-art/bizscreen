@@ -104,6 +104,9 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Defense-in-depth: Check role even though App.jsx should handle routing
+  const isAdmin = userProfile?.role === 'admin' || userProfile?.role === 'super_admin';
+
   if (loading) {
     return (
       <PageLayout>
@@ -112,6 +115,27 @@ export default function AdminDashboardPage() {
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
               <p className="text-gray-600">{t('admin.loadingClients', 'Loading your clients...')}</p>
+            </div>
+          </div>
+        </PageContent>
+      </PageLayout>
+    );
+  }
+
+  // Access denied for non-admin users
+  if (!isAdmin) {
+    return (
+      <PageLayout>
+        <PageContent>
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">{t('common.accessDenied', 'Access Denied')}</h2>
+              <p className="text-gray-600">{t('admin.adminAccessRequired', 'Admin access required to view this page.')}</p>
             </div>
           </div>
         </PageContent>

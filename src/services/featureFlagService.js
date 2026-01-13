@@ -86,26 +86,17 @@ async function getCurrentTenantInfo() {
     return { tenantId: null, plan: 'free' };
   }
 
-  // Get tenant_id from user metadata or profiles
-  let tenantId = user.user_metadata?.tenant_id;
+  // In this schema, the user ID IS the tenant ID for clients
+  // (profiles.id = auth.users.id = tenant identifier)
+  let tenantId = user.user_metadata?.tenant_id || user.id;
   let plan = 'free';
-
-  if (!tenantId) {
-    // Fallback to profiles table
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('tenant_id')
-      .eq('id', user.id)
-      .single();
-    tenantId = profile?.tenant_id;
-  }
 
   // Get current plan
   if (tenantId) {
     const { data: subscription } = await supabase
       .from('subscriptions')
       .select('plan_id, plans(slug)')
-      .eq('tenant_id', tenantId)
+      .eq('owner_id', tenantId)
       .in('status', ['active', 'trialing'])
       .order('created_at', { ascending: false })
       .limit(1)

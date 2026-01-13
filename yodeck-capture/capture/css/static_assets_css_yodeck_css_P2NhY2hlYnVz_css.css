@@ -1,0 +1,131 @@
+.login-layout {
+	background-color: #f6f8fb;
+}
+
+.login-layout .widget-box {
+	padding: 3px;
+	background-color: #e7e7e7;
+}
+
+.navbar-brand {
+	height: 36px;
+	margin-top: 0;
+	background-image: url('/static/assets/images/yodeck/yodeck_logo-horizontal-large-red.png');
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+#sidebar .navbar-brand,
+#navbar #navbar-container #menu-toggler + span.navbar-brand-container .navbar-brand {
+	width: 120px;
+}
+
+#sidebar.menu-min .navbar-brand {
+	width: 26px;
+}
+
+.login-container .logo {
+	margin-top: 30px;
+	width: 80%;
+	margin-left: 10%;
+	height: 70px;
+	background-image: url('/static/assets/images/yodeck/yodeck_logo-horizontal-large-red.png');
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	margin-bottom: 20px;
+}
+
+.login-layout .powered-by:after {
+	content: '\00A9 Flipnode LLC';
+}
+
+#screen-editor .logo:after {
+	content: 'Yodeck';
+	white-space: pre;
+}
+
+.use-video-original-modal-title:after {
+	content: 'This option can be made available to all users (free or paid).';
+}
+
+.use-video-original-modal-body:after {
+	content: 'Enabling this option will use the exact file you uploaded for playback and will not use the normalized version. This is for advanced users only, since the player may fail to properly playback the original video file if it is not compatible.';
+}
+
+.use-video-original-modal-footer:after {
+	content: 'Yodeck Support Team can activate this option for your account. Please provide the reason you want to use this option. ';
+}
+
+/* override css of resellers */
+.how-to-monitor {
+	display: block;
+}
+
+.login-container .terms-of-service-text {
+	display: none !important;
+}
+
+a.our-anchors-only {
+	pointer-events: auto;
+}
+
+.widget-menu-item.active,
+.template-menu-item.active {
+	background: var(--basic_branding) !important;
+}
+
+/* YDK-1959/YDK-1914 news feed */
+
+.feed-title {
+	font-weight: bold;
+	display: block;
+	padding: 30px 0px 15px;
+}
+
+#rss_feed_items {
+	margin: 20px;
+	text-align: center;
+	display: block !important; /* to overcome class="hidden" in html */
+}
+
+#rss_feed_items > li {
+	display: inline-block;
+	vertical-align: top;
+	border-top: 1px dotted var(--basic_branding);
+	margin: 20px 2% 10px;
+	width: 21%;
+	max-width: 320px;
+	padding: 16px 0px;
+	font-size: 17px;
+}
+
+#rss_feed_items > li > a {
+	color: var(--basic_branding);
+	text-decoration: underline;
+	display: block;
+	margin-top: 16px;
+	font-size: 12px;
+}
+
+@media screen and (max-width: 991px) {
+	#rss_feed_items > li {
+		width: 41%;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	#rss_feed_items > li {
+		width: 96%;
+	}
+}
+
+.sidebar.menu-min .navbar-brand {
+	background-image: url(/static/assets/images/yodeck/yodeck_logo_without_text.png);
+	margin-left: 0;
+}
+
+.form-row {
+	overflow-x: auto;
+}

@@ -3,6 +3,8 @@
  * Provides consistent, user-friendly error messages across the application
  */
 
+import { captureError } from '../services/errorTrackingService';
+
 /**
  * Standard error messages for common operations
  */
@@ -115,9 +117,9 @@ export function logError(error, context, additionalInfo = {}) {
     console.error(`[${context}] Additional info:`, additionalInfo);
   }
 
-  // In production, this could send to error tracking service (e.g., Sentry)
+  // Send to error tracking service in production
   if (import.meta.env.PROD) {
-    // TODO: Send to error tracking service
+    captureError(error, context, additionalInfo);
   }
 }
 

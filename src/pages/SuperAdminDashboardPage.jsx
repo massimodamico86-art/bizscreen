@@ -10,8 +10,21 @@ import {
   unassignClient
 } from '../services/adminService';
 import ErrorBoundary from '../components/ErrorBoundary';
+import {
+  Shield,
+  FileText,
+  Activity,
+  Server,
+  Wrench,
+  Building2,
+  Flag,
+  Play,
+  UserCheck,
+  ChevronRight,
+  LayoutTemplate,
+} from 'lucide-react';
 
-export default function SuperAdminDashboardPage() {
+export default function SuperAdminDashboardPage({ onNavigate }) {
   const { userProfile } = useAuth();
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -80,12 +93,32 @@ export default function SuperAdminDashboardPage() {
     }
   };
 
+  // Defense-in-depth: Check role even though App.jsx should handle routing
+  const isSuperAdmin = userProfile?.role === 'super_admin';
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading system overview...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Access denied for non-super-admin users
+  if (!isSuperAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600">Super admin access required to view this page.</p>
         </div>
       </div>
     );
@@ -102,6 +135,42 @@ export default function SuperAdminDashboardPage() {
             System-wide management and analytics
           </p>
         </div>
+
+        {/* Admin Tools Quick Links */}
+        {onNavigate && (
+          <div className="mb-8 bg-white rounded-lg shadow p-4">
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Admin Tools</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
+              {[
+                { id: 'admin-tenants', label: 'Tenant Management', icon: Shield, color: 'text-purple-600 bg-purple-100' },
+                { id: 'admin-audit-logs', label: 'Audit Logs', icon: FileText, color: 'text-blue-600 bg-blue-100' },
+                { id: 'admin-system-events', label: 'System Events', icon: Activity, color: 'text-green-600 bg-green-100' },
+                { id: 'status', label: 'System Status', icon: Server, color: 'text-gray-600 bg-gray-100' },
+                { id: 'ops-console', label: 'Ops Console', icon: Wrench, color: 'text-orange-600 bg-orange-100' },
+                { id: 'tenant-admin', label: 'Tenant Lifecycle', icon: Building2, color: 'text-indigo-600 bg-indigo-100' },
+                { id: 'feature-flags', label: 'Feature Flags', icon: Flag, color: 'text-red-600 bg-red-100' },
+                { id: 'demo-tools', label: 'Demo Tools', icon: Play, color: 'text-pink-600 bg-pink-100' },
+                { id: 'clients', label: 'Client Management', icon: UserCheck, color: 'text-teal-600 bg-teal-100' },
+                { id: 'admin-templates', label: 'Templates', icon: LayoutTemplate, color: 'text-cyan-600 bg-cyan-100' },
+              ].map(tool => {
+                const Icon = tool.icon;
+                return (
+                  <button
+                    key={tool.id}
+                    onClick={() => onNavigate(tool.id)}
+                    className="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors text-left group"
+                  >
+                    <div className={`p-2 rounded-lg ${tool.color}`}>
+                      <Icon size={16} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{tool.label}</span>
+                    <ChevronRight size={14} className="ml-auto text-gray-400 group-hover:text-gray-600" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (

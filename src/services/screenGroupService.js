@@ -264,8 +264,104 @@ export async function getScreenGroupOptions() {
   }));
 }
 
+/**
+ * Fetch screen groups with scene info and device counts
+ * Uses the RPC function for richer data
+ * @param {string} tenantId - Optional tenant ID filter
+ * @returns {Promise<Array>} Screen groups with scene info
+ */
+export async function fetchScreenGroupsWithScenes(tenantId = null) {
+  const { data, error } = await supabase
+    .rpc('get_screen_groups_with_scenes', { p_tenant_id: tenantId });
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Publish a scene to a screen group
+ * Sets the scene on the group and all member devices
+ * @param {string} groupId - Screen group ID
+ * @param {string} sceneId - Scene ID to publish
+ * @param {boolean} updateDevices - Whether to update all devices (default: true)
+ * @returns {Promise<Object>} Result with success status and device count
+ */
+export async function publishSceneToGroup(groupId, sceneId, updateDevices = true) {
+  if (!groupId) throw new Error('Group ID is required');
+  if (!sceneId) throw new Error('Scene ID is required');
+
+  const { data, error } = await supabase
+    .rpc('publish_scene_to_group', {
+      p_group_id: groupId,
+      p_scene_id: sceneId,
+      p_update_devices: updateDevices
+    });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Unpublish/clear scene from a screen group
+ * @param {string} groupId - Screen group ID
+ * @param {boolean} clearDevices - Whether to clear all devices (default: true)
+ * @returns {Promise<Object>} Result with success status
+ */
+export async function unpublishSceneFromGroup(groupId, clearDevices = true) {
+  if (!groupId) throw new Error('Group ID is required');
+
+  const { data, error } = await supabase
+    .rpc('unpublish_scene_from_group', {
+      p_group_id: groupId,
+      p_clear_devices: clearDevices
+    });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Publish a scene to multiple screen groups at once
+ * @param {string[]} groupIds - Array of screen group IDs
+ * @param {string} sceneId - Scene ID to publish
+ * @returns {Promise<Object>} Result with total devices updated
+ */
+export async function publishSceneToMultipleGroups(groupIds, sceneId) {
+  if (!groupIds || groupIds.length === 0) throw new Error('At least one group ID is required');
+  if (!sceneId) throw new Error('Scene ID is required');
+
+  const { data, error } = await supabase
+    .rpc('publish_scene_to_multiple_groups', {
+      p_group_ids: groupIds,
+      p_scene_id: sceneId
+    });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Get group's active scene info
+ * @param {string} groupId - Screen group ID
+ * @returns {Promise<Object|null>} Active scene or null
+ */
+export async function getGroupActiveScene(groupId) {
+  const { data, error } = await supabase
+    .from('screen_groups')
+    .select(`
+      active_scene_id,
+      active_scene:scenes(id, name, business_type, is_active)
+    `)
+    .eq('id', groupId)
+    .single();
+
+  if (error) throw error;
+  return data?.active_scene || null;
+}
+
 export default {
   fetchScreenGroups,
+  fetchScreenGroupsWithScenes,
   getScreenGroup,
   createScreenGroup,
   updateScreenGroup,
@@ -275,5 +371,9 @@ export default {
   assignScreensToGroup,
   removeScreenFromGroup,
   removeScreensFromGroup,
-  getScreenGroupOptions
+  getScreenGroupOptions,
+  publishSceneToGroup,
+  unpublishSceneFromGroup,
+  publishSceneToMultipleGroups,
+  getGroupActiveScene
 };

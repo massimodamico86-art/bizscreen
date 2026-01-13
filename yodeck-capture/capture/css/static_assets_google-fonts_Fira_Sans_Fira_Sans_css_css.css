@@ -1,0 +1,84 @@
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Fira Sans Italic'), local('FiraSans-Italic'), url(Fira_Sans_0.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Fira Sans Medium Italic'), local('FiraSans-MediumItalic'), url(Fira_Sans_1.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Fira Sans SemiBold Italic'), local('FiraSans-SemiBoldItalic'), url(Fira_Sans_2.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Fira Sans Bold Italic'), local('FiraSans-BoldItalic'), url(Fira_Sans_3.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: local('Fira Sans ExtraBold Italic'), local('FiraSans-ExtraBoldItalic'), url(Fira_Sans_4.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+  src: local('Fira Sans Black Italic'), local('FiraSans-BlackItalic'), url(Fira_Sans_5.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Fira Sans Regular'), local('FiraSans-Regular'), url(Fira_Sans_6.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Fira Sans Medium'), local('FiraSans-Medium'), url(Fira_Sans_7.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Fira Sans SemiBold'), local('FiraSans-SemiBold'), url(Fira_Sans_8.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Fira Sans Bold'), local('FiraSans-Bold'), url(Fira_Sans_9.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: local('Fira Sans ExtraBold'), local('FiraSans-ExtraBold'), url(Fira_Sans_10.ttf) format('woff');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: local('Fira Sans Black'), local('FiraSans-Black'), url(Fira_Sans_11.ttf) format('woff');
+}

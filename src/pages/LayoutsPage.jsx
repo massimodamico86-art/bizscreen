@@ -1,821 +1,800 @@
-import { useState, useEffect } from 'react';
+/**
+ * LayoutsPage - OptiSigns-style Template Gallery
+ *
+ * Features:
+ * - Left sidebar with collapsible filter categories
+ * - Hero section with search and quick tags
+ * - Template sections: Featured, Popular, by Category
+ * - Direct template opening in Polotno editor
+ */
+
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Search,
-  Plus,
-  Grid3X3,
-  MoreVertical,
-  Copy,
-  Trash2,
-  Edit,
   X,
-  Layers,
-  AlertTriangle,
-  Zap,
-  CheckCircle,
-  LayoutTemplate,
-  Sparkles,
-  FileText,
-  Loader2,
+  ChevronDown,
   ChevronRight,
+  Monitor,
+  Smartphone,
+  Sparkles,
+  Clock,
+  Star,
+  TrendingUp,
+  Folder,
+  Gift,
+  Percent,
+  Calendar,
+  Utensils,
+  ShoppingBag,
+  Dumbbell,
+  Building2,
+  Music,
+  Shirt,
+  LayoutGrid,
+  Plus,
+  Loader2,
+  Wand2,
+  ChevronLeft,
 } from 'lucide-react';
-import { fetchLayouts, createLayout, deleteLayout, duplicateLayout, getLayoutUsage, deleteLayoutSafely } from '../services/layoutService';
-import { formatDate } from '../utils/formatters';
-import { getEffectiveLimits, hasReachedLimit, formatLimitDisplay } from '../services/limitsService';
-import { getLayoutTemplates, applyTemplate } from '../services/templateService';
-import { Button, Card, Badge, EmptyState, Alert } from '../design-system';
-import { useTranslation } from '../i18n';
+import { getLayoutTemplates } from '../services/templateService';
+import { fetchLayouts } from '../services/layoutService';
+
+/**
+ * Sidebar categories matching OptiSigns
+ */
+const SIDEBAR_CATEGORIES = [
+  { id: 'all', label: 'All', icon: LayoutGrid },
+  { id: 'featured', label: 'Featured', icon: Star, special: true },
+  { id: 'popular', label: 'Popular', icon: TrendingUp },
+  { id: 'your-templates', label: 'Your Templates', icon: Folder },
+  { id: 'recent', label: 'Recent Designs', icon: Clock },
+  { id: 'divider-1', type: 'divider' },
+  { id: 'holidays', label: 'Holidays and Observances', icon: Gift },
+  { id: 'sales', label: 'Seasonal Promotions', icon: Percent },
+  { id: 'general', label: 'Occasions', icon: Calendar },
+  { id: 'restaurant', label: 'Menu', icon: Utensils },
+  { id: 'restaurant-2', label: 'Restaurants', icon: Utensils },
+  { id: 'retail', label: 'Retail', icon: ShoppingBag },
+  { id: 'gym', label: 'Fitness', icon: Dumbbell },
+  { id: 'welcome', label: 'Corporate', icon: Building2 },
+  { id: 'music', label: 'Entertainment', icon: Music },
+  { id: 'fashion', label: 'Fashion', icon: Shirt },
+];
+
+/**
+ * Quick search tags for hero section
+ */
+const QUICK_TAGS = [
+  'Holiday Sale Promotion',
+  'Winter Safety Announcement',
+  'Year-End Employee Recognition',
+  'Upcoming New Year Event',
+  'Winter Menu Specials',
+];
+
+/**
+ * Industries filter
+ */
+const INDUSTRIES = [
+  { id: 'retail', label: 'Retail' },
+  { id: 'hospitality', label: 'Hospitality' },
+  { id: 'healthcare', label: 'Healthcare' },
+  { id: 'education', label: 'Education' },
+  { id: 'corporate', label: 'Corporate' },
+];
 
 const LayoutsPage = ({ showToast, onNavigate }) => {
-  const { t } = useTranslation();
-  const [layouts, setLayouts] = useState([]);
+  // State
+  const [templates, setTemplates] = useState([]);
+  const [userDesigns, setUserDesigns] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [actionMenuId, setActionMenuId] = useState(null);
-  const [creating, setCreating] = useState(false);
-  const [newLayout, setNewLayout] = useState({
-    name: '',
-    description: ''
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [orientation, setOrientation] = useState('all'); // all, landscape, portrait
+  const [visualMode, setVisualMode] = useState('all'); // all, static, animation
+  const [showMoreCategories, setShowMoreCategories] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({
+    categories: true,
+    orientation: true,
+    visualMode: true,
+    industries: false,
   });
 
-  // Plan limits state
-  const [limits, setLimits] = useState(null);
-  const [showLimitModal, setShowLimitModal] = useState(false);
+  // Refs for horizontal scrolling
+  const featuredScrollRef = useRef(null);
+  const popularScrollRef = useRef(null);
 
-  // Template picker state
-  const [showChoiceModal, setShowChoiceModal] = useState(false);
-  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
-  const [templates, setTemplates] = useState([]);
-  const [templatesLoading, setTemplatesLoading] = useState(false);
-  const [applyingTemplate, setApplyingTemplate] = useState(null);
-
-  // Delete confirmation state
-  const [deleteConfirm, setDeleteConfirm] = useState(null); // { id, name, usage, loading }
-  const [deletingForce, setDeletingForce] = useState(false);
-
+  // Load data
   useEffect(() => {
-    loadLayouts();
-    loadLimits();
+    loadData();
   }, []);
 
-  const loadLimits = async () => {
-    try {
-      const data = await getEffectiveLimits();
-      setLimits(data);
-    } catch (error) {
-      console.error('Error fetching limits:', error);
-    }
-  };
-
-  const loadLayouts = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const data = await fetchLayouts();
-      setLayouts(data);
+      const [templatesData, designsData] = await Promise.all([
+        getLayoutTemplates(),
+        fetchLayouts(),
+      ]);
+      setTemplates(templatesData);
+      setUserDesigns(designsData);
     } catch (error) {
-      console.error('Error fetching layouts:', error);
-      showToast?.('Error loading layouts: ' + error.message, 'error');
+      console.error('Error loading data:', error);
+      showToast?.('Error loading templates', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredLayouts = layouts.filter(layout =>
-    layout.name.toLowerCase().includes(search.toLowerCase())
+  // Filter templates
+  const filteredTemplates = useMemo(() => {
+    let result = [...templates];
+
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(t =>
+        t.name?.toLowerCase().includes(query) ||
+        t.description?.toLowerCase().includes(query) ||
+        t.category?.toLowerCase().includes(query)
+      );
+    }
+
+    // Category filter
+    if (activeCategory === 'featured') {
+      result = result.filter(t => t.is_featured);
+    } else if (activeCategory === 'popular') {
+      // Sort by some popularity metric or just show first N
+      result = result.slice(0, 20);
+    } else if (activeCategory === 'your-templates') {
+      // Show user's saved templates (empty for now)
+      result = [];
+    } else if (activeCategory === 'recent') {
+      // Show recently viewed (empty for now)
+      result = [];
+    } else if (activeCategory !== 'all') {
+      result = result.filter(t => {
+        const catSlug = t.categorySlug?.toLowerCase() || '';
+        return catSlug.includes(activeCategory.replace('-2', ''));
+      });
+    }
+
+    // Orientation filter
+    if (orientation !== 'all') {
+      result = result.filter(t => t.orientation === orientation);
+    }
+
+    // Visual mode filter (placeholder - we don't have animated templates yet)
+    if (visualMode === 'animation') {
+      result = result.filter(t => t.meta?.animated === true);
+    }
+
+    return result;
+  }, [templates, searchQuery, activeCategory, orientation, visualMode]);
+
+  // Get templates by category for sections
+  const featuredTemplates = useMemo(() =>
+    templates.filter(t => t.is_featured).slice(0, 10),
+    [templates]
   );
 
-  // Check if limit is reached
-  const limitReached = limits ? hasReachedLimit(limits.maxLayouts, layouts.length) : false;
+  const popularTemplates = useMemo(() =>
+    templates.slice(0, 10),
+    [templates]
+  );
 
-  // Handle add layout with limit check
-  const handleAddLayout = () => {
-    if (limitReached) {
-      setShowLimitModal(true);
-    } else {
-      setShowChoiceModal(true);
-    }
+  const holidayTemplates = useMemo(() =>
+    templates.filter(t => t.categorySlug?.includes('holiday')).slice(0, 10),
+    [templates]
+  );
+
+  // Handle template click - open directly in editor
+  const handleTemplateClick = (template) => {
+    // Debug: log template data from database
+    console.log('Template clicked:', {
+      name: template.name,
+      width: template.width,
+      height: template.height,
+      orientation: template.orientation,
+      thumbnail_url: template.thumbnail_url,
+    });
+
+    // Get the actual dimensions from template
+    const templateWidth = template.width || 1920;
+    const templateHeight = template.height || 1080;
+
+    // Get high-res version of thumbnail for editor (replace small preview params with actual size)
+    const thumbnailUrl = template.thumbnail_url || template.preview_image_url || '';
+    const highResThumbnail = thumbnailUrl.includes('unsplash.com')
+      ? thumbnailUrl.replace(/[?&]w=\d+/, `?w=${templateWidth}`).replace(/[?&]h=\d+/, `&h=${templateHeight}`)
+      : thumbnailUrl;
+
+    const templateData = {
+      id: template.id,
+      name: template.name || template.title,
+      thumbnail: highResThumbnail,
+      orientation: template.orientation || '16_9', // Pass orientation for proper canvas size
+      width: templateWidth,   // Use resolved width
+      height: templateHeight, // Use resolved height
+    };
+
+    console.log('Template data being passed:', templateData);
+    onNavigate?.(`design-editor?template=${encodeURIComponent(JSON.stringify(templateData))}`);
   };
 
-  // Load layout templates
-  const loadTemplates = async () => {
-    try {
-      setTemplatesLoading(true);
-      const data = await getLayoutTemplates();
-      setTemplates(data);
-    } catch (error) {
-      console.error('Error loading templates:', error);
-      showToast?.('Error loading templates', 'error');
-    } finally {
-      setTemplatesLoading(false);
-    }
+  // Handle search
+  const handleSearch = (e) => {
+    e?.preventDefault();
+    setSearchQuery(searchInput);
+    setActiveCategory('all');
   };
 
-  // Show template picker
-  const handleShowTemplatePicker = () => {
-    setShowChoiceModal(false);
-    setShowTemplatePicker(true);
-    loadTemplates();
+  // Handle quick tag click
+  const handleQuickTag = (tag) => {
+    setSearchInput(tag);
+    setSearchQuery(tag);
+    setActiveCategory('all');
   };
 
-  // Create blank layout
-  const handleCreateBlank = () => {
-    setShowChoiceModal(false);
-    setShowCreateModal(true);
+  // Toggle section expansion
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  // Apply template
-  const handleApplyTemplate = async (template) => {
-    try {
-      setApplyingTemplate(template.slug);
-      const result = await applyTemplate(template.slug);
-
-      if (result.layouts && result.layouts.length > 0) {
-        showToast?.('Layout created from template!', 'success');
-        setShowTemplatePicker(false);
-        loadLayouts();
-        // Navigate to the created layout
-        if (onNavigate && result.layouts[0]?.id) {
-          onNavigate(`layout-editor-${result.layouts[0].id}`);
-        }
-      }
-    } catch (error) {
-      console.error('Error applying template:', error);
-      showToast?.(error.message || 'Error applying template', 'error');
-    } finally {
-      setApplyingTemplate(null);
-    }
-  };
-
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    if (!newLayout.name.trim()) {
-      showToast?.('Please enter a layout name', 'error');
-      return;
-    }
-
-    try {
-      setCreating(true);
-      const data = await createLayout({
-        name: newLayout.name.trim(),
-        description: newLayout.description.trim() || null
+  // Scroll handlers for horizontal sections
+  const scroll = (ref, direction) => {
+    if (ref.current) {
+      const scrollAmount = 300;
+      ref.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
       });
-
-      setLayouts(prev => [{ ...data, zone_count: 0 }, ...prev]);
-      setShowCreateModal(false);
-      setNewLayout({ name: '', description: '' });
-      showToast?.('Layout created successfully');
-
-      // Navigate to the editor
-      if (onNavigate) {
-        onNavigate(`layout-editor-${data.id}`);
-      }
-    } catch (error) {
-      console.error('Error creating layout:', error);
-      showToast?.('Error creating layout: ' + error.message, 'error');
-    } finally {
-      setCreating(false);
     }
   };
 
-  const handleDuplicate = async (layout) => {
-    try {
-      const newData = await duplicateLayout(layout.id);
-      setLayouts(prev => [{ ...newData, zone_count: newData.layout_zones?.length || 0 }, ...prev]);
-      showToast?.('Layout duplicated successfully');
-    } catch (error) {
-      console.error('Error duplicating layout:', error);
-      showToast?.('Error duplicating layout: ' + error.message, 'error');
-    }
+  // Render template card
+  const TemplateCard = ({ template, size = 'medium' }) => {
+    const sizeClasses = {
+      small: 'w-40 h-28',
+      medium: 'w-56 h-40',
+      large: 'w-72 h-48',
+    };
+
+    return (
+      <div
+        onClick={() => handleTemplateClick(template)}
+        className={`
+          ${sizeClasses[size]} flex-shrink-0 relative rounded-lg overflow-hidden
+          cursor-pointer group bg-gray-100 border border-gray-200
+          hover:shadow-lg hover:border-teal-400 transition-all
+        `}
+      >
+        {template.thumbnail_url || template.preview_image_url ? (
+          <img
+            src={template.thumbnail_url || template.preview_image_url}
+            alt={template.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-100">
+            <LayoutGrid size={32} className="text-teal-300" />
+          </div>
+        )}
+
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 bg-white text-gray-900 rounded-md text-sm font-medium shadow-lg">
+            Use Template
+          </span>
+        </div>
+
+        {/* Featured badge */}
+        {template.is_featured && (
+          <div className="absolute top-2 left-2 px-2 py-0.5 bg-yellow-400 text-yellow-900 text-xs font-medium rounded">
+            Featured
+          </div>
+        )}
+      </div>
+    );
   };
 
-  // Initiate delete - checks for usage first
-  const handleDelete = async (layout) => {
-    setDeleteConfirm({ id: layout.id, name: layout.name, usage: null, loading: true });
-    setActionMenuId(null);
+  // Render horizontal scroll section
+  const HorizontalSection = ({ title, templates, scrollRef, onViewAll }) => (
+    <div className="mb-8">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        {onViewAll && (
+          <button
+            onClick={onViewAll}
+            className="text-teal-600 hover:text-teal-700 text-sm font-medium"
+          >
+            View all
+          </button>
+        )}
+      </div>
+      <div className="relative group">
+        {/* Left scroll button */}
+        <button
+          onClick={() => scroll(scrollRef, 'left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
+        >
+          <ChevronLeft size={18} />
+        </button>
 
-    try {
-      const usage = await getLayoutUsage(layout.id);
-      setDeleteConfirm({ id: layout.id, name: layout.name, usage, loading: false });
-    } catch (error) {
-      console.error('Error checking usage:', error);
-      setDeleteConfirm({ id: layout.id, name: layout.name, usage: null, loading: false });
-    }
-  };
+        {/* Scrollable container */}
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {templates.map((template) => (
+            <TemplateCard key={template.id || template.slug} template={template} />
+          ))}
+        </div>
 
-  // Confirm delete (optionally with force)
-  const confirmDelete = async (force = false) => {
-    if (!deleteConfirm) return;
-
-    setDeletingForce(true);
-    try {
-      const result = await deleteLayoutSafely(deleteConfirm.id, { force });
-
-      if (result.success) {
-        setLayouts(prev => prev.filter(l => l.id !== deleteConfirm.id));
-        showToast?.('Layout deleted successfully');
-        setDeleteConfirm(null);
-      } else if (result.code === 'IN_USE' && !force) {
-        setDeleteConfirm(prev => ({ ...prev, usage: result.usage }));
-      } else {
-        showToast?.(result.error || 'Error deleting layout', 'error');
-      }
-    } catch (error) {
-      console.error('Error deleting layout:', error);
-      showToast?.('Error deleting layout: ' + error.message, 'error');
-    } finally {
-      setDeletingForce(false);
-    }
-  };
+        {/* Right scroll button */}
+        <button
+          onClick={() => scroll(scrollRef, 'right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
+        >
+          <ChevronRight size={18} />
+        </button>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Layouts</h1>
-          <p className="text-gray-500 mt-1">
-            {layouts.length} layout{layouts.length !== 1 ? 's' : ''}
-          </p>
-        </div>
-        <Button onClick={handleAddLayout}>
-          <Plus size={18} />
-          Add Layout
-        </Button>
-      </div>
-
-      {/* Limit Warning Banner */}
-      {limitReached && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <p className="text-yellow-800 font-medium">Layout limit reached</p>
-            <p className="text-yellow-700 text-sm mt-1">
-              You've reached the maximum of {limits?.maxLayouts} layout{limits?.maxLayouts !== 1 ? 's' : ''} for your {limits?.planName} plan.
-            </p>
+    <div className="flex h-[calc(100vh-64px)] -mx-6 -mt-6">
+      {/* ===== LEFT SIDEBAR ===== */}
+      <div className="w-64 flex-shrink-0 bg-white border-r border-gray-200 overflow-y-auto">
+        <div className="p-4 space-y-4">
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              placeholder='Try "Building Directory"'
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500"
+            />
           </div>
-          <Button variant="outline" size="sm" onClick={() => setShowLimitModal(true)} className="shrink-0">
-            <Zap size={16} />
-            Upgrade
-          </Button>
-        </div>
-      )}
 
-      {/* Search */}
-      <div className="flex items-center gap-4">
-        <div className="flex-1 relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search layouts..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-md pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-          />
-        </div>
-      </div>
+          {/* Home Button */}
+          <button
+            onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
+            className="w-full py-2.5 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg transition-colors"
+          >
+            Home
+          </button>
 
-      {/* Content */}
-      {loading ? (
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
-        </div>
-      ) : layouts.length === 0 ? (
-        /* Empty State */
-        <Card className="p-12 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-lg flex items-center justify-center">
-            <Grid3X3 size={32} className="text-purple-600" />
+          {/* New Design Button */}
+          <button
+            onClick={() => onNavigate?.('design-editor')}
+            className="w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg transition-colors"
+          >
+            New Design
+          </button>
+
+          {/* Your Designs Button */}
+          <button
+            onClick={() => setActiveCategory('your-templates')}
+            className={`
+              w-full py-2.5 border font-medium rounded-lg transition-colors
+              ${activeCategory === 'your-templates'
+                ? 'border-teal-500 bg-teal-50 text-teal-700'
+                : 'border-gray-200 hover:bg-gray-50 text-gray-700'
+              }
+            `}
+          >
+            Your Designs
+          </button>
+
+          {/* Divider */}
+          <div className="border-t border-gray-200 pt-4">
+            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Filters
+            </h4>
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">No Layouts Yet</h2>
-          <p className="text-gray-600 max-w-md mx-auto mb-6">
-            Layouts let you divide your screen into multiple zones, each displaying different content simultaneously. Perfect for dashboards, info boards, and more.
-          </p>
-          <Button onClick={handleAddLayout}>
-            <Plus size={18} />
-            Add Layout
-          </Button>
-        </Card>
-      ) : (
-        /* Layouts List */
-        <Card>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 text-left text-sm text-gray-500">
-                  <th className="p-4 w-8">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                  </th>
-                  <th className="p-4 font-medium">NAME</th>
-                  <th className="p-4 font-medium">ZONES</th>
-                  <th className="p-4 font-medium">DESCRIPTION</th>
-                  <th className="p-4 font-medium">MODIFIED</th>
-                  <th className="p-4 font-medium w-20">ACTIONS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredLayouts.map(layout => (
-                  <tr
-                    key={layout.id}
-                    className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                    onClick={() => onNavigate?.(`layout-editor-${layout.id}`)}
+
+          {/* Categories Section */}
+          <div>
+            <button
+              onClick={() => toggleSection('categories')}
+              className="w-full flex items-center justify-between py-2 text-sm font-medium text-gray-900"
+            >
+              Categories
+              {expandedSections.categories ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+            {expandedSections.categories && (
+              <div className="space-y-0.5 ml-1">
+                {SIDEBAR_CATEGORIES
+                  .slice(0, showMoreCategories ? undefined : 10)
+                  .map((cat) => {
+                    if (cat.type === 'divider') {
+                      return <div key={cat.id} className="border-t border-gray-100 my-2" />;
+                    }
+                    const Icon = cat.icon;
+                    const isActive = activeCategory === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => { setActiveCategory(cat.id); setSearchQuery(''); }}
+                        className={`
+                          w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm text-left transition-colors
+                          ${isActive
+                            ? 'bg-teal-50 text-teal-700 font-medium'
+                            : 'text-gray-600 hover:bg-gray-50'
+                          }
+                        `}
+                      >
+                        {Icon && <Icon size={14} />}
+                        {cat.label}
+                      </button>
+                    );
+                  })}
+                {SIDEBAR_CATEGORIES.length > 10 && (
+                  <button
+                    onClick={() => setShowMoreCategories(!showMoreCategories)}
+                    className="text-teal-600 hover:text-teal-700 text-sm font-medium pl-2 py-1"
                   >
-                    <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                      <input type="checkbox" className="rounded border-gray-300" />
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                          <Grid3X3 size={20} className="text-purple-600" />
-                        </div>
-                        <span className="font-medium text-gray-900">{layout.name}</span>
-                      </div>
-                    </td>
-                    <td className="p-4 text-gray-600 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Layers size={14} />
-                        {layout.zone_count || 0} zone{layout.zone_count !== 1 ? 's' : ''}
-                      </div>
-                    </td>
-                    <td className="p-4 text-gray-600 text-sm">
-                      <span className="truncate max-w-xs block">
-                        {layout.description || '—'}
-                      </span>
-                    </td>
-                    <td className="p-4 text-gray-600 text-sm">
-                      {formatDate(layout.updated_at)}
-                    </td>
-                    <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                      <div className="relative">
-                        <button
-                          onClick={() => setActionMenuId(actionMenuId === layout.id ? null : layout.id)}
-                          className="p-1 hover:bg-gray-100 rounded"
-                        >
-                          <MoreVertical size={18} className="text-gray-400" />
-                        </button>
-                        {actionMenuId === layout.id && (
-                          <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
-                            <button
-                              onClick={() => {
-                                setActionMenuId(null);
-                                onNavigate?.(`layout-editor-${layout.id}`);
-                              }}
-                              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
-                            >
-                              <Edit size={14} />
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => {
-                                setActionMenuId(null);
-                                handleDuplicate(layout);
-                              }}
-                              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
-                            >
-                              <Copy size={14} />
-                              Duplicate
-                            </button>
-                            <button
-                              onClick={() => handleDelete(layout)}
-                              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-red-600"
-                            >
-                              <Trash2 size={14} />
-                              Delete
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
+                    {showMoreCategories ? 'Show less' : `+ View ${SIDEBAR_CATEGORIES.length - 10} more`}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Orientation Section */}
+          <div>
+            <button
+              onClick={() => toggleSection('orientation')}
+              className="w-full flex items-center justify-between py-2 text-sm font-medium text-gray-900"
+            >
+              Orientation
+              {expandedSections.orientation ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+            {expandedSections.orientation && (
+              <div className="flex gap-2 mt-1">
+                <button
+                  onClick={() => setOrientation(orientation === 'landscape' ? 'all' : 'landscape')}
+                  className={`
+                    flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors
+                    ${orientation === 'landscape'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }
+                  `}
+                >
+                  <Monitor size={14} />
+                  Landscape
+                </button>
+                <button
+                  onClick={() => setOrientation(orientation === 'portrait' ? 'all' : 'portrait')}
+                  className={`
+                    flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors
+                    ${orientation === 'portrait'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }
+                  `}
+                >
+                  <Smartphone size={14} />
+                  Portrait
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Visual Mode Section */}
+          <div>
+            <button
+              onClick={() => toggleSection('visualMode')}
+              className="w-full flex items-center justify-between py-2 text-sm font-medium text-gray-900"
+            >
+              Visual Mode
+              {expandedSections.visualMode ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+            {expandedSections.visualMode && (
+              <div className="flex gap-2 mt-1">
+                <button
+                  onClick={() => setVisualMode(visualMode === 'static' ? 'all' : 'static')}
+                  className={`
+                    flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors
+                    ${visualMode === 'static'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }
+                  `}
+                >
+                  Static
+                </button>
+                <button
+                  onClick={() => setVisualMode(visualMode === 'animation' ? 'all' : 'animation')}
+                  className={`
+                    flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors
+                    ${visualMode === 'animation'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }
+                  `}
+                >
+                  Animation
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Industries Section */}
+          <div>
+            <button
+              onClick={() => toggleSection('industries')}
+              className="w-full flex items-center justify-between py-2 text-sm font-medium text-gray-900"
+            >
+              Industries
+              {expandedSections.industries ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+            {expandedSections.industries && (
+              <div className="flex flex-wrap gap-2 mt-1">
+                {INDUSTRIES.map((ind) => (
+                  <button
+                    key={ind.id}
+                    onClick={() => setActiveCategory(ind.id)}
+                    className={`
+                      px-3 py-1.5 rounded-full text-sm border transition-colors
+                      ${activeCategory === ind.id
+                        ? 'border-teal-500 bg-teal-50 text-teal-700'
+                        : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                      }
+                    `}
+                  >
+                    {ind.label}
+                  </button>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            )}
           </div>
-        </Card>
-      )}
-
-      {/* Footer Actions */}
-      <div className="flex items-center gap-4 pt-4">
-        <Button onClick={handleAddLayout}>
-          <Plus size={18} />
-          Add Layout
-        </Button>
-        <Button variant="outline">
-          Actions
-        </Button>
+        </div>
       </div>
 
-      {/* Create Layout Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Create Layout</h2>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
-                <X size={20} className="text-gray-400" />
-              </button>
-            </div>
-            <form onSubmit={handleCreate}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={newLayout.name}
-                    onChange={(e) => setNewLayout(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Enter layout name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    autoFocus
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    value={newLayout.description}
-                    onChange={(e) => setNewLayout(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Optional description"
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 mt-6">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowCreateModal(false)}
-                  disabled={creating}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={creating}>
-                  {creating ? 'Creating...' : 'Create Layout'}
-                </Button>
-              </div>
-            </form>
-          </Card>
-        </div>
-      )}
+      {/* ===== MAIN CONTENT ===== */}
+      <div className="flex-1 overflow-y-auto bg-gray-50">
+        {/* Hero Section */}
+        {!searchQuery && activeCategory === 'all' && (
+          <div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-8 py-12">
+            <div className="max-w-2xl mx-auto text-center">
+              <h1 className="text-2xl font-bold text-white mb-6">
+                What Template Are You Looking For?
+              </h1>
 
-      {/* Limit Reached Modal */}
-      {showLimitModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md">
-            <div className="p-6 text-center">
-              <div className="w-16 h-16 mx-auto bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                <AlertTriangle className="w-8 h-8 text-yellow-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Layout Limit Reached</h3>
-              <p className="text-gray-600 mb-6">
-                You've used {formatLimitDisplay(limits?.maxLayouts, layouts.length)} layouts on your {limits?.planName} plan.
-              </p>
-              <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-                <h4 className="font-medium text-gray-900 mb-2">Upgrade to get:</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <Grid3X3 className="w-4 h-4 text-purple-500" />
-                    More layouts for your screens
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-yellow-500" />
-                    Higher limits for all resources
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    Priority support
-                  </li>
-                </ul>
-              </div>
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setShowLimitModal(false)} className="flex-1">
-                  Maybe Later
-                </Button>
-                <Button
-                  onClick={() => {
-                    setShowLimitModal(false);
-                    window.location.hash = '#account-plan';
-                  }}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600"
-                >
-                  <Zap size={16} />
-                  View Plans
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Choice Modal - Blank or Template */}
-      {showChoiceModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">New Layout</h2>
+              {/* Search Bar */}
+              <form onSubmit={handleSearch} className="relative mb-6">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder='Try "Building Directory"'
+                  className="w-full pl-12 pr-32 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+                />
                 <button
-                  onClick={() => setShowChoiceModal(false)}
-                  className="p-1 hover:bg-gray-100 rounded"
+                  type="submit"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-md transition-colors"
                 >
-                  <X size={20} className="text-gray-400" />
+                  Search Templates
                 </button>
-              </div>
+              </form>
 
-              <p className="text-gray-600 mb-6">
-                How would you like to create your layout?
-              </p>
-
-              <div className="space-y-3">
-                {/* Blank Layout Option */}
-                <button
-                  onClick={handleCreateBlank}
-                  className="w-full p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors text-left flex items-center gap-4 group"
-                >
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-100">
-                    <FileText size={24} className="text-gray-400 group-hover:text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-gray-900">Blank Layout</h3>
-                    <p className="text-sm text-gray-500">Start fresh and add zones manually</p>
-                  </div>
-                  <ChevronRight size={20} className="text-gray-400 group-hover:text-blue-600" />
-                </button>
-
-                {/* Template Option */}
-                <button
-                  onClick={handleShowTemplatePicker}
-                  className="w-full p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors text-left flex items-center gap-4 group"
-                >
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <LayoutTemplate size={24} className="text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-gray-900 flex items-center gap-2">
-                      Start from Template
-                      <Badge variant="purple">Recommended</Badge>
-                    </h3>
-                    <p className="text-sm text-gray-500">Use a pre-configured zone layout</p>
-                  </div>
-                  <ChevronRight size={20} className="text-gray-400 group-hover:text-purple-600" />
-                </button>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md">
-            <div className="p-6">
-              {deleteConfirm.loading ? (
-                <div className="text-center py-8">
-                  <Loader2 className="w-8 h-8 animate-spin mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-600">Checking where this layout is used...</p>
-                </div>
-              ) : deleteConfirm.usage?.is_in_use ? (
-                <>
-                  <div className="flex items-start gap-3 mb-4">
-                    <div className="p-2 bg-yellow-100 rounded-full">
-                      <AlertTriangle className="w-5 h-5 text-yellow-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Layout In Use</h3>
-                      <p className="text-gray-600 text-sm mt-1">
-                        <strong>"{deleteConfirm.name}"</strong> is currently being used:
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Usage Details */}
-                  <div className="bg-gray-50 rounded-lg p-4 mb-4 space-y-2">
-                    {deleteConfirm.usage?.screens?.count > 0 && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Screens</span>
-                        <span className="font-medium text-gray-900">
-                          {deleteConfirm.usage.screens.count} screen{deleteConfirm.usage.screens.count !== 1 ? 's' : ''}
-                        </span>
-                      </div>
-                    )}
-                    {deleteConfirm.usage?.schedules?.count > 0 && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Schedules</span>
-                        <span className="font-medium text-gray-900">
-                          {deleteConfirm.usage.schedules.count} schedule{deleteConfirm.usage.schedules.count !== 1 ? 's' : ''}
-                        </span>
-                      </div>
-                    )}
-                    {deleteConfirm.usage?.campaigns?.count > 0 && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Campaigns</span>
-                        <span className="font-medium text-gray-900">
-                          {deleteConfirm.usage.campaigns.count} campaign{deleteConfirm.usage.campaigns.count !== 1 ? 's' : ''}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <p className="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-lg mb-4">
-                    Deleting this layout will remove it from all screens, schedules, and campaigns where it's used.
-                  </p>
-
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => setDeleteConfirm(null)}
-                      className="flex-1"
-                      disabled={deletingForce}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="danger"
-                      onClick={() => confirmDelete(true)}
-                      className="flex-1"
-                      disabled={deletingForce}
-                    >
-                      {deletingForce ? (
-                        <>
-                          <Loader2 size={16} className="animate-spin" />
-                          Deleting...
-                        </>
-                      ) : (
-                        <>
-                          <Trash2 size={16} />
-                          Delete Anyway
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-start gap-3 mb-4">
-                    <div className="p-2 bg-red-100 rounded-full">
-                      <Trash2 className="w-5 h-5 text-red-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Delete Layout?</h3>
-                      <p className="text-gray-600 text-sm mt-1">
-                        Are you sure you want to delete <strong>"{deleteConfirm.name}"</strong>?
-                        This action cannot be undone.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => setDeleteConfirm(null)}
-                      className="flex-1"
-                      disabled={deletingForce}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="danger"
-                      onClick={() => confirmDelete(false)}
-                      className="flex-1"
-                      disabled={deletingForce}
-                    >
-                      {deletingForce ? (
-                        <>
-                          <Loader2 size={16} className="animate-spin" />
-                          Deleting...
-                        </>
-                      ) : (
-                        <>
-                          <Trash2 size={16} />
-                          Delete
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </>
-              )}
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Template Picker Modal */}
-      {showTemplatePicker && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <LayoutTemplate size={20} className="text-purple-600" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900">Choose a Layout Template</h2>
-                  <p className="text-sm text-gray-500">Select a multi-zone layout to get started</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowTemplatePicker(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
-              >
-                <X size={20} className="text-gray-400" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4">
-              {templatesLoading ? (
-                <div className="flex items-center justify-center h-48">
-                  <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
-                </div>
-              ) : templates.length === 0 ? (
-                <div className="text-center py-12">
-                  <LayoutTemplate size={48} className="mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500">No layout templates available</p>
-                  <Button
-                    variant="outline"
-                    onClick={handleCreateBlank}
-                    className="mt-4"
+              {/* Quick Tags */}
+              <div className="flex flex-wrap justify-center gap-2 mb-6">
+                {QUICK_TAGS.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => handleQuickTag(tag)}
+                    className="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm rounded-full transition-colors"
                   >
-                    Create Blank Layout
-                  </Button>
+                    {tag}
+                  </button>
+                ))}
+              </div>
+
+              {/* AI Designer Button */}
+              <button
+                onClick={() => showToast?.('AI Designer coming soon!', 'info')}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-teal-600 font-medium rounded-lg transition-colors shadow-sm"
+              >
+                <Sparkles size={18} />
+                Try AI Designer
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Search Results Header */}
+        {searchQuery && (
+          <div className="bg-gradient-to-r from-amber-600 to-orange-500 px-8 py-8">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-xl font-bold text-white mb-4">
+                Results for: {searchQuery}
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {['digital menu board', 'animated display', 'static template', 'promotional content'].map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => handleQuickTag(tag)}
+                    className="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm rounded-full transition-colors"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Content Area */}
+        <div className="p-8">
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loader2 className="w-8 h-8 animate-spin text-teal-500" />
+            </div>
+          ) : searchQuery || activeCategory !== 'all' ? (
+            /* Grid View for Search/Filtered Results */
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {activeCategory === 'your-templates' ? 'Your Templates' :
+                   activeCategory === 'recent' ? 'Recent Designs' :
+                   activeCategory === 'featured' ? 'Featured Templates' :
+                   activeCategory === 'popular' ? 'Popular Templates' :
+                   searchQuery ? `${filteredTemplates.length} results` :
+                   SIDEBAR_CATEGORIES.find(c => c.id === activeCategory)?.label || 'Templates'}
+                </h2>
+                {(searchQuery || activeCategory !== 'all') && (
+                  <button
+                    onClick={() => { setSearchQuery(''); setSearchInput(''); setActiveCategory('all'); }}
+                    className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                  >
+                    <X size={14} />
+                    Clear filters
+                  </button>
+                )}
+              </div>
+
+              {filteredTemplates.length === 0 ? (
+                <div className="text-center py-16">
+                  <LayoutGrid size={48} className="mx-auto text-gray-300 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No templates found</h3>
+                  <p className="text-gray-500 mb-4">
+                    {activeCategory === 'your-templates'
+                      ? 'You haven\'t saved any templates yet'
+                      : activeCategory === 'recent'
+                      ? 'No recent designs'
+                      : 'Try a different search or category'}
+                  </p>
+                  <button
+                    onClick={() => onNavigate?.('design-editor')}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg transition-colors"
+                  >
+                    <Plus size={18} />
+                    Create New Design
+                  </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {templates.map((template) => (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {filteredTemplates.map((template) => (
                     <div
-                      key={template.id}
-                      className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+                      key={template.id || template.slug}
+                      onClick={() => handleTemplateClick(template)}
+                      className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-teal-400 transition-all"
                     >
-                      {/* Template thumbnail */}
-                      <div className="h-32 bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center">
-                        {template.thumbnail ? (
-                          <img
-                            src={template.thumbnail}
-                            alt={template.title}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <Grid3X3 size={40} className="text-purple-300" />
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h3 className="font-medium text-gray-900">{template.title}</h3>
-                            <p className="text-xs text-gray-500">{template.category}</p>
-                          </div>
-                          {template.meta?.zones && (
-                            <Badge variant="gray">{template.meta.zones} zones</Badge>
-                          )}
+                      {template.thumbnail_url || template.preview_image_url ? (
+                        <img
+                          src={template.thumbnail_url || template.preview_image_url}
+                          alt={template.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-100">
+                          <LayoutGrid size={32} className="text-teal-300" />
                         </div>
-                        <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                          {template.description}
-                        </p>
-                        <Button
-                          size="sm"
-                          onClick={() => handleApplyTemplate(template)}
-                          disabled={applyingTemplate === template.slug}
-                          className="w-full"
-                        >
-                          {applyingTemplate === template.slug ? (
-                            <>
-                              <Loader2 size={14} className="animate-spin mr-1" />
-                              Creating...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles size={14} className="mr-1" />
-                              Use Template
-                            </>
-                          )}
-                        </Button>
+                      )}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                        <span className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 bg-white text-gray-900 rounded-md text-sm font-medium shadow-lg">
+                          Use Template
+                        </span>
                       </div>
+                      {template.is_featured && (
+                        <div className="absolute top-2 left-2 px-2 py-0.5 bg-yellow-400 text-yellow-900 text-xs font-medium rounded">
+                          Featured
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               )}
             </div>
+          ) : (
+            /* Home View with Sections */
+            <div className="space-y-8">
+              {/* Featured Section */}
+              {featuredTemplates.length > 0 && (
+                <HorizontalSection
+                  title="Featured"
+                  templates={featuredTemplates}
+                  scrollRef={featuredScrollRef}
+                  onViewAll={() => setActiveCategory('featured')}
+                />
+              )}
 
-            <div className="p-4 border-t border-gray-200 bg-gray-50 shrink-0">
-              <div className="flex justify-between items-center">
-                <button
-                  onClick={handleCreateBlank}
-                  className="text-sm text-gray-600 hover:text-gray-900"
-                >
-                  or create a blank layout
-                </button>
-                <Button variant="outline" onClick={() => setShowTemplatePicker(false)}>
-                  Cancel
-                </Button>
+              {/* Popular Section */}
+              {popularTemplates.length > 0 && (
+                <HorizontalSection
+                  title="Popular"
+                  templates={popularTemplates}
+                  scrollRef={popularScrollRef}
+                  onViewAll={() => setActiveCategory('popular')}
+                />
+              )}
+
+              {/* Holidays Section */}
+              {holidayTemplates.length > 0 && (
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900">Holidays and Observances</h3>
+                    <button
+                      onClick={() => setActiveCategory('holidays')}
+                      className="text-teal-600 hover:text-teal-700 text-sm font-medium"
+                    >
+                      View all
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {holidayTemplates.slice(0, 5).map((template) => (
+                      <TemplateCard key={template.id || template.slug} template={template} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* All Templates Grid */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">All Designs</h3>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {templates.slice(0, 20).map((template) => (
+                    <div
+                      key={template.id || template.slug}
+                      onClick={() => handleTemplateClick(template)}
+                      className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-teal-400 transition-all"
+                    >
+                      {template.thumbnail_url || template.preview_image_url ? (
+                        <img
+                          src={template.thumbnail_url || template.preview_image_url}
+                          alt={template.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-100">
+                          <LayoutGrid size={32} className="text-teal-300" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                        <span className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 bg-white text-gray-900 rounded-md text-sm font-medium shadow-lg">
+                          Use Template
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </Card>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

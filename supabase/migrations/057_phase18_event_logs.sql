@@ -1,15 +1,22 @@
 -- ============================================================================
 -- Phase 18: Audit Logs, Event Stream, & System Activity Timeline
 -- ============================================================================
+--
+-- TENANT MODEL: profiles-as-tenant
+-- tenant_id references profiles(id) - the profile IS the tenant/owner.
+-- This aligns with organization_members, locations, and usage_events.
+-- ============================================================================
 
 -- ============================================================================
 -- A. AUDIT_LOGS TABLE
 -- Tracks all sensitive actions per tenant
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS audit_logs (
+CREATE TABLE IF NOT EXISTS public.audit_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
+  -- tenant_id = profile ID of the business owner (profiles-as-tenant pattern)
+  -- Can be NULL for system-level events not tied to a specific tenant
+  tenant_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   event_type TEXT NOT NULL,
   entity_type TEXT,
@@ -33,9 +40,10 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_user
 -- ============================================================================
 -- B. SYSTEM_EVENTS TABLE
 -- Tracks backend and internal operations (super_admin only)
+-- No tenant_id - these are platform-wide system events
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS system_events (
+CREATE TABLE IF NOT EXISTS public.system_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   source TEXT NOT NULL CHECK (source IN ('api', 'scheduler', 'system', 'admin', 'worker')),
   event_type TEXT NOT NULL,
@@ -57,33 +65,43 @@ CREATE INDEX IF NOT EXISTS idx_system_events_severity
 -- ============================================================================
 -- C. RLS POLICIES
 -- ============================================================================
+-- Uses profiles-as-tenant pattern:
+-- - tenant_id = profile ID of the business owner
+-- - User can access if: they ARE the tenant, OR are a team member, OR are super_admin
+-- - Leverages helper functions from migration 021: is_tenant_member(), is_super_admin()
+-- ============================================================================
 
-ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE system_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.system_events ENABLE ROW LEVEL SECURITY;
 
--- Audit logs: SELECT allowed per-tenant for tenant members
-CREATE POLICY audit_logs_select_tenant ON audit_logs
+-- Audit logs: SELECT allowed for tenant owner, team members, and super_admins
+CREATE POLICY audit_logs_select_tenant ON public.audit_logs
   FOR SELECT
   USING (
-    tenant_id IN (
-      SELECT tenant_id FROM profiles WHERE id = auth.uid()
-    )
-    OR
-    EXISTS (
-      SELECT 1 FROM profiles
-      WHERE id = auth.uid() AND role = 'super_admin'
-    )
+    -- User IS the tenant owner
+    tenant_id = auth.uid()
+    -- OR user is a team member of this tenant
+    OR is_tenant_member(tenant_id)
+    -- OR user is super_admin (can see all)
+    OR is_super_admin()
   );
+
+-- Audit logs: INSERT allowed via RPC (SECURITY DEFINER functions handle this)
+-- Direct insert is restricted to super_admin for manual entries
+CREATE POLICY audit_logs_insert_policy ON public.audit_logs
+  FOR INSERT
+  WITH CHECK (is_super_admin());
 
 -- System events: SELECT allowed for super_admin only
-CREATE POLICY system_events_select_super_admin ON system_events
+CREATE POLICY system_events_select_super_admin ON public.system_events
   FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles
-      WHERE id = auth.uid() AND role = 'super_admin'
-    )
-  );
+  USING (is_super_admin());
+
+-- System events: INSERT allowed via RPC (SECURITY DEFINER functions handle this)
+-- Direct insert restricted to super_admin
+CREATE POLICY system_events_insert_policy ON public.system_events
+  FOR INSERT
+  WITH CHECK (is_super_admin());
 
 -- ============================================================================
 -- D. RPC FUNCTIONS FOR RECORDING EVENTS

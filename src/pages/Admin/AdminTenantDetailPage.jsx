@@ -58,6 +58,7 @@ export default function AdminTenantDetailPage({ tenantId, onNavigate, showToast 
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [showQuotaModal, setShowQuotaModal] = useState(false);
   const [selectedQuotaFeature, setSelectedQuotaFeature] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null); // { type: 'suspend'|'unsuspend', title, message }
 
   const handleBack = useCallback(() => {
     onNavigate?.('admin-tenants');
@@ -180,7 +181,13 @@ export default function AdminTenantDetailPage({ tenantId, onNavigate, showToast 
         <div className="flex items-center gap-2">
           {tenant.status === 'active' ? (
             <button
-              onClick={() => handleAction(suspend, 'suspend', 'Admin action')}
+              onClick={() => setConfirmAction({
+                type: 'suspend',
+                title: 'Suspend Tenant',
+                message: `Are you sure you want to suspend "${tenant.name}"? This will immediately block all users from accessing the platform.`,
+                confirmLabel: 'Suspend Tenant',
+                variant: 'danger',
+              })}
               disabled={actionLoading}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 disabled:opacity-50"
             >
@@ -189,7 +196,13 @@ export default function AdminTenantDetailPage({ tenantId, onNavigate, showToast 
             </button>
           ) : tenant.status === 'suspended' ? (
             <button
-              onClick={() => handleAction(suspend, 'unsuspend', 'Admin action')}
+              onClick={() => setConfirmAction({
+                type: 'unsuspend',
+                title: 'Reactivate Tenant',
+                message: `Are you sure you want to reactivate "${tenant.name}"? Users will regain access immediately.`,
+                confirmLabel: 'Reactivate',
+                variant: 'success',
+              })}
               disabled={actionLoading}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 disabled:opacity-50"
             >
@@ -299,6 +312,22 @@ export default function AdminTenantDetailPage({ tenantId, onNavigate, showToast 
             setSelectedQuotaFeature(null);
           }}
           loading={actionLoading}
+        />
+      )}
+
+      {/* Confirmation Modal for Destructive Actions */}
+      {confirmAction && (
+        <ConfirmActionModal
+          title={confirmAction.title}
+          message={confirmAction.message}
+          confirmLabel={confirmAction.confirmLabel}
+          variant={confirmAction.variant}
+          loading={actionLoading}
+          onClose={() => setConfirmAction(null)}
+          onConfirm={async () => {
+            await handleAction(suspend, confirmAction.type, 'Admin action');
+            setConfirmAction(null);
+          }}
         />
       )}
     </div>
@@ -769,6 +798,60 @@ function BillingTab({
 // ============================================================================
 // MODALS
 // ============================================================================
+
+function ConfirmActionModal({ title, message, confirmLabel, variant = 'danger', loading, onClose, onConfirm }) {
+  const variantStyles = {
+    danger: {
+      button: 'bg-red-600 hover:bg-red-700 text-white',
+      icon: 'text-red-600 bg-red-100',
+    },
+    success: {
+      button: 'bg-green-600 hover:bg-green-700 text-white',
+      icon: 'text-green-600 bg-green-100',
+    },
+    warning: {
+      button: 'bg-yellow-600 hover:bg-yellow-700 text-white',
+      icon: 'text-yellow-600 bg-yellow-100',
+    },
+  };
+
+  const styles = variantStyles[variant] || variantStyles.danger;
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen px-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
+        <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div className="flex items-start gap-4 mb-4">
+            <div className={`p-2 rounded-full ${styles.icon}`}>
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+              <p className="mt-2 text-sm text-gray-600">{message}</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-end gap-3 mt-6">
+            <button
+              onClick={onClose}
+              disabled={loading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-800 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={loading}
+              className={`px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 ${styles.button}`}
+            >
+              {loading ? 'Processing...' : confirmLabel}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function PlanChangeModal({ currentPlan, onClose, onConfirm, loading }) {
   const [selectedPlan, setSelectedPlan] = useState(currentPlan);
