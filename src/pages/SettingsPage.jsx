@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Bell, Eye, Globe, Shield, Activity, RotateCcw } from 'lucide-react';
+import { Bell, Eye, Globe, Shield, Activity, RotateCcw, AlertCircle, RefreshCw, Palette, Plus, Trash2, Loader2 } from 'lucide-react';
 import { Card, Button } from '../design-system';
 import { getUserSettings, updateUserSettings, resetUserSettings } from '../services/userSettingsService';
 import { getActivityLog, formatActivity } from '../services/activityLogService';
+import { getAllBrandThemes, deleteBrandTheme, setActiveTheme } from '../services/brandThemeService';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from '../i18n';
+import { BrandImporterModal, ThemePreviewCard } from '../components/brand';
 
 const SettingsPage = ({ showToast }) => {
   const { t } = useTranslation();
@@ -12,11 +14,18 @@ const SettingsPage = ({ showToast }) => {
   const [settings, setSettings] = useState(null);
   const [activityLog, setActivityLog] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
+
+  // Brand theme state
+  const [brandThemes, setBrandThemes] = useState([]);
+  const [showBrandModal, setShowBrandModal] = useState(false);
+  const [brandLoading, setBrandLoading] = useState(false);
 
   const tabs = [
     { id: 'notifications', label: t('settings.tabs.notifications', 'Notifications'), icon: Bell },
     { id: 'display', label: t('settings.tabs.display', 'Display'), icon: Eye },
+    { id: 'branding', label: t('settings.tabs.branding', 'Branding'), icon: Palette },
     { id: 'privacy', label: t('settings.tabs.privacy', 'Privacy'), icon: Shield },
     { id: 'activity', label: t('settings.tabs.activity', 'Activity Log'), icon: Activity }
   ];
@@ -29,10 +38,12 @@ const SettingsPage = ({ showToast }) => {
   const fetchSettings = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await getUserSettings();
       setSettings(data);
-    } catch (error) {
-      showToast('Error loading settings: ' + error.message, 'error');
+    } catch (err) {
+      console.error('Error loading settings:', err);
+      setError(err.message || 'Failed to load settings');
     } finally {
       setLoading(false);
     }
@@ -46,6 +57,25 @@ const SettingsPage = ({ showToast }) => {
       console.error('Error loading activity log:', error);
     }
   };
+
+  const fetchBrandThemes = async () => {
+    try {
+      setBrandLoading(true);
+      const themes = await getAllBrandThemes();
+      setBrandThemes(themes || []);
+    } catch (error) {
+      console.error('Error loading brand themes:', error);
+    } finally {
+      setBrandLoading(false);
+    }
+  };
+
+  // Fetch brand themes when branding tab is selected
+  useEffect(() => {
+    if (activeTab === 'branding' && brandThemes.length === 0 && !brandLoading) {
+      fetchBrandThemes();
+    }
+  }, [activeTab]);
 
   const handleSaveSettings = async (updates) => {
     try {
@@ -77,7 +107,68 @@ const SettingsPage = ({ showToast }) => {
     }
   };
 
-  if (loading || !settings) {
+  const handleThemeCreated = async (theme) => {
+    setShowBrandModal(false);
+    await fetchBrandThemes();
+    showToast(t('settings.branding.themeCreated', 'Brand theme created successfully!'));
+  };
+
+  const handleDeleteTheme = async (themeId) => {
+    if (!confirm(t('settings.branding.confirmDelete', 'Are you sure you want to delete this brand theme?'))) {
+      return;
+    }
+
+    try {
+      await deleteBrandTheme(themeId);
+      setBrandThemes(brandThemes.filter(t => t.id !== themeId));
+      showToast(t('settings.branding.themeDeleted', 'Brand theme deleted'));
+    } catch (error) {
+      showToast('Error deleting theme: ' + error.message, 'error');
+    }
+  };
+
+  const handleSetActiveTheme = async (themeId) => {
+    try {
+      await setActiveTheme(themeId);
+      setBrandThemes(brandThemes.map(t => ({
+        ...t,
+        is_active: t.id === themeId
+      })));
+      showToast(t('settings.branding.themeActivated', 'Brand theme activated'));
+    } catch (error) {
+      showToast('Error activating theme: ' + error.message, 'error');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">{t('common.loading', 'Loading...')}</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Card className="p-8 max-w-md">
+          <div className="text-center">
+            <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              {t('settings.errorTitle', 'Unable to load settings')}
+            </h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <Button onClick={fetchSettings} variant="outline">
+              <RefreshCw size={16} />
+              {t('common.tryAgain', 'Try Again')}
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!settings) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-gray-500">{t('common.loading', 'Loading...')}</div>
@@ -241,6 +332,56 @@ const SettingsPage = ({ showToast }) => {
         </Card>
       )}
 
+      {/* Branding Tab */}
+      {activeTab === 'branding' && (
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-lg font-semibold">{t('settings.branding.title', 'Brand Themes')}</h2>
+              <p className="text-sm text-gray-600">
+                {t('settings.branding.description', 'Import your brand identity for consistent styling across all scenes')}
+              </p>
+            </div>
+            <Button onClick={() => setShowBrandModal(true)}>
+              <Plus size={16} />
+              {t('settings.branding.importBrand', 'Import Brand')}
+            </Button>
+          </div>
+
+          {brandLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+            </div>
+          ) : brandThemes.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg">
+              <Palette className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {t('settings.branding.noThemes', 'No brand themes yet')}
+              </h3>
+              <p className="text-gray-600 mb-4">
+                {t('settings.branding.noThemesDesc', 'Import your logo to automatically extract brand colors and create a consistent theme')}
+              </p>
+              <Button onClick={() => setShowBrandModal(true)} variant="outline">
+                <Plus size={16} />
+                {t('settings.branding.importFirst', 'Import Your First Brand')}
+              </Button>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {brandThemes.map(theme => (
+                <ThemePreviewCard
+                  key={theme.id}
+                  theme={theme}
+                  isActive={theme.is_active}
+                  onSelect={() => handleSetActiveTheme(theme.id)}
+                  onDelete={() => handleDeleteTheme(theme.id)}
+                />
+              ))}
+            </div>
+          )}
+        </Card>
+      )}
+
       {/* Privacy Tab */}
       {activeTab === 'privacy' && (
         <Card className="p-6">
@@ -357,6 +498,15 @@ const SettingsPage = ({ showToast }) => {
           {t('settings.resetToDefaults', 'Reset to Defaults')}
         </Button>
       </div>
+
+      {/* Brand Importer Modal */}
+      {showBrandModal && (
+        <BrandImporterModal
+          isOpen={showBrandModal}
+          onClose={() => setShowBrandModal(false)}
+          onThemeCreated={handleThemeCreated}
+        />
+      )}
     </div>
   );
 };

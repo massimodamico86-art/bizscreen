@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Background circle -->
+    <path
+        android:fillColor="#3b82f6"
+        android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+    <!-- TV icon - monitor -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,40h36c2,0 3.5,1.5 3.5,3.5v18c0,2 -1.5,3.5 -3.5,3.5H36c-2,0 -3.5,-1.5 -3.5,-3.5v-18c0,-2 1.5,-3.5 3.5,-3.5z" />
+    <!-- TV stand -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M46,68h16M54,65v3"
+        android:strokeWidth="2"
+        android:strokeColor="#FFFFFF"/>
+</vector>

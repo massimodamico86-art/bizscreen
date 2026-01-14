@@ -1,0 +1,19 @@
+/* Inter.css */
+
+/* Inter Variable – Normal */
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 100 900; /* variable font can cover all weights */
+	font-display: swap;
+	src: url('Inter.ttf') format('truetype');
+}
+
+/* Inter Variable – Italic */
+@font-face {
+	font-family: 'Inter';
+	font-style: italic;
+	font-weight: 100 900; /* covers 100–900 italic */
+	font-display: swap;
+	src: url('Inter-Italic.ttf') format('truetype');
+}

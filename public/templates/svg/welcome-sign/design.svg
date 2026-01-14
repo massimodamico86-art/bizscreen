@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="headerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1E3A5F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2C5282;stop-opacity:1" />
+    </linearGradient>
+    <style>
+      .title { font-family: 'Georgia', serif; font-weight: 700; }
+      .heading { font-family: 'Arial', sans-serif; font-weight: 700; }
+      .body { font-family: 'Arial', sans-serif; font-weight: 400; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="#F8F9FA"/>
+
+  <!-- Header bar -->
+  <rect width="1920" height="200" fill="url(#headerGradient)"/>
+
+  <!-- Company Logo placeholder -->
+  <rect x="80" y="50" width="100" height="100" rx="10" fill="rgba(255,255,255,0.2)"/>
+  <text x="130" y="115" text-anchor="middle" class="body" fill="white" font-size="14">LOGO</text>
+
+  <!-- Company name -->
+  <text x="220" y="120" class="heading" fill="white" font-size="48">COMPANY NAME</text>
+
+  <!-- Main welcome text -->
+  <text x="960" y="400" text-anchor="middle" class="title" fill="#1E3A5F" font-size="96">Welcome</text>
+
+  <!-- Visitor info section -->
+  <rect x="460" y="480" width="1000" height="300" rx="15" fill="white" stroke="#E2E8F0" stroke-width="2"/>
+
+  <!-- Section labels -->
+  <text x="560" y="540" class="heading" fill="#1E3A5F" font-size="24">Visitor Name</text>
+  <text x="560" y="590" class="body" fill="#4A5568" font-size="36">John Smith</text>
+
+  <line x1="960" y1="510" x2="960" y2="750" stroke="#E2E8F0" stroke-width="2"/>
+
+  <text x="1060" y="540" class="heading" fill="#1E3A5F" font-size="24">Meeting With</text>
+  <text x="1060" y="590" class="body" fill="#4A5568" font-size="36">Jane Doe</text>
+
+  <line x1="460" y1="630" x2="1460" y2="630" stroke="#E2E8F0" stroke-width="2"/>
+
+  <text x="560" y="700" class="heading" fill="#1E3A5F" font-size="24">Location</text>
+  <text x="560" y="750" class="body" fill="#4A5568" font-size="36">Conference Room A</text>
+
+  <!-- Footer -->
+  <rect y="880" width="1920" height="200" fill="#1E3A5F"/>
+  <text x="960" y="960" text-anchor="middle" class="body" fill="rgba(255,255,255,0.7)" font-size="24">Please check in at the reception desk</text>
+  <text x="960" y="1010" text-anchor="middle" class="body" fill="rgba(255,255,255,0.5)" font-size="20">123 Business Street, Suite 100 | Tel: (555) 123-4567</text>
+</svg>

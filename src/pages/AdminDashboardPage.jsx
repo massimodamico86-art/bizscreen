@@ -15,11 +15,12 @@ import {
   Button,
   Badge,
   Alert,
-  EmptyState
+  EmptyState,
+  Modal
 } from '../design-system';
-import { Users, Building2, UserCheck, ExternalLink, Plus, Upload, FileText } from 'lucide-react';
+import { Users, Building2, UserCheck, ExternalLink, Plus, Upload, FileText, X, Download } from 'lucide-react';
 
-export default function AdminDashboardPage() {
+export default function AdminDashboardPage({ onNavigate }) {
   const { t } = useTranslation();
   const { userProfile } = useAuth();
   const [clients, setClients] = useState([]);
@@ -30,6 +31,20 @@ export default function AdminDashboardPage() {
     totalListings: 0,
     totalGuests: 0
   });
+
+  // Modal states
+  const [addPropertyModal, setAddPropertyModal] = useState(false);
+  const [importGuestsModal, setImportGuestsModal] = useState(false);
+  const [generateReportModal, setGenerateReportModal] = useState(false);
+
+  // Form states
+  const [selectedClientId, setSelectedClientId] = useState('');
+  const [propertyName, setPropertyName] = useState('');
+  const [propertyAddress, setPropertyAddress] = useState('');
+  const [guestFile, setGuestFile] = useState(null);
+  const [reportDateRange, setReportDateRange] = useState({ start: '', end: '' });
+  const [actionLoading, setActionLoading] = useState(false);
+  const [actionSuccess, setActionSuccess] = useState('');
 
   useEffect(() => {
     fetchAdminData();
@@ -104,6 +119,170 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Handle Add Property
+  const handleAddProperty = async () => {
+    if (!selectedClientId || !propertyName) {
+      setError(t('admin.selectClientAndName', 'Please select a client and enter a property name'));
+      return;
+    }
+
+    setActionLoading(true);
+    setError('');
+
+    try {
+      const { data, error: insertError } = await supabase
+        .from('listings')
+        .insert({
+          owner_id: selectedClientId,
+          name: propertyName,
+          address: propertyAddress || null,
+          status: 'active'
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      setActionSuccess(t('admin.propertyCreated', 'Property created successfully!'));
+      setAddPropertyModal(false);
+      setPropertyName('');
+      setPropertyAddress('');
+      setSelectedClientId('');
+      fetchAdminData(); // Refresh data
+    } catch (err) {
+      console.error('Error creating property:', err);
+      setError(err.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Handle Import Guests (CSV)
+  const handleImportGuests = async () => {
+    if (!selectedClientId || !guestFile) {
+      setError(t('admin.selectClientAndFile', 'Please select a client and upload a CSV file'));
+      return;
+    }
+
+    setActionLoading(true);
+    setError('');
+
+    try {
+      // Read CSV file
+      const text = await guestFile.text();
+      const lines = text.split('\n').filter(line => line.trim());
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+
+      // Get client's listings
+      const { data: clientListings } = await supabase
+        .from('listings')
+        .select('id, name')
+        .eq('owner_id', selectedClientId);
+
+      if (!clientListings || clientListings.length === 0) {
+        throw new Error(t('admin.noListingsForClient', 'Client has no properties. Create a property first.'));
+      }
+
+      const defaultListingId = clientListings[0].id;
+
+      // Parse CSV rows
+      const guests = [];
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim());
+        const guest = {};
+
+        headers.forEach((header, index) => {
+          if (header === 'name' || header === 'full_name') guest.name = values[index];
+          if (header === 'email') guest.email = values[index];
+          if (header === 'phone') guest.phone = values[index];
+        });
+
+        if (guest.name || guest.email) {
+          guests.push({
+            ...guest,
+            listing_id: defaultListingId,
+            status: 'active'
+          });
+        }
+      }
+
+      if (guests.length === 0) {
+        throw new Error(t('admin.noValidGuests', 'No valid guest data found in CSV'));
+      }
+
+      // Insert guests
+      const { error: insertError } = await supabase
+        .from('guests')
+        .insert(guests);
+
+      if (insertError) throw insertError;
+
+      setActionSuccess(t('admin.guestsImported', '{{count}} guests imported successfully!', { count: guests.length }));
+      setImportGuestsModal(false);
+      setGuestFile(null);
+      setSelectedClientId('');
+      fetchAdminData();
+    } catch (err) {
+      console.error('Error importing guests:', err);
+      setError(err.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Handle Generate Report
+  const handleGenerateReport = async () => {
+    setActionLoading(true);
+    setError('');
+
+    try {
+      // Generate CSV report
+      const reportData = [];
+      reportData.push(['Client', 'Email', 'Properties', 'Guests', 'Joined']);
+
+      clients.forEach(client => {
+        reportData.push([
+          client.full_name || 'No name',
+          client.email,
+          client.listingsCount,
+          client.guestsCount,
+          new Date(client.created_at).toLocaleDateString()
+        ]);
+      });
+
+      // Create CSV
+      const csvContent = reportData.map(row => row.join(',')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `admin-report-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      setActionSuccess(t('admin.reportGenerated', 'Report downloaded successfully!'));
+      setGenerateReportModal(false);
+    } catch (err) {
+      console.error('Error generating report:', err);
+      setError(err.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Clear success message after 3 seconds
+  useEffect(() => {
+    if (actionSuccess) {
+      const timer = setTimeout(() => setActionSuccess(''), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [actionSuccess]);
+
+  // Defense-in-depth: Check role even though App.jsx should handle routing
+  const isAdmin = userProfile?.role === 'admin' || userProfile?.role === 'super_admin';
+
   if (loading) {
     return (
       <PageLayout>
@@ -112,6 +291,27 @@ export default function AdminDashboardPage() {
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
               <p className="text-gray-600">{t('admin.loadingClients', 'Loading your clients...')}</p>
+            </div>
+          </div>
+        </PageContent>
+      </PageLayout>
+    );
+  }
+
+  // Access denied for non-admin users
+  if (!isAdmin) {
+    return (
+      <PageLayout>
+        <PageContent>
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">{t('common.accessDenied', 'Access Denied')}</h2>
+              <p className="text-gray-600">{t('admin.adminAccessRequired', 'Admin access required to view this page.')}</p>
             </div>
           </div>
         </PageContent>
@@ -242,6 +442,13 @@ export default function AdminDashboardPage() {
             )}
           </Card>
 
+          {/* Success Message */}
+          {actionSuccess && (
+            <Alert variant="success" className="mb-6">
+              {actionSuccess}
+            </Alert>
+          )}
+
           {/* Quick Actions */}
           {clients.length > 0 && (
             <Card className="mt-8 bg-blue-50 border-blue-200">
@@ -253,18 +460,169 @@ export default function AdminDashboardPage() {
                   {t('admin.quickActionsDesc', 'Common tasks for managing your clients')}
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <Button icon={<Plus className="w-4 h-4" />}>
+                  <Button icon={<Plus className="w-4 h-4" />} onClick={() => setAddPropertyModal(true)}>
                     {t('admin.addProperty', 'Add New Property')}
                   </Button>
-                  <Button variant="secondary" icon={<Upload className="w-4 h-4" />}>
+                  <Button variant="secondary" icon={<Upload className="w-4 h-4" />} onClick={() => setImportGuestsModal(true)}>
                     {t('admin.importGuests', 'Import Guests')}
                   </Button>
-                  <Button variant="secondary" icon={<FileText className="w-4 h-4" />}>
+                  <Button variant="secondary" icon={<FileText className="w-4 h-4" />} onClick={() => setGenerateReportModal(true)}>
                     {t('admin.generateReport', 'Generate Report')}
                   </Button>
                 </div>
               </div>
             </Card>
+          )}
+
+          {/* Add Property Modal */}
+          {addPropertyModal && (
+            <Modal
+              isOpen={addPropertyModal}
+              onClose={() => setAddPropertyModal(false)}
+              title={t('admin.addProperty', 'Add New Property')}
+            >
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin.selectClient', 'Select Client')} *
+                  </label>
+                  <select
+                    value={selectedClientId}
+                    onChange={(e) => setSelectedClientId(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">{t('admin.chooseClient', 'Choose a client...')}</option>
+                    {clients.map(client => (
+                      <option key={client.id} value={client.id}>
+                        {client.full_name || client.email}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin.propertyName', 'Property Name')} *
+                  </label>
+                  <input
+                    type="text"
+                    value={propertyName}
+                    onChange={(e) => setPropertyName(e.target.value)}
+                    placeholder={t('admin.enterPropertyName', 'Enter property name')}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin.propertyAddress', 'Address')} ({t('common.optional', 'optional')})
+                  </label>
+                  <input
+                    type="text"
+                    value={propertyAddress}
+                    onChange={(e) => setPropertyAddress(e.target.value)}
+                    placeholder={t('admin.enterAddress', 'Enter address')}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button variant="secondary" onClick={() => setAddPropertyModal(false)}>
+                    {t('common.cancel', 'Cancel')}
+                  </Button>
+                  <Button onClick={handleAddProperty} disabled={actionLoading}>
+                    {actionLoading ? t('common.creating', 'Creating...') : t('admin.createProperty', 'Create Property')}
+                  </Button>
+                </div>
+              </div>
+            </Modal>
+          )}
+
+          {/* Import Guests Modal */}
+          {importGuestsModal && (
+            <Modal
+              isOpen={importGuestsModal}
+              onClose={() => setImportGuestsModal(false)}
+              title={t('admin.importGuests', 'Import Guests')}
+            >
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin.selectClient', 'Select Client')} *
+                  </label>
+                  <select
+                    value={selectedClientId}
+                    onChange={(e) => setSelectedClientId(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">{t('admin.chooseClient', 'Choose a client...')}</option>
+                    {clients.map(client => (
+                      <option key={client.id} value={client.id}>
+                        {client.full_name || client.email}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin.csvFile', 'CSV File')} *
+                  </label>
+                  <input
+                    type="file"
+                    accept=".csv"
+                    onChange={(e) => setGuestFile(e.target.files?.[0] || null)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t('admin.csvFormat', 'CSV format: name, email, phone (with header row)')}
+                  </p>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button variant="secondary" onClick={() => setImportGuestsModal(false)}>
+                    {t('common.cancel', 'Cancel')}
+                  </Button>
+                  <Button onClick={handleImportGuests} disabled={actionLoading}>
+                    {actionLoading ? t('common.importing', 'Importing...') : t('admin.import', 'Import')}
+                  </Button>
+                </div>
+              </div>
+            </Modal>
+          )}
+
+          {/* Generate Report Modal */}
+          {generateReportModal && (
+            <Modal
+              isOpen={generateReportModal}
+              onClose={() => setGenerateReportModal(false)}
+              title={t('admin.generateReport', 'Generate Report')}
+            >
+              <div className="space-y-4">
+                <p className="text-sm text-gray-600">
+                  {t('admin.reportDesc', 'Generate a CSV report of all your clients with their properties and guest counts.')}
+                </p>
+
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">{t('admin.reportIncludes', 'Report includes:')}</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• {t('admin.clientNames', 'Client names and emails')}</li>
+                    <li>• {t('admin.propertyCounts', 'Property counts')}</li>
+                    <li>• {t('admin.guestCounts', 'Guest counts')}</li>
+                    <li>• {t('admin.joinDates', 'Join dates')}</li>
+                  </ul>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button variant="secondary" onClick={() => setGenerateReportModal(false)}>
+                    {t('common.cancel', 'Cancel')}
+                  </Button>
+                  <Button onClick={handleGenerateReport} disabled={actionLoading} icon={<Download className="w-4 h-4" />}>
+                    {actionLoading ? t('common.generating', 'Generating...') : t('admin.downloadReport', 'Download Report')}
+                  </Button>
+                </div>
+              </div>
+            </Modal>
           )}
         </PageContent>
       </PageLayout>

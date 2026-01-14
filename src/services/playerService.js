@@ -198,12 +198,13 @@ export async function reportCommandResult(commandId, success = true, errorMessag
  * @param {string} screenId - The screen UUID
  * @param {string} playerVersion - Current player version
  * @param {string} cachedContentHash - Hash of cached content
+ * @returns {Promise<{needs_screenshot_update: boolean}|null>} Status response or null on error
  */
 export async function updateDeviceStatus(screenId, playerVersion = null, cachedContentHash = null) {
-  if (!screenId) return;
+  if (!screenId) return null;
 
   try {
-    const { error } = await supabase.rpc('update_device_status', {
+    const { data, error } = await supabase.rpc('update_device_status', {
       p_device_id: screenId,
       p_player_version: playerVersion,
       p_cached_content_hash: cachedContentHash
@@ -211,9 +212,13 @@ export async function updateDeviceStatus(screenId, playerVersion = null, cachedC
 
     if (error) {
       console.error('Failed to update device status:', error);
+      return null;
     }
+
+    return data;
   } catch (err) {
     console.error('Device status update error:', err);
+    return null;
   }
 }
 

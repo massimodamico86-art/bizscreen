@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Lato:wght@300;400;700&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1920" fill="#f5f5f0"/>
+
+  <!-- Top decorative band -->
+  <rect x="0" y="0" width="1080" height="200" fill="#1a365d"/>
+  <rect x="0" y="180" width="1080" height="40" fill="#d4af37"/>
+
+  <!-- Hotel logo area -->
+  <circle cx="540" cy="100" r="60" fill="#d4af37" opacity="0.2"/>
+  <text x="540" y="115" font-family="Playfair Display, serif" font-size="48" font-weight="700" fill="#ffffff" text-anchor="middle">G</text>
+
+  <!-- Hotel name -->
+  <text x="540" y="320" font-family="Playfair Display, serif" font-size="56" font-weight="600" fill="#1a365d" text-anchor="middle">THE GRAND HOTEL</text>
+  <rect x="390" y="350" width="300" height="3" fill="#d4af37"/>
+  <text x="540" y="410" font-family="Lato, sans-serif" font-size="28" font-weight="300" fill="#64748b" text-anchor="middle" letter-spacing="4">GUEST SERVICES</text>
+
+  <!-- Amenities section -->
+  <text x="540" y="530" font-family="Playfair Display, serif" font-size="36" font-weight="600" fill="#1a365d" text-anchor="middle">Hotel Amenities</text>
+
+  <!-- Amenity items -->
+  <rect x="80" y="580" width="920" height="100" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <circle cx="150" cy="630" r="30" fill="#1a365d" opacity="0.1"/>
+  <text x="150" y="640" font-family="Lato, sans-serif" font-size="24" fill="#1a365d" text-anchor="middle">W</text>
+  <text x="210" y="640" font-family="Lato, sans-serif" font-size="26" font-weight="700" fill="#1a365d">Free WiFi</text>
+  <text x="920" y="640" font-family="Lato, sans-serif" font-size="20" font-weight="400" fill="#64748b" text-anchor="end">Network: GrandGuest</text>
+
+  <rect x="80" y="700" width="920" height="100" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <circle cx="150" cy="750" r="30" fill="#1a365d" opacity="0.1"/>
+  <text x="150" y="760" font-family="Lato, sans-serif" font-size="24" fill="#1a365d" text-anchor="middle">P</text>
+  <text x="210" y="760" font-family="Lato, sans-serif" font-size="26" font-weight="700" fill="#1a365d">Pool &amp; Spa</text>
+  <text x="920" y="760" font-family="Lato, sans-serif" font-size="20" font-weight="400" fill="#64748b" text-anchor="end">6 AM - 10 PM</text>
+
+  <rect x="80" y="820" width="920" height="100" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <circle cx="150" cy="870" r="30" fill="#1a365d" opacity="0.1"/>
+  <text x="150" y="880" font-family="Lato, sans-serif" font-size="24" fill="#1a365d" text-anchor="middle">F</text>
+  <text x="210" y="880" font-family="Lato, sans-serif" font-size="26" font-weight="700" fill="#1a365d">Fitness Center</text>
+  <text x="920" y="880" font-family="Lato, sans-serif" font-size="20" font-weight="400" fill="#64748b" text-anchor="end">24 Hours</text>
+
+  <rect x="80" y="940" width="920" height="100" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <circle cx="150" cy="990" r="30" fill="#1a365d" opacity="0.1"/>
+  <text x="150" y="1000" font-family="Lato, sans-serif" font-size="24" fill="#1a365d" text-anchor="middle">R</text>
+  <text x="210" y="1000" font-family="Lato, sans-serif" font-size="26" font-weight="700" fill="#1a365d">Restaurant</text>
+  <text x="920" y="1000" font-family="Lato, sans-serif" font-size="20" font-weight="400" fill="#64748b" text-anchor="end">Lobby Level</text>
+
+  <!-- Dining section -->
+  <text x="540" y="1140" font-family="Playfair Display, serif" font-size="36" font-weight="600" fill="#1a365d" text-anchor="middle">Dining Hours</text>
+
+  <rect x="80" y="1180" width="440" height="140" rx="8" fill="#1a365d"/>
+  <text x="300" y="1240" font-family="Lato, sans-serif" font-size="24" font-weight="700" fill="#d4af37" text-anchor="middle">BREAKFAST</text>
+  <text x="300" y="1280" font-family="Lato, sans-serif" font-size="22" font-weight="400" fill="#ffffff" text-anchor="middle">6:30 AM - 10:30 AM</text>
+
+  <rect x="560" y="1180" width="440" height="140" rx="8" fill="#1a365d"/>
+  <text x="780" y="1240" font-family="Lato, sans-serif" font-size="24" font-weight="700" fill="#d4af37" text-anchor="middle">DINNER</text>
+  <text x="780" y="1280" font-family="Lato, sans-serif" font-size="22" font-weight="400" fill="#ffffff" text-anchor="middle">5:30 PM - 10:00 PM</text>
+
+  <!-- Contact section -->
+  <rect x="80" y="1380" width="920" height="200" rx="12" fill="#d4af37" opacity="0.15"/>
+  <text x="540" y="1450" font-family="Playfair Display, serif" font-size="32" font-weight="600" fill="#1a365d" text-anchor="middle">Need Assistance?</text>
+  <text x="540" y="1510" font-family="Lato, sans-serif" font-size="28" font-weight="400" fill="#1a365d" text-anchor="middle">Dial 0 for Front Desk</text>
+  <text x="540" y="1550" font-family="Lato, sans-serif" font-size="22" font-weight="300" fill="#64748b" text-anchor="middle">Available 24 hours</text>
+
+  <!-- Room service -->
+  <rect x="80" y="1620" width="920" height="120" rx="8" fill="#ffffff" stroke="#d4af37" stroke-width="2"/>
+  <text x="540" y="1680" font-family="Lato, sans-serif" font-size="28" font-weight="700" fill="#1a365d" text-anchor="middle">Room Service Available</text>
+  <text x="540" y="1720" font-family="Lato, sans-serif" font-size="20" font-weight="400" fill="#64748b" text-anchor="middle">Dial 7 | Menu in room folder</text>
+
+  <!-- Footer -->
+  <rect x="0" y="1800" width="1080" height="120" fill="#1a365d"/>
+  <text x="540" y="1860" font-family="Playfair Display, serif" font-size="28" font-weight="500" fill="#ffffff" text-anchor="middle">Thank you for staying with us</text>
+  <text x="540" y="1900" font-family="Lato, sans-serif" font-size="18" font-weight="300" fill="#d4af37" text-anchor="middle">www.thegrandhotel.com</text>
+</svg>

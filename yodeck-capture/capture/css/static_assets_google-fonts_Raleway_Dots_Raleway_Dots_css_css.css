@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'Raleway Dots';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Raleway Dots'), local('RalewayDots-Regular'), url(Raleway_Dots_0.ttf) format('woff');
+}

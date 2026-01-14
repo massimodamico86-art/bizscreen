@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
       // Build the query with minimal fields for faster response
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, email, full_name, role')
+        .select('id, email, full_name, role, has_completed_onboarding')
         .eq('id', userId)
         .single();
 
@@ -125,11 +125,26 @@ export const AuthProvider = ({ children }) => {
 
     let mounted = true;
 
+    // Helper to add timeout to async operations
+    const withTimeout = (promise, timeoutMs, operation) => {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`${operation} timed out after ${timeoutMs}ms`)), timeoutMs)
+        )
+      ]);
+    };
+
     // Initialize auth state
     const initAuth = async () => {
       try {
-        // Get initial session
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // Get initial session with timeout
+        log.debug('Getting session...');
+        const { data: { session }, error } = await withTimeout(
+          supabase.auth.getSession(),
+          10000,
+          'getSession'
+        );
 
         if (error) {
           log.error('Session error', { error: error.message });
@@ -146,6 +161,15 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         log.error('Init error', { error: error.message });
+        // On timeout or error, clear any stale session and allow login
+        if (error.message.includes('timed out')) {
+          log.warn('Auth timed out - clearing stale session');
+          try {
+            await supabase.auth.signOut();
+          } catch (e) {
+            // Ignore signOut errors
+          }
+        }
       } finally {
         if (mounted) {
           setLoading(false);

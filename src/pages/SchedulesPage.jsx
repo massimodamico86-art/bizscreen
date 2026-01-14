@@ -12,8 +12,10 @@ import {
   Pause,
   X,
   AlertTriangle,
+  AlertCircle,
   Zap,
-  CheckCircle
+  CheckCircle,
+  RefreshCw
 } from 'lucide-react';
 import {
   fetchSchedules,
@@ -26,11 +28,13 @@ import { formatDate } from '../utils/formatters';
 import { getEffectiveLimits, hasReachedLimit, formatLimitDisplay } from '../services/limitsService';
 import { Button, Card, Badge, EmptyState, Alert } from '../design-system';
 import { useTranslation } from '../i18n';
+import YodeckEmptyState from '../components/YodeckEmptyState';
 
 const SchedulesPage = ({ showToast, onNavigate }) => {
   const { t } = useTranslation();
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [actionMenuId, setActionMenuId] = useState(null);
@@ -61,11 +65,12 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
   const loadSchedules = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await fetchSchedules();
       setSchedules(data);
-    } catch (error) {
-      console.error('Error fetching schedules:', error);
-      showToast?.('Error loading schedules: ' + error.message, 'error');
+    } catch (err) {
+      console.error('Error fetching schedules:', err);
+      setError(err.message || 'Failed to load schedules');
     } finally {
       setLoading(false);
     }
@@ -213,20 +218,31 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
         </div>
+      ) : error ? (
+        <Card className="p-8">
+          <div className="text-center">
+            <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Unable to load schedules</h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <Button onClick={loadSchedules} variant="outline">
+              <RefreshCw size={16} />
+              Try Again
+            </Button>
+          </div>
+        </Card>
       ) : schedules.length === 0 ? (
         /* Empty State */
-        <Card className="p-12 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-teal-100 rounded-lg flex items-center justify-center">
-            <Calendar size={32} className="text-teal-600" />
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">No Schedules Yet</h2>
-          <p className="text-gray-600 max-w-md mx-auto mb-6">
-            Schedules let you automate when different content plays on your screens. Set up time-based rules to show the right content at the right time.
-          </p>
-          <Button onClick={handleAddSchedule}>
-            <Plus size={18} />
-            Add Schedule
-          </Button>
+        <Card className="p-6">
+          <YodeckEmptyState
+            type="schedules"
+            title="No Schedules Yet"
+            description="Schedules let you automate when different content plays on your screens. Set up time-based rules to show the right content at the right time."
+            actionLabel="Create Schedule"
+            onAction={handleAddSchedule}
+            showTourLink={true}
+            tourLinkText="Learn about scheduling →"
+            onTourClick={() => window.open('https://docs.bizscreen.io/schedules', '_blank')}
+          />
         </Card>
       ) : (
         /* Schedules List */

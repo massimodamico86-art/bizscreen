@@ -131,19 +131,25 @@ export async function applyPack(slug) {
  */
 export function formatTemplateForCard(template) {
   const badge = TEMPLATE_TYPE_BADGES[template.type] || { label: template.type, color: 'gray' };
+  const meta = template.meta || {};
 
   return {
     id: template.id,
     slug: template.slug,
     type: template.type,
+    name: template.name,
     title: template.name,
     description: template.description,
     thumbnail: template.thumbnail_url,
+    thumbnail_url: template.thumbnail_url,
+    preview_image_url: template.thumbnail_url,
     category: template.category?.name || 'General',
     categorySlug: template.category?.slug || 'generic',
     categoryIcon: template.category?.icon,
+    orientation: meta.orientation || 'landscape',
+    is_featured: meta.is_featured || false,
     badge,
-    meta: template.meta || {},
+    meta,
     isPack: template.type === 'pack',
     isPlaylist: template.type === 'playlist',
     isLayout: template.type === 'layout',

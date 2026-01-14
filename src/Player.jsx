@@ -6,6 +6,25 @@ import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { supabase } from './supabase';
 import * as analytics from './services/playerAnalyticsService';
 import {
+  getBlockAnimationStyles,
+  getSlideTransitionStyles,
+  ANIMATION_KEYFRAMES,
+} from './services/sceneDesignService';
+import {
+  preloadSlide,
+  preloadNextSlides,
+  preloadScene,
+  clearPreloadCache,
+} from './services/mediaPreloader';
+import {
+  subscribeToSceneUpdates,
+  checkDeviceRefreshStatus,
+  clearDeviceRefreshFlag,
+} from './services/deviceSyncService';
+import { getWeather } from './services/weatherService';
+import WeatherWall from './components/WeatherWall';
+import { QRCodeSVG } from 'qrcode.react';
+import {
   pollForCommand,
   reportCommandResult,
   updateDeviceStatus,
@@ -25,6 +44,35 @@ import {
   COMMAND_POLL_INTERVAL,
   HEARTBEAT_INTERVAL
 } from './services/playerService';
+import { captureAndUploadScreenshot, cleanupOldScreenshots } from './services/screenshotService';
+import { registerServiceWorker, initOfflineService } from './player/offlineService';
+import {
+  resolveSlideBindings,
+  prefetchSceneDataSources,
+  extractDataSourceIds,
+  clearCachedDataSource,
+} from './services/dataBindingResolver';
+import {
+  subscribeToDataSource,
+} from './services/dataSourceService';
+import {
+  initTracking,
+  stopTracking,
+  trackSceneStart,
+  trackSceneEnd,
+  trackPlayerOnline,
+  trackPlayerOffline,
+  isInitialized as isTrackingInitialized,
+} from './services/playbackTrackingService';
+import {
+  subscribeToDeviceCommands,
+  subscribeToDeviceRefresh,
+  unsubscribeAll as unsubscribeAllRealtime,
+} from './services/realtimeService';
+import {
+  adaptivePreload,
+  detectBandwidth,
+} from './services/mediaPreloader';
 
 // API base URL for app data fetching
 const API_BASE = '';
@@ -40,7 +88,8 @@ const STORAGE_KEYS = {
 };
 
 // Player version for heartbeats
-const PLAYER_VERSION = '1.1.0';
+// Phase 6: Updated with media preloading and real-time sync
+const PLAYER_VERSION = '1.2.0';
 
 // Stuck detection thresholds
 const STUCK_DETECTION = {
@@ -205,173 +254,11 @@ function useAppData(appId, config, refreshMinutes = 10) {
 
 /**
  * Weather App - Displays current weather and forecast
+ * Now uses the themed WeatherWall component for Yodeck-style display
  */
 function WeatherApp({ config, appId }) {
-  const refreshMinutes = config?.refreshMinutes || 10;
-  const { data, loading, error } = useAppData(appId, config, refreshMinutes);
-
-  // Loading state
-  if (loading && !data) {
-    return (
-      <div style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
-        color: 'white',
-        fontFamily: 'system-ui, sans-serif'
-      }}>
-        <p>Loading weather...</p>
-      </div>
-    );
-  }
-
-  // Use data or fallback
-  const weather = data || {
-    locationName: config?.locationName || 'Weather',
-    current: { temp: '--', condition: 'Loading...', icon: 'cloud' },
-    forecast: []
-  };
-
-  const isCompact = config?.layoutStyle === 'compact' || weather.layoutStyle === 'compact';
-  const theme = config?.theme || weather.theme || 'auto';
-  const isDark = theme === 'dark' || (theme === 'auto' && true);
-
-  // Weather icon component
-  const WeatherIcon = ({ icon, size = 48 }) => {
-    const icons = {
-      sun: (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-        </svg>
-      ),
-      moon: (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
-      ),
-      cloud: (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-        </svg>
-      ),
-      'cloud-sun': (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2v2M4.93 4.93l1.41 1.41M20 12h2M17.66 17.66l1.41 1.41M2 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-          <circle cx="12" cy="10" r="4" />
-          <path d="M17 18h-1.26A8 8 0 1 0 9 20h8a4 4 0 0 0 0-8z" />
-        </svg>
-      ),
-      'cloud-rain': (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-          <path d="M8 19v2M12 19v2M16 19v2" />
-        </svg>
-      ),
-      'cloud-lightning': (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-          <path d="M13 11l-4 6h5l-2 4" />
-        </svg>
-      ),
-      snowflake: (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2v20M17 7l-5 5-5-5M17 17l-5-5-5 5M2 12h20M7 7l5 5 5-5M7 17l5-5 5 5" />
-        </svg>
-      )
-    };
-    return icons[icon] || icons.cloud;
-  };
-
-  const bgGradient = isDark
-    ? 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)'
-    : 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)';
-
-  return (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: bgGradient,
-      color: 'white',
-      fontFamily: 'system-ui, sans-serif',
-      padding: isCompact ? '1rem' : '2rem'
-    }}>
-      {/* Location */}
-      <p style={{
-        fontSize: isCompact ? '1rem' : '1.25rem',
-        opacity: 0.8,
-        marginBottom: '0.5rem'
-      }}>
-        {weather.locationName}
-      </p>
-
-      {/* Current weather */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: isCompact ? '1rem' : '2rem',
-        marginBottom: isCompact ? '1rem' : '2rem'
-      }}>
-        <WeatherIcon icon={weather.current?.icon} size={isCompact ? 48 : 72} />
-        <div>
-          <p style={{
-            fontSize: isCompact ? '3rem' : '5rem',
-            fontWeight: '200',
-            lineHeight: 1
-          }}>
-            {weather.current?.temp}°
-          </p>
-          <p style={{
-            fontSize: isCompact ? '0.875rem' : '1.125rem',
-            opacity: 0.8,
-            textTransform: 'capitalize'
-          }}>
-            {weather.current?.condition}
-          </p>
-        </div>
-      </div>
-
-      {/* Forecast (only in detailed mode) */}
-      {!isCompact && weather.forecast && weather.forecast.length > 0 && (
-        <div style={{
-          display: 'flex',
-          gap: '1.5rem',
-          borderTop: '1px solid rgba(255,255,255,0.2)',
-          paddingTop: '1.5rem'
-        }}>
-          {weather.forecast.slice(0, 5).map((day, i) => (
-            <div key={i} style={{ textAlign: 'center' }}>
-              <p style={{ fontSize: '0.875rem', opacity: 0.7, marginBottom: '0.5rem' }}>{day.day}</p>
-              <WeatherIcon icon={day.icon} size={24} />
-              <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
-                {day.high}° / {day.low}°
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Demo indicator */}
-      {weather.isDemo && (
-        <p style={{
-          position: 'absolute',
-          bottom: '0.5rem',
-          right: '0.5rem',
-          fontSize: '0.625rem',
-          opacity: 0.5
-        }}>
-          Demo Data
-        </p>
-      )}
-    </div>
-  );
+  // Use the new WeatherWall component which supports multiple themes
+  return <WeatherWall config={config} appId={appId} />;
 }
 
 /**
@@ -1072,6 +959,703 @@ function LayoutRenderer({ layout, timezone, screenId, tenantId, campaignId }) {
 }
 
 /**
+ * Scene Renderer - Renders scene slides with drag-drop design blocks
+ * Supports text, image, shape, and widget blocks
+ * Phase 6: Added media preloading for smooth transitions
+ */
+function SceneRenderer({ scene, screenId, tenantId }) {
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isPreloading, setIsPreloading] = useState(false);
+  const [resolvedBlocksMap, setResolvedBlocksMap] = useState(new Map());
+  const timerRef = useRef(null);
+  const preloadedRef = useRef(new Set());
+
+  const slides = scene?.slides || [];
+
+  // Prefetch and resolve data bindings for the scene
+  useEffect(() => {
+    if (!scene || slides.length === 0) return;
+
+    let cancelled = false;
+
+    async function resolveBindings() {
+      try {
+        // First, prefetch all data sources used in the scene
+        await prefetchSceneDataSources(scene);
+
+        // Then resolve bindings for all slides
+        const resolvedMap = new Map();
+
+        for (let i = 0; i < slides.length; i++) {
+          const slide = slides[i];
+          const blocks = slide?.design?.blocks || [];
+
+          if (blocks.length > 0) {
+            const resolved = await resolveSlideBindings(blocks);
+            resolved.forEach((block) => {
+              if (block.resolvedContent) {
+                resolvedMap.set(block.id, block.resolvedContent);
+              }
+            });
+          }
+        }
+
+        if (!cancelled) {
+          setResolvedBlocksMap(resolvedMap);
+        }
+      } catch (error) {
+        console.error('[SceneRenderer] Failed to resolve data bindings:', error);
+      }
+    }
+
+    resolveBindings();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [scene, slides]);
+
+  // Subscribe to real-time data source updates
+  useEffect(() => {
+    if (!scene || slides.length === 0) return;
+
+    // Extract all data source IDs used in the scene
+    const dataSourceIds = new Set();
+    for (const slide of slides) {
+      const ids = extractDataSourceIds(slide?.design);
+      ids.forEach((id) => dataSourceIds.add(id));
+    }
+
+    if (dataSourceIds.size === 0) return;
+
+    const subscriptions = [];
+
+    // Subscribe to each data source
+    dataSourceIds.forEach((dataSourceId) => {
+      try {
+        const subscription = subscribeToDataSource(dataSourceId, async (update) => {
+          console.log('[SceneRenderer] Data source updated:', dataSourceId, update.type);
+
+          // Clear the cache for this data source
+          clearCachedDataSource(dataSourceId);
+
+          // Re-resolve bindings for affected slides
+          const resolvedMap = new Map(resolvedBlocksMap);
+
+          for (let i = 0; i < slides.length; i++) {
+            const slide = slides[i];
+            const blocks = slide?.design?.blocks || [];
+
+            // Check if this slide uses the updated data source
+            const slideIds = extractDataSourceIds(slide?.design);
+            if (!slideIds.has(dataSourceId)) continue;
+
+            if (blocks.length > 0) {
+              try {
+                const resolved = await resolveSlideBindings(blocks);
+                resolved.forEach((block) => {
+                  if (block.resolvedContent) {
+                    resolvedMap.set(block.id, block.resolvedContent);
+                  }
+                });
+              } catch (err) {
+                console.error('[SceneRenderer] Failed to re-resolve bindings:', err);
+              }
+            }
+          }
+
+          setResolvedBlocksMap(resolvedMap);
+        });
+        subscriptions.push(subscription);
+      } catch (err) {
+        console.error('[SceneRenderer] Failed to subscribe to data source:', dataSourceId, err);
+      }
+    });
+
+    return () => {
+      // Cleanup subscriptions
+      subscriptions.forEach((sub) => {
+        if (sub?.unsubscribe) {
+          sub.unsubscribe().catch((err) => {
+            console.warn('[SceneRenderer] Error unsubscribing:', err);
+          });
+        }
+      });
+    };
+  }, [scene, slides, resolvedBlocksMap]);
+
+  // Preload initial scene content on mount
+  useEffect(() => {
+    if (slides.length > 0) {
+      // Preload first few slides
+      preloadNextSlides(slides, 0, 3).catch(err => {
+        console.warn('[SceneRenderer] Initial preload error:', err);
+      });
+    }
+  }, [slides]);
+
+  // Auto-advance slides based on duration with preloading
+  useEffect(() => {
+    if (slides.length <= 1) return;
+
+    const currentSlide = slides[currentSlideIndex];
+    const duration = (currentSlide?.duration_seconds || 10) * 1000;
+
+    // Preload next slide before transition (2 seconds early)
+    const preloadDelay = Math.max(0, duration - 2000);
+    const preloadTimer = setTimeout(() => {
+      const nextIndex = (currentSlideIndex + 1) % slides.length;
+      const slideKey = `${scene?.id}-${nextIndex}`;
+
+      if (!preloadedRef.current.has(slideKey)) {
+        setIsPreloading(true);
+        preloadNextSlides(slides, nextIndex, 2)
+          .then(() => {
+            preloadedRef.current.add(slideKey);
+          })
+          .catch(err => console.warn('[SceneRenderer] Preload error:', err))
+          .finally(() => setIsPreloading(false));
+      }
+    }, preloadDelay);
+
+    // Advance to next slide
+    timerRef.current = setTimeout(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % slides.length);
+    }, duration);
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      clearTimeout(preloadTimer);
+    };
+  }, [currentSlideIndex, slides, scene?.id]);
+
+  if (!scene || slides.length === 0) {
+    return (
+      <div style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#0f172a',
+        color: 'white',
+        fontFamily: 'system-ui, sans-serif'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{scene?.name || 'Scene'}</p>
+          <p style={{ color: '#64748b' }}>No slides configured</p>
+        </div>
+      </div>
+    );
+  }
+
+  const currentSlide = slides[currentSlideIndex];
+  const design = currentSlide?.design || { background: { color: '#111827' }, blocks: [] };
+
+  // Background style
+  const backgroundStyle = {};
+  if (design.background?.type === 'solid') {
+    backgroundStyle.backgroundColor = design.background.color || '#111827';
+  } else if (design.background?.type === 'gradient') {
+    backgroundStyle.background = `linear-gradient(${design.background.direction || '180deg'}, ${design.background.from}, ${design.background.to})`;
+  } else if (design.background?.type === 'image') {
+    backgroundStyle.backgroundImage = `url(${design.background.url})`;
+    backgroundStyle.backgroundSize = 'cover';
+    backgroundStyle.backgroundPosition = 'center';
+  } else {
+    backgroundStyle.backgroundColor = '#111827';
+  }
+
+  // Sort blocks by layer
+  const sortedBlocks = [...(design.blocks || [])].sort((a, b) => (a.layer || 1) - (b.layer || 1));
+
+  // Get slide transition styles
+  const transitionStyles = getSlideTransitionStyles(design.transition);
+
+  return (
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+      overflow: 'hidden',
+      ...backgroundStyle,
+      ...transitionStyles
+    }}>
+      {/* Inject animation keyframes */}
+      <style>{ANIMATION_KEYFRAMES}</style>
+
+      {sortedBlocks.map((block) => (
+        <SceneBlock
+          key={block.id}
+          block={{
+            ...block,
+            // Inject resolved content from data binding
+            resolvedContent: resolvedBlocksMap.get(block.id) || block.resolvedContent,
+          }}
+          slideIndex={currentSlideIndex}
+        />
+      ))}
+
+      {/* Slide progress indicators */}
+      {slides.length > 1 && (
+        <div style={{
+          position: 'absolute',
+          bottom: '1rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          gap: '0.5rem',
+          opacity: 0.6
+        }}>
+          {slides.slice(0, Math.min(slides.length, 10)).map((_, idx) => (
+            <div
+              key={idx}
+              style={{
+                width: idx === currentSlideIndex ? '1.5rem' : '0.5rem',
+                height: '0.5rem',
+                borderRadius: '0.25rem',
+                backgroundColor: idx === currentSlideIndex ? '#3b82f6' : '#fff',
+                transition: 'all 0.3s ease'
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Scene Block - Renders individual blocks in a scene slide
+ * Supports data-bound text blocks with resolvedContent
+ */
+function SceneBlock({ block, slideIndex }) {
+  const { type, x, y, width, height, layer, props, widgetType, animation, resolvedContent } = block;
+
+  // Get animation styles from block.animation
+  const animationStyles = getBlockAnimationStyles(animation);
+
+  const baseStyle = {
+    position: 'absolute',
+    left: `${x * 100}%`,
+    top: `${y * 100}%`,
+    width: `${width * 100}%`,
+    height: `${height * 100}%`,
+    zIndex: layer || 1,
+    overflow: 'hidden',
+    ...animationStyles,
+  };
+
+  switch (type) {
+    case 'text': {
+      // Use resolved content from data binding if available, otherwise fall back to static text
+      const displayText = resolvedContent || props?.text || '';
+
+      return (
+        <div
+          style={{
+            ...baseStyle,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: props?.align === 'left' ? 'flex-start' : props?.align === 'right' ? 'flex-end' : 'center',
+            padding: '0.5rem',
+            fontSize: `${props?.fontSize || 24}px`,
+            fontWeight: props?.fontWeight || '400',
+            color: props?.color || '#ffffff',
+            textAlign: props?.align || 'center',
+            wordWrap: 'break-word',
+          }}
+        >
+          {displayText}
+        </div>
+      );
+    }
+
+    case 'image':
+      return (
+        <div style={{
+          ...baseStyle,
+          borderRadius: `${props?.borderRadius || 0}px`,
+          backgroundColor: '#1e293b',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          {props?.url ? (
+            <img
+              src={props.url}
+              alt=""
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: props?.fit || 'cover',
+                borderRadius: `${props?.borderRadius || 0}px`,
+              }}
+            />
+          ) : (
+            <div style={{ color: '#64748b', fontSize: '0.875rem' }}>No image</div>
+          )}
+        </div>
+      );
+
+    case 'shape':
+      return (
+        <div style={{
+          ...baseStyle,
+          backgroundColor: props?.fill || '#3b82f6',
+          opacity: props?.opacity ?? 1,
+          borderRadius: `${props?.borderRadius || 0}px`,
+        }} />
+      );
+
+    case 'widget':
+      return (
+        <div style={baseStyle}>
+          <SceneWidgetRenderer widgetType={widgetType} props={props} />
+        </div>
+      );
+
+    default:
+      return null;
+  }
+}
+
+/**
+ * Scene Widget Renderer - Renders widgets (clock, date, weather, qr) in scene blocks
+ */
+function SceneWidgetRenderer({ widgetType, props }) {
+  const [time, setTime] = useState(new Date());
+  const [weather, setWeather] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+
+  // Clock/date update interval
+  useEffect(() => {
+    const interval = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Weather data fetching with 10-minute auto-refresh
+  const location = props?.location || 'Miami, FL';
+  const units = props?.units || 'imperial';
+
+  useEffect(() => {
+    if (widgetType !== 'weather') return;
+
+    const fetchWeatherData = async () => {
+      setWeatherLoading(true);
+      try {
+        const data = await getWeather(location, units);
+        setWeather(data);
+      } catch (err) {
+        console.error('Failed to fetch weather:', err);
+      } finally {
+        setWeatherLoading(false);
+      }
+    };
+
+    // Fetch immediately
+    fetchWeatherData();
+
+    // Set up 10-minute refresh interval
+    const weatherInterval = setInterval(fetchWeatherData, 10 * 60 * 1000);
+    return () => clearInterval(weatherInterval);
+  }, [widgetType, location, units]);
+
+  // Safe props with defaults
+  const safeProps = props || {};
+  const textColor = safeProps.textColor || '#ffffff';
+  const accentColor = safeProps.accentColor || '#3b82f6';
+  const size = safeProps.size || 'medium';
+  const customFontSize = safeProps.customFontSize;
+
+  // Size mappings for clock/date/weather
+  const sizeMap = {
+    small: {
+      clock: 'clamp(0.8rem, 3vw, 1.5rem)',
+      date: 'clamp(0.6rem, 1.5vw, 1rem)',
+      weatherTemp: 'clamp(0.8rem, 2.5vw, 1.5rem)',
+      weatherSecondary: 'clamp(0.4rem, 1vw, 0.625rem)',
+    },
+    medium: {
+      clock: 'clamp(1rem, 5vw, 3rem)',
+      date: 'clamp(0.75rem, 2vw, 1.5rem)',
+      weatherTemp: 'clamp(1rem, 3vw, 2rem)',
+      weatherSecondary: 'clamp(0.5rem, 1vw, 0.75rem)',
+    },
+    large: {
+      clock: 'clamp(1.5rem, 8vw, 5rem)',
+      date: 'clamp(1rem, 3vw, 2rem)',
+      weatherTemp: 'clamp(1.2rem, 4vw, 2.5rem)',
+      weatherSecondary: 'clamp(0.6rem, 1.2vw, 0.875rem)',
+    },
+  };
+
+  // Get font size - handles custom size with explicit px value
+  const getFontSize = (widgetKey, fallbackKey = 'clock') => {
+    if (size === 'custom' && customFontSize) {
+      return `${customFontSize}px`;
+    }
+    return sizeMap[size]?.[widgetKey] || sizeMap.medium[fallbackKey];
+  };
+
+  const formatTime = () => {
+    return time.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  const formatDate = () => {
+    return time.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  switch (widgetType) {
+    case 'clock':
+      return (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: textColor,
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: getFontSize('clock'),
+          fontWeight: '300',
+        }}>
+          {formatTime()}
+        </div>
+      );
+
+    case 'date':
+      return (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: textColor,
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: getFontSize('date'),
+          fontWeight: '400',
+        }}>
+          {formatDate()}
+        </div>
+      );
+
+    case 'weather': {
+      // Weather widget props
+      const widgetLocation = safeProps.location || 'Miami, FL';
+      const widgetUnits = safeProps.units || 'imperial';
+      const style = safeProps.style || 'minimal';
+
+      // Use fetched weather data, or fallback values while loading
+      const displayTemp = weather?.tempFormatted || (widgetUnits === 'metric' ? '22°C' : '72°F');
+      const displayLocation = weather?.city || widgetLocation.split(',')[0];
+      const weatherIcon = weather?.iconUrl;
+      const weatherDescription = weather?.description || 'Partly Cloudy';
+
+      // Loading indicator style
+      const loadingOpacity = weatherLoading ? 0.6 : 1;
+
+      // Fallback SVG icon when no API icon available
+      const FallbackIcon = ({ size = 24 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="4" fill={accentColor} />
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke={accentColor} strokeWidth="2" strokeLinecap="round"/>
+        </svg>
+      );
+
+      if (style === 'card') {
+        return (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(0,0,0,0.3)',
+            borderRadius: '12px',
+            padding: '8px',
+            fontFamily: 'system-ui, sans-serif',
+            opacity: loadingOpacity,
+            transition: 'opacity 0.3s ease',
+          }}>
+            {/* Weather Icon - from API or fallback */}
+            {weatherIcon ? (
+              <img
+                src={weatherIcon}
+                alt={weatherDescription}
+                style={{ width: 48, height: 48, marginBottom: '4px' }}
+              />
+            ) : (
+              <div style={{ marginBottom: '4px' }}>
+                <FallbackIcon size={32} />
+              </div>
+            )}
+            <div style={{ color: textColor, fontSize: getFontSize('weatherTemp'), fontWeight: '600' }}>
+              {displayTemp}
+            </div>
+            <div style={{ color: textColor, opacity: 0.8, fontSize: getFontSize('weatherSecondary') }}>
+              {weatherDescription}
+            </div>
+            <div style={{ color: textColor, opacity: 0.6, fontSize: getFontSize('weatherSecondary') }}>
+              {displayLocation}
+            </div>
+          </div>
+        );
+      }
+
+      // Minimal style (default)
+      return (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          fontFamily: 'system-ui, sans-serif',
+          opacity: loadingOpacity,
+          transition: 'opacity 0.3s ease',
+        }}>
+          {/* Weather Icon - from API or fallback */}
+          {weatherIcon ? (
+            <img
+              src={weatherIcon}
+              alt={weatherDescription}
+              style={{ width: 36, height: 36 }}
+            />
+          ) : (
+            <FallbackIcon size={24} />
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ color: textColor, fontSize: getFontSize('weatherTemp'), fontWeight: '600', lineHeight: 1 }}>
+              {displayTemp}
+            </span>
+            <span style={{ color: textColor, opacity: 0.7, fontSize: getFontSize('weatherSecondary'), lineHeight: 1 }}>
+              {displayLocation}
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    case 'qr': {
+      const cornerRadius = safeProps.cornerRadius || 8;
+      const label = safeProps.label || '';
+      const url = safeProps.url || '';
+      const errorCorrection = safeProps.errorCorrection || 'M';
+      const qrScale = Math.min(2, Math.max(0.5, safeProps.qrScale || 1.0));
+      const qrFgColor = safeProps.qrFgColor || '#000000';
+      const qrBgColor = safeProps.qrBgColor || '#ffffff';
+
+      // Fallback placeholder when URL is empty
+      const QRPlaceholder = () => (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          gridTemplateRows: 'repeat(5, 1fr)',
+          gap: '2px',
+        }}>
+          {[0,1,2,3,4,5,6,7,8,10,14,15,16,17,18,19,20,21,22,24].map(i => (
+            <div key={i} style={{ background: qrFgColor, borderRadius: '1px' }} />
+          ))}
+          {[9,11,12,13,23].map(i => (
+            <div key={i} style={{ background: qrFgColor, opacity: 0.4, borderRadius: '1px' }} />
+          ))}
+        </div>
+      );
+
+      return (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '4px',
+          fontFamily: 'system-ui, sans-serif',
+        }}>
+          {/* QR Code Container */}
+          <div style={{
+            width: `min(${80 * qrScale}%, calc(100% - 8px))`,
+            aspectRatio: '1',
+            maxHeight: label ? '70%' : '90%',
+            background: qrBgColor,
+            borderRadius: `${cornerRadius}px`,
+            padding: `${8 * qrScale}px`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}>
+            {url ? (
+              <QRCodeSVG
+                value={url}
+                size={256}
+                level={errorCorrection}
+                fgColor={qrFgColor}
+                bgColor={qrBgColor}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                }}
+              />
+            ) : (
+              <QRPlaceholder />
+            )}
+          </div>
+          {/* Label */}
+          {(label || url) && (
+            <div style={{
+              marginTop: '4px',
+              color: textColor,
+              fontSize: 'clamp(0.5rem, 1.5vw, 0.75rem)',
+              textAlign: 'center',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: '100%',
+            }}>
+              {label || (url.length > 25 ? url.slice(0, 25) + '...' : url)}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    default:
+      return (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(0,0,0,0.3)',
+          color: '#64748b',
+          fontSize: '0.75rem',
+        }}>
+          {widgetType || 'Widget'}
+        </div>
+      );
+  }
+}
+
+/**
  * Pairing Page - Enter OTP code to connect TV
  */
 function PairPage() {
@@ -1080,6 +1664,7 @@ function PairPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [demoOtp, setDemoOtp] = useState(null);
+  const [showHelp, setShowHelp] = useState(false);
 
   // Check if already paired on mount, and check for demo OTP
   useEffect(() => {
@@ -1137,7 +1722,17 @@ function PairPage() {
       navigate('/player/view', { replace: true });
     } catch (err) {
       console.error('Pairing error:', err);
-      setError(err.message || 'Failed to pair device. Please check your OTP code.');
+      // Provide more specific error messages based on error type
+      const errorMessage = err.message?.toLowerCase() || '';
+      if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+        setError('Network error. Please check your internet connection and try again.');
+      } else if (errorMessage.includes('not found') || errorMessage.includes('invalid')) {
+        setError('Invalid pairing code. Please check the code in your BizScreen dashboard and try again.');
+      } else if (errorMessage.includes('expired')) {
+        setError('This pairing code has expired. Please generate a new code from your dashboard.');
+      } else {
+        setError(err.message || 'Failed to connect. Please verify your code and try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -1265,6 +1860,28 @@ function PairPage() {
             onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
           />
 
+          {/* Character count indicator */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '0.25rem',
+            marginBottom: '1rem',
+            marginTop: '-0.5rem'
+          }}>
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                style={{
+                  width: '0.5rem',
+                  height: '0.5rem',
+                  borderRadius: '50%',
+                  backgroundColor: otpInput.length > i ? '#3b82f6' : '#e2e8f0',
+                  transition: 'background-color 0.15s'
+                }}
+              />
+            ))}
+          </div>
+
           {error && (
             <div style={{
               background: '#fef2f2',
@@ -1304,12 +1921,60 @@ function PairPage() {
           </button>
         </form>
 
+        {/* Help toggle */}
+        <button
+          type="button"
+          onClick={() => setShowHelp(!showHelp)}
+          style={{
+            marginTop: '1.5rem',
+            background: 'none',
+            border: 'none',
+            color: '#64748b',
+            fontSize: '0.875rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.25rem',
+            width: '100%'
+          }}
+        >
+          <span>{showHelp ? '▼' : '▶'}</span>
+          Need help?
+        </button>
+
+        {/* Help content */}
+        {showHelp && (
+          <div style={{
+            marginTop: '1rem',
+            padding: '1rem',
+            background: '#f8fafc',
+            borderRadius: '0.5rem',
+            textAlign: 'left',
+            fontSize: '0.8125rem',
+            color: '#475569'
+          }}>
+            <p style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#1e293b' }}>
+              How to get your pairing code:
+            </p>
+            <ol style={{ margin: 0, paddingLeft: '1.25rem', lineHeight: '1.6' }}>
+              <li>Log in to your BizScreen dashboard</li>
+              <li>Go to <strong>Screens</strong> page</li>
+              <li>Click <strong>Add Screen</strong></li>
+              <li>Copy the 6-character code shown</li>
+            </ol>
+            <p style={{ marginTop: '0.75rem', fontSize: '0.75rem', color: '#94a3b8' }}>
+              Code not working? Try creating a new screen in your dashboard.
+            </p>
+          </div>
+        )}
+
         <p style={{
-          marginTop: '2rem',
+          marginTop: '1.5rem',
           fontSize: '0.75rem',
           color: '#94a3b8'
         }}>
-          Find your code in Screens &rarr; Add Screen
+          Powered by BizScreen
         </p>
       </div>
     </div>
@@ -1343,6 +2008,9 @@ function ViewPage() {
   const stuckDetectionRef = useRef(null);
   const lastVideoTimeRef = useRef(0);
   const lastActivityRef = useRef(Date.now());
+  const contentContainerRef = useRef(null);
+  const screenshotInProgressRef = useRef(false);
+  const loadContentRef = useRef(null);
 
   // Initialize analytics session on mount
   useEffect(() => {
@@ -1352,7 +2020,7 @@ function ViewPage() {
     };
   }, []);
 
-  // Initialize offline cache and kiosk mode on mount
+  // Initialize offline cache, service worker, and kiosk mode on mount
   useEffect(() => {
     const init = async () => {
       // Initialize IndexedDB cache
@@ -1361,6 +2029,14 @@ function ViewPage() {
         console.log('Offline cache initialized');
       } catch (err) {
         console.warn('Failed to initialize offline cache:', err);
+      }
+
+      // Initialize enhanced offline service and service worker
+      try {
+        await initOfflineService();
+        console.log('[Player] Offline service initialized');
+      } catch (err) {
+        console.warn('[Player] Failed to initialize offline service:', err);
       }
 
       // Check for kiosk mode setting
@@ -1374,35 +2050,140 @@ function ViewPage() {
     init();
   }, []);
 
-  // Command polling - check for device commands every 10 seconds
+  // Initialize playback tracking and track scene changes
+  // Ref to track previous scene ID for change detection
+  const prevSceneIdRef = useRef(null);
+
+  useEffect(() => {
+    const screenId = localStorage.getItem(STORAGE_KEYS.screenId);
+    if (!content || !screenId) return;
+
+    const tenantId = content.screen?.tenant_id;
+    const groupId = content.screen?.screen_group_id;
+    const locationId = content.screen?.location_id;
+    const sceneId = content.scene?.id;
+
+    // Initialize tracking if not already done
+    if (!isTrackingInitialized() && tenantId) {
+      initTracking({
+        deviceId: screenId,
+        tenantId,
+        groupId,
+        locationId,
+      });
+      console.log('[Player] Playback tracking initialized');
+      trackPlayerOnline();
+    }
+
+    // Track scene changes
+    if (content.content_source === 'scene' && sceneId) {
+      if (prevSceneIdRef.current !== sceneId) {
+        // Scene changed - track the new scene
+        console.log('[Player] Scene changed:', prevSceneIdRef.current, '->', sceneId);
+        trackSceneStart({
+          sceneId,
+          groupId,
+          scheduleId: content.schedule?.id,
+        });
+        prevSceneIdRef.current = sceneId;
+      }
+    } else if (prevSceneIdRef.current) {
+      // Switched away from scene mode
+      trackSceneEnd();
+      prevSceneIdRef.current = null;
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (isTrackingInitialized()) {
+        trackSceneEnd();
+        stopTracking();
+      }
+    };
+  }, [content]);
+
+  // Track online/offline status changes
+  useEffect(() => {
+    const handleOnline = () => {
+      if (isTrackingInitialized()) {
+        trackPlayerOnline();
+      }
+    };
+
+    const handleOffline = () => {
+      if (isTrackingInitialized()) {
+        trackPlayerOffline();
+      }
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Realtime command subscription - instant WebSocket updates instead of polling
+  // Falls back to polling if WebSocket connection fails
   useEffect(() => {
     const screenId = localStorage.getItem(STORAGE_KEYS.screenId);
     if (!screenId) return;
 
-    const pollCommands = async () => {
-      try {
-        const command = await pollForCommand(screenId);
-        if (command) {
-          console.log('Received command:', command);
-          await handleCommand(command);
-        }
-      } catch (err) {
-        console.error('Command poll error:', err);
+    let unsubscribeCommands = null;
+    let unsubscribeRefresh = null;
+    let fallbackPollInterval = null;
+
+    // Handle incoming commands via realtime
+    const onCommand = async (command) => {
+      console.log('[Player] Realtime command received:', command);
+      await handleCommand(command);
+    };
+
+    // Handle refresh events via realtime
+    const onRefresh = async (event) => {
+      console.log('[Player] Realtime refresh event:', event);
+      if (event.type === 'scene_change' || event.type === 'refresh_requested') {
+        loadContentRef.current?.(screenId, false);
       }
     };
 
-    // Poll immediately, then on interval
-    pollCommands();
-    commandPollRef.current = setInterval(pollCommands, COMMAND_POLL_INTERVAL);
+    // Set up realtime subscriptions
+    try {
+      unsubscribeCommands = subscribeToDeviceCommands(screenId, onCommand);
+      unsubscribeRefresh = subscribeToDeviceRefresh(screenId, onRefresh);
+      console.log('[Player] Realtime subscriptions active');
+    } catch (err) {
+      console.warn('[Player] Realtime subscription failed, falling back to polling:', err);
+
+      // Fallback to polling if realtime fails
+      const pollCommands = async () => {
+        try {
+          const command = await pollForCommand(screenId);
+          if (command) {
+            console.log('[Player] Polled command:', command);
+            await handleCommand(command);
+          }
+        } catch (pollErr) {
+          console.error('[Player] Command poll error:', pollErr);
+        }
+      };
+
+      pollCommands();
+      fallbackPollInterval = setInterval(pollCommands, COMMAND_POLL_INTERVAL);
+    }
 
     return () => {
-      if (commandPollRef.current) {
-        clearInterval(commandPollRef.current);
-      }
+      if (unsubscribeCommands) unsubscribeCommands();
+      if (unsubscribeRefresh) unsubscribeRefresh();
+      if (fallbackPollInterval) clearInterval(fallbackPollInterval);
     };
   }, []);
 
   // Heartbeat - update device status every 30 seconds
+  // Phase 6: Enhanced with refresh status checking for real-time sync
+  // Phase: Added screenshot capture support for remote diagnostics
   useEffect(() => {
     const screenId = localStorage.getItem(STORAGE_KEYS.screenId);
     if (!screenId) return;
@@ -1410,8 +2191,40 @@ function ViewPage() {
     const sendBeat = async () => {
       try {
         const contentHash = localStorage.getItem(STORAGE_KEYS.contentHash);
-        await updateDeviceStatus(screenId, PLAYER_VERSION, contentHash);
+        const statusResult = await updateDeviceStatus(screenId, PLAYER_VERSION, contentHash);
         lastActivityRef.current = Date.now();
+
+        // Check if screenshot is requested
+        if (statusResult?.needs_screenshot_update && !screenshotInProgressRef.current) {
+          console.log('[Player] Screenshot requested, capturing...');
+          screenshotInProgressRef.current = true;
+          try {
+            const container = contentContainerRef.current || document.body;
+            await captureAndUploadScreenshot(screenId, container);
+            console.log('[Player] Screenshot captured and uploaded');
+            // Clean up old screenshots (keep last 5)
+            await cleanupOldScreenshots(screenId, 5);
+          } catch (screenshotErr) {
+            console.error('[Player] Screenshot capture failed:', screenshotErr);
+          } finally {
+            screenshotInProgressRef.current = false;
+          }
+        }
+
+        // Check if device needs to refresh content (Phase 6 real-time sync)
+        try {
+          const refreshStatus = await checkDeviceRefreshStatus(screenId);
+          if (refreshStatus?.needs_refresh) {
+            console.log('[Player] Refresh needed, reloading content...');
+            // Reload content using ref to avoid dependency cycle
+            loadContentRef.current?.(screenId, false);
+            // Clear the refresh flag
+            await clearDeviceRefreshFlag(screenId, contentHash);
+          }
+        } catch (refreshErr) {
+          // Silently ignore refresh check errors to not block heartbeat
+          console.warn('[Player] Refresh check failed:', refreshErr.message);
+        }
       } catch (err) {
         console.error('Heartbeat error:', err);
       }
@@ -1425,7 +2238,7 @@ function ViewPage() {
         clearInterval(heartbeatRef.current);
       }
     };
-  }, []);
+  }, []); // Removed loadContent dependency - using ref instead
 
   // Stuck detection - auto-recovery for stalled playback
   useEffect(() => {
@@ -1611,10 +2424,11 @@ function ViewPage() {
       lastActivityRef.current = Date.now();
 
       // For playlist type, process items (shuffle if needed)
-      // New format: items are nested in playlist.items, type is 'playlist' or 'layout'
-      if (data.type === 'playlist') {
-        let processedItems = data.playlist?.items || [];
-        if (data.playlist?.shuffle && processedItems.length > 1) {
+      // RPC returns 'mode' field, items are at data.items directly
+      const contentMode = data.mode || data.type; // Support both field names
+      if (contentMode === 'playlist') {
+        let processedItems = data.items || data.playlist?.items || [];
+        if ((data.playlist?.shuffle || data.shuffle) && processedItems.length > 1) {
           processedItems = shuffleArray(processedItems);
         }
         setItems(processedItems);
@@ -1622,9 +2436,9 @@ function ViewPage() {
         setItems([]);
       }
 
-      // Store content hash for change detection (new format)
+      // Store content hash for change detection (use 'mode' key to match polling)
       const contentHashObj = {
-        type: data.type,
+        mode: contentMode,
         source: data.source,
         playlistId: data.playlist?.id,
         layoutId: data.layout?.id,
@@ -1655,10 +2469,11 @@ function ViewPage() {
           setIsOfflineMode(true);
           lastActivityRef.current = Date.now();
 
-          // New format uses 'type' and playlist.items
-          if (cachedData.type === 'playlist') {
-            let processedItems = cachedData.playlist?.items || [];
-            if (cachedData.playlist?.shuffle && processedItems.length > 1) {
+          // RPC returns 'mode' field, items are at data.items directly
+          const cachedMode = cachedData.mode || cachedData.type;
+          if (cachedMode === 'playlist') {
+            let processedItems = cachedData.items || cachedData.playlist?.items || [];
+            if ((cachedData.playlist?.shuffle || cachedData.shuffle) && processedItems.length > 1) {
               processedItems = shuffleArray(processedItems);
             }
             setItems(processedItems);
@@ -1677,6 +2492,11 @@ function ViewPage() {
       throw err;
     }
   }, [shuffleArray]);
+
+  // Store loadContent in ref for use in heartbeat effect
+  useEffect(() => {
+    loadContentRef.current = loadContent;
+  }, [loadContent]);
 
   // Initial load
   useEffect(() => {
@@ -1718,10 +2538,11 @@ function ViewPage() {
         consecutiveErrors = 0;
         setConnectionStatus('connected');
 
-        // Check if content has changed (new format uses type/source)
+        // Check if content has changed (RPC returns 'mode' not 'type')
         const lastHash = localStorage.getItem(STORAGE_KEYS.contentHash);
+        const contentMode = newContent.mode || newContent.type;
         const newHash = JSON.stringify({
-          type: newContent.type,
+          mode: contentMode,
           source: newContent.source,
           playlistId: newContent.playlist?.id,
           layoutId: newContent.layout?.id,
@@ -1732,10 +2553,10 @@ function ViewPage() {
           console.log('Content updated, refreshing...');
           setContent(newContent);
 
-          // New format: type is 'playlist' or 'layout', items in playlist.items
-          if (newContent.type === 'playlist') {
-            let processedItems = newContent.playlist?.items || [];
-            if (newContent.playlist?.shuffle && processedItems.length > 1) {
+          // RPC returns 'mode' field, items at data.items directly
+          if (contentMode === 'playlist') {
+            let processedItems = newContent.items || newContent.playlist?.items || [];
+            if ((newContent.shuffle || newContent.playlist?.shuffle) && processedItems.length > 1) {
               processedItems = shuffleArray(processedItems);
             }
             setItems(processedItems);
@@ -1790,8 +2611,9 @@ function ViewPage() {
 
   // Track playback analytics for playlist mode
   useEffect(() => {
-    // New format uses 'type' instead of 'mode', and 'screen' instead of 'device'
-    if (content?.type !== 'playlist' || items.length === 0) return;
+    // RPC returns 'mode' field (playlist or layout)
+    const mode = content?.mode || content?.type;
+    if (mode !== 'playlist' || items.length === 0) return;
     const currentItem = items[currentIndex];
     if (!currentItem) return;
 
@@ -1861,8 +2683,9 @@ function ViewPage() {
   };
 
   // Check if we have any content to display
-  // New format uses 'type' instead of 'mode'
-  const hasContent = content?.type === 'layout'
+  // RPC returns 'mode' field (playlist or layout)
+  const contentMode = content?.mode || content?.type;
+  const hasContent = contentMode === 'layout'
     ? (content.layout && content.layout.zones?.length > 0)
     : (items.length > 0);
 
@@ -2010,16 +2833,147 @@ function ViewPage() {
     );
   }
 
+  // Scene mode - render scene slides with block-based designs
+  // content_source === 'scene' when active_scene_id is set
+  if (content.content_source === 'scene' && content.scene) {
+    return (
+      <div
+        ref={contentContainerRef}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: '#000',
+          overflow: 'hidden'
+        }}
+      >
+        <SceneRenderer
+          scene={content.scene}
+          screenId={localStorage.getItem(STORAGE_KEYS.screenId)}
+          tenantId={content.screen?.tenant_id}
+        />
+
+        {/* Connection status indicator */}
+        {connectionStatus !== 'connected' && (
+          <div style={{
+            position: 'absolute',
+            top: '0.5rem',
+            left: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.25rem 0.75rem',
+            background: connectionStatus === 'reconnecting' ? 'rgba(251, 191, 36, 0.9)' : 'rgba(239, 68, 68, 0.9)',
+            borderRadius: '9999px',
+            color: 'white',
+            fontSize: '0.75rem',
+            fontFamily: 'system-ui, sans-serif'
+          }}>
+            <div style={{
+              width: '0.5rem',
+              height: '0.5rem',
+              borderRadius: '50%',
+              background: 'currentColor',
+              animation: connectionStatus === 'reconnecting' ? 'pulse 1.5s infinite' : 'none'
+            }} />
+            {connectionStatus === 'reconnecting' ? 'Reconnecting...' : 'Offline'}
+          </div>
+        )}
+
+        {/* Scene indicator */}
+        <div style={{
+          position: 'absolute',
+          bottom: '0.5rem',
+          left: '0.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          padding: '0.25rem 0.75rem',
+          background: 'rgba(139, 92, 246, 0.7)',
+          borderRadius: '9999px',
+          color: 'white',
+          fontSize: '0.625rem',
+          fontFamily: 'system-ui, sans-serif',
+          opacity: 0.5
+        }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+          {content.scene.name}
+        </div>
+
+        {/* Offline mode watermark */}
+        {isOfflineMode && (
+          <div style={{
+            position: 'absolute',
+            bottom: '0.5rem',
+            right: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.35rem 0.75rem',
+            background: 'rgba(239, 68, 68, 0.8)',
+            borderRadius: '0.25rem',
+            color: 'white',
+            fontSize: '0.625rem',
+            fontFamily: 'system-ui, sans-serif',
+            opacity: 0.7
+          }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="1" y1="1" x2="23" y2="23" />
+              <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
+              <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
+              <path d="M10.71 5.05A16 16 0 0 1 22.58 9" />
+              <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+              <line x1="12" y1="20" x2="12.01" y2="20" />
+            </svg>
+            Offline Mode - Playing Cached Content
+          </div>
+        )}
+
+        {/* Hidden disconnect button */}
+        {!kioskMode && (
+          <button
+            onClick={handleDisconnect}
+            style={{
+              position: 'absolute',
+              top: '1rem',
+              right: '1rem',
+              padding: '0.5rem 1rem',
+              background: 'rgba(0,0,0,0.5)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              opacity: 0,
+              transition: 'opacity 0.3s'
+            }}
+            onMouseEnter={(e) => e.target.style.opacity = 1}
+            onMouseLeave={(e) => e.target.style.opacity = 0}
+          >
+            Disconnect
+          </button>
+        )}
+      </div>
+    );
+  }
+
   // Layout mode - render multi-zone layout
   // New format uses 'type' instead of 'mode', 'screen' instead of 'device'
   if (content.type === 'layout') {
     return (
-      <div style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: '#000',
-        overflow: 'hidden'
-      }}>
+      <div
+        ref={contentContainerRef}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: '#000',
+          overflow: 'hidden'
+        }}
+      >
         <LayoutRenderer
           layout={content.layout}
           timezone={content.screen?.timezone}
@@ -2079,6 +3033,36 @@ function ViewPage() {
           </div>
         )}
 
+        {/* Offline mode watermark */}
+        {isOfflineMode && (
+          <div style={{
+            position: 'absolute',
+            bottom: '0.5rem',
+            right: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.35rem 0.75rem',
+            background: 'rgba(239, 68, 68, 0.8)',
+            borderRadius: '0.25rem',
+            color: 'white',
+            fontSize: '0.625rem',
+            fontFamily: 'system-ui, sans-serif',
+            opacity: 0.7
+          }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="1" y1="1" x2="23" y2="23" />
+              <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
+              <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
+              <path d="M10.71 5.05A16 16 0 0 1 22.58 9" />
+              <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+              <line x1="12" y1="20" x2="12.01" y2="20" />
+            </svg>
+            Offline Mode - Playing Cached Content
+          </div>
+        )}
+
         {/* Hidden disconnect button */}
         <button
           onClick={handleDisconnect}
@@ -2109,12 +3093,15 @@ function ViewPage() {
   const currentItem = items[currentIndex];
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      backgroundColor: '#000',
-      overflow: 'hidden'
-    }}>
+    <div
+      ref={contentContainerRef}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        backgroundColor: '#000',
+        overflow: 'hidden'
+      }}
+    >
       {/* Media display */}
       {currentItem.mediaType === 'video' ? (
         <video
@@ -2303,25 +3290,26 @@ function ViewPage() {
         </button>
       )}
 
-      {/* Offline mode indicator */}
+      {/* Offline mode watermark */}
       {isOfflineMode && (
         <div style={{
           position: 'absolute',
-          top: '0.5rem',
+          bottom: '2.5rem',
           right: '0.5rem',
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
-          padding: '0.25rem 0.75rem',
-          background: 'rgba(251, 191, 36, 0.9)',
-          borderRadius: '9999px',
-          color: '#78350f',
+          padding: '0.35rem 0.75rem',
+          background: 'rgba(239, 68, 68, 0.8)',
+          borderRadius: '0.25rem',
+          color: 'white',
           fontSize: '0.625rem',
           fontFamily: 'system-ui, sans-serif',
+          opacity: 0.7,
           zIndex: 10
         }}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M1 1l22 22" />
+            <line x1="1" y1="1" x2="23" y2="23" />
             <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
             <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
             <path d="M10.71 5.05A16 16 0 0 1 22.58 9" />
@@ -2329,7 +3317,7 @@ function ViewPage() {
             <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
             <line x1="12" y1="20" x2="12.01" y2="20" />
           </svg>
-          Offline Mode
+          Offline Mode - Playing Cached Content
         </div>
       )}
 

@@ -270,12 +270,34 @@ export default function TenantAdminPage({ showToast }) {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  // Defense-in-depth: Check role even though App.jsx should handle routing
+  const isSuperAdmin = userProfile?.role === 'super_admin';
+
   if (loading) {
     return (
       <PageLayout>
         <PageContent>
           <div className="flex items-center justify-center h-64">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          </div>
+        </PageContent>
+      </PageLayout>
+    );
+  }
+
+  // Access denied for non-super-admin users
+  if (!isSuperAdmin) {
+    return (
+      <PageLayout>
+        <PageContent>
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-red-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">{t('common.accessDenied', 'Access Denied')}</h2>
+              <p className="text-gray-600">{t('tenantAdmin.superAdminRequired', 'Super admin access required to view this page.')}</p>
+            </div>
           </div>
         </PageContent>
       </PageLayout>

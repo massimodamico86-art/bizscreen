@@ -9,6 +9,7 @@ import {
   Edit,
   Clock,
   AlertTriangle,
+  AlertCircle,
   Zap,
   CheckCircle,
   LayoutTemplate,
@@ -16,6 +17,14 @@ import {
   FileText,
   Loader2,
   ChevronRight,
+  RefreshCw,
+  Tag,
+  Cloud,
+  MousePointer,
+  HelpCircle,
+  Monitor,
+  Info,
+  X,
 } from 'lucide-react';
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -47,25 +56,37 @@ import { EmptyState } from '../design-system';
 // --------------------------------------------------------------------------
 
 // Limit warning banner
-const LimitWarningBanner = ({ limits, onUpgrade }) => (
-  <Banner
-    variant="warning"
-    icon={<AlertTriangle size={20} />}
-    title="Playlist limit reached"
-    action={
-      <Button variant="secondary" size="sm" onClick={onUpgrade}>
-        <Zap size={16} />
-        Upgrade
-      </Button>
-    }
-  >
-    You've reached the maximum of {limits?.maxPlaylists} playlist{limits?.maxPlaylists !== 1 ? 's' : ''} for your {limits?.planName} plan.
-  </Banner>
-);
+const LimitWarningBanner = ({ limits, onUpgrade }) => {
+  // Guard against null limits
+  if (!limits) return null;
+
+  const maxPlaylists = limits.maxPlaylists ?? 0;
+  const planName = limits.planName || 'current';
+
+  return (
+    <Banner
+      variant="warning"
+      icon={<AlertTriangle size={20} />}
+      title="Playlist limit reached"
+      action={
+        <Button variant="secondary" size="sm" onClick={onUpgrade}>
+          <Zap size={16} />
+          Upgrade
+        </Button>
+      }
+    >
+      You've reached the maximum of {maxPlaylists} playlist{maxPlaylists !== 1 ? 's' : ''} for your {planName} plan.
+    </Banner>
+  );
+};
 
 // Playlist table row
-const PlaylistRow = ({ playlist, onNavigate, actionMenuId, onActionMenuToggle, onDuplicate, onDelete }) => (
-  <tr
+const PlaylistRow = ({ playlist, onNavigate, actionMenuId, onActionMenuToggle, onDuplicate, onDelete, onSetToScreen, onItemDetails }) => {
+  // Guard against null playlist
+  if (!playlist) return null;
+
+  return (
+    <tr
     className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
     onClick={() => onNavigate?.(`playlist-editor-${playlist.id}`)}
   >
@@ -106,7 +127,7 @@ const PlaylistRow = ({ playlist, onNavigate, actionMenuId, onActionMenuToggle, o
           <MoreVertical size={18} className="text-gray-400" />
         </button>
         {actionMenuId === playlist.id && (
-          <div className="absolute right-0 mt-1 w-40 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-10">
+          <div className="absolute right-0 mt-1 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
             <button
               onClick={() => {
                 onActionMenuToggle(null);
@@ -114,8 +135,18 @@ const PlaylistRow = ({ playlist, onNavigate, actionMenuId, onActionMenuToggle, o
               }}
               className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
             >
-              <Edit size={14} />
+              <Edit size={14} className="text-gray-400" />
               Edit
+            </button>
+            <button
+              onClick={() => {
+                onActionMenuToggle(null);
+                onSetToScreen?.(playlist);
+              }}
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+            >
+              <Monitor size={14} className="text-gray-400" />
+              Set to Screen
             </button>
             <button
               onClick={() => {
@@ -124,8 +155,18 @@ const PlaylistRow = ({ playlist, onNavigate, actionMenuId, onActionMenuToggle, o
               }}
               className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
             >
-              <Copy size={14} />
+              <Copy size={14} className="text-gray-400" />
               Duplicate
+            </button>
+            <button
+              onClick={() => {
+                onActionMenuToggle(null);
+                onItemDetails?.(playlist);
+              }}
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+            >
+              <Info size={14} className="text-gray-400" />
+              Item Details
             </button>
             <button
               onClick={() => onDelete(playlist)}
@@ -139,7 +180,8 @@ const PlaylistRow = ({ playlist, onNavigate, actionMenuId, onActionMenuToggle, o
       </div>
     </td>
   </tr>
-);
+  );
+};
 
 // Create Playlist Modal
 const CreatePlaylistModal = ({ open, onClose, onSubmit, creating }) => {
@@ -148,15 +190,21 @@ const CreatePlaylistModal = ({ open, onClose, onSubmit, creating }) => {
     description: '',
     default_duration: 10,
   });
+  const [nameError, setNameError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.name.trim()) return;
+    if (!form.name.trim()) {
+      setNameError('Please enter a playlist name');
+      return;
+    }
+    setNameError('');
     onSubmit(form);
   };
 
   const handleClose = () => {
     setForm({ name: '', description: '', default_duration: 10 });
+    setNameError('');
     onClose();
   };
 
@@ -171,12 +219,16 @@ const CreatePlaylistModal = ({ open, onClose, onSubmit, creating }) => {
       <form onSubmit={handleSubmit} id="create-playlist-form">
         <ModalContent>
           <Stack gap="md">
-            <FormField label="Name" required>
+            <FormField label="Name" required error={nameError}>
               <Input
                 value={form.name}
-                onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+                onChange={(e) => {
+                  setForm((prev) => ({ ...prev, name: e.target.value }));
+                  if (nameError) setNameError('');
+                }}
                 placeholder="Enter playlist name"
                 autoFocus
+                error={!!nameError}
               />
             </FormField>
 
@@ -270,7 +322,113 @@ const LimitReachedModal = ({ open, onClose, limits, playlistCount }) => {
   );
 };
 
-// Choice Modal - Blank or Template
+// Playlist Type Modal - Yodeck style
+const PlaylistTypeModal = ({ open, onClose, onSelectType }) => {
+  if (!open) return null;
+
+  const playlistTypes = [
+    {
+      id: 'classic',
+      name: 'Classic',
+      icon: ListVideo,
+      premium: false,
+      description: 'Create a Classic Playlist. After clicking "Add", you will be able to select the Media you want to add to the Playlist.',
+    },
+    {
+      id: 'tag-based',
+      name: 'Tag-based',
+      icon: Tag,
+      premium: true,
+      description: 'Automatically include media with specific tags.',
+    },
+    {
+      id: 'onedrive',
+      name: 'OneDrive',
+      icon: Cloud,
+      premium: true,
+      description: 'Sync media from your OneDrive folder.',
+    },
+    {
+      id: 'dropbox',
+      name: 'Dropbox',
+      icon: Cloud,
+      premium: true,
+      description: 'Sync media from your Dropbox folder.',
+    },
+    {
+      id: 'import-csv',
+      name: 'Import CSV',
+      icon: FileText,
+      premium: true,
+      description: 'Import playlist items from a CSV file.',
+    },
+    {
+      id: 'interactive',
+      name: 'Interactive',
+      icon: MousePointer,
+      premium: true,
+      description: 'Create touch-enabled interactive playlists.',
+    },
+  ];
+
+  const [selectedType, setSelectedType] = useState('classic');
+
+  const selectedTypeData = playlistTypes.find(t => t.id === selectedType);
+
+  return (
+    <Modal open={open} onClose={onClose} size="md">
+      <ModalHeader>
+        <ModalTitle>Playlist Type</ModalTitle>
+      </ModalHeader>
+
+      <ModalContent>
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          {playlistTypes.map((type) => {
+            const TypeIcon = type.icon;
+            const isSelected = selectedType === type.id;
+            return (
+              <button
+                key={type.id}
+                onClick={() => !type.premium && setSelectedType(type.id)}
+                disabled={type.premium}
+                className={`
+                  relative p-4 rounded-lg border-2 transition-all text-center
+                  ${isSelected ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300'}
+                  ${type.premium ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
+                `}
+              >
+                {type.premium && (
+                  <span className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded">
+                    PREMIUM
+                  </span>
+                )}
+                <TypeIcon size={24} className={`mx-auto mb-2 ${isSelected ? 'text-orange-600' : 'text-gray-400'}`} />
+                <span className={`text-sm font-medium ${isSelected ? 'text-orange-600' : 'text-gray-700'}`}>
+                  {type.name}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {selectedTypeData && (
+          <p className="text-sm text-gray-600">{selectedTypeData.description}</p>
+        )}
+      </ModalContent>
+
+      <ModalFooter>
+        <Button variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button onClick={() => onSelectType(selectedType)}>
+          Add
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+// Choice Modal - Blank or Template (legacy)
 const ChoiceModal = ({ open, onClose, onBlank, onTemplate }) => {
   if (!open) return null;
 
@@ -502,6 +660,177 @@ const TemplatePickerModal = ({ open, onClose, templates, loading, applyingTempla
   );
 };
 
+// Set to Screen Modal - Yodeck style
+const SetToScreenModal = ({ open, onClose, playlist, screens, screensLoading, onSetToScreen }) => {
+  const [type, setType] = useState('content'); // 'content' or 'takeover'
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedScreens, setSelectedScreens] = useState([]);
+  const [assigning, setAssigning] = useState(false);
+
+  // Reset state when modal opens
+  useEffect(() => {
+    if (open) {
+      setType('content');
+      setSearchQuery('');
+      setSelectedScreens([]);
+    }
+  }, [open]);
+
+  const filteredScreens = screens?.filter(screen =>
+    screen.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
+
+  const handleSubmit = async () => {
+    if (selectedScreens.length === 0) return;
+    setAssigning(true);
+    try {
+      await onSetToScreen?.(playlist, selectedScreens, type);
+      onClose();
+    } finally {
+      setAssigning(false);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Set to Screen</h2>
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+            <X size={20} className="text-gray-500" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="px-6 py-6 space-y-6">
+          {/* Type selection */}
+          <div className="flex items-center gap-6">
+            <span className="text-sm text-gray-600">Type</span>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="screenType"
+                checked={type === 'content'}
+                onChange={() => setType('content')}
+                className="w-4 h-4 text-orange-500 focus:ring-orange-500"
+              />
+              <span className="text-sm text-gray-700">Set as Screen Content</span>
+              <span className="w-4 h-4 bg-gray-200 rounded-full flex items-center justify-center text-[10px] text-gray-500 cursor-help">?</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="screenType"
+                checked={type === 'takeover'}
+                onChange={() => setType('takeover')}
+                className="w-4 h-4 text-orange-500 focus:ring-orange-500"
+              />
+              <span className="text-sm text-gray-700">Takeover</span>
+              <span className="w-4 h-4 bg-gray-200 rounded-full flex items-center justify-center text-[10px] text-gray-500 cursor-help">?</span>
+            </label>
+          </div>
+
+          {/* Screen selection */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm text-gray-600">Select Screen(s)</span>
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search for a screen"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm"
+              />
+            </div>
+
+            {/* Screen list dropdown */}
+            {searchQuery && (
+              <div className="mt-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+                {screensLoading ? (
+                  <div className="p-4 text-center text-gray-500">
+                    <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                  </div>
+                ) : filteredScreens.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    No screens found
+                  </div>
+                ) : (
+                  filteredScreens.map(screen => (
+                    <label
+                      key={screen.id}
+                      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedScreens.includes(screen.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedScreens(prev => [...prev, screen.id]);
+                          } else {
+                            setSelectedScreens(prev => prev.filter(id => id !== screen.id));
+                          }
+                        }}
+                        className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                      />
+                      <Monitor size={16} className="text-gray-400" />
+                      <span className="text-sm text-gray-700">{screen.name}</span>
+                    </label>
+                  ))
+                )}
+              </div>
+            )}
+
+            {/* Selected screens */}
+            {selectedScreens.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {selectedScreens.map(screenId => {
+                  const screen = screens?.find(s => s.id === screenId);
+                  return (
+                    <span
+                      key={screenId}
+                      className="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-700 rounded text-sm"
+                    >
+                      {screen?.name || 'Unknown'}
+                      <button
+                        onClick={() => setSelectedScreens(prev => prev.filter(id => id !== screenId))}
+                        className="hover:text-orange-900"
+                      >
+                        <X size={14} />
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={selectedScreens.length === 0 || assigning}
+            className="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {assigning ? 'Setting...' : 'Set to Screen'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --------------------------------------------------------------------------
 // Main Component
 // --------------------------------------------------------------------------
@@ -511,6 +840,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
   const { t } = useTranslation();
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [actionMenuId, setActionMenuId] = useState(null);
@@ -522,6 +852,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
 
   // Template picker state
   const [showChoiceModal, setShowChoiceModal] = useState(false);
+  const [showPlaylistTypeModal, setShowPlaylistTypeModal] = useState(false);
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [templatesLoading, setTemplatesLoading] = useState(false);
@@ -530,6 +861,12 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
   // Delete confirmation state
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [deletingForce, setDeletingForce] = useState(false);
+
+  // Set to Screen modal state
+  const [showSetToScreenModal, setShowSetToScreenModal] = useState(false);
+  const [setToScreenPlaylist, setSetToScreenPlaylist] = useState(null);
+  const [screens, setScreens] = useState([]);
+  const [screensLoading, setScreensLoading] = useState(false);
 
   useEffect(() => {
     fetchPlaylists();
@@ -548,16 +885,17 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
   const fetchPlaylists = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      setError(null);
+      const { data, error: fetchError } = await supabase
         .from('playlists')
         .select(`*, items:playlist_items(count)`)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (fetchError) throw fetchError;
       setPlaylists(data || []);
-    } catch (error) {
-      console.error('Error fetching playlists:', error);
-      showToast?.('Error loading playlists: ' + error.message, 'error');
+    } catch (err) {
+      console.error('Error fetching playlists:', err);
+      setError(err.message || 'Failed to load playlists');
     } finally {
       setLoading(false);
     }
@@ -573,7 +911,16 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
     if (limitReached) {
       setShowLimitModal(true);
     } else {
-      setShowChoiceModal(true);
+      setShowPlaylistTypeModal(true);
+    }
+  };
+
+  const handleSelectPlaylistType = (type) => {
+    setShowPlaylistTypeModal(false);
+    if (type === 'classic') {
+      setShowCreateModal(true);
+    } else {
+      showToast?.(`${type} playlists require a premium plan`, 'info');
     }
   };
 
@@ -743,6 +1090,59 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
     }
   };
 
+  // Fetch screens for Set to Screen modal
+  const fetchScreens = async () => {
+    try {
+      setScreensLoading(true);
+      const { data, error } = await supabase
+        .from('tv_devices')
+        .select('id, name, status')
+        .order('name');
+
+      if (error) throw error;
+      setScreens(data || []);
+    } catch (error) {
+      console.error('Error fetching screens:', error);
+    } finally {
+      setScreensLoading(false);
+    }
+  };
+
+  // Handle Set to Screen menu action
+  const handleSetToScreenClick = (playlist) => {
+    setSetToScreenPlaylist(playlist);
+    setShowSetToScreenModal(true);
+    fetchScreens();
+  };
+
+  // Handle assigning playlist to screens
+  const handleSetToScreen = async (playlist, screenIds, type) => {
+    try {
+      // Update each selected screen with this playlist
+      const updates = screenIds.map(screenId =>
+        supabase
+          .from('tv_devices')
+          .update({
+            active_playlist_id: playlist.id,
+            content_type: type === 'takeover' ? 'takeover' : 'playlist',
+          })
+          .eq('id', screenId)
+      );
+
+      await Promise.all(updates);
+      showToast?.(`Playlist assigned to ${screenIds.length} screen${screenIds.length > 1 ? 's' : ''}`, 'success');
+    } catch (error) {
+      console.error('Error setting playlist to screen:', error);
+      showToast?.('Error assigning playlist to screen', 'error');
+    }
+  };
+
+  // Handle Item Details menu action
+  const handleItemDetails = (playlist) => {
+    // Navigate to playlist editor for now
+    onNavigate?.(`playlist-editor-${playlist.id}`);
+  };
+
   return (
     <PageLayout>
       <PageHeader
@@ -780,18 +1180,65 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
             <div className="flex items-center justify-center h-64">
               <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
             </div>
-          ) : playlists.length === 0 ? (
-            <EmptyState
-              icon={<ListVideo size={48} className="text-orange-300" />}
-              title="No Playlists Yet"
-              description="Playlists let you sequence your media, apps, and layouts to play on your screens. Create your first playlist to get started."
-              action={
-                <Button onClick={handleAddPlaylist}>
-                  <Plus size={18} />
-                  Add Playlist
+          ) : error ? (
+            <Card variant="outlined" className="p-8">
+              <div className="text-center">
+                <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Unable to load playlists</h3>
+                <p className="text-gray-600 mb-4">{error}</p>
+                <Button onClick={fetchPlaylists} variant="outline">
+                  <RefreshCw size={16} />
+                  Try Again
                 </Button>
-              }
-            />
+              </div>
+            </Card>
+          ) : playlists.length === 0 ? (
+            /* Yodeck-style empty state */
+            <div className="flex flex-col items-center justify-center py-16">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">You don't have any Playlists.</h2>
+
+              {/* Film strip illustration */}
+              <div className="relative mb-8">
+                <div className="w-64 h-40 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden">
+                  {/* Film strip frame */}
+                  <div className="absolute top-0 left-0 right-0 h-6 bg-gray-200 flex items-center gap-1 px-2">
+                    {[...Array(8)].map((_, i) => (
+                      <div key={i} className="w-4 h-3 bg-gray-300 rounded-sm" />
+                    ))}
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 h-6 bg-gray-200 flex items-center gap-1 px-2">
+                    {[...Array(8)].map((_, i) => (
+                      <div key={i} className="w-4 h-3 bg-gray-300 rounded-sm" />
+                    ))}
+                  </div>
+                  {/* Film frames */}
+                  <div className="flex gap-1 mt-2">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className={`w-10 h-14 rounded border ${i === 0 ? 'bg-red-100 border-red-300' : 'bg-white border-gray-300'}`}>
+                        {i === 0 && <div className="w-full h-full flex items-center justify-center"><ListVideo size={16} className="text-red-400" /></div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Pointing hand */}
+                <div className="absolute -bottom-4 left-12 text-orange-400">
+                  <MousePointer size={24} className="transform -rotate-12" />
+                </div>
+              </div>
+
+              <p className="text-gray-600 text-center max-w-md mb-6">
+                <strong>Playlists</strong> are sequences of media, apps or layouts, looping constantly on your screen, like a slideshow. Add one and start creating!
+              </p>
+
+              <Button onClick={handleAddPlaylist} className="bg-orange-500 hover:bg-orange-600">
+                Add Playlist
+              </Button>
+
+              <button className="mt-4 text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
+                <HelpCircle size={14} />
+                Do you want to view the Playlists tour?
+              </button>
+            </div>
           ) : (
             <Card variant="outlined">
               <div className="overflow-x-auto">
@@ -818,6 +1265,8 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
                         onActionMenuToggle={setActionMenuId}
                         onDuplicate={handleDuplicate}
                         onDelete={handleDelete}
+                        onSetToScreen={handleSetToScreenClick}
+                        onItemDetails={handleItemDetails}
                       />
                     ))}
                   </tbody>
@@ -854,6 +1303,12 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         playlistCount={playlists.length}
       />
 
+      <PlaylistTypeModal
+        open={showPlaylistTypeModal}
+        onClose={() => setShowPlaylistTypeModal(false)}
+        onSelectType={handleSelectPlaylistType}
+      />
+
       <ChoiceModal
         open={showChoiceModal}
         onClose={() => setShowChoiceModal(false)}
@@ -876,6 +1331,18 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         applyingTemplate={applyingTemplate}
         onApply={handleApplyTemplate}
         onBlank={handleCreateBlank}
+      />
+
+      <SetToScreenModal
+        open={showSetToScreenModal}
+        onClose={() => {
+          setShowSetToScreenModal(false);
+          setSetToScreenPlaylist(null);
+        }}
+        playlist={setToScreenPlaylist}
+        screens={screens}
+        screensLoading={screensLoading}
+        onSetToScreen={handleSetToScreen}
       />
     </PageLayout>
   );

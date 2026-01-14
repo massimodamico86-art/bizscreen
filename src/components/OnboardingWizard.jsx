@@ -20,7 +20,9 @@ import {
   ChevronRight,
   ChevronLeft,
   X,
-  Loader2
+  Loader2,
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 import Button from './Button';
 import {
@@ -55,6 +57,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isSkipping, setIsSkipping] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [error, setError] = useState(null);
 
   // Load progress on mount
   useEffect(() => {
@@ -65,6 +68,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
 
   const loadProgress = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await getOnboardingProgress();
       setProgress(data);
@@ -80,6 +84,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
       }
     } catch (err) {
       console.error('Failed to load onboarding progress:', err);
+      setError('Unable to load progress. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -105,6 +110,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
     if (!currentStep || isUpdating) return;
 
     setIsUpdating(true);
+    setError(null);
     try {
       const result = await updateOnboardingStep(currentStep.id, true);
 
@@ -130,6 +136,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
       }
     } catch (err) {
       console.error('Failed to complete step:', err);
+      setError('Failed to save progress. Please try again.');
     } finally {
       setIsUpdating(false);
     }
@@ -137,11 +144,13 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
 
   const handleSkip = async () => {
     setIsSkipping(true);
+    setError(null);
     try {
       await skipOnboarding();
       onClose();
     } catch (err) {
       console.error('Failed to skip onboarding:', err);
+      setError('Failed to skip onboarding. Please try again.');
     } finally {
       setIsSkipping(false);
     }
@@ -232,6 +241,18 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
             <div className="flex items-center justify-center py-12">
               <Loader2 className="animate-spin text-blue-600" size={32} />
             </div>
+          ) : error && !progress ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <AlertCircle className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h3>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <Button onClick={loadProgress} variant="outline">
+                <RefreshCw size={16} />
+                Try Again
+              </Button>
+            </div>
           ) : (
             <>
               {/* Step indicators */}
@@ -272,6 +293,14 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
                 isComplete={isStepComplete(currentStep?.id)}
                 onNavigate={handleNavigateToStep}
               />
+
+              {/* Inline error message */}
+              {error && progress && (
+                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm mt-4">
+                  <AlertCircle size={16} className="flex-shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
 
               {/* Actions */}
               <div className="flex items-center justify-between mt-6 pt-4 border-t">

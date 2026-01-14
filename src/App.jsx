@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import {
   Home,
   LayoutDashboard,
@@ -38,6 +38,12 @@ import {
   Shield,
   Briefcase,
   Flag,
+  Gauge,
+  Layers,
+  Database,
+  Store,
+  Share2,
+  Bell,
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { BrandingProvider, useBranding } from './contexts/BrandingContext';
@@ -48,6 +54,9 @@ import { LoginPage } from './pages';
 import AnnouncementBanner from './components/AnnouncementBanner';
 import AnnouncementCenter from './components/AnnouncementCenter';
 import FeedbackWidget from './components/FeedbackWidget';
+import { NotificationBell } from './components/notifications';
+import AutoBuildOnboardingModal from './components/onboarding/AutoBuildOnboardingModal';
+import { fetchScenesForTenant } from './services/sceneService';
 import { useTranslation } from './i18n';
 import { useFeatureFlags } from './hooks/useFeatureFlag';
 import { Feature } from './config/plans';
@@ -95,6 +104,29 @@ const ResellerDashboardPage = lazy(() => import('./pages/ResellerDashboardPage')
 const ResellerBillingPage = lazy(() => import('./pages/ResellerBillingPage'));
 const ServiceQualityPage = lazy(() => import('./pages/ServiceQualityPage'));
 const FeatureFlagsPage = lazy(() => import('./pages/FeatureFlagsPage'));
+const UsageDashboardPage = lazy(() => import('./pages/UsageDashboardPage'));
+const AdminTenantsListPage = lazy(() => import('./pages/Admin/AdminTenantsListPage'));
+const AdminTenantDetailPage = lazy(() => import('./pages/Admin/AdminTenantDetailPage'));
+const AdminAuditLogsPage = lazy(() => import('./pages/Admin/AdminAuditLogsPage'));
+const AdminSystemEventsPage = lazy(() => import('./pages/Admin/AdminSystemEventsPage'));
+const ScenesPage = lazy(() => import('./pages/ScenesPage'));
+const SceneDetailPage = lazy(() => import('./pages/SceneDetailPage'));
+const SceneEditorPage = lazy(() => import('./pages/SceneEditorPage'));
+const DeviceDiagnosticsPage = lazy(() => import('./pages/DeviceDiagnosticsPage'));
+const DataSourcesPage = lazy(() => import('./pages/DataSourcesPage'));
+const ContentPerformancePage = lazy(() => import('./pages/ContentPerformancePage'));
+const TemplateMarketplacePage = lazy(() => import('./pages/TemplateMarketplacePage'));
+const AdminTemplatesPage = lazy(() => import('./pages/Admin/AdminTemplatesPage'));
+const AdminEditTemplatePage = lazy(() => import('./pages/Admin/AdminEditTemplatePage'));
+const SocialAccountsPage = lazy(() => import('./pages/SocialAccountsPage'));
+const AlertsCenterPage = lazy(() => import('./pages/AlertsCenterPage'));
+const NotificationSettingsPage = lazy(() => import('./pages/NotificationSettingsPage'));
+const YodeckLayoutEditorPage = lazy(() => import('./pages/LayoutEditor/YodeckLayoutEditorPage'));
+const LayoutPreviewPage = lazy(() => import('./pages/LayoutEditor/LayoutPreviewPage'));
+const CanvaCallbackPage = lazy(() => import('./pages/CanvaCallbackPage'));
+const DesignEditorPage = lazy(() => import('./pages/DesignEditorPage'));
+const SvgTemplateGalleryPage = lazy(() => import('./pages/SvgTemplateGalleryPage'));
+const SvgEditorPage = lazy(() => import('./pages/SvgEditorPage'));
 
 // Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
 export default function BizScreenApp() {
@@ -123,6 +155,7 @@ function BizScreenAppInner() {
     Feature.WEBHOOKS,
     Feature.WHITE_LABEL,
     Feature.AUDIT_LOGS,
+    Feature.USAGE_DASHBOARD,
   ]);
 
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -133,6 +166,24 @@ function BizScreenAppInner() {
   const [isPasswordReset, setIsPasswordReset] = useState(false);
   // Track announcement banner height for layout offset - must be before early returns
   const [announcementHeight, setAnnouncementHeight] = useState(0);
+  // AI Autobuild onboarding modal
+  const [showAutoBuildModal, setShowAutoBuildModal] = useState(false);
+
+  // Refs to hold current values for real-time handlers (avoids stale closures)
+  const listingsRef = useRef(listings);
+  const userProfileRef = useRef(userProfile);
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    listingsRef.current = listings;
+  }, [listings]);
+
+  useEffect(() => {
+    userProfileRef.current = userProfile;
+  }, [userProfile]);
+
+  // Check if this is the Canva OAuth callback
+  const isCanvaCallback = window.location.pathname === '/auth/canva/callback';
 
   // Check if URL has password reset hash
   useEffect(() => {
@@ -160,6 +211,28 @@ function BizScreenAppInner() {
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
+
+  // Check if user should see AI autobuild onboarding
+  useEffect(() => {
+    const checkAutoBuildOnboarding = async () => {
+      // Only check for client role users who haven't completed onboarding
+      if (!authUserProfile?.id) return;
+      if (authUserProfile.role !== 'client') return;
+      if (authUserProfile.has_completed_onboarding) return;
+
+      try {
+        // Check if user has any scenes
+        const scenes = await fetchScenesForTenant(authUserProfile.id);
+        if (scenes.length === 0) {
+          setShowAutoBuildModal(true);
+        }
+      } catch (err) {
+        console.error('Error checking autobuild onboarding:', err);
+      }
+    };
+
+    checkAutoBuildOnboarding();
+  }, [authUserProfile?.id, authUserProfile?.role, authUserProfile?.has_completed_onboarding]);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -274,16 +347,20 @@ function BizScreenAppInner() {
         (payload) => {
           console.log('Listing change received:', payload);
 
+          // Use refs to get current values (avoids stale closure issue)
+          const currentListings = listingsRef.current;
+          const currentUserProfile = userProfileRef.current;
+
           // Client-side check: only process listings we're managing
-          const currentListingIds = listings.map(l => l.id);
+          const currentListingIds = currentListings.map(l => l.id);
           const isRelevantListing =
-            userProfile?.role === 'super_admin' || // Super admins see all
+            currentUserProfile?.role === 'super_admin' || // Super admins see all
             payload.new?.owner_id === user.id || // Own listings
-            (userProfile?.role === 'admin' && currentListingIds.includes(payload.new?.id)); // Managed client listings
+            (currentUserProfile?.role === 'admin' && currentListingIds.includes(payload.new?.id)); // Managed client listings
 
           // For DELETE events, check if we had this listing
           const isRelevantDelete =
-            userProfile?.role === 'super_admin' ||
+            currentUserProfile?.role === 'super_admin' ||
             currentListingIds.includes(payload.old?.id);
 
           if (payload.eventType === 'INSERT' && isRelevantListing) {
@@ -357,8 +434,16 @@ function BizScreenAppInner() {
   // Media submenu state
   const [mediaExpanded, setMediaExpanded] = useState(false);
 
-  // Yodeck-style navigation with i18n and feature gating
+  // Auto-expand media menu when navigating to a media subpage
+  useEffect(() => {
+    if (currentPage?.startsWith('media-')) {
+      setMediaExpanded(true);
+    }
+  }, [currentPage]);
+
+  // Yodeck-exact navigation (main menu only - matches Yodeck sidebar exactly)
   const navigation = [
+    { id: 'welcome', label: t('nav.welcome', 'Welcome'), icon: Home },
     { id: 'dashboard', label: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard },
     {
       id: 'media',
@@ -376,19 +461,9 @@ function BizScreenAppInner() {
     },
     { id: 'apps', label: t('nav.apps', 'Apps'), icon: Grid3X3 },
     { id: 'playlists', label: t('nav.playlists', 'Playlists'), icon: ListVideo },
-    { id: 'layouts', label: t('nav.layouts', 'Layouts'), icon: Layout },
-    { id: 'schedules', label: t('nav.schedules', 'Schedules'), icon: Calendar },
     { id: 'templates', label: t('nav.templates', 'Templates'), icon: LayoutTemplate },
-    { id: 'assistant', label: t('nav.aiAssistant', 'AI Assistant'), icon: Wand2, feature: Feature.AI_ASSISTANT, tier: 'Pro' },
+    { id: 'schedules', label: t('nav.schedules', 'Schedules'), icon: Calendar },
     { id: 'screens', label: t('nav.screens', 'Screens'), icon: Monitor },
-    { id: 'screen-groups', label: t('nav.screenGroups', 'Screen Groups'), icon: Users, feature: Feature.SCREEN_GROUPS, tier: 'Starter' },
-    { id: 'locations', label: t('nav.locations', 'Locations'), icon: MapPin },
-    { id: 'campaigns', label: t('nav.campaigns', 'Campaigns'), icon: Zap, feature: Feature.CAMPAIGNS, tier: 'Pro' },
-    { id: 'review-inbox', label: t('nav.reviewInbox', 'Review Inbox'), icon: Inbox },
-    { id: 'analytics', label: t('nav.analytics', 'Analytics'), icon: BarChart3, feature: Feature.ADVANCED_ANALYTICS, tier: 'Pro' },
-    { id: 'activity', label: t('nav.activityLog', 'Activity Log'), icon: Activity, feature: Feature.AUDIT_LOGS, tier: 'Enterprise' },
-    // Legacy pages (hidden but accessible)
-    // { id: 'listings', label: 'Locations', icon: Building2 },
   ];
 
   // Loading fallback component
@@ -415,6 +490,8 @@ function BizScreenAppInner() {
   };
 
   const pages = {
+    // Yodeck-exact pages
+    welcome: <Suspense fallback={<PageLoader />}><DashboardPage setCurrentPage={setCurrentPage} showToast={showToast} listings={listings} setListings={setListings} /></Suspense>,
     dashboard: <Suspense fallback={<PageLoader />}><DashboardPage setCurrentPage={setCurrentPage} showToast={showToast} listings={listings} setListings={setListings} /></Suspense>,
     // Yodeck-style pages
     'media-all': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter={null} /></Suspense>,
@@ -439,7 +516,8 @@ function BizScreenAppInner() {
     'locations': <Suspense fallback={<PageLoader />}><LocationsPage showToast={showToast} /></Suspense>,
     'team': <Suspense fallback={<PageLoader />}><TeamPage showToast={showToast} /></Suspense>,
     'analytics': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsPage showToast={showToast} /></FeatureGate></Suspense>,
-    'templates': <Suspense fallback={<PageLoader />}><TemplatesPage showToast={showToast} /></Suspense>,
+    'templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'scenes': <Suspense fallback={<PageLoader />}><ScenesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'assistant': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.AI_ASSISTANT} fallback={<FeatureUpgradePrompt feature={Feature.AI_ASSISTANT} onNavigate={() => setCurrentPage('account-plan')} />}><ContentAssistantPage showToast={showToast} /></FeatureGate></Suspense>,
     'screen-groups': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.SCREEN_GROUPS} fallback={<FeatureUpgradePrompt feature={Feature.SCREEN_GROUPS} onNavigate={() => setCurrentPage('account-plan')} />}><ScreenGroupsPage showToast={showToast} /></FeatureGate></Suspense>,
     'campaigns': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.CAMPAIGNS} fallback={<FeatureUpgradePrompt feature={Feature.CAMPAIGNS} onNavigate={() => setCurrentPage('account-plan')} />}><CampaignsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
@@ -455,8 +533,37 @@ function BizScreenAppInner() {
     'reseller-dashboard': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerDashboardPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'reseller-billing': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerBillingPage showToast={showToast} /></FeatureGate></Suspense>,
     'service-quality': <Suspense fallback={<PageLoader />}><ServiceQualityPage /></Suspense>,
-    'feature-flags': <Suspense fallback={<PageLoader />}><FeatureFlagsPage /></Suspense>
+    'feature-flags': <Suspense fallback={<PageLoader />}><FeatureFlagsPage /></Suspense>,
+    'usage': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.USAGE_DASHBOARD} fallback={<FeatureUpgradePrompt feature={Feature.USAGE_DASHBOARD} onNavigate={() => setCurrentPage('account-plan')} />}><UsageDashboardPage showToast={showToast} /></FeatureGate></Suspense>,
+    'admin-tenants': <Suspense fallback={<PageLoader />}><AdminTenantsListPage onNavigate={setCurrentPage} showToast={showToast} /></Suspense>,
+    'admin-audit-logs': <Suspense fallback={<PageLoader />}><AdminAuditLogsPage onBack={() => setCurrentPage('admin-tenants')} showToast={showToast} /></Suspense>,
+    'admin-system-events': <Suspense fallback={<PageLoader />}><AdminSystemEventsPage onBack={() => setCurrentPage('admin-tenants')} showToast={showToast} /></Suspense>,
+    'device-diagnostics': <Suspense fallback={<PageLoader />}><DeviceDiagnosticsPage /></Suspense>,
+    'data-sources': <Suspense fallback={<PageLoader />}><DataSourcesPage showToast={showToast} /></Suspense>,
+    'content-performance': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><ContentPerformancePage showToast={showToast} /></FeatureGate></Suspense>,
+    'template-marketplace': <Suspense fallback={<PageLoader />}><TemplateMarketplacePage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'admin-templates': <Suspense fallback={<PageLoader />}><AdminTemplatesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'social-accounts': <Suspense fallback={<PageLoader />}><SocialAccountsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'alerts': <Suspense fallback={<PageLoader />}><AlertsCenterPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'notification-settings': <Suspense fallback={<PageLoader />}><NotificationSettingsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'svg-templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
   };
+
+  // Show Canva OAuth callback page
+  if (isCanvaCallback) {
+    return (
+      <Suspense fallback={<PageLoader />}>
+        <CanvaCallbackPage
+          onNavigate={(page) => {
+            // Clear the callback URL and navigate
+            window.history.replaceState(null, '', '/');
+            setCurrentPage(page);
+          }}
+          showToast={showToast}
+        />
+      </Suspense>
+    );
+  }
 
   // Show password reset page if user clicked reset link
   if (isPasswordReset && user) {
@@ -543,16 +650,24 @@ function BizScreenAppInner() {
 
   // Route to role-specific dashboards
   // When impersonating a client, super_admin/admin sees the client UI
+  // Admin tool pages that should show sidebar even for super_admin
+  const adminToolPages = [
+    'admin-tenants', 'admin-audit-logs', 'admin-system-events',
+    'status', 'ops-console', 'tenant-admin', 'feature-flags', 'demo-tools', 'clients', 'admin-templates'
+  ];
+  const isAdminToolPage = adminToolPages.includes(currentPage) || currentPage.startsWith('admin-tenant-') || currentPage.startsWith('admin-template-');
+
   const shouldShowClientUI =
     authUserProfile?.role === 'client' ||
-    isImpersonating;
+    isImpersonating ||
+    isAdminToolPage; // Super admin navigating to admin tools should see sidebar
 
   if (!shouldShowClientUI) {
-    // Show admin dashboards only when NOT impersonating
+    // Show admin dashboards only when NOT impersonating and NOT on admin tool page
     if (authUserProfile?.role === 'super_admin') {
       return (
         <Suspense fallback={<PageLoader />}>
-          <SuperAdminDashboardPage />
+          <SuperAdminDashboardPage onNavigate={setCurrentPage} />
         </Suspense>
       );
     }
@@ -609,36 +724,29 @@ function BizScreenAppInner() {
       )}
 
       <aside
-        className="w-64 bg-white border-r border-gray-100 flex flex-col shadow-sm"
-        style={{ marginTop: topOffset }}
+        className="bg-white border-r border-gray-200 flex flex-col"
+        style={{ marginTop: topOffset, width: '211px' }}
       >
-        {/* Logo & Brand */}
-        <div className="px-5 py-5 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {branding.logoUrl ? (
-                <img
-                  src={branding.logoUrl}
-                  alt={branding.businessName}
-                  className="w-9 h-9 rounded-xl object-contain shadow-sm"
-                />
-              ) : (
+        {/* Logo - Yodeck style */}
+        <div className="px-4 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt={branding.businessName}
+                className="h-8 object-contain"
+              />
+            ) : (
+              <div className="flex items-center gap-2">
                 <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-sm"
-                  style={{ backgroundColor: branding.primaryColor }}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+                  style={{ backgroundColor: '#f26f21' }}
                 >
                   {(branding.businessName || 'B')[0].toUpperCase()}
                 </div>
-              )}
-              <h1
-                className="text-lg font-semibold tracking-tight"
-                style={{ color: branding.primaryColor }}
-              >
-                {branding.businessName}
-              </h1>
-            </div>
-            {/* Announcement Center */}
-            <AnnouncementCenter />
+                <span className="text-lg font-semibold text-gray-900">{branding.businessName}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -647,7 +755,7 @@ function BizScreenAppInner() {
           {navigation.map(item => {
             const Icon = item.icon;
             const isActive = currentPage === item.id || (item.subItems && item.subItems.some(sub => sub.id === currentPage));
-            const isExpanded = item.expandable && (mediaExpanded || item.subItems?.some(sub => sub.id === currentPage));
+            const isExpanded = item.expandable && mediaExpanded;
 
             // Check if feature is enabled (if item has a feature requirement)
             const isFeatureEnabled = !item.feature || featureFlags[item.feature];
@@ -659,12 +767,11 @@ function BizScreenAppInner() {
                 <div key={item.id}>
                   <button
                     onClick={() => setMediaExpanded(!mediaExpanded)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-150 ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-none transition-all duration-150 text-left ${
                       isActive
-                        ? 'text-white font-medium shadow-sm'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'text-[#f26f21] font-medium border-l-[3px] border-[#f26f21] bg-[#fff5f0] -ml-px'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-[3px] border-transparent'
                     }`}
-                    style={isActive ? { backgroundColor: branding.primaryColor } : {}}
                   >
                     <div className="flex items-center gap-3">
                       <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
@@ -684,12 +791,11 @@ function BizScreenAppInner() {
                           <button
                             key={subItem.id}
                             onClick={() => setCurrentPage(subItem.id)}
-                            className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-all duration-150 text-sm ${
+                            className={`w-full flex items-center justify-start gap-2.5 px-2.5 py-1.5 rounded-none transition-all duration-150 text-sm text-left ${
                               isSubActive
-                                ? 'text-white font-medium'
+                                ? 'text-[#f26f21] font-medium bg-[#fff5f0]'
                                 : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                             }`}
-                            style={isSubActive ? { backgroundColor: branding.primaryColor } : {}}
                           >
                             <SubIcon size={14} className={isSubActive ? '' : 'text-gray-400'} />
                             <span>{subItem.label}</span>
@@ -706,17 +812,16 @@ function BizScreenAppInner() {
               <button
                 key={item.id}
                 onClick={() => canAccess ? setCurrentPage(item.id) : null}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+                className={`w-full flex items-center justify-start gap-3 px-3 py-2 rounded-none transition-all duration-150 text-left ${
                   isActive
-                    ? 'text-white font-medium shadow-sm'
+                    ? 'text-[#f26f21] font-medium border-l-[3px] border-[#f26f21] bg-[#fff5f0] -ml-px'
                     : canAccess
-                      ? 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                      : 'text-gray-400 cursor-not-allowed opacity-60'
+                      ? 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-[3px] border-transparent'
+                      : 'text-gray-400 cursor-not-allowed opacity-60 border-l-[3px] border-transparent'
                 }`}
-                style={isActive ? { backgroundColor: branding.primaryColor } : {}}
                 title={!canAccess ? `Upgrade to ${item.tier} plan to access this feature` : ''}
               >
-                <Icon size={18} className={isActive ? '' : canAccess ? 'text-gray-400' : 'text-gray-300'} />
+                <Icon size={18} className={isActive ? 'text-[#f26f21]' : canAccess ? 'text-gray-400' : 'text-gray-300'} />
                 <span className="text-sm flex-1">{item.label}</span>
                 {item.tier && !canAccess && (
                   <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded font-medium">
@@ -728,173 +833,104 @@ function BizScreenAppInner() {
           })}
         </nav>
 
-        {/* Settings Section */}
-        <div className="px-3 py-3 border-t border-gray-100 space-y-0.5">
-          {/* Super Admin Tools Section */}
-          {authUserProfile?.role === 'super_admin' && !isImpersonating && (
-            <>
-              <p className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wider">{t('nav.admin', 'Admin')}</p>
-              {[
-                { id: 'clients', label: t('nav.clients', 'Clients'), icon: Users },
-                { id: 'status', label: t('nav.systemStatus', 'System Status'), icon: Server },
-                { id: 'ops-console', label: t('nav.opsConsole', 'Ops Console'), icon: Wrench },
-                { id: 'tenant-admin', label: t('nav.tenants', 'Tenants'), icon: Building2 },
-                { id: 'feature-flags', label: t('nav.featureFlags', 'Feature Flags'), icon: Flag },
-                { id: 'demo-tools', label: t('nav.demoTools', 'Demo Tools'), icon: Play },
-              ].map(item => {
-                const Icon = item.icon;
-                const isActive = currentPage === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setCurrentPage(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
-                      isActive ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                    style={isActive ? { backgroundColor: branding.primaryColor } : {}}
-                  >
-                    <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
-                    <span className="text-sm">{item.label}</span>
-                  </button>
-                );
-              })}
-            </>
-          )}
-
-          {/* Settings Items */}
-          <p className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wider mt-2">{t('nav.settings', 'Settings')}</p>
-          {[
-            { id: 'account-plan', label: t('nav.planAndLimits', 'Plan & Limits'), icon: CreditCard },
-            { id: 'team', label: t('nav.team', 'Team'), icon: UsersRound },
-            { id: 'branding', label: t('nav.branding', 'Branding'), icon: Palette },
-            { id: 'settings', label: t('nav.settings', 'Settings'), icon: Settings },
-          ].map(item => {
-            const Icon = item.icon;
-            const isActive = currentPage === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setCurrentPage(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
-                  isActive ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-                style={isActive ? { backgroundColor: branding.primaryColor } : {}}
-              >
-                <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
-                <span className="text-sm">{item.label}</span>
-              </button>
-            );
-          })}
-
-          {/* Developer & Advanced */}
-          {(userProfile?.role === 'client' || userProfile?.role === 'admin' || userProfile?.role === 'super_admin') && (
-            <>
-              {[
-                { id: 'developer', label: t('nav.developer', 'Developer'), icon: Code },
-                { id: 'white-label', label: t('nav.whiteLabel', 'White-Label'), icon: Globe },
-              ].map(item => {
-                const Icon = item.icon;
-                const isActive = currentPage === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setCurrentPage(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
-                      isActive ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                    style={isActive ? { backgroundColor: branding.primaryColor } : {}}
-                  >
-                    <Icon size={18} className={isActive ? '' : 'text-gray-400'} />
-                    <span className="text-sm">{item.label}</span>
-                  </button>
-                );
-              })}
-            </>
-          )}
-
-          {/* Enterprise Security - gated by feature flag */}
-          {(featureFlags[Feature.ENTERPRISE_SSO] || authUserProfile?.role === 'super_admin') && (
-            <button
-              onClick={() => setCurrentPage('enterprise-security')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
-                currentPage === 'enterprise-security' ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              }`}
-              style={currentPage === 'enterprise-security' ? { backgroundColor: branding.primaryColor } : {}}
-            >
-              <Shield size={18} className={currentPage === 'enterprise-security' ? '' : 'text-gray-400'} />
-              <span className="text-sm">{t('nav.enterprise', 'Enterprise')}</span>
-            </button>
-          )}
-
-          {/* Service Quality - gated by admin role or enterprise plan */}
-          {(userProfile?.role === 'admin' || authUserProfile?.role === 'super_admin' || featureFlags[Feature.ENTERPRISE_SSO]) && (
-            <button
-              onClick={() => setCurrentPage('service-quality')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
-                currentPage === 'service-quality' ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              }`}
-              style={currentPage === 'service-quality' ? { backgroundColor: branding.primaryColor } : {}}
-            >
-              <Activity size={18} className={currentPage === 'service-quality' ? '' : 'text-gray-400'} />
-              <span className="text-sm">{t('nav.serviceQuality', 'Service Quality')}</span>
-            </button>
-          )}
-
-          {/* Help Center */}
+        {/* Knowledge Hub - Yodeck style */}
+        <div className="px-3 py-3 border-t border-gray-100">
           <button
             onClick={() => setCurrentPage('help')}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
-              currentPage === 'help' ? 'text-white font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-            }`}
-            style={currentPage === 'help' ? { backgroundColor: branding.primaryColor } : {}}
+            className="w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg bg-[#fff5f0] hover:bg-[#ffebe0] transition-colors text-left"
           >
-            <HelpCircle size={18} className={currentPage === 'help' ? '' : 'text-gray-400'} />
-            <span className="text-sm">{t('nav.helpCenter', 'Help Center')}</span>
+            <div className="w-8 h-8 rounded-full bg-[#f26f21] flex items-center justify-center">
+              <HelpCircle size={16} className="text-white" />
+            </div>
+            <span className="text-sm font-medium text-gray-700">{t('nav.knowledgeHub', 'Knowledge Hub')}</span>
           </button>
-
-          {/* Reseller Portal - gated by feature flag */}
-          {(featureFlags[Feature.RESELLER_PORTAL] || authUserProfile?.role === 'super_admin') && (
-            <button
-              onClick={() => setCurrentPage('reseller-dashboard')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
-                currentPage === 'reseller-dashboard' || currentPage === 'reseller-billing'
-                  ? 'text-white font-medium shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              }`}
-              style={currentPage === 'reseller-dashboard' || currentPage === 'reseller-billing' ? { backgroundColor: branding.primaryColor } : {}}
-            >
-              <Briefcase size={18} className={currentPage === 'reseller-dashboard' || currentPage === 'reseller-billing' ? '' : 'text-gray-400'} />
-              <span className="text-sm">{t('nav.resellerPortal', 'Reseller Portal')}</span>
-            </button>
-          )}
-        </div>
-
-        {/* User Profile */}
-        <div className="px-3 py-3 border-t border-gray-100">
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors">
-            <div
-              className="w-9 h-9 rounded-full flex items-center justify-center text-white font-medium text-sm shadow-sm"
-              style={{ backgroundColor: branding.primaryColor }}
-            >
-              {(userProfile?.full_name || user.email || 'U')[0].toUpperCase()}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="font-medium text-sm text-gray-900 truncate">{userProfile?.full_name || 'User'}</div>
-              <div className="text-xs text-gray-500 truncate">{user.email}</div>
-            </div>
-            <button
-              onClick={handleSignOut}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              title="Sign out"
-            >
-              <LogOut size={16} className="text-gray-400" />
-            </button>
-          </div>
         </div>
       </aside>
 
-      <main id="main-content" className="flex-1 overflow-auto bg-gray-50" style={{ marginTop: topOffset }}>
-        <div className="p-6">
+      <main id="main-content" className="flex-1 flex flex-col overflow-hidden bg-[#f6f8fb]" style={{ marginTop: topOffset }}>
+        {/* Top Header Bar - Yodeck style */}
+        <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
+          {/* Breadcrumbs - improved for editor pages */}
+          <nav className="flex items-center text-sm text-gray-500">
+            <button onClick={() => setCurrentPage('dashboard')} className="hover:text-gray-700">
+              Home
+            </button>
+            <ChevronRight size={14} className="mx-2 text-gray-400" />
+            {/* Handle editor pages with parent navigation */}
+            {currentPage.startsWith('playlist-editor-') ? (
+              <>
+                <button onClick={() => setCurrentPage('playlists')} className="hover:text-gray-700">
+                  Playlists
+                </button>
+                <ChevronRight size={14} className="mx-2 text-gray-400" />
+                <span className="text-gray-900 font-medium">Edit Playlist</span>
+              </>
+            ) : currentPage.startsWith('layout-editor-') ? (
+              <>
+                <button onClick={() => setCurrentPage('layouts')} className="hover:text-gray-700">
+                  Layouts
+                </button>
+                <ChevronRight size={14} className="mx-2 text-gray-400" />
+                <span className="text-gray-900 font-medium">Edit Layout</span>
+              </>
+            ) : currentPage.startsWith('schedule-editor-') ? (
+              <>
+                <button onClick={() => setCurrentPage('schedules')} className="hover:text-gray-700">
+                  Schedules
+                </button>
+                <ChevronRight size={14} className="mx-2 text-gray-400" />
+                <span className="text-gray-900 font-medium">Edit Schedule</span>
+              </>
+            ) : currentPage.startsWith('scene-editor-') || currentPage.startsWith('scene-detail-') ? (
+              <>
+                <button onClick={() => setCurrentPage('scenes')} className="hover:text-gray-700">
+                  Scenes
+                </button>
+                <ChevronRight size={14} className="mx-2 text-gray-400" />
+                <span className="text-gray-900 font-medium">Edit Scene</span>
+              </>
+            ) : currentPage.startsWith('admin-tenant-') ? (
+              <>
+                <button onClick={() => setCurrentPage('admin')} className="hover:text-gray-700">
+                  Admin
+                </button>
+                <ChevronRight size={14} className="mx-2 text-gray-400" />
+                <span className="text-gray-900 font-medium">Tenant Details</span>
+              </>
+            ) : (
+              <span className="text-gray-900 font-medium capitalize">
+                {currentPage.replace(/-/g, ' ').replace(/^media /, '')}
+              </span>
+            )}
+          </nav>
+
+          {/* Right side - Notifications & User Menu */}
+          <div className="flex items-center gap-4">
+            {/* Notification Bell */}
+            <NotificationBell onNavigate={setCurrentPage} />
+            {/* Announcement Center */}
+            <AnnouncementCenter />
+            {/* User Menu */}
+            <div className="flex items-center gap-2 pl-4 border-l border-gray-200">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-sm"
+                style={{ backgroundColor: branding.primaryColor }}
+              >
+                {(userProfile?.full_name || user.email || 'U')[0].toUpperCase()}
+              </div>
+              <button
+                onClick={handleSignOut}
+                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Sign out"
+              >
+                <LogOut size={16} className="text-gray-400" />
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-auto p-6">
           {pages[currentPage] || (
             // Handle dynamic editor routes
             currentPage.startsWith('playlist-editor-') ? (
@@ -929,6 +965,71 @@ function BizScreenAppInner() {
                   onNavigate={setCurrentPage}
                 />
               </Suspense>
+            ) : currentPage.startsWith('admin-tenant-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <AdminTenantDetailPage
+                  tenantId={currentPage.replace('admin-tenant-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('scene-detail-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <SceneDetailPage
+                  sceneId={currentPage.replace('scene-detail-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('scene-editor-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <SceneEditorPage
+                  sceneId={currentPage.replace('scene-editor-', '')}
+                  onShowToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('admin-template-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <AdminEditTemplatePage
+                  templateId={currentPage.replace('admin-template-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('yodeck-layout-preview-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <LayoutPreviewPage
+                  layoutId={currentPage.replace('yodeck-layout-preview-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('yodeck-layout-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <YodeckLayoutEditorPage
+                  layoutId={currentPage.replace('yodeck-layout-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('design-editor') ? (
+              <Suspense fallback={<PageLoader />}>
+                <DesignEditorPage
+                  designId={currentPage.includes('?') ? 'new' : currentPage.replace('design-editor-', '')}
+                  routeString={currentPage}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('svg-editor') ? (
+              <Suspense fallback={<PageLoader />}>
+                <SvgEditorPage
+                  routeString={currentPage}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
             ) : (
               <div className="text-center py-12">
                 <p className="text-gray-500">Page not found: {currentPage}</p>
@@ -954,6 +1055,18 @@ function BizScreenAppInner() {
           onClose={() => setToast(null)}
         />
       )}
+
+      {/* AI Autobuild Onboarding Modal */}
+      <AutoBuildOnboardingModal
+        isOpen={showAutoBuildModal}
+        onClose={() => setShowAutoBuildModal(false)}
+        onComplete={() => {
+          setShowAutoBuildModal(false);
+          showToast('Your TV scene has been created!');
+        }}
+        user={user}
+        userProfile={authUserProfile}
+      />
     </div>
   );
 }

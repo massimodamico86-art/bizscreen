@@ -284,19 +284,26 @@ export async function getLocationStats() {
       return { data: null, error: locError.message };
     }
 
-    // Fetch all screens with their status
-    const { data: screens, error: screenError } = await supabase
-      .from('tv_devices')
-      .select('id, location_id, is_online, last_seen')
-      .in('listing_id', (
-        await supabase
-          .from('listings')
-          .select('id')
-          .eq('owner_id', tenantId)
-      ).data?.map((l) => l.id) || []);
+    // Get listing IDs for this tenant first
+    const { data: listings } = await supabase
+      .from('listings')
+      .select('id')
+      .eq('owner_id', tenantId);
 
-    if (screenError) {
-      return { data: null, error: screenError.message };
+    const listingIds = listings?.map((l) => l.id) || [];
+
+    // Fetch all screens with their status (if no listings, return empty stats)
+    let screens = [];
+    if (listingIds.length > 0) {
+      const { data: screenData, error: screenError } = await supabase
+        .from('tv_devices')
+        .select('id, location_id, is_online, last_seen')
+        .in('listing_id', listingIds);
+
+      if (screenError) {
+        return { data: null, error: screenError.message };
+      }
+      screens = screenData || [];
     }
 
     // Calculate stats per location

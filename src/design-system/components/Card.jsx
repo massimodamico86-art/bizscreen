@@ -54,13 +54,13 @@ export const Card = forwardRef(function Card(
     ? `
       cursor-pointer
       transition-all duration-200 ease-out
-      hover:border-gray-300 hover:shadow-lg hover:-translate-y-0.5
+      hover:border-[#f26f21] hover:shadow-lg hover:-translate-y-0.5
       active:scale-[0.98] active:shadow-md active:translate-y-0
     `
-    : 'transition-shadow duration-200';
+    : 'transition-all duration-200 hover:shadow-sm';
 
   const selectedStyles = selected
-    ? 'ring-2 ring-blue-500 ring-offset-1 border-blue-500'
+    ? 'ring-2 ring-[#f26f21] ring-offset-1 border-[#f26f21]'
     : '';
 
   // Handle keyboard events for interactive cards
@@ -83,7 +83,7 @@ export const Card = forwardRef(function Card(
           ${paddingStyles[padding]}
           ${interactiveStyles}
           ${selectedStyles}
-          ${interactive ? 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2' : ''}
+          ${interactive ? 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f26f21] focus-visible:ring-offset-2' : ''}
           ${className}
         `.trim()}
         onClick={onClick}

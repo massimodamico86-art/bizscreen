@@ -154,6 +154,7 @@ export async function navigateToSection(page, section) {
     layouts: /layouts/i,
     schedules: /schedules/i,
     dashboard: /dashboard/i,
+    scenes: /scenes/i,
   };
 
   const pattern = sectionPatterns[sectionLower];

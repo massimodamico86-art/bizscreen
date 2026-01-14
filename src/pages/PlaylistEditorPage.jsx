@@ -1,10 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   ArrowLeft,
   Plus,
   Trash2,
-  ChevronUp,
-  ChevronDown,
   Image,
   Video,
   Music,
@@ -12,7 +10,6 @@ import {
   Globe,
   Grid3X3,
   Clock,
-  GripVertical,
   X,
   Search,
   Save,
@@ -30,6 +27,19 @@ import {
   FileEdit,
   Calendar,
   MessageSquare,
+  Play,
+  Pause,
+  Minus,
+  LayoutGrid,
+  GripVertical,
+  Settings,
+  SkipBack,
+  SkipForward,
+  Folder,
+  FolderOpen,
+  ChevronRight,
+  Home,
+  BookmarkPlus,
 } from 'lucide-react';
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -55,6 +65,7 @@ import {
   EXPIRY_PRESETS,
   getExpiryLabel,
 } from '../services/previewService';
+import { savePlaylistAsTemplate } from '../services/playlistService';
 
 const MEDIA_TYPE_ICONS = {
   image: Image,
@@ -74,6 +85,201 @@ const MEDIA_TYPE_LABELS = {
   app: 'App'
 };
 
+const FILTER_TABS = [
+  { key: '', label: 'All' },
+  { key: 'image', label: 'Images' },
+  { key: 'video', label: 'Videos' },
+  { key: 'audio', label: 'Audio' },
+  { key: 'document', label: 'Docs' },
+  { key: 'web_page', label: 'Web' },
+  { key: 'app', label: 'Apps' },
+  { key: 'playlist', label: 'Playlists' },
+  { key: 'template', label: 'Templates' },
+];
+
+// Timeline item component - duration-based width with drag support
+const PlaylistStripItem = ({ item, index, onRemove, onUpdateDuration, getEffectiveDuration, onDragStart, onDragEnd, onDragOver, onDrop, isDragOver, isDragging, minDuration = 5, maxDuration = 30 }) => {
+  const TypeIcon = MEDIA_TYPE_ICONS[item.media?.type] || Image;
+  const duration = getEffectiveDuration(item);
+
+  // Calculate width based on duration (min 120px, max 200px)
+  const durationRange = Math.max(1, maxDuration - minDuration);
+  const normalizedDuration = Math.min(1, Math.max(0, (duration - minDuration) / durationRange));
+  const width = Math.round(120 + normalizedDuration * 80);
+
+  const adjustDuration = (delta) => {
+    const newDuration = Math.max(1, Math.min(3600, duration + delta));
+    onUpdateDuration(item.id, newDuration);
+  };
+
+  const handleDragStart = (e) => {
+    // Set drag image with slight offset for better UX
+    const rect = e.target.getBoundingClientRect();
+    e.dataTransfer.setDragImage(e.target, rect.width / 2, rect.height / 2);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'reorder', index, itemId: item.id }));
+    // Delay to allow the drag image to be captured before opacity change
+    requestAnimationFrame(() => {
+      onDragStart?.(index);
+    });
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+    onDragOver?.(index);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDrop?.(index);
+  };
+
+  return (
+    <div className="flex items-center">
+      {/* Drop indicator line - shows before this item */}
+      <div
+        className={`h-[92px] rounded-full ${
+          isDragOver ? 'w-1 bg-orange-500 mx-1' : 'w-0'
+        }`}
+        style={{
+          transition: 'width 100ms ease-out, margin 100ms ease-out',
+          willChange: isDragOver ? 'width, margin' : 'auto'
+        }}
+      />
+      <div
+        className={`flex-shrink-0 group ${
+          isDragging ? 'opacity-30' : 'opacity-100'
+        }`}
+        style={{
+          width: `${width}px`,
+          transition: 'opacity 100ms ease-out',
+          willChange: isDragging ? 'opacity' : 'auto'
+        }}
+        title={item.media?.name || 'Unknown'}
+        draggable
+        onDragStart={handleDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        {/* Thumbnail */}
+        <div className="relative h-[70px] bg-gray-100 rounded-t overflow-hidden border border-gray-200">
+          {item.media?.thumbnail_url || item.media?.url ? (
+            <img
+              src={item.media.thumbnail_url || item.media.url}
+              alt={item.media.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-50">
+              <TypeIcon size={24} className="text-gray-400" />
+            </div>
+          )}
+          {/* Drag handle - top left */}
+          <div className="absolute top-1 left-1 p-0.5 bg-black/40 rounded cursor-grab active:cursor-grabbing">
+            <GripVertical size={10} className="text-white" />
+          </div>
+          {/* Remove button - top right */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onRemove(item.id); }}
+            className="absolute top-1 right-1 w-4 h-4 bg-black/40 hover:bg-red-500 rounded-full flex items-center justify-center text-white hover:text-white transition-colors"
+          >
+            <X size={10} />
+          </button>
+        </div>
+        {/* Duration - compact */}
+        <div className="flex items-center justify-between px-1 py-1 bg-gray-100 border border-t-0 border-gray-200 rounded-b text-[10px]">
+          <button
+            onClick={(e) => { e.stopPropagation(); adjustDuration(-1); }}
+            className="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+          >
+            <Minus size={12} />
+          </button>
+          <span className="text-gray-700 font-medium">{duration}s</span>
+          <button
+            onClick={(e) => { e.stopPropagation(); adjustDuration(1); }}
+            className="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+          >
+            <Plus size={12} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Empty slot for drag target - subtle, matches new compact height
+const EmptySlot = ({ onClick }) => (
+  <div
+    onClick={onClick}
+    className="flex-shrink-0 w-[70px] h-[92px] border border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors"
+  >
+    <Plus size={18} className="text-gray-400" />
+  </div>
+);
+
+// Library media item - allows adding same media multiple times, supports drag to timeline
+const LibraryMediaItem = ({ media, countInPlaylist = 0, onAdd }) => {
+  const TypeIcon = MEDIA_TYPE_ICONS[media.type] || Image;
+
+  const handleDragStart = (e) => {
+    e.dataTransfer.effectAllowed = 'copy';
+    e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'add', media }));
+    // Add a drag image effect
+    e.target.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (e) => {
+    e.target.style.opacity = '1';
+  };
+
+  return (
+    <div
+      className="relative rounded overflow-hidden group cursor-grab hover:ring-2 hover:ring-orange-500 active:cursor-grabbing"
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="aspect-video bg-gray-800 relative pointer-events-none">
+        {media.thumbnail_url || media.url ? (
+          <img src={media.thumbnail_url || media.url} alt={media.name} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <TypeIcon size={24} className="text-gray-500" />
+          </div>
+        )}
+        {/* Name overlay - single location */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5">
+          <p className="text-xs text-white truncate font-medium">{media.name}</p>
+        </div>
+        {/* Count badge - shows how many times this item is in the playlist */}
+        {countInPlaylist > 0 && (
+          <div className="absolute top-1 right-1 min-w-5 h-5 px-1.5 bg-orange-500 rounded-full flex items-center justify-center">
+            <span className="text-[10px] text-white font-bold">{countInPlaylist}</span>
+          </div>
+        )}
+        {/* Drag hint */}
+        <div className="absolute top-1 left-1 p-1 bg-black/50 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+          <GripVertical size={12} className="text-white" />
+        </div>
+      </div>
+      {/* Add button on click - positioned below for click access */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onAdd(media); }}
+        className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto"
+      >
+        <div className="bg-orange-500 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-medium shadow-lg">
+          <Plus size={14} />
+          {countInPlaylist > 0 ? 'Add Again' : 'Add'}
+        </div>
+      </button>
+    </div>
+  );
+};
+
 const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -81,11 +287,26 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
   const [mediaAssets, setMediaAssets] = useState([]);
   const [mediaSearch, setMediaSearch] = useState('');
   const [mediaFilter, setMediaFilter] = useState('');
-  const [selectedMedia, setSelectedMedia] = useState([]);
+
+  // Folder navigation state
+  const [currentFolderId, setCurrentFolderId] = useState(null);
+  const [folders, setFolders] = useState([]);
+  const [folderPath, setFolderPath] = useState([]);
+  const [loadingFolders, setLoadingFolders] = useState(false);
+
+  // Virtual scrolling state
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 20 });
+  const mediaScrollRef = useRef(null);
+  const ITEMS_PER_ROW = 2;
+  const ITEM_HEIGHT = 100; // approximate height of each media item row
+  const [previewItem, setPreviewItem] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentPlayIndex, setCurrentPlayIndex] = useState(0);
+  const playTimerRef = useRef(null);
+  const timelineRef = useRef(null);
 
   // AI Assistant state
   const [showAiModal, setShowAiModal] = useState(false);
@@ -107,17 +328,40 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
   const [allowComments, setAllowComments] = useState(true);
   const [copiedLinkId, setCopiedLinkId] = useState(null);
 
+  // Drag and drop state
+  const [dragSourceIndex, setDragSourceIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+  const [isDraggingFromLibrary, setIsDraggingFromLibrary] = useState(false);
+
+  // Save as Template state
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [templateDescription, setTemplateDescription] = useState('');
+  const [savingTemplate, setSavingTemplate] = useState(false);
+
   useEffect(() => {
     if (playlistId) {
       fetchPlaylist();
+      fetchMediaAssets();
+      fetchFolders();
     }
   }, [playlistId]);
+
+  // Fetch media when filter or folder changes
+  useEffect(() => {
+    fetchMediaAssets();
+  }, [mediaFilter, mediaSearch, currentFolderId]);
+
+  // Fetch folders when navigating
+  useEffect(() => {
+    fetchFolders();
+    fetchFolderPath();
+  }, [currentFolderId]);
 
   const fetchPlaylist = async () => {
     try {
       setLoading(true);
 
-      // Fetch playlist
       const { data: playlistData, error: playlistError } = await supabase
         .from('playlists')
         .select('*')
@@ -127,7 +371,6 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       if (playlistError) throw playlistError;
       setPlaylist(playlistData);
 
-      // Fetch playlist items with media details
       const { data: itemsData, error: itemsError } = await supabase
         .from('playlist_items')
         .select(`
@@ -147,12 +390,93 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     }
   };
 
+  // Fetch folders for current parent
+  const fetchFolders = async () => {
+    try {
+      setLoadingFolders(true);
+      // Try RPC first
+      const { data, error } = await supabase.rpc('get_folder_summary', {
+        p_folder_id: currentFolderId,
+      });
+
+      if (error) {
+        // Fallback to direct query
+        let query = supabase
+          .from('media_folders')
+          .select('*')
+          .order('name', { ascending: true });
+
+        if (currentFolderId === null) {
+          query = query.is('parent_id', null);
+        } else {
+          query = query.eq('parent_id', currentFolderId);
+        }
+
+        const { data: fallbackData } = await query;
+        setFolders(
+          (fallbackData || []).map((f) => ({
+            folder_id: f.id,
+            folder_name: f.name,
+            media_count: 0,
+            child_folder_count: 0,
+          }))
+        );
+      } else {
+        setFolders(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching folders:', err);
+    } finally {
+      setLoadingFolders(false);
+    }
+  };
+
+  // Fetch folder path (breadcrumbs)
+  const fetchFolderPath = async () => {
+    if (!currentFolderId) {
+      setFolderPath([]);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.rpc('get_folder_path', {
+        p_folder_id: currentFolderId,
+      });
+
+      if (error) {
+        // Fallback: just show current folder
+        const { data: folder } = await supabase
+          .from('media_folders')
+          .select('id, name')
+          .eq('id', currentFolderId)
+          .single();
+
+        if (folder) {
+          setFolderPath([{ id: folder.id, name: folder.name, depth: 0 }]);
+        }
+      } else {
+        setFolderPath(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching folder path:', err);
+    }
+  };
+
   const fetchMediaAssets = async () => {
     try {
       let query = supabase
         .from('media_assets')
         .select('*')
-        .order('created_at', { ascending: false });
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false })
+        .limit(100); // Increased limit for virtual scrolling
+
+      // Filter by folder
+      if (currentFolderId === null) {
+        query = query.is('folder_id', null);
+      } else {
+        query = query.eq('folder_id', currentFolderId);
+      }
 
       if (mediaFilter) {
         query = query.eq('type', mediaFilter);
@@ -165,69 +489,76 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       const { data, error } = await query;
       if (error) throw error;
       setMediaAssets(data || []);
+      // Reset scroll position when folder changes
+      if (mediaScrollRef.current) {
+        mediaScrollRef.current.scrollTop = 0;
+      }
+      setVisibleRange({ start: 0, end: 20 });
     } catch (error) {
       console.error('Error fetching media:', error);
-      showToast?.('Error loading media: ' + error.message, 'error');
     }
   };
 
-  const openAddModal = () => {
-    setShowAddModal(true);
-    setSelectedMedia([]);
-    fetchMediaAssets();
+  // Navigate to a folder
+  const navigateToFolder = (folderId) => {
+    setCurrentFolderId(folderId);
   };
 
-  const handleAddItems = async () => {
-    if (selectedMedia.length === 0) {
-      showToast?.('Please select at least one media item', 'error');
-      return;
-    }
+  // Virtual scrolling handler
+  const handleMediaScroll = useCallback((e) => {
+    const scrollTop = e.target.scrollTop;
+    const containerHeight = e.target.clientHeight;
+    const startRow = Math.floor(scrollTop / ITEM_HEIGHT);
+    const visibleRows = Math.ceil(containerHeight / ITEM_HEIGHT) + 2; // buffer
+    const startIndex = Math.max(0, startRow * ITEMS_PER_ROW);
+    const endIndex = Math.min(
+      mediaAssets.length,
+      (startRow + visibleRows) * ITEMS_PER_ROW
+    );
+    setVisibleRange({ start: startIndex, end: endIndex });
+  }, [mediaAssets.length]);
 
+  // Get visible media items for virtual scrolling
+  const visibleMediaItems = useMemo(() => {
+    return mediaAssets.slice(visibleRange.start, visibleRange.end);
+  }, [mediaAssets, visibleRange]);
+
+  const handleAddItem = async (media) => {
     try {
       setSaving(true);
 
-      // Get the highest position
       const maxPosition = items.length > 0
         ? Math.max(...items.map(i => i.position))
         : -1;
 
-      // Create new items
-      const newItems = selectedMedia.map((mediaId, index) => {
-        const media = mediaAssets.find(m => m.id === mediaId);
-        return {
-          playlist_id: playlistId,
-          item_type: 'media',
-          item_id: mediaId,
-          position: maxPosition + 1 + index,
-          duration: media?.duration || null
-        };
-      });
-
       const { data, error } = await supabase
         .from('playlist_items')
-        .insert(newItems)
+        .insert({
+          playlist_id: playlistId,
+          item_type: 'media',
+          item_id: media.id,
+          position: maxPosition + 1,
+          duration: media.duration || null
+        })
         .select(`
           *,
           media:media_assets(id, name, type, url, thumbnail_url, duration)
-        `);
+        `)
+        .single();
 
       if (error) throw error;
 
-      setItems(prev => [...prev, ...data]);
-      setShowAddModal(false);
-      setSelectedMedia([]);
-      showToast?.(`Added ${data.length} item(s) to playlist`);
+      setItems(prev => [...prev, data]);
+      showToast?.(`Added "${media.name}" to playlist`);
     } catch (error) {
-      console.error('Error adding items:', error);
-      showToast?.('Error adding items: ' + error.message, 'error');
+      console.error('Error adding item:', error);
+      showToast?.('Error adding item: ' + error.message, 'error');
     } finally {
       setSaving(false);
     }
   };
 
   const handleRemoveItem = async (itemId) => {
-    if (!window.confirm('Remove this item from the playlist?')) return;
-
     try {
       const { error } = await supabase
         .from('playlist_items')
@@ -236,14 +567,12 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
 
       if (error) throw error;
 
-      // Remove from state and re-order
       const newItems = items
         .filter(i => i.id !== itemId)
         .map((item, index) => ({ ...item, position: index }));
 
       setItems(newItems);
 
-      // Update positions in database
       await Promise.all(
         newItems.map(item =>
           supabase
@@ -253,48 +582,10 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         )
       );
 
-      showToast?.('Item removed from playlist');
+      showToast?.('Item removed');
     } catch (error) {
       console.error('Error removing item:', error);
       showToast?.('Error removing item: ' + error.message, 'error');
-    }
-  };
-
-  const handleMoveItem = async (itemId, direction) => {
-    const currentIndex = items.findIndex(i => i.id === itemId);
-    if (currentIndex === -1) return;
-
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= items.length) return;
-
-    try {
-      // Swap positions
-      const newItems = [...items];
-      [newItems[currentIndex], newItems[newIndex]] = [newItems[newIndex], newItems[currentIndex]];
-
-      // Update positions
-      const updatedItems = newItems.map((item, index) => ({
-        ...item,
-        position: index
-      }));
-
-      setItems(updatedItems);
-
-      // Update in database
-      await Promise.all([
-        supabase
-          .from('playlist_items')
-          .update({ position: updatedItems[currentIndex].position })
-          .eq('id', updatedItems[currentIndex].id),
-        supabase
-          .from('playlist_items')
-          .update({ position: updatedItems[newIndex].position })
-          .eq('id', updatedItems[newIndex].id)
-      ]);
-    } catch (error) {
-      console.error('Error reordering items:', error);
-      showToast?.('Error reordering items: ' + error.message, 'error');
-      fetchPlaylist(); // Refresh on error
     }
   };
 
@@ -314,16 +605,189 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       );
     } catch (error) {
       console.error('Error updating duration:', error);
-      showToast?.('Error updating duration: ' + error.message, 'error');
     }
   };
 
-  const toggleMediaSelection = (mediaId) => {
-    setSelectedMedia(prev =>
-      prev.includes(mediaId)
-        ? prev.filter(id => id !== mediaId)
-        : [...prev, mediaId]
-    );
+  // Drag and drop handlers with throttling for smooth UX
+  const lastDragOverIndexRef = useRef(null);
+  const dragOverIndexRef = useRef(null); // Track current dragOverIndex without state updates
+  const isDraggingRef = useRef(false); // Track dragging state without re-renders
+  const isDraggingFromLibraryRef = useRef(false); // Track library drag state without re-renders
+
+  const handleTimelineDragStart = (index) => {
+    isDraggingRef.current = true;
+    dragOverIndexRef.current = null;
+    lastDragOverIndexRef.current = null;
+    setDragSourceIndex(index);
+    setDragOverIndex(null);
+  };
+
+  const handleTimelineDragEnd = () => {
+    isDraggingRef.current = false;
+    dragOverIndexRef.current = null;
+    lastDragOverIndexRef.current = null;
+    setDragSourceIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleTimelineDragOver = (index) => {
+    // Only update if we're actually dragging something within timeline
+    if (!isDraggingRef.current && dragSourceIndex === null) return;
+    // Don't show indicator on the source item itself
+    if (index === dragSourceIndex) {
+      if (dragOverIndexRef.current !== null) {
+        dragOverIndexRef.current = null;
+        lastDragOverIndexRef.current = null;
+        setDragOverIndex(null);
+      }
+      return;
+    }
+    // Skip if we're already showing indicator at this index
+    if (lastDragOverIndexRef.current === index) return;
+    lastDragOverIndexRef.current = index;
+    dragOverIndexRef.current = index;
+    // Update state synchronously - the throttling happens via the ref check above
+    setDragOverIndex(index);
+  };
+
+  const handleTimelineDrop = async (targetIndex) => {
+    // Reset drag state
+    const sourceIndex = dragSourceIndex;
+    setDragSourceIndex(null);
+    setDragOverIndex(null);
+    setIsDraggingFromLibrary(false);
+
+    if (sourceIndex === null || sourceIndex === targetIndex) return;
+    // Adjust target if dropping after source (since source will be removed first)
+    const adjustedTarget = targetIndex > sourceIndex ? targetIndex - 1 : targetIndex;
+    if (sourceIndex === adjustedTarget) return;
+
+    // Reorder items locally first for immediate feedback
+    const newItems = [...items];
+    const [movedItem] = newItems.splice(sourceIndex, 1);
+    newItems.splice(adjustedTarget, 0, movedItem);
+
+    // Update positions
+    const updatedItems = newItems.map((item, idx) => ({ ...item, position: idx }));
+    setItems(updatedItems);
+
+    // Save to database
+    try {
+      setSaving(true);
+      await Promise.all(
+        updatedItems.map(item =>
+          supabase
+            .from('playlist_items')
+            .update({ position: item.position })
+            .eq('id', item.id)
+        )
+      );
+    } catch (error) {
+      console.error('Error reordering:', error);
+      showToast?.('Error saving order', 'error');
+      // Revert on error
+      fetchPlaylist();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Handle drop from library to timeline
+  const handleTimelineDropFromLibrary = async (e, targetIndex = items.length) => {
+    e.preventDefault();
+    // Reset all drag state
+    isDraggingFromLibraryRef.current = false;
+    isDraggingRef.current = false;
+    lastDragOverIndexRef.current = null;
+    dragOverIndexRef.current = null;
+    setIsDraggingFromLibrary(false);
+    setDragOverIndex(null);
+    setDragSourceIndex(null);
+
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+
+      if (data.type === 'add' && data.media) {
+        // Adding from library
+        setSaving(true);
+
+        // Shift positions for items after the target
+        const updatedPositions = items
+          .filter((_, idx) => idx >= targetIndex)
+          .map((item, idx) => ({ id: item.id, position: targetIndex + idx + 1 }));
+
+        // Insert new item
+        const { data: newItem, error } = await supabase
+          .from('playlist_items')
+          .insert({
+            playlist_id: playlistId,
+            item_type: 'media',
+            item_id: data.media.id,
+            position: targetIndex,
+            duration: data.media.duration || null
+          })
+          .select(`
+            *,
+            media:media_assets(id, name, type, url, thumbnail_url, duration)
+          `)
+          .single();
+
+        if (error) throw error;
+
+        // Update positions of shifted items
+        await Promise.all(
+          updatedPositions.map(({ id, position }) =>
+            supabase
+              .from('playlist_items')
+              .update({ position })
+              .eq('id', id)
+          )
+        );
+
+        // Update local state
+        const newItems = [...items];
+        newItems.splice(targetIndex, 0, newItem);
+        setItems(newItems.map((item, idx) => ({ ...item, position: idx })));
+
+        showToast?.(`Added "${data.media.name}" to playlist`);
+      } else if (data.type === 'reorder') {
+        // Reordering within timeline
+        handleTimelineDrop(targetIndex);
+      }
+    } catch (error) {
+      console.error('Error handling drop:', error);
+      showToast?.('Error adding item', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleTimelineDragOverContainer = (e) => {
+    e.preventDefault();
+    // If we're reordering within timeline, allow it but don't mark as library drag
+    if (isDraggingRef.current) {
+      e.dataTransfer.dropEffect = 'move';
+      return;
+    }
+    e.dataTransfer.dropEffect = 'copy';
+
+    // Only update state if not already dragging from library (prevent redundant renders)
+    if (!isDraggingFromLibraryRef.current) {
+      isDraggingFromLibraryRef.current = true;
+      setIsDraggingFromLibrary(true);
+    }
+  };
+
+  const handleTimelineDragLeave = (e) => {
+    // Only reset if we're leaving the container entirely (not moving between children)
+    const relatedTarget = e.relatedTarget;
+    const container = e.currentTarget;
+    if (relatedTarget && container.contains(relatedTarget)) {
+      return; // Still within container, don't reset
+    }
+    isDraggingFromLibraryRef.current = false;
+    setIsDraggingFromLibrary(false);
+    // Don't reset dragOverIndex here - let the item's dragLeave handle it
   };
 
   // AI Assistant handlers
@@ -336,11 +800,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
   const handleGenerateAiSlides = async () => {
     try {
       setAiGenerating(true);
-
-      // Get business context from profile
       const businessContext = await getBusinessContextFromProfile();
-
-      // Generate slides for this playlist
       const suggestion = await generateSlides(
         {
           playlistName: playlist.name,
@@ -350,7 +810,6 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         },
         businessContext
       );
-
       setAiSuggestion(suggestion);
       showToast?.('Slides generated! Review and apply them.', 'success');
     } catch (error) {
@@ -366,8 +825,6 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
 
     try {
       setAiApplying(true);
-
-      // Create media items for each slide in the suggestion
       const slides = aiSuggestion.payload?.slides || [];
       const maxPosition = items.length > 0
         ? Math.max(...items.map(i => i.position))
@@ -375,8 +832,6 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
 
       for (let i = 0; i < slides.length; i++) {
         const slide = slides[i];
-
-        // Create a text media asset
         const { data: media, error: mediaError } = await supabase
           .from('media_assets')
           .insert({
@@ -395,7 +850,6 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
 
         if (mediaError) throw mediaError;
 
-        // Add to playlist
         const { error: linkError } = await supabase
           .from('playlist_items')
           .insert({
@@ -409,11 +863,9 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         if (linkError) throw linkError;
       }
 
-      // Refresh playlist items
       await fetchPlaylist();
       setShowAiModal(false);
       setAiSuggestion(null);
-
       showToast?.(`Added ${slides.length} AI-generated slides!`, 'success');
     } catch (error) {
       console.error('Error applying AI slides:', error);
@@ -423,7 +875,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     }
   };
 
-  // Fetch current review request for this playlist
+  // Approval handlers
   const fetchCurrentReview = async () => {
     try {
       const review = await getOpenReviewForResource('playlist', playlistId);
@@ -433,14 +885,12 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     }
   };
 
-  // Fetch on playlist load
   useEffect(() => {
     if (playlist) {
       fetchCurrentReview();
     }
   }, [playlist?.id]);
 
-  // Request approval handler
   const handleRequestApproval = async () => {
     try {
       setSubmittingApproval(true);
@@ -453,7 +903,6 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       showToast?.('Approval requested successfully');
       setShowApprovalModal(false);
       setApprovalMessage('');
-      // Refresh playlist and review
       await fetchPlaylist();
       await fetchCurrentReview();
     } catch (error) {
@@ -464,9 +913,8 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     }
   };
 
-  // Revert to draft handler
   const handleRevertToDraft = async () => {
-    if (!window.confirm('Revert this playlist to draft status? This will cancel any pending reviews.')) return;
+    if (!window.confirm('Revert this playlist to draft status?')) return;
     try {
       await revertToDraft('playlist', playlistId);
       showToast?.('Reverted to draft');
@@ -478,7 +926,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     }
   };
 
-  // Fetch preview links
+  // Preview link handlers
   const fetchPreviewLinks = async () => {
     try {
       setLoadingPreviewLinks(true);
@@ -491,13 +939,11 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     }
   };
 
-  // Open preview modal
   const handleOpenPreviewModal = () => {
     setShowPreviewModal(true);
     fetchPreviewLinks();
   };
 
-  // Create preview link
   const handleCreatePreviewLink = async () => {
     try {
       setCreatingPreviewLink(true);
@@ -517,9 +963,8 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     }
   };
 
-  // Revoke preview link
   const handleRevokePreviewLink = async (linkId) => {
-    if (!window.confirm('Revoke this preview link? It will no longer work.')) return;
+    if (!window.confirm('Revoke this preview link?')) return;
     try {
       await revokePreviewLink(linkId);
       showToast?.('Preview link revoked');
@@ -530,7 +975,6 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     }
   };
 
-  // Copy preview link
   const handleCopyLink = async (link) => {
     try {
       const url = formatPreviewLink(link.token);
@@ -543,7 +987,37 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     }
   };
 
-  // Get approval status config
+  // Save as Template handler
+  const handleOpenTemplateModal = () => {
+    setTemplateName(playlist?.name ? `${playlist.name} Template` : '');
+    setTemplateDescription(playlist?.description || '');
+    setShowTemplateModal(true);
+  };
+
+  const handleSaveAsTemplate = async () => {
+    if (!templateName.trim()) {
+      showToast?.('Please enter a template name', 'error');
+      return;
+    }
+
+    try {
+      setSavingTemplate(true);
+      const result = await savePlaylistAsTemplate(playlistId, {
+        name: templateName.trim(),
+        description: templateDescription.trim() || null,
+      });
+      showToast?.(`Template "${result.template_name}" created with ${result.item_count} items`);
+      setShowTemplateModal(false);
+      setTemplateName('');
+      setTemplateDescription('');
+    } catch (error) {
+      console.error('Error saving as template:', error);
+      showToast?.(error.message || 'Error saving template', 'error');
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
   const approvalConfig = playlist?.approval_status
     ? getApprovalStatusConfig(playlist.approval_status)
     : null;
@@ -557,11 +1031,76 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
   };
 
   const formatDuration = (seconds) => {
-    if (seconds < 60) return `${seconds}s`;
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  // Playback controls
+  const startPlayback = () => {
+    if (items.length === 0) return;
+    setIsPlaying(true);
+    setCurrentPlayIndex(0);
+    setPreviewItem(items[0]);
+    scheduleNextItem(0);
+  };
+
+  const stopPlayback = () => {
+    setIsPlaying(false);
+    if (playTimerRef.current) {
+      clearTimeout(playTimerRef.current);
+      playTimerRef.current = null;
+    }
+  };
+
+  const scheduleNextItem = (index) => {
+    const item = items[index];
+    if (!item) {
+      stopPlayback();
+      return;
+    }
+    const duration = getEffectiveDuration(item) * 1000;
+    playTimerRef.current = setTimeout(() => {
+      const nextIndex = (index + 1) % items.length;
+      setCurrentPlayIndex(nextIndex);
+      setPreviewItem(items[nextIndex]);
+      if (nextIndex === 0) {
+        // Loop completed
+        stopPlayback();
+      } else {
+        scheduleNextItem(nextIndex);
+      }
+    }, duration);
+  };
+
+  const skipToNext = () => {
+    if (items.length === 0) return;
+    const nextIndex = (currentPlayIndex + 1) % items.length;
+    setCurrentPlayIndex(nextIndex);
+    setPreviewItem(items[nextIndex]);
+    if (isPlaying) {
+      if (playTimerRef.current) clearTimeout(playTimerRef.current);
+      scheduleNextItem(nextIndex);
+    }
+  };
+
+  const skipToPrev = () => {
+    if (items.length === 0) return;
+    const prevIndex = currentPlayIndex === 0 ? items.length - 1 : currentPlayIndex - 1;
+    setCurrentPlayIndex(prevIndex);
+    setPreviewItem(items[prevIndex]);
+    if (isPlaying) {
+      if (playTimerRef.current) clearTimeout(playTimerRef.current);
+      scheduleNextItem(prevIndex);
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (playTimerRef.current) clearTimeout(playTimerRef.current);
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -575,11 +1114,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">Playlist not found</p>
-        <Button
-          variant="outline"
-          className="mt-4"
-          onClick={() => onNavigate?.('playlists')}
-        >
+        <Button variant="outline" className="mt-4" onClick={() => onNavigate?.('playlists')}>
           Back to Playlists
         </Button>
       </div>
@@ -587,326 +1122,469 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => onNavigate?.('playlists')}
-          className="p-2 hover:bg-gray-100 rounded-lg"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">{playlist.name}</h1>
-            {/* Approval Status Badge */}
-            {approvalConfig && (
-              <span
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${approvalConfig.bgColor} ${approvalConfig.textColor}`}
-              >
-                {approvalConfig.icon === 'FileEdit' && <FileEdit size={12} />}
-                {approvalConfig.icon === 'Clock' && <Clock size={12} />}
-                {approvalConfig.icon === 'CheckCircle' && <CheckCircle size={12} />}
-                {approvalConfig.icon === 'XCircle' && <XCircle size={12} />}
-                {approvalConfig.label}
-              </span>
-            )}
-          </div>
-          {playlist.description && (
-            <p className="text-gray-500 text-sm">{playlist.description}</p>
+    <div className="h-full flex flex-col bg-gray-50 overflow-hidden">
+      {/* Editor header with save status */}
+      <div className="flex-shrink-0 bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-semibold text-gray-900">{playlist?.name || 'Untitled Playlist'}</h1>
+          {saving ? (
+            <span className="text-xs bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full flex items-center gap-1.5">
+              <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+              Saving...
+            </span>
+          ) : (
+            <span className="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full flex items-center gap-1.5">
+              <Check size={12} />
+              All changes saved
+            </span>
           )}
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <Clock size={16} />
-          <span>Total: {formatDuration(getTotalDuration())}</span>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleOpenTemplateModal}
+            className="flex items-center gap-1.5"
+            title="Save as Template"
+          >
+            <BookmarkPlus size={16} />
+            <span className="hidden sm:inline">Save as Template</span>
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => onNavigate?.('playlists')}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-6"
+          >
+            Done
+          </Button>
         </div>
-        <Button variant="outline" onClick={handleOpenPreviewModal}>
-          <Link2 size={18} />
-          Preview Link
-        </Button>
-        {/* Show Request Approval only for draft or rejected */}
-        {(!playlist.approval_status || playlist.approval_status === 'draft' || playlist.approval_status === 'rejected') && (
-          <Button variant="outline" onClick={() => setShowApprovalModal(true)}>
-            <Send size={18} />
-            Request Approval
-          </Button>
-        )}
-        {/* Show Revert to Draft for in_review or approved */}
-        {(playlist.approval_status === 'in_review' || playlist.approval_status === 'approved') && (
-          <Button variant="outline" onClick={handleRevertToDraft}>
-            <FileEdit size={18} />
-            Edit Draft
-          </Button>
-        )}
-        <Button variant="outline" onClick={handleOpenAiModal}>
-          <Wand2 size={18} />
-          AI Suggest
-        </Button>
-        <Button onClick={openAddModal}>
-          <Plus size={18} />
-          Add Media
-        </Button>
       </div>
 
-      {/* Playlist Info Bar */}
-      <Card className="p-4">
-        <div className="flex items-center gap-6 text-sm">
-          <div>
-            <span className="text-gray-500">Items:</span>{' '}
-            <span className="font-medium">{items.length}</span>
+      {/* Main content area */}
+      <div className="flex-1 flex overflow-hidden min-h-0">
+        {/* Library Panel */}
+        <div className="w-[280px] flex-shrink-0 bg-white border-r border-gray-200 flex flex-col">
+          {/* Search */}
+          <div className="p-2 border-b border-gray-200">
+            <div className="relative">
+              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search library..."
+                value={mediaSearch}
+                onChange={(e) => setMediaSearch(e.target.value)}
+                className="w-full pl-8 pr-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+              />
+            </div>
           </div>
-          <div>
-            <span className="text-gray-500">Default Duration:</span>{' '}
-            <span className="font-medium">{playlist.default_duration}s</span>
+
+          {/* Folder navigation breadcrumbs */}
+          <div className="px-2 py-1.5 border-b border-gray-200 bg-gray-50">
+            <div className="flex items-center gap-1 text-xs overflow-x-auto scrollbar-hide">
+              <button
+                onClick={() => navigateToFolder(null)}
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-gray-200 transition-colors flex-shrink-0 ${
+                  currentFolderId === null ? 'text-orange-600 font-medium' : 'text-gray-600'
+                }`}
+              >
+                <Home size={12} />
+                <span>Root</span>
+              </button>
+              {folderPath.map((folder, index) => (
+                <div key={folder.id} className="flex items-center flex-shrink-0">
+                  <ChevronRight size={12} className="text-gray-400 mx-0.5" />
+                  <button
+                    onClick={() => navigateToFolder(folder.id)}
+                    className={`px-1.5 py-0.5 rounded hover:bg-gray-200 transition-colors truncate max-w-[80px] ${
+                      index === folderPath.length - 1 ? 'text-orange-600 font-medium' : 'text-gray-600'
+                    }`}
+                    title={folder.name}
+                  >
+                    {folder.name}
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
-          <div>
-            <span className="text-gray-500">Transition:</span>{' '}
-            <span className="font-medium capitalize">{playlist.transition_effect || 'fade'}</span>
+
+          {/* Folders list */}
+          {folders.length > 0 && (
+            <div className="border-b border-gray-200 max-h-[120px] overflow-y-auto">
+              <div className="p-1.5 space-y-0.5">
+                {folders.map((folder) => (
+                  <button
+                    key={folder.folder_id}
+                    onClick={() => navigateToFolder(folder.folder_id)}
+                    className="w-full flex items-center gap-2 px-2 py-1.5 text-left text-sm hover:bg-orange-50 rounded transition-colors group"
+                  >
+                    <FolderOpen size={16} className="text-orange-500 flex-shrink-0" />
+                    <span className="truncate flex-1 text-gray-700 group-hover:text-orange-600">
+                      {folder.folder_name}
+                    </span>
+                    {folder.media_count > 0 && (
+                      <span className="text-xs text-gray-400 flex-shrink-0 bg-gray-100 px-1.5 py-0.5 rounded">
+                        {folder.media_count}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Filter tabs - horizontally scrollable */}
+          <div className="border-b border-gray-200">
+            <div className="flex gap-1 p-2 overflow-x-auto scrollbar-hide">
+              {FILTER_TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setMediaFilter(tab.key)}
+                  className={`px-2.5 py-1 text-xs rounded-full whitespace-nowrap transition-colors flex-shrink-0 ${
+                    mediaFilter === tab.key
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div>
-            <span className="text-gray-500">Shuffle:</span>{' '}
-            <span className="font-medium">{playlist.shuffle ? 'Yes' : 'No'}</span>
+
+          {/* Item count */}
+          <div className="px-2 py-1.5 text-xs text-gray-500 border-b border-gray-100 flex items-center justify-between">
+            <span>{mediaAssets.length} items</span>
+            {currentFolderId && (
+              <button
+                onClick={() => navigateToFolder(null)}
+                className="text-orange-500 hover:text-orange-600 text-xs"
+              >
+                View all
+              </button>
+            )}
+          </div>
+
+          {/* Media grid with virtual scrolling */}
+          <div
+            ref={mediaScrollRef}
+            className="flex-1 overflow-y-auto p-2"
+            onScroll={handleMediaScroll}
+          >
+            {mediaAssets.length === 0 && folders.length === 0 ? (
+              <div className="text-center py-6 text-gray-500 text-sm">
+                {loadingFolders ? 'Loading...' : 'No media found'}
+              </div>
+            ) : mediaAssets.length === 0 ? (
+              <div className="text-center py-6 text-gray-500 text-sm">
+                <Folder size={32} className="mx-auto mb-2 text-gray-300" />
+                <p>This folder is empty</p>
+                <p className="text-xs mt-1">Drag media here or browse subfolders</p>
+              </div>
+            ) : (
+              <div
+                className="relative"
+                style={{
+                  height: `${Math.ceil(mediaAssets.length / ITEMS_PER_ROW) * ITEM_HEIGHT}px`,
+                }}
+              >
+                <div
+                  className="absolute left-0 right-0 grid grid-cols-2 gap-2"
+                  style={{
+                    top: `${Math.floor(visibleRange.start / ITEMS_PER_ROW) * ITEM_HEIGHT}px`,
+                  }}
+                >
+                  {visibleMediaItems.map(media => (
+                    <LibraryMediaItem
+                      key={media.id}
+                      media={media}
+                      countInPlaylist={items.filter(i => i.item_id === media.id).length}
+                      onAdd={handleAddItem}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </Card>
 
-      {/* Items List */}
-      {items.length === 0 ? (
-        <Card className="p-12 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-lg flex items-center justify-center">
-            <Plus size={32} className="text-orange-600" />
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">No Items Yet</h2>
-          <p className="text-gray-600 max-w-md mx-auto mb-6">
-            Add media, apps, or layouts to your playlist. Items will play in sequence on your screens.
-          </p>
-          <Button onClick={openAddModal}>
-            <Plus size={18} />
-            Add Media
-          </Button>
-        </Card>
-      ) : (
-        <Card>
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-200 text-left text-sm text-gray-500">
-                <th className="p-4 w-12">#</th>
-                <th className="p-4 font-medium">ITEM</th>
-                <th className="p-4 font-medium">TYPE</th>
-                <th className="p-4 font-medium w-32">DURATION</th>
-                <th className="p-4 font-medium w-24">ORDER</th>
-                <th className="p-4 font-medium w-16">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item, index) => {
-                const TypeIcon = MEDIA_TYPE_ICONS[item.media?.type] || Image;
-                return (
-                  <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="p-4 text-gray-400">
-                      <GripVertical size={16} className="cursor-grab" />
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        {item.media?.thumbnail_url || item.media?.url ? (
-                          <img
-                            src={item.media.thumbnail_url || item.media.url}
-                            alt={item.media.name}
-                            className="w-12 h-12 object-cover rounded"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center">
-                            <TypeIcon size={20} className="text-gray-400" />
-                          </div>
-                        )}
-                        <div>
-                          <span className="font-medium text-gray-900">
-                            {item.media?.name || 'Unknown'}
-                          </span>
-                          <p className="text-xs text-gray-500">Position {index + 1}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        <TypeIcon size={16} className="text-gray-400" />
-                        <span className="text-gray-600">
-                          {MEDIA_TYPE_LABELS[item.media?.type] || item.item_type}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          value={item.duration || ''}
-                          onChange={(e) => handleUpdateDuration(item.id, parseInt(e.target.value) || null)}
-                          placeholder={`${playlist.default_duration}`}
-                          min={1}
-                          max={3600}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+        {/* Preview area with playlist info */}
+        <div className="flex-1 flex flex-col p-3 bg-gray-100 overflow-hidden">
+          {/* Main preview content */}
+          <div className="flex-1 flex gap-3 min-h-0">
+            {/* Large TV Preview */}
+            <div className="flex-1 flex flex-col min-w-0">
+              {/* TV Frame */}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="w-full max-w-2xl">
+                  <div className="aspect-video bg-gray-900 rounded-xl shadow-2xl overflow-hidden relative ring-4 ring-gray-800">
+                    {previewItem ? (
+                      previewItem.media?.thumbnail_url || previewItem.media?.url ? (
+                        <img
+                          src={previewItem.media.thumbnail_url || previewItem.media.url}
+                          alt={previewItem.media.name}
+                          className="w-full h-full object-contain"
                         />
-                        <span className="text-xs text-gray-500">
-                          {item.duration ? '' : '(default)'}
-                        </span>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Play size={64} className="text-gray-600" />
+                        </div>
+                      )
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-500">
+                        <div className="w-16 h-16 rounded-full border-2 border-gray-600 flex items-center justify-center mb-3">
+                          <Play size={32} className="text-gray-600 ml-1" />
+                        </div>
+                        <p className="text-base">Select an item to preview</p>
+                        <p className="text-xs text-gray-600 mt-1">or click Play to start</p>
                       </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleMoveItem(item.id, 'up')}
-                          disabled={index === 0}
-                          className="p-1 hover:bg-gray-100 rounded disabled:opacity-30"
-                        >
-                          <ChevronUp size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleMoveItem(item.id, 'down')}
-                          disabled={index === items.length - 1}
-                          className="p-1 hover:bg-gray-100 rounded disabled:opacity-30"
-                        >
-                          <ChevronDown size={18} />
-                        </button>
+                    )}
+                    {/* Playing indicator */}
+                    {isPlaying && (
+                      <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg">
+                        <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                        PLAYING
                       </div>
-                    </td>
-                    <td className="p-4">
-                      <button
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="p-1 hover:bg-red-50 rounded text-red-500"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </Card>
-      )}
-
-      {/* Add Media Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-3xl max-h-[80vh] flex flex-col">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-xl font-bold">Add Media to Playlist</h2>
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
-                <X size={20} className="text-gray-400" />
-              </button>
-            </div>
-
-            {/* Search and Filter */}
-            <div className="p-4 border-b border-gray-200 flex gap-4">
-              <div className="flex-1 relative">
-                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search media..."
-                  value={mediaSearch}
-                  onChange={(e) => {
-                    setMediaSearch(e.target.value);
-                    fetchMediaAssets();
-                  }}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                />
-              </div>
-              <select
-                value={mediaFilter}
-                onChange={(e) => {
-                  setMediaFilter(e.target.value);
-                  fetchMediaAssets();
-                }}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              >
-                <option value="">All Types</option>
-                <option value="image">Images</option>
-                <option value="video">Videos</option>
-                <option value="audio">Audio</option>
-                <option value="document">Documents</option>
-                <option value="web_page">Web Pages</option>
-              </select>
-            </div>
-
-            {/* Media Grid */}
-            <div className="flex-1 overflow-y-auto p-4">
-              {mediaAssets.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  No media found. Upload some media first.
+                    )}
+                    {/* Item counter overlay */}
+                    {previewItem && items.length > 0 && (
+                      <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                        {(items.findIndex(i => i.id === previewItem.id) + 1) || 1} / {items.length}
+                      </div>
+                    )}
+                  </div>
+                  {/* TV Stand decoration */}
+                  <div className="flex justify-center">
+                    <div className="w-24 h-2 bg-gray-800 rounded-b-lg" />
+                  </div>
                 </div>
-              ) : (
-                <div className="grid grid-cols-4 gap-4">
-                  {mediaAssets.map(media => {
-                    const TypeIcon = MEDIA_TYPE_ICONS[media.type] || Image;
-                    const isSelected = selectedMedia.includes(media.id);
-                    const isAlreadyInPlaylist = items.some(i => i.item_id === media.id);
+              </div>
 
-                    return (
-                      <div
-                        key={media.id}
-                        onClick={() => !isAlreadyInPlaylist && toggleMediaSelection(media.id)}
-                        className={`
-                          relative rounded-lg border-2 cursor-pointer transition-all
-                          ${isSelected ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300'}
-                          ${isAlreadyInPlaylist ? 'opacity-50 cursor-not-allowed' : ''}
-                        `}
-                      >
-                        <div className="aspect-video bg-gray-100 rounded-t-lg overflow-hidden">
-                          {media.thumbnail_url || media.url ? (
-                            <img
-                              src={media.thumbnail_url || media.url}
-                              alt={media.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <TypeIcon size={32} className="text-gray-400" />
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-2">
-                          <p className="text-sm font-medium truncate">{media.name}</p>
-                          <p className="text-xs text-gray-500">{MEDIA_TYPE_LABELS[media.type]}</p>
-                        </div>
-                        {isSelected && (
-                          <div className="absolute top-2 right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">
-                              {selectedMedia.indexOf(media.id) + 1}
-                            </span>
-                          </div>
-                        )}
-                        {isAlreadyInPlaylist && (
-                          <div className="absolute top-2 left-2 px-2 py-1 bg-gray-800 text-white text-xs rounded">
-                            Already added
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+              {/* Playback controls - centered below TV */}
+              <div className="mt-2 flex items-center justify-center gap-2">
+                <button
+                  onClick={skipToPrev}
+                  disabled={items.length === 0}
+                  className="p-2.5 text-gray-600 hover:bg-white hover:shadow rounded-full transition-all disabled:opacity-40"
+                >
+                  <SkipBack size={22} />
+                </button>
+                <button
+                  onClick={isPlaying ? stopPlayback : startPlayback}
+                  disabled={items.length === 0}
+                  className="p-4 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors shadow-lg disabled:opacity-40 disabled:hover:bg-orange-500"
+                >
+                  {isPlaying ? <Pause size={26} /> : <Play size={26} className="ml-0.5" />}
+                </button>
+                <button
+                  onClick={skipToNext}
+                  disabled={items.length === 0}
+                  className="p-2.5 text-gray-600 hover:bg-white hover:shadow rounded-full transition-all disabled:opacity-40"
+                >
+                  <SkipForward size={22} />
+                </button>
+              </div>
+
+              {/* Current item info */}
+              {previewItem && (
+                <div className="mt-2 text-center">
+                  <p className="text-sm font-medium text-gray-800">{previewItem.media?.name}</p>
+                  <p className="text-xs text-gray-500">
+                    Duration: {getEffectiveDuration(previewItem)}s
+                  </p>
                 </div>
               )}
             </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-gray-200 flex items-center justify-between">
-              <span className="text-sm text-gray-500">
-                {selectedMedia.length} item{selectedMedia.length !== 1 ? 's' : ''} selected
-              </span>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setShowAddModal(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleAddItems} disabled={saving || selectedMedia.length === 0}>
-                  {saving ? 'Adding...' : `Add ${selectedMedia.length} Item${selectedMedia.length !== 1 ? 's' : ''}`}
-                </Button>
+            {/* Playlist Stats Panel */}
+            <div className="w-56 flex-shrink-0 flex flex-col gap-2">
+              {/* Playlist header */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+                <h2 className="text-base font-semibold text-gray-900 truncate mb-0.5">{playlist?.name || 'Untitled Playlist'}</h2>
+                <p className="text-xs text-gray-500 line-clamp-1">{playlist?.description || 'No description'}</p>
+                <div className="flex items-center gap-1.5 mt-2">
+                  <button
+                    onClick={handleOpenAiModal}
+                    className="flex-1 p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors flex items-center justify-center gap-1.5 text-sm"
+                    title="AI Suggestions"
+                  >
+                    <Wand2 size={16} />
+                    AI
+                  </button>
+                  <button
+                    onClick={handleOpenPreviewModal}
+                    className="flex-1 p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-1.5 text-sm"
+                    title="Preview Links"
+                  >
+                    <Link2 size={16} />
+                    Share
+                  </button>
+                  <button
+                    className="flex-1 p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-1.5 text-sm"
+                    title="Settings"
+                  >
+                    <Settings size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Stats cards */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+                <h3 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2">Stats</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-600">Items</span>
+                    <span className="text-xs font-semibold text-gray-900">{items.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-600">Duration</span>
+                    <span className="text-xs font-semibold text-gray-900">{formatDuration(getTotalDuration())}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-600">Avg.</span>
+                    <span className="text-xs font-semibold text-gray-900">
+                      {items.length > 0 ? Math.round(getTotalDuration() / items.length) : 0}s
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Media type breakdown */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 flex-1">
+                <h3 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2">Content Mix</h3>
+                {items.length > 0 ? (
+                  <div className="space-y-1.5">
+                    {(() => {
+                      const typeCounts = items.reduce((acc, item) => {
+                        const type = item.media?.type || 'unknown';
+                        acc[type] = (acc[type] || 0) + 1;
+                        return acc;
+                      }, {});
+                      return Object.entries(typeCounts).map(([type, count]) => (
+                        <div key={type} className="flex items-center gap-2">
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between text-xs mb-0.5">
+                              <span className="text-gray-600 capitalize">{type}</span>
+                              <span className="text-gray-900 font-medium">{count}</span>
+                            </div>
+                            <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-orange-500 rounded-full transition-all"
+                                style={{ width: `${(count / items.length) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400 text-center py-2">No items yet</p>
+                )}
               </div>
             </div>
-          </Card>
+          </div>
         </div>
-      )}
+      </div>
+
+      {/* Timeline strip */}
+      <div className="flex-shrink-0 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+        {/* Timeline header */}
+        <div className="flex items-center justify-between px-3 py-1.5 border-b border-gray-100">
+          <span className="text-xs text-gray-600 font-medium">
+            {items.length} items &bull; {formatDuration(getTotalDuration())}
+          </span>
+          <button
+            onClick={() => setShowApprovalModal(true)}
+            className="text-gray-500 hover:text-orange-600 text-xs flex items-center gap-1 transition-colors"
+          >
+            <Send size={12} />
+            Request Approval
+          </button>
+        </div>
+
+        {/* Timeline items */}
+        <div
+          ref={timelineRef}
+          className={`flex items-center px-3 py-2 overflow-x-auto transition-colors ${
+            isDraggingFromLibrary ? 'bg-orange-50 ring-2 ring-orange-300 ring-inset' : 'bg-gray-50'
+          }`}
+          onDragOver={handleTimelineDragOverContainer}
+          onDragLeave={handleTimelineDragLeave}
+          onDrop={(e) => handleTimelineDropFromLibrary(e, items.length)}
+        >
+          {items.map((item, index) => (
+            <div
+              key={item.id}
+              onClick={() => {
+                setPreviewItem(item);
+                setCurrentPlayIndex(index);
+              }}
+              className={`cursor-pointer relative ${
+                previewItem?.id === item.id && dragSourceIndex === null ? 'ring-2 ring-orange-500 ring-offset-1 rounded' : ''
+              } ${isPlaying && currentPlayIndex === index ? 'ring-2 ring-green-500 ring-offset-1 rounded' : ''}`}
+            >
+              <PlaylistStripItem
+                item={item}
+                index={index}
+                onRemove={handleRemoveItem}
+                onUpdateDuration={handleUpdateDuration}
+                getEffectiveDuration={getEffectiveDuration}
+                onDragStart={handleTimelineDragStart}
+                onDragEnd={handleTimelineDragEnd}
+                onDragOver={handleTimelineDragOver}
+                onDrop={handleTimelineDrop}
+                isDragOver={dragOverIndex === index}
+                isDragging={dragSourceIndex === index}
+              />
+              {/* Playing indicator on timeline */}
+              {isPlaying && currentPlayIndex === index && (
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-medium z-10">
+                  ▶ NOW
+                </div>
+              )}
+            </div>
+          ))}
+          {/* Drop zone at the end */}
+          <div className="flex items-center">
+            {/* Drop indicator line for end position */}
+            <div
+              className={`h-[92px] rounded-full ${
+                dragOverIndex === items.length ? 'w-1 bg-orange-500 mx-1' : 'w-0'
+              }`}
+              style={{
+                transition: 'width 100ms ease-out, margin 100ms ease-out',
+                willChange: dragOverIndex === items.length ? 'width, margin' : 'auto'
+              }}
+            />
+            <div
+              className={`flex-shrink-0 w-[70px] h-[92px] border border-dashed rounded-lg flex items-center justify-center cursor-pointer ${
+                isDraggingFromLibrary || dragSourceIndex !== null
+                  ? 'border-orange-500 bg-orange-100 border-2'
+                  : 'border-gray-300 hover:border-orange-500 hover:bg-orange-50'
+              }`}
+              style={{ transition: 'border-color 150ms, background-color 150ms' }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Only update if it's different from current
+                if (dragSourceIndex !== null && lastDragOverIndexRef.current !== items.length) {
+                  lastDragOverIndexRef.current = items.length;
+                  setDragOverIndex(items.length);
+                }
+              }}
+              onDragLeave={() => {
+                if (lastDragOverIndexRef.current === items.length) {
+                  lastDragOverIndexRef.current = null;
+                  setDragOverIndex(null);
+                }
+              }}
+              onDrop={(e) => { e.stopPropagation(); handleTimelineDropFromLibrary(e, items.length); }}
+            >
+              <Plus size={18} className={isDraggingFromLibrary || dragSourceIndex !== null ? 'text-orange-500' : 'text-gray-400'} />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* AI Suggest Modal */}
       {showAiModal && (
@@ -922,17 +1600,13 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
                   <p className="text-sm text-gray-500">Generate content slides for your playlist</p>
                 </div>
               </div>
-              <button
-                onClick={() => setShowAiModal(false)}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
+              <button onClick={() => setShowAiModal(false)} className="p-1 hover:bg-gray-100 rounded">
                 <X size={20} className="text-gray-400" />
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6">
               {!aiSuggestion ? (
-                /* Generation Form */
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -947,42 +1621,26 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
                         onChange={(e) => setAiSlideCount(parseInt(e.target.value))}
                         className="flex-1"
                       />
-                      <span className="text-2xl font-bold text-gray-900 w-8 text-center">
-                        {aiSlideCount}
-                      </span>
+                      <span className="text-2xl font-bold text-gray-900 w-8 text-center">{aiSlideCount}</span>
                     </div>
                   </div>
-
                   <div className="bg-purple-50 border border-purple-100 rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <Sparkles size={20} className="text-purple-500 mt-0.5" />
-                      <div>
-                        <p className="text-sm text-purple-700">
-                          AI will generate slide content based on your business profile and playlist name.
-                          You can review the suggestions before adding them.
-                        </p>
-                      </div>
+                      <p className="text-sm text-purple-700">
+                        AI will generate slide content based on your business profile and playlist name.
+                      </p>
                     </div>
                   </div>
                 </div>
               ) : (
-                /* Suggestion Preview */
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-green-600 mb-4">
                     <Check size={20} />
                     <span className="font-medium">Generated {aiSuggestion.payload?.slides?.length || 0} slides</span>
                   </div>
-
                   {aiSuggestion.payload?.slides?.map((slide, index) => (
-                    <div
-                      key={index}
-                      className="p-4 border border-gray-200 rounded-lg"
-                      style={{
-                        backgroundColor: slide.style?.backgroundColor
-                          ? `${slide.style.backgroundColor}10`
-                          : undefined,
-                      }}
-                    >
+                    <div key={index} className="p-4 border border-gray-200 rounded-lg">
                       <div className="flex items-start gap-3">
                         <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium text-gray-600">
                           {index + 1}
@@ -990,14 +1648,6 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
                         <div className="flex-1">
                           <h4 className="font-semibold text-gray-900">{slide.headline}</h4>
                           <p className="text-sm text-gray-600 mt-1">{slide.body}</p>
-                          <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
-                            <span>Duration: {slide.duration}s</span>
-                            {slide.imagePrompt && (
-                              <span className="truncate max-w-xs" title={slide.imagePrompt}>
-                                Image: {slide.imagePrompt}
-                              </span>
-                            )}
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -1006,48 +1656,19 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
               )}
             </div>
 
-            {/* Footer */}
             <div className="p-4 border-t border-gray-200 flex items-center justify-between">
               {!aiSuggestion ? (
                 <>
-                  <Button variant="outline" onClick={() => setShowAiModal(false)}>
-                    Cancel
-                  </Button>
+                  <Button variant="outline" onClick={() => setShowAiModal(false)}>Cancel</Button>
                   <Button onClick={handleGenerateAiSlides} disabled={aiGenerating}>
-                    {aiGenerating ? (
-                      <>
-                        <Loader2 size={18} className="animate-spin mr-2" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles size={18} className="mr-2" />
-                        Generate Slides
-                      </>
-                    )}
+                    {aiGenerating ? <><Loader2 size={18} className="animate-spin mr-2" />Generating...</> : <><Sparkles size={18} className="mr-2" />Generate Slides</>}
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button
-                    variant="outline"
-                    onClick={() => setAiSuggestion(null)}
-                    disabled={aiApplying}
-                  >
-                    Generate Different
-                  </Button>
+                  <Button variant="outline" onClick={() => setAiSuggestion(null)} disabled={aiApplying}>Generate Different</Button>
                   <Button onClick={handleApplyAiSlides} disabled={aiApplying}>
-                    {aiApplying ? (
-                      <>
-                        <Loader2 size={18} className="animate-spin mr-2" />
-                        Adding...
-                      </>
-                    ) : (
-                      <>
-                        <Check size={18} className="mr-2" />
-                        Add {aiSuggestion.payload?.slides?.length || 0} Slides
-                      </>
-                    )}
+                    {aiApplying ? <><Loader2 size={18} className="animate-spin mr-2" />Adding...</> : <><Check size={18} className="mr-2" />Add {aiSuggestion.payload?.slides?.length || 0} Slides</>}
                   </Button>
                 </>
               )}
@@ -1056,68 +1677,32 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         </div>
       )}
 
-      {/* Request Approval Modal */}
+      {/* Approval Modal */}
       {showApprovalModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <Card className="w-full max-w-md">
             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Send size={20} className="text-blue-600" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">Request Approval</h2>
-                  <p className="text-sm text-gray-500">Submit for review</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowApprovalModal(false)}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
+              <h2 className="text-xl font-bold">Request Approval</h2>
+              <button onClick={() => setShowApprovalModal(false)} className="p-1 hover:bg-gray-100 rounded">
                 <X size={20} className="text-gray-400" />
               </button>
             </div>
-
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Message (optional)
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Message (optional)</label>
                 <textarea
                   value={approvalMessage}
                   onChange={(e) => setApprovalMessage(e.target.value)}
                   placeholder="Add any notes for the reviewer..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
-              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle size={20} className="text-blue-500 mt-0.5" />
-                  <p className="text-sm text-blue-700">
-                    This will change the playlist status to "In Review" and notify reviewers.
-                  </p>
-                </div>
-              </div>
             </div>
-
             <div className="p-4 border-t border-gray-200 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowApprovalModal(false)}>
-                Cancel
-              </Button>
+              <Button variant="outline" onClick={() => setShowApprovalModal(false)}>Cancel</Button>
               <Button onClick={handleRequestApproval} disabled={submittingApproval}>
-                {submittingApproval ? (
-                  <>
-                    <Loader2 size={18} className="animate-spin mr-2" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Send size={18} className="mr-2" />
-                    Request Approval
-                  </>
-                )}
+                {submittingApproval ? <><Loader2 size={18} className="animate-spin mr-2" />Submitting...</> : <><Send size={18} className="mr-2" />Request Approval</>}
               </Button>
             </div>
           </Card>
@@ -1129,41 +1714,24 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <Card className="w-full max-w-2xl max-h-[80vh] flex flex-col">
             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Link2 size={20} className="text-purple-600" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">Preview Links</h2>
-                  <p className="text-sm text-gray-500">Share this playlist for review</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowPreviewModal(false)}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
+              <h2 className="text-xl font-bold">Preview Links</h2>
+              <button onClick={() => setShowPreviewModal(false)} className="p-1 hover:bg-gray-100 rounded">
                 <X size={20} className="text-gray-400" />
               </button>
             </div>
-
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              {/* Create new link */}
               <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                 <h3 className="font-medium text-gray-900">Create New Link</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Expires in
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Expires in</label>
                     <select
                       value={selectedExpiry}
                       onChange={(e) => setSelectedExpiry(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     >
-                      {Object.entries(EXPIRY_PRESETS).map(([key, value]) => (
-                        <option key={key} value={key}>
-                          {getExpiryLabel(key)}
-                        </option>
+                      {Object.entries(EXPIRY_PRESETS).map(([key]) => (
+                        <option key={key} value={key}>{getExpiryLabel(key)}</option>
                       ))}
                     </select>
                   </div>
@@ -1173,32 +1741,17 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
                         type="checkbox"
                         checked={allowComments}
                         onChange={(e) => setAllowComments(e.target.checked)}
-                        className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                        className="w-4 h-4 text-purple-600 rounded"
                       />
                       <span className="text-sm text-gray-700">Allow comments</span>
                     </label>
                   </div>
                 </div>
-                <Button
-                  onClick={handleCreatePreviewLink}
-                  disabled={creatingPreviewLink}
-                  className="w-full"
-                >
-                  {creatingPreviewLink ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin mr-2" />
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      <Plus size={18} className="mr-2" />
-                      Create Preview Link
-                    </>
-                  )}
+                <Button onClick={handleCreatePreviewLink} disabled={creatingPreviewLink} className="w-full">
+                  {creatingPreviewLink ? <><Loader2 size={18} className="animate-spin mr-2" />Creating...</> : <><Plus size={18} className="mr-2" />Create Preview Link</>}
                 </Button>
               </div>
 
-              {/* Existing links */}
               <div>
                 <h3 className="font-medium text-gray-900 mb-3">Active Links</h3>
                 {loadingPreviewLinks ? (
@@ -1214,57 +1767,21 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
                 ) : (
                   <div className="space-y-3">
                     {previewLinks.map((link) => (
-                      <div
-                        key={link.id}
-                        className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg"
-                      >
+                      <div key={link.id} className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <code className="text-sm bg-gray-100 px-2 py-0.5 rounded truncate max-w-[200px]">
-                              {link.token}
-                            </code>
-                            {link.allow_comments && (
-                              <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded flex items-center gap-1">
-                                <MessageSquare size={10} />
-                                Comments
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                            <Calendar size={12} />
-                            Expires: {new Date(link.expires_at).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })}
+                          <code className="text-sm bg-gray-100 px-2 py-0.5 rounded truncate block max-w-[200px]">{link.token}</code>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Expires: {new Date(link.expires_at).toLocaleDateString()}
                           </p>
                         </div>
                         <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => handleCopyLink(link)}
-                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                            title="Copy link"
-                          >
-                            {copiedLinkId === link.id ? (
-                              <Check size={16} className="text-green-600" />
-                            ) : (
-                              <Copy size={16} className="text-gray-500" />
-                            )}
+                          <button onClick={() => handleCopyLink(link)} className="p-2 hover:bg-gray-100 rounded-lg">
+                            {copiedLinkId === link.id ? <Check size={16} className="text-green-600" /> : <Copy size={16} className="text-gray-500" />}
                           </button>
-                          <a
-                            href={formatPreviewLink(link.token)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                            title="Open preview"
-                          >
+                          <a href={formatPreviewLink(link.token)} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-100 rounded-lg">
                             <ExternalLink size={16} className="text-gray-500" />
                           </a>
-                          <button
-                            onClick={() => handleRevokePreviewLink(link.id)}
-                            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Revoke link"
-                          >
+                          <button onClick={() => handleRevokePreviewLink(link.id)} className="p-2 hover:bg-red-50 rounded-lg">
                             <Trash2 size={16} className="text-red-500" />
                           </button>
                         </div>
@@ -1274,10 +1791,76 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
                 )}
               </div>
             </div>
-
             <div className="p-4 border-t border-gray-200 flex justify-end">
-              <Button variant="outline" onClick={() => setShowPreviewModal(false)}>
-                Close
+              <Button variant="outline" onClick={() => setShowPreviewModal(false)}>Close</Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Save as Template Modal */}
+      {showTemplateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <BookmarkPlus size={20} className="text-orange-500" />
+                Save as Template
+              </h2>
+              <button onClick={() => setShowTemplateModal(false)} className="p-1 hover:bg-gray-100 rounded">
+                <X size={20} className="text-gray-400" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                Create a reusable template from this playlist. The template can be applied to quickly create new playlists with the same structure.
+              </p>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Template Name *</label>
+                <input
+                  type="text"
+                  value={templateName}
+                  onChange={(e) => setTemplateName(e.target.value)}
+                  placeholder="e.g., Restaurant Menu Template"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
+                <textarea
+                  value={templateDescription}
+                  onChange={(e) => setTemplateDescription(e.target.value)}
+                  placeholder="Describe what this template is for..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none"
+                />
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-600">
+                <p><strong>Items included:</strong> {items.length} items</p>
+                <p><strong>Total duration:</strong> {formatDuration(getTotalDuration())}</p>
+              </div>
+            </div>
+            <div className="p-4 border-t border-gray-200 flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowTemplateModal(false)} disabled={savingTemplate}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveAsTemplate}
+                disabled={savingTemplate || !templateName.trim()}
+                className="bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                {savingTemplate ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin mr-2" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <BookmarkPlus size={16} className="mr-2" />
+                    Save Template
+                  </>
+                )}
               </Button>
             </div>
           </Card>

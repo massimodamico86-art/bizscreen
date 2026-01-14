@@ -64,13 +64,14 @@ const Button = forwardRef(function Button(
 
   // Variant styles
   const variantStyles = {
-    // Primary - main action button
+    // Primary - main action button (Yodeck orange)
     primary: `
-      bg-gray-900 text-white
-      hover:bg-gray-800
-      active:bg-gray-950
-      focus-visible:ring-gray-500
+      bg-[#f26f21] text-white
+      hover:bg-[#e05a10]
+      active:bg-[#d04d08]
+      focus-visible:ring-[#f26f21]
       disabled:bg-gray-200 disabled:text-gray-400
+      shadow-sm
     `,
     // Secondary - outline button
     secondary: `

@@ -187,8 +187,12 @@ test.describe('Playlists', () => {
       const playlistRow = page.locator('tr').filter({ hasText: playlistName });
       await playlistRow.locator('button').filter({ has: page.locator('svg') }).last().click();
 
-      // Click Delete in the dropdown
-      await page.getByText(/delete/i).click();
+      // Click Delete in the dropdown - use role to be specific
+      await page.getByRole('menuitem', { name: /delete/i }).or(
+        page.locator('[role="menu"] button').filter({ hasText: /delete/i })
+      ).or(
+        page.locator('button.text-red-600').filter({ hasText: /delete/i })
+      ).first().click();
 
       // Confirm deletion in the modal
       const deleteButton = page.getByRole('button', { name: /delete/i }).last();

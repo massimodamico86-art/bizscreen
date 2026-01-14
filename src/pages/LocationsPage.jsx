@@ -246,14 +246,15 @@ const LocationsPage = ({ showToast, setCurrentPage }) => {
         {/* Locations List */}
         {locations.length === 0 ? (
           <EmptyState
-            icon={MapPin}
+            icon={<MapPin size={48} aria-hidden="true" />}
             title={t('locations.noLocations', 'No locations yet')}
             description={t('locations.noLocationsDesc', 'Create locations to organize your screens by physical branches or areas.')}
-            action={canManage && {
-              label: t('locations.addFirstLocation', 'Add Your First Location'),
-              onClick: openCreateModal,
-              icon: <Plus size={18} aria-hidden="true" />
-            }}
+            action={canManage ? (
+              <Button onClick={openCreateModal} variant="primary">
+                <Plus size={18} aria-hidden="true" />
+                {t('locations.addFirstLocation', 'Add Your First Location')}
+              </Button>
+            ) : null}
           />
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" role="list" aria-label={t('locations.locationsList', 'Locations list')}>

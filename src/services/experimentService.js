@@ -82,17 +82,9 @@ async function getCurrentTenantId() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  let tenantId = user.user_metadata?.tenant_id;
-  if (!tenantId) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('tenant_id')
-      .eq('id', user.id)
-      .single();
-    tenantId = profile?.tenant_id;
-  }
-
-  return tenantId;
+  // In this schema, user.id IS the tenant_id for clients
+  // (profiles.id = auth.users.id = tenant identifier)
+  return user.user_metadata?.tenant_id || user.id;
 }
 
 /**
