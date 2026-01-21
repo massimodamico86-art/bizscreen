@@ -1,14 +1,16 @@
 /**
- * Error Tracking Abstraction
+ * Error Tracking with Sentry Integration
  *
  * Pluggable error tracking that supports multiple providers:
  * - console (default, logs to console)
  * - sentry (Sentry.io integration)
  *
  * Configure via VITE_ERROR_TRACKING_PROVIDER env var.
+ * Set VITE_SENTRY_DSN for Sentry integration.
  */
 
 import React from 'react';
+import * as Sentry from '@sentry/react';
 import { config, isProduction, isLocal } from '../config/env';
 import { logError } from './logger';
 
@@ -44,60 +46,180 @@ const providers = {
       if (!isProduction()) {
         console.log('[ErrorTracking] Breadcrumb:', breadcrumb);
       }
+    },
+    startTransaction(name, op) {
+      return { finish: () => {} };
     }
   },
 
   /**
-   * Sentry provider stub - ready for Sentry integration
-   * To enable: npm install @sentry/react @sentry/tracing
+   * Sentry provider - full Sentry integration
    */
   sentry: {
     init() {
-      // Sentry initialization would go here
-      // Example:
-      // import * as Sentry from '@sentry/react';
-      // Sentry.init({
-      //   dsn: import.meta.env.VITE_SENTRY_DSN,
-      //   environment: config().env,
-      //   tracesSampleRate: 0.1,
-      // });
-      console.warn('[ErrorTracking] Sentry provider not fully configured. Using console fallback.');
+      const dsn = import.meta.env.VITE_SENTRY_DSN;
+
+      if (!dsn) {
+        console.warn('[ErrorTracking] Sentry DSN not configured. Set VITE_SENTRY_DSN.');
+        return false;
+      }
+
+      try {
+        Sentry.init({
+          dsn,
+          environment: config().env || 'development',
+          release: import.meta.env.VITE_APP_VERSION || '1.0.0',
+
+          // Performance Monitoring
+          tracesSampleRate: isProduction() ? 0.1 : 1.0,
+
+          // Session Replay for debugging (only in production)
+          replaysSessionSampleRate: isProduction() ? 0.1 : 0,
+          replaysOnErrorSampleRate: isProduction() ? 1.0 : 0,
+
+          // Filter out non-actionable errors
+          ignoreErrors: [
+            // Network errors
+            'Network Error',
+            'Failed to fetch',
+            'NetworkError',
+            'Load failed',
+            // Browser extensions
+            /^chrome-extension:\/\//,
+            /^moz-extension:\/\//,
+            // User aborts
+            'AbortError',
+            'The operation was aborted',
+            // Resize observer
+            'ResizeObserver loop',
+          ],
+
+          // Don't send in development unless explicitly enabled
+          enabled: isProduction() || import.meta.env.VITE_SENTRY_DEBUG === 'true',
+
+          // Attach stack trace to all messages
+          attachStacktrace: true,
+
+          // Custom tags
+          initialScope: {
+            tags: {
+              app: 'bizscreen',
+              platform: 'web',
+            },
+          },
+
+          // Before sending, sanitize sensitive data
+          beforeSend(event) {
+            // Remove sensitive headers
+            if (event.request?.headers) {
+              delete event.request.headers['Authorization'];
+              delete event.request.headers['Cookie'];
+            }
+
+            // Scrub potential PII from error messages
+            if (event.message) {
+              event.message = event.message.replace(
+                /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g,
+                '[EMAIL_REDACTED]'
+              );
+            }
+
+            return event;
+          },
+
+          // Integrations
+          integrations: [
+            Sentry.browserTracingIntegration(),
+            Sentry.replayIntegration({
+              maskAllText: true,
+              blockAllMedia: true,
+            }),
+          ],
+        });
+
+        console.log('[ErrorTracking] Sentry initialized');
+        return true;
+      } catch (error) {
+        console.error('[ErrorTracking] Sentry initialization failed:', error);
+        return false;
+      }
     },
+
     captureException(error, context = {}) {
-      // Sentry.captureException(error, { extra: context });
-      providers.console.captureException(error, context);
+      Sentry.withScope((scope) => {
+        Object.entries(context).forEach(([key, value]) => {
+          scope.setExtra(key, value);
+        });
+        Sentry.captureException(error);
+      });
     },
+
     captureMessage(message, level = 'error', context = {}) {
-      // Sentry.captureMessage(message, { level, extra: context });
-      providers.console.captureMessage(message, level, context);
+      Sentry.withScope((scope) => {
+        Object.entries(context).forEach(([key, value]) => {
+          scope.setExtra(key, value);
+        });
+        Sentry.captureMessage(message, level);
+      });
     },
+
     setUser(user) {
-      // Sentry.setUser(user);
-      providers.console.setUser(user);
+      if (user) {
+        Sentry.setUser({
+          id: user.id,
+          email: user.email,
+          username: user.full_name,
+        });
+      } else {
+        Sentry.setUser(null);
+      }
     },
+
     setContext(name, context) {
-      // Sentry.setContext(name, context);
-      providers.console.setContext(name, context);
+      Sentry.setContext(name, context);
     },
+
     addBreadcrumb(breadcrumb) {
-      // Sentry.addBreadcrumb(breadcrumb);
-      providers.console.addBreadcrumb(breadcrumb);
+      Sentry.addBreadcrumb({
+        category: breadcrumb.category,
+        message: breadcrumb.message,
+        data: breadcrumb.data,
+        level: breadcrumb.level || 'info',
+        timestamp: breadcrumb.timestamp || Date.now() / 1000,
+      });
+    },
+
+    startTransaction(name, op) {
+      return Sentry.startInactiveSpan({ name, op });
     }
   }
 };
 
 // Active provider instance
 let activeProvider = null;
+let initialized = false;
 
 /**
  * Initialize error tracking
  */
 export function initErrorTracking() {
+  if (initialized) return activeProvider;
+
   const providerName = import.meta.env.VITE_ERROR_TRACKING_PROVIDER || 'console';
-  activeProvider = providers[providerName] || providers.console;
+
+  // Default to sentry if DSN is provided
+  const effectiveProvider = import.meta.env.VITE_SENTRY_DSN && providerName !== 'console'
+    ? 'sentry'
+    : providerName;
+
+  activeProvider = providers[effectiveProvider] || providers.console;
 
   try {
-    activeProvider.init();
+    const success = activeProvider.init();
+    if (success === false && effectiveProvider === 'sentry') {
+      // Fall back to console if Sentry fails
+      activeProvider = providers.console;
+    }
   } catch (error) {
     console.error('[ErrorTracking] Failed to initialize:', error);
     activeProvider = providers.console;
@@ -106,6 +228,7 @@ export function initErrorTracking() {
   // Set up global error handlers
   setupGlobalErrorHandlers();
 
+  initialized = true;
   return activeProvider;
 }
 
@@ -140,7 +263,7 @@ function setupGlobalErrorHandlers() {
  * Get active provider (initialize if needed)
  */
 function getProvider() {
-  if (!activeProvider) {
+  if (!initialized) {
     initErrorTracking();
   }
   return activeProvider;
@@ -172,7 +295,8 @@ export function setUser(user) {
     getProvider().setUser({
       id: user.id,
       email: user.email,
-      role: user.role
+      full_name: user.full_name || user.user_metadata?.full_name,
+      role: user.role || user.user_metadata?.role
     });
   } else {
     getProvider().setUser(null);
@@ -189,13 +313,21 @@ export function setContext(name, context) {
 /**
  * Add a breadcrumb for debugging
  */
-export function addBreadcrumb(category, message, data = {}) {
+export function addBreadcrumb(category, message, data = {}, level = 'info') {
   getProvider().addBreadcrumb({
     category,
     message,
     data,
+    level,
     timestamp: Date.now() / 1000
   });
+}
+
+/**
+ * Start a performance transaction
+ */
+export function startTransaction(name, op = 'custom') {
+  return getProvider().startTransaction(name, op);
 }
 
 /**
@@ -252,6 +384,16 @@ export function createErrorBoundary(FallbackComponent) {
   };
 }
 
+/**
+ * Sentry Error Boundary component wrapper
+ */
+export const SentryErrorBoundary = Sentry.ErrorBoundary;
+
+/**
+ * Sentry profiler for React components
+ */
+export const withProfiler = Sentry.withProfiler;
+
 export default {
   init: initErrorTracking,
   captureException,
@@ -259,6 +401,9 @@ export default {
   setUser,
   setContext,
   addBreadcrumb,
+  startTransaction,
   withErrorTracking,
-  handleReactError
+  handleReactError,
+  SentryErrorBoundary,
+  withProfiler
 };
