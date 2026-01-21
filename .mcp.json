@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "gsd": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "gsd-mcp-server"],
+      "env": {}
+    }
+  }
+}

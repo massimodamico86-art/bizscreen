@@ -25,7 +25,6 @@ import {
   ChevronLeft,
   X,
   FileType,
-  Sparkles,
   Home,
   Square,
 } from 'lucide-react';
@@ -52,11 +51,6 @@ const FILTER_CONFIG = {
     items: ['Landscape', 'Portrait'],
     type: 'toggle',
   },
-  visualMode: {
-    label: 'Visual Mode',
-    items: ['Static', 'Animation'],
-    type: 'toggle',
-  },
   industries: {
     label: 'Industries',
     items: [
@@ -65,30 +59,6 @@ const FILTER_CONFIG = {
       'Entertainment', 'Finance',
     ],
     defaultShow: 8,
-  },
-  templateTypes: {
-    label: 'Template Types',
-    items: [
-      'Promotion', 'Event', 'Announcement', 'Menu', 'event_notification',
-      'sale', 'Welcome', 'Directory', 'Schedule', 'Info Board',
-    ],
-    defaultShow: 6,
-  },
-  visualStyles: {
-    label: 'Visual Styles',
-    items: [
-      'Playful', 'casual', 'Professional', 'formal', 'celebratory',
-      'energetic', 'Minimalist', 'Bold', 'Elegant', 'Modern',
-    ],
-    defaultShow: 6,
-  },
-  colorMoods: {
-    label: 'Color Moods',
-    items: [
-      'Vibrant', 'Warm', 'complementary', 'neutral', 'Cool',
-      'warm and vibrant', 'Earthy', 'Pastel', 'Monochrome',
-    ],
-    defaultShow: 6,
   },
   tags: {
     label: 'Tags',
@@ -101,14 +71,6 @@ const FILTER_CONFIG = {
   },
 };
 
-// Quick filter chips
-const QUICK_FILTERS = [
-  'Holiday Sale Promotion',
-  'Year-End Event Announcement',
-  'Winter Fitness Class Schedule',
-  'School Winter Break Closure Notice',
-  'New Year Customer Appreciation',
-];
 
 export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
   // State
@@ -121,20 +83,13 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
   const [expandedFilters, setExpandedFilters] = useState({
     categories: true,
     industries: false,
-    templateTypes: false,
-    visualStyles: false,
-    colorMoods: false,
     tags: false,
   });
   const [showMoreFilters, setShowMoreFilters] = useState({});
   const [activeFilters, setActiveFilters] = useState({
     orientation: null,
-    visualMode: null,
     category: 'All',
     industry: null,
-    templateType: null,
-    visualStyle: null,
-    colorMood: null,
     tag: null,
   });
 
@@ -194,25 +149,38 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
     return result;
   }, [templates, searchQuery, headerSearchQuery, activeFilters]);
 
+  // Apply base filters (orientation) to get filtered base
+  const baseFilteredTemplates = useMemo(() => {
+    let result = [...templates];
+
+    if (activeFilters.orientation) {
+      result = result.filter(t =>
+        t.orientation?.toLowerCase() === activeFilters.orientation.toLowerCase()
+      );
+    }
+
+    return result;
+  }, [templates, activeFilters.orientation]);
+
   // Get featured templates (is_featured or first 10)
   const featuredTemplates = useMemo(() => {
-    const featured = templates.filter(t => t.is_featured || t.isFeatured);
-    return featured.length > 0 ? featured : templates.slice(0, 10);
-  }, [templates]);
+    const featured = baseFilteredTemplates.filter(t => t.is_featured || t.isFeatured);
+    return featured.length > 0 ? featured : baseFilteredTemplates.slice(0, 10);
+  }, [baseFilteredTemplates]);
 
   // Get popular templates (by use_count or random selection)
   const popularTemplates = useMemo(() => {
-    const sorted = [...templates].sort((a, b) => (b.use_count || 0) - (a.use_count || 0));
+    const sorted = [...baseFilteredTemplates].sort((a, b) => (b.use_count || 0) - (a.use_count || 0));
     return sorted.slice(0, 10);
-  }, [templates]);
+  }, [baseFilteredTemplates]);
 
   // Get recent templates
   const recentTemplates = useMemo(() => {
-    const sorted = [...templates].sort((a, b) =>
+    const sorted = [...baseFilteredTemplates].sort((a, b) =>
       new Date(b.created_at || 0) - new Date(a.created_at || 0)
     );
     return sorted.slice(0, 10);
-  }, [templates]);
+  }, [baseFilteredTemplates]);
 
   // Handle template click
   const handleTemplateClick = (template) => {
@@ -325,10 +293,23 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
 
   // Template Card Component
   const TemplateCard = ({ template, isUserDesign = false, size = 'normal', inGrid = false }) => {
-    // Consistent sizing for both grid and scroll views
-    const cardClass = inGrid
-      ? 'w-full h-44'  // Fixed height for grid items
-      : (size === 'large' ? 'w-80 h-44 flex-shrink-0' : 'w-72 h-40 flex-shrink-0');
+    // Check if template is portrait orientation
+    const isPortrait = template.orientation?.toLowerCase() === 'portrait' ||
+      (template.height && template.width && template.height > template.width);
+
+    // Adjust sizing based on orientation
+    let cardClass;
+    if (inGrid) {
+      // Grid view - portrait cards are taller
+      cardClass = isPortrait ? 'w-full h-64' : 'w-full h-44';
+    } else {
+      // Scroll view - portrait cards are narrower and taller
+      if (isPortrait) {
+        cardClass = size === 'large' ? 'w-44 h-64 flex-shrink-0' : 'w-40 h-56 flex-shrink-0';
+      } else {
+        cardClass = size === 'large' ? 'w-80 h-44 flex-shrink-0' : 'w-72 h-40 flex-shrink-0';
+      }
+    }
 
     return (
       <div
@@ -380,12 +361,32 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
     );
   };
 
+  // Handle "View all" click - show all templates with optional section filter
+  const handleViewAll = (sectionTitle) => {
+    // Set a search/filter that shows all templates for this section
+    if (sectionTitle === 'Featured') {
+      setActiveFilters(prev => ({ ...prev, category: 'Featured' }));
+    } else if (sectionTitle === 'Popular') {
+      setActiveFilters(prev => ({ ...prev, category: 'Popular' }));
+    } else if (sectionTitle === 'Recent Designs') {
+      setActiveFilters(prev => ({ ...prev, category: 'Recent Designs' }));
+    }
+    // Clear search to show filtered results
+    setSearchQuery('');
+    setHeaderSearchQuery('');
+  };
+
   // Horizontal Scroll Section
   const HorizontalSection = ({ title, templates, scrollRef, isUserDesign = false }) => (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-        <button className="text-sm text-emerald-600 hover:text-emerald-700">View all</button>
+        <button
+          onClick={() => handleViewAll(title)}
+          className="text-sm text-emerald-600 hover:text-emerald-700"
+        >
+          View all
+        </button>
       </div>
       <div className="relative group/scroll">
         {/* Left scroll button */}
@@ -516,39 +517,6 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
               </div>
             </div>
 
-            {/* Visual Mode */}
-            <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-800 mb-2">Visual Mode</h4>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setActiveFilters(prev => ({
-                    ...prev,
-                    visualMode: prev.visualMode === 'static' ? null : 'static',
-                  }))}
-                  className={`text-sm transition-colors ${
-                    activeFilters.visualMode === 'static'
-                      ? 'text-emerald-600 font-medium'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Static
-                </button>
-                <button
-                  onClick={() => setActiveFilters(prev => ({
-                    ...prev,
-                    visualMode: prev.visualMode === 'animation' ? null : 'animation',
-                  }))}
-                  className={`text-sm transition-colors ${
-                    activeFilters.visualMode === 'animation'
-                      ? 'text-emerald-600 font-medium'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Animation
-                </button>
-              </div>
-            </div>
-
             {/* Categories - Always Expanded */}
             <div className="mb-4">
               <div className="flex items-center justify-between mb-2">
@@ -590,9 +558,6 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
 
             {/* Collapsible Sections */}
             <CollapsibleFilterSection filterKey="industries" config={FILTER_CONFIG.industries} />
-            <CollapsibleFilterSection filterKey="templateTypes" config={FILTER_CONFIG.templateTypes} />
-            <CollapsibleFilterSection filterKey="visualStyles" config={FILTER_CONFIG.visualStyles} />
-            <CollapsibleFilterSection filterKey="colorMoods" config={FILTER_CONFIG.colorMoods} />
             <CollapsibleFilterSection filterKey="tags" config={FILTER_CONFIG.tags} />
           </div>
         </div>
@@ -619,32 +584,21 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
                   className="w-full pl-12 pr-4 py-3 text-base rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-white/50"
                 />
               </div>
-              <button className="px-6 py-3 bg-white text-gray-900 font-medium rounded-lg hover:bg-gray-100 transition-colors">
+              <button
+                onClick={() => {
+                  // The search is already reactive via headerSearchQuery state
+                  // This button provides visual feedback that search is active
+                  if (headerSearchQuery) {
+                    setSearchQuery('');  // Clear sidebar search if using header
+                  }
+                }}
+                className="px-6 py-3 bg-white text-gray-900 font-medium rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 Search Templates
               </button>
             </div>
           </div>
 
-          {/* Quick Filter Chips */}
-          <div className="flex flex-wrap justify-center gap-2 mb-4">
-            {QUICK_FILTERS.map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setHeaderSearchQuery(filter)}
-                className="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm rounded-full transition-colors"
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-
-          {/* AI Designer Button */}
-          <div className="text-center">
-            <button className="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-900 font-medium rounded-lg hover:bg-gray-100 transition-colors">
-              <Sparkles size={16} className="text-emerald-500" />
-              Try AI Designer
-            </button>
-          </div>
         </div>
 
         {/* Content Area */}
@@ -696,21 +650,59 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
           ) : (
             /* Home View with Sections */
             <>
-              <HorizontalSection
-                title="Featured"
-                templates={featuredTemplates}
-                scrollRef={featuredRef}
-              />
-              <HorizontalSection
-                title="Popular"
-                templates={popularTemplates}
-                scrollRef={popularRef}
-              />
-              <HorizontalSection
-                title="Recent Designs"
-                templates={recentTemplates}
-                scrollRef={recentRef}
-              />
+              {/* Active filter indicator */}
+              {activeFilters.orientation && (
+                <div className="mb-4 flex items-center gap-2">
+                  <span className="text-sm text-gray-500">Active filters:</span>
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full">
+                    {activeFilters.orientation === 'landscape' ? <Monitor size={12} /> : <Smartphone size={12} />}
+                    {activeFilters.orientation}
+                    <button
+                      onClick={() => setActiveFilters(prev => ({ ...prev, orientation: null }))}
+                      className="ml-1 hover:text-emerald-900"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    ({baseFilteredTemplates.length} templates)
+                  </span>
+                </div>
+              )}
+
+              {baseFilteredTemplates.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
+                  <Folder size={48} className="mx-auto text-gray-300 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No templates found</h3>
+                  <p className="text-gray-500 mb-4">
+                    No templates match your current filters. Try adjusting your selection.
+                  </p>
+                  <button
+                    onClick={() => setActiveFilters(prev => ({ ...prev, orientation: null }))}
+                    className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <HorizontalSection
+                    title="Featured"
+                    templates={featuredTemplates}
+                    scrollRef={featuredRef}
+                  />
+                  <HorizontalSection
+                    title="Popular"
+                    templates={popularTemplates}
+                    scrollRef={popularRef}
+                  />
+                  <HorizontalSection
+                    title="Recent Designs"
+                    templates={recentTemplates}
+                    scrollRef={recentRef}
+                  />
+                </>
+              )}
             </>
           )}
         </div>

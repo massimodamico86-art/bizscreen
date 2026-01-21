@@ -50,6 +50,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
     tags: '',
     isActive: true,
     isFeatured: false,
+    thumbnailUrl: null,
   });
 
   // Related data
@@ -82,6 +83,8 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
   const [autoTagging, setAutoTagging] = useState(false);
   const [svgContent, setSvgContent] = useState(null);
   const [svgUrl, setSvgUrl] = useState(null);
+  const [svgPreviewUrl, setSvgPreviewUrl] = useState(null);
+  const [uploadedSvgFile, setUploadedSvgFile] = useState(null);
 
   // Load categories
   useEffect(() => {
@@ -107,6 +110,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
           tags: (data.tags || []).join(', '),
           isActive: data.is_active !== false,
           isFeatured: data.is_featured || false,
+          thumbnailUrl: data.thumbnail_url || null,
         });
         setSlides(data.slides || []);
       })
@@ -142,6 +146,15 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
     setError(null);
 
     try {
+      // Build metadata with SVG info
+      const metadata = {};
+      if (svgContent) {
+        metadata.svgContent = svgContent;
+      }
+      if (svgUrl) {
+        metadata.svgUrl = svgUrl;
+      }
+
       const templateData = {
         name: form.name.trim(),
         description: form.description.trim(),
@@ -155,13 +168,31 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
           .filter(Boolean),
         isActive: form.isActive,
         isFeatured: form.isFeatured,
+        metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
       };
+
+      let savedTemplateId = templateId;
 
       if (isNew) {
         const created = await createTemplate(templateData);
-        onNavigate?.(`admin-template-${created.id}`);
+        savedTemplateId = created.id;
       } else {
         await updateTemplate(templateId, templateData);
+      }
+
+      // If there's an uploaded SVG file, automatically save it as thumbnail
+      if (uploadedSvgFile && savedTemplateId) {
+        try {
+          await uploadTemplateThumbnail(savedTemplateId, uploadedSvgFile);
+          console.log('Thumbnail auto-uploaded successfully');
+        } catch (thumbErr) {
+          console.error('Failed to upload thumbnail:', thumbErr);
+          // Don't fail the whole save, just log the error
+        }
+      }
+
+      if (isNew) {
+        onNavigate?.(`admin-template-${savedTemplateId}`);
       }
     } catch (err) {
       console.error('Failed to save template:', err);
@@ -199,6 +230,12 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       const content = await file.text();
       setSvgContent(content);
       setSvgUrl(null);
+      setUploadedSvgFile(file);
+
+      // Create preview URL from SVG content
+      const blob = new Blob([content], { type: 'image/svg+xml' });
+      const previewUrl = URL.createObjectURL(blob);
+      setSvgPreviewUrl(previewUrl);
     } catch (err) {
       console.error('Failed to read SVG file:', err);
       setError('Failed to read SVG file');
@@ -580,24 +617,57 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
             <p className="mt-1 text-xs text-gray-500">Separate with commas</p>
           </div>
 
-          {/* Thumbnail Upload */}
-          {!isNew && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Thumbnail
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleThumbnailUpload}
-                disabled={uploading}
-                className="text-sm"
-              />
-              {uploading && (
-                <p className="text-xs text-blue-600 mt-1">Uploading...</p>
-              )}
-            </div>
-          )}
+          {/* Thumbnail Preview */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Thumbnail Preview
+            </label>
+            {svgPreviewUrl ? (
+              <div className="space-y-3">
+                <div className="relative w-64 h-40 border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                  <img
+                    src={svgPreviewUrl}
+                    alt="SVG Preview"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <p className="text-xs text-green-600">
+                  ✓ This SVG will be automatically saved as the thumbnail when you click "Save"
+                </p>
+              </div>
+            ) : form.thumbnailUrl ? (
+              <div className="w-64 h-40 border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                <img
+                  src={form.thumbnailUrl}
+                  alt="Current Thumbnail"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            ) : (
+              <div className="w-64 h-40 border border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+                <p className="text-sm text-gray-400">
+                  Upload an SVG above to see preview
+                </p>
+              </div>
+            )}
+
+            {/* Manual thumbnail upload fallback */}
+            {!isNew && !svgPreviewUrl && (
+              <div className="mt-3">
+                <label className="text-xs text-gray-500">Or upload a different image:</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailUpload}
+                  disabled={uploading}
+                  className="text-sm mt-1"
+                />
+                {uploading && (
+                  <p className="text-xs text-blue-600 mt-1">Uploading...</p>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Toggles */}
           <div className="flex gap-6">

@@ -1,0 +1,220 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - link "Skip to main content" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - complementary [ref=e5]:
+    - generic [ref=e8]:
+      - generic [ref=e9]: B
+      - generic [ref=e10]: BizScreen
+    - navigation [ref=e11]:
+      - button "Welcome" [ref=e12] [cursor=pointer]:
+        - img [ref=e13]
+        - generic [ref=e16]: Welcome
+      - button "Dashboard" [ref=e17] [cursor=pointer]:
+        - img [ref=e18]
+        - generic [ref=e23]: Dashboard
+      - button "Media" [ref=e25] [cursor=pointer]:
+        - generic [ref=e26]:
+          - img [ref=e27]
+          - generic [ref=e31]: Media
+        - img [ref=e32]
+      - button "Apps" [ref=e34] [cursor=pointer]:
+        - img [ref=e35]
+        - generic [ref=e37]: Apps
+      - button "Playlists" [ref=e38] [cursor=pointer]:
+        - img [ref=e39]
+        - generic [ref=e41]: Playlists
+      - button "Templates" [ref=e42] [cursor=pointer]:
+        - img [ref=e43]
+        - generic [ref=e47]: Templates
+      - button "Schedules" [ref=e48] [cursor=pointer]:
+        - img [ref=e49]
+        - generic [ref=e51]: Schedules
+      - button "Screens" [ref=e52] [cursor=pointer]:
+        - img [ref=e53]
+        - generic [ref=e55]: Screens
+    - button "Knowledge Hub" [ref=e57] [cursor=pointer]:
+      - img [ref=e59]
+      - generic [ref=e62]: Knowledge Hub
+  - main [ref=e63]:
+    - generic [ref=e64]:
+      - navigation [ref=e65]:
+        - button "Home" [ref=e66] [cursor=pointer]
+        - img [ref=e67]
+        - generic [ref=e69]: dashboard
+      - generic [ref=e70]:
+        - button "View notifications" [ref=e72] [cursor=pointer]:
+          - img [ref=e73]
+        - button "Announcements" [ref=e76] [cursor=pointer]:
+          - img [ref=e77]
+        - generic [ref=e80]:
+          - generic [ref=e81]: C
+          - button "Sign out" [ref=e82] [cursor=pointer]:
+            - img [ref=e83]
+    - generic [ref=e87]:
+      - generic [ref=e90]:
+        - heading "Dashboard" [level=1] [ref=e91]
+        - paragraph [ref=e92]: Welcome back! Here's your digital signage overview
+      - generic [ref=e94]:
+        - generic [ref=e96]:
+          - generic [ref=e98] [cursor=pointer]:
+            - generic [ref=e99]:
+              - paragraph [ref=e100]: Total Screens
+              - paragraph [ref=e101]: "2"
+              - generic [ref=e104]:
+                - generic [ref=e105]:
+                  - img [ref=e106]
+                  - text: "0"
+                - generic [ref=e110]:
+                  - img [ref=e111]
+                  - text: "2"
+            - img [ref=e119]
+          - generic [ref=e122] [cursor=pointer]:
+            - generic [ref=e123]:
+              - paragraph [ref=e124]: Playlists
+              - paragraph [ref=e125]: "3"
+              - generic [ref=e127]: Content playlists
+            - img [ref=e129]
+          - generic [ref=e132] [cursor=pointer]:
+            - generic [ref=e133]:
+              - paragraph [ref=e134]: Media Assets
+              - paragraph [ref=e135]: "12"
+              - generic "12 images" [ref=e139]:
+                - img [ref=e140]
+                - text: "12"
+            - img [ref=e145]
+          - generic [ref=e150] [cursor=pointer]:
+            - generic [ref=e151]:
+              - paragraph [ref=e152]: Apps
+              - paragraph [ref=e153]: "0"
+              - generic [ref=e155]: Widgets & dynamic content
+            - img [ref=e157]
+        - generic [ref=e159]:
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - heading "Screens Overview" [level=3] [ref=e163]
+              - button "View All" [ref=e165] [cursor=pointer]:
+                - text: View All
+                - img [ref=e166]
+            - generic [ref=e169]:
+              - generic [ref=e170]:
+                - generic [ref=e173]:
+                  - paragraph [ref=e174]: Lobby Screen
+                  - paragraph [ref=e175]: Lobby Display
+                - generic [ref=e176]:
+                  - generic [ref=e177]: Offline
+                  - paragraph [ref=e178]:
+                    - img [ref=e179]
+                    - text: Never
+              - generic [ref=e182]:
+                - generic [ref=e185]:
+                  - paragraph [ref=e186]: Meeting Room
+                  - paragraph [ref=e187]: No content assigned
+                - generic [ref=e188]:
+                  - generic [ref=e189]: Offline
+                  - paragraph [ref=e190]:
+                    - img [ref=e191]
+                    - text: Never
+          - generic [ref=e194]:
+            - heading "Quick Actions" [level=3] [ref=e197]
+            - generic [ref=e199]:
+              - button "Add Screen Connect a new TV display" [ref=e200] [cursor=pointer]:
+                - img [ref=e202]
+                - generic [ref=e204]:
+                  - heading "Add Screen" [level=3] [ref=e205]
+                  - paragraph [ref=e206]: Connect a new TV display
+                - img [ref=e207]
+              - button "Create Playlist Build a new content playlist" [ref=e209] [cursor=pointer]:
+                - img [ref=e211]
+                - generic [ref=e213]:
+                  - heading "Create Playlist" [level=3] [ref=e214]
+                  - paragraph [ref=e215]: Build a new content playlist
+                - img [ref=e216]
+              - button "Upload Media Add images, videos, or documents" [ref=e218] [cursor=pointer]:
+                - img [ref=e220]
+                - generic [ref=e224]:
+                  - heading "Upload Media" [level=3] [ref=e225]
+                  - paragraph [ref=e226]: Add images, videos, or documents
+                - img [ref=e227]
+              - button "Create App Add a clock, web page, or widget" [ref=e229] [cursor=pointer]:
+                - img [ref=e231]
+                - generic [ref=e233]:
+                  - heading "Create App" [level=3] [ref=e234]
+                  - paragraph [ref=e235]: Add a clock, web page, or widget
+                - img [ref=e236]
+        - generic [ref=e238]:
+          - generic [ref=e240]:
+            - generic [ref=e242]:
+              - img [ref=e243]
+              - heading "Recent Activity" [level=3] [ref=e245]
+            - generic [ref=e246]:
+              - button "Gemini_Generated_Image_crwa73crwa73crwa.png uploaded · 29d ago" [ref=e247] [cursor=pointer]:
+                - img [ref=e249]
+                - generic [ref=e253]:
+                  - paragraph [ref=e254]: Gemini_Generated_Image_crwa73crwa73crwa.png
+                  - paragraph [ref=e255]:
+                    - img [ref=e256]
+                    - generic [ref=e259]: uploaded
+                    - generic [ref=e260]: ·
+                    - text: 29d ago
+              - button "Digital Menu Board created · 30d ago" [ref=e261] [cursor=pointer]:
+                - img [ref=e263]
+                - generic [ref=e265]:
+                  - paragraph [ref=e266]: Digital Menu Board
+                  - paragraph [ref=e267]:
+                    - img [ref=e268]
+                    - generic [ref=e270]: created
+                    - generic [ref=e271]: ·
+                    - text: 30d ago
+              - button "Daily Specials & Promos created · 30d ago" [ref=e272] [cursor=pointer]:
+                - img [ref=e274]
+                - generic [ref=e276]:
+                  - paragraph [ref=e277]: Daily Specials & Promos
+                  - paragraph [ref=e278]:
+                    - img [ref=e279]
+                    - generic [ref=e281]: created
+                    - generic [ref=e282]: ·
+                    - text: 30d ago
+              - button "Desserts & Drinks uploaded · 30d ago" [ref=e283] [cursor=pointer]:
+                - img [ref=e285]
+                - generic [ref=e289]:
+                  - paragraph [ref=e290]: Desserts & Drinks
+                  - paragraph [ref=e291]:
+                    - img [ref=e292]
+                    - generic [ref=e295]: uploaded
+                    - generic [ref=e296]: ·
+                    - text: 30d ago
+              - button "Weekend Brunch uploaded · 30d ago" [ref=e297] [cursor=pointer]:
+                - img [ref=e299]
+                - generic [ref=e303]:
+                  - paragraph [ref=e304]: Weekend Brunch
+                  - paragraph [ref=e305]:
+                    - img [ref=e306]
+                    - generic [ref=e309]: uploaded
+                    - generic [ref=e310]: ·
+                    - text: 30d ago
+          - generic [ref=e312]:
+            - generic [ref=e313]:
+              - generic [ref=e314]:
+                - img [ref=e315]
+                - heading "Alerts" [level=3] [ref=e318]
+                - generic [ref=e319]: "2"
+              - button "View All" [ref=e320] [cursor=pointer]:
+                - generic [ref=e321]: View All
+            - generic [ref=e322]:
+              - generic [ref=e324]: 2 warnings
+              - button "Lobby Screen Device has never connected" [ref=e325] [cursor=pointer]:
+                - img [ref=e327]
+                - generic [ref=e329]:
+                  - paragraph [ref=e330]: Lobby Screen
+                  - paragraph [ref=e331]: Device has never connected
+              - button "Meeting Room Device has never connected" [ref=e332] [cursor=pointer]:
+                - img [ref=e334]
+                - generic [ref=e336]:
+                  - paragraph [ref=e337]: Meeting Room
+                  - paragraph [ref=e338]: Device has never connected
+  - button "Send feedback" [ref=e339] [cursor=pointer]:
+    - img [ref=e340]
+```

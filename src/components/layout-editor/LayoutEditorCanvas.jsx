@@ -143,7 +143,10 @@ export default function LayoutEditorCanvas({
   smartGuidesEnabled = true,
   onDoubleClick,
   mode = 'edit', // 'edit' | 'preview'
+  canvasSize = { width: 1920, height: 1080 }, // Canvas dimensions
 }) {
+  // Calculate aspect ratio from canvas size
+  const aspectRatio = canvasSize.width / canvasSize.height;
   // In preview mode, disable all editing interactions
   const isPreviewMode = mode === 'preview';
   const canvasRef = useRef(null);
@@ -344,10 +347,11 @@ export default function LayoutEditorCanvas({
     <div className="w-full h-full flex items-center justify-center p-8 bg-gray-100">
       <div
         ref={canvasRef}
-        className="relative aspect-video rounded-lg overflow-hidden shadow-xl"
+        className="relative rounded-lg overflow-hidden shadow-xl"
         style={{
           width: `${100 * zoom}%`,
-          maxWidth: `calc((100vh - 200px) * 16 / 9 * ${zoom})`,
+          maxWidth: `calc((100vh - 200px) * ${aspectRatio} * ${zoom})`,
+          aspectRatio: `${canvasSize.width} / ${canvasSize.height}`,
           ...getBackgroundStyle(),
         }}
         onClick={handleCanvasClick}

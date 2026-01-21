@@ -6,8 +6,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import { X, CloudSun, Upload, Info, MapPin } from 'lucide-react';
+import { X, CloudSun, Upload, Info, MapPin, Maximize2 } from 'lucide-react';
 import { Button, Card } from '../../design-system';
+import WeatherWall from '../WeatherWall';
 
 // Language options
 const LANGUAGES = [
@@ -69,24 +70,19 @@ export default function WeatherWallConfigModal({ app, onClose, onCreate, creatin
   const [tags, setTags] = useState('');
   const [defaultDuration, setDefaultDuration] = useState(20);
 
-  // Preview state
-  const [previewWeather] = useState({
-    location: 'London',
-    condition: 'Snow',
-    temp: 20,
-    tempF: 68,
-    humidity: 60,
-    wind: 7,
-    visibility: 10,
-    airQuality: 2,
-    forecast: [
-      { day: 'Mon', icon: 'sun', high: 22, low: 15 },
-      { day: 'Tue', icon: 'cloud', high: 19, low: 12 },
-      { day: 'Wed', icon: 'rain', high: 16, low: 10 },
-      { day: 'Thu', icon: 'sun', high: 21, low: 14 },
-      { day: 'Fri', icon: 'cloud', high: 18, low: 11 },
-    ],
-  });
+  // Full-screen preview modal state
+  const [showFullPreview, setShowFullPreview] = useState(false);
+
+  // Handle ESC key to close preview
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && showFullPreview) {
+        setShowFullPreview(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showFullPreview]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -123,18 +119,6 @@ export default function WeatherWallConfigModal({ app, onClose, onCreate, creatin
     }
   };
 
-  // Get weather icon based on condition
-  const getWeatherIcon = (condition) => {
-    const icons = {
-      sun: '☀️',
-      cloud: '☁️',
-      rain: '🌧️',
-      snow: '❄️',
-      storm: '⛈️',
-    };
-    return icons[condition] || '☀️';
-  };
-
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col">
@@ -152,7 +136,10 @@ export default function WeatherWallConfigModal({ app, onClose, onCreate, creatin
             <Button variant="secondary" onClick={onClose}>
               Cancel
             </Button>
-            <Button variant="secondary">Preview</Button>
+            <Button variant="secondary" onClick={() => setShowFullPreview(true)}>
+              <Maximize2 className="w-4 h-4 mr-1" />
+              Preview
+            </Button>
             <Button
               onClick={handleSubmit}
               disabled={creating || (!usePlayerLocation && !location)}
@@ -167,129 +154,78 @@ export default function WeatherWallConfigModal({ app, onClose, onCreate, creatin
         <div className="flex-1 overflow-y-auto">
           <div className="flex">
             {/* Left: Preview */}
-            <div className="w-[450px] p-6 bg-gray-50 border-r border-gray-200">
-              {/* Weather Preview Card */}
-              <div
-                className={`rounded-xl overflow-hidden shadow-lg ${
-                  theme === 'animated'
-                    ? 'bg-gradient-to-br from-blue-600 to-blue-800'
-                    : theme === 'classic'
-                    ? 'bg-gray-800'
-                    : 'bg-white/20 backdrop-blur-lg border border-white/30'
-                }`}
-              >
-                <div className="p-6 text-white">
-                  {/* Location */}
-                  <div className="flex items-center gap-2 text-sm opacity-80 mb-1">
-                    <MapPin size={14} />
-                    <span>{locationHeader || previewWeather.location}</span>
-                  </div>
-
-                  {/* Condition */}
-                  <div className="text-lg font-medium mb-4">
-                    {previewWeather.condition}
-                  </div>
-
-                  {/* Main temp and icons row */}
-                  <div className="flex items-start justify-between mb-6">
-                    <div>
-                      <div className="text-6xl font-light">
-                        {tempUnit === 'celsius'
-                          ? `${previewWeather.temp}°C`
-                          : `${previewWeather.tempF}°F`}
-                        {showBothUnits && (
-                          <span className="text-2xl ml-2 opacity-60">
-                            {tempUnit === 'celsius'
-                              ? `${previewWeather.tempF}°F`
-                              : `${previewWeather.temp}°C`}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-sm opacity-60 mt-1">
-                        Feels like{' '}
-                        {tempUnit === 'celsius' ? '18°C' : '65°F'}
-                      </div>
-                    </div>
-
-                    {/* Weather icon grid */}
-                    <div className="grid grid-cols-4 gap-2">
-                      {['sun', 'cloud', 'rain', 'snow'].map((icon, i) => (
-                        <div
-                          key={i}
-                          className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center text-xl"
-                        >
-                          {getWeatherIcon(icon)}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Stats row */}
-                  <div className="grid grid-cols-4 gap-4 py-4 border-t border-white/20">
-                    <div className="text-center">
-                      <div className="text-2xl font-semibold">
-                        {previewWeather.humidity}%
-                      </div>
-                      <div className="text-xs opacity-60">Humidity</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-semibold">0%</div>
-                      <div className="text-xs opacity-60">Chance</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-semibold">
-                        {measurementSystem === 'metric' ? '10km' : '6mi'}
-                      </div>
-                      <div className="text-xs opacity-60">Visibility</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-semibold">
-                        {previewWeather.airQuality}
-                      </div>
-                      <div className="text-xs opacity-60">Air Quality</div>
-                    </div>
-                  </div>
-
-                  {/* Date/Time */}
-                  <div className="text-sm opacity-60 mt-4">
-                    Tuesday, 17 Dec 2025 • 02:58 PM
-                  </div>
-
-                  {/* Forecast */}
-                  <div className="grid grid-cols-5 gap-2 mt-4 pt-4 border-t border-white/20">
-                    {previewWeather.forecast.map((day, i) => (
-                      <div
-                        key={i}
-                        className="text-center bg-white/10 rounded-lg p-2"
-                      >
-                        <div className="text-xs opacity-80">{day.day}</div>
-                        <div className="text-xl my-1">
-                          {getWeatherIcon(day.icon)}
-                        </div>
-                        <div className="text-sm">
-                          {tempUnit === 'celsius'
-                            ? `${day.high}°`
-                            : `${Math.round(day.high * 1.8 + 32)}°`}
-                        </div>
-                      </div>
-                    ))}
+            <div className="w-[450px] p-6 bg-gray-900 border-r border-gray-200 flex flex-col items-center">
+              {/* Live Weather Preview using actual WeatherWall component */}
+              {/* Container simulates a TV scaled down to fit */}
+              {orientation === 'portrait' ? (
+                // Portrait: 1080x1920 scaled to fit ~300px height
+                <div className="rounded-xl overflow-hidden shadow-lg" style={{ aspectRatio: '9/16', height: '350px' }}>
+                  <div
+                    style={{
+                      width: '1080px',
+                      height: '1920px',
+                      transform: 'scale(0.182)', // Scale to fit ~350px height
+                      transformOrigin: 'top left',
+                    }}
+                  >
+                    <WeatherWall
+                      config={{
+                        theme,
+                        location: usePlayerLocation ? 'auto' : location,
+                        locationHeader,
+                        tempUnit,
+                        showBothUnits,
+                        measurementSystem,
+                        language,
+                        dateFormat,
+                        logoUrl,
+                        orientation: 'portrait',
+                      }}
+                    />
                   </div>
                 </div>
-              </div>
+              ) : (
+                // Landscape (default): 1920x1080 scaled to fit ~420px width
+                <div className="rounded-xl overflow-hidden shadow-lg w-full" style={{ aspectRatio: '16/9' }}>
+                  <div
+                    style={{
+                      width: '1920px',
+                      height: '1080px',
+                      transform: 'scale(0.219)', // Scale to fit ~420px width
+                      transformOrigin: 'top left',
+                    }}
+                  >
+                    <WeatherWall
+                      config={{
+                        theme,
+                        location: usePlayerLocation ? 'auto' : location,
+                        locationHeader,
+                        tempUnit,
+                        showBothUnits,
+                        measurementSystem,
+                        language,
+                        dateFormat,
+                        logoUrl,
+                        orientation: 'landscape',
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Metadata */}
-              <div className="mt-4 text-sm text-gray-500">
+              <div className="mt-4 text-sm text-gray-400 w-full">
                 <div className="flex justify-between py-1">
                   <span>ID</span>
-                  <span>-</span>
+                  <span className="text-gray-300">-</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span>Uploaded date</span>
-                  <span>-</span>
+                  <span className="text-gray-300">-</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span>Category</span>
-                  <span>Weather</span>
+                  <span className="text-gray-300">Weather</span>
                 </div>
               </div>
             </div>
@@ -315,13 +251,13 @@ export default function WeatherWallConfigModal({ app, onClose, onCreate, creatin
                     {/* Name */}
                     <div className="flex items-center gap-4">
                       <label className="w-40 text-sm font-medium text-gray-700">
-                        Name*
+                        Name
                       </label>
                       <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter Name"
+                        placeholder="Weather Wall"
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
                       />
                     </div>
@@ -364,16 +300,15 @@ export default function WeatherWallConfigModal({ app, onClose, onCreate, creatin
                     {/* Location Header */}
                     <div className="flex items-center gap-4">
                       <label className="w-40 text-sm font-medium text-gray-700 flex items-center gap-1">
-                        Location Header
-                        <Info size={14} className="text-gray-400" />
+                        Display Name
+                        <Info size={14} className="text-gray-400" title="Override the location name shown on screen" />
                       </label>
                       <input
                         type="text"
                         value={locationHeader}
                         onChange={(e) => setLocationHeader(e.target.value)}
-                        placeholder={usePlayerLocation ? '' : 'Enter location'}
-                        disabled={!usePlayerLocation}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21] disabled:bg-gray-100"
+                        placeholder="e.g., Our Store, Lobby Display"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
                       />
                     </div>
 
@@ -409,10 +344,10 @@ export default function WeatherWallConfigModal({ app, onClose, onCreate, creatin
                       </select>
                     </div>
 
-                    {/* Also display in F */}
+                    {/* Also display secondary unit */}
                     <div className="flex items-center gap-4">
                       <label className="w-40 text-sm font-medium text-gray-700 flex items-center gap-1">
-                        Also display in °F
+                        Also display in {tempUnit === 'celsius' ? '°F' : '°C'}
                         <Info size={14} className="text-gray-400" />
                       </label>
                       <button
@@ -684,6 +619,56 @@ export default function WeatherWallConfigModal({ app, onClose, onCreate, creatin
           </div>
         </div>
       </div>
+
+      {/* Full-screen Preview Modal */}
+      {showFullPreview && (
+        <div className="fixed inset-0 z-[60] bg-black flex items-center justify-center">
+          {/* Close button */}
+          <button
+            onClick={() => setShowFullPreview(false)}
+            className="absolute top-4 right-4 z-10 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* Preview info */}
+          <div className="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-sm rounded-lg px-4 py-2 text-white text-sm">
+            <div className="font-medium">{name || 'Weather Wall'}</div>
+            <div className="text-white/60 text-xs">
+              Theme: {theme} • {orientation === 'portrait' ? '9:16' : '16:9'}
+            </div>
+          </div>
+
+          {/* Weather Wall Preview */}
+          <div
+            className={`${
+              orientation === 'portrait'
+                ? 'h-[90vh] aspect-[9/16]'
+                : 'w-[90vw] aspect-video'
+            } max-w-full max-h-full`}
+          >
+            <WeatherWall
+              config={{
+                theme,
+                location: usePlayerLocation ? 'auto' : location,
+                locationHeader,
+                tempUnit,
+                showBothUnits,
+                measurementSystem,
+                language,
+                dateFormat,
+                logoUrl,
+                orientation,
+              }}
+            />
+          </div>
+
+          {/* Press ESC hint */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/40 text-sm">
+            Press ESC or click X to close
+          </div>
+        </div>
+      )}
     </div>
   );
 }

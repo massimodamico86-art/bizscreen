@@ -40,6 +40,7 @@ import {
   ChevronRight,
   Home,
   BookmarkPlus,
+  Palette,
 } from 'lucide-react';
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -66,6 +67,7 @@ import {
   getExpiryLabel,
 } from '../services/previewService';
 import { savePlaylistAsTemplate } from '../services/playlistService';
+import WeatherWall from '../components/WeatherWall';
 
 const MEDIA_TYPE_ICONS = {
   image: Image,
@@ -73,7 +75,8 @@ const MEDIA_TYPE_ICONS = {
   audio: Music,
   document: FileText,
   web_page: Globe,
-  app: Grid3X3
+  app: Grid3X3,
+  design: Palette
 };
 
 const MEDIA_TYPE_LABELS = {
@@ -82,7 +85,8 @@ const MEDIA_TYPE_LABELS = {
   audio: 'Audio',
   document: 'Document',
   web_page: 'Web Page',
-  app: 'App'
+  app: 'App',
+  design: 'Design'
 };
 
 const FILTER_TABS = [
@@ -93,8 +97,7 @@ const FILTER_TABS = [
   { key: 'document', label: 'Docs' },
   { key: 'web_page', label: 'Web' },
   { key: 'app', label: 'Apps' },
-  { key: 'playlist', label: 'Playlists' },
-  { key: 'template', label: 'Templates' },
+  { key: 'my_designs', label: 'My Designs' },
 ];
 
 // Timeline item component - duration-based width with drag support
@@ -288,6 +291,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [mediaAssets, setMediaAssets] = useState([]);
+  const [userDesigns, setUserDesigns] = useState([]);
   const [mediaSearch, setMediaSearch] = useState('');
   const [mediaFilter, setMediaFilter] = useState('');
 
@@ -371,17 +375,56 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       if (playlistError) throw playlistError;
       setPlaylist(playlistData);
 
+      // Fetch playlist items (without join first)
       const { data: itemsData, error: itemsError } = await supabase
         .from('playlist_items')
-        .select(`
-          *,
-          media:media_assets(id, name, type, url, thumbnail_url, duration)
-        `)
+        .select('*')
         .eq('playlist_id', playlistId)
         .order('position', { ascending: true });
 
       if (itemsError) throw itemsError;
-      setItems(itemsData || []);
+
+      // Separate items by type and fetch related data
+      const mediaItemIds = itemsData?.filter(i => i.item_type === 'media').map(i => i.item_id) || [];
+      const layoutItemIds = itemsData?.filter(i => i.item_type === 'layout').map(i => i.item_id) || [];
+
+      // Fetch media assets
+      let mediaMap = {};
+      if (mediaItemIds.length > 0) {
+        const { data: mediaData } = await supabase
+          .from('media_assets')
+          .select('id, name, type, url, thumbnail_url, duration, config_json')
+          .in('id', mediaItemIds);
+        mediaMap = (mediaData || []).reduce((acc, m) => ({ ...acc, [m.id]: m }), {});
+      }
+
+      // Fetch layouts (designs)
+      let layoutMap = {};
+      if (layoutItemIds.length > 0) {
+        const { data: layoutData } = await supabase
+          .from('layouts')
+          .select('id, name, background_image, width, height')
+          .in('id', layoutItemIds);
+        layoutMap = (layoutData || []).reduce((acc, l) => ({
+          ...acc,
+          [l.id]: {
+            id: l.id,
+            name: l.name,
+            type: 'design',
+            url: l.background_image,
+            thumbnail_url: l.background_image,
+            duration: null,
+          }
+        }), {});
+      }
+
+      // Combine items with their media/layout data
+      const enrichedItems = (itemsData || []).map(item => ({
+        ...item,
+        media: item.item_type === 'layout' ? layoutMap[item.item_id] : mediaMap[item.item_id]
+      }));
+
+      setItems(enrichedItems);
     } catch (error) {
       console.error('Error fetching playlist:', error);
       showToast?.('Error loading playlist: ' + error.message, 'error');
@@ -464,32 +507,68 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
 
   const fetchMediaAssets = async () => {
     try {
-      let query = supabase
-        .from('media_assets')
-        .select('*')
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false })
-        .limit(100); // Increased limit for virtual scrolling
+      // Special handling for "My Designs" filter - fetch from layouts table
+      if (mediaFilter === 'my_designs') {
+        let query = supabase
+          .from('layouts')
+          .select('*')
+          .eq('data->>type', 'svg_design')
+          .order('updated_at', { ascending: false })
+          .limit(100);
 
-      // Filter by folder
-      if (currentFolderId === null) {
-        query = query.is('folder_id', null);
+        if (mediaSearch) {
+          query = query.ilike('name', `%${mediaSearch}%`);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        // Transform layouts to media-like format for display
+        const designsAsMedia = (data || []).map(design => ({
+          id: design.id,
+          name: design.name,
+          type: 'design',
+          url: design.background_image,
+          thumbnail_url: design.background_image,
+          duration: null,
+          created_at: design.created_at,
+          // Store original design data for adding to playlist
+          _isDesign: true,
+          _layoutData: design,
+        }));
+
+        setMediaAssets(designsAsMedia);
+        setUserDesigns(data || []);
       } else {
-        query = query.eq('folder_id', currentFolderId);
+        // Normal media assets fetch
+        let query = supabase
+          .from('media_assets')
+          .select('*')
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false })
+          .limit(100);
+
+        // Filter by folder
+        if (currentFolderId === null) {
+          query = query.is('folder_id', null);
+        } else {
+          query = query.eq('folder_id', currentFolderId);
+        }
+
+        if (mediaFilter) {
+          query = query.eq('type', mediaFilter);
+        }
+
+        if (mediaSearch) {
+          query = query.ilike('name', `%${mediaSearch}%`);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+        setMediaAssets(data || []);
       }
 
-      if (mediaFilter) {
-        query = query.eq('type', mediaFilter);
-      }
-
-      if (mediaSearch) {
-        query = query.ilike('name', `%${mediaSearch}%`);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      setMediaAssets(data || []);
-      // Reset scroll position when folder changes
+      // Reset scroll position when filter changes
       if (mediaScrollRef.current) {
         mediaScrollRef.current.scrollTop = 0;
       }
@@ -531,22 +610,44 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         ? Math.max(...items.map(i => i.position))
         : -1;
 
+      // Check if this is a design (from layouts table)
+      const isDesign = media._isDesign;
+      const itemType = isDesign ? 'layout' : 'media';
+
       const { data, error } = await supabase
         .from('playlist_items')
         .insert({
           playlist_id: playlistId,
-          item_type: 'media',
+          item_type: itemType,
           item_id: media.id,
           position: maxPosition + 1,
-          duration: media.duration || null
+          duration: media.duration || 10 // Default 10s for designs
         })
-        .select(`
-          *,
-          media:media_assets(id, name, type, url, thumbnail_url, duration)
-        `)
+        .select('*')
         .single();
 
       if (error) throw error;
+
+      // For designs, manually construct the media object for display
+      if (isDesign) {
+        const layoutData = media._layoutData;
+        data.media = {
+          id: layoutData.id,
+          name: layoutData.name,
+          type: 'design',
+          url: layoutData.background_image,
+          thumbnail_url: layoutData.background_image,
+          duration: null,
+        };
+      } else {
+        // Fetch the media asset for non-designs
+        const { data: mediaData } = await supabase
+          .from('media_assets')
+          .select('id, name, type, url, thumbnail_url, duration, config_json')
+          .eq('id', media.id)
+          .single();
+        data.media = mediaData;
+      }
 
       setItems(prev => [...prev, data]);
       showToast?.(`Added "${media.name}" to playlist`);
@@ -711,6 +812,10 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         // Adding from library
         setSaving(true);
 
+        // Check if this is a design (from layouts table)
+        const isDesign = data.media._isDesign;
+        const itemType = isDesign ? 'layout' : 'media';
+
         // Shift positions for items after the target
         const updatedPositions = items
           .filter((_, idx) => idx >= targetIndex)
@@ -721,18 +826,36 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
           .from('playlist_items')
           .insert({
             playlist_id: playlistId,
-            item_type: 'media',
+            item_type: itemType,
             item_id: data.media.id,
             position: targetIndex,
-            duration: data.media.duration || null
+            duration: data.media.duration || 10 // Default 10s for designs
           })
-          .select(`
-            *,
-            media:media_assets(id, name, type, url, thumbnail_url, duration)
-          `)
+          .select('*')
           .single();
 
         if (error) throw error;
+
+        // Add media data to newItem
+        if (isDesign) {
+          const layoutData = data.media._layoutData;
+          newItem.media = {
+            id: layoutData.id,
+            name: layoutData.name,
+            type: 'design',
+            url: layoutData.background_image,
+            thumbnail_url: layoutData.background_image,
+            duration: null,
+          };
+        } else {
+          // Fetch the media asset
+          const { data: mediaData } = await supabase
+            .from('media_assets')
+            .select('id, name, type, url, thumbnail_url, duration, config_json')
+            .eq('id', data.media.id)
+            .single();
+          newItem.media = mediaData;
+        }
 
         // Update positions of shifted items
         await Promise.all(
@@ -1142,18 +1265,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            variant="outline"
-            onClick={handleOpenTemplateModal}
-            className="flex items-center gap-1.5"
-            title="Save as Template"
-          >
-            <BookmarkPlus size={16} />
-            <span className="hidden sm:inline">Save as Template</span>
-          </Button>
-          <Button
-            size="sm"
             onClick={() => onNavigate?.('playlists')}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6"
           >
             Done
           </Button>
@@ -1318,7 +1430,24 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
                 <div className="w-full max-w-2xl">
                   <div className="aspect-video bg-gray-900 rounded-xl shadow-2xl overflow-hidden relative ring-4 ring-gray-800">
                     {previewItem ? (
-                      previewItem.media?.thumbnail_url || previewItem.media?.url ? (
+                      // App content - render the actual app component
+                      previewItem.media?.type === 'app' ? (
+                        (() => {
+                          const appType = previewItem.media?.config_json?.appType;
+                          const config = previewItem.media?.config_json || {};
+                          if (appType === 'weather') {
+                            return <WeatherWall config={config} />;
+                          }
+                          // Unknown app type - show placeholder
+                          return (
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 to-indigo-900 text-white">
+                              <Grid3X3 size={48} className="mb-3 opacity-60" />
+                              <p className="text-lg font-medium">{previewItem.media?.name || 'App'}</p>
+                              <p className="text-sm opacity-60 capitalize">{appType || 'Unknown'} App</p>
+                            </div>
+                          );
+                        })()
+                      ) : previewItem.media?.thumbnail_url || previewItem.media?.url ? (
                         <img
                           src={previewItem.media.thumbnail_url || previewItem.media.url}
                           alt={previewItem.media.name}
@@ -1395,93 +1524,6 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
               )}
             </div>
 
-            {/* Playlist Stats Panel */}
-            <div className="w-56 flex-shrink-0 flex flex-col gap-2">
-              {/* Playlist header */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
-                <h2 className="text-base font-semibold text-gray-900 truncate mb-0.5">{playlist?.name || 'Untitled Playlist'}</h2>
-                <p className="text-xs text-gray-500 line-clamp-1">{playlist?.description || 'No description'}</p>
-                <div className="flex items-center gap-1.5 mt-2">
-                  <button
-                    onClick={handleOpenAiModal}
-                    className="flex-1 p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors flex items-center justify-center gap-1.5 text-sm"
-                    title="AI Suggestions"
-                  >
-                    <Wand2 size={16} />
-                    AI
-                  </button>
-                  <button
-                    onClick={handleOpenPreviewModal}
-                    className="flex-1 p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-1.5 text-sm"
-                    title="Preview Links"
-                  >
-                    <Link2 size={16} />
-                    Share
-                  </button>
-                  <button
-                    className="flex-1 p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-1.5 text-sm"
-                    title="Settings"
-                  >
-                    <Settings size={16} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Stats cards */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
-                <h3 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2">Stats</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-600">Items</span>
-                    <span className="text-xs font-semibold text-gray-900">{items.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-600">Duration</span>
-                    <span className="text-xs font-semibold text-gray-900">{formatDuration(getTotalDuration())}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-600">Avg.</span>
-                    <span className="text-xs font-semibold text-gray-900">
-                      {items.length > 0 ? Math.round(getTotalDuration() / items.length) : 0}s
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Media type breakdown */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 flex-1">
-                <h3 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2">Content Mix</h3>
-                {items.length > 0 ? (
-                  <div className="space-y-1.5">
-                    {(() => {
-                      const typeCounts = items.reduce((acc, item) => {
-                        const type = item.media?.type || 'unknown';
-                        acc[type] = (acc[type] || 0) + 1;
-                        return acc;
-                      }, {});
-                      return Object.entries(typeCounts).map(([type, count]) => (
-                        <div key={type} className="flex items-center gap-2">
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between text-xs mb-0.5">
-                              <span className="text-gray-600 capitalize">{type}</span>
-                              <span className="text-gray-900 font-medium">{count}</span>
-                            </div>
-                            <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-orange-500 rounded-full transition-all"
-                                style={{ width: `${(count / items.length) * 100}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ));
-                    })()}
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-400 text-center py-2">No items yet</p>
-                )}
-              </div>
-            </div>
           </div>
         </div>
       </div>

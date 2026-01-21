@@ -58,6 +58,18 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
   const [smartGuidesEnabled, setSmartGuidesEnabled] = useState(true);
   const [showLayersPanel, setShowLayersPanel] = useState(false);
 
+  // Canvas orientation and size
+  const [orientation, setOrientation] = useState(() => {
+    // Initialize from layout or default to 16:9 landscape
+    if (layout?.canvasSize) {
+      return layout.canvasSize.width > layout.canvasSize.height ? '16:9' : '9:16';
+    }
+    return '16:9';
+  });
+  const [canvasSize, setCanvasSize] = useState(() => {
+    return layout?.canvasSize || { width: 1920, height: 1080 };
+  });
+
   // History for undo/redo (local state)
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -83,6 +95,26 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
     }
   }, [layout, history.length]);
 
+  // Sync canvas size from layout when it loads
+  useEffect(() => {
+    if (layout?.canvasSize) {
+      setCanvasSize(layout.canvasSize);
+      // Determine orientation from canvas size
+      if (layout.canvasSize.width > layout.canvasSize.height) {
+        setOrientation('16:9');
+      } else if (layout.canvasSize.height > layout.canvasSize.width) {
+        setOrientation('9:16');
+      } else {
+        setOrientation('1:1');
+      }
+    }
+  }, [layout?.canvasSize?.width, layout?.canvasSize?.height]);
+
+  // Handle orientation change
+  const handleOrientationChange = useCallback((newOrientation) => {
+    setOrientation(newOrientation);
+  }, []);
+
   // Push state to history
   const pushHistory = useCallback((newLayout) => {
     setHistory((prev) => {
@@ -103,6 +135,13 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
     setLayout(newLayout);
     saveLayoutDebounced(newLayout);
   }, [layout, pushHistory, setLayout, saveLayoutDebounced]);
+
+  // Handle canvas size change (must be after handleLayoutUpdate)
+  const handleCanvasSizeChange = useCallback((newSize) => {
+    setCanvasSize(newSize);
+    // Also update the layout so it persists
+    handleLayoutUpdate({ canvasSize: newSize });
+  }, [handleLayoutUpdate]);
 
   // Selected element
   const selectedElement = useMemo(() => {
@@ -426,6 +465,11 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
         onSendBackward={handleSendBackward}
         showLayersPanel={showLayersPanel}
         onToggleLayersPanel={() => setShowLayersPanel(!showLayersPanel)}
+        orientation={orientation}
+        canvasSize={canvasSize}
+        onOrientationChange={handleOrientationChange}
+        onCanvasSizeChange={handleCanvasSizeChange}
+        onNavigate={onNavigate}
       />
 
       {/* Main content */}
@@ -453,6 +497,7 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
             zoom={zoom}
             showGrid={showGrid}
             smartGuidesEnabled={smartGuidesEnabled}
+            canvasSize={canvasSize}
             onDoubleClick={(elementId) => {
               const element = layout?.elements?.find((el) => el.id === elementId);
               if (element?.type === 'image') {

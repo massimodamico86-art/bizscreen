@@ -851,29 +851,50 @@ export async function updateAppConfig(id, config) {
 }
 
 /**
- * Create a Weather app
- * @param {Object} options - Weather configuration
- * @param {string} options.name - Display name
- * @param {string} options.location - City name or coordinates (e.g., "New York" or "40.7128,-74.0060")
- * @param {string} options.units - 'imperial' or 'metric'
- * @param {string} options.layout - 'compact' or 'detailed'
- * @param {number} options.refreshMinutes - How often to refresh (min 2)
+ * Create a Weather app (Weather Wall)
+ * @param {Object} config - Weather Wall configuration
  * @returns {Promise<Object>} Created app asset
  */
-export async function createWeatherApp({
-  name = 'Weather',
-  location = '',
-  units = 'imperial',
-  layout = 'detailed',
-  refreshMinutes = 15
-} = {}) {
-  if (!location) throw new Error('Location is required');
-
-  return createAppAsset(APP_TYPE_KEYS.WEATHER, name, {
-    location,
+export async function createWeatherApp(config = {}) {
+  const {
+    name = 'Weather Wall',
+    description = '',
+    usePlayerLocation = true,
+    location = '',
+    locationHeader = '',
+    tempUnit = 'celsius',
+    showBothUnits = true,
+    measurementSystem = 'metric',
+    language = 'en',
+    dateFormat = 'default',
+    theme = 'animated',
+    logoUrl = '',
+    orientation = 'auto',
+    refreshMinutes = 15,
+    // Legacy support
     units,
     layout,
-    refreshMinutes: Math.max(2, refreshMinutes)
+  } = config;
+
+  // Require location if not using auto-detection
+  if (!usePlayerLocation && !location) {
+    throw new Error('Location is required when not using player location');
+  }
+
+  return createAppAsset(APP_TYPE_KEYS.WEATHER, name, {
+    description,
+    usePlayerLocation,
+    location: usePlayerLocation ? 'auto' : location,
+    locationHeader,
+    tempUnit: tempUnit || (units === 'imperial' ? 'fahrenheit' : 'celsius'),
+    showBothUnits,
+    measurementSystem: measurementSystem || (units === 'imperial' ? 'imperial' : 'metric'),
+    language,
+    dateFormat,
+    theme: theme || layout || 'animated',
+    logoUrl,
+    orientation,
+    refreshMinutes: Math.max(2, refreshMinutes),
   });
 }
 

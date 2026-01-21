@@ -333,6 +333,20 @@ export async function fetchSvgTemplates(options = {}) {
         // Normalize dimensions for digital signage (scale up small SVGs)
         const normalizedDims = normalizeSignageDimensions(rawWidth, rawHeight, orientation);
 
+        // Generate data URL from SVG content if no thumbnail exists
+        const svgContent = t.metadata?.svgContent;
+        let thumbnailDataUrl = null;
+        if (!t.thumbnail_url && svgContent) {
+          try {
+            // Use encodeURIComponent for UTF-8 safe encoding
+            thumbnailDataUrl = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
+          } catch (e) {
+            console.warn('Failed to create data URL from SVG content:', e);
+          }
+        }
+
+        const thumbnailUrl = t.thumbnail_url || thumbnailDataUrl;
+
         return {
           id: t.id,
           name: t.name,
@@ -344,10 +358,10 @@ export async function fetchSvgTemplates(options = {}) {
           // Store original dimensions for SVG scaling reference
           originalWidth: rawWidth,
           originalHeight: rawHeight,
-          thumbnail: t.thumbnail_url,
-          thumbnailUrl: t.thumbnail_url,
-          svgUrl: t.preview_url || t.thumbnail_url,
-          svgContent: t.metadata?.svgContent, // Original SVG content for editing
+          thumbnail: thumbnailUrl,
+          thumbnailUrl: thumbnailUrl,
+          svgUrl: t.preview_url || t.thumbnail_url || thumbnailDataUrl,
+          svgContent: svgContent, // Original SVG content for editing
           tags: t.tags || [],
           isFeatured: t.is_featured,
           license: t.license,
