@@ -274,9 +274,9 @@ export function InsertContentModal({
       try {
         switch (activeTab) {
           case 'media':
-            // fetchMediaAssets doesn't support folderId directly - fetch all and let folders hook handle navigation
-            const mediaData = await fetchMediaAssets({});
-            setMediaItems(mediaData || []);
+            // Fetch media with high page size for modal display
+            const mediaResult = await fetchMediaAssets({ page: 1, pageSize: 500 });
+            setMediaItems(mediaResult?.data || []);
             break;
           case 'apps':
             const appsData = await fetchApps({});

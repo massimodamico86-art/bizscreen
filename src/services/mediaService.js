@@ -60,16 +60,26 @@ export function validateMediaFile(file, maxSizeMB = 100) {
 }
 
 /**
- * Fetch all media assets with optional filtering
+ * Fetch media assets with server-side pagination and optional filtering
  * Orders by sort_order first, then by created_at for items with same sort_order
+ * @param {Object} options - Query options
+ * @param {string} options.type - Filter by media type
+ * @param {string} options.search - Search by name
+ * @param {number} options.page - Page number (1-based)
+ * @param {number} options.pageSize - Number of items per page
+ * @param {string|null} options.folderId - Filter by folder (null = root, undefined = all)
+ * @returns {Promise<Object>} Paginated result { data, totalCount, page, pageSize, totalPages }
  */
-export async function fetchMediaAssets({ type = null, search = '', limit = 100, folderId = undefined } = {}) {
+export async function fetchMediaAssets({ type = null, search = '', page = 1, pageSize = 50, folderId = undefined } = {}) {
+  // Calculate offset for pagination
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
   let query = supabase
     .from('media_assets')
-    .select('*')
+    .select('*', { count: 'exact' })
     .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false })
-    .limit(limit);
+    .order('created_at', { ascending: false });
 
   if (type) {
     query = query.eq('type', type);
@@ -88,10 +98,23 @@ export async function fetchMediaAssets({ type = null, search = '', limit = 100, 
     }
   }
 
-  const { data, error } = await query;
+  // Apply pagination
+  query = query.range(from, to);
+
+  const { data, error, count } = await query;
 
   if (error) throw error;
-  return data || [];
+
+  const totalCount = count || 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  return {
+    data: data || [],
+    totalCount,
+    page,
+    pageSize,
+    totalPages
+  };
 }
 
 /**

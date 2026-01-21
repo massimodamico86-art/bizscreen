@@ -80,3 +80,18 @@
   - React Router's `useSearchParams` hook for URL state management
   - `useCallback` for functions used in useEffect dependencies
 ---
+
+## Iteration 6 - US-006: Add server-side pagination to fetchMediaAssets
+- What was implemented:
+  - Updated `fetchMediaAssets()` to accept `{ page, pageSize }` params
+  - Added `.range()` and `{ count: 'exact' }` for pagination
+  - Returns `{ data, totalCount, page, pageSize, totalPages }` object
+  - Updated InsertContentModal.jsx to use `result?.data`
+- Files changed:
+  - `src/services/mediaService.js` (modified)
+  - `src/components/modals/InsertContentModal.jsx` (modified)
+- Learnings for future iterations:
+  - PlaylistEditorPage and MediaLibraryPage have their own `fetchMediaAssets` functions that shadow the import
+  - Only callers using the actual import from mediaService need updating
+  - Grep shows imports AND local function definitions - check actual usage
+---

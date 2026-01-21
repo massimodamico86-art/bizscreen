@@ -82,12 +82,13 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a user, I want the Media Library to load quickly even with thousands of assets so that I can browse efficiently.
 
 **Acceptance Criteria:**
-- [ ] Update `fetchMediaAssets()` in mediaService.js to accept `{ page, pageSize }` parameters
-- [ ] Use Supabase `.range()` for true server-side pagination
-- [ ] Return `{ data, totalCount, page, pageSize, totalPages }` object
-- [ ] Remove the unused `limit` parameter or repurpose as `pageSize`
-- [ ] Default pageSize = 50
-- [ ] Typecheck passes
+- [x] Update `fetchMediaAssets()` in mediaService.js to accept `{ page, pageSize }` parameters
+- [x] Use Supabase `.range()` for true server-side pagination
+- [x] Return `{ data, totalCount, page, pageSize, totalPages }` object
+- [x] Replaced `limit` parameter with `pageSize`
+- [x] Default pageSize = 50
+- [x] Typecheck passes
+- [x] Updated InsertContentModal.jsx to use new return shape
 
 ---
 
