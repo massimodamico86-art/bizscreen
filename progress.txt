@@ -126,3 +126,20 @@
   - Service functions that call other service functions need updating too
   - For grouping/filtering views, fetch all with high pageSize rather than paginated
 ---
+
+## Iteration 9 - US-009: Update TemplatesPage to use server-side pagination
+- What was implemented:
+  - Replaced client-side filtering with server-side fetch via `fetchTemplates()`
+  - Category and type filters now trigger server fetch with page reset to 1
+  - URL params for bookmarkable state (category, type, page via useSearchParams)
+  - Added pagination controls at bottom when totalPages > 1
+  - Loading state disables filter buttons during transitions
+  - Grouped display preserved when "All Types" selected, flat grid with pagination for specific type
+- Files changed:
+  - `src/pages/TemplatesPage.jsx` (modified)
+- Learnings for future iterations:
+  - When filters change, always reset page to 1 to avoid showing empty results
+  - URL params can store multiple filter values - use URLSearchParams for clean handling
+  - Grouped display (by type) works with server-side filtering when page size allows
+  - Delete URL params instead of setting to 'all' or '1' for cleaner URLs
+---

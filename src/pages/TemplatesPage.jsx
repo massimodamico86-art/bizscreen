@@ -4,8 +4,8 @@
  * Gallery of content templates and vertical packs for quick-start content.
  */
 
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   LayoutTemplate,
   Utensils,
@@ -22,6 +22,7 @@ import {
   Loader2,
   ExternalLink,
   ChevronRight,
+  ChevronLeft,
   Info,
 } from 'lucide-react';
 import {
@@ -71,8 +72,11 @@ const getBadgeVariant = (type) => {
   return variants[type] || 'gray';
 };
 
+const PAGE_SIZE = 24; // Good for grid display
+
 const TemplatesPage = ({ showToast }) => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const { t } = useTranslation();
 
@@ -80,8 +84,13 @@ const TemplatesPage = ({ showToast }) => {
   const [categories, setCategories] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [activeType, setActiveType] = useState('all');
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // Get filters from URL params
+  const activeCategory = searchParams.get('category') || 'all';
+  const activeType = searchParams.get('type') || 'all';
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   // Apply state
   const [applying, setApplying] = useState(null);
@@ -89,11 +98,6 @@ const TemplatesPage = ({ showToast }) => {
 
   // Permissions
   const [canEdit, setCanEdit] = useState(false);
-
-  // Load data
-  useEffect(() => {
-    loadData();
-  }, []);
 
   // Check permissions
   useEffect(() => {
@@ -104,34 +108,71 @@ const TemplatesPage = ({ showToast }) => {
     checkPermissions();
   }, [user]);
 
-  const loadData = async () => {
+  // Load categories on mount
+  useEffect(() => {
+    fetchTemplateCategories()
+      .then(setCategories)
+      .catch((err) => {
+        console.error('Error loading categories:', err);
+      });
+  }, []);
+
+  // Load templates with server-side filtering and pagination
+  const loadTemplates = useCallback(async () => {
     try {
       setLoading(true);
-      const [cats, tempsResult] = await Promise.all([
-        fetchTemplateCategories(),
-        fetchTemplates({ page: 1, pageSize: 500 }), // Load all templates for filtering
-      ]);
-      setCategories(cats);
-      setTemplates((tempsResult.data || []).map(formatTemplateForCard));
+      const result = await fetchTemplates({
+        categorySlug: activeCategory === 'all' ? undefined : activeCategory,
+        type: activeType === 'all' ? undefined : activeType,
+        page: currentPage,
+        pageSize: PAGE_SIZE,
+      });
+      setTemplates((result.data || []).map(formatTemplateForCard));
+      setTotalCount(result.totalCount || 0);
+      setTotalPages(result.totalPages || 0);
     } catch (error) {
       console.error('Error loading templates:', error);
       showToast?.('Error loading templates', 'error');
     } finally {
       setLoading(false);
     }
+  }, [activeCategory, activeType, currentPage, showToast]);
+
+  // Fetch templates when filters or page change
+  useEffect(() => {
+    loadTemplates();
+  }, [loadTemplates]);
+
+  // Update URL params helper
+  const updateParams = (updates) => {
+    const newParams = new URLSearchParams(searchParams);
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === 'all' || value === '1' || value === null || value === undefined) {
+        newParams.delete(key);
+      } else {
+        newParams.set(key, value);
+      }
+    });
+    setSearchParams(newParams);
   };
 
-  // Filter templates
-  const filteredTemplates = templates.filter((t) => {
-    const categoryMatch = activeCategory === 'all' || t.categorySlug === activeCategory;
-    const typeMatch = activeType === 'all' || t.type === activeType;
-    return categoryMatch && typeMatch;
-  });
+  // Handle filter changes (reset page to 1)
+  const handleCategoryChange = (category) => {
+    updateParams({ category, page: '1' });
+  };
 
-  // Group by type for display
-  const packs = filteredTemplates.filter((t) => t.type === 'pack');
-  const playlistTemplates = filteredTemplates.filter((t) => t.type === 'playlist');
-  const layoutTemplates = filteredTemplates.filter((t) => t.type === 'layout');
+  const handleTypeChange = (type) => {
+    updateParams({ type, page: '1' });
+  };
+
+  const handlePageChange = (newPage) => {
+    updateParams({ page: newPage.toString() });
+  };
+
+  // Group by type for display when showing all types
+  const packs = activeType === 'all' ? templates.filter((t) => t.type === 'pack') : [];
+  const playlistTemplates = activeType === 'all' ? templates.filter((t) => t.type === 'playlist') : [];
+  const layoutTemplates = activeType === 'all' ? templates.filter((t) => t.type === 'layout') : [];
 
   // Apply template handler
   const handleApply = async (template) => {
@@ -203,10 +244,11 @@ const TemplatesPage = ({ showToast }) => {
         {/* Category Filter Tabs */}
         <div className="flex flex-wrap gap-2 mb-4" role="tablist" aria-label={t('templates.categoryFilter', 'Category filter')}>
           <button
-            onClick={() => setActiveCategory('all')}
+            onClick={() => handleCategoryChange('all')}
+            disabled={loading}
             role="tab"
             aria-selected={activeCategory === 'all'}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
               activeCategory === 'all'
                 ? 'bg-blue-100 text-blue-700'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -219,10 +261,11 @@ const TemplatesPage = ({ showToast }) => {
             return (
               <button
                 key={cat.slug}
-                onClick={() => setActiveCategory(cat.slug)}
+                onClick={() => handleCategoryChange(cat.slug)}
+                disabled={loading}
                 role="tab"
                 aria-selected={activeCategory === cat.slug}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
                   activeCategory === cat.slug
                     ? 'bg-blue-100 text-blue-700'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -238,10 +281,11 @@ const TemplatesPage = ({ showToast }) => {
         {/* Type Filter */}
         <div className="flex gap-2 mb-6" role="tablist" aria-label={t('templates.typeFilter', 'Type filter')}>
           <button
-            onClick={() => setActiveType('all')}
+            onClick={() => handleTypeChange('all')}
+            disabled={loading}
             role="tab"
             aria-selected={activeType === 'all'}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
               activeType === 'all'
                 ? 'bg-gray-800 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -250,10 +294,11 @@ const TemplatesPage = ({ showToast }) => {
             {t('templates.allTypes', 'All Types')}
           </button>
           <button
-            onClick={() => setActiveType('pack')}
+            onClick={() => handleTypeChange('pack')}
+            disabled={loading}
             role="tab"
             aria-selected={activeType === 'pack'}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-50 ${
               activeType === 'pack'
                 ? 'bg-green-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -263,10 +308,11 @@ const TemplatesPage = ({ showToast }) => {
             {t('templates.starterPacks', 'Starter Packs')}
           </button>
           <button
-            onClick={() => setActiveType('playlist')}
+            onClick={() => handleTypeChange('playlist')}
+            disabled={loading}
             role="tab"
             aria-selected={activeType === 'playlist'}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
               activeType === 'playlist'
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -276,10 +322,11 @@ const TemplatesPage = ({ showToast }) => {
             {t('templates.playlists', 'Playlists')}
           </button>
           <button
-            onClick={() => setActiveType('layout')}
+            onClick={() => handleTypeChange('layout')}
+            disabled={loading}
             role="tab"
             aria-selected={activeType === 'layout'}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 disabled:opacity-50 ${
               activeType === 'layout'
                 ? 'bg-purple-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -290,86 +337,135 @@ const TemplatesPage = ({ showToast }) => {
           </button>
         </div>
 
-        {/* Starter Packs Section */}
-        {(activeType === 'all' || activeType === 'pack') && packs.length > 0 && (
-          <section className="space-y-4 mb-8" aria-labelledby="packs-heading">
-            <div className="flex items-center gap-2">
-              <Package size={20} className="text-green-600" aria-hidden="true" />
-              <h2 id="packs-heading" className="text-lg font-semibold text-gray-900">{t('templates.starterPacks', 'Starter Packs')}</h2>
-              <span className="text-sm text-gray-500">
-                {t('templates.starterPacksDescription', 'Complete setups with playlists, layouts, and schedules')}
-              </span>
-            </div>
+        {/* When "All Types" is selected, show grouped sections */}
+        {activeType === 'all' && (
+          <>
+            {/* Starter Packs Section */}
+            {packs.length > 0 && (
+              <section className="space-y-4 mb-8" aria-labelledby="packs-heading">
+                <div className="flex items-center gap-2">
+                  <Package size={20} className="text-green-600" aria-hidden="true" />
+                  <h2 id="packs-heading" className="text-lg font-semibold text-gray-900">{t('templates.starterPacks', 'Starter Packs')}</h2>
+                  <span className="text-sm text-gray-500">
+                    {t('templates.starterPacksDescription', 'Complete setups with playlists, layouts, and schedules')}
+                  </span>
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {packs.map((template) => (
-                <TemplateCard
-                  key={template.id}
-                  template={template}
-                  onApply={handleApply}
-                  applying={applying === template.slug}
-                  disabled={!canEdit}
-                  t={t}
-                />
-              ))}
-            </div>
-          </section>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {packs.map((template) => (
+                    <TemplateCard
+                      key={template.id}
+                      template={template}
+                      onApply={handleApply}
+                      applying={applying === template.slug}
+                      disabled={!canEdit}
+                      t={t}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Playlist Templates Section */}
+            {playlistTemplates.length > 0 && (
+              <section className="space-y-4 mb-8" aria-labelledby="playlists-heading">
+                <div className="flex items-center gap-2">
+                  <List size={20} className="text-blue-600" aria-hidden="true" />
+                  <h2 id="playlists-heading" className="text-lg font-semibold text-gray-900">{t('templates.playlistTemplates', 'Playlist Templates')}</h2>
+                  <span className="text-sm text-gray-500">
+                    {t('templates.playlistTemplatesDescription', 'Pre-configured playlists with placeholder items')}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {playlistTemplates.map((template) => (
+                    <TemplateCard
+                      key={template.id}
+                      template={template}
+                      onApply={handleApply}
+                      applying={applying === template.slug}
+                      disabled={!canEdit}
+                      t={t}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Layout Templates Section */}
+            {layoutTemplates.length > 0 && (
+              <section className="space-y-4 mb-8" aria-labelledby="layouts-heading">
+                <div className="flex items-center gap-2">
+                  <Layout size={20} className="text-purple-600" aria-hidden="true" />
+                  <h2 id="layouts-heading" className="text-lg font-semibold text-gray-900">{t('templates.layoutTemplates', 'Layout Templates')}</h2>
+                  <span className="text-sm text-gray-500">
+                    {t('templates.layoutTemplatesDescription', 'Multi-zone layouts for dynamic displays')}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {layoutTemplates.map((template) => (
+                    <TemplateCard
+                      key={template.id}
+                      template={template}
+                      onApply={handleApply}
+                      applying={applying === template.slug}
+                      disabled={!canEdit}
+                      t={t}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
         )}
 
-        {/* Playlist Templates Section */}
-        {(activeType === 'all' || activeType === 'playlist') && playlistTemplates.length > 0 && (
-          <section className="space-y-4 mb-8" aria-labelledby="playlists-heading">
-            <div className="flex items-center gap-2">
-              <List size={20} className="text-blue-600" aria-hidden="true" />
-              <h2 id="playlists-heading" className="text-lg font-semibold text-gray-900">{t('templates.playlistTemplates', 'Playlist Templates')}</h2>
-              <span className="text-sm text-gray-500">
-                {t('templates.playlistTemplatesDescription', 'Pre-configured playlists with placeholder items')}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {playlistTemplates.map((template) => (
-                <TemplateCard
-                  key={template.id}
-                  template={template}
-                  onApply={handleApply}
-                  applying={applying === template.slug}
-                  disabled={!canEdit}
-                  t={t}
-                />
-              ))}
-            </div>
-          </section>
+        {/* When a specific type is selected, show flat grid with pagination */}
+        {activeType !== 'all' && templates.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {templates.map((template) => (
+              <TemplateCard
+                key={template.id}
+                template={template}
+                onApply={handleApply}
+                applying={applying === template.slug}
+                disabled={!canEdit}
+                t={t}
+              />
+            ))}
+          </div>
         )}
 
-        {/* Layout Templates Section */}
-        {(activeType === 'all' || activeType === 'layout') && layoutTemplates.length > 0 && (
-          <section className="space-y-4 mb-8" aria-labelledby="layouts-heading">
-            <div className="flex items-center gap-2">
-              <Layout size={20} className="text-purple-600" aria-hidden="true" />
-              <h2 id="layouts-heading" className="text-lg font-semibold text-gray-900">{t('templates.layoutTemplates', 'Layout Templates')}</h2>
-              <span className="text-sm text-gray-500">
-                {t('templates.layoutTemplatesDescription', 'Multi-zone layouts for dynamic displays')}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {layoutTemplates.map((template) => (
-                <TemplateCard
-                  key={template.id}
-                  template={template}
-                  onApply={handleApply}
-                  applying={applying === template.slug}
-                  disabled={!canEdit}
-                  t={t}
-                />
-              ))}
-            </div>
-          </section>
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 mt-8 pt-6 border-t">
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={currentPage <= 1 || loading}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" />
+              {t('common.previous', 'Previous')}
+            </Button>
+            <span className="text-sm text-gray-600">
+              {t('common.pageOf', 'Page {{current}} of {{total}}', { current: currentPage, total: totalPages })}
+              <span className="text-gray-400 ml-2">({totalCount} {t('templates.templates', 'templates')})</span>
+            </span>
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={currentPage >= totalPages || loading}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              {t('common.next', 'Next')}
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
         )}
 
         {/* Empty State */}
-        {filteredTemplates.length === 0 && (
+        {templates.length === 0 && !loading && (
           <EmptyState
             icon={LayoutTemplate}
             title={t('templates.noTemplatesFound', 'No templates found')}

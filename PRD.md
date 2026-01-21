@@ -124,12 +124,12 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a user, I want pagination on the Templates page so that I can browse large template libraries efficiently.
 
 **Acceptance Criteria:**
-- [ ] Replace in-memory filtering with server-side fetch per page
-- [ ] Category filter triggers new server fetch (not local filter)
-- [ ] Add pagination controls below template grid
-- [ ] Loading state shown during category/page changes
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Replace in-memory filtering with server-side fetch per page
+- [x] Category filter triggers new server fetch (not local filter)
+- [x] Add pagination controls below template grid
+- [x] Loading state shown during category/page changes (buttons disabled when loading)
+- [x] Typecheck passes
+- [ ] Verify changes work in browser (requires manual testing)
 
 ---
 
