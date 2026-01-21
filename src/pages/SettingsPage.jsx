@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, Eye, Globe, Shield, Activity, RotateCcw, AlertCircle, RefreshCw, Palette, Plus, Trash2, Loader2 } from 'lucide-react';
+import { Bell, Eye, Globe, Shield, Activity, RotateCcw, AlertCircle, RefreshCw, Palette, Plus, Trash2, Loader2, Lock } from 'lucide-react';
 import { Card, Button } from '../design-system';
 import { getUserSettings, updateUserSettings, resetUserSettings } from '../services/userSettingsService';
 import { getActivityLog, formatActivity } from '../services/activityLogService';
@@ -7,6 +7,8 @@ import { getAllBrandThemes, deleteBrandTheme, setActiveTheme } from '../services
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from '../i18n';
 import { BrandImporterModal, ThemePreviewCard } from '../components/brand';
+import { TwoFactorSetup, SessionManagement, LoginHistory } from '../components/security';
+import { DataPrivacySettings } from '../components/compliance';
 
 const SettingsPage = ({ showToast }) => {
   const { t } = useTranslation();
@@ -26,6 +28,7 @@ const SettingsPage = ({ showToast }) => {
     { id: 'notifications', label: t('settings.tabs.notifications', 'Notifications'), icon: Bell },
     { id: 'display', label: t('settings.tabs.display', 'Display'), icon: Eye },
     { id: 'branding', label: t('settings.tabs.branding', 'Branding'), icon: Palette },
+    { id: 'security', label: t('settings.tabs.security', 'Security'), icon: Lock },
     { id: 'privacy', label: t('settings.tabs.privacy', 'Privacy'), icon: Shield },
     { id: 'activity', label: t('settings.tabs.activity', 'Activity Log'), icon: Activity }
   ];
@@ -382,76 +385,99 @@ const SettingsPage = ({ showToast }) => {
         </Card>
       )}
 
+      {/* Security Tab */}
+      {activeTab === 'security' && (
+        <div className="space-y-6">
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4">{t('settings.security.title', 'Account Security')}</h2>
+            <TwoFactorSetup showToast={showToast} />
+          </Card>
+
+          <Card className="p-6">
+            <SessionManagement showToast={showToast} />
+          </Card>
+
+          <Card className="p-6">
+            <LoginHistory showToast={showToast} />
+          </Card>
+        </div>
+      )}
+
       {/* Privacy Tab */}
       {activeTab === 'privacy' && (
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">{t('settings.privacy.title', 'Privacy & Data')}</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">{t('settings.privacy.activityTracking', 'Activity Tracking')}</div>
-                <div className="text-sm text-gray-600">{t('settings.privacy.activityTrackingDesc', 'Track your actions for activity log')}</div>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.activity_tracking}
-                  onChange={(e) => handleSaveSettings({ activity_tracking: e.target.checked })}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">{t('settings.privacy.analytics', 'Analytics')}</div>
-                <div className="text-sm text-gray-600">{t('settings.privacy.analyticsDesc', 'Help us improve by sharing anonymous usage data')}</div>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.analytics_enabled}
-                  onChange={(e) => handleSaveSettings({ analytics_enabled: e.target.checked })}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-
-            <div className="pt-4 border-t">
-              <h3 className="font-medium mb-2">{t('settings.privacy.autoSyncPms', 'Auto-Sync PMS')}</h3>
-              <div className="flex items-center justify-between mb-3">
-                <div className="text-sm text-gray-600">{t('settings.privacy.autoSyncPmsDesc', 'Automatically sync reservations from PMS')}</div>
+        <div className="space-y-6">
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4">{t('settings.privacy.title', 'Privacy & Data')}</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">{t('settings.privacy.activityTracking', 'Activity Tracking')}</div>
+                  <div className="text-sm text-gray-600">{t('settings.privacy.activityTrackingDesc', 'Track your actions for activity log')}</div>
+                </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={settings.auto_sync_pms}
-                    onChange={(e) => handleSaveSettings({ auto_sync_pms: e.target.checked })}
+                    checked={settings.activity_tracking}
+                    onChange={(e) => handleSaveSettings({ activity_tracking: e.target.checked })}
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                 </label>
               </div>
 
-              {settings.auto_sync_pms && (
+              <div className="flex items-center justify-between">
                 <div>
-                  <label className="block text-sm font-medium mb-2">{t('settings.privacy.syncFrequency', 'Sync Frequency')}</label>
-                  <select
-                    value={settings.sync_frequency_hours}
-                    onChange={(e) => handleSaveSettings({ sync_frequency_hours: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  >
-                    <option value="1">{t('settings.privacy.everyHour', 'Every hour')}</option>
-                    <option value="6">{t('settings.privacy.every6Hours', 'Every 6 hours')}</option>
-                    <option value="12">{t('settings.privacy.every12Hours', 'Every 12 hours')}</option>
-                    <option value="24">{t('settings.privacy.every24Hours', 'Every 24 hours')}</option>
-                  </select>
+                  <div className="font-medium">{t('settings.privacy.analytics', 'Analytics')}</div>
+                  <div className="text-sm text-gray-600">{t('settings.privacy.analyticsDesc', 'Help us improve by sharing anonymous usage data')}</div>
                 </div>
-              )}
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={settings.analytics_enabled}
+                    onChange={(e) => handleSaveSettings({ analytics_enabled: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+
+              <div className="pt-4 border-t">
+                <h3 className="font-medium mb-2">{t('settings.privacy.autoSyncPms', 'Auto-Sync PMS')}</h3>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-sm text-gray-600">{t('settings.privacy.autoSyncPmsDesc', 'Automatically sync reservations from PMS')}</div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.auto_sync_pms}
+                      onChange={(e) => handleSaveSettings({ auto_sync_pms: e.target.checked })}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+
+                {settings.auto_sync_pms && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">{t('settings.privacy.syncFrequency', 'Sync Frequency')}</label>
+                    <select
+                      value={settings.sync_frequency_hours}
+                      onChange={(e) => handleSaveSettings({ sync_frequency_hours: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    >
+                      <option value="1">{t('settings.privacy.everyHour', 'Every hour')}</option>
+                      <option value="6">{t('settings.privacy.every6Hours', 'Every 6 hours')}</option>
+                      <option value="12">{t('settings.privacy.every12Hours', 'Every 12 hours')}</option>
+                      <option value="24">{t('settings.privacy.every24Hours', 'Every 24 hours')}</option>
+                    </select>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+
+          {/* GDPR Data Privacy */}
+          <DataPrivacySettings showToast={showToast} />
+        </div>
       )}
 
       {/* Activity Log Tab */}

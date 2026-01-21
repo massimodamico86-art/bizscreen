@@ -73,12 +73,18 @@ describe('sceneDesignService', () => {
     });
 
     it('defines all transition types', () => {
-      expect(TRANSITION_TYPES).toHaveLength(4);
+      expect(TRANSITION_TYPES).toHaveLength(14);
       const values = TRANSITION_TYPES.map(t => t.value);
+      // Core transitions
       expect(values).toContain('none');
       expect(values).toContain('fade');
       expect(values).toContain('slide');
       expect(values).toContain('zoom');
+      // Extended transitions
+      expect(values).toContain('dissolve');
+      expect(values).toContain('wipe-right');
+      expect(values).toContain('wipe-left');
+      expect(values).toContain('cube');
     });
 
     it('defines default animation settings', () => {
