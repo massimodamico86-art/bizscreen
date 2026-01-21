@@ -80,21 +80,91 @@ export async function signUp({ email, password, fullName, businessName }) {
 }
 
 /**
+ * Check if account is locked out
+ * @param {string} email
+ * @returns {Promise<{locked: boolean, minutesRemaining?: number, remainingAttempts?: number}>}
+ */
+export async function checkLockout(email) {
+  try {
+    const { data, error } = await supabase.rpc('check_login_lockout', {
+      p_email: email,
+    });
+
+    if (error) {
+      console.error('Lockout check error:', error);
+      // Fail open - allow login attempt if check fails
+      return { locked: false };
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Lockout check error:', error);
+    return { locked: false };
+  }
+}
+
+/**
+ * Record a login attempt
+ * @param {string} email
+ * @param {boolean} success
+ */
+async function recordLoginAttempt(email, success) {
+  try {
+    await supabase.rpc('record_login_attempt', {
+      p_email: email,
+      p_success: success,
+    });
+  } catch (error) {
+    // Non-blocking - don't fail login if recording fails
+    console.error('Failed to record login attempt:', error);
+  }
+}
+
+/**
  * Sign in with email and password
  * @param {string} email
  * @param {string} password
- * @returns {Promise<{user: object|null, error: string|null}>}
+ * @returns {Promise<{user: object|null, error: string|null, locked?: boolean, minutesRemaining?: number}>}
  */
 export async function signIn(email, password) {
   try {
+    // Check if account is locked out
+    const lockoutStatus = await checkLockout(email);
+
+    if (lockoutStatus.locked) {
+      const minutes = Math.ceil(lockoutStatus.minutes_remaining || 15);
+      return {
+        user: null,
+        error: `Too many failed attempts. Please try again in ${minutes} minute${minutes !== 1 ? 's' : ''}.`,
+        locked: true,
+        minutesRemaining: minutes,
+      };
+    }
+
+    // Attempt login
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      return { user: null, error: error.message };
+      // Record failed attempt
+      await recordLoginAttempt(email, false);
+
+      // Check remaining attempts
+      const newStatus = await checkLockout(email);
+      const remaining = newStatus.remaining_attempts;
+
+      let errorMessage = error.message;
+      if (remaining !== undefined && remaining > 0 && remaining <= 3) {
+        errorMessage += ` (${remaining} attempt${remaining !== 1 ? 's' : ''} remaining)`;
+      }
+
+      return { user: null, error: errorMessage };
     }
+
+    // Record successful login
+    await recordLoginAttempt(email, true);
 
     return { user: data.user, error: null };
   } catch (error) {
@@ -239,6 +309,7 @@ export default {
   signUp,
   signIn,
   signOut,
+  checkLockout,
   requestPasswordReset,
   updatePassword,
   getSession,
