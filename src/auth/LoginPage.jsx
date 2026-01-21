@@ -1,5 +1,5 @@
 /**
- * LoginPage - User login form
+ * LoginPage - User login form with MFA support
  */
 
 import { useState } from 'react';
@@ -7,6 +7,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from './AuthLayout';
 import { signIn } from '../services/authService';
+import { isMfaRequired } from '../services/mfaService';
+import { MfaVerification } from '../components/security';
 import Seo from '../components/Seo';
 
 export default function LoginPage() {
@@ -16,6 +18,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showMfaVerification, setShowMfaVerification] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,8 +34,14 @@ export default function LoginPage() {
       }
 
       if (user) {
-        // Redirect to app
-        navigate('/app');
+        // Check if MFA is required
+        const mfaRequired = await isMfaRequired();
+        if (mfaRequired) {
+          setShowMfaVerification(true);
+        } else {
+          // Redirect to app
+          navigate('/app');
+        }
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
@@ -40,6 +49,35 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  const handleMfaSuccess = () => {
+    navigate('/app');
+  };
+
+  const handleMfaCancel = () => {
+    setShowMfaVerification(false);
+    // Sign out since MFA wasn't completed
+    setEmail('');
+    setPassword('');
+  };
+
+  // Show MFA verification if required
+  if (showMfaVerification) {
+    return (
+      <>
+        <Seo pageKey="login" />
+        <AuthLayout
+          title="Verify Your Identity"
+          subtitle="Enter your authentication code to continue"
+        >
+          <MfaVerification
+            onSuccess={handleMfaSuccess}
+            onCancel={handleMfaCancel}
+          />
+        </AuthLayout>
+      </>
+    );
+  }
 
   return (
     <>
