@@ -47,24 +47,42 @@ export async function createScene({
 }
 
 /**
- * Fetch all scenes for a tenant
+ * Fetch scenes for a tenant with server-side pagination
  * @param {string} tenantId - The tenant/user ID
- * @returns {Promise<Array>} List of scenes
+ * @param {Object} options - Pagination options
+ * @param {number} options.page - Page number (1-based)
+ * @param {number} options.pageSize - Number of items per page
+ * @returns {Promise<Object>} Paginated result { data, totalCount, page, pageSize, totalPages }
  */
-export async function fetchScenesForTenant(tenantId) {
-  const { data, error } = await supabase
+export async function fetchScenesForTenant(tenantId, { page = 1, pageSize = 50 } = {}) {
+  // Calculate offset for pagination
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, error, count } = await supabase
     .from('scenes')
     .select(`
       *,
       layout:layouts(id, name),
       primary_playlist:playlists!scenes_primary_playlist_id_fkey(id, name),
       secondary_playlist:playlists!scenes_secondary_playlist_id_fkey(id, name)
-    `)
+    `, { count: 'exact' })
     .eq('tenant_id', tenantId)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: true })
+    .range(from, to);
 
   if (error) throw error;
-  return data || [];
+
+  const totalCount = count || 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  return {
+    data: data || [],
+    totalCount,
+    page,
+    pageSize,
+    totalPages
+  };
 }
 
 /**

@@ -222,8 +222,8 @@ function BizScreenAppInner() {
 
       try {
         // Check if user has any scenes
-        const scenes = await fetchScenesForTenant(authUserProfile.id);
-        if (scenes.length === 0) {
+        const { totalCount } = await fetchScenesForTenant(authUserProfile.id, { page: 1, pageSize: 1 });
+        if (totalCount === 0) {
           setShowAutoBuildModal(true);
         }
       } catch (err) {

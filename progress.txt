@@ -44,3 +44,21 @@
   - Indexes found: `idx_layout_zones_layout_id`, `idx_layout_zones_playlist_id`, `idx_layout_zones_media_id`
   - Partial indexes used: `WHERE assigned_playlist_id IS NOT NULL` - good for sparse columns
 ---
+
+## Iteration 4 - US-004: Add server-side pagination to fetchScenesForTenant
+- What was implemented:
+  - Updated `fetchScenesForTenant()` to accept `{ page, pageSize }` params
+  - Added `.range(from, to)` for offset-based pagination
+  - Added `{ count: 'exact' }` option to get total count
+  - Returns `{ data, totalCount, page, pageSize, totalPages }` object
+  - Updated callers: App.jsx, ContentPerformancePage.jsx
+- Files changed:
+  - `src/services/sceneService.js` (modified)
+  - `src/App.jsx` (modified)
+  - `src/pages/ContentPerformancePage.jsx` (modified)
+- Learnings for future iterations:
+  - ALWAYS grep for function usages before changing return shape
+  - Supabase pagination: `.range(from, to)` where from/to are 0-indexed
+  - Get total count: `select('*', { count: 'exact' })` returns `count` in response
+  - Callers checking `.length` must change to `.totalCount` or `.data.length`
+---

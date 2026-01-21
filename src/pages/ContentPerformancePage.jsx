@@ -77,12 +77,12 @@ export default function ContentPerformancePage({ showToast }) {
   useEffect(() => {
     async function loadFilterOptions() {
       try {
-        const [groups, scenes] = await Promise.all([
+        const [groups, scenesResult] = await Promise.all([
           fetchScreenGroups(),
-          fetchScenesForTenant(),
+          fetchScenesForTenant(null, { page: 1, pageSize: 1000 }), // Load all for filter dropdown
         ]);
         setScreenGroups(groups || []);
-        setAllScenes(scenes || []);
+        setAllScenes(scenesResult?.data || []);
       } catch (error) {
         console.error('Failed to load filter options:', error);
       }

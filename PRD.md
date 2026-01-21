@@ -55,11 +55,12 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a user, I want scenes to load quickly even with hundreds of scenes so that the page is responsive.
 
 **Acceptance Criteria:**
-- [ ] Update `fetchScenesForTenant()` to accept `{ page, pageSize }` parameters
-- [ ] Add `.range()` clause to Supabase query for offset-based pagination
-- [ ] Return `{ data, totalCount, page, pageSize, totalPages }` object
-- [ ] Default pageSize = 50
-- [ ] Typecheck passes
+- [x] Update `fetchScenesForTenant()` to accept `{ page, pageSize }` parameters
+- [x] Add `.range()` clause to Supabase query for offset-based pagination
+- [x] Return `{ data, totalCount, page, pageSize, totalPages }` object
+- [x] Default pageSize = 50
+- [x] Typecheck passes
+- [x] Updated existing callers (App.jsx, ContentPerformancePage.jsx) for new return shape
 
 ---
 
