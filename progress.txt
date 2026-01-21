@@ -163,3 +163,37 @@
   - For picker use cases, call with high pageSize or all layouts
   - Transform zone_count still works with new return shape
 ---
+
+## Iteration 11 - US-011: Update LayoutsPage to use server-side pagination
+- What was implemented:
+  - Added pagination state for user layouts (layoutsPage, layoutsTotalCount, layoutsTotalPages)
+  - "Your Templates" section now shows actual user layouts with pagination
+  - Layouts loaded on-demand when "Your Templates" category is selected
+  - URL params for bookmarkable state (category, page via useSearchParams)
+  - Pagination controls with Previous/Next and page counter
+  - Loading state during page transitions (layoutsLoading state)
+  - Separate loading for templates vs user layouts for better UX
+- Files changed:
+  - `src/pages/LayoutsPage.jsx` (modified)
+- Learnings for future iterations:
+  - Pages with multiple data sources may need separate loading states
+  - Load data on-demand when category is selected vs loading everything upfront
+  - User layouts and system templates are different concerns - handle separately
+  - URL params enable deep linking to specific category/page combinations
+---
+
+## PRD Complete!
+All 11 user stories have been implemented:
+- US-001: Database function for scenes with device counts ✓
+- US-002: sceneService RPC optimization ✓
+- US-003: Indexes verification (already exist) ✓
+- US-004: fetchScenesForTenant pagination ✓
+- US-005: ScenesPage pagination UI ✓
+- US-006: fetchMediaAssets pagination ✓
+- US-007: MediaLibraryPage server-side pagination ✓
+- US-008: fetchTemplates pagination ✓
+- US-009: TemplatesPage server-side pagination ✓
+- US-010: fetchLayouts pagination ✓
+- US-011: LayoutsPage pagination UI ✓
+
+Manual browser testing is recommended to verify all changes work correctly.

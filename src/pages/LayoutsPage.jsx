@@ -8,7 +8,8 @@
  * - Direct template opening in Polotno editor
  */
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Search,
   X,
@@ -83,14 +84,19 @@ const INDUSTRIES = [
   { id: 'corporate', label: 'Corporate' },
 ];
 
+const PAGE_SIZE = 20;
+
 const LayoutsPage = ({ showToast, onNavigate }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // State
   const [templates, setTemplates] = useState([]);
   const [userDesigns, setUserDesigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [layoutsLoading, setLayoutsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchInput, setSearchInput] = useState('');
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState(searchParams.get('category') || 'all');
   const [orientation, setOrientation] = useState('all'); // all, landscape, portrait
   const [visualMode, setVisualMode] = useState('all'); // all, static, animation
   const [showMoreCategories, setShowMoreCategories] = useState(false);
@@ -101,30 +107,73 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
     industries: false,
   });
 
+  // Pagination state for user layouts
+  const [layoutsPage, setLayoutsPage] = useState(parseInt(searchParams.get('page') || '1', 10));
+  const [layoutsTotalCount, setLayoutsTotalCount] = useState(0);
+  const [layoutsTotalPages, setLayoutsTotalPages] = useState(0);
+
   // Refs for horizontal scrolling
   const featuredScrollRef = useRef(null);
   const popularScrollRef = useRef(null);
 
-  // Load data
+  // Load templates on mount
   useEffect(() => {
-    loadData();
+    loadTemplates();
   }, []);
 
-  const loadData = async () => {
+  // Load user layouts when "Your Templates" is selected or page changes
+  const loadUserLayouts = useCallback(async (page) => {
+    try {
+      setLayoutsLoading(true);
+      const result = await fetchLayouts({ page, pageSize: PAGE_SIZE });
+      setUserDesigns(result.data || []);
+      setLayoutsTotalCount(result.totalCount || 0);
+      setLayoutsTotalPages(result.totalPages || 0);
+    } catch (error) {
+      console.error('Error loading layouts:', error);
+      showToast?.('Error loading your designs', 'error');
+    } finally {
+      setLayoutsLoading(false);
+    }
+  }, [showToast]);
+
+  // Load layouts when category changes to "your-templates" or page changes
+  useEffect(() => {
+    if (activeCategory === 'your-templates') {
+      loadUserLayouts(layoutsPage);
+    }
+  }, [activeCategory, layoutsPage, loadUserLayouts]);
+
+  const loadTemplates = async () => {
     try {
       setLoading(true);
-      const [templatesData, layoutsResult] = await Promise.all([
-        getLayoutTemplates(),
-        fetchLayouts(),
-      ]);
+      const templatesData = await getLayoutTemplates();
       setTemplates(templatesData);
-      setUserDesigns(layoutsResult.data || []);
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('Error loading templates:', error);
       showToast?.('Error loading templates', 'error');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle category change
+  const handleCategoryChange = (category) => {
+    setActiveCategory(category);
+    setSearchQuery('');
+    // Reset page when changing categories
+    if (category === 'your-templates') {
+      setLayoutsPage(1);
+      setSearchParams({ category: 'your-templates' });
+    } else {
+      setSearchParams({});
+    }
+  };
+
+  // Handle page change for user layouts
+  const handleLayoutsPageChange = (newPage) => {
+    setLayoutsPage(newPage);
+    setSearchParams({ category: 'your-templates', page: newPage.toString() });
   };
 
   // Filter templates
@@ -148,8 +197,8 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
       // Sort by some popularity metric or just show first N
       result = result.slice(0, 20);
     } else if (activeCategory === 'your-templates') {
-      // Show user's saved templates (empty for now)
-      result = [];
+      // User's own layouts are handled separately with pagination
+      return [];
     } else if (activeCategory === 'recent') {
       // Show recently viewed (empty for now)
       result = [];
@@ -364,7 +413,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
 
           {/* Home Button */}
           <button
-            onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
+            onClick={() => handleCategoryChange('all')}
             className="w-full py-2.5 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg transition-colors"
           >
             Home
@@ -380,7 +429,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
 
           {/* Your Designs Button */}
           <button
-            onClick={() => setActiveCategory('your-templates')}
+            onClick={() => handleCategoryChange('your-templates')}
             className={`
               w-full py-2.5 border font-medium rounded-lg transition-colors
               ${activeCategory === 'your-templates'
@@ -421,7 +470,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                     return (
                       <button
                         key={cat.id}
-                        onClick={() => { setActiveCategory(cat.id); setSearchQuery(''); }}
+                        onClick={() => handleCategoryChange(cat.id)}
                         className={`
                           w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm text-left transition-colors
                           ${isActive
@@ -663,14 +712,89 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                 )}
               </div>
 
-              {filteredTemplates.length === 0 ? (
+              {/* Special handling for Your Templates with pagination */}
+              {activeCategory === 'your-templates' ? (
+                layoutsLoading ? (
+                  <div className="flex items-center justify-center h-64">
+                    <Loader2 className="w-8 h-8 animate-spin text-teal-500" />
+                  </div>
+                ) : userDesigns.length === 0 ? (
+                  <div className="text-center py-16">
+                    <LayoutGrid size={48} className="mx-auto text-gray-300 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No designs yet</h3>
+                    <p className="text-gray-500 mb-4">
+                      Create your first layout design to get started
+                    </p>
+                    <button
+                      onClick={() => onNavigate?.('design-editor')}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg transition-colors"
+                    >
+                      <Plus size={18} />
+                      Create New Design
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                      {userDesigns.map((layout) => (
+                        <div
+                          key={layout.id}
+                          onClick={() => onNavigate?.(`layout-editor/${layout.id}`)}
+                          className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-teal-400 transition-all"
+                        >
+                          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-100 p-4">
+                            <LayoutGrid size={32} className="text-teal-400 mb-2" />
+                            <span className="text-sm font-medium text-gray-700 text-center truncate w-full">
+                              {layout.name}
+                            </span>
+                            {layout.zone_count > 0 && (
+                              <span className="text-xs text-gray-500 mt-1">
+                                {layout.zone_count} zone{layout.zone_count !== 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </div>
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 bg-white text-gray-900 rounded-md text-sm font-medium shadow-lg">
+                              Edit Layout
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Pagination Controls */}
+                    {layoutsTotalPages > 1 && (
+                      <div className="flex items-center justify-center gap-4 mt-8 pt-6 border-t">
+                        <button
+                          disabled={layoutsPage <= 1 || layoutsLoading}
+                          onClick={() => handleLayoutsPageChange(layoutsPage - 1)}
+                          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                        >
+                          <ChevronLeft size={16} />
+                          Previous
+                        </button>
+                        <span className="text-sm text-gray-600">
+                          Page {layoutsPage} of {layoutsTotalPages}
+                          <span className="text-gray-400 ml-2">({layoutsTotalCount} layouts)</span>
+                        </span>
+                        <button
+                          disabled={layoutsPage >= layoutsTotalPages || layoutsLoading}
+                          onClick={() => handleLayoutsPageChange(layoutsPage + 1)}
+                          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                        >
+                          Next
+                          <ChevronRight size={16} />
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )
+              ) : filteredTemplates.length === 0 ? (
                 <div className="text-center py-16">
                   <LayoutGrid size={48} className="mx-auto text-gray-300 mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">No templates found</h3>
                   <p className="text-gray-500 mb-4">
-                    {activeCategory === 'your-templates'
-                      ? 'You haven\'t saved any templates yet'
-                      : activeCategory === 'recent'
+                    {activeCategory === 'recent'
                       ? 'No recent designs'
                       : 'Try a different search or category'}
                   </p>

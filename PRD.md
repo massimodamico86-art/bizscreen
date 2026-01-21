@@ -150,12 +150,13 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a user, I want pagination on the Layouts page so that I can navigate my layouts efficiently.
 
 **Acceptance Criteria:**
-- [ ] Add pagination state to LayoutsPage.jsx
-- [ ] Call paginated `fetchLayouts()` with page parameter
-- [ ] Display pagination controls
-- [ ] Loading state shown during page transitions
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Add pagination state to LayoutsPage.jsx (layoutsPage, layoutsTotalCount, layoutsTotalPages)
+- [x] Call paginated `fetchLayouts()` with page parameter
+- [x] Display pagination controls (Previous/Next with page counter)
+- [x] Loading state shown during page transitions (layoutsLoading state)
+- [x] URL params for bookmarkable state (category, page via useSearchParams)
+- [x] Typecheck passes
+- [ ] Verify changes work in browser (requires manual testing)
 
 ---
 
