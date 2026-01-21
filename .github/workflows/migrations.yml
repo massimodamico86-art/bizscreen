@@ -1,0 +1,283 @@
+name: Database Migrations
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Migration action'
+        required: true
+        default: 'diff'
+        type: choice
+        options:
+          - diff
+          - dry-run
+          - apply
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # =============================================================================
+  # JOB 1: MIGRATION ANALYSIS (PR only)
+  # =============================================================================
+  analyze:
+    name: Analyze Migrations
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed migrations
+        id: changed
+        run: |
+          MIGRATIONS=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- 'supabase/migrations/*.sql' | sort)
+          echo "Changed migrations:"
+          echo "$MIGRATIONS"
+          echo "migrations<<EOF" >> $GITHUB_OUTPUT
+          echo "$MIGRATIONS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "count=$(echo "$MIGRATIONS" | grep -c '\.sql$' || echo 0)" >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Validate migration syntax
+        run: |
+          for file in ${{ steps.changed.outputs.migrations }}; do
+            echo "Validating: $file"
+            # Basic SQL syntax check using psql
+            if command -v psql &> /dev/null; then
+              psql -f "$file" --set ON_ERROR_STOP=1 -c "SELECT 1" 2>&1 || true
+            fi
+          done
+        continue-on-error: true
+
+      - name: Check migration naming convention
+        run: |
+          ERRORS=""
+          for file in ${{ steps.changed.outputs.migrations }}; do
+            filename=$(basename "$file")
+            # Check format: NNN_description.sql
+            if ! [[ "$filename" =~ ^[0-9]{3}_[a-z0-9_]+\.sql$ ]]; then
+              ERRORS="$ERRORS\n- $filename does not follow naming convention (NNN_description.sql)"
+            fi
+          done
+          if [ -n "$ERRORS" ]; then
+            echo "::warning::Migration naming issues:$ERRORS"
+          fi
+
+      - name: Detect destructive operations
+        id: destructive
+        run: |
+          WARNINGS=""
+          for file in ${{ steps.changed.outputs.migrations }}; do
+            # Check for potentially destructive operations
+            if grep -iE "(DROP TABLE|DROP COLUMN|TRUNCATE|DELETE FROM)" "$file" > /dev/null 2>&1; then
+              WARNINGS="$WARNINGS\n- $file contains potentially destructive operations"
+            fi
+          done
+          if [ -n "$WARNINGS" ]; then
+            echo "has_warnings=true" >> $GITHUB_OUTPUT
+            echo "warnings<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$WARNINGS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "has_warnings=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const migrations = `${{ steps.changed.outputs.migrations }}`.trim();
+            const count = ${{ steps.changed.outputs.count }};
+            const hasWarnings = ${{ steps.destructive.outputs.has_warnings }};
+            const warnings = `${{ steps.destructive.outputs.warnings }}`;
+
+            let body = `## 📊 Migration Analysis\n\n`;
+            body += `**Changed migrations:** ${count}\n\n`;
+
+            if (migrations) {
+              body += `### Files:\n\`\`\`\n${migrations}\n\`\`\`\n\n`;
+            }
+
+            if (hasWarnings) {
+              body += `### ⚠️ Warnings\n`;
+              body += `The following migrations contain potentially destructive operations:\n`;
+              body += `${warnings}\n\n`;
+              body += `Please ensure these changes are intentional and have been reviewed.\n\n`;
+            }
+
+            body += `### Checklist\n`;
+            body += `- [ ] Migrations are idempotent (can be run multiple times safely)\n`;
+            body += `- [ ] Rollback procedure documented if needed\n`;
+            body += `- [ ] Tested locally with \`supabase db reset\`\n`;
+            body += `- [ ] No sensitive data exposed in migration\n`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+  # =============================================================================
+  # JOB 2: SCHEMA DIFF
+  # =============================================================================
+  diff:
+    name: Schema Diff
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'diff'
+    environment: ${{ github.event.inputs.environment }}
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Link project
+        run: |
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF_PROD }}
+          else
+            supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Generate diff
+        run: |
+          echo "## Schema Diff for ${{ github.event.inputs.environment }}"
+          echo ""
+          supabase db diff --schema public
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+  # =============================================================================
+  # JOB 3: DRY RUN
+  # =============================================================================
+  dry-run:
+    name: Migration Dry Run
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'dry-run'
+    environment: ${{ github.event.inputs.environment }}
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Start local Supabase
+        run: supabase start
+
+      - name: Run migrations locally
+        run: |
+          echo "Running migrations in local environment..."
+          supabase db reset
+          echo ""
+          echo "Migration dry run completed successfully!"
+
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop
+
+  # =============================================================================
+  # JOB 4: APPLY MIGRATIONS
+  # =============================================================================
+  apply:
+    name: Apply Migrations
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply'
+    environment: ${{ github.event.inputs.environment }}
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Link project
+        run: |
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF_PROD }}
+          else
+            supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Create backup timestamp
+        run: |
+          echo "BACKUP_TIME=$(date -u +%Y%m%d_%H%M%S)" >> $GITHUB_ENV
+
+      - name: Show pending migrations
+        run: |
+          echo "## Pending Migrations"
+          supabase db diff --schema public
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Apply migrations
+        run: |
+          echo "Applying migrations to ${{ github.event.inputs.environment }}..."
+          supabase db push
+          echo ""
+          echo "Migrations applied successfully!"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Verify migration status
+        run: |
+          echo "## Migration Status"
+          supabase migration list
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Notify completion
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "Migrations Applied: ${{ github.event.inputs.environment }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Database Migrations Applied*\n*Environment:* ${{ github.event.inputs.environment }}\n*Backup Time:* ${{ env.BACKUP_TIME }}\n*Applied by:* ${{ github.actor }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true

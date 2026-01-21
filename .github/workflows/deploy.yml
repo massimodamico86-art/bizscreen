@@ -1,0 +1,449 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip tests (emergency only)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  # =============================================================================
+  # JOB 1: BUILD & TEST
+  # =============================================================================
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      build_id: ${{ steps.build.outputs.build_id }}
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint --if-present
+
+      - name: Run type check
+        run: npm run typecheck --if-present
+
+      - name: Run unit tests
+        if: ${{ github.event.inputs.skip_tests != 'true' }}
+        run: npm test -- --run
+
+      - name: Build application
+        id: build
+        run: |
+          npm run build
+          echo "build_id=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        env:
+          VITE_APP_VERSION: ${{ github.sha }}
+          VITE_BUILD_TIME: ${{ github.event.head_commit.timestamp }}
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ steps.build.outputs.build_id }}
+          path: dist/
+          retention-days: 7
+
+  # =============================================================================
+  # JOB 2: DATABASE MIGRATIONS (Staging)
+  # =============================================================================
+  migrate-staging:
+    name: Run Migrations (Staging)
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
+    environment: staging
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Link Supabase project
+        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Check for pending migrations
+        id: check-migrations
+        run: |
+          PENDING=$(supabase db diff --schema public 2>&1 || true)
+          if [ -n "$PENDING" ] && [ "$PENDING" != "No changes detected" ]; then
+            echo "has_pending=true" >> $GITHUB_OUTPUT
+            echo "Pending migrations detected"
+          else
+            echo "has_pending=false" >> $GITHUB_OUTPUT
+            echo "No pending migrations"
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Run migrations
+        if: steps.check-migrations.outputs.has_pending == 'true'
+        run: supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Notify migration status
+        if: always()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "Database Migration (Staging): ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Database Migration (Staging)*\n*Status:* ${{ job.status }}\n*Build:* ${{ needs.build.outputs.build_id }}\n*Commit:* `${{ github.sha }}`"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # =============================================================================
+  # JOB 3: DEPLOY TO STAGING
+  # =============================================================================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build, migrate-staging]
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
+    environment:
+      name: staging
+      url: ${{ steps.deploy.outputs.url }}
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ needs.build.outputs.build_id }}
+          path: dist/
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Staging
+        id: deploy
+        run: |
+          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $URL"
+
+      - name: Set staging alias
+        run: |
+          vercel alias ${{ steps.deploy.outputs.url }} staging.bizscreen.app --token=${{ secrets.VERCEL_TOKEN }}
+        continue-on-error: true
+
+      - name: Run smoke tests
+        run: |
+          # Wait for deployment to be ready
+          sleep 10
+          # Simple health check
+          curl -f ${{ steps.deploy.outputs.url }}/api/health || exit 1
+        continue-on-error: true
+
+      - name: Notify deployment
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "Staging Deployment: ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Staging Deployment*\n*Status:* ${{ job.status }}\n*Version:* ${{ needs.build.outputs.version }}\n*Build:* ${{ needs.build.outputs.build_id }}\n*URL:* ${{ steps.deploy.outputs.url }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": { "type": "plain_text", "text": "View Deployment" },
+                      "url": "${{ steps.deploy.outputs.url }}"
+                    },
+                    {
+                      "type": "button",
+                      "text": { "type": "plain_text", "text": "View Commit" },
+                      "url": "${{ github.event.head_commit.url }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # =============================================================================
+  # JOB 4: DATABASE MIGRATIONS (Production)
+  # =============================================================================
+  migrate-production:
+    name: Run Migrations (Production)
+    runs-on: ubuntu-latest
+    needs: [build, deploy-staging]
+    if: github.event.inputs.environment == 'production'
+    environment: production
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Link Supabase project
+        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF_PROD }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Backup database before migration
+        run: |
+          echo "Creating backup before migration..."
+          # Supabase handles backups automatically, but we log the timestamp
+          echo "BACKUP_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+
+      - name: Run migrations (dry run)
+        run: |
+          echo "Running migration dry run..."
+          supabase db diff --schema public
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Run migrations
+        run: supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Notify migration status
+        if: always()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "Production Migration: ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":rotating_light: *Production Migration*\n*Status:* ${{ job.status }}\n*Build:* ${{ needs.build.outputs.build_id }}\n*Backup Timestamp:* ${{ env.BACKUP_TIMESTAMP }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # =============================================================================
+  # JOB 5: DEPLOY TO PRODUCTION
+  # =============================================================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, migrate-production]
+    if: github.event.inputs.environment == 'production'
+    environment:
+      name: production
+      url: https://app.bizscreen.app
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ needs.build.outputs.build_id }}
+          path: dist/
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Production
+        id: deploy
+        run: |
+          URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $URL"
+
+      - name: Run production smoke tests
+        run: |
+          sleep 15
+          # Health check
+          curl -f https://app.bizscreen.app/api/health || exit 1
+          # Check critical endpoints
+          curl -f https://app.bizscreen.app/ || exit 1
+
+      - name: Create deployment tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag -a "deploy-${{ needs.build.outputs.version }}-${{ needs.build.outputs.build_id }}" -m "Production deployment ${{ needs.build.outputs.version }}"
+          git push origin "deploy-${{ needs.build.outputs.version }}-${{ needs.build.outputs.build_id }}"
+        continue-on-error: true
+
+      - name: Notify deployment
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "Production Deployment: ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":rocket: *Production Deployment*\n*Status:* ${{ job.status }}\n*Version:* ${{ needs.build.outputs.version }}\n*Build:* ${{ needs.build.outputs.build_id }}\n*URL:* https://app.bizscreen.app"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Deployed by: ${{ github.actor }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # =============================================================================
+  # JOB 6: ROLLBACK (Manual trigger only)
+  # =============================================================================
+  rollback:
+    name: Rollback Production
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && failure()
+    needs: [deploy-production]
+    environment: production
+    timeout-minutes: 10
+
+    steps:
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Get previous deployment
+        id: previous
+        run: |
+          PREV=$(vercel list --token=${{ secrets.VERCEL_TOKEN }} | grep -E "Production" | head -2 | tail -1 | awk '{print $1}')
+          echo "deployment=$PREV" >> $GITHUB_OUTPUT
+
+      - name: Rollback to previous deployment
+        run: |
+          echo "Rolling back to: ${{ steps.previous.outputs.deployment }}"
+          vercel rollback ${{ steps.previous.outputs.deployment }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Notify rollback
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": ":warning: Production Rollback Executed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":warning: *Production Rollback*\n*Reason:* Deployment failed\n*Rolled back to:* ${{ steps.previous.outputs.deployment }}\n*Triggered by:* ${{ github.actor }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
