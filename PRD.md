@@ -42,12 +42,12 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a developer, I need indexes on layout_zones foreign keys so that queries filtering by layout_id, assigned_playlist_id, or assigned_media_id are fast.
 
 **Acceptance Criteria:**
-- [ ] Create migration `supabase/migrations/110_layout_zones_indexes.sql`
-- [ ] Add index on `layout_zones.layout_id`
-- [ ] Add index on `layout_zones.assigned_playlist_id`
-- [ ] Add index on `layout_zones.assigned_media_id`
-- [ ] Use `CREATE INDEX IF NOT EXISTS` for idempotency
-- [ ] Typecheck passes
+- [x] ~~Create migration~~ (indexes already exist in migrations 014 and 061)
+- [x] Index on `layout_zones.layout_id` - exists: `idx_layout_zones_layout_id` (migration 014)
+- [x] Index on `layout_zones.assigned_playlist_id` - exists: `idx_layout_zones_playlist_id` (migration 061)
+- [x] Index on `layout_zones.assigned_media_id` - exists: `idx_layout_zones_media_id` (migration 061)
+- [x] Already uses `CREATE INDEX IF NOT EXISTS` for idempotency
+- [x] No changes needed - typecheck passes
 
 ---
 

@@ -32,3 +32,15 @@
   - Supabase RPC call: `supabase.rpc('function_name', { param: value })`
   - RPC returns `{ data, error }` like regular queries
 ---
+
+## Iteration 3 - US-003: Add missing indexes to layout_zones table
+- What was implemented:
+  - NO CODE CHANGES - indexes already exist!
+  - Verified existing indexes in migrations 014 and 061
+- Files changed:
+  - None (PRD updated to reflect existing state)
+- Learnings for future iterations:
+  - ALWAYS verify audit findings before implementing - grep for `idx_` patterns
+  - Indexes found: `idx_layout_zones_layout_id`, `idx_layout_zones_playlist_id`, `idx_layout_zones_media_id`
+  - Partial indexes used: `WHERE assigned_playlist_id IS NOT NULL` - good for sparse columns
+---
