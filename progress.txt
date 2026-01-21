@@ -1,0 +1,21 @@
+# Progress Log
+
+## Learnings
+(Patterns discovered during implementation)
+
+---
+
+## Iteration 1 - US-001: Create database function for scenes with device counts
+- What was implemented:
+  - Created `get_scenes_with_device_counts(p_tenant_id UUID)` function
+  - Returns JSON array of scenes with nested layout/playlist objects and deviceCount
+  - Uses subquery for device count instead of N+1 pattern
+  - SECURITY DEFINER with explicit tenant/superadmin check
+- Files changed:
+  - `supabase/migrations/109_scenes_device_counts_function.sql` (new)
+- Learnings for future iterations:
+  - Supabase nested selects return objects like `layout: {id, name}` - must match this format in RPC
+  - Use `COALESCE(json_agg(...), '[]'::JSON)` to handle empty results
+  - Device count uses correlated subquery - efficient with index on `tv_devices.active_scene_id`
+  - Build passes (no typecheck script, but `npm run build` works)
+---
