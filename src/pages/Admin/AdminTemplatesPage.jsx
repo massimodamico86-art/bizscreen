@@ -14,7 +14,7 @@ import {
   updateTemplate,
   LICENSE_LABELS,
 } from '../../services/marketplaceService';
-import BulkTemplateUpload from '../../components/admin/BulkTemplateUpload';
+import BulkTemplateUpload from '../../components/Admin/BulkTemplateUpload';
 
 // License badge colors
 const LICENSE_COLORS = {
