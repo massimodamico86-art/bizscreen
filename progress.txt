@@ -62,3 +62,21 @@
   - Get total count: `select('*', { count: 'exact' })` returns `count` in response
   - Callers checking `.length` must change to `.totalCount` or `.data.length`
 ---
+
+## Iteration 5 - US-005: Update ScenesPage to use paginated fetch
+- What was implemented:
+  - Created migration 111 to add pagination to RPC function `get_scenes_with_device_counts`
+  - Updated `fetchScenesWithDeviceCounts()` service to accept pagination params
+  - Added pagination state and URL params to ScenesPage (useSearchParams)
+  - Added Previous/Next pagination controls with page counter
+  - Loading state disables buttons during transitions
+- Files changed:
+  - `supabase/migrations/111_scenes_device_counts_pagination.sql` (new)
+  - `src/services/sceneService.js` (modified)
+  - `src/pages/ScenesPage.jsx` (modified)
+- Learnings for future iterations:
+  - When RPC function already exists, update it in a new migration (don't modify old migration)
+  - Use `DROP FUNCTION IF EXISTS` before `CREATE OR REPLACE` when changing params
+  - React Router's `useSearchParams` hook for URL state management
+  - `useCallback` for functions used in useEffect dependencies
+---

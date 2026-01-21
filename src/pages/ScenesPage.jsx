@@ -7,7 +7,8 @@
  * - Create new scene
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Layers,
   Plus,
@@ -25,6 +26,8 @@ import {
   Coffee,
   Building2,
   Sparkles,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { formatDate } from '../utils/formatters';
@@ -129,32 +132,51 @@ function SceneCard({ scene, onOpenScene, onPublish }) {
   );
 }
 
+const PAGE_SIZE = 12; // Good for grid display
+
 export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild }) {
   const { userProfile } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [scenes, setScenes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [publishModalScene, setPublishModalScene] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
-  // Fetch scenes on mount
-  useEffect(() => {
-    if (userProfile?.id) {
-      loadScenes();
-    }
-  }, [userProfile?.id]);
+  // Get current page from URL, default to 1
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
-  async function loadScenes() {
+  // Load scenes with pagination
+  const loadScenes = useCallback(async (page) => {
+    if (!userProfile?.id) return;
+
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchScenesWithDeviceCounts(userProfile.id);
-      setScenes(data);
+      const result = await fetchScenesWithDeviceCounts(userProfile.id, {
+        page,
+        pageSize: PAGE_SIZE
+      });
+      setScenes(result.data || []);
+      setTotalCount(result.totalCount || 0);
+      setTotalPages(result.totalPages || 0);
     } catch (err) {
       console.error('Error loading scenes:', err);
       setError('Failed to load scenes. Please try again.');
     } finally {
       setLoading(false);
     }
+  }, [userProfile?.id]);
+
+  // Fetch scenes when page or user changes
+  useEffect(() => {
+    loadScenes(currentPage);
+  }, [currentPage, loadScenes]);
+
+  // Handle page change
+  function handlePageChange(newPage) {
+    setSearchParams({ page: newPage.toString() });
   }
 
   function handleOpenScene(scene) {
@@ -167,7 +189,7 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
 
   function handlePublishSuccess(count) {
     onShowToast?.(`Scene published to ${count} screen${count !== 1 ? 's' : ''}!`, 'success');
-    loadScenes(); // Refresh to update device counts
+    loadScenes(currentPage); // Refresh to update device counts
   }
 
   function handleCreateScene() {
@@ -215,16 +237,46 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
             }
           />
         ) : (
-          <Grid cols={{ default: 1, sm: 2, lg: 3 }} gap="lg">
-            {scenes.map((scene) => (
-              <SceneCard
-                key={scene.id}
-                scene={scene}
-                onOpenScene={handleOpenScene}
-                onPublish={handlePublish}
-              />
-            ))}
-          </Grid>
+          <>
+            <Grid cols={{ default: 1, sm: 2, lg: 3 }} gap="lg">
+              {scenes.map((scene) => (
+                <SceneCard
+                  key={scene.id}
+                  scene={scene}
+                  onOpenScene={handleOpenScene}
+                  onPublish={handlePublish}
+                />
+              ))}
+            </Grid>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-4 mt-8 pt-6 border-t">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={currentPage <= 1 || loading}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Previous
+                </Button>
+                <span className="text-sm text-gray-600">
+                  Page {currentPage} of {totalPages}
+                  <span className="text-gray-400 ml-2">({totalCount} scenes)</span>
+                </span>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={currentPage >= totalPages || loading}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </PageContent>
 

@@ -247,21 +247,27 @@ export async function getDeviceCountByScene(sceneId) {
 }
 
 /**
- * Fetch scenes with device counts for a tenant
+ * Fetch scenes with device counts for a tenant with pagination
  * Uses optimized database function to avoid N+1 query pattern
  * @param {string} tenantId - The tenant/user ID
- * @returns {Promise<Array>} List of scenes with device counts
+ * @param {Object} options - Pagination options
+ * @param {number} options.page - Page number (1-based)
+ * @param {number} options.pageSize - Number of items per page
+ * @returns {Promise<Object>} Paginated result { data, totalCount, page, pageSize, totalPages }
  */
-export async function fetchScenesWithDeviceCounts(tenantId) {
+export async function fetchScenesWithDeviceCounts(tenantId, { page = 1, pageSize = 50 } = {}) {
   const { data, error } = await supabase.rpc('get_scenes_with_device_counts', {
-    p_tenant_id: tenantId
+    p_tenant_id: tenantId,
+    p_page: page,
+    p_page_size: pageSize
   });
 
   if (error) {
     throw new Error(`Failed to fetch scenes with device counts: ${error.message}`);
   }
 
-  return data || [];
+  // RPC returns the paginated object directly
+  return data || { data: [], totalCount: 0, page, pageSize, totalPages: 0 };
 }
 
 export default {

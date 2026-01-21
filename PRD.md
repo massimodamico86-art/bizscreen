@@ -68,13 +68,13 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a user, I want pagination controls on the Scenes page so that I can navigate through my scenes efficiently.
 
 **Acceptance Criteria:**
-- [ ] Add pagination state (currentPage, totalPages) to ScenesPage.jsx
-- [ ] Call paginated `fetchScenesForTenant()` with page parameter
-- [ ] Display pagination controls (Previous/Next or page numbers)
-- [ ] Update URL with page query param for bookmarkable pages
-- [ ] Loading state shown during page transitions
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Add pagination state (currentPage, totalPages) to ScenesPage.jsx
+- [x] Call paginated `fetchScenesWithDeviceCounts()` with page parameter (uses optimized RPC)
+- [x] Display pagination controls (Previous/Next with page counter)
+- [x] Update URL with page query param for bookmarkable pages (useSearchParams)
+- [x] Loading state shown during page transitions (disabled buttons when loading)
+- [x] Typecheck passes
+- [ ] Verify changes work in browser (requires manual testing)
 
 ---
 
