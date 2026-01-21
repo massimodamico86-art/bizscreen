@@ -2,10 +2,34 @@
  * Webhook Service
  *
  * Frontend service for managing webhook endpoints and viewing delivery history.
+ *
+ * Features:
+ * - Webhook endpoint management
+ * - Delivery history tracking
+ * - Event replay capability
+ * - Dead letter queue for failed events
+ * - Webhook testing (ping endpoint)
+ * - Signature verification guide
  */
 
 import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
+
+// Retry configuration
+export const WEBHOOK_RETRY_CONFIG = {
+  maxAttempts: 5,
+  initialDelaySeconds: 30,
+  backoffMultiplier: 2,
+  // Results in: 30s, 60s, 120s, 240s, 480s (max ~8 minutes total wait)
+};
+
+// Webhook status constants
+export const WEBHOOK_STATUSES = {
+  PENDING: 'pending',
+  DELIVERED: 'delivered',
+  FAILED: 'failed',      // Still retrying
+  EXHAUSTED: 'exhausted', // Max retries reached (dead letter)
+};
 
 // Available webhook events
 export const AVAILABLE_WEBHOOK_EVENTS = [
@@ -275,4 +299,468 @@ export function getDeliveryStatus(event) {
 export function formatEventType(eventType) {
   const event = AVAILABLE_WEBHOOK_EVENTS.find(e => e.value === eventType);
   return event?.label || eventType;
+}
+
+// ============================================
+// WEBHOOK RELIABILITY FEATURES
+// ============================================
+
+/**
+ * Get failed/dead-letter webhook events
+ * @param {number} limit
+ * @returns {Promise<Array>}
+ */
+export async function getDeadLetterEvents(limit = 50) {
+  const ownerId = await getEffectiveOwnerId();
+  if (!ownerId) throw new Error('No tenant context');
+
+  const { data, error } = await supabase
+    .from('webhook_events')
+    .select(`
+      id,
+      event_type,
+      payload,
+      status,
+      attempt_count,
+      response_status,
+      last_error,
+      created_at,
+      last_attempt_at,
+      endpoint:webhook_endpoints(id, url)
+    `)
+    .eq('owner_id', ownerId)
+    .eq('status', WEBHOOK_STATUSES.EXHAUSTED)
+    .order('last_attempt_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Replay a failed webhook event (reset for retry)
+ * @param {string} eventId
+ * @returns {Promise<Object>}
+ */
+export async function replayWebhookEvent(eventId) {
+  const ownerId = await getEffectiveOwnerId();
+  if (!ownerId) throw new Error('No tenant context');
+
+  // Reset the event for retry
+  const { data, error } = await supabase
+    .from('webhook_events')
+    .update({
+      status: WEBHOOK_STATUSES.PENDING,
+      attempt_count: 0,
+      next_attempt_at: new Date().toISOString(),
+      last_error: null,
+    })
+    .eq('id', eventId)
+    .eq('owner_id', ownerId)
+    .select('id, event_type, status')
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Replay multiple failed events
+ * @param {string[]} eventIds
+ * @returns {Promise<{ success: number, failed: number }>}
+ */
+export async function replayMultipleEvents(eventIds) {
+  let success = 0;
+  let failed = 0;
+
+  for (const eventId of eventIds) {
+    try {
+      await replayWebhookEvent(eventId);
+      success++;
+    } catch (e) {
+      failed++;
+    }
+  }
+
+  return { success, failed };
+}
+
+/**
+ * Permanently delete a dead letter event
+ * @param {string} eventId
+ * @returns {Promise<void>}
+ */
+export async function deleteDeadLetterEvent(eventId) {
+  const ownerId = await getEffectiveOwnerId();
+  if (!ownerId) throw new Error('No tenant context');
+
+  const { error } = await supabase
+    .from('webhook_events')
+    .delete()
+    .eq('id', eventId)
+    .eq('owner_id', ownerId)
+    .eq('status', WEBHOOK_STATUSES.EXHAUSTED);
+
+  if (error) throw error;
+}
+
+/**
+ * Clear all dead letter events for the tenant
+ * @returns {Promise<number>} Number of deleted events
+ */
+export async function clearDeadLetterQueue() {
+  const ownerId = await getEffectiveOwnerId();
+  if (!ownerId) throw new Error('No tenant context');
+
+  const { data, error } = await supabase
+    .from('webhook_events')
+    .delete()
+    .eq('owner_id', ownerId)
+    .eq('status', WEBHOOK_STATUSES.EXHAUSTED)
+    .select('id');
+
+  if (error) throw error;
+  return data?.length || 0;
+}
+
+/**
+ * Test a webhook endpoint with a ping event
+ * @param {string} endpointId
+ * @returns {Promise<{ success: boolean, statusCode?: number, error?: string, latencyMs: number }>}
+ */
+export async function testWebhookEndpoint(endpointId) {
+  const ownerId = await getEffectiveOwnerId();
+  if (!ownerId) throw new Error('No tenant context');
+
+  // Get endpoint details
+  const { data: endpoint, error: fetchError } = await supabase
+    .from('webhook_endpoints')
+    .select('id, url, secret')
+    .eq('id', endpointId)
+    .eq('owner_id', ownerId)
+    .single();
+
+  if (fetchError || !endpoint) {
+    throw new Error('Endpoint not found');
+  }
+
+  // Create test payload
+  const testPayload = {
+    event: 'webhook.test',
+    timestamp: new Date().toISOString(),
+    test: true,
+    message: 'This is a test webhook from BizScreen',
+  };
+
+  // Generate signature
+  const signature = await generateWebhookSignature(testPayload, endpoint.secret);
+
+  // Send test request
+  const startTime = performance.now();
+  try {
+    const response = await fetch(endpoint.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-BizScreen-Signature': signature,
+        'X-BizScreen-Event': 'webhook.test',
+        'X-BizScreen-Delivery': `test_${Date.now()}`,
+      },
+      body: JSON.stringify(testPayload),
+    });
+
+    const latencyMs = Math.round(performance.now() - startTime);
+
+    return {
+      success: response.ok,
+      statusCode: response.status,
+      latencyMs,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+      latencyMs: Math.round(performance.now() - startTime),
+    };
+  }
+}
+
+/**
+ * Generate HMAC-SHA256 signature for webhook payload
+ * @param {Object} payload
+ * @param {string} secret
+ * @returns {Promise<string>}
+ */
+async function generateWebhookSignature(payload, secret) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(JSON.stringify(payload));
+  const keyData = encoder.encode(secret);
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const signature = await crypto.subtle.sign('HMAC', key, data);
+  const hashArray = Array.from(new Uint8Array(signature));
+  return 'sha256=' + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Get webhook endpoint statistics
+ * @param {string} endpointId
+ * @returns {Promise<Object>}
+ */
+export async function getEndpointStats(endpointId) {
+  const { data, error } = await supabase.rpc('get_webhook_endpoint_stats', {
+    p_endpoint_id: endpointId,
+  });
+
+  if (error) {
+    // Fallback: calculate from events
+    const events = await fetchWebhookDeliveries(endpointId, 100);
+
+    const stats = {
+      total: events.length,
+      delivered: 0,
+      failed: 0,
+      pending: 0,
+      successRate: 0,
+      avgLatency: null,
+    };
+
+    for (const event of events) {
+      if (event.status === 'delivered') stats.delivered++;
+      else if (event.status === 'exhausted') stats.failed++;
+      else stats.pending++;
+    }
+
+    stats.successRate = stats.total > 0
+      ? Math.round((stats.delivered / stats.total) * 100)
+      : 100;
+
+    return stats;
+  }
+
+  return data;
+}
+
+/**
+ * Get webhook event details with full payload
+ * @param {string} eventId
+ * @returns {Promise<Object>}
+ */
+export async function getWebhookEventDetails(eventId) {
+  const ownerId = await getEffectiveOwnerId();
+  if (!ownerId) throw new Error('No tenant context');
+
+  const { data, error } = await supabase
+    .from('webhook_events')
+    .select(`
+      id,
+      event_type,
+      payload,
+      status,
+      attempt_count,
+      max_attempts,
+      response_status,
+      last_error,
+      created_at,
+      last_attempt_at,
+      next_attempt_at,
+      endpoint:webhook_endpoints(id, url, is_active)
+    `)
+    .eq('id', eventId)
+    .eq('owner_id', ownerId)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Rotate webhook secret
+ * @param {string} endpointId
+ * @returns {Promise<{ endpoint: Object, secret: string }>}
+ */
+export async function rotateWebhookSecret(endpointId) {
+  const ownerId = await getEffectiveOwnerId();
+  if (!ownerId) throw new Error('No tenant context');
+
+  // Generate new secret
+  const newSecret = generateSecret();
+
+  const { data, error } = await supabase
+    .from('webhook_endpoints')
+    .update({ secret: newSecret })
+    .eq('id', endpointId)
+    .eq('owner_id', ownerId)
+    .select('id, url, events, is_active, description')
+    .single();
+
+  if (error) throw error;
+
+  return {
+    endpoint: data,
+    secret: newSecret,
+  };
+}
+
+/**
+ * Get webhook delivery summary for dashboard
+ * @param {number} days - Number of days to look back
+ * @returns {Promise<Object>}
+ */
+export async function getDeliverySummary(days = 7) {
+  const ownerId = await getEffectiveOwnerId();
+  if (!ownerId) throw new Error('No tenant context');
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  const { data, error } = await supabase
+    .from('webhook_events')
+    .select('id, status, created_at')
+    .eq('owner_id', ownerId)
+    .gte('created_at', startDate.toISOString());
+
+  if (error) throw error;
+
+  const summary = {
+    total: data?.length || 0,
+    delivered: 0,
+    pending: 0,
+    failed: 0,
+    exhausted: 0,
+    successRate: 100,
+    byDay: {},
+  };
+
+  for (const event of (data || [])) {
+    // Count by status
+    switch (event.status) {
+      case 'delivered':
+        summary.delivered++;
+        break;
+      case 'pending':
+      case 'failed':
+        summary.pending++;
+        break;
+      case 'exhausted':
+        summary.exhausted++;
+        break;
+    }
+
+    // Group by day
+    const day = event.created_at.split('T')[0];
+    if (!summary.byDay[day]) {
+      summary.byDay[day] = { total: 0, delivered: 0, failed: 0 };
+    }
+    summary.byDay[day].total++;
+    if (event.status === 'delivered') {
+      summary.byDay[day].delivered++;
+    } else if (event.status === 'exhausted') {
+      summary.byDay[day].failed++;
+    }
+  }
+
+  // Calculate success rate
+  const completed = summary.delivered + summary.exhausted;
+  if (completed > 0) {
+    summary.successRate = Math.round((summary.delivered / completed) * 100);
+  }
+
+  return summary;
+}
+
+/**
+ * Get signature verification code examples
+ * @returns {Object}
+ */
+export function getSignatureVerificationExamples() {
+  return {
+    node: `
+const crypto = require('crypto');
+
+function verifyWebhookSignature(payload, signature, secret) {
+  const expectedSignature = 'sha256=' + crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(payload))
+    .digest('hex');
+
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+
+// Usage in Express
+app.post('/webhook', (req, res) => {
+  const signature = req.headers['x-bizscreen-signature'];
+  const isValid = verifyWebhookSignature(req.body, signature, WEBHOOK_SECRET);
+
+  if (!isValid) {
+    return res.status(401).send('Invalid signature');
+  }
+
+  // Process webhook...
+  res.status(200).send('OK');
+});
+`,
+    python: `
+import hmac
+import hashlib
+import json
+
+def verify_webhook_signature(payload, signature, secret):
+    expected = 'sha256=' + hmac.new(
+        secret.encode('utf-8'),
+        json.dumps(payload, separators=(',', ':')).encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+
+    return hmac.compare_digest(signature, expected)
+
+# Usage in Flask
+@app.route('/webhook', methods=['POST'])
+def handle_webhook():
+    signature = request.headers.get('X-BizScreen-Signature')
+    is_valid = verify_webhook_signature(request.json, signature, WEBHOOK_SECRET)
+
+    if not is_valid:
+        return 'Invalid signature', 401
+
+    # Process webhook...
+    return 'OK', 200
+`,
+    php: `
+<?php
+function verifyWebhookSignature($payload, $signature, $secret) {
+    $expected = 'sha256=' . hash_hmac(
+        'sha256',
+        json_encode($payload),
+        $secret
+    );
+
+    return hash_equals($signature, $expected);
+}
+
+// Usage
+$signature = $_SERVER['HTTP_X_BIZSCREEN_SIGNATURE'] ?? '';
+$payload = json_decode(file_get_contents('php://input'), true);
+
+if (!verifyWebhookSignature($payload, $signature, WEBHOOK_SECRET)) {
+    http_response_code(401);
+    exit('Invalid signature');
+}
+
+// Process webhook...
+http_response_code(200);
+echo 'OK';
+?>
+`,
+  };
 }
