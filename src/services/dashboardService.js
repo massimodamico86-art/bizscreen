@@ -18,28 +18,60 @@ export function isDeviceOnline(lastSeen) {
 
 /**
  * Get dashboard statistics for screens, playlists, and media
+ * Uses optimized database function to avoid fetching all records
  * @returns {Promise<Object>} Dashboard stats
  */
 export async function getDashboardStats() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User must be authenticated');
 
-  // Fetch all counts in parallel
+  // Use optimized database function - single query instead of fetching all rows
+  const { data, error } = await supabase.rpc('get_dashboard_stats');
+
+  if (error) {
+    console.error('Error fetching dashboard stats:', error);
+    // Fallback to legacy method if function doesn't exist
+    if (error.code === 'PGRST202') {
+      return getDashboardStatsLegacy();
+    }
+    throw error;
+  }
+
+  // Normalize the response to match expected format
+  return {
+    screens: {
+      total: data?.screens?.total || 0,
+      online: data?.screens?.online || 0,
+      offline: data?.screens?.offline || 0
+    },
+    playlists: {
+      total: data?.playlists?.total || 0
+    },
+    media: {
+      total: data?.media?.total || 0,
+      images: data?.media?.images || 0,
+      videos: data?.media?.videos || 0,
+      audio: data?.media?.audio || 0,
+      documents: data?.media?.documents || 0,
+      webPages: data?.media?.web_pages || 0,
+      apps: data?.media?.apps || 0
+    }
+  };
+}
+
+/**
+ * Legacy fallback for getDashboardStats (unbounded queries)
+ * Used only if the optimized database function is not available
+ * @deprecated Use get_dashboard_stats() database function instead
+ * @returns {Promise<Object>} Dashboard stats
+ */
+async function getDashboardStatsLegacy() {
+  console.warn('Using legacy getDashboardStats - consider running migration 108');
+
   const [screensResult, playlistsResult, mediaResult] = await Promise.all([
-    // Screens count with online/offline breakdown
-    supabase
-      .from('tv_devices')
-      .select('id, is_online, last_seen'),
-
-    // Playlists count
-    supabase
-      .from('playlists')
-      .select('id'),
-
-    // Media assets count with type breakdown
-    supabase
-      .from('media_assets')
-      .select('id, type')
+    supabase.from('tv_devices').select('id, is_online, last_seen'),
+    supabase.from('playlists').select('id'),
+    supabase.from('media_assets').select('id, type')
   ]);
 
   if (screensResult.error) throw screensResult.error;
@@ -50,10 +82,8 @@ export async function getDashboardStats() {
   const playlists = playlistsResult.data || [];
   const media = mediaResult.data || [];
 
-  // Calculate screen stats using shared threshold
   const onlineScreens = screens.filter(s => isDeviceOnline(s.last_seen)).length;
 
-  // Calculate media type breakdown
   const mediaByType = media.reduce((acc, item) => {
     const type = item.type || 'other';
     acc[type] = (acc[type] || 0) + 1;
@@ -189,9 +219,36 @@ export function formatLastSeen(lastSeen, includeExact = false) {
 
 /**
  * Get devices with health issues (offline for extended periods, never connected, etc.)
+ * Uses optimized database function that only returns devices with issues
+ * @param {number} limit - Maximum number of issues to return (default 50)
  * @returns {Promise<Array>} Devices with issues
  */
-export async function getDeviceHealthIssues() {
+export async function getDeviceHealthIssues(limit = 50) {
+  // Try optimized database function first
+  const { data, error } = await supabase.rpc('get_device_health_issues', {
+    issue_limit: limit
+  });
+
+  if (error) {
+    console.error('Error fetching device health issues:', error);
+    // Fallback to legacy method if function doesn't exist
+    if (error.code === 'PGRST202') {
+      return getDeviceHealthIssuesLegacy();
+    }
+    throw error;
+  }
+
+  return data || [];
+}
+
+/**
+ * Legacy fallback for getDeviceHealthIssues (unbounded query)
+ * @deprecated Use get_device_health_issues() database function instead
+ * @returns {Promise<Array>} Devices with issues
+ */
+async function getDeviceHealthIssuesLegacy() {
+  console.warn('Using legacy getDeviceHealthIssues - consider running migration 108');
+
   const { data, error } = await supabase
     .from('tv_devices')
     .select('id, device_name, last_seen, is_online, created_at')
@@ -209,7 +266,6 @@ export async function getDeviceHealthIssues() {
     const lastSeenDate = device.last_seen ? new Date(device.last_seen) : null;
     const timeSinceLastSeen = lastSeenDate ? now - lastSeenDate.getTime() : null;
 
-    // Never connected
     if (!device.last_seen) {
       issues.push({
         deviceId: device.id,
@@ -218,9 +274,7 @@ export async function getDeviceHealthIssues() {
         severity: 'warning',
         message: 'Device has never connected'
       });
-    }
-    // Offline > 24 hours
-    else if (timeSinceLastSeen > DAY_MS) {
+    } else if (timeSinceLastSeen > DAY_MS) {
       const daysOffline = Math.floor(timeSinceLastSeen / DAY_MS);
       issues.push({
         deviceId: device.id,
@@ -230,9 +284,7 @@ export async function getDeviceHealthIssues() {
         message: `Offline for ${daysOffline} day${daysOffline > 1 ? 's' : ''}`,
         lastSeen: device.last_seen
       });
-    }
-    // Offline > 1 hour but < 24 hours
-    else if (timeSinceLastSeen > HOUR_MS) {
+    } else if (timeSinceLastSeen > HOUR_MS) {
       const hoursOffline = Math.floor(timeSinceLastSeen / HOUR_MS);
       issues.push({
         deviceId: device.id,
@@ -250,17 +302,47 @@ export async function getDeviceHealthIssues() {
 
 /**
  * Get a quick summary of alerts for the dashboard
+ * Uses optimized database function
  * @returns {Promise<Object>} Alert summary
  */
 export async function getAlertSummary() {
-  const issues = await getDeviceHealthIssues();
+  // Try optimized database function first
+  const { data, error } = await supabase.rpc('get_alert_summary', {
+    top_issues_limit: 3
+  });
+
+  if (error) {
+    console.error('Error fetching alert summary:', error);
+    // Fallback to legacy method if function doesn't exist
+    if (error.code === 'PGRST202') {
+      return getAlertSummaryLegacy();
+    }
+    throw error;
+  }
+
+  return {
+    total: data?.total || 0,
+    critical: data?.critical || 0,
+    warning: data?.warning || 0,
+    info: data?.info || 0,
+    topIssues: data?.topIssues || []
+  };
+}
+
+/**
+ * Legacy fallback for getAlertSummary
+ * @deprecated Use get_alert_summary() database function instead
+ * @returns {Promise<Object>} Alert summary
+ */
+async function getAlertSummaryLegacy() {
+  const issues = await getDeviceHealthIssuesLegacy();
 
   return {
     total: issues.length,
     critical: issues.filter(i => i.severity === 'critical').length,
     warning: issues.filter(i => i.severity === 'warning').length,
     info: issues.filter(i => i.severity === 'info').length,
-    topIssues: issues.slice(0, 3) // Top 3 issues
+    topIssues: issues.slice(0, 3)
   };
 }
 
