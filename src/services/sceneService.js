@@ -230,25 +230,20 @@ export async function getDeviceCountByScene(sceneId) {
 
 /**
  * Fetch scenes with device counts for a tenant
+ * Uses optimized database function to avoid N+1 query pattern
  * @param {string} tenantId - The tenant/user ID
  * @returns {Promise<Array>} List of scenes with device counts
  */
 export async function fetchScenesWithDeviceCounts(tenantId) {
-  // First fetch scenes
-  const scenes = await fetchScenesForTenant(tenantId);
+  const { data, error } = await supabase.rpc('get_scenes_with_device_counts', {
+    p_tenant_id: tenantId
+  });
 
-  // Then get device counts for each scene
-  const scenesWithCounts = await Promise.all(
-    scenes.map(async (scene) => {
-      const deviceCount = await getDeviceCountByScene(scene.id);
-      return {
-        ...scene,
-        deviceCount
-      };
-    })
-  );
+  if (error) {
+    throw new Error(`Failed to fetch scenes with device counts: ${error.message}`);
+  }
 
-  return scenesWithCounts;
+  return data || [];
 }
 
 export default {

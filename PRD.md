@@ -30,11 +30,11 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a developer, I want sceneService to call the optimized database function so that scene loading is O(1) queries instead of O(N).
 
 **Acceptance Criteria:**
-- [ ] Replace `fetchScenesWithDeviceCounts()` in `src/services/sceneService.js` to use RPC call
-- [ ] Remove `getDeviceCountByScene()` function (now unused)
-- [ ] Maintain existing return shape for backward compatibility
-- [ ] Add error handling with descriptive message
-- [ ] Typecheck passes
+- [x] Replace `fetchScenesWithDeviceCounts()` in `src/services/sceneService.js` to use RPC call
+- [x] ~~Remove `getDeviceCountByScene()` function~~ (kept - still used by SceneDetailPage)
+- [x] Maintain existing return shape for backward compatibility
+- [x] Add error handling with descriptive message
+- [x] Typecheck passes
 
 ---
 

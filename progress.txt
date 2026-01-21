@@ -19,3 +19,16 @@
   - Device count uses correlated subquery - efficient with index on `tv_devices.active_scene_id`
   - Build passes (no typecheck script, but `npm run build` works)
 ---
+
+## Iteration 2 - US-002: Update sceneService to use new database function
+- What was implemented:
+  - Replaced `fetchScenesWithDeviceCounts()` to call RPC `get_scenes_with_device_counts`
+  - Added descriptive error message on failure
+  - Kept `getDeviceCountByScene()` - still used by SceneDetailPage.jsx for single scene view
+- Files changed:
+  - `src/services/sceneService.js` (modified)
+- Learnings for future iterations:
+  - Check all usages before removing a function - Grep for function name across src/
+  - Supabase RPC call: `supabase.rpc('function_name', { param: value })`
+  - RPC returns `{ data, error }` like regular queries
+---
