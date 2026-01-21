@@ -110,3 +110,19 @@
   - Complex pages may have multiple filter systems - some server-side, some client-side
   - useCallback for fetch functions to ensure stable dependencies
 ---
+
+## Iteration 8 - US-008: Add server-side pagination to fetchTemplates
+- What was implemented:
+  - Updated `fetchTemplates()` to accept `{ page, pageSize }` params
+  - Added `.range()` and `{ count: 'exact' }` for pagination
+  - Returns `{ data, totalCount, page, pageSize, totalPages }` object
+  - Default pageSize = 24 (good for grid)
+  - Updated internal callers in templateService.js to use `.data`
+  - Updated TemplatesPage.jsx to use new return shape
+- Files changed:
+  - `src/services/templateService.js` (modified)
+  - `src/pages/TemplatesPage.jsx` (modified)
+- Learnings for future iterations:
+  - Service functions that call other service functions need updating too
+  - For grouping/filtering views, fetch all with high pageSize rather than paginated
+---

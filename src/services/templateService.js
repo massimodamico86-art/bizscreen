@@ -40,18 +40,25 @@ export async function fetchTemplateCategories() {
 }
 
 /**
- * Fetch templates with optional filters
+ * Fetch templates with optional filters and pagination
  * @param {object} options
  * @param {string} options.categorySlug - Filter by category slug
  * @param {string} options.type - Filter by type ('playlist', 'layout', 'pack')
+ * @param {number} options.page - Page number (1-based)
+ * @param {number} options.pageSize - Number of items per page
+ * @returns {Promise<Object>} Paginated result { data, totalCount, page, pageSize, totalPages }
  */
-export async function fetchTemplates({ categorySlug, type } = {}) {
+export async function fetchTemplates({ categorySlug, type, page = 1, pageSize = 24 } = {}) {
+  // Calculate offset for pagination
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
   let query = supabase
     .from('content_templates')
     .select(`
       *,
       category:template_categories(id, slug, name, icon)
-    `)
+    `, { count: 'exact' })
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
 
@@ -74,9 +81,22 @@ export async function fetchTemplates({ categorySlug, type } = {}) {
     query = query.eq('type', type);
   }
 
-  const { data, error } = await query;
+  // Apply pagination
+  query = query.range(from, to);
+
+  const { data, error, count } = await query;
   if (error) throw error;
-  return data || [];
+
+  const totalCount = count || 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  return {
+    data: data || [],
+    totalCount,
+    page,
+    pageSize,
+    totalPages
+  };
 }
 
 /**
@@ -160,11 +180,12 @@ export function formatTemplateForCard(template) {
  * Get templates grouped by category
  */
 export async function getTemplatesGroupedByCategory() {
-  const [categories, templates] = await Promise.all([
+  const [categories, templatesResult] = await Promise.all([
     fetchTemplateCategories(),
-    fetchTemplates(),
+    fetchTemplates({ page: 1, pageSize: 1000 }), // Fetch all for grouping
   ]);
 
+  const templates = templatesResult.data || [];
   const grouped = categories.map((category) => ({
     ...category,
     templates: templates
@@ -179,24 +200,24 @@ export async function getTemplatesGroupedByCategory() {
  * Get packs only (for onboarding)
  */
 export async function getPackTemplates() {
-  const templates = await fetchTemplates({ type: 'pack' });
-  return templates.map(formatTemplateForCard);
+  const result = await fetchTemplates({ type: 'pack', page: 1, pageSize: 100 });
+  return (result.data || []).map(formatTemplateForCard);
 }
 
 /**
  * Get playlist templates only
  */
 export async function getPlaylistTemplates(categorySlug = null) {
-  const templates = await fetchTemplates({ type: 'playlist', categorySlug });
-  return templates.map(formatTemplateForCard);
+  const result = await fetchTemplates({ type: 'playlist', categorySlug, page: 1, pageSize: 100 });
+  return (result.data || []).map(formatTemplateForCard);
 }
 
 /**
  * Get layout templates only
  */
 export async function getLayoutTemplates(categorySlug = null) {
-  const templates = await fetchTemplates({ type: 'layout', categorySlug });
-  return templates.map(formatTemplateForCard);
+  const result = await fetchTemplates({ type: 'layout', categorySlug, page: 1, pageSize: 100 });
+  return (result.data || []).map(formatTemplateForCard);
 }
 
 /**

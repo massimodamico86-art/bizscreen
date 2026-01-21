@@ -110,11 +110,13 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a user, I want templates to load quickly even as the template library grows so that I can browse efficiently.
 
 **Acceptance Criteria:**
-- [ ] Update `fetchTemplates()` in templateService.js to accept `{ page, pageSize, categorySlug }` parameters
-- [ ] Add `.range()` clause to Supabase query
-- [ ] Return `{ data, totalCount, page, pageSize, totalPages }` object
-- [ ] Default pageSize = 24 (good for grid display)
-- [ ] Typecheck passes
+- [x] Update `fetchTemplates()` in templateService.js to accept `{ page, pageSize, categorySlug }` parameters
+- [x] Add `.range()` clause to Supabase query
+- [x] Return `{ data, totalCount, page, pageSize, totalPages }` object
+- [x] Default pageSize = 24 (good for grid display)
+- [x] Typecheck passes
+- [x] Updated internal callers: getTemplatesGroupedByCategory, getPackTemplates, getPlaylistTemplates, getLayoutTemplates
+- [x] Updated TemplatesPage.jsx to use new return shape
 
 ---
 

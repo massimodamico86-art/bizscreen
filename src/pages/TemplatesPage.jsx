@@ -107,12 +107,12 @@ const TemplatesPage = ({ showToast }) => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [cats, temps] = await Promise.all([
+      const [cats, tempsResult] = await Promise.all([
         fetchTemplateCategories(),
-        fetchTemplates(),
+        fetchTemplates({ page: 1, pageSize: 500 }), // Load all templates for filtering
       ]);
       setCategories(cats);
-      setTemplates(temps.map(formatTemplateForCard));
+      setTemplates((tempsResult.data || []).map(formatTemplateForCard));
     } catch (error) {
       console.error('Error loading templates:', error);
       showToast?.('Error loading templates', 'error');
