@@ -79,6 +79,7 @@ import {
   moveMediaToFolder,
   reorderMedia,
   moveMediaToFolderOrdered,
+  fetchMediaAssets as fetchMediaAssetsService,
 } from '../services/mediaService';
 import {
   getEffectiveLimits,
@@ -1096,6 +1097,8 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const ITEMS_PER_PAGE_OPTIONS = [12, 20, 40, 60];
 
   // Folder modal state
@@ -1527,30 +1530,22 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
     }
   };
 
-  const fetchMediaAssets = async () => {
+  const fetchMediaAssets = useCallback(async (page = currentPage) => {
     try {
       setLoading(true);
       setError(null);
-      let query = supabase
-        .from('media_assets')
-        .select('*')
-        .order('sort_order', { ascending: true })
-        .order('created_at', { ascending: false });
 
-      if (filter) {
-        query = query.eq('type', filter);
-      }
+      const result = await fetchMediaAssetsService({
+        type: filter || null,
+        search: search || '',
+        page,
+        pageSize: itemsPerPage,
+        folderId: currentFolderId
+      });
 
-      // Filter by folder
-      if (currentFolderId === null) {
-        query = query.is('folder_id', null);
-      } else {
-        query = query.eq('folder_id', currentFolderId);
-      }
-
-      const { data, error: fetchError } = await query;
-      if (fetchError) throw fetchError;
-      setMediaAssets(data || []);
+      setMediaAssets(result.data || []);
+      setTotalCount(result.totalCount || 0);
+      setTotalPages(result.totalPages || 0);
     } catch (err) {
       console.error('Error fetching media:', err);
       setError(err.message || 'Failed to load media');
@@ -1558,19 +1553,15 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter, search, itemsPerPage, currentFolderId, showToast]);
 
-  // Filter assets based on search, type, and orientation
+  // Apply client-side filters (orientation only - type and search are server-side)
   const filteredAssets = mediaAssets.filter((asset) => {
-    // Search filter
-    if (search && !asset.name.toLowerCase().includes(search.toLowerCase())) {
-      return false;
-    }
-    // Type filter
+    // Type filter (additional client-side filter if typeFilter differs from main filter prop)
     if (typeFilter && asset.type !== typeFilter) {
       return false;
     }
-    // Orientation filter
+    // Orientation filter (client-side only)
     if (orientationFilter && asset.orientation !== orientationFilter) {
       return false;
     }
@@ -1579,16 +1570,20 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
 
   const hasActiveFilters = typeFilter || orientationFilter;
 
-  // Pagination calculations
-  const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedAssets = filteredAssets.slice(startIndex, endIndex);
+  // For display, use filtered assets (client-side filters applied on top of server pagination)
+  // Note: This means pagination is server-side but additional filters are client-side
+  const paginatedAssets = filteredAssets;
 
-  // Reset to page 1 when filters change
+  // Reset to page 1 and refetch when filters/pagination change
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, typeFilter, orientationFilter]);
+    fetchMediaAssets(1);
+  }, [search, filter, itemsPerPage, currentFolderId]);
+
+  // Refetch when page changes
+  useEffect(() => {
+    fetchMediaAssets(currentPage);
+  }, [currentPage]);
 
   // Selection and detail modal handlers
   const handleSelectAsset = (asset) => {

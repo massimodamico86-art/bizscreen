@@ -95,3 +95,18 @@
   - Only callers using the actual import from mediaService need updating
   - Grep shows imports AND local function definitions - check actual usage
 ---
+
+## Iteration 7 - US-007: Update MediaLibraryPage to use server-side pagination
+- What was implemented:
+  - Replaced local `fetchMediaAssets` function with service call
+  - Added `totalCount` and `totalPages` state variables
+  - Service now handles search, folder, type filtering server-side
+  - Added useEffect hooks to refetch when page/filters change
+  - Kept client-side orientation filter (not supported by service yet)
+- Files changed:
+  - `src/pages/MediaLibraryPage.jsx` (modified)
+- Learnings for future iterations:
+  - When replacing local function with service, import with alias: `fetchMediaAssets as fetchMediaAssetsService`
+  - Complex pages may have multiple filter systems - some server-side, some client-side
+  - useCallback for fetch functions to ensure stable dependencies
+---

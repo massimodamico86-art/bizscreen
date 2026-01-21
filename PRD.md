@@ -96,13 +96,13 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a user, I want the Media Library pagination to fetch only the current page from the server so that initial load is fast.
 
 **Acceptance Criteria:**
-- [ ] Replace client-side pagination logic (lines 1582-1586) with server-side
-- [ ] Update `fetchMediaAssets` call to pass page/pageSize
-- [ ] Pagination controls trigger new fetch (not local slice)
-- [ ] Maintain folder filtering with server-side pagination
-- [ ] Search triggers server-side query with pagination reset to page 1
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Replace client-side pagination logic with server-side (using service's pagination)
+- [x] Update `fetchMediaAssets` call to pass page/pageSize
+- [x] Pagination controls trigger new fetch (useEffect on currentPage)
+- [x] Maintain folder filtering with server-side pagination (folderId passed to service)
+- [x] Search triggers server-side query with pagination reset to page 1
+- [x] Typecheck passes
+- [ ] Verify changes work in browser (requires manual testing)
 
 ---
 
