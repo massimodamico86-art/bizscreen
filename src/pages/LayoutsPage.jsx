@@ -113,12 +113,12 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [templatesData, designsData] = await Promise.all([
+      const [templatesData, layoutsResult] = await Promise.all([
         getLayoutTemplates(),
         fetchLayouts(),
       ]);
       setTemplates(templatesData);
-      setUserDesigns(designsData);
+      setUserDesigns(layoutsResult.data || []);
     } catch (error) {
       console.error('Error loading data:', error);
       showToast?.('Error loading templates', 'error');

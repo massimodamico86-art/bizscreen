@@ -160,7 +160,7 @@ const CampaignEditorPage = ({ showToast }) => {
       setScreenGroups(groupsRes || []);
       setLocations(locsRes || []);
       setPlaylists(playlistsRes || []);
-      setLayouts(layoutsRes || []);
+      setLayouts(layoutsRes.data || []);
     } catch (error) {
       console.error('Error loading picker data:', error);
     }

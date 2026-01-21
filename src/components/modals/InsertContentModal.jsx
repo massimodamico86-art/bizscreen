@@ -283,8 +283,8 @@ export function InsertContentModal({
             setApps(appsData || []);
             break;
           case 'layouts':
-            const layoutsData = await fetchLayouts();
-            setLayouts(layoutsData || []);
+            const layoutsResult = await fetchLayouts();
+            setLayouts(layoutsResult.data || []);
             break;
           case 'playlists':
             const playlistsData = await fetchPlaylists();

@@ -39,27 +39,46 @@ import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
  */
 
 /**
- * Fetch all layouts for the current user
+ * Fetch layouts for the current user with pagination
  *
- * @returns {Promise<Layout[]>} Array of layouts with zone counts
+ * @param {Object} options - Pagination options
+ * @param {number} options.page - Page number (1-based), defaults to 1
+ * @param {number} options.pageSize - Items per page, defaults to 50
+ * @returns {Promise<Object>} Paginated result { data, totalCount, page, pageSize, totalPages }
  * @throws {Error} If database query fails
  */
-export async function fetchLayouts() {
-  const { data, error } = await supabase
+export async function fetchLayouts({ page = 1, pageSize = 50 } = {}) {
+  // Calculate offset for pagination
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, error, count } = await supabase
     .from('layouts')
     .select(`
       *,
       layout_zones(count)
-    `)
-    .order('created_at', { ascending: false });
+    `, { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(from, to);
 
   if (error) throw error;
 
   // Transform the count from array to number
-  return (data || []).map(layout => ({
+  const transformedData = (data || []).map(layout => ({
     ...layout,
     zone_count: layout.layout_zones?.[0]?.count || 0
   }));
+
+  const totalCount = count || 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  return {
+    data: transformedData,
+    totalCount,
+    page,
+    pageSize,
+    totalPages
+  };
 }
 
 /**

@@ -143,3 +143,23 @@
   - Grouped display (by type) works with server-side filtering when page size allows
   - Delete URL params instead of setting to 'all' or '1' for cleaner URLs
 ---
+
+## Iteration 10 - US-010: Add server-side pagination to fetchLayouts
+- What was implemented:
+  - Updated `fetchLayouts()` to accept `{ page, pageSize }` parameters
+  - Added `.range()` and `{ count: 'exact' }` for pagination
+  - Returns `{ data, totalCount, page, pageSize, totalPages }` object
+  - Default pageSize = 50
+  - Updated all callers to use `.data` from returned object
+- Files changed:
+  - `src/services/layoutService.js` (modified)
+  - `src/pages/ScreensPage.jsx` (modified)
+  - `src/pages/LayoutsPage.jsx` (modified)
+  - `src/components/modals/InsertContentModal.jsx` (modified)
+  - `src/pages/CampaignEditorPage.jsx` (modified)
+  - `src/pages/LayoutTemplates/LayoutTemplatesPage.jsx` (modified)
+- Learnings for future iterations:
+  - Many pages use layouts for dropdowns/pickers - they typically need all layouts, not paginated
+  - For picker use cases, call with high pageSize or all layouts
+  - Transform zone_count still works with new return shape
+---

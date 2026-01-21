@@ -305,8 +305,8 @@ export default function LayoutTemplatesPage({ showToast, onNavigate }) {
     setIsLoadingLayouts(true);
     setLayoutsError(null);
     try {
-      const layouts = await fetchLayouts();
-      setMyLayouts(layouts);
+      const result = await fetchLayouts();
+      setMyLayouts(result.data || []);
     } catch (err) {
       console.error('Failed to load layouts:', err);
       setLayoutsError(err.message);

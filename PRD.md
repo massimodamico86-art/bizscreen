@@ -137,11 +137,12 @@ Address critical performance issues in the Content Management domain (scenes, te
 **Description:** As a user, I want layouts to load quickly so that the Layouts page is responsive.
 
 **Acceptance Criteria:**
-- [ ] Update `fetchLayouts()` in layoutService.js to accept `{ page, pageSize }` parameters
-- [ ] Add `.range()` clause to Supabase query
-- [ ] Return `{ data, totalCount, page, pageSize, totalPages }` object
-- [ ] Default pageSize = 50
-- [ ] Typecheck passes
+- [x] Update `fetchLayouts()` in layoutService.js to accept `{ page, pageSize }` parameters
+- [x] Add `.range()` clause to Supabase query
+- [x] Return `{ data, totalCount, page, pageSize, totalPages }` object
+- [x] Default pageSize = 50
+- [x] Typecheck passes
+- [x] Updated callers: ScreensPage, LayoutsPage, InsertContentModal, CampaignEditorPage, LayoutTemplatesPage
 
 ---
 

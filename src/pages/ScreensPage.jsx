@@ -1244,8 +1244,8 @@ const ScreensPage = ({ showToast }) => {
 
   const loadLayouts = async () => {
     try {
-      const data = await fetchLayouts();
-      setLayouts(data || []);
+      const result = await fetchLayouts();
+      setLayouts(result.data || []);
     } catch (error) {
       console.error('Error fetching layouts:', error);
     }
