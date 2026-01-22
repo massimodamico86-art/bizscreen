@@ -27,6 +27,7 @@ import {
   Button,
   EmptyState
 } from '../design-system';
+import { SafeHTML } from '../security';
 import {
   HELP_CATEGORIES,
   searchHelpTopics,
@@ -286,11 +287,11 @@ function TopicDetailView({ topic, onNavigate, onBack, t }) {
         inList = true;
         const text = trimmed.replace(/^-\s*/, '').replace(/^\d+\.\s*/, '');
         const formatted = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        listItems.push(<li key={index} className="text-gray-700" dangerouslySetInnerHTML={{ __html: formatted }} />);
+        listItems.push(<li key={index} className="text-gray-700"><SafeHTML html={formatted} as="span" /></li>);
       } else if (trimmed) {
         if (inList) { elements.push(<ul key={`list-${index}`} className="list-disc pl-6 mb-4 space-y-1">{listItems}</ul>); listItems = []; inList = false; }
         const formatted = trimmed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        elements.push(<p key={index} className="text-gray-700 mb-3" dangerouslySetInnerHTML={{ __html: formatted }} />);
+        elements.push(<SafeHTML key={index} html={formatted} className="text-gray-700 mb-3" as="p" />);
       }
     });
 
