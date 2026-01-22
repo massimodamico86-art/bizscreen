@@ -1,5 +1,6 @@
 // Media Asset Service - CRUD operations for media library
 import { supabase } from '../supabase';
+import { checkRateLimit, createRateLimitError } from './rateLimitService.js';
 
 /**
  * Media asset types
@@ -153,6 +154,16 @@ export async function createMediaAsset({
 
   if (!user) throw new Error('User must be authenticated');
 
+  // Rate limit check
+  const rateCheck = await checkRateLimit('media_upload', {
+    userId: user.id,
+    isAuthenticated: true,
+  });
+
+  if (!rateCheck.allowed) {
+    throw createRateLimitError(rateCheck.retryAfter);
+  }
+
   const { data, error } = await supabase
     .from('media_assets')
     .insert({
@@ -192,6 +203,16 @@ export async function uploadMediaFromDataUrl(dataUrl, options = {}) {
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User must be authenticated');
+
+  // Rate limit check
+  const rateCheck = await checkRateLimit('media_upload', {
+    userId: user.id,
+    isAuthenticated: true,
+  });
+
+  if (!rateCheck.allowed) {
+    throw createRateLimitError(rateCheck.retryAfter);
+  }
 
   // Convert data URL to blob
   const response = await fetch(dataUrl);
@@ -993,4 +1014,226 @@ export async function createDataTableApp({
     columns,
     refreshMinutes: Math.max(2, refreshMinutes)
   });
+}
+
+// =====================================================
+// BULK OPERATIONS (US-151, US-152)
+// =====================================================
+
+/**
+ * Bulk add tags to multiple media assets (US-151)
+ * @param {string[]} mediaIds - Array of media asset UUIDs
+ * @param {string[]} tags - Array of tags to add
+ * @returns {Promise<{updated: number}>}
+ */
+export async function bulkAddTags(mediaIds, tags) {
+  if (!mediaIds || mediaIds.length === 0) return { updated: 0 };
+  if (!tags || tags.length === 0) return { updated: 0 };
+
+  // Normalize tags
+  const normalizedTags = tags.map(t => t.trim().toLowerCase()).filter(Boolean);
+  if (normalizedTags.length === 0) return { updated: 0 };
+
+  let updated = 0;
+
+  // Update each asset (merge existing tags with new ones)
+  for (const id of mediaIds) {
+    const { data: asset, error: fetchError } = await supabase
+      .from('media_assets')
+      .select('tags')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) continue;
+
+    const existingTags = asset?.tags || [];
+    const mergedTags = [...new Set([...existingTags, ...normalizedTags])];
+
+    const { error: updateError } = await supabase
+      .from('media_assets')
+      .update({ tags: mergedTags })
+      .eq('id', id);
+
+    if (!updateError) updated++;
+  }
+
+  return { updated };
+}
+
+/**
+ * Bulk remove tags from multiple media assets (US-151)
+ * @param {string[]} mediaIds - Array of media asset UUIDs
+ * @param {string[]} tags - Array of tags to remove
+ * @returns {Promise<{updated: number}>}
+ */
+export async function bulkRemoveTags(mediaIds, tags) {
+  if (!mediaIds || mediaIds.length === 0) return { updated: 0 };
+  if (!tags || tags.length === 0) return { updated: 0 };
+
+  // Normalize tags
+  const normalizedTags = tags.map(t => t.trim().toLowerCase()).filter(Boolean);
+  if (normalizedTags.length === 0) return { updated: 0 };
+
+  let updated = 0;
+
+  // Update each asset (remove specified tags)
+  for (const id of mediaIds) {
+    const { data: asset, error: fetchError } = await supabase
+      .from('media_assets')
+      .select('tags')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) continue;
+
+    const existingTags = asset?.tags || [];
+    const filteredTags = existingTags.filter(t => !normalizedTags.includes(t.toLowerCase()));
+
+    const { error: updateError } = await supabase
+      .from('media_assets')
+      .update({ tags: filteredTags })
+      .eq('id', id);
+
+    if (!updateError) updated++;
+  }
+
+  return { updated };
+}
+
+/**
+ * Get download URLs for multiple media assets (US-152)
+ * Excludes web_page and app types (can't download external URLs)
+ * @param {string[]} mediaIds - Array of media asset UUIDs
+ * @returns {Promise<Array<{id: string, name: string, url: string, type: string}>>}
+ */
+export async function getBulkDownloadUrls(mediaIds) {
+  if (!mediaIds || mediaIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from('media_assets')
+    .select('id, name, url, type')
+    .in('id', mediaIds)
+    .not('type', 'in', '("web_page","app")');
+
+  if (error) throw error;
+
+  return (data || []).map(asset => ({
+    id: asset.id,
+    name: asset.name,
+    url: asset.url,
+    type: asset.type
+  }));
+}
+
+// =====================================================
+// STORAGE USAGE (US-154)
+// =====================================================
+
+/**
+ * Format bytes to human-readable string
+ * @param {number} bytes - Number of bytes
+ * @param {number} decimals - Decimal places (default 2)
+ * @returns {string} Formatted string (e.g., "2.4 GB")
+ */
+export function formatBytes(bytes, decimals = 2) {
+  if (!bytes || bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+}
+
+/**
+ * Get storage usage statistics (US-154)
+ * @returns {Promise<Object>} Storage usage data
+ */
+export async function getStorageUsage() {
+  const { data, error } = await supabase.rpc('get_media_storage_usage');
+
+  if (error) throw error;
+
+  const row = data?.[0] || {
+    total_bytes: 0,
+    total_count: 0,
+    image_bytes: 0,
+    image_count: 0,
+    video_bytes: 0,
+    video_count: 0,
+    audio_bytes: 0,
+    audio_count: 0,
+    document_bytes: 0,
+    document_count: 0
+  };
+
+  return {
+    totalBytes: row.total_bytes,
+    totalCount: row.total_count,
+    formattedTotal: formatBytes(row.total_bytes),
+    byType: {
+      image: { bytes: row.image_bytes, count: row.image_count, formatted: formatBytes(row.image_bytes) },
+      video: { bytes: row.video_bytes, count: row.video_count, formatted: formatBytes(row.video_bytes) },
+      audio: { bytes: row.audio_bytes, count: row.audio_count, formatted: formatBytes(row.audio_bytes) },
+      document: { bytes: row.document_bytes, count: row.document_count, formatted: formatBytes(row.document_bytes) }
+    }
+  };
+}
+
+// =====================================================
+// MEDIA PREVIEW (US-155)
+// =====================================================
+
+/**
+ * Get preview data for a media asset (US-155)
+ * @param {string} mediaId - Media asset UUID
+ * @returns {Promise<Object>} Preview data
+ */
+export async function getMediaPreviewData(mediaId) {
+  if (!mediaId) throw new Error('Media ID is required');
+
+  const { data, error } = await supabase
+    .from('media_assets')
+    .select('id, name, type, url, thumbnail_url, file_size, width, height, duration, mime_type, created_at, updated_at')
+    .eq('id', mediaId)
+    .single();
+
+  if (error) throw error;
+  if (!data) throw new Error('Media not found');
+
+  return {
+    id: data.id,
+    name: data.name,
+    type: data.type,
+    url: data.url,
+    thumbnailUrl: data.thumbnail_url,
+    fileSize: data.file_size,
+    formattedSize: formatBytes(data.file_size),
+    width: data.width,
+    height: data.height,
+    dimensions: data.width && data.height ? `${data.width} x ${data.height}` : null,
+    duration: data.duration,
+    formattedDuration: data.duration ? formatDuration(data.duration) : null,
+    mimeType: data.mime_type,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at
+  };
+}
+
+/**
+ * Format duration in seconds to human-readable string
+ * @param {number} seconds - Duration in seconds
+ * @returns {string} Formatted string (e.g., "2:30" or "1:05:30")
+ */
+function formatDuration(seconds) {
+  if (!seconds || seconds <= 0) return '0:00';
+
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+
+  if (hrs > 0) {
+    return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
