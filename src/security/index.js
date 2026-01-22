@@ -1,2 +1,2 @@
 export { SafeHTML } from './SafeHTML.jsx';
-export { sanitizeHTML, SANITIZE_CONFIG } from './sanitize.js';
+export { sanitizeHTML, sanitizeHTMLWithContext, SANITIZE_CONFIG, initSanitizationLogging, isLoggingInitialized } from './sanitize.js';
