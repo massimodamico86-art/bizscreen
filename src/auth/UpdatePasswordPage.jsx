@@ -7,6 +7,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Loader2, CheckCircle, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import AuthLayout from './AuthLayout';
 import { updatePassword, getSession } from '../services/authService';
+import { validatePassword } from '../services/passwordService.js';
+import PasswordStrengthIndicator from '../components/security/PasswordStrengthIndicator.jsx';
 
 export default function UpdatePasswordPage() {
   const navigate = useNavigate();
@@ -18,6 +20,7 @@ export default function UpdatePasswordPage() {
   const [success, setSuccess] = useState(false);
   const [hasSession, setHasSession] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
 
   // Check if user has a valid session (from email link)
   useEffect(() => {
@@ -33,15 +36,16 @@ export default function UpdatePasswordPage() {
     e.preventDefault();
     setError('');
 
-    // Validate passwords match
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    // Validate password using passwordService
+    const validation = validatePassword(password);
+    if (!validation.valid) {
+      setError(validation.errors[0]);
       return;
     }
 
-    // Validate password length
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
@@ -156,9 +160,9 @@ export default function UpdatePasswordPage() {
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
+              placeholder="Create a strong password"
               required
-              minLength={6}
+              minLength={8}
               className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <button
@@ -169,6 +173,12 @@ export default function UpdatePasswordPage() {
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
+          <PasswordStrengthIndicator
+            password={password}
+            checkBreaches={true}
+            showRequirements={true}
+            onValidationChange={(result) => setIsPasswordValid(result.valid)}
+          />
         </div>
 
         {/* Confirm Password */}
@@ -185,7 +195,7 @@ export default function UpdatePasswordPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Enter password again"
               required
-              minLength={6}
+              minLength={8}
               className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -194,7 +204,7 @@ export default function UpdatePasswordPage() {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !isPasswordValid}
           className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
