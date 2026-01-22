@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 1 of 12 (Testing Infrastructure)
-Plan: 2 of 4 in current phase (01-02 just completed)
+Plan: 3 of 4 in current phase (01-03 just completed)
 Status: In progress
-Last activity: 2026-01-22 - Completed 01-02-PLAN.md (Content Sync Flow Tests)
+Last activity: 2026-01-22 - Completed 01-03-PLAN.md (Heartbeat/Reconnection Tests)
 
-Progress: [##----------] 17%
+Progress: [###---------] 25%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 9 min
-- Total execution time: 0.3 hours
+- Total plans completed: 3
+- Average duration: 8.3 min
+- Total execution time: 0.4 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-testing-infrastructure | 2 | 17 min | 8.5 min |
+| 01-testing-infrastructure | 3 | 25 min | 8.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-04 (12 min), 01-02 (5 min)
-- Trend: Improving
+- Last 5 plans: 01-04 (12 min), 01-02 (5 min), 01-03 (8 min)
+- Trend: Steady
 
 *Updated after each plan completion*
 
@@ -49,6 +49,9 @@ Recent decisions affecting current work:
 - [01-04]: Added supabase.rpc to mock for RPC function testing
 - [01-02]: Callback capture pattern for realtime refresh event testing
 - [01-02]: Relative call count assertions due to heartbeat refresh checks
+- [01-03]: Use vi.runAllTimersAsync() for initial render flush in Player tests
+- [01-03]: Global localStorage mock applied before module imports
+- [01-03]: Test reconnection via RPC call counts, not internal state
 
 ### Pending Todos
 
@@ -62,5 +65,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 01-02-PLAN.md
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None
