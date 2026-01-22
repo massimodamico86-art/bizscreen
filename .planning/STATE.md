@@ -130,11 +130,7 @@ Resume file: None
 
 ## Next Steps
 
-Phase 2: XSS Prevention - COMPLETE
-- ~~02-01: Security infrastructure (SafeHTML, sanitizeHTML)~~ DONE
-- ~~02-02: Fix innerHTML mutation in SVG editor LeftSidebar~~ DONE
-- ~~02-03: HelpCenterPage innerHTML fix~~ DONE
-- ~~02-04: Security logging and dashboard~~ DONE
-- ~~02-05: Verification and integration~~ DONE
-
-**Ready for Phase 3** (next phase in roadmap)
+Phase 3: Auth Hardening
+- Password policy: minimum 8 characters with complexity
+- Rate limiting for high-frequency API endpoints
+- Per-user and per-IP rate limiting dimensions

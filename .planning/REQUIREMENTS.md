@@ -14,8 +14,8 @@
 
 ### Security Hardening
 
-- [ ] **SEC-01**: XSS vulnerability in HelpCenterPage fixed with DOMPurify sanitization
-- [ ] **SEC-02**: innerHTML mutation in SVG editor LeftSidebar replaced with React state
+- [x] **SEC-01**: XSS vulnerability in HelpCenterPage fixed with DOMPurify sanitization
+- [x] **SEC-02**: innerHTML mutation in SVG editor LeftSidebar replaced with React state
 - [ ] **SEC-03**: Password policy enforces minimum 8 characters with complexity
 - [ ] **SEC-04**: Global API rate limiting protects high-frequency endpoints
 - [ ] **SEC-05**: Console.log calls (197+) replaced with structured logger
@@ -110,8 +110,8 @@ Deferred to future release:
 | TEST-02 | Phase 1 | Complete |
 | TEST-03 | Phase 1 | Complete |
 | TEST-04 | Phase 1 | Complete |
-| SEC-01 | Phase 2 | Pending |
-| SEC-02 | Phase 2 | Pending |
+| SEC-01 | Phase 2 | Complete |
+| SEC-02 | Phase 2 | Complete |
 | SEC-03 | Phase 3 | Pending |
 | SEC-04 | Phase 3 | Pending |
 | SEC-05 | Phase 4 | Pending |
@@ -156,4 +156,4 @@ Deferred to future release:
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 — Phase 1 complete (TEST-01, TEST-02, TEST-03, TEST-04)*
+*Last updated: 2026-01-22 — Phase 2 complete (SEC-01, SEC-02)*
