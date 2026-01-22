@@ -10,19 +10,26 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 3 of 12 (Auth Hardening) - In Progress
-Plan: 2 of 4 in phase 3
+Plan: 2 of 4 in phase 3 complete
 Status: In Progress
-Last activity: 2026-01-22 - Completed 03-02-PLAN.md (Rate Limiting Database Infrastructure)
+Last activity: 2026-01-22 - Completed 03-01-PLAN.md (Password Validation Integration)
 
 Progress: [######------] 17% (2/12 phases complete)
 
 ## Phase 3 Progress
 
 **Auth Hardening Plans:**
-- [ ] 03-01: Password policy and validation
+- [x] 03-01: Password validation integration (4d0df0b, b2579ce)
 - [x] 03-02: Rate limiting database infrastructure (fd22eeb)
 - [ ] 03-03: Service integration for rate limiting
 - [ ] 03-04: Verification and testing
+
+**Password Validation Integration:**
+- SignupPage validates passwords with passwordService (8+ chars, complexity)
+- UpdatePasswordPage applies same validation rules
+- PasswordStrengthIndicator shows real-time feedback
+- Submit buttons disabled until password valid
+- HIBP breach checking active
 
 **Rate Limiting Infrastructure:**
 - api_rate_limits table with optimized indexes
@@ -76,9 +83,9 @@ Progress: [######------] 17% (2/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 6.3 min
-- Total execution time: 67 min (1.1 hours)
+- Total plans completed: 12
+- Average duration: 6.1 min
+- Total execution time: 71 min (1.2 hours)
 
 **By Phase:**
 
@@ -86,11 +93,11 @@ Progress: [######------] 17% (2/12 phases complete)
 |-------|-------|-------|----------|
 | 01-testing-infrastructure | 5 | 50 min | 10 min |
 | 02-xss-prevention | 5 | 16 min | 3.2 min |
-| 03-auth-hardening | 1 | 1 min | 1 min |
+| 03-auth-hardening | 2 | 5 min | 2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (1 min), 02-04 (3 min), 02-05 (5 min), 03-02 (1 min)
-- Trend: Fast (database migrations execute quickly)
+- Last 5 plans: 02-04 (3 min), 02-05 (5 min), 03-02 (1 min), 03-01 (4 min)
+- Trend: Fast (form integration changes)
 
 *Updated after each plan completion*
 
@@ -129,6 +136,8 @@ Recent decisions affecting current work:
 - [03-02]: pg_advisory_xact_lock for atomic rate limit checks (prevents race conditions)
 - [03-02]: Return retry_after_seconds based on oldest request in window
 - [03-02]: 1-day cleanup retention (shorter than login_attempts' 30-day audit)
+- [03-01]: Password validation order - check validity before passwords match
+- [03-01]: Form gating via isPasswordValid state and disabled submit button
 
 ### Pending Todos
 
@@ -143,13 +152,12 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-22T21:36:52Z
-Stopped at: Completed 03-02-PLAN.md (Rate Limiting Database Infrastructure)
+Last session: 2026-01-22
+Stopped at: Completed 03-01-PLAN.md (Password Validation Integration)
 Resume file: None
 
 ## Next Steps
 
 Phase 3: Auth Hardening (continued)
-- Plan 03-01: Password policy and validation (pending)
 - Plan 03-03: Service integration to call check_rate_limit() from API endpoints
 - Plan 03-04: Verification and testing
