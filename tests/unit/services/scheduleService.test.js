@@ -29,6 +29,7 @@ vi.mock('../../../src/supabase', () => ({
       order: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: {}, error: null }),
     })),
+    rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
   },
 }));
 
@@ -248,5 +249,757 @@ describe('Scene scheduling validation', () => {
 
     await expect(getSchedulePreview(''))
       .rejects.toThrow('Schedule ID is required');
+  });
+});
+
+// ============================================================================
+// EXTENDED COVERAGE - Schedule CRUD Operations
+// ============================================================================
+
+describe('scheduleService - Extended Coverage', () => {
+  let mockSupabase;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('Schedule CRUD operations', () => {
+    describe('fetchSchedules', () => {
+      it('returns schedules for current user', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const mockData = [
+          { id: 'sched-1', name: 'Morning Schedule', schedule_entries: [{ count: 3 }] },
+          { id: 'sched-2', name: 'Evening Schedule', schedule_entries: [{ count: 1 }] }
+        ];
+
+        supabase.from.mockImplementationOnce(() => ({
+          select: vi.fn().mockReturnThis(),
+          order: vi.fn().mockResolvedValue({ data: mockData, error: null })
+        }));
+
+        const { fetchSchedules } = await import('../../../src/services/scheduleService');
+        const result = await fetchSchedules();
+
+        expect(result).toHaveLength(2);
+        expect(result[0].name).toBe('Morning Schedule');
+        expect(result[0].entry_count).toBe(3);
+      });
+
+      it('handles empty schedule list', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          select: vi.fn().mockReturnThis(),
+          order: vi.fn().mockResolvedValue({ data: [], error: null })
+        }));
+
+        const { fetchSchedules } = await import('../../../src/services/scheduleService');
+        const result = await fetchSchedules();
+
+        expect(result).toEqual([]);
+      });
+
+      it('handles database errors gracefully', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          select: vi.fn().mockReturnThis(),
+          order: vi.fn().mockResolvedValue({ data: null, error: { message: 'Database error' } })
+        }));
+
+        const { fetchSchedules } = await import('../../../src/services/scheduleService');
+
+        await expect(fetchSchedules()).rejects.toThrow();
+      });
+    });
+
+    describe('createSchedule', () => {
+      it('creates schedule with required fields', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const mockSchedule = { id: 'new-sched', name: 'Test Schedule', description: 'Test desc' };
+
+        supabase.auth.getUser.mockResolvedValueOnce({
+          data: { user: { id: 'user-123' } }
+        });
+
+        supabase.from.mockImplementationOnce(() => ({
+          insert: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: mockSchedule, error: null })
+        }));
+
+        const { createSchedule } = await import('../../../src/services/scheduleService');
+        const result = await createSchedule({ name: 'Test Schedule', description: 'Test desc' });
+
+        expect(result).toEqual(mockSchedule);
+      });
+
+      it('throws error when user not authenticated', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.auth.getUser.mockResolvedValueOnce({
+          data: { user: null }
+        });
+
+        const { createSchedule } = await import('../../../src/services/scheduleService');
+
+        await expect(createSchedule({ name: 'Test' }))
+          .rejects.toThrow('User must be authenticated');
+      });
+
+      it('logs activity on successful creation', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const { logActivity } = await import('../../../src/services/activityLogService');
+        const mockSchedule = { id: 'new-sched', name: 'Logged Schedule' };
+
+        supabase.auth.getUser.mockResolvedValueOnce({
+          data: { user: { id: 'user-123' } }
+        });
+
+        supabase.from.mockImplementationOnce(() => ({
+          insert: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: mockSchedule, error: null })
+        }));
+
+        const { createSchedule } = await import('../../../src/services/scheduleService');
+        await createSchedule({ name: 'Logged Schedule' });
+
+        expect(logActivity).toHaveBeenCalled();
+      });
+    });
+
+    describe('updateSchedule', () => {
+      it('updates schedule properties', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const mockUpdated = { id: 'sched-1', name: 'Updated Name', description: 'Updated desc' };
+
+        supabase.from.mockImplementationOnce(() => ({
+          update: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: mockUpdated, error: null })
+        }));
+
+        const { updateSchedule } = await import('../../../src/services/scheduleService');
+        const result = await updateSchedule('sched-1', { name: 'Updated Name' });
+
+        expect(result.name).toBe('Updated Name');
+      });
+
+      it('filters out non-allowed fields', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        let capturedUpdate = null;
+
+        supabase.from.mockImplementationOnce(() => ({
+          update: vi.fn((data) => {
+            capturedUpdate = data;
+            return {
+              eq: vi.fn().mockReturnThis(),
+              select: vi.fn().mockReturnThis(),
+              single: vi.fn().mockResolvedValue({ data: { id: 'sched-1', name: 'Test' }, error: null })
+            };
+          })
+        }));
+
+        const { updateSchedule } = await import('../../../src/services/scheduleService');
+        await updateSchedule('sched-1', {
+          name: 'Allowed',
+          description: 'Also allowed',
+          owner_id: 'not-allowed', // Should be filtered
+          created_at: 'not-allowed' // Should be filtered
+        });
+
+        expect(capturedUpdate).toEqual({ name: 'Allowed', description: 'Also allowed' });
+      });
+
+      it('logs activity on successful update', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const { logActivity } = await import('../../../src/services/activityLogService');
+
+        supabase.from.mockImplementationOnce(() => ({
+          update: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: { id: 'sched-1', name: 'Updated' }, error: null })
+        }));
+
+        const { updateSchedule } = await import('../../../src/services/scheduleService');
+        await updateSchedule('sched-1', { name: 'Updated' });
+
+        expect(logActivity).toHaveBeenCalled();
+      });
+    });
+
+    describe('deleteSchedule', () => {
+      it('deletes schedule by ID', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        // Mock the select for getting schedule info before delete
+        supabase.from.mockImplementationOnce(() => ({
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: { id: 'sched-1', name: 'To Delete' }, error: null })
+        }));
+
+        // Mock the delete operation
+        supabase.from.mockImplementationOnce(() => ({
+          delete: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockResolvedValue({ error: null })
+        }));
+
+        const { deleteSchedule } = await import('../../../src/services/scheduleService');
+        const result = await deleteSchedule('sched-1');
+
+        expect(result).toBe(true);
+      });
+
+      it('logs activity on successful deletion', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const { logActivity } = await import('../../../src/services/activityLogService');
+
+        supabase.from.mockImplementationOnce(() => ({
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: { id: 'sched-1', name: 'To Delete' }, error: null })
+        }));
+
+        supabase.from.mockImplementationOnce(() => ({
+          delete: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockResolvedValue({ error: null })
+        }));
+
+        const { deleteSchedule } = await import('../../../src/services/scheduleService');
+        await deleteSchedule('sched-1');
+
+        expect(logActivity).toHaveBeenCalled();
+      });
+
+      it('handles non-existent schedule gracefully', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: null, error: null })
+        }));
+
+        supabase.from.mockImplementationOnce(() => ({
+          delete: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockResolvedValue({ error: null })
+        }));
+
+        const { deleteSchedule } = await import('../../../src/services/scheduleService');
+        // Should not throw even if schedule wasn't found
+        const result = await deleteSchedule('non-existent');
+        expect(result).toBe(true);
+      });
+    });
+  });
+
+  describe('Schedule entry operations', () => {
+    describe('createScheduleEntry', () => {
+      it('creates entry with time range', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const mockEntry = {
+          id: 'entry-1',
+          schedule_id: 'sched-1',
+          start_time: '08:00',
+          end_time: '12:00'
+        };
+
+        supabase.from.mockImplementationOnce(() => ({
+          insert: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: mockEntry, error: null })
+        }));
+
+        const { createScheduleEntry } = await import('../../../src/services/scheduleService');
+        const result = await createScheduleEntry('sched-1', {
+          start_time: '08:00',
+          end_time: '12:00'
+        });
+
+        expect(result.start_time).toBe('08:00');
+        expect(result.end_time).toBe('12:00');
+      });
+
+      it('creates entry with days of week', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const mockEntry = {
+          id: 'entry-1',
+          schedule_id: 'sched-1',
+          days_of_week: [1, 2, 3, 4, 5]
+        };
+
+        supabase.from.mockImplementationOnce(() => ({
+          insert: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: mockEntry, error: null })
+        }));
+
+        const { createScheduleEntry } = await import('../../../src/services/scheduleService');
+        const result = await createScheduleEntry('sched-1', {
+          days_of_week: [1, 2, 3, 4, 5]
+        });
+
+        expect(result.days_of_week).toEqual([1, 2, 3, 4, 5]);
+      });
+
+      it('uses default values when not provided', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        let capturedInsert = null;
+
+        supabase.from.mockImplementationOnce(() => ({
+          insert: vi.fn((data) => {
+            capturedInsert = data;
+            return {
+              select: vi.fn().mockReturnThis(),
+              single: vi.fn().mockResolvedValue({ data: { id: 'entry-1', ...data }, error: null })
+            };
+          })
+        }));
+
+        const { createScheduleEntry } = await import('../../../src/services/scheduleService');
+        await createScheduleEntry('sched-1', {});
+
+        expect(capturedInsert.start_time).toBe('09:00');
+        expect(capturedInsert.end_time).toBe('17:00');
+        expect(capturedInsert.days_of_week).toEqual([1, 2, 3, 4, 5]); // Default weekdays
+      });
+    });
+
+    describe('updateScheduleEntry', () => {
+      it('updates entry time range', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          update: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({
+            data: { id: 'entry-1', start_time: '10:00', end_time: '14:00' },
+            error: null
+          })
+        }));
+
+        const { updateScheduleEntry } = await import('../../../src/services/scheduleService');
+        const result = await updateScheduleEntry('entry-1', {
+          start_time: '10:00',
+          end_time: '14:00'
+        });
+
+        expect(result.start_time).toBe('10:00');
+        expect(result.end_time).toBe('14:00');
+      });
+
+      it('updates entry days of week', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          update: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({
+            data: { id: 'entry-1', days_of_week: [0, 6] },
+            error: null
+          })
+        }));
+
+        const { updateScheduleEntry } = await import('../../../src/services/scheduleService');
+        const result = await updateScheduleEntry('entry-1', {
+          days_of_week: [0, 6]
+        });
+
+        expect(result.days_of_week).toEqual([0, 6]);
+      });
+    });
+
+    describe('deleteScheduleEntry', () => {
+      it('removes entry from schedule', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          delete: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockResolvedValue({ error: null })
+        }));
+
+        const { deleteScheduleEntry } = await import('../../../src/services/scheduleService');
+        const result = await deleteScheduleEntry('entry-1');
+
+        expect(result).toBe(true);
+      });
+    });
+  });
+
+  describe('Schedule conflict detection', () => {
+    it('checkEntryConflicts validates schedule ID', async () => {
+      const { checkEntryConflicts } = await import('../../../src/services/scheduleService');
+
+      await expect(checkEntryConflicts(null, {}))
+        .rejects.toThrow('Schedule ID is required');
+
+      await expect(checkEntryConflicts('', {}))
+        .rejects.toThrow('Schedule ID is required');
+    });
+
+    it('detects overlapping time ranges on same day', async () => {
+      const { supabase } = await import('../../../src/supabase');
+
+      supabase.rpc.mockResolvedValueOnce({
+        data: [{
+          conflicting_entry_id: 'entry-2',
+          conflicting_start_time: '09:00',
+          conflicting_end_time: '12:00',
+          conflicting_days_of_week: [1, 2, 3],
+          content_type: 'playlist',
+          content_name: 'Morning Playlist'
+        }],
+        error: null
+      });
+
+      const { checkEntryConflicts } = await import('../../../src/services/scheduleService');
+      const result = await checkEntryConflicts('sched-1', {
+        start_time: '10:00',
+        end_time: '14:00',
+        days_of_week: [1, 2, 3]
+      });
+
+      expect(result.hasConflicts).toBe(true);
+      expect(result.conflicts).toHaveLength(1);
+      expect(result.conflicts[0].content_name).toBe('Morning Playlist');
+    });
+
+    it('allows non-overlapping entries', async () => {
+      const { supabase } = await import('../../../src/supabase');
+
+      supabase.rpc.mockResolvedValueOnce({
+        data: [],
+        error: null
+      });
+
+      const { checkEntryConflicts } = await import('../../../src/services/scheduleService');
+      const result = await checkEntryConflicts('sched-1', {
+        start_time: '14:00',
+        end_time: '17:00',
+        days_of_week: [1, 2, 3]
+      });
+
+      expect(result.hasConflicts).toBe(false);
+      expect(result.conflicts).toHaveLength(0);
+    });
+  });
+
+  describe('Device/group assignment', () => {
+    describe('assignScheduleToDevice', () => {
+      it('assigns schedule to device', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.rpc.mockResolvedValueOnce({
+          data: { success: true },
+          error: null
+        });
+
+        const { assignScheduleToDevice } = await import('../../../src/services/scheduleService');
+        const result = await assignScheduleToDevice('device-1', 'sched-1');
+
+        expect(supabase.rpc).toHaveBeenCalledWith('assign_schedule_to_device', {
+          p_device_id: 'device-1',
+          p_schedule_id: 'sched-1'
+        });
+      });
+
+      it('validates device ID is provided', async () => {
+        const { assignScheduleToDevice } = await import('../../../src/services/scheduleService');
+
+        await expect(assignScheduleToDevice(null, 'sched-1'))
+          .rejects.toThrow('Device ID is required');
+
+        await expect(assignScheduleToDevice('', 'sched-1'))
+          .rejects.toThrow('Device ID is required');
+      });
+
+      it('allows clearing schedule assignment with null', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.rpc.mockResolvedValueOnce({
+          data: { success: true },
+          error: null
+        });
+
+        const { assignScheduleToDevice } = await import('../../../src/services/scheduleService');
+        await assignScheduleToDevice('device-1', null);
+
+        expect(supabase.rpc).toHaveBeenCalledWith('assign_schedule_to_device', {
+          p_device_id: 'device-1',
+          p_schedule_id: null
+        });
+      });
+    });
+
+    describe('assignScheduleToGroup', () => {
+      it('assigns schedule to screen group', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.rpc.mockResolvedValueOnce({
+          data: { success: true },
+          error: null
+        });
+
+        const { assignScheduleToGroup } = await import('../../../src/services/scheduleService');
+        const result = await assignScheduleToGroup('group-1', 'sched-1');
+
+        expect(supabase.rpc).toHaveBeenCalledWith('assign_schedule_to_group', {
+          p_group_id: 'group-1',
+          p_schedule_id: 'sched-1'
+        });
+      });
+
+      it('validates group ID is provided', async () => {
+        const { assignScheduleToGroup } = await import('../../../src/services/scheduleService');
+
+        await expect(assignScheduleToGroup(null, 'sched-1'))
+          .rejects.toThrow('Group ID is required');
+
+        await expect(assignScheduleToGroup('', 'sched-1'))
+          .rejects.toThrow('Group ID is required');
+      });
+    });
+
+    describe('getDevicesWithSchedule', () => {
+      it('returns devices using schedule', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const mockDevices = [
+          { id: 'dev-1', device_name: 'Lobby TV', is_online: true, location: { id: 'loc-1', name: 'Main' } },
+          { id: 'dev-2', device_name: 'Cafe TV', is_online: false, location: null }
+        ];
+
+        supabase.from.mockImplementationOnce(() => ({
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          order: vi.fn().mockResolvedValue({ data: mockDevices, error: null })
+        }));
+
+        const { getDevicesWithSchedule } = await import('../../../src/services/scheduleService');
+        const result = await getDevicesWithSchedule('sched-1');
+
+        expect(result).toHaveLength(2);
+        expect(result[0].device_name).toBe('Lobby TV');
+      });
+    });
+
+    describe('getGroupsWithSchedule', () => {
+      it('returns groups using schedule', async () => {
+        const { supabase } = await import('../../../src/supabase');
+        const mockGroups = [
+          { id: 'grp-1', name: 'Lobby Screens', location: { id: 'loc-1', name: 'Main' } },
+          { id: 'grp-2', name: 'Conference Rooms', location: null }
+        ];
+
+        supabase.from.mockImplementationOnce(() => ({
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          order: vi.fn().mockResolvedValue({ data: mockGroups, error: null })
+        }));
+
+        const { getGroupsWithSchedule } = await import('../../../src/services/scheduleService');
+        const result = await getGroupsWithSchedule('sched-1');
+
+        expect(result).toHaveLength(2);
+        expect(result[0].name).toBe('Lobby Screens');
+      });
+    });
+
+    describe('bulkAssignScheduleToDevices', () => {
+      it('assigns schedule to multiple devices', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          update: vi.fn().mockReturnThis(),
+          in: vi.fn().mockReturnThis(),
+          select: vi.fn().mockResolvedValue({
+            data: [{ id: 'dev-1' }, { id: 'dev-2' }],
+            error: null
+          })
+        }));
+
+        const { bulkAssignScheduleToDevices } = await import('../../../src/services/scheduleService');
+        const result = await bulkAssignScheduleToDevices('sched-1', ['dev-1', 'dev-2']);
+
+        expect(result.updated).toBe(2);
+      });
+
+      it('validates schedule ID is provided', async () => {
+        const { bulkAssignScheduleToDevices } = await import('../../../src/services/scheduleService');
+
+        await expect(bulkAssignScheduleToDevices(null, ['dev-1']))
+          .rejects.toThrow('Schedule ID is required');
+      });
+
+      it('returns zero when no device IDs provided', async () => {
+        const { bulkAssignScheduleToDevices } = await import('../../../src/services/scheduleService');
+        const result = await bulkAssignScheduleToDevices('sched-1', []);
+
+        expect(result.updated).toBe(0);
+      });
+    });
+
+    describe('bulkAssignScheduleToGroups', () => {
+      it('assigns schedule to multiple groups', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          update: vi.fn().mockReturnThis(),
+          in: vi.fn().mockReturnThis(),
+          select: vi.fn().mockResolvedValue({
+            data: [{ id: 'grp-1' }, { id: 'grp-2' }],
+            error: null
+          })
+        }));
+
+        const { bulkAssignScheduleToGroups } = await import('../../../src/services/scheduleService');
+        const result = await bulkAssignScheduleToGroups('sched-1', ['grp-1', 'grp-2']);
+
+        expect(result.updated).toBe(2);
+      });
+    });
+  });
+
+  describe('Filler content operations', () => {
+    describe('updateScheduleFillerContent', () => {
+      it('updates filler content for schedule', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          update: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({
+            data: { id: 'sched-1', filler_content_type: 'playlist', filler_content_id: 'pl-1' },
+            error: null
+          })
+        }));
+
+        const { updateScheduleFillerContent } = await import('../../../src/services/scheduleService');
+        const result = await updateScheduleFillerContent('sched-1', 'playlist', 'pl-1');
+
+        expect(result.filler_content_type).toBe('playlist');
+        expect(result.filler_content_id).toBe('pl-1');
+      });
+
+      it('validates schedule ID is required', async () => {
+        const { updateScheduleFillerContent } = await import('../../../src/services/scheduleService');
+
+        await expect(updateScheduleFillerContent(null, 'playlist', 'pl-1'))
+          .rejects.toThrow('Schedule ID is required');
+      });
+
+      it('validates content type and ID are required', async () => {
+        const { updateScheduleFillerContent } = await import('../../../src/services/scheduleService');
+
+        await expect(updateScheduleFillerContent('sched-1', null, 'pl-1'))
+          .rejects.toThrow('Content type and ID are required');
+
+        await expect(updateScheduleFillerContent('sched-1', 'playlist', null))
+          .rejects.toThrow('Content type and ID are required');
+      });
+
+      it('validates content type is valid', async () => {
+        const { updateScheduleFillerContent } = await import('../../../src/services/scheduleService');
+
+        await expect(updateScheduleFillerContent('sched-1', 'invalid', 'pl-1'))
+          .rejects.toThrow('Invalid content type');
+      });
+    });
+
+    describe('clearScheduleFillerContent', () => {
+      it('clears filler content', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          update: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({
+            data: { id: 'sched-1', filler_content_type: null, filler_content_id: null },
+            error: null
+          })
+        }));
+
+        const { clearScheduleFillerContent } = await import('../../../src/services/scheduleService');
+        const result = await clearScheduleFillerContent('sched-1');
+
+        expect(result.filler_content_type).toBeNull();
+        expect(result.filler_content_id).toBeNull();
+      });
+
+      it('validates schedule ID is required', async () => {
+        const { clearScheduleFillerContent } = await import('../../../src/services/scheduleService');
+
+        await expect(clearScheduleFillerContent(null))
+          .rejects.toThrow('Schedule ID is required');
+      });
+    });
+  });
+
+  describe('Week preview', () => {
+    describe('getWeekPreview', () => {
+      it('validates schedule ID is required', async () => {
+        const { getWeekPreview } = await import('../../../src/services/scheduleService');
+
+        await expect(getWeekPreview(null, '2026-01-20'))
+          .rejects.toThrow('Schedule ID is required');
+      });
+
+      it('returns 7 days of schedule preview', async () => {
+        const { supabase } = await import('../../../src/supabase');
+
+        supabase.from.mockImplementationOnce(() => ({
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({
+            data: {
+              id: 'sched-1',
+              filler_content_type: null,
+              filler_content_id: null,
+              schedule_entries: [
+                {
+                  id: 'entry-1',
+                  start_time: '09:00',
+                  end_time: '17:00',
+                  days_of_week: [1, 2, 3, 4, 5],
+                  start_date: null,
+                  end_date: null,
+                  content_type: 'playlist',
+                  content_id: 'pl-1',
+                  event_type: 'content',
+                  is_active: true,
+                  priority: 0
+                }
+              ]
+            },
+            error: null
+          })
+        }));
+
+        // Mock playlist lookup
+        supabase.from.mockImplementation(() => ({
+          select: vi.fn().mockReturnThis(),
+          in: vi.fn().mockResolvedValue({
+            data: [{ id: 'pl-1', name: 'Morning Playlist' }],
+            error: null
+          })
+        }));
+
+        const { getWeekPreview } = await import('../../../src/services/scheduleService');
+        const result = await getWeekPreview('sched-1', '2026-01-20');
+
+        expect(result).toHaveLength(7);
+        expect(result[0]).toHaveProperty('date');
+        expect(result[0]).toHaveProperty('dayOfWeek');
+        expect(result[0]).toHaveProperty('dayName');
+        expect(result[0]).toHaveProperty('entries');
+      });
+    });
   });
 });
