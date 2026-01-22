@@ -12,7 +12,7 @@ BizScreen production release progresses through 12 phases: establishing testing 
 
 - [x] **Phase 1: Testing Infrastructure** - Establish safety net before any refactoring
 - [x] **Phase 2: XSS Prevention** - Fix security vulnerabilities in HTML rendering
-- [ ] **Phase 3: Auth Hardening** - Strengthen password and rate limiting policies
+- [x] **Phase 3: Auth Hardening** - Strengthen password and rate limiting policies
 - [ ] **Phase 4: Logging Migration** - Replace console.log with structured logging
 - [ ] **Phase 5: Critical Fixes** - Wire up incomplete features and logic gaps
 - [ ] **Phase 6: Player Reliability** - Harden offline sync and error handling
@@ -73,10 +73,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Integrate password validation into auth forms (SEC-03)
-- [ ] 03-02-PLAN.md — Create rate limiting database infrastructure (SEC-04)
-- [ ] 03-03-PLAN.md — Integrate rate limiting into services (SEC-04)
-- [ ] 03-04-PLAN.md — Verification and testing
+- [x] 03-01-PLAN.md — Integrate password validation into auth forms (SEC-03)
+- [x] 03-02-PLAN.md — Create rate limiting database infrastructure (SEC-04)
+- [x] 03-03-PLAN.md — Integrate rate limiting into services (SEC-04)
+- [x] 03-04-PLAN.md — Verification and testing
 
 ### Phase 4: Logging Migration
 **Goal**: All console output uses structured logging for production observability
@@ -217,7 +217,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 |-------|----------------|--------|-----------|
 | 1. Testing Infrastructure | 5/5 | Complete | 2026-01-22 |
 | 2. XSS Prevention | 5/5 | Complete | 2026-01-22 |
-| 3. Auth Hardening | 0/4 | Planned | - |
+| 3. Auth Hardening | 4/4 | Complete | 2026-01-22 |
 | 4. Logging Migration | 0/TBD | Not started | - |
 | 5. Critical Fixes | 0/TBD | Not started | - |
 | 6. Player Reliability | 0/TBD | Not started | - |
@@ -230,4 +230,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 — Phase 3 planned*
+*Last updated: 2026-01-22 — Phase 3 complete*
