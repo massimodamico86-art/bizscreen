@@ -247,6 +247,7 @@ export default function LeftSidebar({
   const [giphyTab, setGiphyTab] = useState('stickers');
   const [giphyResults, setGiphyResults] = useState([]);
   const [loadingGiphy, setLoadingGiphy] = useState(false);
+  const [erroredGiphyImages, setErroredGiphyImages] = useState(new Set());
   const [templateTab, setTemplateTab] = useState('templates');
   const [filteredTemplates, setFilteredTemplates] = useState([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
@@ -733,16 +734,15 @@ export default function LeftSidebar({
                   >
                     {item.isEmoji ? (
                       <span className="text-3xl">{item.emojiChar}</span>
+                    ) : erroredGiphyImages.has(item.id) ? (
+                      <span className="text-xs text-gray-400">{item.alt}</span>
                     ) : (
                       <img
                         src={item.thumb}
                         alt={item.alt}
                         className="w-full h-full object-cover"
                         loading="lazy"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.parentElement.innerHTML = `<span class="text-xs text-gray-400">${item.alt}</span>`;
-                        }}
+                        onError={() => setErroredGiphyImages(prev => new Set(prev).add(item.id))}
                       />
                     )}
                   </button>
