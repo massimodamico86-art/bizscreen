@@ -87,10 +87,15 @@ Plans:
   2. Logs include correlation IDs linking related operations
   3. Log levels (error, warn, info, debug) are applied consistently
   4. PII (emails, names) is redacted from log output
-**Plans**: TBD
+**Plans**: 6 plans
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — Logging infrastructure enhancement (PII redaction, safe stringify, useLogger hook)
+- [ ] 04-02-PLAN.md — Build-time enforcement (ESLint no-console, Terser config)
+- [ ] 04-03-PLAN.md — Migrate high-priority services (auth, security, player)
+- [ ] 04-04-PLAN.md — Migrate remaining services (realtime, external integrations, utilities)
+- [ ] 04-05-PLAN.md — Migrate Player, hooks, components, and pages
+- [ ] 04-06-PLAN.md — Verification, enforcement escalation, and cleanup
 
 ### Phase 5: Critical Fixes
 **Goal**: Incomplete features work end-to-end without "not implemented" errors
@@ -218,7 +223,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 1. Testing Infrastructure | 5/5 | Complete | 2026-01-22 |
 | 2. XSS Prevention | 5/5 | Complete | 2026-01-22 |
 | 3. Auth Hardening | 4/4 | Complete | 2026-01-22 |
-| 4. Logging Migration | 0/TBD | Not started | - |
+| 4. Logging Migration | 0/6 | Planned | - |
 | 5. Critical Fixes | 0/TBD | Not started | - |
 | 6. Player Reliability | 0/TBD | Not started | - |
 | 7. Player Refactoring | 0/TBD | Not started | - |
@@ -230,4 +235,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 — Phase 3 complete*
+*Last updated: 2026-01-22 — Phase 4 planned (6 plans in 3 waves)*
