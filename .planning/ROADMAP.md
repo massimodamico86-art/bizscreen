@@ -35,10 +35,14 @@ BizScreen production release progresses through 12 phases: establishing testing 
   3. Content sync test verifies player receives and renders updated playlist from server
   4. Heartbeat test verifies player reconnects after connection loss
   5. Critical service functions (scheduleService, offlineService) have unit test coverage
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md — Offline mode transition tests (TEST-01)
+- [ ] 01-02-PLAN.md — Content sync flow tests (TEST-02)
+- [ ] 01-03-PLAN.md — Heartbeat/reconnection tests (TEST-03)
+- [ ] 01-04-PLAN.md — Expand service function tests (TEST-04)
+- [ ] 01-05-PLAN.md — Integration and verification
 
 ### Phase 2: XSS Prevention
 **Goal**: User-generated and dynamic HTML content is sanitized before rendering
@@ -204,7 +208,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Testing Infrastructure | 0/TBD | Not started | - |
+| 1. Testing Infrastructure | 0/5 | Planning complete | - |
 | 2. XSS Prevention | 0/TBD | Not started | - |
 | 3. Auth Hardening | 0/TBD | Not started | - |
 | 4. Logging Migration | 0/TBD | Not started | - |
