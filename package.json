@@ -40,6 +40,7 @@
     "html2canvas": "^1.4.1",
     "ical.js": "^2.2.1",
     "idb": "^8.0.3",
+    "isomorphic-dompurify": "^2.35.0",
     "lucide-react": "^0.548.0",
     "polotno": "^2.33.2",
     "qrcode": "^1.5.4",
