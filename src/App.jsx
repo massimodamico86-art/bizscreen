@@ -127,6 +127,7 @@ const CanvaCallbackPage = lazy(() => import('./pages/CanvaCallbackPage'));
 const DesignEditorPage = lazy(() => import('./pages/DesignEditorPage'));
 const SvgTemplateGalleryPage = lazy(() => import('./pages/SvgTemplateGalleryPage'));
 const SvgEditorPage = lazy(() => import('./pages/SvgEditorPage'));
+const SecurityDashboardPage = lazy(() => import('./pages/SecurityDashboardPage'));
 
 // Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
 export default function BizScreenApp() {
@@ -547,6 +548,7 @@ function BizScreenAppInner() {
     'alerts': <Suspense fallback={<PageLoader />}><AlertsCenterPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'notification-settings': <Suspense fallback={<PageLoader />}><NotificationSettingsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'svg-templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'security': <Suspense fallback={<PageLoader />}><SecurityDashboardPage /></Suspense>,
   };
 
   // Show Canva OAuth callback page
@@ -653,7 +655,7 @@ function BizScreenAppInner() {
   // Admin tool pages that should show sidebar even for super_admin
   const adminToolPages = [
     'admin-tenants', 'admin-audit-logs', 'admin-system-events',
-    'status', 'ops-console', 'tenant-admin', 'feature-flags', 'demo-tools', 'clients', 'admin-templates'
+    'status', 'ops-console', 'tenant-admin', 'feature-flags', 'demo-tools', 'clients', 'admin-templates', 'security'
   ];
   const isAdminToolPage = adminToolPages.includes(currentPage) || currentPage.startsWith('admin-tenant-') || currentPage.startsWith('admin-template-');
 
