@@ -70,10 +70,13 @@ Plans:
   2. User cannot set password without complexity (uppercase, lowercase, number)
   3. High-frequency API endpoints return 429 after exceeding rate limit
   4. Rate limiting applies per-user and per-IP dimensions
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — Integrate password validation into auth forms (SEC-03)
+- [ ] 03-02-PLAN.md — Create rate limiting database infrastructure (SEC-04)
+- [ ] 03-03-PLAN.md — Integrate rate limiting into services (SEC-04)
+- [ ] 03-04-PLAN.md — Verification and testing
 
 ### Phase 4: Logging Migration
 **Goal**: All console output uses structured logging for production observability
@@ -214,7 +217,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 |-------|----------------|--------|-----------|
 | 1. Testing Infrastructure | 5/5 | Complete | 2026-01-22 |
 | 2. XSS Prevention | 5/5 | Complete | 2026-01-22 |
-| 3. Auth Hardening | 0/TBD | Not started | - |
+| 3. Auth Hardening | 0/4 | Planned | - |
 | 4. Logging Migration | 0/TBD | Not started | - |
 | 5. Critical Fixes | 0/TBD | Not started | - |
 | 6. Player Reliability | 0/TBD | Not started | - |
@@ -227,4 +230,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 — Phase 2 complete*
+*Last updated: 2026-01-22 — Phase 3 planned*
