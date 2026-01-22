@@ -5,7 +5,7 @@
 /**
  * Password strength requirements
  */
-const PASSWORD_REQUIREMENTS = {
+export const PASSWORD_REQUIREMENTS = {
   minLength: 8,
   maxLength: 128,
   requireUppercase: true,
