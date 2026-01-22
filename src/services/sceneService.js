@@ -6,6 +6,7 @@
  */
 
 import { supabase } from '../supabase';
+import { checkRateLimit, createRateLimitError } from './rateLimitService.js';
 
 /**
  * Create a new scene
@@ -28,6 +29,17 @@ export async function createScene({
   secondaryPlaylistId = null,
   settings = {}
 }) {
+  // Rate limit check
+  const { data: { user } } = await supabase.auth.getUser();
+  const rateCheck = await checkRateLimit('scene_create', {
+    userId: user?.id,
+    isAuthenticated: !!user,
+  });
+
+  if (!rateCheck.allowed) {
+    throw createRateLimitError(rateCheck.retryAfter);
+  }
+
   const { data, error } = await supabase
     .from('scenes')
     .insert([{
