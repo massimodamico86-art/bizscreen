@@ -5,16 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 2 XSS Prevention - COMPLETE
+**Current focus:** Phase 3 Auth Hardening - In Progress
 
 ## Current Position
 
-Phase: 2 of 12 (XSS Prevention) - COMPLETE
-Plan: 5 of 5 in phase 2 (all complete)
-Status: Phase 2 Complete
-Last activity: 2026-01-22 - Completed 02-05-PLAN.md (Verification and Testing)
+Phase: 3 of 12 (Auth Hardening) - In Progress
+Plan: 2 of 4 in phase 3
+Status: In Progress
+Last activity: 2026-01-22 - Completed 03-02-PLAN.md (Rate Limiting Database Infrastructure)
 
-Progress: [######------] 67% (2/12 phases complete)
+Progress: [######------] 17% (2/12 phases complete)
+
+## Phase 3 Progress
+
+**Auth Hardening Plans:**
+- [ ] 03-01: Password policy and validation
+- [x] 03-02: Rate limiting database infrastructure (fd22eeb)
+- [ ] 03-03: Service integration for rate limiting
+- [ ] 03-04: Verification and testing
+
+**Rate Limiting Infrastructure:**
+- api_rate_limits table with optimized indexes
+- check_rate_limit() function with atomic advisory locks
+- cleanup_rate_limits() for scheduled maintenance
+- RLS policies configured
 
 ## Phase 2 Completion Summary
 
@@ -62,9 +76,9 @@ Progress: [######------] 67% (2/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 7 min
-- Total execution time: 66 min (1.1 hours)
+- Total plans completed: 11
+- Average duration: 6.3 min
+- Total execution time: 67 min (1.1 hours)
 
 **By Phase:**
 
@@ -72,10 +86,11 @@ Progress: [######------] 67% (2/12 phases complete)
 |-------|-------|-------|----------|
 | 01-testing-infrastructure | 5 | 50 min | 10 min |
 | 02-xss-prevention | 5 | 16 min | 3.2 min |
+| 03-auth-hardening | 1 | 1 min | 1 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (5 min), 02-02 (2 min), 02-03 (1 min), 02-04 (3 min), 02-05 (5 min)
-- Trend: Fast (security infrastructure, fixes, and testing)
+- Last 5 plans: 02-03 (1 min), 02-04 (3 min), 02-05 (5 min), 03-02 (1 min)
+- Trend: Fast (database migrations execute quickly)
 
 *Updated after each plan completion*
 
@@ -111,6 +126,9 @@ Recent decisions affecting current work:
 - [02-05]: Tests in tests/unit/ instead of src/__tests__/ (project convention)
 - [02-05]: Data URI in img src is safe context (non-executable)
 - [02-05]: Alert mock pattern verifies no script execution
+- [03-02]: pg_advisory_xact_lock for atomic rate limit checks (prevents race conditions)
+- [03-02]: Return retry_after_seconds based on oldest request in window
+- [03-02]: 1-day cleanup retention (shorter than login_attempts' 30-day audit)
 
 ### Pending Todos
 
@@ -121,16 +139,17 @@ None.
 - ~~No test coverage in src/~~ Player.jsx now has characterization test coverage
 - 197+ console.log calls - observability limited until Phase 4 completes
 - 4 unrelated test files fail (api/ imports missing) - outside Phase 1 scope
+- Local Supabase migration history out of sync - migrations ready for deployment but need manual application
 
 ## Session Continuity
 
-Last session: 2026-01-22T20:59:19Z
-Stopped at: Completed 02-05-PLAN.md (Verification and Testing) - Phase 2 Complete
+Last session: 2026-01-22T21:36:52Z
+Stopped at: Completed 03-02-PLAN.md (Rate Limiting Database Infrastructure)
 Resume file: None
 
 ## Next Steps
 
-Phase 3: Auth Hardening
-- Password policy: minimum 8 characters with complexity
-- Rate limiting for high-frequency API endpoints
-- Per-user and per-IP rate limiting dimensions
+Phase 3: Auth Hardening (continued)
+- Plan 03-01: Password policy and validation (pending)
+- Plan 03-03: Service integration to call check_rate_limit() from API endpoints
+- Plan 03-04: Verification and testing
