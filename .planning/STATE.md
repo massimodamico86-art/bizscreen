@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 3 of 12 (Auth Hardening) - In Progress
-Plan: 2 of 4 in phase 3 complete
+Plan: 3 of 4 in phase 3 complete
 Status: In Progress
-Last activity: 2026-01-22 - Completed 03-01-PLAN.md (Password Validation Integration)
+Last activity: 2026-01-22 - Completed 03-03-PLAN.md (Rate Limiting Service Integration)
 
 Progress: [######------] 17% (2/12 phases complete)
 
@@ -21,7 +21,7 @@ Progress: [######------] 17% (2/12 phases complete)
 **Auth Hardening Plans:**
 - [x] 03-01: Password validation integration (4d0df0b, b2579ce)
 - [x] 03-02: Rate limiting database infrastructure (fd22eeb)
-- [ ] 03-03: Service integration for rate limiting
+- [x] 03-03: Service integration for rate limiting (8ac2ff2, 368ac50, 82396c3)
 - [ ] 03-04: Verification and testing
 
 **Password Validation Integration:**
@@ -36,6 +36,13 @@ Progress: [######------] 17% (2/12 phases complete)
 - check_rate_limit() function with atomic advisory locks
 - cleanup_rate_limits() for scheduled maintenance
 - RLS policies configured
+
+**Rate Limiting Service Integration:**
+- rateLimitService.js wrapper with checkRateLimit(), createRateLimitError()
+- Media upload: 50 requests/15min (100 for authenticated)
+- Scene creation: 30 requests/15min (60 for authenticated)
+- RATE_LIMIT_EXCEEDED error code for UI handling
+- Fail-open on infrastructure errors
 
 ## Phase 2 Completion Summary
 
@@ -83,9 +90,9 @@ Progress: [######------] 17% (2/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: 6.1 min
-- Total execution time: 71 min (1.2 hours)
+- Total plans completed: 13
+- Average duration: 5.7 min
+- Total execution time: 73 min (1.2 hours)
 
 **By Phase:**
 
@@ -93,11 +100,11 @@ Progress: [######------] 17% (2/12 phases complete)
 |-------|-------|-------|----------|
 | 01-testing-infrastructure | 5 | 50 min | 10 min |
 | 02-xss-prevention | 5 | 16 min | 3.2 min |
-| 03-auth-hardening | 2 | 5 min | 2.5 min |
+| 03-auth-hardening | 3 | 7 min | 2.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-04 (3 min), 02-05 (5 min), 03-02 (1 min), 03-01 (4 min)
-- Trend: Fast (form integration changes)
+- Last 5 plans: 02-05 (5 min), 03-02 (1 min), 03-01 (4 min), 03-03 (2 min)
+- Trend: Fast (service integration changes)
 
 *Updated after each plan completion*
 
@@ -138,6 +145,9 @@ Recent decisions affecting current work:
 - [03-02]: 1-day cleanup retention (shorter than login_attempts' 30-day audit)
 - [03-01]: Password validation order - check validity before passwords match
 - [03-01]: Form gating via isPasswordValid state and disabled submit button
+- [03-03]: Fail open if rate limit check fails (don't break user experience)
+- [03-03]: Authenticated users get 2x base limit
+- [03-03]: Error message shows "try again in X minutes" for clarity
 
 ### Pending Todos
 
@@ -153,11 +163,10 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 03-01-PLAN.md (Password Validation Integration)
+Stopped at: Completed 03-03-PLAN.md (Rate Limiting Service Integration)
 Resume file: None
 
 ## Next Steps
 
 Phase 3: Auth Hardening (continued)
-- Plan 03-03: Service integration to call check_rate_limit() from API endpoints
 - Plan 03-04: Verification and testing
