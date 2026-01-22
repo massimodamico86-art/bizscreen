@@ -52,10 +52,14 @@ Plans:
   1. HelpCenterPage renders sanitized HTML with malicious scripts removed
   2. SVG editor LeftSidebar uses React state instead of innerHTML mutation
   3. Injecting `<script>alert('xss')</script>` into any text field produces no alert
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md — Security infrastructure (DOMPurify + SafeHTML component)
+- [ ] 02-02-PLAN.md — Fix LeftSidebar innerHTML mutation (SEC-02)
+- [ ] 02-03-PLAN.md — Fix HelpCenterPage XSS (SEC-01)
+- [ ] 02-04-PLAN.md — Security logging and dashboard
+- [ ] 02-05-PLAN.md — XSS prevention tests and verification
 
 ### Phase 3: Auth Hardening
 **Goal**: Authentication resists common attacks through password policies and rate limiting
@@ -208,8 +212,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Testing Infrastructure | 5/5 | ✓ Complete | 2026-01-22 |
-| 2. XSS Prevention | 0/TBD | Not started | - |
+| 1. Testing Infrastructure | 5/5 | Complete | 2026-01-22 |
+| 2. XSS Prevention | 0/5 | Planned | - |
 | 3. Auth Hardening | 0/TBD | Not started | - |
 | 4. Logging Migration | 0/TBD | Not started | - |
 | 5. Critical Fixes | 0/TBD | Not started | - |
@@ -223,4 +227,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 — Phase 1 complete*
+*Last updated: 2026-01-22 — Phase 2 planned*
