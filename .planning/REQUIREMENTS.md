@@ -150,10 +150,10 @@ Deferred to future release:
 | APR-05 | Phase 12 | Pending |
 
 **Coverage:**
-- v1 requirements: 44 total
-- Mapped to phases: 44
-- Unmapped: 0 ✓
+- v1 requirements: 42 total
+- Mapped to phases: 42
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 after initial definition*
+*Last updated: 2026-01-22 after roadmap creation*
