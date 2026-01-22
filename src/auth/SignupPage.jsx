@@ -7,6 +7,8 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, User, Building2, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import AuthLayout from './AuthLayout';
 import { signUp, isEmailConfirmationPending } from '../services/authService';
+import { validatePassword } from '../services/passwordService.js';
+import PasswordStrengthIndicator from '../components/security/PasswordStrengthIndicator.jsx';
 import Seo from '../components/Seo';
 
 export default function SignupPage() {
@@ -25,6 +27,7 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [emailSent, setEmailSent] = useState(false);
   const [createdEmail, setCreatedEmail] = useState('');
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,9 +39,10 @@ export default function SignupPage() {
     setError('');
     setLoading(true);
 
-    // Validate password
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    // Validate password using passwordService
+    const validation = validatePassword(formData.password, formData.email);
+    if (!validation.valid) {
+      setError(validation.errors[0]);
       setLoading(false);
       return;
     }
@@ -203,9 +207,9 @@ export default function SignupPage() {
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
               onChange={handleChange}
-              placeholder="At least 6 characters"
+              placeholder="Create a strong password"
               required
-              minLength={6}
+              minLength={8}
               className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <button
@@ -216,6 +220,13 @@ export default function SignupPage() {
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
+          <PasswordStrengthIndicator
+            password={formData.password}
+            email={formData.email}
+            checkBreaches={true}
+            showRequirements={true}
+            onValidationChange={(result) => setIsPasswordValid(result.valid)}
+          />
         </div>
 
         {/* Terms */}
@@ -229,7 +240,7 @@ export default function SignupPage() {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !isPasswordValid}
           className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
