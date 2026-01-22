@@ -7,10 +7,10 @@
 
 ### Testing Infrastructure
 
-- [ ] **TEST-01**: Player.jsx has characterization tests covering offline mode transitions
-- [ ] **TEST-02**: Player.jsx has characterization tests covering content sync flow
-- [ ] **TEST-03**: Player.jsx has characterization tests covering heartbeat/reconnection
-- [ ] **TEST-04**: Critical service functions have unit tests (scheduleService, offlineService)
+- [x] **TEST-01**: Player.jsx has characterization tests covering offline mode transitions
+- [x] **TEST-02**: Player.jsx has characterization tests covering content sync flow
+- [x] **TEST-03**: Player.jsx has characterization tests covering heartbeat/reconnection
+- [x] **TEST-04**: Critical service functions have unit tests (scheduleService, offlineService)
 
 ### Security Hardening
 
@@ -106,10 +106,10 @@ Deferred to future release:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TEST-01 | Phase 1 | Pending |
-| TEST-02 | Phase 1 | Pending |
-| TEST-03 | Phase 1 | Pending |
-| TEST-04 | Phase 1 | Pending |
+| TEST-01 | Phase 1 | Complete |
+| TEST-02 | Phase 1 | Complete |
+| TEST-03 | Phase 1 | Complete |
+| TEST-04 | Phase 1 | Complete |
 | SEC-01 | Phase 2 | Pending |
 | SEC-02 | Phase 2 | Pending |
 | SEC-03 | Phase 3 | Pending |
@@ -156,4 +156,4 @@ Deferred to future release:
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 after roadmap creation*
+*Last updated: 2026-01-22 — Phase 1 complete (TEST-01, TEST-02, TEST-03, TEST-04)*
