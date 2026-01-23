@@ -23,7 +23,7 @@
  * @see screenService.js for API operations
  * @see ScreenDetailDrawer.jsx for detailed screen view
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Search,
   Plus,
@@ -32,9 +32,11 @@ import {
   Loader2,
   MapPin,
   Users,
+  Key,
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
-import { isScreenOnline } from '../services/screenService';
+import { isScreenOnline, setMasterKioskPin, getMasterPinStatus } from '../services/screenService';
+import { useLogger } from '../hooks/useLogger';
 import { hasReachedLimit } from '../services/limitsService';
 import ScreenDetailDrawer from '../components/ScreenDetailDrawer';
 import { ScreensFooterCards } from '../components/screens/ScreensFooterCards';
@@ -73,7 +75,58 @@ import { Card } from '../design-system';
 
 const ScreensPage = ({ showToast }) => {
   const { t } = useTranslation();
+  const logger = useLogger('ScreensPage');
   const [actionMenuId, setActionMenuId] = useState(null);
+
+  // Master PIN modal state
+  const [showMasterPinModal, setShowMasterPinModal] = useState(false);
+  const [masterPinInput, setMasterPinInput] = useState('');
+  const [masterPinConfirm, setMasterPinConfirm] = useState('');
+  const [masterPinStatus, setMasterPinStatus] = useState({ isSet: false, setAt: null });
+  const [masterPinError, setMasterPinError] = useState('');
+  const [masterPinSaving, setMasterPinSaving] = useState(false);
+
+  // Load master PIN status on mount
+  useEffect(() => {
+    async function loadPinStatus() {
+      try {
+        const status = await getMasterPinStatus();
+        setMasterPinStatus(status);
+      } catch (err) {
+        logger.debug('Failed to load PIN status', { error: err });
+      }
+    }
+    loadPinStatus();
+  }, [logger]);
+
+  // Handler for saving master PIN
+  const handleSaveMasterPin = async () => {
+    if (masterPinInput.length !== 4 || !/^\d{4}$/.test(masterPinInput)) {
+      setMasterPinError('PIN must be exactly 4 digits');
+      return;
+    }
+    if (masterPinInput !== masterPinConfirm) {
+      setMasterPinError('PINs do not match');
+      return;
+    }
+
+    setMasterPinError('');
+    setMasterPinSaving(true);
+
+    try {
+      await setMasterKioskPin(masterPinInput);
+      setMasterPinStatus({ isSet: true, setAt: new Date().toISOString() });
+      setShowMasterPinModal(false);
+      setMasterPinInput('');
+      setMasterPinConfirm('');
+      showToast?.('Master PIN updated successfully');
+    } catch (err) {
+      setMasterPinError('Failed to save PIN. Please try again.');
+      logger.error('Failed to save master PIN', { error: err });
+    } finally {
+      setMasterPinSaving(false);
+    }
+  };
 
   // Use the extracted hook for all data management
   const {
@@ -174,10 +227,22 @@ const ScreensPage = ({ showToast }) => {
           </>
         }
         actions={
-          <Button onClick={handleAddScreen}>
-            <Plus size={18} />
-            {t('screens.addScreen', 'Add Screen')}
-          </Button>
+          <Inline gap="sm">
+            <button
+              onClick={() => setShowMasterPinModal(true)}
+              className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              <Key className="w-4 h-4" />
+              <span className="hidden sm:inline">Master PIN</span>
+              {masterPinStatus.isSet && (
+                <span className="w-2 h-2 bg-green-500 rounded-full" title="PIN is set" />
+              )}
+            </button>
+            <Button onClick={handleAddScreen}>
+              <Plus size={18} />
+              {t('screens.addScreen', 'Add Screen')}
+            </Button>
+          </Inline>
         }
       />
 
@@ -376,6 +441,104 @@ const ScreensPage = ({ showToast }) => {
         onSubmit={handleUpdateScreen}
         saving={savingEdit}
       />
+
+      {/* Master PIN Modal */}
+      {showMasterPinModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 m-4">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <Key className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Master Kiosk PIN</h2>
+                <p className="text-sm text-gray-500">
+                  {masterPinStatus.isSet
+                    ? `Last updated ${new Date(masterPinStatus.setAt).toLocaleDateString()}`
+                    : 'Not yet configured'}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-sm text-gray-600 mb-4">
+              The master PIN works across all your devices. Use it to exit kiosk mode on any screen.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  New PIN (4 digits)
+                </label>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={4}
+                  value={masterPinInput}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                    setMasterPinInput(val);
+                    setMasterPinError('');
+                  }}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg text-center text-2xl tracking-[0.5em] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="****"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirm PIN
+                </label>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={4}
+                  value={masterPinConfirm}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                    setMasterPinConfirm(val);
+                    setMasterPinError('');
+                  }}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg text-center text-2xl tracking-[0.5em] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="****"
+                />
+              </div>
+
+              {masterPinError && (
+                <p className="text-sm text-red-600">{masterPinError}</p>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowMasterPinModal(false);
+                  setMasterPinInput('');
+                  setMasterPinConfirm('');
+                  setMasterPinError('');
+                }}
+                className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveMasterPin}
+                disabled={masterPinSaving || masterPinInput.length !== 4}
+                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {masterPinSaving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  'Save PIN'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {detailScreen && (
         <ScreenDetailDrawer
