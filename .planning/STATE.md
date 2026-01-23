@@ -10,23 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 9 of 12 (Device Experience) - IN PROGRESS
-Plan: 4 of 8 in phase 9
+Plan: 1 of 8 in phase 9
 Status: In progress
-Last activity: 2026-01-23 - Completed 09-04 (PairingScreen component)
+Last activity: 2026-01-23 - Completed 09-01 (PIN storage schema and services)
 
 Progress: [#################░░░░░░░] 70% (8.5/12 phases complete)
 
 ## Phase 9 Progress
 
 **Device Experience Plans:**
-- [x] 09-01: PIN hash/validation infrastructure (6958085)
-- [x] 09-02: useTapSequence hook (09c082c, b8cad29)
-- [x] 09-03: PinEntry component (7fce21f)
-- [x] 09-04: PairingScreen component (be14a35)
+- [x] 09-01: PIN hash/validation infrastructure (8347f07, 6958085, f93c095)
+- [ ] 09-02: useTapSequence hook
+- [ ] 09-03: PinEntry component
+- [ ] 09-04: PairingScreen component
 - [ ] 09-05: OtpEntryScreen component
 - [ ] 09-06: Pairing polling hook
 - [ ] 09-07: Player integration
 - [ ] 09-08: Testing and verification
+
+**Plan 09-01 Results:**
+- Migration 117 adds kiosk_pin_hash to tv_devices and master_kiosk_pin_hash to profiles
+- RPC functions: get_device_kiosk_pins, set_device_kiosk_pin, set_master_kiosk_pin
+- playerService exports: hashPin, cacheKioskPinHashes, validatePinOffline
+- screenService exports: setMasterKioskPin, getMasterPinStatus, setDeviceKioskPin
 
 ## Phase 8 Completion Summary
 
@@ -483,7 +489,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 09-04-PLAN.md (PairingScreen component)
+Stopped at: Completed 09-01-PLAN.md (PIN storage schema and services)
 Resume file: None
 
 ## Next Steps
@@ -491,11 +497,6 @@ Resume file: None
 **Phase 9 in progress:** Device Experience
 
 **Completed plans:**
-- [x] 09-01: PIN hash/validation (1 min)
-- [x] 09-02: useTapSequence hook (2 min)
-- [x] 09-03: PinEntry component (1 min)
-- [x] 09-04: PairingScreen component (1 min)
+- [x] 09-01: PIN hash/validation infrastructure (2 min)
 
-**Next:** 09-05 (OtpEntryScreen component)
-
-**Next:** 09-04 (Device pairing flow)
+**Next:** 09-02 (useTapSequence hook)
