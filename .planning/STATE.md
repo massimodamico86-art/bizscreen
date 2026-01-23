@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 7 of 12 (Player Refactoring) - COMPLETE
-Plan: 3 of 3 in phase 7 - COMPLETE
-Status: Phase complete
-Last activity: 2026-01-23 - Completed 07-03 (Final hooks + tests)
+Phase: 7 of 12 (Player Refactoring) - COMPLETE (with gap closure)
+Plan: 4 of 4 in phase 7 - COMPLETE
+Status: Phase complete (all gaps closed)
+Last activity: 2026-01-23 - Completed 07-04 (Gap closure - playbackTrackingService fix)
 
 Progress: [##############░░░░░░░░░░] 58% (7/12 phases complete)
 
@@ -22,6 +22,13 @@ Progress: [##############░░░░░░░░░░] 58% (7/12 phases comple
 - [x] 07-01: Extract widgets + fix PLR-01 (47fcba4, 2c177a5)
 - [x] 07-02: Extract custom hooks (8bf0aee, 293c991, 5553176)
 - [x] 07-03: Final hooks + tests (5ba3221, ab3f9cc, cb6d88e)
+- [x] 07-04: Gap closure - playbackTrackingService fix (d0ab9f0)
+
+**Gap Closure (07-04):**
+- Fixed ReferenceError in playbackTrackingService.trackSceneStart (line 159)
+- Fixed ReferenceError in playbackTrackingService.trackMediaError (line 407)
+- Resolved 10 test failures (42 -> 32 remaining pre-existing failures)
+- All 34 playbackTrackingService tests now pass
 
 **Final Hooks + Tests (07-03):**
 - Created useKioskMode hook (135 lines) - kiosk state, fullscreen, password exit
@@ -392,22 +399,24 @@ None.
 - ~~Player.jsx has uncommitted changes~~ Committed: structured logging in catch blocks
 - ~~PLR-01 gap: Player.jsx uses own getRetryDelay (0-25% jitter) instead of calculateBackoff (0-100%)~~ Fixed in 07-01
 - Database schema issue: `column "last_seen" does not exist` — unrelated to Phase 6
-- Pre-existing test failures in offlineService.test.js and playbackTrackingService.test.js (unrelated to Phase 7)
+- ~~Pre-existing test failures in offlineService.test.js and playbackTrackingService.test.js (unrelated to Phase 7)~~ playbackTrackingService fixed in 07-04; offlineService failures remain (loggingService window.location issue)
+- 32 pre-existing test failures remain (api/ imports, offlineService, security tests, etc.) - outside Phase 7 scope
 
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 07-03-PLAN.md (Final hooks + tests) - Phase 7 COMPLETE
+Stopped at: Completed 07-04-PLAN.md (Gap closure - playbackTrackingService fix) - Phase 7 COMPLETE
 Resume file: None
 
 ## Next Steps
 
-**Phase 7 Complete!** Ready for Phase 8.
+**Phase 7 Complete with Gap Closure!** Ready for Phase 8.
 
 **Phase 7: Player Refactoring** — COMPLETE
 - [x] 07-01: Extract widgets + fix PLR-01 (47fcba4, 2c177a5)
 - [x] 07-02: Extract custom hooks (8bf0aee, 293c991, 5553176)
 - [x] 07-03: Final hooks + tests (5ba3221, ab3f9cc, cb6d88e)
+- [x] 07-04: Gap closure - playbackTrackingService fix (d0ab9f0)
 
 **Results:**
 - Player.jsx reduced by 720 lines (21%)
@@ -415,3 +424,4 @@ Resume file: None
 - 4 widget components extracted
 - 29 new hook unit tests
 - PLR-01 thundering herd issue fixed
+- playbackTrackingService ReferenceError bugs fixed (10 test failures resolved)
