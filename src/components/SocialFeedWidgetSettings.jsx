@@ -125,7 +125,7 @@ export default function SocialFeedWidgetSettings({
         showAuthor,
       });
     } catch (error) {
-      console.error('Failed to save settings:', error);
+      logger.error('Failed to save settings', { error, widgetId, provider, accountId });
     } finally {
       setSaving(false);
     }
