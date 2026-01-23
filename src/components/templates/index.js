@@ -7,3 +7,4 @@
 export { TemplatePreviewPopover, useTemplatePreview } from './TemplatePreviewPopover';
 export { TemplateLivePreview, TemplateIframePreview } from './TemplateLivePreview';
 export { TemplateCustomizeModal } from './TemplateCustomizeModal';
+export { SaveAsTemplateModal } from './SaveAsTemplateModal';
