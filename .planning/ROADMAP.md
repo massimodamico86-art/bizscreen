@@ -166,12 +166,12 @@ Plans:
 - [x] 08-04-PLAN.md — Extract useScreensData hook (REF-04)
 - [x] 08-05-PLAN.md — Extract useMediaLibrary hook (REF-03)
 - [x] 08-06-PLAN.md — Hook tests and verification
-- [ ] 08-07-PLAN.md — Gap closure: Extract FeatureFlagsPage components (target: <600 lines)
-- [ ] 08-08-PLAN.md — Gap closure: Wire MediaLibraryPage to extracted components (target: <800 lines)
-- [ ] 08-09-PLAN.md — Gap closure: Extract ScreensPage components (target: <700 lines)
-- [ ] 08-10-PLAN.md — Gap closure: Extract PlaylistEditorPage components (target: <700 lines)
-- [ ] 08-11-PLAN.md — Gap closure: Extract CampaignEditorPage modals (target: <600 lines)
-- [ ] 08-12-PLAN.md — Gap closure: Final verification
+- [x] 08-07-PLAN.md — Gap closure: Extract FeatureFlagsPage components (target: <600 lines)
+- [x] 08-08-PLAN.md — Gap closure: Wire MediaLibraryPage to extracted components (target: <800 lines)
+- [x] 08-09-PLAN.md — Gap closure: Extract ScreensPage components (target: <700 lines)
+- [x] 08-10-PLAN.md — Gap closure: Extract PlaylistEditorPage components (target: <700 lines)
+- [x] 08-11-PLAN.md — Gap closure: Extract CampaignEditorPage modals (target: <600 lines)
+- [x] 08-12-PLAN.md — Gap closure: Final verification
 
 ### Phase 9: Device Experience
 **Goal**: Device pairing and kiosk management are easier for field technicians
@@ -181,10 +181,17 @@ Plans:
   1. Unpaired player displays QR code that admin can scan to start pairing
   2. Tapping bottom-right corner 5 times reveals kiosk exit PIN prompt
   3. Emergency kiosk exit works without network connection (PIN stored locally)
-**Plans**: TBD
+**Plans**: 8 plans
 
 Plans:
-- [ ] 09-01: TBD
+- [ ] 09-01-PLAN.md — Database schema and PIN service functions (DEV-03)
+- [ ] 09-02-PLAN.md — Create useTapSequence hook for hidden exit trigger (DEV-02)
+- [ ] 09-03-PLAN.md — Create PinEntry component with numeric keypad (DEV-02)
+- [ ] 09-04-PLAN.md — Create PairingScreen component with QR code (DEV-01)
+- [ ] 09-05-PLAN.md — Admin pairing page and routing (DEV-01)
+- [ ] 09-06-PLAN.md — Integrate QR pairing and PIN exit into Player.jsx (DEV-01, DEV-02, DEV-03)
+- [ ] 09-07-PLAN.md — Master PIN management in ScreensPage (DEV-03)
+- [ ] 09-08-PLAN.md — Unit tests for Phase 9 components
 
 ### Phase 10: Analytics
 **Goal**: Content owners can see how long and how often their content is viewed
@@ -245,11 +252,11 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 6. Player Reliability | 3/3 | Complete | 2026-01-23 |
 | 7. Player Refactoring | 4/4 | Complete | 2026-01-23 |
 | 8. Page Refactoring | 12/12 | Complete | 2026-01-23 |
-| 9. Device Experience | 0/TBD | Not started | - |
+| 9. Device Experience | 0/8 | Planned | - |
 | 10. Analytics | 0/TBD | Not started | - |
 | 11. GDPR Compliance | 0/TBD | Not started | - |
 | 12. Content Approval | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 8 complete (12/12 plans, 70% line reduction)*
+*Last updated: 2026-01-23 — Phase 9 planned (8 plans in 3 waves)*
