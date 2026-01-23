@@ -9,8 +9,10 @@ import { useState, useCallback } from 'react';
 import { Globe, Check, Loader2 } from 'lucide-react';
 import { useI18n } from '../i18n';
 import { setUserPreferredLocale } from '../services/localeService';
+import { useLogger } from '../hooks/useLogger.js';
 
 export function LanguageSwitcher({ showLabel = true, size = 'default' }) {
+  const logger = useLogger('LanguageSwitcher');
   const { locale, setLocale, supportedLocales, t } = useI18n();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -119,7 +121,7 @@ export function CompactLanguageSwitcher() {
       setLocale(newLocale);
       await setUserPreferredLocale(newLocale);
     } catch (e) {
-      console.error('Failed to save locale preference:', e);
+      logger.error('Failed to save locale preference', { error: e, locale: newLocale });
     } finally {
       setSaving(false);
     }

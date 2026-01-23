@@ -33,8 +33,10 @@ import {
   getUptimeColor,
   getPreviewInfo
 } from '../services/screenDiagnosticsService';
+import { useLogger } from '../hooks/useLogger.js';
 
 const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
+  const logger = useLogger('ScreenDetailDrawer');
   const [diagnostics, setDiagnostics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -52,7 +54,7 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
       const data = await getScreenDiagnostics(screen.id);
       setDiagnostics(data);
     } catch (err) {
-      console.error('Error loading diagnostics:', err);
+      logger.error('Error loading diagnostics', { error: err, screenId: screen.id });
       setError(err.message || 'Failed to load diagnostics');
       showToast?.('Error loading screen diagnostics', 'error');
     } finally {

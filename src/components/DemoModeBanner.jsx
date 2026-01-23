@@ -9,11 +9,13 @@
 import { useState, useEffect } from 'react';
 import { AlertTriangle, X, Clock, RefreshCw } from 'lucide-react';
 import { checkIsDemoTenant } from '../services/demoService';
+import { useLogger } from '../hooks/useLogger.js';
 
 /**
  * DemoModeBanner - Shows demo mode indicator
  */
 export default function DemoModeBanner() {
+  const logger = useLogger('DemoModeBanner');
   const [demoInfo, setDemoInfo] = useState(null);
   const [dismissed, setDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -27,7 +29,7 @@ export default function DemoModeBanner() {
       const info = await checkIsDemoTenant();
       setDemoInfo(info);
     } catch (err) {
-      console.error('Error checking demo status:', err);
+      logger.error('Error checking demo status', { error: err });
     } finally {
       setLoading(false);
     }

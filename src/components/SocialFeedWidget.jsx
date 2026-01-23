@@ -14,6 +14,7 @@ import {
   LAYOUT_OPTIONS,
 } from '../services/social';
 import { getSocialFeedPosts, getCachedPosts } from '../services/socialFeedSyncService';
+import { useLogger } from '../hooks/useLogger.js';
 
 /**
  * Main Social Feed Widget component
@@ -32,6 +33,7 @@ export default function SocialFeedWidget({
   className = '',
   isPreview = false,
 }) {
+  const logger = useLogger('SocialFeedWidget');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -53,7 +55,7 @@ export default function SocialFeedWidget({
 
       setPosts(feedPosts || []);
     } catch (err) {
-      console.error('Failed to load social feed:', err);
+      logger.error('Failed to load social feed', { error: err, widgetId, accountId, provider });
       setError(err.message || 'Failed to load feed');
     } finally {
       setLoading(false);

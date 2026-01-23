@@ -7,6 +7,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useLogger } from '../hooks/useLogger.js';
 
 export default function PolotnoEditor({
   onSave,
@@ -17,6 +18,7 @@ export default function PolotnoEditor({
   height = 1080,
   templates = [], // Templates to show in the side panel
 }) {
+  const logger = useLogger('PolotnoEditor');
   const iframeRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -65,7 +67,7 @@ export default function PolotnoEditor({
               height: data.height,
             });
           } catch (err) {
-            console.error('Save handler failed:', err);
+            logger.error('Save handler failed', { error: err, designName });
           }
         }
         break;
