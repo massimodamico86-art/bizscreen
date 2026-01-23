@@ -23,6 +23,7 @@ import {
   LICENSE_LABELS,
 } from '../../services/marketplaceService';
 import { autoTagSvg, autoTagSvgFromUrl } from '../../services/autoTaggingService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Industry options
 const INDUSTRIES = [
@@ -38,6 +39,7 @@ const INDUSTRIES = [
 
 export default function AdminEditTemplatePage({ templateId, onNavigate }) {
   const isNew = templateId === 'new';
+  const logger = useLogger('AdminEditTemplatePage');
 
   // Form state
   const [form, setForm] = useState({
@@ -90,7 +92,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
   useEffect(() => {
     fetchCategories()
       .then(setCategories)
-      .catch(err => console.error('Failed to load categories:', err));
+      .catch(err => logger.error('Failed to load categories', { error: err }));
   }, []);
 
   // Load template if editing
@@ -115,7 +117,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
         setSlides(data.slides || []);
       })
       .catch(err => {
-        console.error('Failed to load template:', err);
+        logger.error('Failed to load template', { templateId, error: err });
         setError('Failed to load template');
       })
       .finally(() => setLoading(false));
@@ -127,7 +129,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
 
     fetchEnterpriseAccess(templateId)
       .then(setEnterpriseAccess)
-      .catch(err => console.error('Failed to load enterprise access:', err));
+      .catch(err => logger.error('Failed to load enterprise access', { templateId, error: err }));
   }, [templateId, isNew, form.license]);
 
   // Handle form change
@@ -184,9 +186,9 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       if (uploadedSvgFile && savedTemplateId) {
         try {
           await uploadTemplateThumbnail(savedTemplateId, uploadedSvgFile);
-          console.log('Thumbnail auto-uploaded successfully');
+          logger.info('Thumbnail auto-uploaded successfully', { templateId: result.id });
         } catch (thumbErr) {
-          console.error('Failed to upload thumbnail:', thumbErr);
+          logger.error('Failed to upload thumbnail', { templateId: result.id, error: thumbErr });
           // Don't fail the whole save, just log the error
         }
       }
@@ -195,7 +197,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
         onNavigate?.(`admin-template-${savedTemplateId}`);
       }
     } catch (err) {
-      console.error('Failed to save template:', err);
+      logger.error('Failed to save template', { templateId, templateName: form.name, error: err });
       setError(err.message || 'Failed to save template');
     } finally {
       setSaving(false);
@@ -214,7 +216,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       const data = await fetchTemplateDetail(templateId);
       setForm(prev => ({ ...prev, thumbnailUrl: data.thumbnail_url }));
     } catch (err) {
-      console.error('Failed to upload thumbnail:', err);
+      logger.error('Failed to upload thumbnail', { templateId, error: err });
       setError('Failed to upload thumbnail');
     } finally {
       setUploading(false);
@@ -237,7 +239,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       const previewUrl = URL.createObjectURL(blob);
       setSvgPreviewUrl(previewUrl);
     } catch (err) {
-      console.error('Failed to read SVG file:', err);
+      logger.error('Failed to read SVG file', { fileName: file.name, error: err });
       setError('Failed to read SVG file');
     }
   };
@@ -280,7 +282,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
         setError(null);
       }
     } catch (err) {
-      console.error('Auto-tagging failed:', err);
+      logger.error('Auto-tagging failed', { svgUrl, error: err });
       setError('Auto-tagging failed: ' + (err.message || 'Unknown error'));
     } finally {
       setAutoTagging(false);
@@ -303,7 +305,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       });
       setSlides(prev => [...prev, slide]);
     } catch (err) {
-      console.error('Failed to add slide:', err);
+      logger.error('Failed to add slide', { templateId, slideTitle: slideForm.title, error: err });
       setError('Failed to add slide');
     }
   };
@@ -352,7 +354,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       );
       setEditingSlide(null);
     } catch (err) {
-      console.error('Failed to update slide:', err);
+      logger.error('Failed to update slide', { slideId: editingSlide.id, slideTitle: slideForm.title, error: err });
       setError('Failed to update slide');
     }
   };
@@ -364,7 +366,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       await deleteTemplateSlide(slideId);
       setSlides(prev => prev.filter(s => s.id !== slideId));
     } catch (err) {
-      console.error('Failed to delete slide:', err);
+      logger.error('Failed to delete slide', { slideId, error: err });
       setError('Failed to delete slide');
     }
   };
@@ -379,7 +381,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       const access = await fetchEnterpriseAccess(templateId);
       setEnterpriseAccess(access);
     } catch (err) {
-      console.error('Failed to grant access:', err);
+      logger.error('Failed to grant enterprise access', { templateId, tenantId: newTenantId, error: err });
       setError('Failed to grant access');
     }
   };
@@ -389,7 +391,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       await revokeEnterpriseAccess(templateId, tenantId);
       setEnterpriseAccess(prev => prev.filter(a => a.tenant_id !== tenantId));
     } catch (err) {
-      console.error('Failed to revoke access:', err);
+      logger.error('Failed to revoke enterprise access', { accessId, error: err });
       setError('Failed to revoke access');
     }
   };

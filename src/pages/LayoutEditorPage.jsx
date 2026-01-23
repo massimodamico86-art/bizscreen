@@ -35,6 +35,7 @@ import {
 import { supabase } from '../supabase';
 import { Button, Card } from '../design-system';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   requestApproval,
   getOpenReviewForResource,
@@ -118,6 +119,7 @@ const ZONE_COLORS = [
 
 const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
   const { t } = useTranslation();
+  const logger = useLogger('LayoutEditorPage');
   const [layout, setLayout] = useState(null);
   const [zones, setZones] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -156,7 +158,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       setLayout(data);
       setZones(data.layout_zones || []);
     } catch (error) {
-      console.error('Error loading layout:', error);
+      logger.error('Failed to load layout', { layoutId, error });
       showToast?.('Error loading layout: ' + error.message, 'error');
     } finally {
       setLoading(false);
@@ -191,7 +193,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       setIsDirty(false);
       showToast?.('Layout saved successfully');
     } catch (error) {
-      console.error('Error saving layout:', error);
+      logger.error('Failed to save layout', { layoutId, layoutName: layout.name, error });
       showToast?.('Error saving layout: ' + error.message, 'error');
     } finally {
       setSaving(false);
@@ -212,7 +214,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       setSelectedZone(newZone.id);
       setIsDirty(true);
     } catch (error) {
-      console.error('Error adding zone:', error);
+      logger.error('Failed to add zone', { layoutId, error });
       showToast?.('Error adding zone: ' + error.message, 'error');
     }
   };
@@ -227,7 +229,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       setIsDirty(true);
       showToast?.('Zone deleted');
     } catch (error) {
-      console.error('Error deleting zone:', error);
+      logger.error('Failed to delete zone', { zoneId, error });
       showToast?.('Error deleting zone: ' + error.message, 'error');
     }
   };
@@ -300,7 +302,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       setIsDirty(true);
       showToast?.('Content assigned to zone');
     } catch (error) {
-      console.error('Error assigning content:', error);
+      logger.error('Failed to assign content', { zoneId: selectedZone.id, playlistId, error });
       showToast?.('Error assigning content: ' + error.message, 'error');
     }
   };
@@ -315,7 +317,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       ));
       setIsDirty(true);
     } catch (error) {
-      console.error('Error clearing assignment:', error);
+      logger.error('Failed to clear assignment', { zoneId, error });
     }
   };
 
@@ -333,7 +335,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       const review = await getOpenReviewForResource('layout', layoutId);
       setCurrentReview(review);
     } catch (error) {
-      console.error('Error fetching review:', error);
+      logger.error('Failed to fetch review', { layoutId, error });
     }
   };
 
@@ -360,7 +362,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       await loadLayout();
       await fetchCurrentReview();
     } catch (error) {
-      console.error('Error requesting approval:', error);
+      logger.error('Failed to request approval', { layoutId, layoutName: layout.name, error });
       showToast?.(error.message || 'Error requesting approval', 'error');
     } finally {
       setSubmittingApproval(false);
@@ -376,7 +378,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       await loadLayout();
       setCurrentReview(null);
     } catch (error) {
-      console.error('Error reverting to draft:', error);
+      logger.error('Failed to revert to draft', { layoutId, error });
       showToast?.(error.message || 'Error reverting to draft', 'error');
     }
   };
@@ -388,7 +390,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       const links = await fetchPreviewLinksForResource('layout', layoutId);
       setPreviewLinks(links);
     } catch (error) {
-      console.error('Error fetching preview links:', error);
+      logger.error('Failed to fetch preview links', { layoutId, error });
     } finally {
       setLoadingPreviewLinks(false);
     }
@@ -413,7 +415,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       showToast?.('Preview link created');
       await fetchPreviewLinks();
     } catch (error) {
-      console.error('Error creating preview link:', error);
+      logger.error('Failed to create preview link', { layoutId, expiryPreset: selectedExpiry, error });
       showToast?.(error.message || 'Error creating preview link', 'error');
     } finally {
       setCreatingPreviewLink(false);
@@ -428,7 +430,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       showToast?.('Preview link revoked');
       await fetchPreviewLinks();
     } catch (error) {
-      console.error('Error revoking preview link:', error);
+      logger.error('Failed to revoke preview link', { linkId, error });
       showToast?.(error.message || 'Error revoking link', 'error');
     }
   };
