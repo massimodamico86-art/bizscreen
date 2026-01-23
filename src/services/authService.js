@@ -3,6 +3,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('AuthService');
 
 /**
  * Sign up a new user
@@ -58,7 +61,7 @@ export async function signUp({ email, password, fullName, businessName }) {
         });
 
       if (profileError) {
-        console.error('Error creating profile:', profileError);
+        logger.error('Failed to create profile during signup', { error: profileError, userId: authData.user.id });
         // Don't fail the signup, profile can be created later
       }
     } else {
@@ -72,9 +75,10 @@ export async function signUp({ email, password, fullName, businessName }) {
         .eq('id', authData.user.id);
     }
 
+    logger.info('User signed up successfully', { userId: authData.user.id });
     return { user: authData.user, error: null };
   } catch (error) {
-    console.error('Signup error:', error);
+    logger.error('Signup failed', { error });
     return { user: null, error: error.message };
   }
 }
@@ -91,14 +95,14 @@ export async function checkLockout(email) {
     });
 
     if (error) {
-      console.error('Lockout check error:', error);
+      logger.error('Lockout check failed', { error, email });
       // Fail open - allow login attempt if check fails
       return { locked: false };
     }
 
     return data;
   } catch (error) {
-    console.error('Lockout check error:', error);
+    logger.error('Lockout check exception', { error, email });
     return { locked: false };
   }
 }
@@ -116,7 +120,7 @@ async function recordLoginAttempt(email, success) {
     });
   } catch (error) {
     // Non-blocking - don't fail login if recording fails
-    console.error('Failed to record login attempt:', error);
+    logger.warn('Failed to record login attempt', { error, email });
   }
 }
 
@@ -166,9 +170,10 @@ export async function signIn(email, password) {
     // Record successful login
     await recordLoginAttempt(email, true);
 
+    logger.info('User signed in successfully', { userId: data.user.id });
     return { user: data.user, error: null };
   } catch (error) {
-    console.error('Sign in error:', error);
+    logger.error('Sign in failed', { error, email });
     return { user: null, error: error.message };
   }
 }
@@ -181,11 +186,13 @@ export async function signOut() {
   try {
     const { error } = await supabase.auth.signOut();
     if (error) {
+      logger.error('Sign out failed', { error });
       return { error: error.message };
     }
+    logger.info('User signed out successfully');
     return { error: null };
   } catch (error) {
-    console.error('Sign out error:', error);
+    logger.error('Sign out exception', { error });
     return { error: error.message };
   }
 }
@@ -202,12 +209,14 @@ export async function requestPasswordReset(email) {
     });
 
     if (error) {
+      logger.error('Password reset request failed', { error, email });
       return { success: false, error: error.message };
     }
 
+    logger.info('Password reset email sent', { email });
     return { success: true, error: null };
   } catch (error) {
-    console.error('Password reset request error:', error);
+    logger.error('Password reset request exception', { error, email });
     return { success: false, error: error.message };
   }
 }
@@ -224,12 +233,14 @@ export async function updatePassword(newPassword) {
     });
 
     if (error) {
+      logger.error('Password update failed', { error });
       return { success: false, error: error.message };
     }
 
+    logger.info('Password updated successfully');
     return { success: true, error: null };
   } catch (error) {
-    console.error('Password update error:', error);
+    logger.error('Password update exception', { error });
     return { success: false, error: error.message };
   }
 }
@@ -246,7 +257,7 @@ export async function getSession() {
     }
     return { session: data.session, error: null };
   } catch (error) {
-    console.error('Get session error:', error);
+    logger.error('Get session failed', { error });
     return { session: null, error: error.message };
   }
 }
@@ -263,7 +274,7 @@ export async function getCurrentUser() {
     }
     return { user: data.user, error: null };
   } catch (error) {
-    console.error('Get user error:', error);
+    logger.error('Get user failed', { error });
     return { user: null, error: error.message };
   }
 }
@@ -295,12 +306,14 @@ export async function resendConfirmationEmail(email) {
     });
 
     if (error) {
+      logger.error('Resend confirmation email failed', { error, email });
       return { success: false, error: error.message };
     }
 
+    logger.info('Confirmation email resent', { email });
     return { success: true, error: null };
   } catch (error) {
-    console.error('Resend confirmation error:', error);
+    logger.error('Resend confirmation exception', { error, email });
     return { success: false, error: error.message };
   }
 }

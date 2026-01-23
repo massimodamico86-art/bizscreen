@@ -6,6 +6,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('RateLimitService');
 
 /**
  * Rate limit configurations per action
@@ -28,7 +31,7 @@ export const RATE_LIMITS = {
 export async function checkRateLimit(action, options = {}) {
   const config = RATE_LIMITS[action];
   if (!config) {
-    console.warn(`Unknown rate limit action: ${action}`);
+    logger.warn('Unknown rate limit action', { action });
     return { allowed: true }; // Fail open for unknown actions
   }
 
@@ -49,12 +52,13 @@ export async function checkRateLimit(action, options = {}) {
     });
 
     if (error) {
-      console.error('Rate limit check error:', error);
+      logger.error('Rate limit check failed', { error, action, identifier });
       // Fail open - don't block users if rate limit check fails
       return { allowed: true };
     }
 
     if (!data.allowed) {
+      logger.warn('Rate limit exceeded', { action, identifier, retryAfter: data.retry_after_seconds });
       return {
         allowed: false,
         retryAfter: data.retry_after_seconds,
@@ -63,13 +67,14 @@ export async function checkRateLimit(action, options = {}) {
       };
     }
 
+    logger.debug('Rate limit check passed', { action, identifier, remaining: data.remaining });
     return {
       allowed: true,
       remaining: data.remaining,
       limit: data.limit,
     };
   } catch (err) {
-    console.error('Rate limit check exception:', err);
+    logger.error('Rate limit check exception', { error: err, action, identifier });
     // Fail open
     return { allowed: true };
   }

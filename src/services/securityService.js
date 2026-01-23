@@ -13,6 +13,9 @@
  */
 
 import { supabase } from '../supabase.js';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('SecurityService');
 
 /**
  * Log a sanitization event
@@ -42,14 +45,15 @@ export async function logSanitizationEvent({ userId, removedSummary, context, ti
 
     if (error) {
       // Silent failure - don't throw, just log
-      console.error('Error logging sanitization event:', error);
+      logger.error('Failed to log sanitization event', { error, context });
       return null;
     }
 
+    logger.info('Sanitization event logged', { eventId: data?.id, context, userId });
     return data?.id || null;
   } catch (error) {
     // Silent failure for logging
-    console.error('Error logging sanitization event:', error);
+    logger.error('Sanitization event logging exception', { error, context });
     return null;
   }
 }
@@ -84,7 +88,7 @@ export async function getSanitizationEvents({ limit = 50, offset = 0 } = {}) {
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error('Error fetching sanitization events:', error);
+      logger.error('Failed to fetch sanitization events', { error });
       return { data: [], error: error.message };
     }
 
@@ -101,7 +105,7 @@ export async function getSanitizationEvents({ limit = 50, offset = 0 } = {}) {
 
     return { data: events, error: null };
   } catch (error) {
-    console.error('Error fetching sanitization events:', error);
+    logger.error('Sanitization events fetch exception', { error });
     return { data: [], error: error.message };
   }
 }
@@ -127,15 +131,16 @@ export async function getFlaggedUsers({ threshold = 5 } = {}) {
       // Fallback: If RPC doesn't exist, try direct query
       if (error.code === '42883') {
         // Function not found - use fallback approach
+        logger.debug('Using fallback for flagged users (RPC not found)');
         return await getFlaggedUsersFallback(threshold);
       }
-      console.error('Error fetching flagged users:', error);
+      logger.error('Failed to fetch flagged users', { error });
       return { data: [], error: error.message };
     }
 
     return { data: data || [], error: null };
   } catch (error) {
-    console.error('Error fetching flagged users:', error);
+    logger.error('Flagged users fetch exception', { error });
     return { data: [], error: error.message };
   }
 }
@@ -218,13 +223,13 @@ export async function getSanitizationEventCount() {
       .select('*', { count: 'exact', head: true });
 
     if (error) {
-      console.error('Error fetching sanitization event count:', error);
+      logger.error('Failed to fetch sanitization event count', { error });
       return { count: 0, error: error.message };
     }
 
     return { count: count || 0, error: null };
   } catch (error) {
-    console.error('Error fetching sanitization event count:', error);
+    logger.error('Sanitization event count fetch exception', { error });
     return { count: 0, error: error.message };
   }
 }

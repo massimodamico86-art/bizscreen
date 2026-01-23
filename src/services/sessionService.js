@@ -3,6 +3,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('SessionService');
 
 /**
  * Get all active sessions for the current user
@@ -24,13 +27,13 @@ export async function getActiveSessions() {
       .order('last_activity', { ascending: false });
 
     if (error) {
-      console.error('Error fetching sessions:', error);
+      logger.error('Failed to fetch sessions', { error });
       return { sessions: [], error: error.message };
     }
 
     return { sessions: data || [], error: null };
   } catch (error) {
-    console.error('Session fetch error:', error);
+    logger.error('Session fetch exception', { error });
     return { sessions: [], error: error.message };
   }
 }
@@ -68,16 +71,17 @@ export async function recordSession(sessionData = {}) {
       .single();
 
     if (error) {
-      console.error('Error recording session:', error);
+      logger.error('Failed to record session', { error });
       return { success: false, error: error.message };
     }
 
     // Store session ID in localStorage for tracking
     localStorage.setItem('bizscreen_session_id', data.id);
 
+    logger.info('Session recorded', { sessionId: data.id, deviceType: deviceInfo.deviceType });
     return { success: true, sessionId: data.id };
   } catch (error) {
-    console.error('Session record error:', error);
+    logger.error('Session record exception', { error });
     return { success: false, error: error.message };
   }
 }
@@ -96,7 +100,7 @@ export async function updateSessionActivity() {
       .eq('id', sessionId);
   } catch (error) {
     // Non-blocking
-    console.error('Session activity update error:', error);
+    logger.debug('Session activity update failed', { error, sessionId });
   }
 }
 
@@ -122,7 +126,7 @@ export async function revokeSession(sessionId) {
       .eq('user_id', user.id);
 
     if (error) {
-      console.error('Error revoking session:', error);
+      logger.error('Failed to revoke session', { error, sessionId });
       return { success: false, error: error.message };
     }
 
@@ -132,9 +136,10 @@ export async function revokeSession(sessionId) {
       await supabase.auth.signOut();
     }
 
+    logger.info('Session revoked', { sessionId });
     return { success: true };
   } catch (error) {
-    console.error('Session revoke error:', error);
+    logger.error('Session revoke exception', { error, sessionId });
     return { success: false, error: error.message };
   }
 }
@@ -164,13 +169,14 @@ export async function revokeAllOtherSessions() {
       .select();
 
     if (error) {
-      console.error('Error revoking sessions:', error);
+      logger.error('Failed to revoke all sessions', { error });
       return { success: false, count: 0, error: error.message };
     }
 
+    logger.info('All other sessions revoked', { count: data?.length || 0 });
     return { success: true, count: data?.length || 0 };
   } catch (error) {
-    console.error('Session revoke all error:', error);
+    logger.error('Session revoke all exception', { error });
     return { success: false, count: 0, error: error.message };
   }
 }
@@ -191,9 +197,10 @@ export async function endCurrentSession() {
         .eq('id', sessionId);
 
       localStorage.removeItem('bizscreen_session_id');
+      logger.info('Session ended', { sessionId });
     }
   } catch (error) {
-    console.error('Session end error:', error);
+    logger.error('Session end exception', { error });
   }
 }
 
@@ -217,13 +224,13 @@ export async function getLoginHistory({ limit = 20, offset = 0 } = {}) {
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error('Error fetching login history:', error);
+      logger.error('Failed to fetch login history', { error });
       return { history: [], error: error.message };
     }
 
     return { history: data || [], error: null };
   } catch (error) {
-    console.error('Login history fetch error:', error);
+    logger.error('Login history fetch exception', { error });
     return { history: [], error: error.message };
   }
 }

@@ -2,6 +2,10 @@
  * Password Service - Password strength validation and breach checking
  */
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('PasswordService');
+
 /**
  * Password strength requirements
  */
@@ -208,7 +212,7 @@ export async function checkPasswordBreach(password) {
     });
 
     if (!response.ok) {
-      console.error('HIBP API error:', response.status);
+      logger.warn('HIBP API error', { status: response.status });
       // Fail open - don't block user if API is down
       return { breached: false, count: 0 };
     }
@@ -229,7 +233,7 @@ export async function checkPasswordBreach(password) {
 
     return { breached: false, count: 0 };
   } catch (error) {
-    console.error('Password breach check error:', error);
+    logger.error('Password breach check failed', { error });
     // Fail open - don't block user if check fails
     return { breached: false, count: 0, error: error.message };
   }

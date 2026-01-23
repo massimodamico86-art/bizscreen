@@ -6,6 +6,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('MfaService');
 
 /**
  * Get current MFA status for the user
@@ -16,7 +19,7 @@ export async function getMfaStatus() {
     const { data, error } = await supabase.auth.mfa.listFactors();
 
     if (error) {
-      console.error('Error getting MFA status:', error);
+      logger.error('Failed to get MFA status', { error });
       return { enrolled: false, verified: false, factors: [] };
     }
 
@@ -29,7 +32,7 @@ export async function getMfaStatus() {
       factors: totpFactors,
     };
   } catch (error) {
-    console.error('MFA status error:', error);
+    logger.error('MFA status exception', { error });
     return { enrolled: false, verified: false, factors: [] };
   }
 }
@@ -45,7 +48,7 @@ export async function getAssuranceLevel() {
     const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
 
     if (error) {
-      console.error('Error getting AAL:', error);
+      logger.error('Failed to get AAL', { error });
       return { currentLevel: 'aal1', nextLevel: null };
     }
 
@@ -54,7 +57,7 @@ export async function getAssuranceLevel() {
       nextLevel: data.nextLevel,
     };
   } catch (error) {
-    console.error('AAL error:', error);
+    logger.error('AAL exception', { error });
     return { currentLevel: 'aal1', nextLevel: null };
   }
 }
@@ -82,9 +85,11 @@ export async function enrollMfa(friendlyName = 'BizScreen') {
     });
 
     if (error) {
+      logger.error('MFA enrollment failed', { error });
       return { success: false, error: error.message };
     }
 
+    logger.info('MFA enrollment initiated', { factorId: data.id, friendlyName });
     return {
       success: true,
       qrCode: data.totp.qr_code,
@@ -92,7 +97,7 @@ export async function enrollMfa(friendlyName = 'BizScreen') {
       factorId: data.id,
     };
   } catch (error) {
-    console.error('MFA enrollment error:', error);
+    logger.error('MFA enrollment exception', { error });
     return { success: false, error: error.message };
   }
 }
@@ -122,12 +127,14 @@ export async function verifyEnrollment(factorId, code) {
     });
 
     if (error) {
+      logger.warn('MFA verification failed', { error, factorId });
       return { success: false, error: error.message };
     }
 
+    logger.info('MFA enrollment verified', { factorId });
     return { success: true };
   } catch (error) {
-    console.error('MFA verification error:', error);
+    logger.error('MFA verification exception', { error, factorId });
     return { success: false, error: error.message };
   }
 }
@@ -171,12 +178,14 @@ export async function verifyMfaLogin(code) {
     });
 
     if (verifyError) {
+      logger.warn('MFA login verification failed', { error: verifyError });
       return { success: false, error: verifyError.message };
     }
 
+    logger.info('MFA login verified');
     return { success: true };
   } catch (error) {
-    console.error('MFA login verification error:', error);
+    logger.error('MFA login verification exception', { error });
     return { success: false, error: error.message };
   }
 }
@@ -193,12 +202,14 @@ export async function disableMfa(factorId) {
     });
 
     if (error) {
+      logger.error('MFA disable failed', { error, factorId });
       return { success: false, error: error.message };
     }
 
+    logger.info('MFA disabled', { factorId });
     return { success: true };
   } catch (error) {
-    console.error('MFA disable error:', error);
+    logger.error('MFA disable exception', { error, factorId });
     return { success: false, error: error.message };
   }
 }
@@ -232,12 +243,14 @@ export async function generateRecoveryCodes() {
     });
 
     if (error) {
+      logger.error('Recovery code generation failed', { error });
       return { success: false, error: error.message };
     }
 
+    logger.info('Recovery codes generated', { count: codes.length });
     return { success: true, codes };
   } catch (error) {
-    console.error('Recovery code generation error:', error);
+    logger.error('Recovery code generation exception', { error });
     return { success: false, error: error.message };
   }
 }
@@ -273,9 +286,10 @@ export async function verifyRecoveryCode(code) {
       },
     });
 
+    logger.info('Recovery code verified and consumed');
     return { success: true };
   } catch (error) {
-    console.error('Recovery code verification error:', error);
+    logger.error('Recovery code verification exception', { error });
     return { success: false, error: error.message };
   }
 }
