@@ -5,16 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 5 Critical Fixes - Complete
+**Current focus:** Phase 6 Player Reliability - In Progress
 
 ## Current Position
 
-Phase: 5 of 12 (Critical Fixes)
-Plan: 2 of 2 in phase 5 (complete)
-Status: Phase Complete
-Last activity: 2026-01-23 - Completed Phase 5 (2 plans executed in parallel)
+Phase: 6 of 12 (Player Reliability)
+Plan: 1 of 4 in phase 6
+Status: In Progress
+Last activity: 2026-01-23 - Completed 06-01-PLAN.md (retry backoff + error logging)
 
-Progress: [##########--] 41.7% (5/12 phases complete)
+Progress: [###########-] 45.8% (5.5/12 phases complete)
+
+## Phase 6 Progress Summary
+
+**Player Reliability Plans:**
+- [x] 06-01: Retry backoff with full jitter + error logging (ef4063e, 61391a9)
+- [ ] 06-02: Offline screenshot queue with reconnect upload
+- [ ] 06-03: Kiosk exit password validation
+- [ ] 06-04: Remaining empty catch block fixes
+
+**Retry Backoff + Error Logging (06-01):**
+- calculateBackoff() updated to use full jitter (0-100% randomization)
+- Prevents thundering herd when multiple devices reconnect
+- Empty catch blocks at Player.jsx lines 209, 239 replaced with structured logging
+- appDataLogger.warn logs include cacheKey, dataSize, error.message
 
 ## Phase 5 Progress Summary
 
@@ -184,9 +198,9 @@ Progress: [##########--] 41.7% (5/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26
-- Average duration: 5.7 min
-- Total execution time: 150 min (2.5 hours)
+- Total plans completed: 27
+- Average duration: 5.6 min
+- Total execution time: 153 min (2.55 hours)
 
 **By Phase:**
 
@@ -197,6 +211,10 @@ Progress: [##########--] 41.7% (5/12 phases complete)
 | 03-auth-hardening | 4 | 11 min | 2.8 min |
 | 04-logging-migration | 6 | 62 min | 10.3 min |
 | 05-critical-fixes | 2 | 11 min | 5.5 min |
+| 06-player-reliability | 1 | 3 min | 3 min |
+
+**Phase 6 Plan Breakdown:**
+- 06-01: 3 min (retry backoff + error logging)
 
 **Phase 5 Plan Breakdown:**
 - 05-01: 8 min (Save as Template feature)
@@ -283,6 +301,9 @@ Recent decisions affecting current work:
 - [05-01]: Template tenant_id set from user profile (private, not global)
 - [05-01]: Zones converted to data format if layout.data is empty
 - [05-01]: Categories match SIDEBAR_CATEGORIES from LayoutsPage
+- [06-01]: Full jitter (0-100%) chosen over partial jitter for maximum distribution
+- [06-01]: Use appDataLogger.warn for non-critical cache errors (not error level)
+- [06-01]: Include cacheKey and dataSize in storage error logs for debugging
 
 ### Pending Todos
 
@@ -299,15 +320,18 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed Phase 5 execution and verification
+Stopped at: Completed 06-01-PLAN.md (retry backoff + error logging)
 Resume file: None
 
 ## Next Steps
 
-**Phase 5 Complete!** Ready for Phase 6.
+**Phase 6 In Progress** - Player Reliability
 
-**Phase 6: Player Reliability** — Harden offline sync and error handling
-- PLR-01: Exponential backoff with jitter for failed syncs
-- PLR-02: Offline screenshot queue with reconnect upload
-- PLR-03: Kiosk exit password validation
-- PLR-04: Replace empty catch blocks with proper error handling
+**Remaining in Phase 6:**
+- [ ] 06-02: Offline screenshot queue with reconnect upload
+- [ ] 06-03: Kiosk exit password validation
+- [ ] 06-04: Remaining empty catch block fixes
+
+**PLR Status:**
+- PLR-01 partial: calculateBackoff with full jitter (complete)
+- PLR-04 partial: 2 empty catch blocks replaced (more may exist)
