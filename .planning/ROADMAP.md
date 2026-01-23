@@ -139,10 +139,12 @@ Plans:
   3. Widget components (Clock, Weather, QRCode, Date) are separate files
   4. All existing Player.jsx tests still pass after refactoring
   5. Offline playback works identically before and after refactoring
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01-PLAN.md — Extract widget components and fix PLR-01 retry gap (REF-01)
+- [ ] 07-02-PLAN.md — Extract custom hooks for content, heartbeat, and commands (REF-02)
+- [ ] 07-03-PLAN.md — Final consolidation, hook tests, and verification
 
 ### Phase 8: Page Refactoring
 **Goal**: Large page components are decomposed into maintainable sub-components
@@ -229,7 +231,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Logging Migration | 6/6 | Complete | 2026-01-22 |
 | 5. Critical Fixes | 2/2 | Complete | 2026-01-23 |
 | 6. Player Reliability | 3/3 | Complete* | 2026-01-23 |
-| 7. Player Refactoring | 0/TBD | Not started | - |
+| 7. Player Refactoring | 0/3 | Not started | - |
 | 8. Page Refactoring | 0/TBD | Not started | - |
 | 9. Device Experience | 0/TBD | Not started | - |
 | 10. Analytics | 0/TBD | Not started | - |
@@ -238,4 +240,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 6 complete (PLR-01 gap deferred to Phase 7)*
+*Last updated: 2026-01-23 — Phase 7 planned (3 plans in 3 waves)*
