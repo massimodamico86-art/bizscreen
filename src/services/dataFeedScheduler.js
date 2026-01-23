@@ -18,6 +18,9 @@ import {
   autoResolveAlert,
   ALERT_TYPES,
 } from './alertEngineService';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('DataFeedScheduler');
 
 // ============================================================================
 // SCHEDULER CONFIGURATION
@@ -66,7 +69,7 @@ function emitSyncEvent(type, sourceId, data = {}) {
     try {
       callback(event);
     } catch (err) {
-      console.error('[DataFeedScheduler] Event listener error:', err);
+      logger.error('Event listener error', { error: err });
     }
   });
 }
@@ -91,13 +94,13 @@ export const SYNC_EVENTS = {
  */
 export function startScheduler(checkInterval = DEFAULT_CHECK_INTERVAL) {
   if (isSchedulerRunning) {
-    console.log('[DataFeedScheduler] Scheduler already running');
+    logger.debug('Scheduler already running');
     return;
   }
 
   const interval = Math.max(checkInterval, MIN_CHECK_INTERVAL);
 
-  console.log(`[DataFeedScheduler] Starting scheduler (interval: ${interval}ms)`);
+  logger.info('Starting scheduler', { interval });
 
   isSchedulerRunning = true;
   emitSyncEvent(SYNC_EVENTS.SCHEDULER_STARTED, null, { interval });
@@ -115,7 +118,7 @@ export function startScheduler(checkInterval = DEFAULT_CHECK_INTERVAL) {
 export function stopScheduler() {
   if (!isSchedulerRunning) return;
 
-  console.log('[DataFeedScheduler] Stopping scheduler');
+  logger.info('Stopping scheduler');
 
   if (schedulerInterval) {
     clearInterval(schedulerInterval);
@@ -156,7 +159,7 @@ export function getStatus() {
  */
 async function runScheduledCheck() {
   if (activeSyncs.size >= MAX_CONCURRENT_SYNCS) {
-    console.log('[DataFeedScheduler] Max concurrent syncs reached, skipping check');
+    logger.debug('Max concurrent syncs reached, skipping check');
     return;
   }
 
@@ -166,7 +169,7 @@ async function runScheduledCheck() {
       .rpc('list_data_sources_needing_sync');
 
     if (error) {
-      console.error('[DataFeedScheduler] Failed to get sources:', error);
+      logger.error('Failed to get sources', { error });
       return;
     }
 
@@ -174,7 +177,7 @@ async function runScheduledCheck() {
       return;
     }
 
-    console.log(`[DataFeedScheduler] Found ${sourcesToSync.length} source(s) needing sync`);
+    logger.debug('Found sources needing sync', { count: sourcesToSync.length });
 
     // Process each source (up to max concurrent)
     for (const source of sourcesToSync) {
@@ -194,7 +197,7 @@ async function runScheduledCheck() {
       syncDataSource(source);
     }
   } catch (err) {
-    console.error('[DataFeedScheduler] Check error:', err);
+    logger.error('Check error', { error: err });
   }
 }
 
@@ -239,7 +242,7 @@ async function syncDataSource(source) {
           notes: 'Data source sync succeeded',
         });
       } catch (alertError) {
-        console.warn('[DataFeedScheduler] Error resolving alert:', alertError);
+        logger.warn('Error resolving alert', { error: alertError });
       }
 
       emitSyncEvent(SYNC_EVENTS.SYNC_COMPLETED, source.id, {
@@ -263,7 +266,7 @@ async function syncDataSource(source) {
           { message: result.message }
         );
       } catch (alertError) {
-        console.warn('[DataFeedScheduler] Error raising alert:', alertError);
+        logger.warn('Error raising alert', { error: alertError });
       }
 
       emitSyncEvent(SYNC_EVENTS.SYNC_FAILED, source.id, {
@@ -272,7 +275,7 @@ async function syncDataSource(source) {
       });
     }
   } catch (err) {
-    console.error(`[DataFeedScheduler] Sync error for ${source.id}:`, err);
+    logger.error('Sync error', { sourceId: source.id, error: err });
 
     failedSources.set(source.id, Date.now());
 
@@ -288,7 +291,7 @@ async function syncDataSource(source) {
         err
       );
     } catch (alertError) {
-      console.warn('[DataFeedScheduler] Error raising alert:', alertError);
+      logger.warn('Error raising alert', { error: alertError });
     }
 
     emitSyncEvent(SYNC_EVENTS.SYNC_FAILED, source.id, {
@@ -358,7 +361,7 @@ export async function triggerManualSync(dataSourceId) {
 
     return result;
   } catch (err) {
-    console.error('[DataFeedScheduler] Manual sync error:', err);
+    logger.error('Manual sync error', { error: err });
     emitSyncEvent(SYNC_EVENTS.SYNC_FAILED, dataSourceId, {
       message: err.message,
       manual: true,
@@ -400,10 +403,10 @@ export function initializeWithVisibilityAwareness() {
   if (typeof document !== 'undefined') {
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
-        console.log('[DataFeedScheduler] Tab hidden, pausing scheduler');
+        logger.debug('Tab hidden, pausing scheduler');
         stopScheduler();
       } else {
-        console.log('[DataFeedScheduler] Tab visible, resuming scheduler');
+        logger.debug('Tab visible, resuming scheduler');
         startScheduler();
       }
     });

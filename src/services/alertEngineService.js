@@ -11,6 +11,9 @@ import {
   dispatchAlertNotifications,
   dispatchResolvedNotification,
 } from './notificationDispatcherService';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('AlertEngine');
 
 // ============================================================================
 // STRUCTURED LOGGING
@@ -39,36 +42,26 @@ function createLogContext(params = {}) {
  * Structured log helper - logs with consistent format and context
  */
 function structuredLog(level, message, context = {}) {
-  const timestamp = new Date().toISOString();
-  const prefix = '[AlertEngine]';
-
   // Filter out null/undefined values for cleaner logs
   const cleanContext = Object.fromEntries(
     Object.entries(context).filter(([_, v]) => v != null)
   );
 
-  const contextStr = Object.keys(cleanContext).length > 0
-    ? ` ${JSON.stringify(cleanContext)}`
-    : '';
-
   switch (level) {
     case 'error':
-      console.error(`${prefix} ${message}${contextStr}`);
+      logger.error(message, cleanContext);
       break;
     case 'warn':
-      console.warn(`${prefix} ${message}${contextStr}`);
+      logger.warn(message, cleanContext);
       break;
     case 'info':
-      console.log(`${prefix} ${message}${contextStr}`);
+      logger.info(message, cleanContext);
       break;
     case 'debug':
-      // Only log debug in development
-      if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
-        console.log(`${prefix} [DEBUG] ${message}${contextStr}`);
-      }
+      logger.debug(message, cleanContext);
       break;
     default:
-      console.log(`${prefix} ${message}${contextStr}`);
+      logger.info(message, cleanContext);
   }
 }
 
@@ -671,7 +664,7 @@ async function findExistingAlert({
   const { data, error } = await query.limit(1).single();
 
   if (error && error.code !== 'PGRST116') {
-    console.error('[AlertEngine] Error finding existing alert:', error);
+    logger.error('Error finding existing alert', { error });
   }
 
   return data;
@@ -776,14 +769,14 @@ export async function acknowledgeAlert(alertId) {
       .eq('status', ALERT_STATUSES.OPEN);
 
     if (error) {
-      console.error('[AlertEngine] Error acknowledging alert:', error);
+      logger.error('Error acknowledging alert', { error });
       return false;
     }
 
-    console.log(`[AlertEngine] Acknowledged alert ${alertId}`);
+    logger.info('Acknowledged alert', { alertId });
     return true;
   } catch (error) {
-    console.error('[AlertEngine] Error acknowledging alert:', error);
+    logger.error('Error acknowledging alert', { error });
     return false;
   }
 }
@@ -815,14 +808,14 @@ export async function resolveAlert(alertId, notes = null) {
       .in('status', [ALERT_STATUSES.OPEN, ALERT_STATUSES.ACKNOWLEDGED]);
 
     if (error) {
-      console.error('[AlertEngine] Error resolving alert:', error);
+      logger.error('Error resolving alert', { error });
       return false;
     }
 
-    console.log(`[AlertEngine] Resolved alert ${alertId}`);
+    logger.info('Resolved alert', { alertId });
     return true;
   } catch (error) {
-    console.error('[AlertEngine] Error resolving alert:', error);
+    logger.error('Error resolving alert', { error });
     return false;
   }
 }
@@ -995,13 +988,13 @@ export async function getAlerts({
     const { data, error, count } = await query;
 
     if (error) {
-      console.error('[AlertEngine] Error fetching alerts:', error);
+      logger.error('Error fetching alerts', { error });
       throw error;
     }
 
     return { data: data || [], count: count || 0 };
   } catch (error) {
-    console.error('[AlertEngine] Error fetching alerts:', error);
+    logger.error('Error fetching alerts', { error });
     throw error;
   }
 }
@@ -1031,13 +1024,13 @@ export async function getAlert(alertId) {
       .single();
 
     if (error) {
-      console.error('[AlertEngine] Error fetching alert:', error);
+      logger.error('Error fetching alert', { error });
       return null;
     }
 
     return data;
   } catch (error) {
-    console.error('[AlertEngine] Error fetching alert:', error);
+    logger.error('Error fetching alert', { error });
     return null;
   }
 }
@@ -1052,7 +1045,7 @@ export async function getAlertSummary() {
     const { data, error } = await supabase.from('alerts').select('status, severity');
 
     if (error) {
-      console.error('[AlertEngine] Error fetching alert summary:', error);
+      logger.error('Error fetching alert summary', { error });
       return {
         open: 0,
         critical: 0,
@@ -1083,7 +1076,7 @@ export async function getAlertSummary() {
 
     return summary;
   } catch (error) {
-    console.error('[AlertEngine] Error fetching alert summary:', error);
+    logger.error('Error fetching alert summary', { error });
     return {
       open: 0,
       critical: 0,
@@ -1120,13 +1113,13 @@ export async function bulkAcknowledge(alertIds) {
       .select();
 
     if (error) {
-      console.error('[AlertEngine] Error bulk acknowledging alerts:', error);
+      logger.error('Error bulk acknowledging alerts', { error });
       return 0;
     }
 
     return data?.length || 0;
   } catch (error) {
-    console.error('[AlertEngine] Error bulk acknowledging alerts:', error);
+    logger.error('Error bulk acknowledging alerts', { error });
     return 0;
   }
 }
@@ -1155,13 +1148,13 @@ export async function bulkResolve(alertIds, notes = null) {
       .select();
 
     if (error) {
-      console.error('[AlertEngine] Error bulk resolving alerts:', error);
+      logger.error('Error bulk resolving alerts', { error });
       return 0;
     }
 
     return data?.length || 0;
   } catch (error) {
-    console.error('[AlertEngine] Error bulk resolving alerts:', error);
+    logger.error('Error bulk resolving alerts', { error });
     return 0;
   }
 }

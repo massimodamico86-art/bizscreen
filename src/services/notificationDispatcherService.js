@@ -6,6 +6,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('NotificationDispatcher');
 
 // ============================================================================
 // NOTIFICATION CHANNELS
@@ -56,12 +59,10 @@ export async function dispatchAlertNotifications(alert, isNewAlert = true) {
       }
     }
 
-    console.log(
-      `[NotificationDispatcher] Dispatched alert ${alert.id}: ${inAppCount} in-app, ${emailCount} email`
-    );
+    logger.info('Dispatched alert notifications', { alertId: alert.id, inAppCount, emailCount });
     return { inApp: inAppCount, email: emailCount };
   } catch (error) {
-    console.error('[NotificationDispatcher] Error dispatching notifications:', error);
+    logger.error('Error dispatching notifications', { error });
     return { inApp: 0, email: 0 };
   }
 }
@@ -79,7 +80,7 @@ async function getUsersToNotify(alert) {
       .in('role', ['owner', 'admin', 'editor']);
 
     if (profileError || !profiles) {
-      console.error('[NotificationDispatcher] Error fetching profiles:', profileError);
+      logger.error('Error fetching profiles', { error: profileError });
       return [];
     }
 
@@ -120,7 +121,7 @@ async function getUsersToNotify(alert) {
 
     return eligibleUsers;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error getting users to notify:', error);
+    logger.error('Error getting users to notify', { error });
     return [];
   }
 }
@@ -194,7 +195,7 @@ function isInQuietHours(prefs) {
 
     return currentMinutes >= startTotalMinutes && currentMinutes <= endTotalMinutes;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error checking quiet hours:', error);
+    logger.error('Error checking quiet hours', { error });
     return false;
   }
 }
@@ -223,13 +224,13 @@ async function createInAppNotification(userId, alert) {
     });
 
     if (error) {
-      console.error('[NotificationDispatcher] Error creating in-app notification:', error);
+      logger.error('Error creating in-app notification', { error });
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error creating in-app notification:', error);
+    logger.error('Error creating in-app notification', { error });
     return false;
   }
 }
@@ -259,10 +260,10 @@ export async function dispatchResolvedNotification(alert, notes = 'Issue resolve
       }
     }
 
-    console.log(`[NotificationDispatcher] Dispatched resolved notification for alert ${alert.id}: ${inAppCount} in-app`);
+    logger.info('Dispatched resolved notification', { alertId: alert.id, inAppCount });
     return { inApp: inAppCount };
   } catch (error) {
-    console.error('[NotificationDispatcher] Error dispatching resolved notification:', error);
+    logger.error('Error dispatching resolved notification', { error });
     return { inApp: 0 };
   }
 }
@@ -285,13 +286,13 @@ async function createResolvedNotification(userId, alert, notes) {
     });
 
     if (error) {
-      console.error('[NotificationDispatcher] Error creating resolved notification:', error);
+      logger.error('Error creating resolved notification', { error });
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error creating resolved notification:', error);
+    logger.error('Error creating resolved notification', { error });
     return false;
   }
 }
@@ -337,19 +338,17 @@ async function queueEmailNotification(user, alert) {
     });
 
     if (error) {
-      console.error('[NotificationDispatcher] Error queueing email notification:', error);
+      logger.error('Error queueing email notification', { error });
       return false;
     }
 
     // In production, this would trigger an email worker
     // For now, we just log that an email should be sent
-    console.log(
-      `[NotificationDispatcher] Email queued for ${user.email || user.user_id}: ${alert.title}`
-    );
+    logger.info('Email queued', { recipient: user.email || user.user_id, alertTitle: alert.title });
 
     return true;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error queueing email notification:', error);
+    logger.error('Error queueing email notification', { error });
     return false;
   }
 }
@@ -368,14 +367,14 @@ export async function sendEmailNotification(notification) {
       .eq('id', notification.id);
 
     if (error) {
-      console.error('[NotificationDispatcher] Error marking email as sent:', error);
+      logger.error('Error marking email as sent', { error });
       return false;
     }
 
-    console.log(`[NotificationDispatcher] Email sent for notification ${notification.id}`);
+    logger.info('Email sent', { notificationId: notification.id });
     return true;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error sending email:', error);
+    logger.error('Error sending email', { error });
     return false;
   }
 }
@@ -424,13 +423,13 @@ export async function getNotifications({
     const { data, error } = await query;
 
     if (error) {
-      console.error('[NotificationDispatcher] Error fetching notifications:', error);
+      logger.error('Error fetching notifications', { error });
       return [];
     }
 
     return data || [];
   } catch (error) {
-    console.error('[NotificationDispatcher] Error fetching notifications:', error);
+    logger.error('Error fetching notifications', { error });
     return [];
   }
 }
@@ -455,13 +454,13 @@ export async function getUnreadCount() {
       .is('read_at', null);
 
     if (error) {
-      console.error('[NotificationDispatcher] Error fetching unread count:', error);
+      logger.error('Error fetching unread count', { error });
       return 0;
     }
 
     return count || 0;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error fetching unread count:', error);
+    logger.error('Error fetching unread count', { error });
     return 0;
   }
 }
@@ -493,13 +492,13 @@ export async function markAsRead(notificationIds = null) {
     const { data, error } = await query.select();
 
     if (error) {
-      console.error('[NotificationDispatcher] Error marking notifications as read:', error);
+      logger.error('Error marking notifications as read', { error });
       return 0;
     }
 
     return data?.length || 0;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error marking notifications as read:', error);
+    logger.error('Error marking notifications as read', { error });
     return 0;
   }
 }
@@ -521,13 +520,13 @@ export async function markAsClicked(notificationId) {
       .eq('id', notificationId);
 
     if (error) {
-      console.error('[NotificationDispatcher] Error marking notification as clicked:', error);
+      logger.error('Error marking notification as clicked', { error });
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error marking notification as clicked:', error);
+    logger.error('Error marking notification as clicked', { error });
     return false;
   }
 }
@@ -555,12 +554,12 @@ export async function getNotificationPreferences() {
       .single();
 
     if (error && error.code !== 'PGRST116') {
-      console.error('[NotificationDispatcher] Error fetching preferences:', error);
+      logger.error('Error fetching preferences', { error });
     }
 
     return data;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error fetching preferences:', error);
+    logger.error('Error fetching preferences', { error });
     return null;
   }
 }
@@ -603,13 +602,13 @@ export async function saveNotificationPreferences(preferences) {
       .single();
 
     if (error) {
-      console.error('[NotificationDispatcher] Error saving preferences:', error);
+      logger.error('Error saving preferences', { error });
       throw error;
     }
 
     return data;
   } catch (error) {
-    console.error('[NotificationDispatcher] Error saving preferences:', error);
+    logger.error('Error saving preferences', { error });
     throw error;
   }
 }

@@ -1,5 +1,8 @@
 // Data Source Service - CRUD operations for dynamic data sources
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('DataSourceService');
 
 /**
  * Data source types
@@ -62,7 +65,7 @@ export async function fetchDataSources() {
   const { data, error } = await supabase.rpc('list_data_sources');
 
   if (error) {
-    console.error('[DataSource] Failed to fetch data sources:', error);
+    logger.error('Failed to fetch data sources', { error });
     throw error;
   }
 
@@ -84,7 +87,7 @@ export async function getDataSource(id) {
   });
 
   if (error) {
-    console.error('[DataSource] Failed to fetch data source:', error);
+    logger.error('Failed to fetch data source', { error });
     throw error;
   }
 
@@ -106,7 +109,7 @@ export async function getDataSourceByName(name) {
     .maybeSingle();
 
   if (error) {
-    console.error('[DataSource] Failed to fetch by name:', error);
+    logger.error('Failed to fetch by name', { error });
     throw error;
   }
 
@@ -142,7 +145,7 @@ export async function createDataSource({ name, description, type = DATA_SOURCE_T
     .single();
 
   if (error) {
-    console.error('[DataSource] Failed to create:', error);
+    logger.error('Failed to create data source', { error });
     throw error;
   }
 
@@ -181,7 +184,7 @@ export async function updateDataSource(id, updates) {
     .single();
 
   if (error) {
-    console.error('[DataSource] Failed to update:', error);
+    logger.error('Failed to update data source', { error });
     throw error;
   }
 
@@ -201,7 +204,7 @@ export async function deleteDataSource(id) {
   const { error } = await supabase.from('data_sources').delete().eq('id', id);
 
   if (error) {
-    console.error('[DataSource] Failed to delete:', error);
+    logger.error('Failed to delete data source', { error });
     throw error;
   }
 }
@@ -227,7 +230,7 @@ export async function getDataSourceFields(dataSourceId) {
     .order('order_index');
 
   if (error) {
-    console.error('[DataSource] Failed to fetch fields:', error);
+    logger.error('Failed to fetch fields', { error });
     throw error;
   }
 
@@ -305,7 +308,7 @@ export async function createField({
     .single();
 
   if (error) {
-    console.error('[DataSource] Failed to create field:', error);
+    logger.error('Failed to create field', { error });
     throw error;
   }
 
@@ -353,7 +356,7 @@ export async function updateField(id, updates) {
     .single();
 
   if (error) {
-    console.error('[DataSource] Failed to update field:', error);
+    logger.error('Failed to update field', { error });
     throw error;
   }
 
@@ -373,7 +376,7 @@ export async function deleteField(id) {
   const { error } = await supabase.from('data_source_fields').delete().eq('id', id);
 
   if (error) {
-    console.error('[DataSource] Failed to delete field:', error);
+    logger.error('Failed to delete field', { error });
     throw error;
   }
 }
@@ -398,7 +401,7 @@ export async function reorderFields(dataSourceId, fieldOrders) {
   const errors = results.filter((r) => r.error);
 
   if (errors.length > 0) {
-    console.error('[DataSource] Failed to reorder fields:', errors);
+    logger.error('Failed to reorder fields', { errors });
     throw new Error('Failed to reorder some fields');
   }
 }
@@ -432,7 +435,7 @@ export async function getDataSourceRows(dataSourceId, { includeInactive = false 
   const { data, error } = await query;
 
   if (error) {
-    console.error('[DataSource] Failed to fetch rows:', error);
+    logger.error('Failed to fetch rows', { error });
     throw error;
   }
 
@@ -478,7 +481,7 @@ export async function createRow({ dataSourceId, values, orderIndex }) {
     .single();
 
   if (error) {
-    console.error('[DataSource] Failed to create row:', error);
+    logger.error('Failed to create row', { error });
     throw error;
   }
 
@@ -519,7 +522,7 @@ export async function updateRow(id, updates) {
   const { data, error } = await supabase.from('data_source_rows').update(filteredUpdates).eq('id', id).select().single();
 
   if (error) {
-    console.error('[DataSource] Failed to update row:', error);
+    logger.error('Failed to update row', { error });
     throw error;
   }
 
@@ -549,7 +552,7 @@ export async function updateRowValue(id, fieldName, value) {
     .single();
 
   if (fetchError) {
-    console.error('[DataSource] Failed to fetch row:', fetchError);
+    logger.error('Failed to fetch row', { error: fetchError });
     throw fetchError;
   }
 
@@ -575,7 +578,7 @@ export async function deleteRow(id) {
   const { error } = await supabase.from('data_source_rows').delete().eq('id', id);
 
   if (error) {
-    console.error('[DataSource] Failed to delete row:', error);
+    logger.error('Failed to delete row', { error });
     throw error;
   }
 }
@@ -618,7 +621,7 @@ export async function reorderRows(dataSourceId, rowOrders) {
   const errors = results.filter((r) => r.error);
 
   if (errors.length > 0) {
-    console.error('[DataSource] Failed to reorder rows:', errors);
+    logger.error('Failed to reorder rows', { errors });
     throw new Error('Failed to reorder some rows');
   }
 }
@@ -705,7 +708,7 @@ export async function importCSVData(dataSourceId, rows, { replaceExisting = fals
   });
 
   if (error) {
-    console.error('[DataSource] Failed to import CSV:', error);
+    logger.error('Failed to import CSV', { error });
     throw error;
   }
 
@@ -828,7 +831,7 @@ export async function resolveBinding(dataSourceId, fieldName, rowIndex = 0) {
   });
 
   if (error) {
-    console.error('[DataSource] Failed to resolve binding:', error);
+    logger.error('Failed to resolve binding', { error });
     return null;
   }
 
@@ -997,7 +1000,7 @@ export async function linkToGoogleSheet(dataSourceId, sheetId, range = 'Sheet1!A
   });
 
   if (error) {
-    console.error('[DataSource] Failed to link to Google Sheets:', error);
+    logger.error('Failed to link to Google Sheets', { error });
     throw error;
   }
 
@@ -1019,7 +1022,7 @@ export async function unlinkIntegration(dataSourceId) {
   });
 
   if (error) {
-    console.error('[DataSource] Failed to unlink integration:', error);
+    logger.error('Failed to unlink integration', { error });
     throw error;
   }
 
@@ -1047,7 +1050,7 @@ export async function updateSyncStatus(dataSourceId, status, errorMessage = null
   });
 
   if (error) {
-    console.error('[DataSource] Failed to update sync status:', error);
+    logger.error('Failed to update sync status', { error });
     throw error;
   }
 }
@@ -1060,7 +1063,7 @@ export async function listDataSourcesNeedingSync() {
   const { data, error } = await supabase.rpc('list_data_sources_needing_sync');
 
   if (error) {
-    console.error('[DataSource] Failed to list sources needing sync:', error);
+    logger.error('Failed to list sources needing sync', { error });
     throw error;
   }
 
@@ -1079,7 +1082,7 @@ export async function listDataSourcesWithIntegrations() {
     .order('name');
 
   if (error) {
-    console.error('[DataSource] Failed to list integrated sources:', error);
+    logger.error('Failed to list integrated sources', { error });
     throw error;
   }
 
@@ -1105,7 +1108,7 @@ export async function getSyncHistory(dataSourceId, limit = 20) {
     .limit(limit);
 
   if (error) {
-    console.error('[DataSource] Failed to fetch sync history:', error);
+    logger.error('Failed to fetch sync history', { error });
     throw error;
   }
 
@@ -1132,7 +1135,7 @@ export async function syncDataSourceRows(dataSourceId, rows) {
   });
 
   if (error) {
-    console.error('[DataSource] Failed to sync rows:', error);
+    logger.error('Failed to sync rows', { error });
     throw error;
   }
 
@@ -1169,7 +1172,7 @@ export function subscribeToDataSource(dataSourceId, onUpdate) {
         filter: `data_source_id=eq.${dataSourceId}`,
       },
       (payload) => {
-        console.log('[DataSource] Row change detected:', payload.eventType);
+        logger.debug('Row change detected', { eventType: payload.eventType });
         onUpdate({
           type: 'row_change',
           eventType: payload.eventType,
@@ -1191,7 +1194,7 @@ export function subscribeToDataSource(dataSourceId, onUpdate) {
         filter: `id=eq.${dataSourceId}`,
       },
       (payload) => {
-        console.log('[DataSource] Metadata change detected');
+        logger.debug('Metadata change detected');
         onUpdate({
           type: 'metadata_change',
           dataSource: payload.new,
@@ -1242,7 +1245,7 @@ export function subscribeToClientDataSources(clientId, onUpdate) {
           .single();
 
         if (ds?.client_id === clientId) {
-          console.log('[DataSource] Client data source updated:', ds.id);
+          logger.debug('Client data source updated', { dataSourceId: ds.id });
           onUpdate({
             dataSourceId: ds.id,
             eventType: payload.eventType,
@@ -1276,7 +1279,7 @@ export async function broadcastDataSourceUpdate(dataSourceId) {
   });
 
   if (error) {
-    console.error('[DataSource] Failed to broadcast update:', error);
+    logger.warn('Failed to broadcast update', { error });
     // Don't throw - broadcast failures shouldn't break sync
   }
 }

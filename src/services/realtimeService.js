@@ -8,6 +8,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('RealtimeService');
 
 // Active subscriptions
 const subscriptions = new Map();
@@ -26,7 +29,7 @@ const RECONNECT_DELAY_MS = 3000;
  */
 export function subscribeToDeviceCommands(deviceId, onCommand) {
   if (!deviceId || !onCommand) {
-    console.warn('[RealtimeService] Invalid params for subscribeToDeviceCommands');
+    logger.warn('Invalid params for subscribeToDeviceCommands');
     return () => {};
   }
 
@@ -34,11 +37,11 @@ export function subscribeToDeviceCommands(deviceId, onCommand) {
 
   // Don't duplicate subscriptions
   if (subscriptions.has(channelName)) {
-    console.log('[RealtimeService] Already subscribed to', channelName);
+    logger.debug('Already subscribed to', { channelName });
     return subscriptions.get(channelName).unsubscribe;
   }
 
-  console.log('[RealtimeService] Subscribing to device commands:', deviceId);
+  logger.info('Subscribing to device commands', { deviceId });
 
   const channel = supabase
     .channel(channelName)
@@ -51,7 +54,7 @@ export function subscribeToDeviceCommands(deviceId, onCommand) {
         filter: `device_id=eq.${deviceId}`,
       },
       (payload) => {
-        console.log('[RealtimeService] Command received:', payload.new);
+        logger.debug('Command received', { command: payload.new });
         onCommand(payload.new);
       }
     )
@@ -66,13 +69,13 @@ export function subscribeToDeviceCommands(deviceId, onCommand) {
       (payload) => {
         // Also handle updates (e.g., command status changes)
         if (payload.new.status === 'pending') {
-          console.log('[RealtimeService] Command updated:', payload.new);
+          logger.debug('Command updated', { command: payload.new });
           onCommand(payload.new);
         }
       }
     )
     .subscribe((status) => {
-      console.log('[RealtimeService] Commands channel status:', status);
+      logger.debug('Commands channel status', { status, channelName });
       if (status === 'SUBSCRIBED') {
         isConnected = true;
         connectionAttempts = 0;
@@ -82,7 +85,7 @@ export function subscribeToDeviceCommands(deviceId, onCommand) {
     });
 
   const unsubscribe = () => {
-    console.log('[RealtimeService] Unsubscribing from', channelName);
+    logger.debug('Unsubscribing from', { channelName });
     supabase.removeChannel(channel);
     subscriptions.delete(channelName);
   };
@@ -100,18 +103,18 @@ export function subscribeToDeviceCommands(deviceId, onCommand) {
  */
 export function subscribeToDeviceRefresh(deviceId, onRefresh) {
   if (!deviceId || !onRefresh) {
-    console.warn('[RealtimeService] Invalid params for subscribeToDeviceRefresh');
+    logger.warn('Invalid params for subscribeToDeviceRefresh');
     return () => {};
   }
 
   const channelName = `device_refresh:${deviceId}`;
 
   if (subscriptions.has(channelName)) {
-    console.log('[RealtimeService] Already subscribed to', channelName);
+    logger.debug('Already subscribed to', { channelName });
     return subscriptions.get(channelName).unsubscribe;
   }
 
-  console.log('[RealtimeService] Subscribing to device refresh:', deviceId);
+  logger.info('Subscribing to device refresh', { deviceId });
 
   const channel = supabase
     .channel(channelName)
@@ -128,26 +131,26 @@ export function subscribeToDeviceRefresh(deviceId, onRefresh) {
 
         // Trigger refresh if active_scene_id changed
         if (prev.active_scene_id !== current.active_scene_id) {
-          console.log('[RealtimeService] Scene changed:', current.active_scene_id);
+          logger.info('Scene changed', { sceneId: current.active_scene_id });
           onRefresh({ type: 'scene_change', sceneId: current.active_scene_id });
         }
 
         // Trigger refresh if explicitly requested
         if (current.needs_refresh && !prev.needs_refresh) {
-          console.log('[RealtimeService] Refresh requested');
+          logger.info('Refresh requested');
           onRefresh({ type: 'refresh_requested' });
         }
       }
     )
     .subscribe((status) => {
-      console.log('[RealtimeService] Refresh channel status:', status);
+      logger.debug('Refresh channel status', { status, channelName });
       if (status === 'SUBSCRIBED') {
         isConnected = true;
       }
     });
 
   const unsubscribe = () => {
-    console.log('[RealtimeService] Unsubscribing from', channelName);
+    logger.debug('Unsubscribing from', { channelName });
     supabase.removeChannel(channel);
     subscriptions.delete(channelName);
   };
@@ -165,18 +168,18 @@ export function subscribeToDeviceRefresh(deviceId, onRefresh) {
  */
 export function subscribeToContentUpdates(sceneId, onUpdate) {
   if (!sceneId || !onUpdate) {
-    console.warn('[RealtimeService] Invalid params for subscribeToContentUpdates');
+    logger.warn('Invalid params for subscribeToContentUpdates');
     return () => {};
   }
 
   const channelName = `scene_content:${sceneId}`;
 
   if (subscriptions.has(channelName)) {
-    console.log('[RealtimeService] Already subscribed to', channelName);
+    logger.debug('Already subscribed to', { channelName });
     return subscriptions.get(channelName).unsubscribe;
   }
 
-  console.log('[RealtimeService] Subscribing to content updates:', sceneId);
+  logger.info('Subscribing to content updates', { sceneId });
 
   const channel = supabase
     .channel(channelName)
@@ -189,7 +192,7 @@ export function subscribeToContentUpdates(sceneId, onUpdate) {
         filter: `scene_id=eq.${sceneId}`,
       },
       (payload) => {
-        console.log('[RealtimeService] Slide change:', payload.eventType, payload.new?.id || payload.old?.id);
+        logger.debug('Slide change', { eventType: payload.eventType, slideId: payload.new?.id || payload.old?.id });
         onUpdate({
           type: 'slide_change',
           event: payload.eventType,
@@ -206,7 +209,7 @@ export function subscribeToContentUpdates(sceneId, onUpdate) {
         filter: `id=eq.${sceneId}`,
       },
       (payload) => {
-        console.log('[RealtimeService] Scene metadata change:', sceneId);
+        logger.debug('Scene metadata change', { sceneId });
         onUpdate({
           type: 'scene_change',
           scene: payload.new,
@@ -214,14 +217,14 @@ export function subscribeToContentUpdates(sceneId, onUpdate) {
       }
     )
     .subscribe((status) => {
-      console.log('[RealtimeService] Content channel status:', status);
+      logger.debug('Content channel status', { status, channelName });
       if (status === 'SUBSCRIBED') {
         isConnected = true;
       }
     });
 
   const unsubscribe = () => {
-    console.log('[RealtimeService] Unsubscribing from', channelName);
+    logger.debug('Unsubscribing from', { channelName });
     supabase.removeChannel(channel);
     subscriptions.delete(channelName);
   };
@@ -265,10 +268,10 @@ export function subscribeToPlayer(deviceId, sceneId, callbacks) {
  * Unsubscribe from all active subscriptions
  */
 export function unsubscribeAll() {
-  console.log('[RealtimeService] Unsubscribing from all channels');
+  logger.info('Unsubscribing from all channels');
 
   subscriptions.forEach((sub, channelName) => {
-    console.log('[RealtimeService] Removing channel:', channelName);
+    logger.debug('Removing channel', { channelName });
     supabase.removeChannel(sub.channel);
   });
 
@@ -295,11 +298,11 @@ function handleReconnect(channelName) {
   connectionAttempts++;
 
   if (connectionAttempts > MAX_RECONNECT_ATTEMPTS) {
-    console.error('[RealtimeService] Max reconnection attempts reached for', channelName);
+    logger.error('Max reconnection attempts reached', { channelName });
     return;
   }
 
-  console.log(`[RealtimeService] Reconnecting ${channelName} (attempt ${connectionAttempts})`);
+  logger.warn('Reconnecting channel', { channelName, attempt: connectionAttempts });
 
   setTimeout(() => {
     const sub = subscriptions.get(channelName);
