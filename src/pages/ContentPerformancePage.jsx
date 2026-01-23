@@ -25,6 +25,7 @@ import {
   Activity,
   Layers,
 } from 'lucide-react';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   PageLayout,
   PageHeader,
@@ -49,6 +50,7 @@ import { fetchScreenGroups } from '../services/screenGroupService';
 import { fetchScenesForTenant } from '../services/sceneService';
 
 export default function ContentPerformancePage({ showToast }) {
+  const logger = useLogger('ContentPerformancePage');
   const navigate = useNavigate();
 
   // Filters
@@ -84,7 +86,7 @@ export default function ContentPerformancePage({ showToast }) {
         setScreenGroups(groups || []);
         setAllScenes(scenesResult?.data || []);
       } catch (error) {
-        console.error('Failed to load filter options:', error);
+        logger.error('Failed to load filter options:', error);
       }
     }
     loadFilterOptions();
@@ -106,7 +108,7 @@ export default function ContentPerformancePage({ showToast }) {
       setTopScenes(data.topScenes);
       setDeviceUptime(data.deviceUptime);
     } catch (error) {
-      console.error('Failed to load analytics:', error);
+      logger.error('Failed to load analytics:', error);
       showToast?.('Failed to load analytics data', 'error');
     } finally {
       setLoading(false);
@@ -128,7 +130,7 @@ export default function ContentPerformancePage({ showToast }) {
       const detail = await fetchSceneDetailAnalytics(scene.scene_id, dateRange);
       setSceneDetail(detail);
     } catch (error) {
-      console.error('Failed to load scene detail:', error);
+      logger.error('Failed to load scene detail:', error);
       showToast?.('Failed to load scene details', 'error');
     } finally {
       setLoadingDetail(false);

@@ -47,6 +47,7 @@ import { canEditContent } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, Button, Badge, EmptyState } from '../design-system';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 
 // Icon mapping for business types
 const getBusinessIcon = (type) => {
@@ -97,6 +98,7 @@ const StepIndicator = ({ currentStep, steps }) => (
 
 const ContentAssistantPage = ({ showToast }) => {
   const { t } = useTranslation();
+  const logger = useLogger('ContentAssistantPage');
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -154,10 +156,10 @@ const ContentAssistantPage = ({ showToast }) => {
         }
       } catch (error) {
         // Profile might not have business info yet
-        console.log('No profile business context found');
+        logger.info('No profile business context found');
       }
     } catch (error) {
-      console.error('Error loading initial data:', error);
+      logger.error('Error loading initial data:', error);
       showToast?.('Error loading assistant', 'error');
     } finally {
       setLoading(false);
@@ -184,7 +186,7 @@ const ContentAssistantPage = ({ showToast }) => {
       setCurrentStep(1);
       showToast?.('Content plan generated!', 'success');
     } catch (error) {
-      console.error('Error generating plan:', error);
+      logger.error('Error generating plan:', error);
       showToast?.(error.message || 'Error generating plan', 'error');
     } finally {
       setGenerating(false);
@@ -211,7 +213,7 @@ const ContentAssistantPage = ({ showToast }) => {
 
       showToast?.('New plan generated!', 'success');
     } catch (error) {
-      console.error('Error regenerating plan:', error);
+      logger.error('Error regenerating plan:', error);
       showToast?.(error.message || 'Error regenerating plan', 'error');
     } finally {
       setGenerating(false);
@@ -268,7 +270,7 @@ const ContentAssistantPage = ({ showToast }) => {
 
       showToast?.(`Created ${results.length} playlists!`, 'success');
     } catch (error) {
-      console.error('Error generating content:', error);
+      logger.error('Error generating content:', error);
       showToast?.(error.message || 'Error generating content', 'error');
     } finally {
       setGenerating(false);

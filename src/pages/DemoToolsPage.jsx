@@ -11,6 +11,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   Users,
   Plus,
@@ -76,6 +77,7 @@ const BUSINESS_ICONS = {
  */
 export default function DemoToolsPage({ showToast }) {
   const { t } = useTranslation();
+  const logger = useLogger('DemoToolsPage');
   const [demoTenants, setDemoTenants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
@@ -94,7 +96,7 @@ export default function DemoToolsPage({ showToast }) {
       const tenants = await listDemoTenants();
       setDemoTenants(tenants);
     } catch (err) {
-      console.error('Error loading demo tenants:', err);
+      logger.error('Error loading demo tenants:', err);
       showToast?.('Failed to load demo tenants', 'error');
     } finally {
       setLoading(false);

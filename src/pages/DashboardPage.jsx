@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import ErrorBoundary from '../components/ErrorBoundary';
 import {
   PageLayout,
@@ -83,6 +84,7 @@ const WELCOME_MODAL_KEY = 'bizscreen_welcome_modal_shown';
 const DashboardPage = ({ setCurrentPage, showToast }) => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const logger = useLogger('DashboardPage');
   const [stats, setStats] = useState(null);
   const [screens, setScreens] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
@@ -131,16 +133,16 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
 
       getRecentActivity(5)
         .then(data => setRecentActivity(data))
-        .catch(err => console.warn('Failed to fetch recent activity:', err))
+        .catch(err => logger.warn('Failed to fetch recent activity:', err))
         .finally(() => setActivityLoading(false));
 
       getAlertSummary()
         .then(data => setAlertSummary(data))
-        .catch(err => console.warn('Failed to fetch alert summary:', err))
+        .catch(err => logger.warn('Failed to fetch alert summary:', err))
         .finally(() => setAlertsLoading(false));
 
     } catch (err) {
-      console.error('Error fetching dashboard data:', err);
+      logger.error('Error fetching dashboard data:', err);
       setError(err.message || 'Failed to load dashboard data');
       showToast?.('Error loading dashboard: ' + err.message, 'error');
     }
@@ -173,7 +175,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
       await fetchData();
       setIsFirstRun(false);
     } catch (error) {
-      console.error('Error creating demo workspace:', error);
+      logger.error('Error creating demo workspace:', error);
       showToast?.('Failed to create demo workspace: ' + error.message, 'error');
     } finally {
       setCreatingDemo(false);
@@ -212,7 +214,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
       await fetchData();
       setIsFirstRun(false);
     } catch (error) {
-      console.error('Error applying pack:', error);
+      logger.error('Error applying pack:', error);
       setPackError(error.message || 'Failed to apply starter pack');
     } finally {
       setApplyingPack(false);
