@@ -7,6 +7,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('PlaybackTracking');
 
 // ============================================================================
 // CONFIGURATION
@@ -81,7 +84,7 @@ export function initTracking(context) {
     window.addEventListener('beforeunload', handleUnload);
   }
 
-  console.log('[PlaybackTracking] Initialized with session:', sessionId);
+  logger.info('Initialized', { sessionId, deviceId: context.deviceId });
 
   return sessionId;
 }
@@ -113,7 +116,7 @@ export function stopTracking() {
 
   sessionId = null;
   deviceContext = null;
-  console.log('[PlaybackTracking] Stopped');
+  logger.info('Stopped');
 }
 
 // ============================================================================
@@ -129,7 +132,7 @@ export function stopTracking() {
  */
 export function trackSceneStart({ sceneId, scheduleId, groupId }) {
   if (!deviceContext) {
-    console.warn('[PlaybackTracking] Not initialized');
+    logger.warn('Not initialized');
     return null;
   }
 
@@ -153,7 +156,7 @@ export function trackSceneStart({ sceneId, scheduleId, groupId }) {
     itemType: 'scene',
   };
 
-  console.log('[PlaybackTracking] Scene started:', sceneId);
+  logger.debug('Scene started', { sceneId, playlistId, screenId });
 
   return currentSceneEvent;
 }
@@ -181,9 +184,9 @@ export function trackSceneEnd() {
     };
 
     queueEvent(completedEvent);
-    console.log('[PlaybackTracking] Scene ended, duration:', durationSeconds, 's');
+    logger.debug('Scene ended', { sceneId: currentSceneEvent.sceneId, durationSeconds });
   } else {
-    console.log('[PlaybackTracking] Scene too short, skipped:', durationSeconds, 's');
+    logger.debug('Scene too short, skipped', { durationSeconds });
   }
 
   currentSceneEvent = null;
@@ -207,7 +210,7 @@ export function getCurrentSceneEvent() {
  */
 export function trackPlayerOnline(at) {
   if (!deviceContext) {
-    console.warn('[PlaybackTracking] Not initialized');
+    logger.warn('Not initialized');
     return;
   }
 
@@ -225,7 +228,7 @@ export function trackPlayerOnline(at) {
   };
 
   queueEvent(event);
-  console.log('[PlaybackTracking] Player online');
+  logger.info('Player online', { deviceId: deviceContext?.deviceId });
 }
 
 /**
@@ -234,7 +237,7 @@ export function trackPlayerOnline(at) {
  */
 export function trackPlayerOffline(at) {
   if (!deviceContext) {
-    console.warn('[PlaybackTracking] Not initialized');
+    logger.warn('Not initialized');
     return;
   }
 
@@ -257,7 +260,7 @@ export function trackPlayerOffline(at) {
   };
 
   queueEvent(event);
-  console.log('[PlaybackTracking] Player offline');
+  logger.info('Player offline', { deviceId: deviceContext?.deviceId });
 }
 
 // ============================================================================
@@ -273,7 +276,7 @@ export function trackPlayerOffline(at) {
  */
 export function trackMediaPlay({ mediaId, playlistId, durationSeconds }) {
   if (!deviceContext) {
-    console.warn('[PlaybackTracking] Not initialized');
+    logger.warn('Not initialized');
     return;
   }
 
@@ -401,7 +404,7 @@ export function trackMediaError({ url, mediaType, error, httpStatus }) {
   };
 
   queueEvent(event);
-  console.warn('[PlaybackTracking] Media error:', mediaType, error);
+  logger.warn('Media error', { mediaType, error, mediaId, sceneId });
 }
 
 /**
@@ -525,7 +528,7 @@ function queueEvent(event) {
 
   // Force flush if queue is getting large
   if (eventQueue.length >= CONFIG.MAX_QUEUE_SIZE) {
-    console.log('[PlaybackTracking] Queue full, flushing...');
+    logger.debug('Queue full, flushing', { queueSize: eventQueue.length });
     flushEvents();
   }
 }
@@ -561,7 +564,7 @@ export async function flushEvents(sync = false) {
   const eventsToSend = [...eventQueue];
   eventQueue = [];
 
-  console.log('[PlaybackTracking] Flushing', eventsToSend.length, 'events');
+  logger.debug('Flushing events', { count: eventsToSend.length });
 
   try {
     if (sync && typeof navigator !== 'undefined' && navigator.sendBeacon) {
@@ -579,7 +582,7 @@ export async function flushEvents(sync = false) {
     });
 
     if (error) {
-      console.error('[PlaybackTracking] Flush failed:', error);
+      logger.error('Flush failed', { error });
       // Re-queue failed events
       eventQueue = [...eventsToSend, ...eventQueue];
       saveOfflineQueue();
@@ -591,7 +594,7 @@ export async function flushEvents(sync = false) {
 
     return data || { inserted: eventsToSend.length, errors: 0 };
   } catch (error) {
-    console.error('[PlaybackTracking] Flush error:', error);
+    logger.error('Flush exception', { error });
     // Re-queue events on error
     eventQueue = [...eventsToSend, ...eventQueue];
     saveOfflineQueue();
@@ -611,9 +614,9 @@ function saveOfflineQueue() {
 
   try {
     localStorage.setItem(CONFIG.OFFLINE_STORAGE_KEY, JSON.stringify(eventQueue));
-    console.log('[PlaybackTracking] Saved', eventQueue.length, 'events to offline storage');
+    logger.debug('Saved events to offline storage', { count: eventQueue.length });
   } catch (error) {
-    console.error('[PlaybackTracking] Failed to save offline queue:', error);
+    logger.error('Failed to save offline queue', { error });
   }
 }
 
@@ -629,11 +632,11 @@ function loadOfflineQueue() {
       const events = JSON.parse(stored);
       if (Array.isArray(events) && events.length > 0) {
         eventQueue = [...events, ...eventQueue];
-        console.log('[PlaybackTracking] Loaded', events.length, 'events from offline storage');
+        logger.debug('Loaded events from offline storage', { count: events.length });
       }
     }
   } catch (error) {
-    console.error('[PlaybackTracking] Failed to load offline queue:', error);
+    logger.error('Failed to load offline queue', { error });
   }
 }
 
@@ -655,7 +658,7 @@ function clearOfflineQueue() {
 // ============================================================================
 
 function handleOnline() {
-  console.log('[PlaybackTracking] Connection restored');
+  logger.info('Connection restored');
   isOnline = true;
   trackPlayerOnline();
   // Try to flush queued events
@@ -663,7 +666,7 @@ function handleOnline() {
 }
 
 function handleOffline() {
-  console.log('[PlaybackTracking] Connection lost');
+  logger.info('Connection lost');
   isOnline = false;
   trackPlayerOffline();
   saveOfflineQueue();

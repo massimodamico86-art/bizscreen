@@ -7,6 +7,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ScreenTelemetry');
 
 /**
  * Get telemetry events for a specific screen
@@ -45,7 +48,7 @@ export async function getScreenTelemetry(screenId, options = {}) {
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching screen telemetry:', error);
+    logger.error('Failed to fetch screen telemetry', { error, screenId });
     throw error;
   }
 
@@ -80,7 +83,7 @@ export async function getScreenTelemetryStats(screenId, period = 'day') {
     .gte('event_timestamp', startDate.toISOString());
 
   if (error) {
-    console.error('Error fetching telemetry stats:', error);
+    logger.error('Failed to fetch telemetry stats', { error, screenId });
     throw error;
   }
 
@@ -149,7 +152,7 @@ export async function getAllScreensTelemetry(options = {}) {
     `);
 
   if (screensError) {
-    console.error('Error fetching screens:', screensError);
+    logger.error('Failed to fetch screens', { error: screensError });
     throw screensError;
   }
 
@@ -160,7 +163,7 @@ export async function getAllScreensTelemetry(options = {}) {
     .gte('event_timestamp', startDate.toISOString());
 
   if (telemetryError) {
-    console.error('Error fetching telemetry counts:', telemetryError);
+    logger.error('Failed to fetch telemetry counts', { error: telemetryError });
     throw telemetryError;
   }
 
@@ -209,7 +212,7 @@ export async function getScreenCommands(screenId, options = {}) {
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching screen commands:', error);
+    logger.error('Failed to fetch screen commands', { error, screenId });
     throw error;
   }
 
@@ -267,7 +270,7 @@ export async function getScreenHealthEvents(screenId, limit = 20) {
     .limit(limit);
 
   if (error) {
-    console.error('Error fetching health events:', error);
+    logger.error('Failed to fetch health events', { error, screenId });
     throw error;
   }
 

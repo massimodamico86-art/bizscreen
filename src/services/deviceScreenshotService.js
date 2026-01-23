@@ -6,6 +6,9 @@ import {
   autoResolveAlert,
   ALERT_TYPES,
 } from './alertEngineService';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('DeviceScreenshot');
 
 /**
  * Fetch all devices with screenshot and diagnostic info
@@ -18,7 +21,7 @@ export async function fetchDevicesWithScreenshots(clientId = null) {
   });
 
   if (error) {
-    console.error('[DeviceScreenshot] Failed to fetch devices:', error);
+    logger.error('Failed to fetch devices', { error });
     throw error;
   }
 
@@ -41,7 +44,7 @@ export async function requestDeviceScreenshot(deviceId) {
   });
 
   if (error) {
-    console.error('[DeviceScreenshot] Failed to request screenshot:', error);
+    logger.error('Failed to request screenshot', { error, deviceId });
     throw error;
   }
 
@@ -69,7 +72,7 @@ export async function requestDeviceCacheSync(deviceId) {
     .eq('id', deviceId);
 
   if (error) {
-    console.error('[DeviceScreenshot] Failed to request cache sync:', error);
+    logger.error('Failed to request cache sync', { error, deviceId });
     throw error;
   }
 
@@ -94,7 +97,7 @@ export async function requestMultipleScreenshots(deviceIds) {
       await requestDeviceScreenshot(deviceId);
       success++;
     } catch (err) {
-      console.warn(`[DeviceScreenshot] Failed to request for ${deviceId}:`, err);
+      logger.warn('Failed to request screenshot', { error: err, deviceId });
       failed++;
     }
   }));
@@ -304,7 +307,7 @@ export async function checkDeviceStatusAndAlert(device) {
       });
     }
   } catch (error) {
-    console.error('[DeviceScreenshot] Error checking device alerts:', error);
+    logger.error('Error checking device alerts', { error, deviceId: device?.id });
   }
 }
 
@@ -332,7 +335,7 @@ export async function checkAllDevicesForAlerts(clientId = null) {
 
     return { checked: devices.length, alerts: alertsRaised };
   } catch (error) {
-    console.error('[DeviceScreenshot] Error checking all devices for alerts:', error);
+    logger.error('Error checking all devices for alerts', { error });
     return { checked: 0, alerts: 0 };
   }
 }

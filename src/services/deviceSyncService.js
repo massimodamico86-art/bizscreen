@@ -6,6 +6,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('DeviceSync');
 
 // Active subscriptions
 const subscriptions = new Map();
@@ -131,7 +134,7 @@ export async function broadcastSceneUpdate(sceneId) {
       affectedDevices: data?.length || 0,
     };
   } catch (error) {
-    console.error('Failed to broadcast scene update:', error);
+    logger.error('Failed to broadcast scene update', { error, sceneId });
     return { success: false, affectedDevices: 0, error: error.message };
   }
 }
@@ -160,7 +163,7 @@ export async function checkDeviceRefreshStatus(deviceId) {
       lastRefresh: data?.last_refresh_at,
     };
   } catch (error) {
-    console.error('Failed to check device refresh status:', error);
+    logger.error('Failed to check device refresh status', { error, deviceId });
     return { needsRefresh: false, lastRefresh: null };
   }
 }
@@ -185,7 +188,7 @@ export async function clearDeviceRefreshFlag(deviceId) {
     if (error) throw error;
     return true;
   } catch (error) {
-    console.error('Failed to clear device refresh flag:', error);
+    logger.error('Failed to clear device refresh flag', { error, deviceId });
     return false;
   }
 }
@@ -250,7 +253,7 @@ export async function getDevicesForScene(sceneId) {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Failed to get devices for scene:', error);
+    logger.error('Failed to get devices for scene', { error, sceneId });
     return [];
   }
 }
@@ -279,7 +282,7 @@ export async function publishSceneToDevice(deviceId, sceneId) {
     if (error) throw error;
     return { success: true };
   } catch (error) {
-    console.error('Failed to publish scene to device:', error);
+    logger.error('Failed to publish scene to device', { error, sceneId, deviceId });
     return { success: false, error: error.message };
   }
 }
@@ -314,7 +317,7 @@ export async function publishSceneToDevices(deviceIds, sceneId) {
       failed: deviceIds.length - (data?.length || 0),
     };
   } catch (error) {
-    console.error('Failed to publish scene to devices:', error);
+    logger.error('Failed to publish scene to devices', { error, sceneId, deviceCount: deviceIds?.length });
     return { success: false, published: 0, failed: deviceIds.length };
   }
 }
