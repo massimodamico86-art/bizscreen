@@ -14,6 +14,7 @@ import {
   enterFullscreen,
   exitFullscreen,
   validateKioskPassword,
+  validatePinOffline,
 } from '../../services/playerService';
 
 const STORAGE_KEYS = {
@@ -42,6 +43,7 @@ export function useKioskMode() {
     localStorage.getItem(STORAGE_KEYS.kioskMode) === 'true'
   );
   const [showKioskExit, setShowKioskExit] = useState(false);
+  const [showPinEntry, setShowPinEntry] = useState(false);
   const [kioskPasswordInput, setKioskPasswordInput] = useState('');
   const [kioskPasswordError, setKioskPasswordError] = useState('');
 
@@ -124,6 +126,39 @@ export function useKioskMode() {
     setKioskPasswordError('');
   }, []);
 
+  // Handle kiosk exit with PIN (new method)
+  const handlePinExit = useCallback(async (pin) => {
+    try {
+      const isValid = await validatePinOffline(pin);
+      if (!isValid) {
+        return false; // Let PinEntry component handle error display
+      }
+
+      // Exit kiosk mode
+      setKioskMode(false);
+      setShowPinEntry(false);
+      localStorage.setItem(STORAGE_KEYS.kioskMode, 'false');
+      exitFullscreen().catch((err) =>
+        logger.warn('Failed to exit fullscreen', { error: err })
+      );
+      logger.info('Exited kiosk mode via PIN');
+      return true;
+    } catch (err) {
+      logger.error('PIN validation error', { error: err });
+      return false;
+    }
+  }, [logger]);
+
+  // Show PIN entry (called by tap sequence trigger)
+  const showPinEntryDialog = useCallback(() => {
+    setShowPinEntry(true);
+  }, []);
+
+  // Dismiss PIN entry
+  const dismissPinEntry = useCallback(() => {
+    setShowPinEntry(false);
+  }, []);
+
   // Initialize kiosk mode (for manual triggering from parent component)
   const initKioskMode = useCallback(() => {
     const savedKioskMode = localStorage.getItem(STORAGE_KEYS.kioskMode);
@@ -138,11 +173,15 @@ export function useKioskMode() {
   return {
     kioskMode,
     showKioskExit,
+    showPinEntry,
     kioskPasswordInput,
     kioskPasswordError,
     setKioskPasswordInput,
     handleKioskExit,
+    handlePinExit,
     cancelKioskExit,
+    showPinEntryDialog,
+    dismissPinEntry,
     initKioskMode,
   };
 }
