@@ -76,13 +76,17 @@ import {
 import { useLogger } from './hooks/useLogger.js';
 import { createScopedLogger } from './services/loggingService.js';
 import { ClockWidget, DateWidget, WeatherWidget, QRCodeWidget } from './player/components/widgets';
+import { PairingScreen } from './player/components/PairingScreen';
+import { PinEntry } from './player/components/PinEntry';
 import {
   usePlayerContent,
   usePlayerHeartbeat,
   usePlayerCommands,
   useKioskMode,
   usePlayerPlayback,
+  useTapSequence,
 } from './player/hooks';
+import { cacheKioskPinHashes } from './services/playerService';
 
 // Module-level logger for utility functions
 const retryLogger = createScopedLogger('Player:retry');
@@ -1383,6 +1387,7 @@ function PairPage() {
   const [error, setError] = useState('');
   const [demoOtp, setDemoOtp] = useState(null);
   const [showHelp, setShowHelp] = useState(false);
+  const [useQrPairing, setUseQrPairing] = useState(true);
 
   // Check if already paired on mount, and check for demo OTP
   useEffect(() => {
@@ -1398,6 +1403,35 @@ function PairPage() {
       setDemoOtp(storedDemoOtp);
     }
   }, [navigate]);
+
+  // Poll for pairing completion when using QR mode
+  useEffect(() => {
+    if (!useQrPairing) return;
+
+    const deviceId = localStorage.getItem('player_device_id');
+    if (!deviceId) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const { data, error } = await supabase
+          .from('tv_devices')
+          .select('id')
+          .eq('device_id', deviceId)
+          .eq('is_paired', true)
+          .single();
+
+        if (data && !error) {
+          localStorage.setItem(STORAGE_KEYS.screenId, data.id);
+          clearInterval(pollInterval);
+          navigate('/player/view', { replace: true });
+        }
+      } catch (err) {
+        // Ignore errors, keep polling
+      }
+    }, 3000);
+
+    return () => clearInterval(pollInterval);
+  }, [useQrPairing, navigate]);
 
   const useDemoCode = () => {
     if (demoOtp) {
@@ -1456,6 +1490,16 @@ function PairPage() {
     }
   };
 
+  // Show QR pairing screen by default
+  if (useQrPairing) {
+    return (
+      <PairingScreen
+        onFallbackToOtp={() => setUseQrPairing(false)}
+      />
+    );
+  }
+
+  // OTP entry fallback
   return (
     <div style={{
       position: 'fixed',
@@ -1686,6 +1730,23 @@ function PairPage() {
             </p>
           </div>
         )}
+
+        {/* Switch to QR mode */}
+        <button
+          type="button"
+          onClick={() => setUseQrPairing(true)}
+          style={{
+            marginTop: '1rem',
+            background: 'none',
+            border: 'none',
+            color: '#3b82f6',
+            fontSize: '0.875rem',
+            cursor: 'pointer',
+            textDecoration: 'underline'
+          }}
+        >
+          Use QR code instead
+        </button>
 
         <p style={{
           marginTop: '1.5rem',
