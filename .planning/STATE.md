@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 9 of 12 (Device Experience) - IN PROGRESS
-Plan: 5 of 8 in phase 9
+Plan: 6 of 8 in phase 9
 Status: In progress
-Last activity: 2026-01-23 - Completed 09-05 (Admin pairing page)
+Last activity: 2026-01-23 - Completed 09-06 (Player integration)
 
-Progress: [#################░░░░░░░] 72% (8.6/12 phases complete)
+Progress: [##################░░░░░░] 73% (8.7/12 phases complete)
 
 ## Phase 9 Progress
 
@@ -24,8 +24,8 @@ Progress: [#################░░░░░░░] 72% (8.6/12 phases complete)
 - [x] 09-03: PinEntry component
 - [x] 09-04: PairingScreen component
 - [x] 09-05: Admin pairing page (4905366, 236868f, 4343643)
-- [ ] 09-06: Pairing polling hook
-- [ ] 09-07: Player integration
+- [x] 09-06: Player integration (4bc0fce, 81ada66, c423cce)
+- [ ] 09-07: Kiosk PIN settings UI
 - [ ] 09-08: Testing and verification
 
 **Plan 09-01 Results:**
@@ -39,6 +39,12 @@ Progress: [#################░░░░░░░] 72% (8.6/12 phases complete)
 - PairDevicePage.jsx (443 lines) with screen selection and create-new UI
 - Protected route /pair/:deviceId added to AppRouter
 - SCREEN_PAIRED action added to activity log
+
+**Plan 09-06 Results:**
+- useKioskMode extended with PIN validation (showPinEntry, handlePinExit, showPinEntryDialog)
+- PairPage shows QR pairing screen by default with OTP fallback
+- ViewPage has hidden 100x100px tap zone for 5-tap kiosk exit
+- PIN hashes cached on heartbeat interval for offline validation
 
 ## Phase 8 Completion Summary
 
@@ -498,7 +504,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 09-05-PLAN.md (Admin pairing page)
+Stopped at: Completed 09-06-PLAN.md (Player integration)
 Resume file: None
 
 ## Next Steps
