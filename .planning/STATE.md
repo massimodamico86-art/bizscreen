@@ -10,18 +10,26 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 7 of 12 (Player Refactoring)
-Plan: 1 of 3 in phase 7
+Plan: 2 of 3 in phase 7
 Status: In Progress
-Last activity: 2026-01-23 - Completed 07-01 (Widget extraction + PLR-01 fix)
+Last activity: 2026-01-23 - Completed 07-02 (Custom hooks extraction)
 
-Progress: [############░░░░░░░░░░░░] 54% (6.3/12 phases complete)
+Progress: [#############░░░░░░░░░░░] 56% (6.7/12 phases complete)
 
 ## Phase 7 Progress Summary
 
 **Player Refactoring Plans:**
 - [x] 07-01: Extract widgets + fix PLR-01 (47fcba4, 2c177a5)
-- [ ] 07-02: Extract custom hooks (usePlayerContent, usePlayerHeartbeat, etc.)
+- [x] 07-02: Extract custom hooks (8bf0aee, 293c991, 5553176)
 - [ ] 07-03: Split Player.jsx into focused components
+
+**Custom Hooks Extraction (07-02):**
+- Created usePlayerContent hook (356 lines) - content state, loading, polling, offline fallback
+- Created usePlayerHeartbeat hook (110 lines) - 30-second heartbeat, screenshot capture
+- Created usePlayerCommands hook (104 lines) - reboot, reload, clear_cache, reset
+- Barrel export at src/player/hooks/index.js
+- Player.jsx reduced by 293 lines (3188 -> 2895)
+- All 73 Player tests pass
 
 **Widget Extraction + PLR-01 Fix (07-01):**
 - Extracted ClockWidget, DateWidget, WeatherWidget, QRCodeWidget to src/player/components/widgets/
@@ -29,6 +37,10 @@ Progress: [############░░░░░░░░░░░░] 54% (6.3/12 phases 
 - Player.jsx reduced by 307 lines (3495 -> 3188)
 - SceneWidgetRenderer simplified to ~30 lines (was ~330 lines)
 - All 60 Player tests pass
+
+**Phase 7 Cumulative Progress:**
+- Player.jsx: 3495 -> 2895 lines (-600 lines, 17% reduction)
+- New directories: src/player/components/widgets/, src/player/hooks/
 
 ## Phase 6 Progress Summary
 
@@ -228,9 +240,9 @@ Progress: [############░░░░░░░░░░░░] 54% (6.3/12 phases 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 29
-- Average duration: 5.5 min
-- Total execution time: 163 min (2.7 hours)
+- Total plans completed: 30
+- Average duration: 5.6 min
+- Total execution time: 169 min (2.8 hours)
 
 **By Phase:**
 
@@ -242,10 +254,11 @@ Progress: [############░░░░░░░░░░░░] 54% (6.3/12 phases 
 | 04-logging-migration | 6 | 62 min | 10.3 min |
 | 05-critical-fixes | 2 | 11 min | 5.5 min |
 | 06-player-reliability | 2 | 8 min | 4 min |
-| 07-player-refactoring | 1 | 5 min | 5 min |
+| 07-player-refactoring | 2 | 11 min | 5.5 min |
 
 **Phase 7 Plan Breakdown:**
 - 07-01: 5 min (widget extraction + PLR-01 fix)
+- 07-02: 6 min (custom hooks extraction)
 
 **Phase 6 Plan Breakdown:**
 - 06-01: 3 min (retry backoff + error logging)
@@ -264,8 +277,8 @@ Progress: [############░░░░░░░░░░░░] 54% (6.3/12 phases 
 - 04-06: 6.4 min (final cleanup, tests)
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (8 min), 06-01 (3 min), 06-02 (5 min), 07-01 (5 min)
-- Trend: Consistent 3-8 min per plan for focused extraction/fix tasks
+- Last 5 plans: 06-01 (3 min), 06-02 (5 min), 07-01 (5 min), 07-02 (6 min)
+- Trend: Consistent 3-6 min per plan for focused extraction/fix tasks
 
 *Updated after each plan completion*
 
@@ -347,6 +360,10 @@ Recent decisions affecting current work:
 - [07-01]: Widget components are self-contained with internal timers
 - [07-01]: WeatherWidget fetches its own data (not passed from parent)
 - [07-01]: Props pattern: { props = {} } for safe default handling
+- [07-02]: usePlayerContent returns loadContentRef for heartbeat/stuck-detection access without dependency cycles
+- [07-02]: handleAdvanceToNext wrapper in ViewPage for analytics.endPlaybackEvent() before advancing
+- [07-02]: advanceToNextRef pattern for stuck detection effect to access latest callback
+- [07-02]: Keep kiosk mode, stuck detection, and analytics tracking in ViewPage (UI-specific)
 
 ### Pending Todos
 
@@ -367,14 +384,14 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 07-01-PLAN.md (Widget extraction + PLR-01 fix)
+Stopped at: Completed 07-02-PLAN.md (Custom hooks extraction)
 Resume file: None
 
 ## Next Steps
 
-**Phase 7 In Progress!** Continue with 07-02.
+**Phase 7 In Progress!** Continue with 07-03.
 
 **Phase 7: Player Refactoring** — Split Player.jsx into focused components
 - [x] 07-01: Extract widgets + fix PLR-01 (complete)
-- [ ] 07-02: Extract custom hooks (usePlayerContent, usePlayerHeartbeat, etc.)
+- [x] 07-02: Extract custom hooks (complete)
 - [ ] 07-03: Split Player.jsx into focused components (SceneRenderer, PlayerControls, etc.)
