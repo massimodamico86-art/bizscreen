@@ -39,11 +39,11 @@
 
 - [~] **REF-01**: Player.jsx split into focused components (SceneRenderer, PlayerControls, etc.) *(partial: hooks and widgets extracted, component file splitting deferred)*
 - [x] **REF-02**: Player custom hooks extracted (usePlayerContent, usePlayerHeartbeat, etc.)
-- [ ] **REF-03**: MediaLibraryPage.jsx split into sub-components with custom hooks
-- [ ] **REF-04**: ScreensPage.jsx split into sub-components with custom hooks
-- [ ] **REF-05**: PlaylistEditorPage.jsx split into sub-components with custom hooks
-- [ ] **REF-06**: CampaignEditorPage.jsx split into sub-components with custom hooks
-- [ ] **REF-07**: FeatureFlagsPage.jsx split into sub-components with custom hooks
+- [x] **REF-03**: MediaLibraryPage.jsx split into sub-components with custom hooks
+- [x] **REF-04**: ScreensPage.jsx split into sub-components with custom hooks
+- [x] **REF-05**: PlaylistEditorPage.jsx split into sub-components with custom hooks
+- [x] **REF-06**: CampaignEditorPage.jsx split into sub-components with custom hooks
+- [x] **REF-07**: FeatureFlagsPage.jsx split into sub-components with custom hooks
 
 ### Content Approval Workflow
 
@@ -126,11 +126,11 @@ Deferred to future release:
 | PLR-04 | Phase 6 | Complete |
 | REF-01 | Phase 7 | Partial |
 | REF-02 | Phase 7 | Complete |
-| REF-03 | Phase 8 | Pending |
-| REF-04 | Phase 8 | Pending |
-| REF-05 | Phase 8 | Pending |
-| REF-06 | Phase 8 | Pending |
-| REF-07 | Phase 8 | Pending |
+| REF-03 | Phase 8 | Complete |
+| REF-04 | Phase 8 | Complete |
+| REF-05 | Phase 8 | Complete |
+| REF-06 | Phase 8 | Complete |
+| REF-07 | Phase 8 | Complete |
 | DEV-01 | Phase 9 | Pending |
 | DEV-02 | Phase 9 | Pending |
 | DEV-03 | Phase 9 | Pending |
@@ -156,4 +156,4 @@ Deferred to future release:
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 7 complete (REF-02, PLR-01)*
+*Last updated: 2026-01-23 — Phase 8 complete (REF-03, REF-04, REF-05, REF-06, REF-07)*

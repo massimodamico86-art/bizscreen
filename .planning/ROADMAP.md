@@ -17,7 +17,7 @@ BizScreen production release progresses through 12 phases: establishing testing 
 - [x] **Phase 5: Critical Fixes** - Wire up incomplete features and logic gaps
 - [x] **Phase 6: Player Reliability** - Harden offline sync and error handling *(PLR-01 gap deferred to Phase 7)*
 - [x] **Phase 7: Player Refactoring** - Split Player.jsx into focused components *(hooks extracted, component splitting deferred)*
-- [ ] **Phase 8: Page Refactoring** - Split large page components *(hooks extracted, gap closure in progress)*
+- [x] **Phase 8: Page Refactoring** - Split large page components *(hooks + components extracted, 70% line reduction)*
 - [ ] **Phase 9: Device Experience** - QR pairing and kiosk exit improvements
 - [ ] **Phase 10: Analytics** - View duration and content performance tracking
 - [ ] **Phase 11: GDPR Compliance** - Data export and account deletion
@@ -244,7 +244,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 5. Critical Fixes | 2/2 | Complete | 2026-01-23 |
 | 6. Player Reliability | 3/3 | Complete | 2026-01-23 |
 | 7. Player Refactoring | 4/4 | Complete | 2026-01-23 |
-| 8. Page Refactoring | 6/12 | Gap closure planned | - |
+| 8. Page Refactoring | 12/12 | Complete | 2026-01-23 |
 | 9. Device Experience | 0/TBD | Not started | - |
 | 10. Analytics | 0/TBD | Not started | - |
 | 11. GDPR Compliance | 0/TBD | Not started | - |
@@ -252,4 +252,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 8 gap closure plans created (08-07 through 08-12)*
+*Last updated: 2026-01-23 — Phase 8 complete (12/12 plans, 70% line reduction)*
