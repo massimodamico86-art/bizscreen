@@ -9,3 +9,4 @@ export { useScreensData } from './useScreensData.js';
 export { useFeatureFlags } from './useFeatureFlags.js';
 export { useCampaignEditor } from './useCampaignEditor.js';
 export { usePlaylistEditor } from './usePlaylistEditor.js';
+export { useMediaLibrary } from './useMediaLibrary.js';
