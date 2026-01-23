@@ -5,16 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 4 Logging Migration - Complete
+**Current focus:** Phase 5 Critical Fixes - In Progress
 
 ## Current Position
 
-Phase: 4 of 12 (Logging Migration)
-Plan: 6 of 6 in phase 4 (complete)
-Status: Phase Complete
-Last activity: 2026-01-23 - Completed 04-06-PLAN.md (Final Cleanup)
+Phase: 5 of 12 (Critical Fixes)
+Plan: 2 of 2 in phase 5 (05-02 complete)
+Status: In Progress
+Last activity: 2026-01-22 - Completed 05-02-PLAN.md (Email Notifications via Resend)
 
-Progress: [########----] 33% (4/12 phases complete)
+Progress: [#########---] 37.5% (4.5/12 phases complete)
+
+## Phase 5 Progress Summary
+
+**Critical Fixes Plans:**
+- [ ] 05-01: Create template from layout service (pending)
+- [x] 05-02: Email notifications via Resend (fa5c55e, 6480c95, 1f1243a)
+
+**Email Notifications (05-02):**
+- Resend SDK integration for email delivery
+- sendAlertEmail function with HTML template builder
+- sendEmailNotification updated to call Resend
+- Graceful fallback when API key not configured
+- VITE_RESEND_API_KEY documented in .env.example
 
 ## Phase 4 Progress Summary
 
@@ -177,6 +190,10 @@ Progress: [########----] 33% (4/12 phases complete)
 | 02-xss-prevention | 5 | 16 min | 3.2 min |
 | 03-auth-hardening | 4 | 11 min | 2.8 min |
 | 04-logging-migration | 6 | 62 min | 10.3 min |
+| 05-critical-fixes | 1/2 | 3 min | 3 min |
+
+**Phase 5 Plan Breakdown:**
+- 05-02: 3 min (Resend email integration)
 
 **Phase 4 Plan Breakdown:**
 - 04-01: 2 min (infrastructure)
@@ -252,6 +269,10 @@ Recent decisions affecting current work:
 - [04-06]: Delete deprecated logger.js instead of marking deprecated (no remaining imports)
 - [04-06]: Rename errorTracking.js to .jsx for JSX syntax support (React components)
 - [04-06]: Focus logging tests on utilities (PII, safeStringify) due to loggingService circular dependency with supabase
+- [05-02]: Use Resend SDK directly (not via API wrapper)
+- [05-02]: Graceful fallback when API key not configured (logs warning, returns false)
+- [05-02]: Inline HTML template builder (no external templating files)
+- [05-02]: Fetch email from profiles table (fallback for client-side context)
 
 ### Pending Todos
 
@@ -267,12 +288,13 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-23
-Stopped at: Completed 04-06-PLAN.md (Final Cleanup)
+Last session: 2026-01-22
+Stopped at: Completed 05-02-PLAN.md (Email Notifications via Resend)
 Resume file: None
 
 ## Next Steps
 
-**Phase 4 Complete!** Ready for Phase 5.
+**Phase 5 In Progress:** Plan 05-01 pending, 05-02 complete.
 
-**Phase 5:** TBD - Awaiting next phase planning
+**Remaining in Phase 5:**
+- 05-01: Create template from layout service function
