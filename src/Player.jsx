@@ -206,8 +206,13 @@ function useAppData(appId, config, refreshMinutes = 10) {
             data: result.data,
             fetchedAt: Date.now()
           }));
-        } catch (e) {
-          // Ignore storage errors
+        } catch (error) {
+          appDataLogger.warn('Failed to cache app data', {
+            error: error.message,
+            cacheKey,
+            dataSize: JSON.stringify(result.data).length,
+          });
+          // Non-critical: continue execution without cache
         }
       } else {
         throw new Error(result.error || 'Unknown error');
@@ -236,8 +241,12 @@ function useAppData(appId, config, refreshMinutes = 10) {
           return;
         }
       }
-    } catch (e) {
-      // Ignore cache errors
+    } catch (error) {
+      appDataLogger.warn('Failed to read cached app data', {
+        error: error.message,
+        cacheKey,
+      });
+      // Non-critical: fall through to fetchData()
     }
 
     fetchData();
