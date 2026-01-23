@@ -36,6 +36,7 @@ import {
   Layers,
 } from 'lucide-react';
 import QRCode from 'qrcode';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Google Fonts to load
 const GOOGLE_FONTS = [
@@ -75,6 +76,7 @@ export default function FabricSvgEditor({
   onClose,
   showToast,
 }) {
+  const logger = useLogger('FabricSvgEditor');
   const canvasRef = useRef(null);
   const fabricCanvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -245,14 +247,14 @@ export default function FabricSvgEditor({
     try {
       if (initialJson) {
         // Load from saved JSON
-        console.log('Loading from saved JSON...');
+        logger.debug('Loading from saved JSON');
         // Ensure canvas is ready
         if (!canvas || canvas.disposed) {
           throw new Error('Canvas not ready or disposed');
         }
         // Fabric.js 6.x loadFromJSON expects the JSON object directly
         const jsonData = typeof initialJson === 'string' ? JSON.parse(initialJson) : initialJson;
-        console.log('JSON data to load:', { version: jsonData.version, objectCount: jsonData.objects?.length });
+        logger.debug('JSON data to load', { version: jsonData.version, objectCount: jsonData.objects?.length });
 
         // Check if JSON has valid structure
         if (!jsonData || typeof jsonData !== 'object') {
@@ -264,10 +266,10 @@ export default function FabricSvgEditor({
           canvas.renderAll();
           saveToHistory();
         } catch (loadErr) {
-          console.error('Fabric loadFromJSON error:', loadErr);
+          logger.error('Fabric loadFromJSON error', { error: loadErr });
           // Try to recover by loading objects manually
           if (jsonData.objects && Array.isArray(jsonData.objects)) {
-            console.log('Attempting manual object loading...');
+            logger.debug('Attempting manual object loading');
             canvas.clear();
             if (jsonData.background) {
               canvas.backgroundColor = jsonData.background;
@@ -279,7 +281,7 @@ export default function FabricSvgEditor({
                   canvas.add(obj[0]);
                 }
               } catch (objErr) {
-                console.warn('Failed to load object:', objData.type, objErr);
+                logger.warn('Failed to load object', { type: objData.type, error: objErr });
               }
             }
             canvas.renderAll();
@@ -290,18 +292,18 @@ export default function FabricSvgEditor({
         }
       } else if (svgUrl) {
         // Load SVG template
-        console.log('Loading SVG from URL:', svgUrl);
+        logger.debug('Loading SVG from URL', { svgUrl });
         const svgString = await loadSvgContent(svgUrl);
-        console.log('SVG content loaded, length:', svgString.length);
+        logger.debug('SVG content loaded', { length: svgString.length });
         await loadSvgIntoCanvas(canvas, svgString);
         saveToHistory();
-        console.log('SVG loaded into canvas successfully');
+        logger.debug('SVG loaded into canvas successfully');
       } else {
         // Blank canvas - just finish loading
-        console.log('Starting with blank canvas');
+        logger.debug('Starting with blank canvas');
       }
     } catch (err) {
-      console.error('Failed to load content:', err);
+      logger.error('Failed to load content', { error: err });
       setError(err.message || 'Failed to load template');
     } finally {
       setIsLoading(false);
@@ -330,7 +332,7 @@ export default function FabricSvgEditor({
         options = result.options || {};
       }
 
-      console.log('SVG loaded:', { objectCount: objects.length, options, effectiveCanvasWidth, effectiveCanvasHeight });
+      logger.debug('SVG loaded', { objectCount: objects.length, options, effectiveCanvasWidth, effectiveCanvasHeight });
 
       if (!objects || objects.length === 0) {
         // If no objects, try to group the SVG as a single object
@@ -364,7 +366,7 @@ export default function FabricSvgEditor({
         svgHeight = parseFloat(options.height) || effectiveCanvasHeight;
       }
 
-      console.log('SVG source dimensions:', { svgWidth, svgHeight, originalSvgWidth, originalSvgHeight, viewBox: { w: options.viewBoxWidth, h: options.viewBoxHeight }, attrs: { w: options.width, h: options.height } });
+      logger.debug('SVG source dimensions', { svgWidth, svgHeight, originalSvgWidth, originalSvgHeight, viewBox: { w: options.viewBoxWidth, h: options.viewBoxHeight }, attrs: { w: options.width, h: options.height } });
 
       // Calculate scale to FIT the canvas (content should fill canvas)
       const scaleX = effectiveCanvasWidth / svgWidth;
@@ -373,7 +375,7 @@ export default function FabricSvgEditor({
       // For digital signage, we want to fit the content within the canvas
       const scale = Math.min(scaleX, scaleY);
 
-      console.log('Scaling SVG:', { svgWidth, svgHeight, effectiveCanvasWidth, effectiveCanvasHeight, scaleX, scaleY, scale });
+      logger.debug('Scaling SVG', { svgWidth, svgHeight, effectiveCanvasWidth, effectiveCanvasHeight, scaleX, scaleY, scale });
 
       // Calculate offset to center the content
       const scaledWidth = svgWidth * scale;
@@ -381,7 +383,7 @@ export default function FabricSvgEditor({
       const offsetX = (effectiveCanvasWidth - scaledWidth) / 2;
       const offsetY = (effectiveCanvasHeight - scaledHeight) / 2;
 
-      console.log('Positioning:', { scaledWidth, scaledHeight, offsetX, offsetY });
+      logger.debug('Positioning', { scaledWidth, scaledHeight, offsetX, offsetY });
 
       // Track text counter for naming
       let textCount = 0;
@@ -493,9 +495,9 @@ export default function FabricSvgEditor({
       objects.forEach(obj => processObject(obj));
 
       canvas.renderAll();
-      console.log(`SVG processed: ${textCount} text elements, ${objectCount} other objects`);
+      logger.debug('SVG processed', { textCount, objectCount });
     } catch (err) {
-      console.error('Error loading SVG into canvas:', err);
+      logger.error('Error loading SVG into canvas', { error: err });
       throw err;
     }
   };
@@ -1054,7 +1056,7 @@ export default function FabricSvgEditor({
       setHasUnsavedChanges(true);
       syncCanvasObjects();
     }).catch((err) => {
-      console.error('Failed to load image:', err);
+      logger.error('Failed to load image', { error: err });
       showToast?.('Failed to load image', 'error');
     });
   }, [canvasWidth, canvasHeight, syncCanvasObjects, showToast]);
@@ -1144,7 +1146,7 @@ export default function FabricSvgEditor({
         showToast?.('QR code added', 'success');
       });
     } catch (err) {
-      console.error('Failed to generate QR code:', err);
+      logger.error('Failed to generate QR code', { error: err });
       showToast?.('Failed to generate QR code', 'error');
     }
   }, [canvasWidth, canvasHeight, syncCanvasObjects, showToast]);
@@ -1184,11 +1186,11 @@ export default function FabricSvgEditor({
 
   // Add widget - supports live data widgets (time, date, weather, etc.)
   const handleAddWidget = useCallback((widgetType) => {
-    console.log('handleAddWidget called with:', widgetType);
+    logger.debug('handleAddWidget called', { widgetType });
 
     const canvas = fabricCanvasRef.current;
     if (!canvas) {
-      console.error('Canvas not available');
+      logger.error('Canvas not available');
       showToast?.('Canvas not ready', 'error');
       return;
     }
@@ -1377,9 +1379,9 @@ export default function FabricSvgEditor({
       canvas.renderAll();
       setHasUnsavedChanges(true);
       syncCanvasObjects();
-      console.log('Widget added successfully');
+      logger.debug('Widget added successfully');
     } catch (err) {
-      console.error('Error adding widget:', err);
+      logger.error('Error adding widget', { error: err });
       showToast?.('Failed to add widget', 'error');
     }
 
@@ -2022,7 +2024,7 @@ export default function FabricSvgEditor({
     const canvas = fabricCanvasRef.current;
     if (!canvas || !template) return;
 
-    console.log('handleSelectTemplate called with:', template);
+    logger.debug('handleSelectTemplate called', { template });
 
     // Get SVG content - either from svgContent (template_library) or svgUrl
     const svgUrl = template.svgUrl || template.svg_url;
@@ -2036,10 +2038,10 @@ export default function FabricSvgEditor({
         if (svgContent) {
           // Use direct SVG content if available (from template_library)
           svgString = svgContent;
-          console.log('Using direct SVG content');
+          logger.debug('Using direct SVG content');
         } else if (svgUrl) {
           // Otherwise fetch from URL
-          console.log('Fetching SVG from URL:', svgUrl);
+          logger.debug('Fetching SVG from URL', { svgUrl });
           svgString = await loadSvgContent(svgUrl);
         }
 
@@ -2053,7 +2055,7 @@ export default function FabricSvgEditor({
           const originalWidth = template.originalWidth;
           const originalHeight = template.originalHeight;
 
-          console.log('Resizing canvas to:', { templateWidth, templateHeight, templateOrientation, originalWidth, originalHeight });
+          logger.debug('Resizing canvas to', { templateWidth, templateHeight, templateOrientation, originalWidth, originalHeight });
 
           // Update canvas dimensions
           canvas.setDimensions({ width: templateWidth, height: templateHeight });
@@ -2086,13 +2088,13 @@ export default function FabricSvgEditor({
           showToast?.(`Template "${template.name}" loaded`, 'success');
         }
       } catch (err) {
-        console.error('Failed to load template:', err);
+        logger.error('Failed to load template', { error: err });
         showToast?.('Failed to load template', 'error');
       } finally {
         setIsLoading(false);
       }
     } else {
-      console.warn('Template has no SVG content or URL:', template);
+      logger.warn('Template has no SVG content or URL', { template });
       showToast?.('Template has no content to load', 'error');
     }
   }, [showToast]);
@@ -2114,10 +2116,10 @@ export default function FabricSvgEditor({
       });
 
       // Save as user template - in production this would call an API
-      console.log('Saving template:', { name: templateName, json: fabricJson, thumbnail: thumbnailDataUrl });
+      logger.info('Saving template', { name: templateName });
       showToast?.(`Template "${templateName}" saved to your library`, 'success');
     } catch (err) {
-      console.error('Failed to save template:', err);
+      logger.error('Failed to save template', { error: err });
       showToast?.('Failed to save template', 'error');
     }
   }, [designName, showToast]);
@@ -2183,7 +2185,7 @@ export default function FabricSvgEditor({
       setHasUnsavedChanges(false);
       showToast?.('Design saved successfully!', 'success');
     } catch (err) {
-      console.error('Failed to save:', err);
+      logger.error('Failed to save', { error: err });
       showToast?.('Failed to save design: ' + err.message, 'error');
     } finally {
       setIsSaving(false);

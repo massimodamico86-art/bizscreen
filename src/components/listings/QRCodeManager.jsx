@@ -3,8 +3,10 @@ import { Plus, X, Trash2, Wand2, Wifi } from 'lucide-react';
 import Button from '../Button';
 import { supabase } from '../../supabase';
 import { generateQRCode, generateWiFiQRCode, generateURLQRCode } from '../../services/qrcodeService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 export const QRCodeManager = ({ formData, setFormData, showToast }) => {
+  const logger = useLogger('QRCodeManager');
   const [loading, setLoading] = useState(false);
 
   // Fetch QR codes from Supabase on mount and subscribe to real-time changes
@@ -35,7 +37,7 @@ export const QRCodeManager = ({ formData, setFormData, showToast }) => {
           qrCodes: qrCodesData
         });
       } catch (error) {
-        console.error('Error fetching QR codes:', error);
+        logger.error('Error fetching QR codes', { error });
         if (showToast) {
           showToast('Error loading QR codes: ' + error.message, 'error');
         }
@@ -58,7 +60,7 @@ export const QRCodeManager = ({ formData, setFormData, showToast }) => {
           filter: `listing_id=eq.${formData.id}`
         },
         (payload) => {
-          console.log('QR code change received:', payload);
+          logger.debug('QR code change received', { eventType: payload.eventType, id: payload.new?.id || payload.old?.id });
 
           if (payload.eventType === 'INSERT') {
             const newQRCode = {
@@ -115,7 +117,7 @@ export const QRCodeManager = ({ formData, setFormData, showToast }) => {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error updating QR code:', error);
+      logger.error('Error updating QR code', { error });
       if (showToast) {
         showToast('Error updating QR code: ' + error.message, 'error');
       }
@@ -159,7 +161,7 @@ export const QRCodeManager = ({ formData, setFormData, showToast }) => {
 
       showToast('QR code generated successfully!');
     } catch (error) {
-      console.error('Error generating QR code:', error);
+      logger.error('Error generating QR code', { error });
       showToast(`Error generating QR code: ${error.message}`, 'error');
     } finally {
       setLoading(false);
@@ -252,8 +254,7 @@ export const QRCodeManager = ({ formData, setFormData, showToast }) => {
                   showToast('WiFi QR code created successfully!');
                 }
               } catch (error) {
-                console.error('Error adding WiFi QR code:', error);
-                console.error('Error details:', JSON.stringify(error, null, 2));
+                logger.error('Error adding WiFi QR code', { error });
                 if (showToast) {
                   // Extract Supabase error details
                   const errorMsg = error?.message || error?.msg || error?.error_description || String(error);
@@ -324,8 +325,7 @@ export const QRCodeManager = ({ formData, setFormData, showToast }) => {
                   showToast('QR code added successfully!');
                 }
               } catch (error) {
-                console.error('Error adding QR code:', error);
-                console.error('Error details:', JSON.stringify(error, null, 2));
+                logger.error('Error adding QR code', { error });
                 if (showToast) {
                   // Extract Supabase error details
                   const errorMsg = error?.message || error?.msg || error?.error_description || String(error);
@@ -528,7 +528,7 @@ export const QRCodeManager = ({ formData, setFormData, showToast }) => {
                               showToast('QR code deleted successfully!');
                             }
                           } catch (error) {
-                            console.error('Error deleting QR code:', error);
+                            logger.error('Error deleting QR code', { error });
                             if (showToast) {
                               showToast('Error deleting QR code: ' + error.message, 'error');
                             }
