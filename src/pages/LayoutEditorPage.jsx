@@ -24,6 +24,7 @@ import {
   MessageSquare,
   Check,
   Loader2,
+  BookTemplate,
 } from 'lucide-react';
 import {
   fetchLayoutWithZones,
@@ -50,6 +51,8 @@ import {
   EXPIRY_PRESETS,
   getExpiryLabel,
 } from '../services/previewService';
+import { createTemplateFromLayout } from '../services/layoutTemplateService';
+import { SaveAsTemplateModal } from '../components/templates/SaveAsTemplateModal';
 
 const PRESET_LAYOUTS = [
   {
@@ -144,6 +147,10 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
   const [selectedExpiry, setSelectedExpiry] = useState('7_days');
   const [allowComments, setAllowComments] = useState(true);
   const [copiedLinkId, setCopiedLinkId] = useState(null);
+
+  // Save as Template state
+  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
+  const [savingTemplate, setSavingTemplate] = useState(false);
 
   useEffect(() => {
     if (layoutId) {
@@ -448,6 +455,21 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
     }
   };
 
+  // Save as Template handler
+  const handleSaveAsTemplate = async (templateData) => {
+    try {
+      setSavingTemplate(true);
+      await createTemplateFromLayout(layoutId, templateData);
+      showToast?.('Layout saved as template');
+      setShowSaveTemplateModal(false);
+    } catch (error) {
+      logger.error('Failed to save as template', { layoutId, error });
+      showToast?.('Error saving template: ' + error.message, 'error');
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
   // Get approval status config
   const approvalConfig = layout?.approval_status
     ? getApprovalStatusConfig(layout.approval_status)
@@ -520,6 +542,10 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
           <Button variant="outline" onClick={handleOpenPreviewModal}>
             <Link2 size={18} />
             Preview Link
+          </Button>
+          <Button variant="outline" onClick={() => setShowSaveTemplateModal(true)}>
+            <BookTemplate size={18} />
+            Save as Template
           </Button>
           {/* Show Request Approval only for draft or rejected */}
           {(!layout.approval_status || layout.approval_status === 'draft' || layout.approval_status === 'rejected') && (
@@ -1137,6 +1163,15 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
           </Card>
         </div>
       )}
+
+      {/* Save as Template Modal */}
+      <SaveAsTemplateModal
+        open={showSaveTemplateModal}
+        onClose={() => setShowSaveTemplateModal(false)}
+        onSave={handleSaveAsTemplate}
+        layout={layout}
+        loading={savingTemplate}
+      />
     </div>
   );
 };
