@@ -53,6 +53,7 @@ import { Badge } from '../../design-system';
 import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../../design-system';
 import { Banner, Alert } from '../../design-system';
 import { FormField, Input } from '../../design-system';
+import { formatLimitDisplay } from '../../services/limitsService';
 
 export const MEDIA_TYPE_ICONS = {
   image: Image,
@@ -513,7 +514,7 @@ export const DeleteConfirmModal = ({ deleteConfirm, onClose, onConfirm, deleting
 };
 
 // Limit Reached Modal
-export const LimitReachedModal = ({ open, onClose, limits, mediaCount, formatLimitDisplay }) => {
+export const LimitReachedModal = ({ open, onClose, limits, mediaCount }) => {
   if (!open) return null;
 
   return (
@@ -524,7 +525,7 @@ export const LimitReachedModal = ({ open, onClose, limits, mediaCount, formatLim
         </div>
         <h3 className="text-xl font-bold text-gray-900 mb-2">Media Limit Reached</h3>
         <p className="text-gray-600 mb-6">
-          You&apos;ve used {formatLimitDisplay?.(limits?.maxMediaAssets, mediaCount) || `${mediaCount}/${limits?.maxMediaAssets}`} media assets on your {limits?.planName} plan.
+          You&apos;ve used {formatLimitDisplay(limits?.maxMediaAssets, mediaCount)} media assets on your {limits?.planName} plan.
         </p>
 
         <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
