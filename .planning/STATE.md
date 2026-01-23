@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 9 of 12 (Device Experience) - IN PROGRESS
-Plan: 6 of 8 in phase 9
+Plan: 7 of 8 in phase 9
 Status: In progress
-Last activity: 2026-01-23 - Completed 09-06 (Player integration)
+Last activity: 2026-01-23 - Completed 09-07 (Kiosk PIN settings UI)
 
-Progress: [##################░░░░░░] 73% (8.7/12 phases complete)
+Progress: [##################░░░░░░] 74% (8.9/12 phases complete)
 
 ## Phase 9 Progress
 
@@ -25,8 +25,14 @@ Progress: [##################░░░░░░] 73% (8.7/12 phases complete)
 - [x] 09-04: PairingScreen component
 - [x] 09-05: Admin pairing page (4905366, 236868f, 4343643)
 - [x] 09-06: Player integration (4bc0fce, 81ada66, c423cce)
-- [ ] 09-07: Kiosk PIN settings UI
+- [x] 09-07: Kiosk PIN settings UI (993550d)
 - [ ] 09-08: Testing and verification
+
+**Plan 09-07 Results:**
+- Master PIN button in ScreensPage header toolbar
+- Modal with 4-digit PIN input and confirmation
+- PIN status loaded on mount with green indicator when set
+- Validation for 4 digits and matching confirmation
 
 **Plan 09-01 Results:**
 - Migration 117 adds kiosk_pin_hash to tv_devices and master_kiosk_pin_hash to profiles
@@ -504,7 +510,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 09-06-PLAN.md (Player integration)
+Stopped at: Completed 09-07-PLAN.md (Kiosk PIN settings UI)
 Resume file: None
 
 ## Next Steps
@@ -517,5 +523,7 @@ Resume file: None
 - [x] 09-03: PinEntry component
 - [x] 09-04: PairingScreen component
 - [x] 09-05: Admin pairing page (3 min)
+- [x] 09-06: Player integration
+- [x] 09-07: Kiosk PIN settings UI (1 min)
 
-**Next:** 09-06 (Pairing polling hook)
+**Next:** 09-08 (Testing and verification)
