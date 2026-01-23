@@ -39,7 +39,7 @@ import {
 } from 'lucide-react';
 import { getLayoutTemplates } from '../services/templateService';
 import { fetchLayouts } from '../services/layoutService';
-import { useLogger } from '../utils/loggingService.js';
+import { useLogger } from '../hooks/useLogger.js';
 
 /**
  * Sidebar categories matching OptiSigns
