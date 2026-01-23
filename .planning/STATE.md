@@ -5,16 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 8 - Page Refactoring (Gap Closure)
+**Current focus:** Phase 9 - Device Experience
 
 ## Current Position
 
-Phase: 8 of 12 (Page Refactoring) - COMPLETE
-Plan: 12 of 12 in phase 8
-Status: Phase 8 complete
-Last activity: 2026-01-23 - Completed 08-12 (Gap closure verification)
+Phase: 9 of 12 (Device Experience) - IN PROGRESS
+Plan: 02 of 4 in phase 9
+Status: Executing 09-02
+Last activity: 2026-01-23 - Completed 09-02-PLAN.md (useTapSequence hook)
 
 Progress: [################░░░░░░░░] 67% (8/12 phases complete)
+
+## Phase 9 Progress
+
+**Device Experience Plans:**
+- [ ] 09-01: Research and context (docs only)
+- [x] 09-02: useTapSequence hook (09c082c, b8cad29)
+- [ ] 09-03: Hidden tap zone component
+- [ ] 09-04: Device pairing flow
 
 ## Phase 8 Completion Summary
 
@@ -444,6 +452,9 @@ Recent decisions affecting current work:
 - [08-03]: Export refs (lastDragOverIndexRef) for drag throttling state that page needs direct access to
 - [08-03]: Virtual scrolling state (visibleRange, mediaScrollRef, ITEMS_PER_ROW) kept in hook for encapsulation
 - [08-12]: Accept MediaLibraryPage 9% overage (875 vs 800 lines) as minor deviation - 60% reduction achieved
+- [09-02]: Use refs instead of state for hidden gesture detection (no visual feedback requirement)
+- [09-02]: Timeout between consecutive taps, not cumulative time
+- [09-02]: Handle both onClick and onTouchEnd with preventDefault to avoid double-firing
 
 ### Pending Todos
 
@@ -465,7 +476,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 08-12-PLAN.md (Gap closure verification)
+Stopped at: Completed 09-02-PLAN.md (useTapSequence hook)
 Resume file: None
 
 ## Next Steps
@@ -485,4 +496,7 @@ Resume file: None
 - Targets met: 4/5 (MediaLibraryPage 75 lines over, accepted as minor deviation)
 - Build passes, no new test failures
 
-**Ready for Phase 9+**
+**Phase 9 in progress:**
+- [x] 09-02: useTapSequence hook (2 min)
+
+**Next:** 09-03 (Hidden tap zone component)
