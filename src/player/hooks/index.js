@@ -7,3 +7,5 @@
 export { usePlayerContent } from './usePlayerContent.js';
 export { usePlayerHeartbeat } from './usePlayerHeartbeat.js';
 export { usePlayerCommands } from './usePlayerCommands.js';
+export { useKioskMode } from './useKioskMode.js';
+export { usePlayerPlayback } from './usePlayerPlayback.js';
