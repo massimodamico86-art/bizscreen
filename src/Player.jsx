@@ -1787,16 +1787,27 @@ function ViewPage() {
     lastActivityRef,
   } = usePlayerContent(screenId, navigate);
 
-  // Kiosk mode hook - manages kiosk state, fullscreen, password exit
+  // Kiosk mode hook - manages kiosk state, fullscreen, password/PIN exit
   const {
     kioskMode,
     showKioskExit,
+    showPinEntry,
     kioskPasswordInput,
     kioskPasswordError,
     setKioskPasswordInput,
     handleKioskExit,
+    handlePinExit,
     cancelKioskExit,
+    showPinEntryDialog,
+    dismissPinEntry,
   } = useKioskMode();
+
+  // Tap sequence for hidden kiosk exit trigger (5 taps in bottom-right)
+  const { handleTap: handleExitTap } = useTapSequence({
+    requiredTaps: 5,
+    timeoutMs: 2000,
+    onTrigger: showPinEntryDialog,
+  });
 
   // Playback hook - manages timing, video control, analytics
   const {
@@ -1824,6 +1835,28 @@ function ViewPage() {
 
   // Heartbeat hook - handles device status updates and screenshots
   usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef);
+
+  // Fetch and cache PIN hashes for offline validation
+  useEffect(() => {
+    if (!screenId || !kioskMode) return;
+
+    const fetchPinHashes = async () => {
+      try {
+        const { data, error } = await supabase.rpc('get_device_kiosk_pins', {
+          p_device_id: screenId
+        });
+        if (data && !error) {
+          cacheKioskPinHashes(data.device_pin_hash, data.master_pin_hash);
+        }
+      } catch (err) {
+        logger.debug('PIN hash fetch failed (offline?)', { error: err });
+      }
+    };
+
+    fetchPinHashes();
+    const interval = setInterval(fetchPinHashes, HEARTBEAT_INTERVAL);
+    return () => clearInterval(interval);
+  }, [screenId, kioskMode, logger]);
 
   // Initialize analytics session on mount
   useEffect(() => {
@@ -2710,7 +2743,33 @@ function ViewPage() {
         </div>
       )}
 
-      {/* Kiosk exit dialog */}
+      {/* Hidden tap zone for kiosk exit (5 taps triggers PIN entry) */}
+      {kioskMode && (
+        <div
+          onClick={handleExitTap}
+          onTouchEnd={handleExitTap}
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            width: '100px',
+            height: '100px',
+            zIndex: 100,
+          }}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* PIN entry overlay for kiosk exit */}
+      {showPinEntry && (
+        <PinEntry
+          onValidate={handlePinExit}
+          onDismiss={dismissPinEntry}
+          onSuccess={() => {}}
+        />
+      )}
+
+      {/* Kiosk exit dialog (legacy password method) */}
       {showKioskExit && (
         <div style={{
           position: 'fixed',
