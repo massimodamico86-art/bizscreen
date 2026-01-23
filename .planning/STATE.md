@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 5 Critical Fixes - In Progress
+**Current focus:** Phase 5 Critical Fixes - Complete
 
 ## Current Position
 
 Phase: 5 of 12 (Critical Fixes)
 Plan: 2 of 2 in phase 5 (complete)
 Status: Phase Complete
-Last activity: 2026-01-23 - Completed 05-01-PLAN.md (Save Layout as Template)
+Last activity: 2026-01-23 - Completed Phase 5 (2 plans executed in parallel)
 
 Progress: [##########--] 41.7% (5/12 phases complete)
 
@@ -299,11 +299,15 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 05-01-PLAN.md (Save Layout as Template)
+Stopped at: Completed Phase 5 execution and verification
 Resume file: None
 
 ## Next Steps
 
 **Phase 5 Complete!** Ready for Phase 6.
 
-**Phase 6:** Awaiting next phase planning
+**Phase 6: Player Reliability** — Harden offline sync and error handling
+- PLR-01: Exponential backoff with jitter for failed syncs
+- PLR-02: Offline screenshot queue with reconnect upload
+- PLR-03: Kiosk exit password validation
+- PLR-04: Replace empty catch blocks with proper error handling

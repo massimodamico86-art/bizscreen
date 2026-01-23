@@ -22,11 +22,11 @@
 
 ### Critical Fixes
 
-- [ ] **FIX-01**: Schedule conflict detection UI shows warnings when creating overlapping entries
-- [ ] **FIX-02**: createTemplateFromLayout() implemented — users can save layouts as templates
-- [ ] **FIX-03**: Timezone validation enforces IANA format with DST handling
-- [ ] **FIX-04**: Storage quota enforcement warns at 80%, blocks at 100%
-- [ ] **FIX-05**: Email notifications use Resend provider (replace stub)
+- [x] **FIX-01**: Schedule conflict detection UI shows warnings when creating overlapping entries
+- [x] **FIX-02**: createTemplateFromLayout() implemented — users can save layouts as templates
+- [x] **FIX-03**: Timezone validation enforces IANA format with DST handling
+- [x] **FIX-04**: Storage quota enforcement warns at 80%, blocks at 100%
+- [x] **FIX-05**: Email notifications use Resend provider (replace stub)
 
 ### Player Reliability
 
@@ -115,11 +115,11 @@ Deferred to future release:
 | SEC-03 | Phase 3 | Complete |
 | SEC-04 | Phase 3 | Complete |
 | SEC-05 | Phase 4 | Complete |
-| FIX-01 | Phase 5 | Pending |
-| FIX-02 | Phase 5 | Pending |
-| FIX-03 | Phase 5 | Pending |
-| FIX-04 | Phase 5 | Pending |
-| FIX-05 | Phase 5 | Pending |
+| FIX-01 | Phase 5 | Complete |
+| FIX-02 | Phase 5 | Complete |
+| FIX-03 | Phase 5 | Complete |
+| FIX-04 | Phase 5 | Complete |
+| FIX-05 | Phase 5 | Complete |
 | PLR-01 | Phase 6 | Pending |
 | PLR-02 | Phase 6 | Pending |
 | PLR-03 | Phase 6 | Pending |
@@ -156,4 +156,4 @@ Deferred to future release:
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 — Phase 4 complete (SEC-05)*
+*Last updated: 2026-01-23 — Phase 5 complete (FIX-01 through FIX-05)*

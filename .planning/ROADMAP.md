@@ -14,7 +14,7 @@ BizScreen production release progresses through 12 phases: establishing testing 
 - [x] **Phase 2: XSS Prevention** - Fix security vulnerabilities in HTML rendering
 - [x] **Phase 3: Auth Hardening** - Strengthen password and rate limiting policies
 - [x] **Phase 4: Logging Migration** - Replace console.log with structured logging
-- [ ] **Phase 5: Critical Fixes** - Wire up incomplete features and logic gaps
+- [x] **Phase 5: Critical Fixes** - Wire up incomplete features and logic gaps
 - [ ] **Phase 6: Player Reliability** - Harden offline sync and error handling
 - [ ] **Phase 7: Player Refactoring** - Split Player.jsx into focused components
 - [ ] **Phase 8: Page Refactoring** - Split large page components
@@ -110,8 +110,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Save Layout as Template (FIX-02)
-- [ ] 05-02-PLAN.md — Email notifications via Resend (FIX-05)
+- [x] 05-01-PLAN.md — Save Layout as Template (FIX-02)
+- [x] 05-02-PLAN.md — Email notifications via Resend (FIX-05)
 
 ### Phase 6: Player Reliability
 **Goal**: Player handles network failures and errors gracefully without user intervention
@@ -225,7 +225,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 2. XSS Prevention | 5/5 | Complete | 2026-01-22 |
 | 3. Auth Hardening | 4/4 | Complete | 2026-01-22 |
 | 4. Logging Migration | 6/6 | Complete | 2026-01-22 |
-| 5. Critical Fixes | 0/2 | Ready | - |
+| 5. Critical Fixes | 2/2 | Complete | 2026-01-23 |
 | 6. Player Reliability | 0/TBD | Not started | - |
 | 7. Player Refactoring | 0/TBD | Not started | - |
 | 8. Page Refactoring | 0/TBD | Not started | - |
@@ -236,4 +236,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 — Phase 5 planned (2 plans in 1 wave)*
+*Last updated: 2026-01-23 — Phase 5 complete (2 plans executed in parallel)*
