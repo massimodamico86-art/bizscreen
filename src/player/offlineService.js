@@ -28,6 +28,30 @@ import {
 
 const logger = createScopedLogger('OfflineService');
 
+/**
+ * Convert blob to base64 data URL for IndexedDB storage
+ * @param {Blob} blob
+ * @returns {Promise<string>}
+ */
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+/**
+ * Convert base64 data URL back to blob
+ * @param {string} base64
+ * @param {string} mimeType
+ * @returns {Promise<Blob>}
+ */
+function base64ToBlob(base64, mimeType) {
+  return fetch(base64).then(res => res.blob());
+}
+
 // Offline mode configuration
 const OFFLINE_CONFIG = {
   // Time before considering device offline (ms)
@@ -453,13 +477,43 @@ async function syncHeartbeats(heartbeats) {
  */
 async function syncPendingScreenshots() {
   const screenshots = await getPendingEvents().then((events) =>
-    events.filter((e) => e.eventType === 'screenshot')
+    events.filter((e) => e.eventType === 'screenshot').sort((a, b) =>
+      new Date(a.createdAt) - new Date(b.createdAt) // FIFO order
+    )
   );
 
   if (screenshots.length === 0) return;
 
-  logger.debug('[OfflineService] Syncing', screenshots.length, 'pending screenshots');
-  // Screenshots would need custom handling based on how they're stored
+  logger.info('[OfflineService] Syncing pending screenshots', { count: screenshots.length });
+
+  for (const event of screenshots) {
+    try {
+      const { deviceId, imageData, mimeType, capturedAt } = event.eventData;
+
+      // Convert base64 back to blob
+      const blob = await base64ToBlob(imageData, mimeType);
+
+      // Upload using existing screenshot service
+      const { uploadScreenshot } = await import('../services/screenshotService.js');
+      await uploadScreenshot(deviceId, blob);
+
+      // Mark as synced
+      await markEventsSynced([event.id]);
+
+      logger.info('[OfflineService] Synced queued screenshot', {
+        deviceId,
+        capturedAt,
+        sizeKB: Math.round(blob.size / 1024)
+      });
+    } catch (error) {
+      logger.error('[OfflineService] Failed to sync screenshot', {
+        error: error.message,
+        eventId: event.id
+      });
+      // Stop on first failure - will retry on next sync attempt
+      break;
+    }
+  }
 }
 
 /**

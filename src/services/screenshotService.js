@@ -10,6 +10,7 @@ import {
   autoResolveAlert,
   ALERT_TYPES,
 } from './alertEngineService';
+import { queueOfflineEvent } from '../player/cacheService.js';
 
 // Track consecutive failures per device for alert escalation
 const deviceFailureCounts = new Map();
@@ -142,6 +143,31 @@ export async function captureAndUploadScreenshot(deviceId, element, deviceInfo =
     // Capture the screenshot
     const blob = await captureScreenshot(element);
     logger.info('Captured, size:', (blob.size / 1024).toFixed(1), 'KB');
+
+    // Check if online before attempting upload
+    if (!navigator.onLine) {
+      // Convert blob to base64 for persistence
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
+      await queueOfflineEvent('screenshot', {
+        deviceId,
+        imageData: base64,
+        mimeType: blob.type,
+        capturedAt: new Date().toISOString(),
+      });
+
+      logger.info('[ScreenshotService] Screenshot queued for offline sync', {
+        deviceId,
+        sizeKB: Math.round(blob.size / 1024),
+      });
+
+      return null; // No URL available yet - will upload on reconnect
+    }
 
     // Upload to storage
     const url = await uploadScreenshot(deviceId, blob);
