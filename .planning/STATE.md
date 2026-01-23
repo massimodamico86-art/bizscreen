@@ -10,20 +10,20 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 9 of 12 (Device Experience) - IN PROGRESS
-Plan: 1 of 8 in phase 9
+Plan: 5 of 8 in phase 9
 Status: In progress
-Last activity: 2026-01-23 - Completed 09-01 (PIN storage schema and services)
+Last activity: 2026-01-23 - Completed 09-05 (Admin pairing page)
 
-Progress: [#################░░░░░░░] 70% (8.5/12 phases complete)
+Progress: [#################░░░░░░░] 72% (8.6/12 phases complete)
 
 ## Phase 9 Progress
 
 **Device Experience Plans:**
 - [x] 09-01: PIN hash/validation infrastructure (8347f07, 6958085, f93c095)
-- [ ] 09-02: useTapSequence hook
-- [ ] 09-03: PinEntry component
-- [ ] 09-04: PairingScreen component
-- [ ] 09-05: OtpEntryScreen component
+- [x] 09-02: useTapSequence hook
+- [x] 09-03: PinEntry component
+- [x] 09-04: PairingScreen component
+- [x] 09-05: Admin pairing page (4905366, 236868f, 4343643)
 - [ ] 09-06: Pairing polling hook
 - [ ] 09-07: Player integration
 - [ ] 09-08: Testing and verification
@@ -33,6 +33,12 @@ Progress: [#################░░░░░░░] 70% (8.5/12 phases complete)
 - RPC functions: get_device_kiosk_pins, set_device_kiosk_pin, set_master_kiosk_pin
 - playerService exports: hashPin, cacheKioskPinHashes, validatePinOffline
 - screenService exports: setMasterKioskPin, getMasterPinStatus, setDeviceKioskPin
+
+**Plan 09-05 Results:**
+- screenService exports: pairDeviceToScreen, createAndPairScreen, getScreenByDeviceId
+- PairDevicePage.jsx (443 lines) with screen selection and create-new UI
+- Protected route /pair/:deviceId added to AppRouter
+- SCREEN_PAIRED action added to activity log
 
 ## Phase 8 Completion Summary
 
@@ -468,6 +474,9 @@ Recent decisions affecting current work:
 - [09-03]: 4-digit PIN with auto-validate on 4th digit for faster UX
 - [09-03]: 30-second inactivity timeout with useRef for proper cleanup
 - [09-03]: Dark theme (#0f172a) for TV/kiosk environment
+- [09-05]: SCREEN_PAIRED action added to activityLogService for audit trail
+- [09-05]: Pairing functions accept optional PIN parameter for immediate security setup
+- [09-05]: Route uses RequireAuth wrapper to ensure only authenticated admins can pair
 
 ### Pending Todos
 
@@ -489,7 +498,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 09-01-PLAN.md (PIN storage schema and services)
+Stopped at: Completed 09-05-PLAN.md (Admin pairing page)
 Resume file: None
 
 ## Next Steps
@@ -498,5 +507,9 @@ Resume file: None
 
 **Completed plans:**
 - [x] 09-01: PIN hash/validation infrastructure (2 min)
+- [x] 09-02: useTapSequence hook
+- [x] 09-03: PinEntry component
+- [x] 09-04: PairingScreen component
+- [x] 09-05: Admin pairing page (3 min)
 
-**Next:** 09-02 (useTapSequence hook)
+**Next:** 09-06 (Pairing polling hook)
