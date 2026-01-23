@@ -17,7 +17,7 @@ BizScreen production release progresses through 12 phases: establishing testing 
 - [x] **Phase 5: Critical Fixes** - Wire up incomplete features and logic gaps
 - [x] **Phase 6: Player Reliability** - Harden offline sync and error handling *(PLR-01 gap deferred to Phase 7)*
 - [x] **Phase 7: Player Refactoring** - Split Player.jsx into focused components *(hooks extracted, component splitting deferred)*
-- [ ] **Phase 8: Page Refactoring** - Split large page components
+- [ ] **Phase 8: Page Refactoring** - Split large page components *(hooks extracted, gap closure in progress)*
 - [ ] **Phase 9: Device Experience** - QR pairing and kiosk exit improvements
 - [ ] **Phase 10: Analytics** - View duration and content performance tracking
 - [ ] **Phase 11: GDPR Compliance** - Data export and account deletion
@@ -157,15 +157,21 @@ Plans:
   3. PlaylistEditorPage.jsx is under 700 lines with usePlaylistEditor hook
   4. CampaignEditorPage.jsx is under 600 lines with useCampaignEditor hook
   5. FeatureFlagsPage.jsx is under 600 lines with useFeatureFlags hook
-**Plans**: 6 plans
+**Plans**: 12 plans (6 original + 6 gap closure)
 
 Plans:
-- [ ] 08-01-PLAN.md — Extract useFeatureFlags hook (REF-07)
-- [ ] 08-02-PLAN.md — Extract useCampaignEditor hook (REF-06)
-- [ ] 08-03-PLAN.md — Extract usePlaylistEditor hook (REF-05)
-- [ ] 08-04-PLAN.md — Extract useScreensData hook (REF-04)
-- [ ] 08-05-PLAN.md — Extract useMediaLibrary hook (REF-03)
-- [ ] 08-06-PLAN.md — Hook tests and verification
+- [x] 08-01-PLAN.md — Extract useFeatureFlags hook (REF-07)
+- [x] 08-02-PLAN.md — Extract useCampaignEditor hook (REF-06)
+- [x] 08-03-PLAN.md — Extract usePlaylistEditor hook (REF-05)
+- [x] 08-04-PLAN.md — Extract useScreensData hook (REF-04)
+- [x] 08-05-PLAN.md — Extract useMediaLibrary hook (REF-03)
+- [x] 08-06-PLAN.md — Hook tests and verification
+- [ ] 08-07-PLAN.md — Gap closure: Extract FeatureFlagsPage components (target: <600 lines)
+- [ ] 08-08-PLAN.md — Gap closure: Wire MediaLibraryPage to extracted components (target: <800 lines)
+- [ ] 08-09-PLAN.md — Gap closure: Extract ScreensPage components (target: <700 lines)
+- [ ] 08-10-PLAN.md — Gap closure: Extract PlaylistEditorPage components (target: <700 lines)
+- [ ] 08-11-PLAN.md — Gap closure: Extract CampaignEditorPage modals (target: <600 lines)
+- [ ] 08-12-PLAN.md — Gap closure: Final verification
 
 ### Phase 9: Device Experience
 **Goal**: Device pairing and kiosk management are easier for field technicians
@@ -238,7 +244,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 5. Critical Fixes | 2/2 | Complete | 2026-01-23 |
 | 6. Player Reliability | 3/3 | Complete | 2026-01-23 |
 | 7. Player Refactoring | 4/4 | Complete | 2026-01-23 |
-| 8. Page Refactoring | 0/6 | Planning complete | - |
+| 8. Page Refactoring | 6/12 | Gap closure planned | - |
 | 9. Device Experience | 0/TBD | Not started | - |
 | 10. Analytics | 0/TBD | Not started | - |
 | 11. GDPR Compliance | 0/TBD | Not started | - |
@@ -246,4 +252,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 8 planning complete (6 plans)*
+*Last updated: 2026-01-23 — Phase 8 gap closure plans created (08-07 through 08-12)*
