@@ -73,6 +73,12 @@ import {
   adaptivePreload,
   detectBandwidth,
 } from './services/mediaPreloader';
+import { useLogger } from './hooks/useLogger.js';
+import { createScopedLogger } from './services/loggingService.js';
+
+// Module-level logger for utility functions
+const retryLogger = createScopedLogger('Player:retry');
+const appDataLogger = createScopedLogger('Player:appData');
 
 // API base URL for app data fetching
 const API_BASE = '';
@@ -129,7 +135,7 @@ async function retryWithBackoff(fn, maxRetries = RETRY_CONFIG.maxRetries) {
       lastError = error;
       if (attempt < maxRetries - 1) {
         const delay = getRetryDelay(attempt);
-        console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${Math.round(delay)}ms`);
+        retryLogger.debug('Retry attempt', { attempt: attempt + 1, maxRetries, delayMs: Math.round(delay) });
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
@@ -207,7 +213,7 @@ function useAppData(appId, config, refreshMinutes = 10) {
         throw new Error(result.error || 'Unknown error');
       }
     } catch (err) {
-      console.error('[useAppData] Fetch error:', err);
+      appDataLogger.error('Fetch error', { error: err });
       setError(err.message);
     } finally {
       setLoading(false);
@@ -964,6 +970,7 @@ function LayoutRenderer({ layout, timezone, screenId, tenantId, campaignId }) {
  * Phase 6: Added media preloading for smooth transitions
  */
 function SceneRenderer({ scene, screenId, tenantId }) {
+  const logger = useLogger('SceneRenderer');
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPreloading, setIsPreloading] = useState(false);
   const [resolvedBlocksMap, setResolvedBlocksMap] = useState(new Map());
@@ -1004,7 +1011,7 @@ function SceneRenderer({ scene, screenId, tenantId }) {
           setResolvedBlocksMap(resolvedMap);
         }
       } catch (error) {
-        console.error('[SceneRenderer] Failed to resolve data bindings:', error);
+        logger.error('Failed to resolve data bindings', { error });
       }
     }
 
@@ -1034,7 +1041,7 @@ function SceneRenderer({ scene, screenId, tenantId }) {
     dataSourceIds.forEach((dataSourceId) => {
       try {
         const subscription = subscribeToDataSource(dataSourceId, async (update) => {
-          console.log('[SceneRenderer] Data source updated:', dataSourceId, update.type);
+          logger.debug('Data source updated', { dataSourceId, updateType: update.type });
 
           // Clear the cache for this data source
           clearCachedDataSource(dataSourceId);
@@ -1059,7 +1066,7 @@ function SceneRenderer({ scene, screenId, tenantId }) {
                   }
                 });
               } catch (err) {
-                console.error('[SceneRenderer] Failed to re-resolve bindings:', err);
+                logger.error('Failed to re-resolve bindings', { error: err });
               }
             }
           }
@@ -1068,7 +1075,7 @@ function SceneRenderer({ scene, screenId, tenantId }) {
         });
         subscriptions.push(subscription);
       } catch (err) {
-        console.error('[SceneRenderer] Failed to subscribe to data source:', dataSourceId, err);
+        logger.error('Failed to subscribe to data source', { dataSourceId, error: err });
       }
     });
 
@@ -1077,22 +1084,22 @@ function SceneRenderer({ scene, screenId, tenantId }) {
       subscriptions.forEach((sub) => {
         if (sub?.unsubscribe) {
           sub.unsubscribe().catch((err) => {
-            console.warn('[SceneRenderer] Error unsubscribing:', err);
+            logger.warn('Error unsubscribing', { error: err });
           });
         }
       });
     };
-  }, [scene, slides, resolvedBlocksMap]);
+  }, [scene, slides, resolvedBlocksMap, logger]);
 
   // Preload initial scene content on mount
   useEffect(() => {
     if (slides.length > 0) {
       // Preload first few slides
       preloadNextSlides(slides, 0, 3).catch(err => {
-        console.warn('[SceneRenderer] Initial preload error:', err);
+        logger.warn('Initial preload error', { error: err });
       });
     }
-  }, [slides]);
+  }, [slides, logger]);
 
   // Auto-advance slides based on duration with preloading
   useEffect(() => {
@@ -1113,7 +1120,7 @@ function SceneRenderer({ scene, screenId, tenantId }) {
           .then(() => {
             preloadedRef.current.add(slideKey);
           })
-          .catch(err => console.warn('[SceneRenderer] Preload error:', err))
+          .catch(err => logger.warn('Preload error', { error: err }))
           .finally(() => setIsPreloading(false));
       }
     }, preloadDelay);
@@ -1324,6 +1331,7 @@ function SceneBlock({ block, slideIndex }) {
  * Scene Widget Renderer - Renders widgets (clock, date, weather, qr) in scene blocks
  */
 function SceneWidgetRenderer({ widgetType, props }) {
+  const logger = useLogger('SceneWidgetRenderer');
   const [time, setTime] = useState(new Date());
   const [weather, setWeather] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
@@ -1347,7 +1355,7 @@ function SceneWidgetRenderer({ widgetType, props }) {
         const data = await getWeather(location, units);
         setWeather(data);
       } catch (err) {
-        console.error('Failed to fetch weather:', err);
+        logger.error('Failed to fetch weather', { error: err, location, units });
       } finally {
         setWeatherLoading(false);
       }
@@ -1659,6 +1667,7 @@ function SceneWidgetRenderer({ widgetType, props }) {
  * Pairing Page - Enter OTP code to connect TV
  */
 function PairPage() {
+  const logger = useLogger('PairPage');
   const navigate = useNavigate();
   const [otpInput, setOtpInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -1721,7 +1730,7 @@ function PairPage() {
       // Navigate to player view
       navigate('/player/view', { replace: true });
     } catch (err) {
-      console.error('Pairing error:', err);
+      logger.error('Pairing error', { error: err, code });
       // Provide more specific error messages based on error type
       const errorMessage = err.message?.toLowerCase() || '';
       if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
@@ -1985,6 +1994,7 @@ function PairPage() {
  * Player View Page - Full-screen slideshow playback
  */
 function ViewPage() {
+  const logger = useLogger('ViewPage');
   const navigate = useNavigate();
   const [content, setContent] = useState(null);
   const [items, setItems] = useState([]);
@@ -2026,17 +2036,17 @@ function ViewPage() {
       // Initialize IndexedDB cache
       try {
         await initOfflineCache();
-        console.log('Offline cache initialized');
+        logger.info('Offline cache initialized');
       } catch (err) {
-        console.warn('Failed to initialize offline cache:', err);
+        logger.warn('Failed to initialize offline cache', { error: err });
       }
 
       // Initialize enhanced offline service and service worker
       try {
         await initOfflineService();
-        console.log('[Player] Offline service initialized');
+        logger.info('Offline service initialized');
       } catch (err) {
-        console.warn('[Player] Failed to initialize offline service:', err);
+        logger.warn('Failed to initialize offline service', { error: err });
       }
 
       // Check for kiosk mode setting
@@ -2044,7 +2054,7 @@ function ViewPage() {
       if (savedKioskMode === 'true') {
         setKioskMode(true);
         // Enter fullscreen for kiosk mode
-        enterFullscreen().catch(console.warn);
+        enterFullscreen().catch(err => logger.warn('Failed to enter fullscreen', { error: err }));
       }
     };
     init();
@@ -2071,7 +2081,7 @@ function ViewPage() {
         groupId,
         locationId,
       });
-      console.log('[Player] Playback tracking initialized');
+      logger.info('Playback tracking initialized');
       trackPlayerOnline();
     }
 
@@ -2079,7 +2089,7 @@ function ViewPage() {
     if (content.content_source === 'scene' && sceneId) {
       if (prevSceneIdRef.current !== sceneId) {
         // Scene changed - track the new scene
-        console.log('[Player] Scene changed:', prevSceneIdRef.current, '->', sceneId);
+        logger.info('Scene changed', { from: prevSceneIdRef.current, to: sceneId });
         trackSceneStart({
           sceneId,
           groupId,
@@ -2137,13 +2147,13 @@ function ViewPage() {
 
     // Handle incoming commands via realtime
     const onCommand = async (command) => {
-      console.log('[Player] Realtime command received:', command);
+      logger.debug('Realtime command received', { command });
       await handleCommand(command);
     };
 
     // Handle refresh events via realtime
     const onRefresh = async (event) => {
-      console.log('[Player] Realtime refresh event:', event);
+      logger.debug('Realtime refresh event', { event });
       if (event.type === 'scene_change' || event.type === 'refresh_requested') {
         loadContentRef.current?.(screenId, false);
       }
@@ -2153,20 +2163,20 @@ function ViewPage() {
     try {
       unsubscribeCommands = subscribeToDeviceCommands(screenId, onCommand);
       unsubscribeRefresh = subscribeToDeviceRefresh(screenId, onRefresh);
-      console.log('[Player] Realtime subscriptions active');
+      logger.info('Realtime subscriptions active');
     } catch (err) {
-      console.warn('[Player] Realtime subscription failed, falling back to polling:', err);
+      logger.warn('Realtime subscription failed, falling back to polling', { error: err });
 
       // Fallback to polling if realtime fails
       const pollCommands = async () => {
         try {
           const command = await pollForCommand(screenId);
           if (command) {
-            console.log('[Player] Polled command:', command);
+            logger.debug('Polled command', { command });
             await handleCommand(command);
           }
         } catch (pollErr) {
-          console.error('[Player] Command poll error:', pollErr);
+          logger.error('Command poll error', { error: pollErr });
         }
       };
 
@@ -2196,16 +2206,16 @@ function ViewPage() {
 
         // Check if screenshot is requested
         if (statusResult?.needs_screenshot_update && !screenshotInProgressRef.current) {
-          console.log('[Player] Screenshot requested, capturing...');
+          logger.info('Screenshot requested, capturing...');
           screenshotInProgressRef.current = true;
           try {
             const container = contentContainerRef.current || document.body;
             await captureAndUploadScreenshot(screenId, container);
-            console.log('[Player] Screenshot captured and uploaded');
+            logger.info('Screenshot captured and uploaded');
             // Clean up old screenshots (keep last 5)
             await cleanupOldScreenshots(screenId, 5);
           } catch (screenshotErr) {
-            console.error('[Player] Screenshot capture failed:', screenshotErr);
+            logger.error('Screenshot capture failed', { error: screenshotErr });
           } finally {
             screenshotInProgressRef.current = false;
           }
@@ -2215,7 +2225,7 @@ function ViewPage() {
         try {
           const refreshStatus = await checkDeviceRefreshStatus(screenId);
           if (refreshStatus?.needs_refresh) {
-            console.log('[Player] Refresh needed, reloading content...');
+            logger.info('Refresh needed, reloading content...');
             // Reload content using ref to avoid dependency cycle
             loadContentRef.current?.(screenId, false);
             // Clear the refresh flag
@@ -2223,10 +2233,10 @@ function ViewPage() {
           }
         } catch (refreshErr) {
           // Silently ignore refresh check errors to not block heartbeat
-          console.warn('[Player] Refresh check failed:', refreshErr.message);
+          logger.warn('Refresh check failed', { message: refreshErr.message });
         }
       } catch (err) {
-        console.error('Heartbeat error:', err);
+        logger.error('Heartbeat error', { error: err });
       }
     };
 
@@ -2252,13 +2262,13 @@ function ViewPage() {
           // Video hasn't progressed
           const stallDuration = now - (lastActivityRef.current || now);
           if (stallDuration > STUCK_DETECTION.maxVideoStallMs) {
-            console.warn('Video stuck detected, attempting recovery...');
+            logger.warn('Video stuck detected, attempting recovery...');
             // Try to restart video
             try {
               videoRef.current.currentTime = 0;
-              videoRef.current.play().catch(console.error);
+              videoRef.current.play().catch(err => logger.error('Video play failed', { error: err }));
             } catch (err) {
-              console.error('Video recovery failed:', err);
+              logger.error('Video recovery failed', { error: err });
               // Skip to next item as fallback
               advanceToNext?.();
             }
@@ -2273,7 +2283,7 @@ function ViewPage() {
       // Check for general inactivity (page might be frozen)
       const inactiveDuration = now - lastActivityRef.current;
       if (inactiveDuration > STUCK_DETECTION.maxNoActivityMs) {
-        console.warn('Player inactive for too long, reloading...');
+        logger.warn('Player inactive for too long, reloading...');
         window.location.reload();
       }
     };
@@ -2311,7 +2321,7 @@ function ViewPage() {
                 setCurrentIndex(0);
               }
             } catch (err) {
-              console.error('Content reload failed:', err);
+              logger.error('Content reload failed', { error: err });
             }
           }
           break;
@@ -2330,11 +2340,11 @@ function ViewPage() {
           break;
 
         default:
-          console.warn('Unknown command:', commandType);
+          logger.warn('Unknown command', { commandType });
           await reportCommandResult(commandId, false, 'Unknown command');
       }
     } catch (err) {
-      console.error('Command execution failed:', err);
+      logger.error('Command execution failed', { error: err });
       await reportCommandResult(commandId, false, err.message);
     }
   }, []);
@@ -2362,7 +2372,7 @@ function ViewPage() {
       if (!isFullscreen() && kioskMode) {
         // Re-enter fullscreen after a short delay
         setTimeout(() => {
-          enterFullscreen().catch(console.warn);
+          enterFullscreen().catch(err => logger.warn('Failed to enter fullscreen', { error: err }));
         }, 100);
       }
     };
@@ -2390,8 +2400,8 @@ function ViewPage() {
     setKioskPasswordInput('');
     setKioskPasswordError('');
     localStorage.setItem(STORAGE_KEYS.kioskMode, 'false');
-    exitFullscreen().catch(console.warn);
-  }, [kioskPasswordInput]);
+    exitFullscreen().catch(err => logger.warn('Failed to exit fullscreen', { error: err }));
+  }, [kioskPasswordInput, logger]);
 
   // Shuffle array using Fisher-Yates
   const shuffleArray = useCallback((array) => {
@@ -2449,21 +2459,21 @@ function ViewPage() {
       // Cache content for offline use
       try {
         await cacheContent(`content-${screenId}`, data, 'playlist');
-        console.log('Content cached for offline use');
+        logger.debug('Content cached for offline use');
       } catch (cacheErr) {
-        console.warn('Failed to cache content:', cacheErr);
+        logger.warn('Failed to cache content', { error: cacheErr });
       }
 
       setError('');
       return data;
     } catch (err) {
-      console.error('Failed to load content from server:', err);
+      logger.error('Failed to load content from server', { error: err });
 
       // Try to load from offline cache
       try {
         const cachedData = await getCachedContent(`content-${screenId}`);
         if (cachedData) {
-          console.log('Using cached content (offline mode)');
+          logger.info('Using cached content (offline mode)');
           setContent(cachedData);
           setConnectionStatus('offline');
           setIsOfflineMode(true);
@@ -2485,13 +2495,13 @@ function ViewPage() {
           return cachedData;
         }
       } catch (cacheErr) {
-        console.warn('Failed to load from cache:', cacheErr);
+        logger.warn('Failed to load from cache', { error: cacheErr });
       }
 
       setConnectionStatus('offline');
       throw err;
     }
-  }, [shuffleArray]);
+  }, [shuffleArray, logger]);
 
   // Store loadContent in ref for use in heartbeat effect
   useEffect(() => {
@@ -2550,7 +2560,7 @@ function ViewPage() {
         });
 
         if (lastHash !== newHash) {
-          console.log('Content updated, refreshing...');
+          logger.info('Content updated, refreshing...');
           setContent(newContent);
 
           // RPC returns 'mode' field, items at data.items directly
@@ -2572,7 +2582,7 @@ function ViewPage() {
         await sendHeartbeat(screenId);
       } catch (err) {
         consecutiveErrors++;
-        console.error(`Polling error (${consecutiveErrors}/${MAX_CONSECUTIVE_ERRORS}):`, err);
+        logger.error('Polling error', { consecutiveErrors, maxErrors: MAX_CONSECUTIVE_ERRORS, error: err });
 
         if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
           setConnectionStatus('reconnecting');
@@ -2581,7 +2591,7 @@ function ViewPage() {
             await loadContent(screenId, true);
             consecutiveErrors = 0;
           } catch (reconnectError) {
-            console.error('Reconnection failed:', reconnectError);
+            logger.error('Reconnection failed', { error: reconnectError });
             setConnectionStatus('offline');
           }
         }
