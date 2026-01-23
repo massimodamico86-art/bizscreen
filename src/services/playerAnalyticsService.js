@@ -5,6 +5,10 @@
  * Events are queued locally and flushed periodically to reduce network overhead.
  */
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('PlayerAnalytics');
+
 // Configuration
 const FLUSH_INTERVAL_MS = 30000; // Flush every 30 seconds
 const MAX_QUEUE_SIZE = 100; // Force flush if queue exceeds this
@@ -96,7 +100,7 @@ export function startPlaybackEvent({
     playerSessionId: sessionId,
   };
 
-  console.log('[Analytics] Started tracking:', itemType, itemName || mediaId, campaignId ? `(campaign: ${campaignId})` : '');
+  logger.debug('Started tracking', { itemType, itemName, mediaId, campaignId });
 
   return currentEvent;
 }
@@ -126,9 +130,9 @@ export function endPlaybackEvent() {
     delete completedEvent.itemName;
 
     queuePlaybackEvent(completedEvent);
-    console.log('[Analytics] Ended tracking:', currentEvent.itemType, 'duration:', durationSeconds, 's');
+    logger.debug('Ended tracking', { itemType: currentEvent.itemType, durationSeconds });
   } else {
-    console.log('[Analytics] Skipped short event:', durationSeconds, 's');
+    logger.debug('Skipped short event', { durationSeconds });
   }
 
   currentEvent = null;
@@ -143,7 +147,7 @@ function queuePlaybackEvent(event) {
 
   // Force flush if queue is getting large
   if (eventQueue.length >= MAX_QUEUE_SIZE) {
-    console.log('[Analytics] Queue full, flushing...');
+    logger.debug('Queue full, flushing', { queueSize: eventQueue.length });
     flushEvents();
   }
 }
@@ -161,7 +165,7 @@ export async function flushEvents(sync = false) {
   const eventsToSend = [...eventQueue];
   eventQueue = [];
 
-  console.log('[Analytics] Flushing', eventsToSend.length, 'events');
+  logger.debug('Flushing events', { count: eventsToSend.length });
 
   try {
     if (sync && typeof navigator !== 'undefined' && navigator.sendBeacon) {
@@ -182,12 +186,12 @@ export async function flushEvents(sync = false) {
 
       if (!response.ok) {
         // Put events back in queue on failure
-        console.error('[Analytics] Flush failed, re-queuing events');
+        logger.warn('Flush failed, re-queuing events', { count: eventsToSend.length });
         eventQueue = [...eventsToSend, ...eventQueue];
       }
     }
   } catch (error) {
-    console.error('[Analytics] Flush error:', error);
+    logger.error('Flush failed', { error });
     // Put events back in queue on error
     eventQueue = [...eventsToSend, ...eventQueue];
   }

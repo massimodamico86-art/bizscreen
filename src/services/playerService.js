@@ -2,6 +2,9 @@
 // Uses SECURITY DEFINER RPC functions for anonymous access
 // Includes offline mode support, command polling, and auto-recovery
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('PlayerService');
 
 // ============================================
 // CONSTANTS
@@ -24,7 +27,7 @@ export async function heartbeat(screenId) {
   });
 
   if (error) {
-    console.error('Failed to update heartbeat:', error);
+    logger.error('Failed to update heartbeat', { error, screenId });
   }
 }
 
@@ -151,7 +154,7 @@ export async function pollForCommand(screenId) {
     });
 
     if (error) {
-      console.error('Failed to poll for commands:', error);
+      logger.error('Failed to poll for commands', { error, screenId });
       return null;
     }
 
@@ -166,7 +169,7 @@ export async function pollForCommand(screenId) {
 
     return null;
   } catch (err) {
-    console.error('Command poll error:', err);
+    logger.error('Command poll exception', { error: err, screenId });
     return null;
   }
 }
@@ -186,10 +189,10 @@ export async function reportCommandResult(commandId, success = true, errorMessag
     });
 
     if (error) {
-      console.error('Failed to report command result:', error);
+      logger.error('Failed to report command result', { error, commandId });
     }
   } catch (err) {
-    console.error('Command result report error:', err);
+    logger.error('Command result report exception', { error: err, commandId });
   }
 }
 
@@ -211,13 +214,13 @@ export async function updateDeviceStatus(screenId, playerVersion = null, cachedC
     });
 
     if (error) {
-      console.error('Failed to update device status:', error);
+      logger.error('Failed to update device status', { error, screenId });
       return null;
     }
 
     return data;
   } catch (err) {
-    console.error('Device status update error:', err);
+    logger.error('Device status update exception', { error: err, screenId });
     return null;
   }
 }
@@ -239,7 +242,7 @@ export async function initOfflineCache() {
     const request = indexedDB.open(INDEXEDDB_NAME, INDEXEDDB_VERSION);
 
     request.onerror = () => {
-      console.error('Failed to open IndexedDB:', request.error);
+      logger.error('Failed to open IndexedDB', { error: request.error });
       reject(request.error);
     };
 
@@ -284,7 +287,7 @@ export async function cacheContent(key, data, type = 'metadata') {
       request.onerror = () => reject(request.error);
     });
   } catch (err) {
-    console.error('Failed to cache content:', err);
+    logger.error('Failed to cache content', { error: err, key, type });
   }
 }
 
@@ -306,12 +309,12 @@ export async function getCachedContent(key) {
         resolve(result ? result.data : null);
       };
       request.onerror = () => {
-        console.error('Failed to get cached content:', request.error);
+        logger.error('Failed to get cached content', { error: request.error, key });
         resolve(null);
       };
     });
   } catch (err) {
-    console.error('Failed to read from cache:', err);
+    logger.error('Failed to read from cache', { error: err, key });
     return null;
   }
 }
@@ -331,9 +334,9 @@ export async function clearCache() {
       request.onerror = () => reject(request.error);
     });
 
-    console.log('Cache cleared successfully');
+    logger.info('Cache cleared successfully');
   } catch (err) {
-    console.error('Failed to clear cache:', err);
+    logger.error('Failed to clear cache', { error: err });
   }
 }
 
@@ -368,7 +371,7 @@ export async function getPlayerContentWithOffline(screenId) {
 
     return { content, offline: false };
   } catch (err) {
-    console.warn('Failed to fetch content from server, trying cache:', err.message);
+    logger.warn('Failed to fetch content from server, trying cache', { error: err, screenId });
 
     // Try to get from cache
     const cached = await getCachedContent(`content-${screenId}`);
@@ -460,7 +463,7 @@ export async function retryWithBackoff(fn, options = {}) {
 
       if (attempt < maxAttempts - 1) {
         const delay = calculateBackoff(attempt, baseDelay, maxDelay);
-        console.warn(`Attempt ${attempt + 1} failed, retrying in ${delay}ms:`, err.message);
+        logger.warn('Retry attempt failed', { attempt: attempt + 1, delayMs: delay, error: err });
 
         if (onRetry) {
           onRetry(attempt + 1, delay, err);
@@ -507,7 +510,7 @@ export async function enterFullscreen(element = document.documentElement) {
       await element.msRequestFullscreen();
     }
   } catch (err) {
-    console.error('Failed to enter fullscreen:', err);
+    logger.error('Failed to enter fullscreen', { error: err });
   }
 }
 
@@ -526,7 +529,7 @@ export async function exitFullscreen() {
       await document.msExitFullscreen();
     }
   } catch (err) {
-    console.error('Failed to exit fullscreen:', err);
+    logger.error('Failed to exit fullscreen', { error: err });
   }
 }
 
@@ -592,7 +595,7 @@ export class PlayerManager {
       await enterFullscreen();
     }
 
-    console.log('PlayerManager started for screen:', this.screenId);
+    logger.info('PlayerManager started', { screenId: this.screenId });
   }
 
   /**
@@ -616,7 +619,7 @@ export class PlayerManager {
       this.contentCheckTimer = null;
     }
 
-    console.log('PlayerManager stopped');
+    logger.info('PlayerManager stopped', { screenId: this.screenId });
   }
 
   /**
@@ -627,7 +630,7 @@ export class PlayerManager {
       const command = await pollForCommand(this.screenId);
 
       if (command) {
-        console.log('Received command:', command);
+        logger.info('Received command', { command, screenId: this.screenId });
         await this.handleCommand(command);
       }
     };
@@ -690,7 +693,7 @@ export class PlayerManager {
           break;
 
         default:
-          console.warn('Unknown command type:', commandType);
+          logger.warn('Unknown command type', { commandType, commandId });
           await reportCommandResult(commandId, false, 'Unknown command type');
       }
 
@@ -698,7 +701,7 @@ export class PlayerManager {
         this.options.onCommand(command);
       }
     } catch (err) {
-      console.error('Command execution failed:', err);
+      logger.error('Command execution failed', { error: err, commandId, commandType });
       await reportCommandResult(commandId, false, err.message);
     }
   }
