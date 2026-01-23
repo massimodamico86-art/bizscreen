@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   PageLayout,
   PageHeader,
@@ -68,6 +69,7 @@ const STATUS_CONFIG = {
 
 const CampaignsPage = ({ showToast }) => {
   const { t } = useTranslation();
+  const logger = useLogger('CampaignsPage');
   const { user } = useAuth();
   const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState([]);
@@ -94,7 +96,7 @@ const CampaignsPage = ({ showToast }) => {
       });
       setCampaigns(data);
     } catch (error) {
-      console.error('Error loading campaigns:', error);
+      logger.error('Error loading campaigns:', error);
       showToast?.('Error loading campaigns', 'error');
     } finally {
       setLoading(false);
@@ -116,7 +118,7 @@ const CampaignsPage = ({ showToast }) => {
       setCampaigns(campaigns.filter(c => c.id !== id));
       showToast?.('Campaign deleted');
     } catch (error) {
-      console.error('Error deleting campaign:', error);
+      logger.error('Error deleting campaign:', error);
       showToast?.('Error deleting campaign: ' + error.message, 'error');
     }
     setOpenMenuId(null);
@@ -128,7 +130,7 @@ const CampaignsPage = ({ showToast }) => {
       showToast?.('Campaign activated');
       loadCampaigns();
     } catch (error) {
-      console.error('Error activating campaign:', error);
+      logger.error('Error activating campaign:', error);
       showToast?.('Error activating campaign: ' + error.message, 'error');
     }
     setOpenMenuId(null);
@@ -140,7 +142,7 @@ const CampaignsPage = ({ showToast }) => {
       showToast?.('Campaign paused');
       loadCampaigns();
     } catch (error) {
-      console.error('Error pausing campaign:', error);
+      logger.error('Error pausing campaign:', error);
       showToast?.('Error pausing campaign: ' + error.message, 'error');
     }
     setOpenMenuId(null);

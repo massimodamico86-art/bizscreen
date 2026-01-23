@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   CreditCard,
   Monitor,
@@ -63,6 +64,7 @@ import {
 
 const AccountPlanPage = ({ showToast }) => {
   const { t } = useTranslation();
+  const logger = useLogger('AccountPlanPage');
   const [subscription, setSubscription] = useState(null);
   const [plans, setPlans] = useState([]);
   const [usage, setUsage] = useState(null);
@@ -92,7 +94,7 @@ const AccountPlanPage = ({ showToast }) => {
       setPlans(plansData);
       setUsage(usageData);
     } catch (err) {
-      console.error('Error loading plan data:', err);
+      logger.error('Error loading plan data:', err);
       setError(err.message || 'Failed to load plan data');
       showToast?.(t('accountPlan.errorLoading', 'Error loading plan data: {{message}}', { message: err.message }), 'error');
     } finally {
@@ -118,7 +120,7 @@ const AccountPlanPage = ({ showToast }) => {
       setUpgrading(planSlug);
       await startCheckout(planSlug);
     } catch (error) {
-      console.error('Error starting checkout:', error);
+      logger.error('Error starting checkout:', error);
       showToast?.(t('accountPlan.errorCheckout', 'Error starting checkout: {{message}}', { message: error.message }), 'error');
       setUpgrading(null);
     }
@@ -129,7 +131,7 @@ const AccountPlanPage = ({ showToast }) => {
       setOpeningPortal(true);
       await openBillingPortal();
     } catch (error) {
-      console.error('Error opening billing portal:', error);
+      logger.error('Error opening billing portal:', error);
       showToast?.(t('accountPlan.errorPortal', 'Error opening billing portal: {{message}}', { message: error.message }), 'error');
       setOpeningPortal(false);
     }

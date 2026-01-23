@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   AlertTriangle,
   AlertCircle,
@@ -104,6 +105,7 @@ const STATUS_STYLES = {
 
 export default function AlertsCenterPage({ showToast, onNavigate }) {
   const { t } = useTranslation();
+  const logger = useLogger('AlertsCenterPage');
   const [alerts, setAlerts] = useState([]);
   const [summary, setSummary] = useState({
     open: 0,
@@ -146,7 +148,7 @@ export default function AlertsCenterPage({ showToast, onNavigate }) {
       setTotalCount(alertsResult.count);
       setSummary(summaryResult);
     } catch (error) {
-      console.error('[AlertsCenterPage] Error loading alerts:', error);
+      logger.error('[AlertsCenterPage] Error loading alerts:', error);
       showToast?.(t('alerts.loadError', 'Failed to load alerts'), 'error');
     } finally {
       setLoading(false);

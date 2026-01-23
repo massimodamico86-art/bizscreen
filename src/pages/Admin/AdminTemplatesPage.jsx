@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useLogger } from '../../hooks/useLogger.js';
 import PageLayout from '../../design-system/components/PageLayout';
 import {
   fetchAdminTemplates,
@@ -24,6 +25,7 @@ const LICENSE_COLORS = {
 };
 
 export default function AdminTemplatesPage({ onNavigate }) {
+  const logger = useLogger('AdminTemplatesPage');
 
   // State
   const [templates, setTemplates] = useState([]);
@@ -47,7 +49,7 @@ export default function AdminTemplatesPage({ onNavigate }) {
   useEffect(() => {
     fetchCategories()
       .then(setCategories)
-      .catch(err => console.error('Failed to load categories:', err));
+      .catch(err => logger.error('Failed to load categories:', err));
   }, []);
 
   // Load templates
@@ -62,7 +64,7 @@ export default function AdminTemplatesPage({ onNavigate }) {
       });
       setTemplates(data);
     } catch (err) {
-      console.error('Failed to load templates:', err);
+      logger.error('Failed to load templates:', err);
       setError('Failed to load templates');
     } finally {
       setLoading(false);
@@ -79,7 +81,7 @@ export default function AdminTemplatesPage({ onNavigate }) {
       await updateTemplate(template.id, { isActive: !template.is_active });
       loadTemplates();
     } catch (err) {
-      console.error('Failed to update template:', err);
+      logger.error('Failed to update template:', err);
       setError('Failed to update template');
     }
   };
@@ -90,7 +92,7 @@ export default function AdminTemplatesPage({ onNavigate }) {
       await updateTemplate(template.id, { isFeatured: !template.is_featured });
       loadTemplates();
     } catch (err) {
-      console.error('Failed to update template:', err);
+      logger.error('Failed to update template:', err);
       setError('Failed to update template');
     }
   };
@@ -105,7 +107,7 @@ export default function AdminTemplatesPage({ onNavigate }) {
       setDeleteId(null);
       loadTemplates();
     } catch (err) {
-      console.error('Failed to delete template:', err);
+      logger.error('Failed to delete template:', err);
       setError('Failed to delete template');
     } finally {
       setDeleting(false);

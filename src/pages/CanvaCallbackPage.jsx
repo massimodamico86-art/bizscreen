@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { useLogger } from '../hooks/useLogger.js';
 import { handleCanvaCallback } from '../services/canvaService';
 
 /**
@@ -7,6 +8,7 @@ import { handleCanvaCallback } from '../services/canvaService';
  * Handles the redirect from Canva after user authorization
  */
 const CanvaCallbackPage = ({ onNavigate, showToast }) => {
+  const logger = useLogger('CanvaCallbackPage');
   const [status, setStatus] = useState('processing'); // processing, success, error
   const [error, setError] = useState(null);
 
@@ -38,7 +40,7 @@ const CanvaCallbackPage = ({ onNavigate, showToast }) => {
           onNavigate?.('layouts');
         }, 2000);
       } catch (err) {
-        console.error('Canva callback error:', err);
+        logger.error('Canva callback error:', err);
         setStatus('error');
         setError(err.message);
         showToast?.('Failed to connect to Canva', 'error');

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabase';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import ErrorBoundary from '../components/ErrorBoundary';
 import {
   PageLayout,
@@ -22,6 +23,7 @@ import { Users, Building2, UserCheck, ExternalLink, Plus, Upload, FileText, X, D
 
 export default function AdminDashboardPage({ onNavigate }) {
   const { t } = useTranslation();
+  const logger = useLogger('AdminDashboardPage');
   const { userProfile } = useAuth();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -112,7 +114,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       });
 
     } catch (err) {
-      console.error('Error fetching admin data:', err);
+      logger.error('Error fetching admin data:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -150,7 +152,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       setSelectedClientId('');
       fetchAdminData(); // Refresh data
     } catch (err) {
-      console.error('Error creating property:', err);
+      logger.error('Error creating property:', err);
       setError(err.message);
     } finally {
       setActionLoading(false);
@@ -223,7 +225,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       setSelectedClientId('');
       fetchAdminData();
     } catch (err) {
-      console.error('Error importing guests:', err);
+      logger.error('Error importing guests:', err);
       setError(err.message);
     } finally {
       setActionLoading(false);
@@ -265,7 +267,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       setActionSuccess(t('admin.reportGenerated', 'Report downloaded successfully!'));
       setGenerateReportModal(false);
     } catch (err) {
-      console.error('Error generating report:', err);
+      logger.error('Error generating report:', err);
       setError(err.message);
     } finally {
       setActionLoading(false);

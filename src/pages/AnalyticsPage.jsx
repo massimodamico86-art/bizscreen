@@ -19,6 +19,7 @@ import {
   Mail,
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   PageLayout,
   PageHeader,
@@ -47,6 +48,7 @@ import {
 
 export default function AnalyticsPage({ showToast }) {
   const { t } = useTranslation();
+  const logger = useLogger('AnalyticsPage');
   // Filters
   const [dateRange, setDateRange] = useState('7d');
   const [locationId, setLocationId] = useState(null);
@@ -75,7 +77,7 @@ export default function AnalyticsPage({ showToast }) {
         const data = await fetchLocations();
         setLocations(data);
       } catch (error) {
-        console.error('Failed to load locations:', error);
+        logger.error('Failed to load locations:', error);
       }
     }
     loadLocations();
@@ -113,7 +115,7 @@ export default function AnalyticsPage({ showToast }) {
       setPlaylistPlayback(playlists);
       setMediaPlayback(media);
     } catch (error) {
-      console.error('Failed to load analytics:', error);
+      logger.error('Failed to load analytics:', error);
       showToast?.('Failed to load analytics data', 'error');
     } finally {
       setLoading(false);
@@ -135,7 +137,7 @@ export default function AnalyticsPage({ showToast }) {
         const monthly = subs.find(s => s.frequency === 'monthly') || null;
         setReportSettings({ weekly, monthly });
       } catch (error) {
-        console.error('Failed to load report settings:', error);
+        logger.error('Failed to load report settings:', error);
       }
     }
     if (canManageReports) {
@@ -153,7 +155,7 @@ export default function AnalyticsPage({ showToast }) {
       }));
       showToast?.(`${frequency.charAt(0).toUpperCase() + frequency.slice(1)} reports ${enabled ? 'enabled' : 'disabled'}`);
     } catch (error) {
-      console.error('Failed to update report:', error);
+      logger.error('Failed to update report:', error);
       showToast?.('Failed to update report settings', 'error');
     }
   };

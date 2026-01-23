@@ -17,6 +17,7 @@ import {
   LinkIcon,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLogger } from '../hooks/useLogger.js';
 import { formatDate } from '../utils/formatters';
 import { Button, Card } from '../design-system';
 import { useTranslation } from '../i18n';
@@ -70,6 +71,7 @@ const colorClasses = {
 
 const AppsPage = ({ showToast }) => {
   const { t } = useTranslation();
+  const logger = useLogger('AppsPage');
   const { user } = useAuth();
 
   // User's created app instances
@@ -107,7 +109,7 @@ const AppsPage = ({ showToast }) => {
       const data = await fetchApps();
       setUserApps(data);
     } catch (error) {
-      console.error('Error fetching apps:', error);
+      logger.error('Error fetching apps:', error);
     } finally {
       setLoadingUserApps(false);
     }
@@ -182,7 +184,7 @@ const AppsPage = ({ showToast }) => {
       setUserApps(userApps.filter(a => a.id !== id));
       showToast?.('App deleted successfully');
     } catch (error) {
-      console.error('Error deleting app:', error);
+      logger.error('Error deleting app:', error);
       showToast?.('Error deleting app: ' + error.message, 'error');
     }
     setOpenMenuId(null);
@@ -435,7 +437,7 @@ const AppsPage = ({ showToast }) => {
               setShowClockModal(false);
               setSelectedApp(null);
             } catch (error) {
-              console.error('Error creating app:', error);
+              logger.error('Error creating app:', error);
               showToast?.('Error creating app: ' + error.message, 'error');
             } finally {
               setCreating(false);
@@ -462,7 +464,7 @@ const AppsPage = ({ showToast }) => {
               setShowWebPageModal(false);
               setSelectedApp(null);
             } catch (error) {
-              console.error('Error creating app:', error);
+              logger.error('Error creating app:', error);
               showToast?.('Error creating app: ' + error.message, 'error');
             } finally {
               setCreating(false);
@@ -499,7 +501,7 @@ const AppsPage = ({ showToast }) => {
               setShowWeatherModal(false);
               setSelectedApp(null);
             } catch (error) {
-              console.error('Error creating app:', error);
+              logger.error('Error creating app:', error);
               showToast?.('Error creating app: ' + error.message, 'error');
             } finally {
               setCreating(false);
@@ -526,7 +528,7 @@ const AppsPage = ({ showToast }) => {
               setShowRssTickerModal(false);
               setSelectedApp(null);
             } catch (error) {
-              console.error('Error creating app:', error);
+              logger.error('Error creating app:', error);
               showToast?.('Error creating app: ' + error.message, 'error');
             } finally {
               setCreating(false);
@@ -553,7 +555,7 @@ const AppsPage = ({ showToast }) => {
               setShowDataTableModal(false);
               setSelectedApp(null);
             } catch (error) {
-              console.error('Error creating app:', error);
+              logger.error('Error creating app:', error);
               showToast?.('Error creating app: ' + error.message, 'error');
             } finally {
               setCreating(false);
@@ -580,7 +582,7 @@ const AppsPage = ({ showToast }) => {
               setShowGenericEmbedModal(false);
               setSelectedApp(null);
             } catch (error) {
-              console.error('Error creating app:', error);
+              logger.error('Error creating app:', error);
               showToast?.('Error creating app: ' + error.message, 'error');
             } finally {
               setCreating(false);
