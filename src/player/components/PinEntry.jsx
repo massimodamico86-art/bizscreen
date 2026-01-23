@@ -103,7 +103,13 @@ export function PinEntry({ onValidate, onDismiss, onSuccess }) {
   const KeypadButton = ({ value, onClick, wide, children }) => (
     <button
       onClick={() => {
-        if (value !== undefined) onClick(value);
+        // For digit buttons (value defined), pass the value
+        // For action buttons (clear/backspace), just call onClick
+        if (value !== undefined) {
+          onClick(value);
+        } else {
+          onClick();
+        }
       }}
       disabled={isValidating}
       style={{
