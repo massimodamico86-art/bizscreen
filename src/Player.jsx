@@ -75,6 +75,7 @@ import {
 } from './services/mediaPreloader';
 import { useLogger } from './hooks/useLogger.js';
 import { createScopedLogger } from './services/loggingService.js';
+import { ClockWidget, DateWidget, WeatherWidget, QRCodeWidget } from './player/components/widgets';
 
 // Module-level logger for utility functions
 const retryLogger = createScopedLogger('Player:retry');
@@ -112,19 +113,8 @@ const RETRY_CONFIG = {
 };
 
 /**
- * Calculate exponential backoff delay
- */
-function getRetryDelay(attempt) {
-  const delay = Math.min(
-    RETRY_CONFIG.baseDelayMs * Math.pow(2, attempt),
-    RETRY_CONFIG.maxDelayMs
-  );
-  // Add jitter (0-25% of delay)
-  return delay + Math.random() * delay * 0.25;
-}
-
-/**
  * Retry a function with exponential backoff
+ * Uses calculateBackoff from playerService for full jitter (0-100%)
  */
 async function retryWithBackoff(fn, maxRetries = RETRY_CONFIG.maxRetries) {
   let lastError;
@@ -134,7 +124,8 @@ async function retryWithBackoff(fn, maxRetries = RETRY_CONFIG.maxRetries) {
     } catch (error) {
       lastError = error;
       if (attempt < maxRetries - 1) {
-        const delay = getRetryDelay(attempt);
+        // Use calculateBackoff from playerService (0-100% full jitter)
+        const delay = calculateBackoff(attempt, RETRY_CONFIG.baseDelayMs, RETRY_CONFIG.maxDelayMs);
         retryLogger.debug('Retry attempt', { attempt: attempt + 1, maxRetries, delayMs: Math.round(delay) });
         await new Promise(resolve => setTimeout(resolve, delay));
       }
@@ -1338,321 +1329,23 @@ function SceneBlock({ block, slideIndex }) {
 
 /**
  * Scene Widget Renderer - Renders widgets (clock, date, weather, qr) in scene blocks
+ * Uses extracted widget components from player/components/widgets/
  */
 function SceneWidgetRenderer({ widgetType, props }) {
-  const logger = useLogger('SceneWidgetRenderer');
-  const [time, setTime] = useState(new Date());
-  const [weather, setWeather] = useState(null);
-  const [weatherLoading, setWeatherLoading] = useState(false);
-
-  // Clock/date update interval
-  useEffect(() => {
-    const interval = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Weather data fetching with 10-minute auto-refresh
-  const location = props?.location || 'Miami, FL';
-  const units = props?.units || 'imperial';
-
-  useEffect(() => {
-    if (widgetType !== 'weather') return;
-
-    const fetchWeatherData = async () => {
-      setWeatherLoading(true);
-      try {
-        const data = await getWeather(location, units);
-        setWeather(data);
-      } catch (err) {
-        logger.error('Failed to fetch weather', { error: err, location, units });
-      } finally {
-        setWeatherLoading(false);
-      }
-    };
-
-    // Fetch immediately
-    fetchWeatherData();
-
-    // Set up 10-minute refresh interval
-    const weatherInterval = setInterval(fetchWeatherData, 10 * 60 * 1000);
-    return () => clearInterval(weatherInterval);
-  }, [widgetType, location, units]);
-
-  // Safe props with defaults
   const safeProps = props || {};
-  const textColor = safeProps.textColor || '#ffffff';
-  const accentColor = safeProps.accentColor || '#3b82f6';
-  const size = safeProps.size || 'medium';
-  const customFontSize = safeProps.customFontSize;
-
-  // Size mappings for clock/date/weather
-  const sizeMap = {
-    small: {
-      clock: 'clamp(0.8rem, 3vw, 1.5rem)',
-      date: 'clamp(0.6rem, 1.5vw, 1rem)',
-      weatherTemp: 'clamp(0.8rem, 2.5vw, 1.5rem)',
-      weatherSecondary: 'clamp(0.4rem, 1vw, 0.625rem)',
-    },
-    medium: {
-      clock: 'clamp(1rem, 5vw, 3rem)',
-      date: 'clamp(0.75rem, 2vw, 1.5rem)',
-      weatherTemp: 'clamp(1rem, 3vw, 2rem)',
-      weatherSecondary: 'clamp(0.5rem, 1vw, 0.75rem)',
-    },
-    large: {
-      clock: 'clamp(1.5rem, 8vw, 5rem)',
-      date: 'clamp(1rem, 3vw, 2rem)',
-      weatherTemp: 'clamp(1.2rem, 4vw, 2.5rem)',
-      weatherSecondary: 'clamp(0.6rem, 1.2vw, 0.875rem)',
-    },
-  };
-
-  // Get font size - handles custom size with explicit px value
-  const getFontSize = (widgetKey, fallbackKey = 'clock') => {
-    if (size === 'custom' && customFontSize) {
-      return `${customFontSize}px`;
-    }
-    return sizeMap[size]?.[widgetKey] || sizeMap.medium[fallbackKey];
-  };
-
-  const formatTime = () => {
-    return time.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
-  const formatDate = () => {
-    return time.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
 
   switch (widgetType) {
     case 'clock':
-      return (
-        <div style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: textColor,
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: getFontSize('clock'),
-          fontWeight: '300',
-        }}>
-          {formatTime()}
-        </div>
-      );
+      return <ClockWidget props={safeProps} />;
 
     case 'date':
-      return (
-        <div style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: textColor,
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: getFontSize('date'),
-          fontWeight: '400',
-        }}>
-          {formatDate()}
-        </div>
-      );
+      return <DateWidget props={safeProps} />;
 
-    case 'weather': {
-      // Weather widget props
-      const widgetLocation = safeProps.location || 'Miami, FL';
-      const widgetUnits = safeProps.units || 'imperial';
-      const style = safeProps.style || 'minimal';
+    case 'weather':
+      return <WeatherWidget props={safeProps} />;
 
-      // Use fetched weather data, or fallback values while loading
-      const displayTemp = weather?.tempFormatted || (widgetUnits === 'metric' ? '22°C' : '72°F');
-      const displayLocation = weather?.city || widgetLocation.split(',')[0];
-      const weatherIcon = weather?.iconUrl;
-      const weatherDescription = weather?.description || 'Partly Cloudy';
-
-      // Loading indicator style
-      const loadingOpacity = weatherLoading ? 0.6 : 1;
-
-      // Fallback SVG icon when no API icon available
-      const FallbackIcon = ({ size = 24 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="4" fill={accentColor} />
-          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke={accentColor} strokeWidth="2" strokeLinecap="round"/>
-        </svg>
-      );
-
-      if (style === 'card') {
-        return (
-          <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'rgba(0,0,0,0.3)',
-            borderRadius: '12px',
-            padding: '8px',
-            fontFamily: 'system-ui, sans-serif',
-            opacity: loadingOpacity,
-            transition: 'opacity 0.3s ease',
-          }}>
-            {/* Weather Icon - from API or fallback */}
-            {weatherIcon ? (
-              <img
-                src={weatherIcon}
-                alt={weatherDescription}
-                style={{ width: 48, height: 48, marginBottom: '4px' }}
-              />
-            ) : (
-              <div style={{ marginBottom: '4px' }}>
-                <FallbackIcon size={32} />
-              </div>
-            )}
-            <div style={{ color: textColor, fontSize: getFontSize('weatherTemp'), fontWeight: '600' }}>
-              {displayTemp}
-            </div>
-            <div style={{ color: textColor, opacity: 0.8, fontSize: getFontSize('weatherSecondary') }}>
-              {weatherDescription}
-            </div>
-            <div style={{ color: textColor, opacity: 0.6, fontSize: getFontSize('weatherSecondary') }}>
-              {displayLocation}
-            </div>
-          </div>
-        );
-      }
-
-      // Minimal style (default)
-      return (
-        <div style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          fontFamily: 'system-ui, sans-serif',
-          opacity: loadingOpacity,
-          transition: 'opacity 0.3s ease',
-        }}>
-          {/* Weather Icon - from API or fallback */}
-          {weatherIcon ? (
-            <img
-              src={weatherIcon}
-              alt={weatherDescription}
-              style={{ width: 36, height: 36 }}
-            />
-          ) : (
-            <FallbackIcon size={24} />
-          )}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ color: textColor, fontSize: getFontSize('weatherTemp'), fontWeight: '600', lineHeight: 1 }}>
-              {displayTemp}
-            </span>
-            <span style={{ color: textColor, opacity: 0.7, fontSize: getFontSize('weatherSecondary'), lineHeight: 1 }}>
-              {displayLocation}
-            </span>
-          </div>
-        </div>
-      );
-    }
-
-    case 'qr': {
-      const cornerRadius = safeProps.cornerRadius || 8;
-      const label = safeProps.label || '';
-      const url = safeProps.url || '';
-      const errorCorrection = safeProps.errorCorrection || 'M';
-      const qrScale = Math.min(2, Math.max(0.5, safeProps.qrScale || 1.0));
-      const qrFgColor = safeProps.qrFgColor || '#000000';
-      const qrBgColor = safeProps.qrBgColor || '#ffffff';
-
-      // Fallback placeholder when URL is empty
-      const QRPlaceholder = () => (
-        <div style={{
-          width: '100%',
-          height: '100%',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
-          gridTemplateRows: 'repeat(5, 1fr)',
-          gap: '2px',
-        }}>
-          {[0,1,2,3,4,5,6,7,8,10,14,15,16,17,18,19,20,21,22,24].map(i => (
-            <div key={i} style={{ background: qrFgColor, borderRadius: '1px' }} />
-          ))}
-          {[9,11,12,13,23].map(i => (
-            <div key={i} style={{ background: qrFgColor, opacity: 0.4, borderRadius: '1px' }} />
-          ))}
-        </div>
-      );
-
-      return (
-        <div style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '4px',
-          fontFamily: 'system-ui, sans-serif',
-        }}>
-          {/* QR Code Container */}
-          <div style={{
-            width: `min(${80 * qrScale}%, calc(100% - 8px))`,
-            aspectRatio: '1',
-            maxHeight: label ? '70%' : '90%',
-            background: qrBgColor,
-            borderRadius: `${cornerRadius}px`,
-            padding: `${8 * qrScale}px`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            overflow: 'hidden',
-          }}>
-            {url ? (
-              <QRCodeSVG
-                value={url}
-                size={256}
-                level={errorCorrection}
-                fgColor={qrFgColor}
-                bgColor={qrBgColor}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  maxWidth: '100%',
-                  maxHeight: '100%',
-                }}
-              />
-            ) : (
-              <QRPlaceholder />
-            )}
-          </div>
-          {/* Label */}
-          {(label || url) && (
-            <div style={{
-              marginTop: '4px',
-              color: textColor,
-              fontSize: 'clamp(0.5rem, 1.5vw, 0.75rem)',
-              textAlign: 'center',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              maxWidth: '100%',
-            }}>
-              {label || (url.length > 25 ? url.slice(0, 25) + '...' : url)}
-            </div>
-          )}
-        </div>
-      );
-    }
+    case 'qr':
+      return <QRCodeWidget props={safeProps} />;
 
     default:
       return (
