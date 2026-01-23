@@ -46,6 +46,7 @@ import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { Button, Card } from '../design-system';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   generateSlides,
   materializePlaylist,
@@ -286,6 +287,7 @@ const LibraryMediaItem = ({ media, countInPlaylist = 0, onAdd }) => {
 const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const logger = useLogger('PlaylistEditorPage');
   const [playlist, setPlaylist] = useState(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -426,7 +428,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
 
       setItems(enrichedItems);
     } catch (error) {
-      console.error('Error fetching playlist:', error);
+      logger.error('Error fetching playlist', { error, playlistId });
       showToast?.('Error loading playlist: ' + error.message, 'error');
     } finally {
       setLoading(false);
@@ -468,7 +470,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         setFolders(data || []);
       }
     } catch (err) {
-      console.error('Error fetching folders:', err);
+      logger.error('Error fetching media folders', { error: err, currentFolderId });
     } finally {
       setLoadingFolders(false);
     }
@@ -501,7 +503,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         setFolderPath(data || []);
       }
     } catch (err) {
-      console.error('Error fetching folder path:', err);
+      logger.error('Error fetching folder path', { error: err, currentFolderId });
     }
   };
 
@@ -574,7 +576,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       }
       setVisibleRange({ start: 0, end: 20 });
     } catch (error) {
-      console.error('Error fetching media:', error);
+      logger.error('Error fetching media assets', { error, mediaFilter, mediaSearch, currentFolderId });
     }
   };
 
@@ -652,7 +654,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       setItems(prev => [...prev, data]);
       showToast?.(`Added "${media.name}" to playlist`);
     } catch (error) {
-      console.error('Error adding item:', error);
+      logger.error('Error adding item to playlist', { error, playlistId, itemType: media._isDesign ? 'layout' : 'media' });
       showToast?.('Error adding item: ' + error.message, 'error');
     } finally {
       setSaving(false);
@@ -685,7 +687,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
 
       showToast?.('Item removed');
     } catch (error) {
-      console.error('Error removing item:', error);
+      logger.error('Error removing item from playlist', { error, itemId });
       showToast?.('Error removing item: ' + error.message, 'error');
     }
   };
@@ -705,7 +707,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         )
       );
     } catch (error) {
-      console.error('Error updating duration:', error);
+      logger.error('Error updating item duration', { error, itemId, newDuration });
     }
   };
 
@@ -784,7 +786,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         )
       );
     } catch (error) {
-      console.error('Error reordering:', error);
+      logger.error('Error reordering playlist items', { error, sourceIndex, destIndex });
       showToast?.('Error saving order', 'error');
       // Revert on error
       fetchPlaylist();
@@ -878,7 +880,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
         handleTimelineDrop(targetIndex);
       }
     } catch (error) {
-      console.error('Error handling drop:', error);
+      logger.error('Error handling drag-drop', { error, playlistId });
       showToast?.('Error adding item', 'error');
     } finally {
       setSaving(false);
@@ -936,7 +938,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       setAiSuggestion(suggestion);
       showToast?.('Slides generated! Review and apply them.', 'success');
     } catch (error) {
-      console.error('Error generating AI slides:', error);
+      logger.error('Error generating AI slides', { error, playlistId, slideCount: aiSlideCount });
       showToast?.(error.message || 'Error generating slides', 'error');
     } finally {
       setAiGenerating(false);
@@ -991,7 +993,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       setAiSuggestion(null);
       showToast?.(`Added ${slides.length} AI-generated slides!`, 'success');
     } catch (error) {
-      console.error('Error applying AI slides:', error);
+      logger.error('Error applying AI slides to playlist', { error, playlistId });
       showToast?.(error.message || 'Error applying slides', 'error');
     } finally {
       setAiApplying(false);
@@ -1004,7 +1006,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       const review = await getOpenReviewForResource('playlist', playlistId);
       setCurrentReview(review);
     } catch (error) {
-      console.error('Error fetching review:', error);
+      logger.error('Error fetching approval review', { error, playlistId });
     }
   };
 
@@ -1029,7 +1031,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       await fetchPlaylist();
       await fetchCurrentReview();
     } catch (error) {
-      console.error('Error requesting approval:', error);
+      logger.error('Error requesting playlist approval', { error, playlistId });
       showToast?.(error.message || 'Error requesting approval', 'error');
     } finally {
       setSubmittingApproval(false);
@@ -1044,7 +1046,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       await fetchPlaylist();
       setCurrentReview(null);
     } catch (error) {
-      console.error('Error reverting to draft:', error);
+      logger.error('Error reverting playlist to draft', { error, playlistId });
       showToast?.(error.message || 'Error reverting to draft', 'error');
     }
   };
@@ -1056,7 +1058,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       const links = await fetchPreviewLinksForResource('playlist', playlistId);
       setPreviewLinks(links);
     } catch (error) {
-      console.error('Error fetching preview links:', error);
+      logger.error('Error fetching preview links', { error, playlistId });
     } finally {
       setLoadingPreviewLinks(false);
     }
@@ -1079,7 +1081,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       showToast?.('Preview link created');
       await fetchPreviewLinks();
     } catch (error) {
-      console.error('Error creating preview link:', error);
+      logger.error('Error creating preview link', { error, playlistId, expiry: selectedExpiry });
       showToast?.(error.message || 'Error creating preview link', 'error');
     } finally {
       setCreatingPreviewLink(false);
@@ -1093,7 +1095,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       showToast?.('Preview link revoked');
       await fetchPreviewLinks();
     } catch (error) {
-      console.error('Error revoking preview link:', error);
+      logger.error('Error revoking preview link', { error, linkId });
       showToast?.(error.message || 'Error revoking link', 'error');
     }
   };
@@ -1134,7 +1136,7 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       setTemplateName('');
       setTemplateDescription('');
     } catch (error) {
-      console.error('Error saving as template:', error);
+      logger.error('Error saving playlist as template', { error, playlistId, templateName });
       showToast?.(error.message || 'Error saving template', 'error');
     } finally {
       setSavingTemplate(false);
