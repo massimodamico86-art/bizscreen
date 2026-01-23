@@ -7,6 +7,7 @@
 
 import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService.js';
+import { sendAlertEmail } from './emailService.js';
 
 const logger = createScopedLogger('NotificationDispatcher');
 
@@ -354,27 +355,70 @@ async function queueEmailNotification(user, alert) {
 }
 
 /**
- * Send email notification (stub - would use email service in production)
+ * Send email notification via Resend
+ *
+ * @param {Object} notification The notification record from database
+ * @returns {Promise<boolean>} Success status
  */
 export async function sendEmailNotification(notification) {
   try {
-    // In production, this would call an email service (SendGrid, Postmark, etc.)
-    // For now, we just mark it as sent
+    // Get recipient email
+    const { data: authData } = await supabase.auth.admin
+      ? await supabase.rpc('get_user_email', { user_id: notification.user_id })
+      : { data: null };
 
-    const { error } = await supabase
-      .from('notifications')
-      .update({ email_sent_at: new Date().toISOString() })
-      .eq('id', notification.id);
+    // Fallback: try to get email from profile or notification context
+    let recipientEmail = authData?.email;
+    if (!recipientEmail) {
+      // For client-side context, we may need to fetch user differently
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', notification.user_id)
+        .single();
+      recipientEmail = profile?.email;
+    }
 
-    if (error) {
-      logger.error('Error marking email as sent', { error });
+    if (!recipientEmail) {
+      logger.warn('No email found for user', { userId: notification.user_id });
       return false;
     }
 
-    logger.info('Email sent', { notificationId: notification.id });
-    return true;
+    // Build action URL
+    const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin;
+    const actionUrl = notification.action_url
+      ? `${baseUrl}${notification.action_url}`
+      : `${baseUrl}/alerts`;
+
+    // Send via Resend
+    const result = await sendAlertEmail({
+      to: recipientEmail,
+      subject: `[BizScreen Alert] ${notification.title}`,
+      title: notification.title,
+      message: notification.message,
+      severity: notification.severity || 'info',
+      actionUrl,
+    });
+
+    if (result.success) {
+      // Update notification record with sent timestamp
+      const { error: updateError } = await supabase
+        .from('notifications')
+        .update({ email_sent_at: new Date().toISOString() })
+        .eq('id', notification.id);
+
+      if (updateError) {
+        logger.error('Failed to update email_sent_at', { notificationId: notification.id, error: updateError });
+      }
+
+      logger.info('Email notification sent', { notificationId: notification.id, to: recipientEmail });
+      return true;
+    } else {
+      logger.error('Email send failed', { notificationId: notification.id, error: result.error });
+      return false;
+    }
   } catch (error) {
-    logger.error('Error sending email', { error });
+    logger.error('Error sending email notification', { notificationId: notification.id, error: error.message });
     return false;
   }
 }
