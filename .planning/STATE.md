@@ -10,17 +10,23 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 5 of 12 (Critical Fixes)
-Plan: 2 of 2 in phase 5 (05-02 complete)
-Status: In Progress
-Last activity: 2026-01-22 - Completed 05-02-PLAN.md (Email Notifications via Resend)
+Plan: 2 of 2 in phase 5 (complete)
+Status: Phase Complete
+Last activity: 2026-01-23 - Completed 05-01-PLAN.md (Save Layout as Template)
 
-Progress: [#########---] 37.5% (4.5/12 phases complete)
+Progress: [##########--] 41.7% (5/12 phases complete)
 
 ## Phase 5 Progress Summary
 
 **Critical Fixes Plans:**
-- [ ] 05-01: Create template from layout service (pending)
+- [x] 05-01: Save Layout as Template (25f6d3d, 0996932, e2639f6, 293343d)
 - [x] 05-02: Email notifications via Resend (fa5c55e, 6480c95, 1f1243a)
+
+**Save Layout as Template (05-01):**
+- createTemplateFromLayout service function with tenant isolation
+- SaveAsTemplateModal component with design-system integration
+- Save as Template button in LayoutEditorPage toolbar
+- ESLint JSX parsing configuration fixed
 
 **Email Notifications (05-02):**
 - Resend SDK integration for email delivery
@@ -178,9 +184,9 @@ Progress: [#########---] 37.5% (4.5/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
-- Average duration: 5.8 min
-- Total execution time: 139 min (2.3 hours)
+- Total plans completed: 26
+- Average duration: 5.7 min
+- Total execution time: 150 min (2.5 hours)
 
 **By Phase:**
 
@@ -190,9 +196,10 @@ Progress: [#########---] 37.5% (4.5/12 phases complete)
 | 02-xss-prevention | 5 | 16 min | 3.2 min |
 | 03-auth-hardening | 4 | 11 min | 2.8 min |
 | 04-logging-migration | 6 | 62 min | 10.3 min |
-| 05-critical-fixes | 1/2 | 3 min | 3 min |
+| 05-critical-fixes | 2 | 11 min | 5.5 min |
 
 **Phase 5 Plan Breakdown:**
+- 05-01: 8 min (Save as Template feature)
 - 05-02: 3 min (Resend email integration)
 
 **Phase 4 Plan Breakdown:**
@@ -273,6 +280,9 @@ Recent decisions affecting current work:
 - [05-02]: Graceful fallback when API key not configured (logs warning, returns false)
 - [05-02]: Inline HTML template builder (no external templating files)
 - [05-02]: Fetch email from profiles table (fallback for client-side context)
+- [05-01]: Template tenant_id set from user profile (private, not global)
+- [05-01]: Zones converted to data format if layout.data is empty
+- [05-01]: Categories match SIDEBAR_CATEGORIES from LayoutsPage
 
 ### Pending Todos
 
@@ -288,13 +298,12 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-22
-Stopped at: Completed 05-02-PLAN.md (Email Notifications via Resend)
+Last session: 2026-01-23
+Stopped at: Completed 05-01-PLAN.md (Save Layout as Template)
 Resume file: None
 
 ## Next Steps
 
-**Phase 5 In Progress:** Plan 05-01 pending, 05-02 complete.
+**Phase 5 Complete!** Ready for Phase 6.
 
-**Remaining in Phase 5:**
-- 05-01: Create template from layout service function
+**Phase 6:** Awaiting next phase planning
