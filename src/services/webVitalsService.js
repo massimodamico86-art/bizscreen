@@ -11,7 +11,7 @@
  */
 
 import { onCLS, onFCP, onLCP, onTTFB, onINP } from 'web-vitals';
-import { captureMessage, setContext } from '../utils/errorTracking';
+import { captureMessage, setContext } from '../utils/errorTracking.jsx';
 import { isProduction } from '../config/env';
 
 import { createScopedLogger } from './loggingService.js';

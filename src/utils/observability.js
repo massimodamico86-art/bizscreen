@@ -8,7 +8,7 @@
  * - Health checks
  */
 
-import { initErrorTracking, setUser as setErrorUser, setContext } from './errorTracking';
+import { initErrorTracking, setUser as setErrorUser, setContext } from './errorTracking.jsx';
 import { createScopedLogger } from '../services/loggingService.js';
 
 const logger = createScopedLogger('observability');

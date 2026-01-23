@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { handleReactError } from '../utils/errorTracking.js';
+import { handleReactError } from '../utils/errorTracking.jsx';
 
 export class ErrorBoundary extends Component {
   constructor(props) {
