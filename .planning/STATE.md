@@ -10,21 +10,20 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 4 of 12 (Logging Migration)
-Plan: 2.5 of 6 in phase 4 complete (04-05 partially complete)
+Plan: 3 of 6 in phase 4 complete
 Status: In Progress
-Last activity: 2026-01-23 - Partially completed 04-05-PLAN.md (Player & Core Migration)
+Last activity: 2026-01-23 - Completed 04-03-PLAN.md (High-Priority Services)
 
-Progress: [######------] 31% (3.7/12 phases complete)
+Progress: [######------] 32% (3.8/12 phases complete)
 
 ## Phase 4 Progress Summary
 
 **Logging Migration Plans:**
 - [x] 04-01: Logging infrastructure enhancement (8125b8c, 61dd802, 7bff91d)
 - [x] 04-02: Build enforcement (22a189b, 7bff91d)
-- [x] 04-03: Auth & security services migration (d3f1007)
-- [~] 04-05: Player & core files migration (67ebb65, e7e518f) - **PARTIAL: 3/11 Task 1 files complete**
-- [ ] 04-05: Remaining Task 1 files (pending)
-- [ ] 04-05: Tasks 2-3 (hooks, components, pages - pending)
+- [x] 04-03: High-priority services migration (d3f1007, 2eb5574, 1db6a75)
+- [ ] 04-04: Incremental migration (pending)
+- [ ] 04-05: Service worker migration (pending)
 - [ ] 04-06: Final cleanup (pending)
 
 **Logging Infrastructure Enhancement:**
@@ -41,13 +40,15 @@ Progress: [######------] 31% (3.7/12 phases complete)
 - Terser configured for production console stripping
 - Production builds automatically remove console.log from application code
 
-**Player & Core Migration (Partial - 04-05):**
-- Player.jsx: 47 console calls → structured logging
-  - ViewPage, SceneRenderer, SceneWidgetRenderer, PairPage with useLogger
-  - Module functions (retry, appData) with createScopedLogger
-- TV.jsx: 6 console calls → structured logging
-- getConfig.js: 1 console call → structured logging
-- **Remaining:** 8 core files, 12 hooks, ~50 components, ~60 pages
+**High-Priority Services Migration (04-03):**
+- Auth & Security Services (6 files, 38 console calls):
+  - authService, mfaService, sessionService, securityService, passwordService, rateLimitService
+- Player & Device Services (6 files, 69 console calls):
+  - playerService, playerAnalyticsService, playbackTrackingService
+  - deviceSyncService, screenTelemetryService, deviceScreenshotService
+- All services use structured logging with PII redaction
+- Contextual IDs (screenId, userId, sceneId) in all logs
+- **Total migrated:** 12 services, 107 console calls eliminated
 
 ## Phase 3 Completion Summary
 
@@ -134,9 +135,9 @@ Progress: [######------] 31% (3.7/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
-- Average duration: 5.1 min
-- Total execution time: 82 min (1.4 hours)
+- Total plans completed: 17
+- Average duration: 5.4 min
+- Total execution time: 97 min (1.6 hours)
 
 **By Phase:**
 
@@ -145,11 +146,11 @@ Progress: [######------] 31% (3.7/12 phases complete)
 | 01-testing-infrastructure | 5 | 50 min | 10 min |
 | 02-xss-prevention | 5 | 16 min | 3.2 min |
 | 03-auth-hardening | 4 | 11 min | 2.8 min |
-| 04-logging-migration | 2 | 5 min | 2.5 min |
+| 04-logging-migration | 3 | 20 min | 6.7 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-03 (2 min), 03-04 (3 min), 04-01 (2 min), 04-02 (3 min)
-- Trend: Very fast (infrastructure configuration)
+- Last 5 plans: 03-04 (3 min), 04-01 (2 min), 04-02 (3 min), 04-03 (15 min)
+- Trend: Moderate (service migration work)
 
 *Updated after each plan completion*
 
@@ -205,6 +206,10 @@ Recent decisions affecting current work:
 - [04-02]: Test files, config files, and scripts exempt from no-console rule
 - [04-02]: Terser used instead of esbuild for drop_console support
 - [04-02]: Service worker console calls preserved (not bundled through Vite)
+- [04-03]: Use logger.debug for frequent operations (heartbeat, telemetry) to avoid log spam
+- [04-03]: Include contextual IDs (screenId, userId, sceneId) in log data for filtering
+- [04-03]: Log offline fallback and retry attempts at warn level for visibility
+- [04-03]: Log successful operations at info level, errors at error level
 
 ### Pending Todos
 
@@ -213,16 +218,17 @@ None.
 ### Blockers/Concerns
 
 - ~~No test coverage in src/~~ Player.jsx now has characterization test coverage
-- 197+ console.log calls - observability limited until Phase 4 completes
+- ~90 console.log calls remaining - 12 high-priority services now use structured logging (107 calls eliminated)
 - 4 unrelated test files fail (api/ imports missing) - outside Phase 1 scope
 - Local Supabase migration history out of sync - migrations ready for deployment but need manual application
+- Build currently fails on errorTrackingService.js (pre-existing issue, not related to logging migration)
 
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 04-02-PLAN.md (Build Enforcement)
+Stopped at: Completed 04-03-PLAN.md (High-Priority Services)
 Resume file: None
 
 ## Next Steps
 
-04-03-PLAN.md: Console audit and migration planning
+04-04-PLAN.md: Incremental migration of remaining services
