@@ -50,6 +50,7 @@ import { BrandingProvider, useBranding } from './contexts/BrandingContext';
 import { stopImpersonation, isImpersonating as checkIsImpersonating } from './services/tenantService';
 import { supabase } from './supabase';
 import Toast from './components/Toast';
+import { useLogger } from './hooks/useLogger.js';
 import { LoginPage } from './pages';
 import AnnouncementBanner from './components/AnnouncementBanner';
 import AnnouncementCenter from './components/AnnouncementCenter';
@@ -142,6 +143,7 @@ function BizScreenAppInner() {
   const { user, loading: authLoading, signOut, userProfile: authUserProfile } = useAuth();
   const { branding, isImpersonating, impersonatedClient, refreshBranding } = useBranding();
   const { t } = useTranslation();
+  const logger = useLogger('App');
 
   // Feature flags for gating premium features
   const featureFlags = useFeatureFlags([
@@ -228,7 +230,7 @@ function BizScreenAppInner() {
           setShowAutoBuildModal(true);
         }
       } catch (err) {
-        console.error('Error checking autobuild onboarding:', err);
+        logger.error('Error checking autobuild onboarding', { error: err });
       }
     };
 
@@ -321,7 +323,7 @@ function BizScreenAppInner() {
 
         setListings(listingsData);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        logger.error('Error fetching data', { error, code: error.code });
         // Don't show error toast for "no rows" errors
         if (error.code !== 'PGRST116') {
           showToast('Error loading data: ' + error.message, 'error');
@@ -346,7 +348,7 @@ function BizScreenAppInner() {
           // No filter - RLS handles access control
         },
         (payload) => {
-          console.log('Listing change received:', payload);
+          logger.debug('Listing change received', { eventType: payload.eventType, id: payload.new?.id || payload.old?.id });
 
           // Use refs to get current values (avoids stale closure issue)
           const currentListings = listingsRef.current;
@@ -381,21 +383,21 @@ function BizScreenAppInner() {
       )
       .subscribe((status, err) => {
         if (status === 'SUBSCRIBED') {
-          console.log('✅ Real-time subscription active');
+          logger.info('Real-time subscription active');
         } else if (status === 'CHANNEL_ERROR') {
-          console.error('❌ Real-time subscription error:', err);
+          logger.error('Real-time subscription error', { error: err });
           // Optionally show toast notification to user
           showToast?.('Real-time updates temporarily unavailable', 'error');
         } else if (status === 'TIMED_OUT') {
-          console.error('❌ Real-time subscription timed out');
+          logger.error('Real-time subscription timed out');
           // Attempt to reconnect after a delay
           setTimeout(() => {
-            console.log('🔄 Attempting to reconnect real-time subscription...');
+            logger.info('Attempting to reconnect real-time subscription');
             supabase.removeChannel(channel);
             // The next render will recreate the subscription
           }, 5000);
         } else if (status === 'CLOSED') {
-          console.warn('⚠️  Real-time subscription closed');
+          logger.warn('Real-time subscription closed');
         }
       });
 
@@ -405,12 +407,12 @@ function BizScreenAppInner() {
         const { error } = await supabase.rpc('update_tv_device_status');
         // Silently ignore if RPC function doesn't exist yet
         if (error && error.code !== '42883') {
-          console.error('Error updating TV device status:', error);
+          logger.error('Error updating TV device status', { error, code: error.code });
         }
       } catch (error) {
         // Silently ignore errors for missing RPC function
         if (error.code !== '42883' && error.message !== 'Function not found') {
-          console.error('Error updating TV device status:', error);
+          logger.error('Error updating TV device status', { error, code: error.code });
         }
       }
     }, 2 * 60 * 1000); // 2 minutes

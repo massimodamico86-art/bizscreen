@@ -10,6 +10,7 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from '../services/loggingService.js';
 import {
   cacheScene,
   getCachedScene,
@@ -24,6 +25,8 @@ import {
   getCacheInfo,
   clearStaleCache,
 } from './cacheService';
+
+const logger = createScopedLogger('OfflineService');
 
 // Offline mode configuration
 const OFFLINE_CONFIG = {
@@ -52,7 +55,7 @@ let serviceWorkerReady = false;
  */
 export async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) {
-    console.warn('[OfflineService] Service workers not supported');
+    logger.warn('[OfflineService] Service workers not supported');
     return null;
   }
 
@@ -61,7 +64,7 @@ export async function registerServiceWorker() {
       scope: '/',
     });
 
-    console.log('[OfflineService] Service worker registered:', registration.scope);
+    logger.debug('[OfflineService] Service worker registered:', registration.scope);
 
     // Wait for the service worker to be ready
     await navigator.serviceWorker.ready;
@@ -72,7 +75,7 @@ export async function registerServiceWorker() {
 
     return registration;
   } catch (error) {
-    console.error('[OfflineService] Service worker registration failed:', error);
+    logger.error('[OfflineService] Service worker registration failed:', error);
     return null;
   }
 }
@@ -97,7 +100,7 @@ function handleServiceWorkerMessage(event) {
       break;
 
     default:
-      console.log('[OfflineService] Unknown message from SW:', type);
+      logger.debug('[OfflineService] Unknown message from SW:', type);
   }
 }
 
@@ -149,7 +152,7 @@ export function setOfflineMode(offline) {
   isOfflineMode = offline;
 
   if (wasOffline !== offline) {
-    console.log('[OfflineService] Mode changed:', offline ? 'OFFLINE' : 'ONLINE');
+    logger.debug('[OfflineService] Mode changed:', offline ? 'OFFLINE' : 'ONLINE');
     notifyOfflineListeners(offline);
   }
 }
@@ -172,7 +175,7 @@ function notifyOfflineListeners(offline) {
     try {
       callback(offline);
     } catch (error) {
-      console.error('[OfflineService] Error in offline listener:', error);
+      logger.error('[OfflineService] Error in offline listener:', error);
     }
   });
 }
@@ -208,12 +211,12 @@ export async function recordHeartbeatFailure() {
 export function initOfflineDetection() {
   // Browser online/offline events
   window.addEventListener('online', () => {
-    console.log('[OfflineService] Browser reports online');
+    logger.debug('[OfflineService] Browser reports online');
     // Don't immediately switch to online mode - wait for heartbeat success
   });
 
   window.addEventListener('offline', () => {
-    console.log('[OfflineService] Browser reports offline');
+    logger.debug('[OfflineService] Browser reports offline');
     setOfflineMode(true);
   });
 }
@@ -263,7 +266,7 @@ export async function fetchAndCacheScene(sceneId, onProgress = null) {
         (cached, total) => onProgress?.(cached, total, 'Caching media...')
       );
 
-      console.log('[OfflineService] Cached media:', mediaResult);
+      logger.debug('[OfflineService] Cached media:', mediaResult);
     }
 
     // Update last sync info
@@ -279,7 +282,7 @@ export async function fetchAndCacheScene(sceneId, onProgress = null) {
       scene: data,
     };
   } catch (error) {
-    console.error('[OfflineService] Failed to cache scene:', error);
+    logger.error('[OfflineService] Failed to cache scene:', error);
     return {
       success: false,
       error: error.message,
@@ -310,12 +313,12 @@ export async function getSceneForPlayback(sceneId) {
         return data;
       }
     } catch (error) {
-      console.warn('[OfflineService] Failed to fetch scene from server:', error);
+      logger.warn('[OfflineService] Failed to fetch scene from server:', error);
     }
   }
 
   // Fall back to cache
-  console.log('[OfflineService] Loading scene from cache:', sceneId);
+  logger.debug('[OfflineService] Loading scene from cache:', sceneId);
   const cachedScene = await getCachedScene(sceneId);
 
   if (cachedScene) {
@@ -351,7 +354,7 @@ export async function checkSceneNeedsUpdate(sceneId, cachedHash) {
 
     return data?.content_changed || data?.needs_full_refresh || false;
   } catch (error) {
-    console.warn('[OfflineService] Failed to check scene update:', error);
+    logger.warn('[OfflineService] Failed to check scene update:', error);
     return false; // Don't force update on error
   }
 }
@@ -383,7 +386,7 @@ export async function getMediaUrl(url) {
  */
 export async function syncPendingEvents() {
   if (isOfflineMode || !isOnline()) {
-    console.log('[OfflineService] Cannot sync - still offline');
+    logger.debug('[OfflineService] Cannot sync - still offline');
     return { success: false, reason: 'offline' };
   }
 
@@ -391,11 +394,11 @@ export async function syncPendingEvents() {
     const pending = await getPendingEvents();
 
     if (pending.length === 0) {
-      console.log('[OfflineService] No pending events to sync');
+      logger.debug('[OfflineService] No pending events to sync');
       return { success: true, synced: 0 };
     }
 
-    console.log('[OfflineService] Syncing', pending.length, 'pending events');
+    logger.debug('[OfflineService] Syncing', pending.length, 'pending events');
 
     // Group events by type
     const heartbeats = pending.filter((e) => e.eventType === 'heartbeat');
@@ -421,14 +424,14 @@ export async function syncPendingEvents() {
       await markEventsSynced(syncedIds);
     }
 
-    console.log('[OfflineService] Synced', syncedIds.length, 'events');
+    logger.debug('[OfflineService] Synced', syncedIds.length, 'events');
 
     return {
       success: true,
       synced: syncedIds.length,
     };
   } catch (error) {
-    console.error('[OfflineService] Sync failed:', error);
+    logger.error('[OfflineService] Sync failed:', error);
     return {
       success: false,
       error: error.message,
@@ -442,7 +445,7 @@ export async function syncPendingEvents() {
 async function syncHeartbeats(heartbeats) {
   // Heartbeats don't need to be synced individually
   // The server will see the device is back online
-  console.log('[OfflineService] Device back online, heartbeats will resume');
+  logger.debug('[OfflineService] Device back online, heartbeats will resume');
 }
 
 /**
@@ -455,7 +458,7 @@ async function syncPendingScreenshots() {
 
   if (screenshots.length === 0) return;
 
-  console.log('[OfflineService] Syncing', screenshots.length, 'pending screenshots');
+  logger.debug('[OfflineService] Syncing', screenshots.length, 'pending screenshots');
   // Screenshots would need custom handling based on how they're stored
 }
 
@@ -480,7 +483,7 @@ async function syncPlaybackEvents(playbacks) {
 
     if (error) throw error;
   } catch (error) {
-    console.error('[OfflineService] Failed to sync playback events:', error);
+    logger.error('[OfflineService] Failed to sync playback events:', error);
   }
 }
 
@@ -577,7 +580,7 @@ export async function reportCacheStatus(deviceId, sceneId, contentHash) {
 
     if (error) throw error;
   } catch (error) {
-    console.warn('[OfflineService] Failed to report cache status:', error);
+    logger.warn('[OfflineService] Failed to report cache status:', error);
   }
 }
 
@@ -589,7 +592,7 @@ export async function reportCacheStatus(deviceId, sceneId, contentHash) {
  * Initialize offline service
  */
 export async function initOfflineService() {
-  console.log('[OfflineService] Initializing...');
+  logger.debug('[OfflineService] Initializing...');
 
   // Register service worker
   await registerServiceWorker();
@@ -600,7 +603,7 @@ export async function initOfflineService() {
   // Clear stale cache entries
   await clearStaleCache(7);
 
-  console.log('[OfflineService] Initialized');
+  logger.debug('[OfflineService] Initialized');
 }
 
 /**

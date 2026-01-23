@@ -7,9 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import AuthLayout from './AuthLayout';
 import { supabase } from '../supabase';
+import { useLogger } from '../hooks/useLogger.js';
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate();
+  const logger = useLogger('AuthCallbackPage');
   const [status, setStatus] = useState('processing'); // processing, success, error
   const [message, setMessage] = useState('Verifying your email...');
 
@@ -77,7 +79,7 @@ export default function AuthCallbackPage() {
           navigate('/auth/login');
         }
       } catch (error) {
-        console.error('Auth callback error:', error);
+        logger.error('Auth callback error', { error });
         setStatus('error');
         setMessage('An unexpected error occurred. Please try again.');
       }

@@ -10,6 +10,9 @@
  */
 
 import { openDB } from 'idb';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('CacheService');
 
 const DB_NAME = 'bizscreen-player-cache';
 const DB_VERSION = 1;
@@ -45,7 +48,7 @@ async function initDB() {
 
   dbInstance = await openDB(DB_NAME, DB_VERSION, {
     upgrade(db, oldVersion, newVersion, transaction) {
-      console.log('[CacheService] Upgrading database from', oldVersion, 'to', newVersion);
+      logger.debug('[CacheService] Upgrading database from', oldVersion, 'to', newVersion);
 
       // Scenes store
       if (!db.objectStoreNames.contains(STORES.SCENES)) {
@@ -153,7 +156,7 @@ async function evictLRUEntries(storeName, maxBytes, maxEntries) {
   }
 
   if (evictedCount > 0) {
-    console.log(
+    logger.debug(
       `[CacheService] LRU eviction: removed ${evictedCount} entries, freed ${formatBytes(freedBytes)}`
     );
   }
@@ -234,7 +237,7 @@ export async function cacheScene(sceneId, sceneData) {
   };
 
   await db.put(STORES.SCENES, cacheEntry);
-  console.log('[CacheService] Cached scene:', sceneId);
+  logger.debug('[CacheService] Cached scene:', sceneId);
 }
 
 /**
@@ -251,7 +254,7 @@ export async function getCachedScene(sceneId) {
   if (scene) {
     // Update lastAccessedAt for LRU tracking
     touchEntry(STORES.SCENES, sceneId);
-    console.log('[CacheService] Retrieved cached scene:', sceneId);
+    logger.debug('[CacheService] Retrieved cached scene:', sceneId);
   }
 
   return scene || null;
@@ -280,7 +283,7 @@ export async function markSceneAsStale(sceneId) {
     scene.isStale = true;
     scene.markedStaleAt = new Date().toISOString();
     await db.put(STORES.SCENES, scene);
-    console.log('[CacheService] Marked scene as stale:', sceneId);
+    logger.debug('[CacheService] Marked scene as stale:', sceneId);
   }
 }
 
@@ -300,7 +303,7 @@ export async function deleteCachedScene(sceneId) {
     await db.delete(STORES.MEDIA, media.url);
   }
 
-  console.log('[CacheService] Deleted cached scene and media:', sceneId);
+  logger.debug('[CacheService] Deleted cached scene and media:', sceneId);
 }
 
 // ============================================================================
@@ -339,7 +342,7 @@ export async function cacheMedia(url, blob, sceneId = null) {
   };
 
   await db.put(STORES.MEDIA, cacheEntry);
-  console.log('[CacheService] Cached media:', url, `(${formatBytes(blob.size)})`);
+  logger.debug('[CacheService] Cached media:', url, `(${formatBytes(blob.size)})`);
 }
 
 /**
@@ -356,7 +359,7 @@ export async function getCachedMedia(url) {
   if (entry?.blob) {
     // Update lastAccessedAt for LRU tracking
     touchEntry(STORES.MEDIA, url);
-    console.log('[CacheService] Retrieved cached media:', url);
+    logger.debug('[CacheService] Retrieved cached media:', url);
     return entry.blob;
   }
 
@@ -411,11 +414,11 @@ export async function cacheMultipleMedia(urls, sceneId = null, onProgress = null
         success++;
       } else {
         failed++;
-        console.warn('[CacheService] Failed to fetch media:', url, response.status);
+        logger.warn('[CacheService] Failed to fetch media:', url, response.status);
       }
     } catch (error) {
       failed++;
-      console.warn('[CacheService] Error caching media:', url, error);
+      logger.warn('[CacheService] Error caching media:', url, error);
     }
 
     onProgress?.(success + failed, urls.length);
@@ -438,7 +441,7 @@ export async function deleteMediaForScene(sceneId) {
     await db.delete(STORES.MEDIA, media.url);
   }
 
-  console.log('[CacheService] Deleted', allMedia.length, 'media files for scene:', sceneId);
+  logger.debug('[CacheService] Deleted', allMedia.length, 'media files for scene:', sceneId);
 }
 
 // ============================================================================
@@ -503,7 +506,7 @@ export async function queueOfflineEvent(eventType, eventData) {
   };
 
   await db.add(STORES.OFFLINE_QUEUE, entry);
-  console.log('[CacheService] Queued offline event:', eventType);
+  logger.debug('[CacheService] Queued offline event:', eventType);
 }
 
 /**
@@ -543,7 +546,7 @@ export async function markEventsSynced(eventIds) {
     }
   }
 
-  console.log('[CacheService] Marked', eventIds.length, 'events as synced');
+  logger.debug('[CacheService] Marked', eventIds.length, 'events as synced');
 }
 
 /**
@@ -557,7 +560,7 @@ export async function clearSyncedEvents() {
     await db.delete(STORES.OFFLINE_QUEUE, event.id);
   }
 
-  console.log('[CacheService] Cleared', synced.length, 'synced events');
+  logger.debug('[CacheService] Cleared', synced.length, 'synced events');
 }
 
 // ============================================================================
@@ -657,7 +660,7 @@ export async function clearAllCache() {
   await db.clear(STORES.MEDIA);
   // Don't clear device state or offline queue
 
-  console.log('[CacheService] Cleared all cache');
+  logger.debug('[CacheService] Cleared all cache');
 }
 
 /**
@@ -685,7 +688,7 @@ export async function clearStaleCache(maxAgeDays = 7) {
     }
   }
 
-  console.log('[CacheService] Cleared stale cache older than', maxAgeDays, 'days');
+  logger.debug('[CacheService] Cleared stale cache older than', maxAgeDays, 'days');
 }
 
 // ============================================================================

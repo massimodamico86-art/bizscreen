@@ -17,6 +17,7 @@ import {
   resolveTenantByDomain,
 } from '../services/tenantService';
 import { useAuth } from './AuthContext';
+import { useLogger } from '../hooks/useLogger.js';
 
 /**
  * @typedef {Object} BrandingContextValue
@@ -32,6 +33,7 @@ const BrandingContext = createContext(null);
 
 export function BrandingProvider({ children }) {
   const { user, userProfile } = useAuth();
+  const logger = useLogger('BrandingContext');
   const [branding, setBranding] = useState(DEFAULT_BRANDING);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -84,7 +86,7 @@ export function BrandingProvider({ children }) {
             return;
           }
         } catch (err) {
-          console.error('Error checking domain branding:', err);
+          logger.error('Error checking domain branding:', err);
         }
       }
       setLoading(false);
@@ -116,7 +118,7 @@ export function BrandingProvider({ children }) {
       const { data, error: fetchError } = await getBranding();
 
       if (fetchError) {
-        console.error('Error fetching branding:', fetchError);
+        logger.error('Error fetching branding:', fetchError);
         setError(fetchError);
         // Keep domain branding if available, otherwise use defaults
         if (!domainInfo.isWhiteLabel) {
@@ -129,7 +131,7 @@ export function BrandingProvider({ children }) {
       // Update impersonation status
       setImpersonationStatus(getImpersonationStatus());
     } catch (err) {
-      console.error('refreshBranding error:', err);
+      logger.error('refreshBranding error:', err);
       setError(err.message);
       if (!domainInfo.isWhiteLabel) {
         setBranding(DEFAULT_BRANDING);
