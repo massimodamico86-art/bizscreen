@@ -10,25 +10,33 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 6 of 12 (Player Reliability)
-Plan: 1 of 4 in phase 6
+Plan: 2 of 4 in phase 6
 Status: In Progress
-Last activity: 2026-01-23 - Completed 06-01-PLAN.md (retry backoff + error logging)
+Last activity: 2026-01-23 - Completed 06-02-PLAN.md (offline screenshot + kiosk password)
 
-Progress: [###########-] 45.8% (5.5/12 phases complete)
+Progress: [###########-] 50% (6/12 phases complete)
 
 ## Phase 6 Progress Summary
 
 **Player Reliability Plans:**
-- [x] 06-01: Retry backoff with full jitter + error logging (ef4063e, 61391a9)
-- [ ] 06-02: Offline screenshot queue with reconnect upload
-- [ ] 06-03: Kiosk exit password validation
-- [ ] 06-04: Remaining empty catch block fixes
+- [x] 06-01: Retry backoff with full jitter + error logging (ef4063e)
+- [x] 06-02: Offline screenshot queue + kiosk password verification (e176887, 8722a70)
+- [ ] 06-03: Remaining empty catch block fixes
+- [ ] 06-04: Additional error handling improvements
 
 **Retry Backoff + Error Logging (06-01):**
 - calculateBackoff() updated to use full jitter (0-100% randomization)
 - Prevents thundering herd when multiple devices reconnect
 - Empty catch blocks at Player.jsx lines 209, 239 replaced with structured logging
 - appDataLogger.warn logs include cacheKey, dataSize, error.message
+
+**Offline Screenshot + Kiosk Password (06-02):**
+- blobToBase64/base64ToBlob helpers for IndexedDB blob persistence
+- syncPendingScreenshots with FIFO upload ordering
+- screenshotService queues screenshots when navigator.onLine is false
+- SHA-256 password hashing via crypto.subtle.digest
+- cacheKioskPasswordHash and validateKioskPasswordOffline exports
+- Plaintext fallback for legacy kiosk deployments
 
 ## Phase 5 Progress Summary
 
@@ -198,9 +206,9 @@ Progress: [###########-] 45.8% (5.5/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27
+- Total plans completed: 28
 - Average duration: 5.6 min
-- Total execution time: 153 min (2.55 hours)
+- Total execution time: 158 min (2.6 hours)
 
 **By Phase:**
 
@@ -211,10 +219,11 @@ Progress: [###########-] 45.8% (5.5/12 phases complete)
 | 03-auth-hardening | 4 | 11 min | 2.8 min |
 | 04-logging-migration | 6 | 62 min | 10.3 min |
 | 05-critical-fixes | 2 | 11 min | 5.5 min |
-| 06-player-reliability | 1 | 3 min | 3 min |
+| 06-player-reliability | 2 | 8 min | 4 min |
 
 **Phase 6 Plan Breakdown:**
 - 06-01: 3 min (retry backoff + error logging)
+- 06-02: 5 min (offline screenshot + kiosk password)
 
 **Phase 5 Plan Breakdown:**
 - 05-01: 8 min (Save as Template feature)
@@ -229,8 +238,8 @@ Progress: [###########-] 45.8% (5.5/12 phases complete)
 - 04-06: 6.4 min (final cleanup, tests)
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (3 min), 04-03 (15 min), 04-04 (15 min), 04-05 (21 min), 04-06 (6.4 min)
-- Trend: Migration tasks vary by file count (6-21 min range)
+- Last 5 plans: 04-05 (21 min), 04-06 (6.4 min), 05-01 (8 min), 06-01 (3 min), 06-02 (5 min)
+- Trend: Migration tasks vary by file count (3-21 min range)
 
 *Updated after each plan completion*
 
@@ -304,6 +313,11 @@ Recent decisions affecting current work:
 - [06-01]: Full jitter (0-100%) chosen over partial jitter for maximum distribution
 - [06-01]: Use appDataLogger.warn for non-critical cache errors (not error level)
 - [06-01]: Include cacheKey and dataSize in storage error logs for debugging
+- [06-02]: Blob to base64 via FileReader.readAsDataURL for IndexedDB persistence
+- [06-02]: FIFO ordering for screenshot upload on reconnect (sort by createdAt)
+- [06-02]: SHA-256 via crypto.subtle (browser-native, no dependencies)
+- [06-02]: Plaintext password fallback for legacy kiosk without cached hash
+- [06-02]: Dynamic import for screenshotService to avoid circular dependency
 
 ### Pending Todos
 
@@ -316,11 +330,12 @@ None.
 - 4 unrelated test files fail (api/ imports missing) - outside Phase 1 scope
 - Local Supabase migration history out of sync - migrations ready for deployment but need manual application
 - PublicPreviewPage.jsx has syntax error (incomplete file from 04-05, not blocking Phase 5)
+- Player.jsx has uncommitted changes from 06-01 Task 2 (empty catch block logging) - needs attention
 
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 06-01-PLAN.md (retry backoff + error logging)
+Stopped at: Completed 06-02-PLAN.md (offline screenshot + kiosk password)
 Resume file: None
 
 ## Next Steps
@@ -328,10 +343,11 @@ Resume file: None
 **Phase 6 In Progress** - Player Reliability
 
 **Remaining in Phase 6:**
-- [ ] 06-02: Offline screenshot queue with reconnect upload
-- [ ] 06-03: Kiosk exit password validation
-- [ ] 06-04: Remaining empty catch block fixes
+- [ ] 06-03: Remaining empty catch block fixes
+- [ ] 06-04: Additional error handling improvements
 
 **PLR Status:**
-- PLR-01 partial: calculateBackoff with full jitter (complete)
-- PLR-04 partial: 2 empty catch blocks replaced (more may exist)
+- PLR-01: calculateBackoff with full jitter (complete)
+- PLR-02: Offline screenshot queue with reconnect upload (complete)
+- PLR-03: Kiosk exit password offline verification (complete)
+- PLR-04 partial: 2 empty catch blocks replaced (more may exist in other files)
