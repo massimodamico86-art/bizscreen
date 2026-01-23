@@ -76,7 +76,13 @@ import {
 import { useLogger } from './hooks/useLogger.js';
 import { createScopedLogger } from './services/loggingService.js';
 import { ClockWidget, DateWidget, WeatherWidget, QRCodeWidget } from './player/components/widgets';
-import { usePlayerContent, usePlayerHeartbeat, usePlayerCommands } from './player/hooks';
+import {
+  usePlayerContent,
+  usePlayerHeartbeat,
+  usePlayerCommands,
+  useKioskMode,
+  usePlayerPlayback,
+} from './player/hooks';
 
 // Module-level logger for utility functions
 const retryLogger = createScopedLogger('Player:retry');
@@ -1695,6 +1701,7 @@ function PairPage() {
 
 /**
  * Player View Page - Full-screen slideshow playback
+ * Refactored to use extracted hooks for kiosk mode and playback
  */
 function ViewPage() {
   const logger = useLogger('ViewPage');
@@ -1719,17 +1726,28 @@ function ViewPage() {
     lastActivityRef,
   } = usePlayerContent(screenId, navigate);
 
-  // Kiosk mode state (kept in ViewPage)
-  const [kioskMode, setKioskMode] = useState(false);
-  const [showKioskExit, setShowKioskExit] = useState(false);
-  const [kioskPasswordInput, setKioskPasswordInput] = useState('');
-  const [kioskPasswordError, setKioskPasswordError] = useState('');
+  // Kiosk mode hook - manages kiosk state, fullscreen, password exit
+  const {
+    kioskMode,
+    showKioskExit,
+    kioskPasswordInput,
+    kioskPasswordError,
+    setKioskPasswordInput,
+    handleKioskExit,
+    cancelKioskExit,
+  } = useKioskMode();
+
+  // Playback hook - manages timing, video control, analytics
+  const {
+    videoRef,
+    timerRef,
+    lastVideoTimeRef,
+    handleVideoEnd,
+    handleAdvanceToNext,
+  } = usePlayerPlayback(items, currentIndex, content, advanceToNext);
 
   // ViewPage-specific refs
-  const videoRef = useRef(null);
-  const timerRef = useRef(null);
   const stuckDetectionRef = useRef(null);
-  const lastVideoTimeRef = useRef(0);
   const contentContainerRef = useRef(null);
   const advanceToNextRef = useRef(null);
 
@@ -1754,7 +1772,7 @@ function ViewPage() {
     };
   }, []);
 
-  // Initialize offline cache, service worker, and kiosk mode on mount
+  // Initialize offline cache and service worker on mount
   useEffect(() => {
     const init = async () => {
       // Initialize IndexedDB cache
@@ -1771,14 +1789,6 @@ function ViewPage() {
         logger.info('Offline service initialized');
       } catch (err) {
         logger.warn('Failed to initialize offline service', { error: err });
-      }
-
-      // Check for kiosk mode setting
-      const savedKioskMode = localStorage.getItem(STORAGE_KEYS.kioskMode);
-      if (savedKioskMode === 'true') {
-        setKioskMode(true);
-        // Enter fullscreen for kiosk mode
-        enterFullscreen().catch(err => logger.warn('Failed to enter fullscreen', { error: err }));
       }
     };
     init();
@@ -1962,135 +1972,9 @@ function ViewPage() {
     };
   }, []);
 
-  // Kiosk mode keyboard handler (Escape to show exit dialog)
-  useEffect(() => {
-    if (!kioskMode) return;
-
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        setShowKioskExit(true);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [kioskMode]);
-
-  // Re-enter fullscreen if exited in kiosk mode
-  useEffect(() => {
-    if (!kioskMode) return;
-
-    const handleFullscreenChange = () => {
-      if (!isFullscreen() && kioskMode) {
-        // Re-enter fullscreen after a short delay
-        setTimeout(() => {
-          enterFullscreen().catch(err => logger.warn('Failed to enter fullscreen', { error: err }));
-        }, 100);
-      }
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-    };
-  }, [kioskMode]);
-
-  // Handle kiosk exit
-  const handleKioskExit = useCallback(() => {
-    const savedPassword = localStorage.getItem(STORAGE_KEYS.kioskPassword);
-    if (savedPassword && kioskPasswordInput !== savedPassword) {
-      setKioskPasswordError('Incorrect password');
-      return;
-    }
-
-    // Exit kiosk mode
-    setKioskMode(false);
-    setShowKioskExit(false);
-    setKioskPasswordInput('');
-    setKioskPasswordError('');
-    localStorage.setItem(STORAGE_KEYS.kioskMode, 'false');
-    exitFullscreen().catch(err => logger.warn('Failed to exit fullscreen', { error: err }));
-  }, [kioskPasswordInput, logger]);
-
-  // Wrapper for advanceToNext that includes analytics tracking
-  const handleAdvanceToNext = useCallback(() => {
-    // End current playback tracking before advancing
-    analytics.endPlaybackEvent();
-    advanceToNext();
-  }, [advanceToNext]);
-
   // Keep ref updated for use in stuck detection effect
   useEffect(() => {
     advanceToNextRef.current = handleAdvanceToNext;
-  }, [handleAdvanceToNext]);
-
-  // Track playback analytics for playlist mode
-  useEffect(() => {
-    // RPC returns 'mode' field (playlist or layout)
-    const mode = content?.mode || content?.type;
-    if (mode !== 'playlist' || items.length === 0) return;
-    const currentItem = items[currentIndex];
-    if (!currentItem) return;
-
-    const screenId = localStorage.getItem(STORAGE_KEYS.screenId);
-    if (!screenId) return;
-
-    // Start tracking this item
-    analytics.startPlaybackEvent({
-      screenId,
-      tenantId: content.screen?.tenant_id,
-      locationId: content.screen?.location_id || null,
-      playlistId: content.playlist?.id || null,
-      layoutId: null,
-      zoneId: null,
-      mediaId: currentItem.mediaType !== 'app' ? currentItem.id : null,
-      appId: currentItem.mediaType === 'app' ? currentItem.id : null,
-      campaignId: content.campaign?.id || null,
-      itemType: currentItem.mediaType === 'app' ? 'app' : 'media',
-      itemName: currentItem.name,
-    });
-
-    // Cleanup: end tracking when component unmounts or item changes
-    return () => {
-      // Note: advanceToNext handles ending, but this catches unmount
-    };
-  }, [currentIndex, items, content?.type, content?.playlist?.id, content?.campaign?.id, content?.screen?.tenant_id, content?.screen?.location_id]);
-
-  // Timer for image/document duration
-  useEffect(() => {
-    if (items.length === 0) return;
-
-    const currentItem = items[currentIndex];
-    if (!currentItem) return;
-
-    // Clear existing timer
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    // For videos, let the onEnded handler advance
-    if (currentItem.mediaType === 'video') {
-      return;
-    }
-
-    // For images and other types, use duration timer
-    const duration = (currentItem.duration || content?.playlist?.defaultDuration || 10) * 1000;
-    timerRef.current = setTimeout(handleAdvanceToNext, duration);
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, [currentIndex, items, content?.playlist?.defaultDuration, handleAdvanceToNext]);
-
-  // Handle video end
-  const handleVideoEnd = useCallback(() => {
-    handleAdvanceToNext();
   }, [handleAdvanceToNext]);
 
   // Disconnect and return to pairing
@@ -2838,11 +2722,7 @@ function ViewPage() {
               marginTop: '1rem'
             }}>
               <button
-                onClick={() => {
-                  setShowKioskExit(false);
-                  setKioskPasswordInput('');
-                  setKioskPasswordError('');
-                }}
+                onClick={cancelKioskExit}
                 style={{
                   flex: 1,
                   padding: '0.75rem',
