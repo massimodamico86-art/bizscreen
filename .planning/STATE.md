@@ -5,16 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 6 Player Reliability - Complete
+**Current focus:** Phase 7 Player Refactoring - In Progress
 
 ## Current Position
 
-Phase: 6 of 12 (Player Reliability)
-Plan: 3 of 3 in phase 6 (complete)
-Status: Phase Complete
-Last activity: 2026-01-23 - Completed Phase 6 (PLR-01 gap deferred to Phase 7)
+Phase: 7 of 12 (Player Refactoring)
+Plan: 1 of 3 in phase 7
+Status: In Progress
+Last activity: 2026-01-23 - Completed 07-01 (Widget extraction + PLR-01 fix)
 
-Progress: [############] 50% (6/12 phases complete)
+Progress: [############░░░░░░░░░░░░] 54% (6.3/12 phases complete)
+
+## Phase 7 Progress Summary
+
+**Player Refactoring Plans:**
+- [x] 07-01: Extract widgets + fix PLR-01 (47fcba4, 2c177a5)
+- [ ] 07-02: Extract custom hooks (usePlayerContent, usePlayerHeartbeat, etc.)
+- [ ] 07-03: Split Player.jsx into focused components
+
+**Widget Extraction + PLR-01 Fix (07-01):**
+- Extracted ClockWidget, DateWidget, WeatherWidget, QRCodeWidget to src/player/components/widgets/
+- PLR-01 gap fixed: Removed getRetryDelay (0-25% jitter), now uses calculateBackoff (0-100% full jitter)
+- Player.jsx reduced by 307 lines (3495 -> 3188)
+- SceneWidgetRenderer simplified to ~30 lines (was ~330 lines)
+- All 60 Player tests pass
 
 ## Phase 6 Progress Summary
 
@@ -40,8 +54,7 @@ Progress: [############] 50% (6/12 phases complete)
 **Verification (06-03):**
 - Approved based on code review (player pairing required for manual testing)
 - 3/4 success criteria verified
-- PLR-01 gap: Player.jsx has own getRetryDelay (0-25% jitter) instead of using calculateBackoff (0-100%)
-- Gap deferred to Phase 7 (Player Refactoring) for consolidation
+- PLR-01 gap fixed in Phase 7-01
 
 **Critical Fixes During Execution:**
 - Restored 28 truncated page files from Phase 4 corruption (+12,602 lines)
@@ -215,9 +228,9 @@ Progress: [############] 50% (6/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 28
-- Average duration: 5.6 min
-- Total execution time: 158 min (2.6 hours)
+- Total plans completed: 29
+- Average duration: 5.5 min
+- Total execution time: 163 min (2.7 hours)
 
 **By Phase:**
 
@@ -229,6 +242,10 @@ Progress: [############] 50% (6/12 phases complete)
 | 04-logging-migration | 6 | 62 min | 10.3 min |
 | 05-critical-fixes | 2 | 11 min | 5.5 min |
 | 06-player-reliability | 2 | 8 min | 4 min |
+| 07-player-refactoring | 1 | 5 min | 5 min |
+
+**Phase 7 Plan Breakdown:**
+- 07-01: 5 min (widget extraction + PLR-01 fix)
 
 **Phase 6 Plan Breakdown:**
 - 06-01: 3 min (retry backoff + error logging)
@@ -247,8 +264,8 @@ Progress: [############] 50% (6/12 phases complete)
 - 04-06: 6.4 min (final cleanup, tests)
 
 **Recent Trend:**
-- Last 5 plans: 04-05 (21 min), 04-06 (6.4 min), 05-01 (8 min), 06-01 (3 min), 06-02 (5 min)
-- Trend: Migration tasks vary by file count (3-21 min range)
+- Last 5 plans: 05-01 (8 min), 06-01 (3 min), 06-02 (5 min), 07-01 (5 min)
+- Trend: Consistent 3-8 min per plan for focused extraction/fix tasks
 
 *Updated after each plan completion*
 
@@ -327,6 +344,9 @@ Recent decisions affecting current work:
 - [06-02]: SHA-256 via crypto.subtle (browser-native, no dependencies)
 - [06-02]: Plaintext password fallback for legacy kiosk without cached hash
 - [06-02]: Dynamic import for screenshotService to avoid circular dependency
+- [07-01]: Widget components are self-contained with internal timers
+- [07-01]: WeatherWidget fetches its own data (not passed from parent)
+- [07-01]: Props pattern: { props = {} } for safe default handling
 
 ### Pending Todos
 
@@ -340,23 +360,21 @@ None.
 - Local Supabase migration history out of sync - migrations ready for deployment but need manual application
 - ~~PublicPreviewPage.jsx has syntax error~~ Fixed: 28 truncated pages restored from Phase 4 corruption
 - ~~Player.jsx has uncommitted changes~~ Committed: structured logging in catch blocks
-- PLR-01 gap: Player.jsx uses own getRetryDelay (0-25% jitter) instead of calculateBackoff (0-100%) — deferred to Phase 7
+- ~~PLR-01 gap: Player.jsx uses own getRetryDelay (0-25% jitter) instead of calculateBackoff (0-100%)~~ Fixed in 07-01
 - Database schema issue: `column "last_seen" does not exist` — unrelated to Phase 6
+- Pre-existing test failures in offlineService.test.js and playbackTrackingService.test.js (unrelated to Phase 7)
 
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed Phase 6 execution and verification
+Stopped at: Completed 07-01-PLAN.md (Widget extraction + PLR-01 fix)
 Resume file: None
 
 ## Next Steps
 
-**Phase 6 Complete!** Ready for Phase 7.
+**Phase 7 In Progress!** Continue with 07-02.
 
 **Phase 7: Player Refactoring** — Split Player.jsx into focused components
-- REF-01: Player.jsx split into SceneRenderer, PlayerControls, etc.
-- REF-02: Custom hooks extracted (usePlayerContent, usePlayerHeartbeat, etc.)
-- **Includes:** Fix PLR-01 gap by consolidating retry logic to use calculateBackoff
-- PLR-02: Offline screenshot queue with reconnect upload (complete)
-- PLR-03: Kiosk exit password offline verification (complete)
-- PLR-04 partial: 2 empty catch blocks replaced (more may exist in other files)
+- [x] 07-01: Extract widgets + fix PLR-01 (complete)
+- [ ] 07-02: Extract custom hooks (usePlayerContent, usePlayerHeartbeat, etc.)
+- [ ] 07-03: Split Player.jsx into focused components (SceneRenderer, PlayerControls, etc.)
