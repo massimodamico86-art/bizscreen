@@ -16,7 +16,7 @@ BizScreen production release progresses through 12 phases: establishing testing 
 - [x] **Phase 4: Logging Migration** - Replace console.log with structured logging
 - [x] **Phase 5: Critical Fixes** - Wire up incomplete features and logic gaps
 - [x] **Phase 6: Player Reliability** - Harden offline sync and error handling *(PLR-01 gap deferred to Phase 7)*
-- [ ] **Phase 7: Player Refactoring** - Split Player.jsx into focused components *(gap closure in progress)*
+- [x] **Phase 7: Player Refactoring** - Split Player.jsx into focused components *(hooks extracted, component splitting deferred)*
 - [ ] **Phase 8: Page Refactoring** - Split large page components
 - [ ] **Phase 9: Device Experience** - QR pairing and kiosk exit improvements
 - [ ] **Phase 10: Analytics** - View duration and content performance tracking
@@ -145,7 +145,7 @@ Plans:
 - [x] 07-01-PLAN.md — Extract widget components and fix PLR-01 retry gap (REF-01)
 - [x] 07-02-PLAN.md — Extract custom hooks for content, heartbeat, and commands (REF-02)
 - [x] 07-03-PLAN.md — Final consolidation, hook tests, and verification
-- [ ] 07-04-PLAN.md — Gap closure: Fix test failures (playbackTrackingService bug)
+- [x] 07-04-PLAN.md — Gap closure: Fix test failures (playbackTrackingService bug)
 
 ### Phase 8: Page Refactoring
 **Goal**: Large page components are decomposed into maintainable sub-components
@@ -232,7 +232,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Logging Migration | 6/6 | Complete | 2026-01-22 |
 | 5. Critical Fixes | 2/2 | Complete | 2026-01-23 |
 | 6. Player Reliability | 3/3 | Complete | 2026-01-23 |
-| 7. Player Refactoring | 3/4 | Gap closure | - |
+| 7. Player Refactoring | 4/4 | Complete | 2026-01-23 |
 | 8. Page Refactoring | 0/TBD | Not started | - |
 | 9. Device Experience | 0/TBD | Not started | - |
 | 10. Analytics | 0/TBD | Not started | - |
@@ -241,4 +241,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 7 gap closure plan added (07-04)*
+*Last updated: 2026-01-23 — Phase 7 complete (4/4 plans, hooks extracted)*

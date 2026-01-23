@@ -37,8 +37,8 @@
 
 ### Refactoring
 
-- [ ] **REF-01**: Player.jsx split into focused components (SceneRenderer, PlayerControls, etc.)
-- [ ] **REF-02**: Player custom hooks extracted (usePlayerContent, usePlayerHeartbeat, etc.)
+- [~] **REF-01**: Player.jsx split into focused components (SceneRenderer, PlayerControls, etc.) *(partial: hooks and widgets extracted, component file splitting deferred)*
+- [x] **REF-02**: Player custom hooks extracted (usePlayerContent, usePlayerHeartbeat, etc.)
 - [ ] **REF-03**: MediaLibraryPage.jsx split into sub-components with custom hooks
 - [ ] **REF-04**: ScreensPage.jsx split into sub-components with custom hooks
 - [ ] **REF-05**: PlaylistEditorPage.jsx split into sub-components with custom hooks
@@ -120,12 +120,12 @@ Deferred to future release:
 | FIX-03 | Phase 5 | Complete |
 | FIX-04 | Phase 5 | Complete |
 | FIX-05 | Phase 5 | Complete |
-| PLR-01 | Phase 6 | Pending |
-| PLR-02 | Phase 6 | Pending |
-| PLR-03 | Phase 6 | Pending |
-| PLR-04 | Phase 6 | Pending |
-| REF-01 | Phase 7 | Pending |
-| REF-02 | Phase 7 | Pending |
+| PLR-01 | Phase 7 | Complete |
+| PLR-02 | Phase 6 | Complete |
+| PLR-03 | Phase 6 | Complete |
+| PLR-04 | Phase 6 | Complete |
+| REF-01 | Phase 7 | Partial |
+| REF-02 | Phase 7 | Complete |
 | REF-03 | Phase 8 | Pending |
 | REF-04 | Phase 8 | Pending |
 | REF-05 | Phase 8 | Pending |
@@ -156,4 +156,4 @@ Deferred to future release:
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 5 complete (FIX-01 through FIX-05)*
+*Last updated: 2026-01-23 — Phase 7 complete (REF-02, PLR-01)*
