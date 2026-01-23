@@ -30,6 +30,7 @@ const App = lazy(() => import('../App'));
 const TV = lazy(() => import('../TV'));
 const Player = lazy(() => import('../Player'));
 const PublicPreviewPage = lazy(() => import('../pages/PublicPreviewPage'));
+const PairDevicePage = lazy(() => import('../pages/PairDevicePage'));
 
 // Loading fallback
 const LoadingSpinner = () => (
@@ -145,6 +146,18 @@ export default function AppRouter() {
       <Route path="/auth/update-password" element={<Suspense fallback={<LoadingSpinner />}><UpdatePasswordPage /></Suspense>} />
       <Route path="/auth/callback" element={<Suspense fallback={<LoadingSpinner />}><AuthCallbackPage /></Suspense>} />
       <Route path="/auth/accept-invite" element={<Suspense fallback={<LoadingSpinner />}><AcceptInvitePage /></Suspense>} />
+
+      {/* Device Pairing Route (protected - requires auth) */}
+      <Route
+        path="/pair/:deviceId"
+        element={
+          <RequireAuth>
+            <Suspense fallback={<LoadingSpinner />}>
+              <PairDevicePage />
+            </Suspense>
+          </RequireAuth>
+        }
+      />
 
       {/* App Routes (protected) */}
       <Route
