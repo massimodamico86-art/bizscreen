@@ -24,6 +24,7 @@ import {
   clearCachedDataSource,
 } from '../../services/dataBindingResolver';
 import { subscribeToDataSource } from '../../services/dataSourceService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Block type icons
 const BLOCK_ICONS = {
@@ -48,6 +49,7 @@ export default function EditorCanvas({
   onBlockUpdate,
   smartGuidesEnabled = true,
 }) {
+  const logger = useLogger('EditorCanvas');
   const canvasRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -88,7 +90,7 @@ export default function EditorCanvas({
           setResolvedBlocks(resolvedMap);
         }
       } catch (error) {
-        console.error('[EditorCanvas] Failed to resolve bindings:', error);
+        logger.error('Failed to resolve bindings', { error });
       }
     }
 
@@ -112,7 +114,7 @@ export default function EditorCanvas({
     dataSourceIds.forEach((dataSourceId) => {
       try {
         const subscription = subscribeToDataSource(dataSourceId, async (update) => {
-          console.log('[EditorCanvas] Data source updated:', dataSourceId, update.type);
+          logger.debug('Data source updated', { dataSourceId, updateType: update.type });
 
           // Clear the cache for this data source
           clearCachedDataSource(dataSourceId);
@@ -134,12 +136,12 @@ export default function EditorCanvas({
             });
             setResolvedBlocks(resolvedMap);
           } catch (err) {
-            console.error('[EditorCanvas] Failed to re-resolve bindings:', err);
+            logger.error('Failed to re-resolve bindings', { error: err });
           }
         });
         subscriptions.push(subscription);
       } catch (err) {
-        console.error('[EditorCanvas] Failed to subscribe to data source:', dataSourceId, err);
+        logger.error('Failed to subscribe to data source', { dataSourceId, error: err });
       }
     });
 
@@ -148,7 +150,7 @@ export default function EditorCanvas({
       subscriptions.forEach((sub) => {
         if (sub?.unsubscribe) {
           sub.unsubscribe().catch((err) => {
-            console.warn('[EditorCanvas] Error unsubscribing:', err);
+            logger.warn('Error unsubscribing', { error: err });
           });
         }
       });

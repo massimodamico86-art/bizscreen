@@ -17,6 +17,7 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { fetchSvgTemplates } from '../../services/svgTemplateService';
+import { useLogger } from '../../hooks/useLogger.js';
 import {
   LayoutTemplate,
   Image,
@@ -238,6 +239,7 @@ export default function LeftSidebar({
   templates = [],
   userTemplates = [],
 }) {
+  const logger = useLogger('LeftSidebar');
   const [activePanel, setActivePanel] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [photos, setPhotos] = useState([]);
@@ -307,7 +309,7 @@ export default function LeftSidebar({
 
       setPhotos(picsumPhotos);
     } catch (error) {
-      console.error('Error fetching photos:', error);
+      logger.error('Error fetching photos', { error });
       // Ultimate fallback with placeholder images
       const fallbackPhotos = [];
       for (let i = 0; i < 12; i++) {
@@ -413,7 +415,7 @@ export default function LeftSidebar({
 
       setGiphyResults(results);
     } catch (error) {
-      console.error('Error fetching GIPHY:', error);
+      logger.error('Error fetching GIPHY', { error });
       setGiphyResults([]);
     } finally {
       setLoadingGiphy(false);
@@ -449,7 +451,7 @@ export default function LeftSidebar({
           });
           setFilteredTemplates(results);
         } catch (err) {
-          console.error('Error fetching templates:', err);
+          logger.error('Error fetching templates', { error: err });
           // Fallback to prop templates with local filtering
           if (searchQuery) {
             const searchLower = searchQuery.toLowerCase();
@@ -612,11 +614,11 @@ export default function LeftSidebar({
                 <button
                   key={widget.id}
                   onClick={() => {
-                    console.log('Widget button clicked:', widget.id);
+                    logger.debug('Widget button clicked', { widgetId: widget.id });
                     if (onAddWidget) {
                       onAddWidget(widget.id);
                     } else {
-                      console.error('onAddWidget handler not provided');
+                      logger.error('onAddWidget handler not provided');
                     }
                   }}
                   className="flex flex-col items-center justify-center p-4 bg-gray-700 hover:bg-gray-600 rounded-xl transition-colors group"

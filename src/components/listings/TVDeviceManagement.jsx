@@ -3,8 +3,10 @@ import { Plus, Trash2, QrCode, RefreshCw, Copy, Smartphone, Monitor, Wifi, WifiO
 import Button from '../Button';
 import { supabase } from '../../supabase';
 import { generateQRCode } from '../../services/qrcodeService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 export const TVDeviceManagement = ({ formData, setFormData, showToast }) => {
+  const logger = useLogger('TVDeviceManagement');
   const [loading, setLoading] = useState(false);
   const [generatingCode, setGeneratingCode] = useState(null);
   const [pairingCodes, setPairingCodes] = useState({});
@@ -45,7 +47,7 @@ export const TVDeviceManagement = ({ formData, setFormData, showToast }) => {
           tvDevices: devicesData
         });
       } catch (error) {
-        console.error('Error fetching TV devices:', error);
+        logger.error('Error fetching TV devices', { error });
         if (showToast) {
           showToast('Error loading TV devices: ' + error.message, 'error');
         }
@@ -68,7 +70,7 @@ export const TVDeviceManagement = ({ formData, setFormData, showToast }) => {
           filter: `listing_id=eq.${formData.id}`
         },
         (payload) => {
-          console.log('TV device change received:', payload);
+          logger.debug('TV device change received', { eventType: payload.eventType, id: payload.new?.id || payload.old?.id });
 
           if (payload.eventType === 'INSERT') {
             const newDevice = {
@@ -180,7 +182,7 @@ export const TVDeviceManagement = ({ formData, setFormData, showToast }) => {
         showToast('Pairing code generated!');
       }
     } catch (error) {
-      console.error('Error generating pairing code:', error);
+      logger.error('Error generating pairing code', { error });
       if (showToast) {
         showToast('Error: ' + error.message, 'error');
       }
@@ -268,7 +270,7 @@ export const TVDeviceManagement = ({ formData, setFormData, showToast }) => {
 
                       if (error) throw error;
                     } catch (error) {
-                      console.error('Error updating TV device:', error);
+                      logger.error('Error updating TV device', { error });
                       if (showToast) {
                         showToast('Error updating TV device: ' + error.message, 'error');
                       }
@@ -338,7 +340,7 @@ export const TVDeviceManagement = ({ formData, setFormData, showToast }) => {
                         showToast('Device deleted successfully!');
                       }
                     } catch (error) {
-                      console.error('Error deleting TV device:', error);
+                      logger.error('Error deleting TV device', { error });
                       if (showToast) {
                         showToast('Error deleting device: ' + error.message, 'error');
                       }
@@ -462,7 +464,7 @@ export const TVDeviceManagement = ({ formData, setFormData, showToast }) => {
               showToast('Screen added! Click the QR icon to generate a pairing code.');
             }
           } catch (error) {
-            console.error('Error adding TV device:', error);
+            logger.error('Error adding TV device', { error });
             if (showToast) {
               showToast('Error adding device: ' + error.message, 'error');
             }
