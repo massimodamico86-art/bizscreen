@@ -1,8 +1,8 @@
 /**
- * Page Hooks - Barrel export for all page-related custom hooks
+ * Page Hooks Barrel Export
  *
- * @module pages/hooks
+ * Custom hooks extracted from page components to reduce complexity
+ * and improve testability.
  */
 
-export { useFeatureFlags } from './useFeatureFlags.js';
-export { useCampaignEditor } from './useCampaignEditor.js';
+export { useScreensData } from './useScreensData.js';
