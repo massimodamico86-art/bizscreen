@@ -5,6 +5,10 @@
 
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('UsageService');
+
 /**
  * Get usage summary for the current tenant
  * @returns {Promise<Object>}
@@ -34,7 +38,7 @@ export async function getUsageSummary() {
 
     return await response.json();
   } catch (error) {
-    console.error('Usage summary error:', error);
+    logger.error('Usage summary error:', { error: error });
     throw error;
   }
 }
@@ -50,7 +54,7 @@ export async function getQuotaStatus(featureKey) {
     const quota = summary.data.quotas.find((q) => q.featureKey === featureKey);
     return quota || null;
   } catch (error) {
-    console.error('Quota status error:', error);
+    logger.error('Quota status error:', { error: error });
     throw error;
   }
 }
@@ -69,7 +73,7 @@ export async function recordClientEvent(featureKey, metadata = {}) {
     } = await supabase.auth.getSession();
 
     if (!session) {
-      console.warn('Not authenticated, skipping client event recording');
+      logger.warn('Not authenticated, skipping client event recording');
       return;
     }
 
@@ -77,7 +81,7 @@ export async function recordClientEvent(featureKey, metadata = {}) {
     const tenantId = session.user.user_metadata?.tenant_id || session.user.id;
 
     if (!tenantId) {
-      console.warn('No tenant found, skipping client event recording');
+      logger.warn('No tenant found, skipping client event recording');
       return;
     }
 
@@ -94,7 +98,7 @@ export async function recordClientEvent(featureKey, metadata = {}) {
     });
   } catch (error) {
     // Don't throw for client events - just log
-    console.error('Client event recording error:', error);
+    logger.error('Client event recording error:', { error: error });
   }
 }
 

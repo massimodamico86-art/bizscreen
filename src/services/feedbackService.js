@@ -6,6 +6,10 @@
 import { supabase } from '../supabase';
 import { uploadBase64ToCloudinary, isCloudinaryConfigured } from './cloudinaryService';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('FeedbackService');
+
 // In-memory cache for announcements
 let announcementCache = {
   data: null,
@@ -93,13 +97,13 @@ export async function submitFeedback(feedback) {
     });
 
     if (error) {
-      console.error('Error submitting feedback:', error);
+      logger.error('Error submitting feedback:', { error: error });
       return { success: false, error: error.message };
     }
 
     return { success: true, id: data };
   } catch (e) {
-    console.error('Error submitting feedback:', e);
+    logger.error('Error submitting feedback:', { error: e });
     return { success: false, error: e.message };
   }
 }
@@ -159,7 +163,7 @@ export async function submitBugReport(description, screenshotDataUrl, additional
         });
         context.screenshotUrl = screenshotUrl;
       } catch (uploadError) {
-        console.warn('Failed to upload screenshot:', uploadError);
+        logger.warn('Failed to upload screenshot:', { data: uploadError });
         context.screenshotUploadFailed = true;
       }
     } else {
@@ -220,7 +224,7 @@ function saveDismissedId(announcementId) {
     dismissed.add(announcementId);
     localStorage.setItem(DISMISSED_KEY, JSON.stringify([...dismissed]));
   } catch (e) {
-    console.warn('Failed to save dismissed announcement:', e);
+    logger.warn('Failed to save dismissed announcement:', { data: e });
   }
 }
 
@@ -251,7 +255,7 @@ export async function getActiveAnnouncements(forceRefresh = false) {
   });
 
   if (error) {
-    console.error('Error fetching announcements:', error);
+    logger.error('Error fetching announcements:', { error: error });
     return [];
   }
 
@@ -360,7 +364,7 @@ export async function getAllFeedback(filters = {}) {
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching feedback:', error);
+    logger.error('Error fetching feedback:', { error: error });
     throw error;
   }
 
@@ -388,7 +392,7 @@ export async function updateFeedbackStatus(feedbackId, status, adminResponse) {
     .single();
 
   if (error) {
-    console.error('Error updating feedback:', error);
+    logger.error('Error updating feedback:', { error: error });
     throw error;
   }
 
@@ -406,7 +410,7 @@ export async function getAllAnnouncements() {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching announcements:', error);
+    logger.error('Error fetching announcements:', { error: error });
     throw error;
   }
 
@@ -440,7 +444,7 @@ export async function createAnnouncement(announcement) {
     .single();
 
   if (error) {
-    console.error('Error creating announcement:', error);
+    logger.error('Error creating announcement:', { error: error });
     throw error;
   }
 
@@ -477,7 +481,7 @@ export async function updateAnnouncement(announcementId, updates) {
     .single();
 
   if (error) {
-    console.error('Error updating announcement:', error);
+    logger.error('Error updating announcement:', { error: error });
     throw error;
   }
 
@@ -499,7 +503,7 @@ export async function deleteAnnouncement(announcementId) {
     .eq('id', announcementId);
 
   if (error) {
-    console.error('Error deleting announcement:', error);
+    logger.error('Error deleting announcement:', { error: error });
     throw error;
   }
 

@@ -75,7 +75,7 @@ export async function getEffectiveLocale(forceRefresh = false) {
     const { data, error } = await supabase.rpc('get_user_effective_locale');
 
     if (error) {
-      console.warn('Error fetching locale from RPC:', error);
+      logger.warn('Error fetching locale from RPC:', { data: error });
       // Fallback to profile direct query
       const { data: profile } = await supabase
         .from('profiles')
@@ -102,7 +102,7 @@ export async function getEffectiveLocale(forceRefresh = false) {
     cacheTimestamp = Date.now();
     return cachedLocale;
   } catch (e) {
-    console.error('Error getting effective locale:', e);
+    logger.error('Error getting effective locale:', { error: e });
     return detectBrowserLocale();
   }
 }
@@ -146,7 +146,7 @@ export async function setUserPreferredLocale(locale) {
     });
 
     if (error) {
-      console.error('Error setting user locale:', error);
+      logger.error('Error setting user locale:', { error: error });
 
       // Fallback to direct update
       const { data: { user } } = await supabase.auth.getUser();
@@ -174,7 +174,7 @@ export async function setUserPreferredLocale(locale) {
 
     return { success: true };
   } catch (e) {
-    console.error('Error setting user locale:', e);
+    logger.error('Error setting user locale:', { error: e });
     return { success: false, error: e.message };
   }
 }
@@ -196,7 +196,7 @@ export async function setTenantDefaultLocale(locale) {
     });
 
     if (error) {
-      console.error('Error setting tenant locale:', error);
+      logger.error('Error setting tenant locale:', { error: error });
       return { success: false, error: error.message };
     }
 
@@ -205,7 +205,7 @@ export async function setTenantDefaultLocale(locale) {
 
     return { success: true };
   } catch (e) {
-    console.error('Error setting tenant locale:', e);
+    logger.error('Error setting tenant locale:', { error: e });
     return { success: false, error: e.message };
   }
 }
@@ -250,7 +250,7 @@ export async function getLocalePreferences() {
       effectiveLocale: isLocaleSupported(effectiveLocale) ? effectiveLocale : DEFAULT_LOCALE,
     };
   } catch (e) {
-    console.error('Error getting locale preferences:', e);
+    logger.error('Error getting locale preferences:', { error: e });
     return {
       userLocale: null,
       tenantLocale: DEFAULT_LOCALE,

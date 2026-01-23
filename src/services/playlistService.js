@@ -403,3 +403,47 @@ export async function savePlaylistAsTemplate(playlistId, { name, description, ca
 
   return data;
 }
+
+// =====================================================
+// BULK OPERATIONS (US-153)
+// =====================================================
+
+/**
+ * Bulk add multiple media assets to a playlist (US-153)
+ * @param {string} playlistId - Playlist UUID
+ * @param {string[]} mediaIds - Array of media asset UUIDs
+ * @param {number} duration - Duration for each item (default 10 seconds)
+ * @returns {Promise<{added: number}>}
+ */
+export async function bulkAddToPlaylist(playlistId, mediaIds, duration = 10) {
+  if (!playlistId) throw new Error('Playlist ID is required');
+  if (!mediaIds || mediaIds.length === 0) return { added: 0 };
+
+  // Get the highest position
+  const { data: existingItems } = await supabase
+    .from('playlist_items')
+    .select('position')
+    .eq('playlist_id', playlistId)
+    .order('position', { ascending: false })
+    .limit(1);
+
+  let nextPosition = existingItems?.length > 0 ? existingItems[0].position + 1 : 0;
+
+  // Create items for each media asset
+  const items = mediaIds.map((mediaId, index) => ({
+    playlist_id: playlistId,
+    item_type: 'media',
+    item_id: mediaId,
+    position: nextPosition + index,
+    duration
+  }));
+
+  const { data, error } = await supabase
+    .from('playlist_items')
+    .insert(items)
+    .select();
+
+  if (error) throw error;
+
+  return { added: data?.length || 0 };
+}

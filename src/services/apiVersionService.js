@@ -7,6 +7,10 @@
 
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ApiVersionService');
+
 // API Version configuration
 export const API_VERSIONS = {
   v1: {
@@ -274,7 +278,7 @@ export async function logApiRequest({
     });
   } catch (err) {
     // Silently fail - don't break requests due to logging errors
-    console.warn('Failed to log API request:', err);
+    logger.warn('Failed to log API request:', { data: err });
   }
 }
 

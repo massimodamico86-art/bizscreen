@@ -6,6 +6,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('FeatureFlagService');
+
 // In-memory cache for feature flags
 let flagCache = {
   data: null,
@@ -41,7 +45,7 @@ function loadFromLocalStorage() {
       }
     }
   } catch (e) {
-    console.warn('Failed to load feature flags from localStorage:', e);
+    logger.warn('Failed to load feature flags from localStorage:', { data: e });
   }
   return null;
 }
@@ -54,7 +58,7 @@ function saveToLocalStorage(cacheData) {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
   } catch (e) {
-    console.warn('Failed to save feature flags to localStorage:', e);
+    logger.warn('Failed to save feature flags to localStorage:', { data: e });
   }
 }
 
@@ -146,7 +150,7 @@ export async function getFeatureFlags(forceRefresh = false) {
   });
 
   if (error) {
-    console.error('Error fetching feature flags:', error);
+    logger.error('Error fetching feature flags:', { error: error });
     // Return empty map on error, don't break the app
     return new Map();
   }
@@ -195,7 +199,7 @@ export async function isFeatureEnabled(flagKey, defaultValue = false) {
     const flag = flags.get(flagKey);
     return flag ? flag.enabled : defaultValue;
   } catch (e) {
-    console.error('Error checking feature flag:', e);
+    logger.error('Error checking feature flag:', { error: e });
     return defaultValue;
   }
 }
@@ -277,7 +281,7 @@ export async function getAllFeatureFlags() {
     .order('name', { ascending: true });
 
   if (error) {
-    console.error('Error fetching all feature flags:', error);
+    logger.error('Error fetching all feature flags:', { error: error });
     throw error;
   }
 
@@ -306,7 +310,7 @@ export async function createFeatureFlag(flag) {
     .single();
 
   if (error) {
-    console.error('Error creating feature flag:', error);
+    logger.error('Error creating feature flag:', { error: error });
     throw error;
   }
 
@@ -337,7 +341,7 @@ export async function updateFeatureFlag(flagId, updates) {
     .single();
 
   if (error) {
-    console.error('Error updating feature flag:', error);
+    logger.error('Error updating feature flag:', { error: error });
     throw error;
   }
 
@@ -359,7 +363,7 @@ export async function deleteFeatureFlag(flagId) {
     .eq('id', flagId);
 
   if (error) {
-    console.error('Error deleting feature flag:', error);
+    logger.error('Error deleting feature flag:', { error: error });
     throw error;
   }
 
@@ -381,7 +385,7 @@ export async function getTenantOverrides(tenantId) {
     .eq('tenant_id', tenantId);
 
   if (error) {
-    console.error('Error fetching tenant overrides:', error);
+    logger.error('Error fetching tenant overrides:', { error: error });
     throw error;
   }
 
@@ -409,7 +413,7 @@ export async function setTenantOverride(flagId, tenantId, enabled) {
     .single();
 
   if (error) {
-    console.error('Error setting tenant override:', error);
+    logger.error('Error setting tenant override:', { error: error });
     throw error;
   }
 
@@ -430,7 +434,7 @@ export async function removeTenantOverride(flagId, tenantId) {
     .eq('tenant_id', tenantId);
 
   if (error) {
-    console.error('Error removing tenant override:', error);
+    logger.error('Error removing tenant override:', { error: error });
     throw error;
   }
 }

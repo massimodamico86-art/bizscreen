@@ -10,6 +10,10 @@
 import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('LocationService');
+
 /**
  * Fetch all locations for the current tenant
  * Includes screen counts per location
@@ -44,7 +48,7 @@ export async function fetchLocations() {
       .order('name', { ascending: true });
 
     if (error) {
-      console.error('fetchLocations error:', error);
+      logger.error('fetchLocations error:', { error: error });
       return { data: [], error: error.message };
     }
 
@@ -76,7 +80,7 @@ export async function fetchLocations() {
 
     return { data: data || [], error: null };
   } catch (err) {
-    console.error('fetchLocations error:', err);
+    logger.error('fetchLocations error:', { error: err });
     return { data: [], error: err.message };
   }
 }
@@ -101,7 +105,7 @@ export async function fetchLocation(locationId) {
 
     return { data, error: null };
   } catch (err) {
-    console.error('fetchLocation error:', err);
+    logger.error('fetchLocation error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -152,13 +156,13 @@ export async function createLocation(locationData) {
       .single();
 
     if (error) {
-      console.error('createLocation error:', error);
+      logger.error('createLocation error:', { error: error });
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
   } catch (err) {
-    console.error('createLocation error:', err);
+    logger.error('createLocation error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -198,13 +202,13 @@ export async function updateLocation(locationId, updates) {
       .single();
 
     if (error) {
-      console.error('updateLocation error:', error);
+      logger.error('updateLocation error:', { error: error });
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
   } catch (err) {
-    console.error('updateLocation error:', err);
+    logger.error('updateLocation error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -250,13 +254,13 @@ export async function deleteLocation(locationId, reassignScreens = false) {
       .eq('id', locationId);
 
     if (error) {
-      console.error('deleteLocation error:', error);
+      logger.error('deleteLocation error:', { error: error });
       return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (err) {
-    console.error('deleteLocation error:', err);
+    logger.error('deleteLocation error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -352,7 +356,7 @@ export async function getLocationStats() {
 
     return { data: result, error: null };
   } catch (err) {
-    console.error('getLocationStats error:', err);
+    logger.error('getLocationStats error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -377,7 +381,7 @@ export async function assignScreenToLocation(screenId, locationId) {
 
     return { success: true };
   } catch (err) {
-    console.error('assignScreenToLocation error:', err);
+    logger.error('assignScreenToLocation error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -416,7 +420,7 @@ export async function getScreensByLocation(locationId) {
 
     return { data: data || [], error: null };
   } catch (err) {
-    console.error('getScreensByLocation error:', err);
+    logger.error('getScreensByLocation error:', { error: err });
     return { data: [], error: err.message };
   }
 }

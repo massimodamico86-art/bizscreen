@@ -7,6 +7,10 @@
 
 import { supabase } from '../../supabase';
 
+import { createScopedLogger } from '../loggingService.js';
+
+const logger = createScopedLogger('GoogleReviewsService');
+
 // Google API configuration
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 const GOOGLE_CLIENT_SECRET = import.meta.env.VITE_GOOGLE_CLIENT_SECRET || '';
@@ -257,7 +261,7 @@ export async function connectGoogleReviews(tenantId, placeIdOrQuery, location = 
 
     return data;
   } catch (error) {
-    console.error('Failed to connect Google Reviews:', error);
+    logger.error('Failed to connect Google Reviews:', { error: error });
     throw error;
   }
 }

@@ -49,7 +49,7 @@ export async function fetchTeamMembers() {
       .order('created_at', { ascending: true });
 
     if (error) {
-      console.error('fetchTeamMembers error:', error);
+      logger.error('fetchTeamMembers error:', { error: error });
       return { data: [], error: error.message };
     }
 
@@ -75,7 +75,7 @@ export async function fetchTeamMembers() {
 
     return { data: members, error: null };
   } catch (err) {
-    console.error('fetchTeamMembers error:', err);
+    logger.error('fetchTeamMembers error:', { error: err });
     return { data: [], error: err.message };
   }
 }
@@ -211,7 +211,7 @@ export async function inviteMember({ email, role }) {
 
     return { success: true, data: { member: newInvite, inviteToken, isNewInvite: true } };
   } catch (err) {
-    console.error('inviteMember error:', err);
+    logger.error('inviteMember error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -275,7 +275,7 @@ export async function updateMemberRole(memberId, newRole) {
     clearPermissionsCache();
     return { success: true };
   } catch (err) {
-    console.error('updateMemberRole error:', err);
+    logger.error('updateMemberRole error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -342,7 +342,7 @@ export async function revokeMember(memberId) {
     clearPermissionsCache();
     return { success: true };
   } catch (err) {
-    console.error('revokeMember error:', err);
+    logger.error('revokeMember error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -374,7 +374,7 @@ export async function resendInvite(memberId) {
 
     return { success: true, inviteToken };
   } catch (err) {
-    console.error('resendInvite error:', err);
+    logger.error('resendInvite error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -405,7 +405,7 @@ export async function deleteInvite(memberId) {
 
     return { success: true };
   } catch (err) {
-    console.error('deleteInvite error:', err);
+    logger.error('deleteInvite error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -474,7 +474,7 @@ export async function acceptInvite(token) {
     clearPermissionsCache();
     return { success: true, tenantId: invite.tenant_id };
   } catch (err) {
-    console.error('acceptInvite error:', err);
+    logger.error('acceptInvite error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -533,7 +533,7 @@ export async function getInviteDetails(token) {
 
     return { data, error: null };
   } catch (err) {
-    console.error('getInviteDetails error:', err);
+    logger.error('getInviteDetails error:', { error: err });
     return { data: null, error: err.message };
   }
 }

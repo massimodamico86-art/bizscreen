@@ -6,6 +6,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('SvgTemplateService');
+
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
 /**
@@ -47,10 +51,10 @@ async function uploadThumbnailToS3(blob, userId) {
       throw new Error(`S3 upload failed with status ${uploadResponse.status}`);
     }
 
-    console.log('Thumbnail uploaded to S3:', fileUrl);
+    logger.info('Thumbnail uploaded to S3:', { data: fileUrl });
     return fileUrl;
   } catch (err) {
-    console.error('S3 thumbnail upload error:', err);
+    logger.error('S3 thumbnail upload error:', { error: err });
     return null;
   }
 }
@@ -308,7 +312,7 @@ export async function fetchSvgTemplates(options = {}) {
       templates = [...templates, ...data];
     }
   } catch (err) {
-    console.warn('Could not fetch SVG templates from database:', err.message);
+    logger.warn('Could not fetch SVG templates from database:', err.message);
   }
 
   // Also fetch from template_library (admin-uploaded templates)
@@ -341,7 +345,7 @@ export async function fetchSvgTemplates(options = {}) {
             // Use encodeURIComponent for UTF-8 safe encoding
             thumbnailDataUrl = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
           } catch (e) {
-            console.warn('Failed to create data URL from SVG content:', e);
+            logger.warn('Failed to create data URL from SVG content:', { data: e });
           }
         }
 
@@ -372,7 +376,7 @@ export async function fetchSvgTemplates(options = {}) {
       templates = [...templates, ...transformedTemplates];
     }
   } catch (err) {
-    console.warn('Could not fetch templates from template_library:', err.message);
+    logger.warn('Could not fetch templates from template_library:', err.message);
   }
 
   // Apply filters to all templates (including local and library)
@@ -541,20 +545,20 @@ export async function saveUserSvgDesign(designData) {
   // Upload thumbnail to S3 if provided
   if (thumbnailDataUrl) {
     try {
-      console.log('Generating thumbnail blob from data URL...');
+      logger.info('Generating thumbnail blob from data URL...');
       const thumbnailBlob = await (await fetch(thumbnailDataUrl)).blob();
-      console.log('Uploading thumbnail to S3, Size:', thumbnailBlob.size);
+      logger.debug('Uploading thumbnail to S3, Size:', thumbnailBlob.size);
 
       thumbnailUrl = await uploadThumbnailToS3(thumbnailBlob, user.id);
 
       if (thumbnailUrl) {
-        console.log('Thumbnail uploaded successfully:', thumbnailUrl);
+        logger.info('Thumbnail uploaded successfully:', { data: thumbnailUrl });
       }
     } catch (err) {
-      console.error('Failed to upload thumbnail:', err);
+      logger.error('Failed to upload thumbnail:', { error: err });
     }
   } else {
-    console.warn('No thumbnailDataUrl provided for save');
+    logger.warn('No thumbnailDataUrl provided for save');
   }
 
   const layoutData = {

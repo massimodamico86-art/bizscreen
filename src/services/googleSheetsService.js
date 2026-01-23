@@ -13,6 +13,10 @@
 
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('GoogleSheetsService');
+
 // Get API key from environment
 const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -112,7 +116,7 @@ export async function fetchSheetData(sheetId, range = 'A1:Z1000') {
 
     return { headers, rows };
   } catch (error) {
-    console.error('[GoogleSheetsService] Fetch error:', error);
+    logger.error('Fetch error:', { error: error });
     throw error;
   }
 }
@@ -355,7 +359,7 @@ export async function syncDataSourceFromSheet(dataSource) {
       rowCount: rows.length,
     };
   } catch (error) {
-    console.error('[GoogleSheetsService] Sync error:', error);
+    logger.error('Sync error:', { error: error });
 
     // Update sync status with error
     await updateSyncStatus(dataSource.id, SYNC_STATUS.ERROR, {
@@ -392,7 +396,7 @@ async function updateSyncStatus(dataSourceId, status, options = {}) {
       p_error: options.error || null,
     });
   } catch (err) {
-    console.error('[GoogleSheetsService] Failed to update sync status:', err);
+    logger.error('Failed to update sync status:', { error: err });
   }
 }
 
@@ -406,7 +410,7 @@ async function broadcastDataSourceUpdate(dataSourceId) {
       p_data_source_id: dataSourceId,
     });
   } catch (err) {
-    console.error('[GoogleSheetsService] Failed to broadcast update:', err);
+    logger.error('Failed to broadcast update:', { error: err });
   }
 }
 
@@ -444,7 +448,7 @@ export async function linkToGoogleSheet(dataSourceId, sheetIdOrUrl, range = 'A1:
 
     return { success: true, message: 'Successfully linked to Google Sheet' };
   } catch (error) {
-    console.error('[GoogleSheetsService] Link error:', error);
+    logger.error('Link error:', { error: error });
     return { success: false, message: error.message };
   }
 }
@@ -464,7 +468,7 @@ export async function unlinkIntegration(dataSourceId) {
 
     return { success: true, message: 'Integration removed' };
   } catch (error) {
-    console.error('[GoogleSheetsService] Unlink error:', error);
+    logger.error('Unlink error:', { error: error });
     return { success: false, message: error.message };
   }
 }
@@ -489,7 +493,7 @@ export async function getSyncHistory(dataSourceId, limit = 20) {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('[GoogleSheetsService] Failed to get sync history:', error);
+    logger.error('Failed to get sync history:', { error: error });
     return [];
   }
 }

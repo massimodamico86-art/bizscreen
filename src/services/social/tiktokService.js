@@ -7,6 +7,10 @@
 
 import { supabase } from '../../supabase';
 
+import { createScopedLogger } from '../loggingService.js';
+
+const logger = createScopedLogger('TiktokService');
+
 // TikTok API configuration
 const TIKTOK_CLIENT_KEY = import.meta.env.VITE_TIKTOK_CLIENT_KEY || '';
 const TIKTOK_CLIENT_SECRET = import.meta.env.VITE_TIKTOK_CLIENT_SECRET || '';
@@ -235,7 +239,7 @@ export async function connectTiktokAccount(code, tenantId) {
 
     return data;
   } catch (error) {
-    console.error('Failed to connect TikTok account:', error);
+    logger.error('Failed to connect TikTok account:', { error: error });
     throw error;
   }
 }

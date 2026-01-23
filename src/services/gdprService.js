@@ -29,7 +29,7 @@ export async function requestDataExport(format = 'json') {
 
     return { success: true, requestId: data };
   } catch (error) {
-    console.error('Data export request error:', error);
+    logger.error('Data export request error:', { error: error });
     return { success: false, error: error.message };
   }
 }
@@ -49,7 +49,7 @@ export async function getDataExportRequests() {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Failed to get export requests:', error);
+    logger.error('Failed to get export requests:', { error: error });
     return [];
   }
 }
@@ -70,7 +70,7 @@ export async function getLatestExportStatus() {
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   } catch (error) {
-    console.error('Failed to get export status:', error);
+    logger.error('Failed to get export status:', { error: error });
     return null;
   }
 }
@@ -160,7 +160,7 @@ export async function downloadClientSideExport() {
     URL.revokeObjectURL(url);
     return { success: true };
   } catch (error) {
-    console.error('Client-side export failed:', error);
+    logger.error('Client-side export failed:', { error: error });
     return { success: false, error: error.message };
   }
 }
@@ -197,7 +197,7 @@ export async function requestAccountDeletion({ reason = null, feedback = null } 
       daysRemaining: status?.days_remaining,
     };
   } catch (error) {
-    console.error('Account deletion request error:', error);
+    logger.error('Account deletion request error:', { error: error });
     return { success: false, error: error.message };
   }
 }
@@ -216,7 +216,7 @@ export async function cancelAccountDeletion() {
 
     return { success: data };
   } catch (error) {
-    console.error('Cancel deletion error:', error);
+    logger.error('Cancel deletion error:', { error: error });
     return { success: false, error: error.message };
   }
 }
@@ -232,7 +232,7 @@ export async function getDeletionStatus() {
     if (error) throw error;
     return data?.[0] || null;
   } catch (error) {
-    console.error('Failed to get deletion status:', error);
+    logger.error('Failed to get deletion status:', { error: error });
     return null;
   }
 }
@@ -251,7 +251,7 @@ export async function getDeletionHistory() {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Failed to get deletion history:', error);
+    logger.error('Failed to get deletion history:', { error: error });
     return [];
   }
 }

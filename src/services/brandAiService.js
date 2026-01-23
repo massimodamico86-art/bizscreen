@@ -1,3 +1,7 @@
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('BrandAiService');
+
 /**
  * Brand AI Service
  *
@@ -76,7 +80,7 @@ export async function extractBrandIdentity(imageUrl) {
       success: true,
     };
   } catch (err) {
-    console.error('extractBrandIdentity error:', err);
+    logger.error('extractBrandIdentity error:', { error: err });
     return {
       colors: {
         extracted: [],

@@ -10,6 +10,10 @@
 
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ConsentService');
+
 // Consent categories
 export const CONSENT_CATEGORIES = {
   necessary: {
@@ -192,10 +196,10 @@ async function saveConsentToDatabase(userId, consentData) {
     });
 
     if (error) {
-      console.error('Failed to save consent to database:', error);
+      logger.error('Failed to save consent to database:', { error: error });
     }
   } catch (error) {
-    console.error('Consent database error:', error);
+    logger.error('Consent database error:', { error: error });
   }
 }
 
@@ -213,7 +217,7 @@ export async function getConsentHistory(userId) {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Failed to get consent history:', error);
+    logger.error('Failed to get consent history:', { error: error });
     return [];
   }
 }

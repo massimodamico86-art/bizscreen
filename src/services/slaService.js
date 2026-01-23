@@ -7,6 +7,10 @@
 
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('SlaService');
+
 // SLA tier configurations
 export const SLA_TIERS = {
   free: {
@@ -92,7 +96,7 @@ export async function getSlaBreakdown(tenantId, days = 30) {
       },
     };
   } catch (error) {
-    console.error('Error fetching SLA breakdown:', error);
+    logger.error('Error fetching SLA breakdown:', { error: error });
     return { daily: [], summary: null, period: null, error: error.message };
   }
 }
@@ -207,7 +211,7 @@ export async function getCurrentSlaStatus(tenantId) {
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error fetching current SLA status:', error);
+    logger.error('Error fetching current SLA status:', { error: error });
     return { error: error.message };
   }
 }
@@ -229,7 +233,7 @@ export async function getCriticalAlerts(tenantId = null, limit = 50) {
 
     return data || [];
   } catch (error) {
-    console.error('Error fetching critical alerts:', error);
+    logger.error('Error fetching critical alerts:', { error: error });
     return [];
   }
 }
@@ -253,7 +257,7 @@ export async function acknowledgeAlert(alertId, userId) {
     if (error) throw error;
     return { success: true };
   } catch (error) {
-    console.error('Error acknowledging alert:', error);
+    logger.error('Error acknowledging alert:', { error: error });
     return { success: false, error: error.message };
   }
 }
@@ -275,7 +279,7 @@ export async function resolveAlert(alertId) {
     if (error) throw error;
     return { success: true };
   } catch (error) {
-    console.error('Error resolving alert:', error);
+    logger.error('Error resolving alert:', { error: error });
     return { success: false, error: error.message };
   }
 }
@@ -306,7 +310,7 @@ export async function createAlert(alert) {
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error creating alert:', error);
+    logger.error('Error creating alert:', { error: error });
     return null;
   }
 }
@@ -513,7 +517,7 @@ export async function getAlertRules(tenantId = null) {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Error fetching alert rules:', error);
+    logger.error('Error fetching alert rules:', { error: error });
     return [];
   }
 }
@@ -538,7 +542,7 @@ export async function updateAlertRule(ruleId, updates) {
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error updating alert rule:', error);
+    logger.error('Error updating alert rule:', { error: error });
     return null;
   }
 }

@@ -1,3 +1,7 @@
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('CloudinaryService');
+
 /**
  * Cloudinary Service
  *
@@ -75,7 +79,7 @@ export async function uploadImageBlobToCloudinary(blob, options = {}) {
       thumbnailUrl: data.secure_url.replace('/upload/', '/upload/c_fill,w_150,h_150/'),
     };
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
+    logger.error('Cloudinary upload error:', { error: error });
     throw error;
   }
 }
@@ -138,7 +142,7 @@ export async function uploadBase64ToCloudinary(base64Data, options = {}) {
       thumbnailUrl: data.secure_url.replace('/upload/', '/upload/c_fill,w_150,h_150/'),
     };
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
+    logger.error('Cloudinary upload error:', { error: error });
     throw error;
   }
 }

@@ -15,6 +15,10 @@
 import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ApiTokenService');
+
 // Available scopes for API tokens
 export const AVAILABLE_SCOPES = [
   { value: 'apps:read', label: 'Apps - Read', description: 'Read app configurations' },
@@ -401,7 +405,7 @@ export async function getTokenUsageStats(tokenId) {
 
   if (error) {
     // Fallback if RPC doesn't exist
-    console.warn('Token usage stats RPC not available');
+    logger.warn('Token usage stats RPC not available');
     return null;
   }
 

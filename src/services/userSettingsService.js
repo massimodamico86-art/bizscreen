@@ -2,6 +2,10 @@
 import { supabase } from '../supabase';
 import { logActivity, ACTION_TYPES, ENTITY_TYPES } from './activityLogService';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('UserSettingsService');
+
 /**
  * Get user settings (creates default if doesn't exist)
  * @returns {Promise<object>} - User settings
@@ -13,7 +17,7 @@ export async function getUserSettings() {
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error getting user settings:', error);
+    logger.error('Error getting user settings:', { error: error });
     throw error;
   }
 }
@@ -49,7 +53,7 @@ export async function updateUserSettings(settings) {
 
     return data;
   } catch (error) {
-    console.error('Error updating user settings:', error);
+    logger.error('Error updating user settings:', { error: error });
     throw error;
   }
 }
@@ -81,7 +85,7 @@ export async function resetUserSettings() {
 
     return await updateUserSettings(defaultSettings);
   } catch (error) {
-    console.error('Error resetting user settings:', error);
+    logger.error('Error resetting user settings:', { error: error });
     throw error;
   }
 }
@@ -101,7 +105,7 @@ export async function getNotificationPreferences() {
       tvOfflineNotifications: settings.tv_offline_notifications
     };
   } catch (error) {
-    console.error('Error getting notification preferences:', error);
+    logger.error('Error getting notification preferences:', { error: error });
     throw error;
   }
 }
@@ -138,7 +142,7 @@ export async function getDisplayPreferences() {
       timeFormat: settings.time_format
     };
   } catch (error) {
-    console.error('Error getting display preferences:', error);
+    logger.error('Error getting display preferences:', { error: error });
     throw error;
   }
 }

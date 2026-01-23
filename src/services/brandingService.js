@@ -11,6 +11,10 @@ import { supabase } from '../supabase';
 import { getCurrentTenant, getImpersonatedClientId } from './tenantService';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('BrandingService');
+
 // Cloudinary config
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -77,7 +81,7 @@ export async function getBranding() {
     const { data: tenant, error: tenantError } = await getCurrentTenant();
 
     if (tenantError) {
-      console.error('Error fetching tenant:', tenantError);
+      logger.error('Error fetching tenant:', { error: tenantError });
       return { data: { ...DEFAULT_BRANDING }, error: null };
     }
 
@@ -97,7 +101,7 @@ export async function getBranding() {
       error: null,
     };
   } catch (err) {
-    console.error('getBranding error:', err);
+    logger.error('getBranding error:', { error: err });
     return { data: { ...DEFAULT_BRANDING }, error: err.message };
   }
 }
@@ -137,7 +141,7 @@ export async function updateBranding(updates) {
     });
 
     if (error) {
-      console.error('Error updating branding:', error);
+      logger.error('Error updating branding:', { error: error });
       return { success: false, error: error.message };
     }
 
@@ -156,7 +160,7 @@ export async function updateBranding(updates) {
 
     return { success: true, error: null };
   } catch (err) {
-    console.error('updateBranding error:', err);
+    logger.error('updateBranding error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -189,7 +193,7 @@ export async function uploadLogo(file) {
 
     return { url: result.secure_url, error: null };
   } catch (err) {
-    console.error('uploadLogo error:', err);
+    logger.error('uploadLogo error:', { error: err });
     return { url: null, error: err.message };
   }
 }
@@ -223,7 +227,7 @@ export async function uploadFavicon(file) {
 
     return { url: result.secure_url, error: null };
   } catch (err) {
-    console.error('uploadFavicon error:', err);
+    logger.error('uploadFavicon error:', { error: err });
     return { url: null, error: err.message };
   }
 }

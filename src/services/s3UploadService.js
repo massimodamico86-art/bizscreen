@@ -1,3 +1,7 @@
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('S3UploadService');
+
 /**
  * S3 Upload Service
  *
@@ -156,7 +160,7 @@ export async function uploadFilesToS3(files, options = {}) {
       results.push(result);
       onFileComplete?.(file, result);
     } catch (error) {
-      console.error(`Error uploading ${file.name}:`, error);
+      logger.error('Error uploading file', { filename: file.name, error });
       onFileError?.(file, error);
     }
   }

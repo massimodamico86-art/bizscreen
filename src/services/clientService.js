@@ -14,6 +14,10 @@
 
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ClientService');
+
 /**
  * @typedef {Object} ClientProfile
  * @property {string} id - UUID
@@ -90,13 +94,13 @@ export async function fetchClients() {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching clients:', error);
+      logger.error('Error fetching clients:', { error: error });
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
   } catch (err) {
-    console.error('fetchClients error:', err);
+    logger.error('fetchClients error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -173,7 +177,7 @@ export async function fetchClientsWithStats() {
 
     return { data: clientsWithStats, error: null };
   } catch (err) {
-    console.error('fetchClientsWithStats error:', err);
+    logger.error('fetchClientsWithStats error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -191,7 +195,7 @@ export async function getClient(clientId) {
     });
 
     if (error) {
-      console.error('Error fetching client:', error);
+      logger.error('Error fetching client:', { error: error });
       return { data: null, error: error.message };
     }
 
@@ -201,7 +205,7 @@ export async function getClient(clientId) {
 
     return { data: data[0], error: null };
   } catch (err) {
-    console.error('getClient error:', err);
+    logger.error('getClient error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -262,7 +266,7 @@ export async function createClient({ email, fullName, businessName, password, cr
 
     return { data: result.client, error: null };
   } catch (err) {
-    console.error('createClient error:', err);
+    logger.error('createClient error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -318,13 +322,13 @@ export async function updateClient(clientId, { fullName, businessName }) {
       .eq('id', clientId);
 
     if (error) {
-      console.error('Error updating client:', error);
+      logger.error('Error updating client:', { error: error });
       return { success: false, error: error.message };
     }
 
     return { success: true, error: null };
   } catch (err) {
-    console.error('updateClient error:', err);
+    logger.error('updateClient error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -378,7 +382,7 @@ export async function getClientStats(clientId) {
       error: null,
     };
   } catch (err) {
-    console.error('getClientStats error:', err);
+    logger.error('getClientStats error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -401,7 +405,7 @@ export async function getClientSubscription(clientId) {
       .single();
 
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching subscription:', error);
+      logger.error('Error fetching subscription:', { error: error });
       return { data: null, error: error.message };
     }
 
@@ -422,7 +426,7 @@ export async function getClientSubscription(clientId) {
 
     return { data, error: null };
   } catch (err) {
-    console.error('getClientSubscription error:', err);
+    logger.error('getClientSubscription error:', { error: err });
     return { data: null, error: err.message };
   }
 }

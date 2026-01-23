@@ -6,6 +6,10 @@
 
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('TemplateService');
+
 /**
  * Category icon mapping (for Lucide icons)
  */
@@ -44,11 +48,12 @@ export async function fetchTemplateCategories() {
  * @param {object} options
  * @param {string} options.categorySlug - Filter by category slug
  * @param {string} options.type - Filter by type ('playlist', 'layout', 'pack')
+ * @param {string} options.search - Search term for name/description (US-122)
  * @param {number} options.page - Page number (1-based)
  * @param {number} options.pageSize - Number of items per page
  * @returns {Promise<Object>} Paginated result { data, totalCount, page, pageSize, totalPages }
  */
-export async function fetchTemplates({ categorySlug, type, page = 1, pageSize = 24 } = {}) {
+export async function fetchTemplates({ categorySlug, type, search, page = 1, pageSize = 24 } = {}) {
   // Calculate offset for pagination
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
@@ -79,6 +84,12 @@ export async function fetchTemplates({ categorySlug, type, page = 1, pageSize = 
   // Filter by type if provided
   if (type) {
     query = query.eq('type', type);
+  }
+
+  // Search by name or description (US-122)
+  if (search && search.trim()) {
+    const searchTerm = `%${search.trim()}%`;
+    query = query.or(`name.ilike.${searchTerm},description.ilike.${searchTerm}`);
   }
 
   // Apply pagination
@@ -235,6 +246,214 @@ export function getDefaultPackSlug(businessType) {
   return mapping[businessType] || mapping.generic;
 }
 
+// =====================================================
+// TEMPLATE FAVORITES (US-120)
+// =====================================================
+
+/**
+ * Add a template to user's favorites
+ * @param {string} templateId - Template UUID
+ */
+export async function addFavoriteTemplate(templateId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User must be authenticated');
+
+  const { data, error } = await supabase
+    .from('user_template_favorites')
+    .insert({ user_id: user.id, template_id: templateId })
+    .select()
+    .single();
+
+  if (error) {
+    // Ignore duplicate constraint errors (already favorited)
+    if (error.code === '23505') return null;
+    throw error;
+  }
+  return data;
+}
+
+/**
+ * Remove a template from user's favorites
+ * @param {string} templateId - Template UUID
+ */
+export async function removeFavoriteTemplate(templateId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User must be authenticated');
+
+  const { error } = await supabase
+    .from('user_template_favorites')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('template_id', templateId);
+
+  if (error) throw error;
+  return true;
+}
+
+/**
+ * Fetch all templates that the user has favorited
+ * @returns {Promise<Array>} Array of favorited templates formatted for cards
+ */
+export async function fetchFavoriteTemplates() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User must be authenticated');
+
+  const { data, error } = await supabase
+    .from('user_template_favorites')
+    .select(`
+      template_id,
+      created_at,
+      template:content_templates(
+        *,
+        category:template_categories(id, slug, name, icon)
+      )
+    `)
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  // Extract and format templates
+  return (data || [])
+    .filter((f) => f.template) // Filter out any with deleted templates
+    .map((f) => formatTemplateForCard(f.template));
+}
+
+/**
+ * Get array of template IDs that the user has favorited
+ * @returns {Promise<string[]>} Array of template UUIDs
+ */
+export async function getFavoriteTemplateIds() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('user_template_favorites')
+    .select('template_id')
+    .eq('user_id', user.id);
+
+  if (error) throw error;
+  return (data || []).map((f) => f.template_id);
+}
+
+/**
+ * Check if a specific template is favorited by the current user
+ * @param {string} templateId - Template UUID
+ * @returns {Promise<boolean>}
+ */
+export async function isTemplateFavorited(templateId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { data, error } = await supabase
+    .from('user_template_favorites')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('template_id', templateId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return !!data;
+}
+
+// =====================================================
+// TEMPLATE USAGE HISTORY (US-121)
+// =====================================================
+
+/**
+ * Record that a template was applied by the user
+ * @param {string} templateId - Template UUID
+ */
+export async function recordTemplateUsage(templateId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User must be authenticated');
+
+  const { data, error } = await supabase
+    .from('user_template_history')
+    .insert({ user_id: user.id, template_id: templateId })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Fetch recently used templates for the current user
+ * @param {number} limit - Max number of templates to return (default 6)
+ * @returns {Promise<Array>} Array of recently used templates formatted for cards
+ */
+export async function fetchRecentlyUsedTemplates(limit = 6) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  // Use RPC function for efficient deduplication
+  const { data: recentIds, error: rpcError } = await supabase
+    .rpc('get_recently_used_templates', { p_limit: limit });
+
+  if (rpcError) {
+    // Fallback to direct query if RPC doesn't exist yet
+    logger.warn('get_recently_used_templates RPC not available, using fallback');
+    return fetchRecentlyUsedTemplatesFallback(user.id, limit);
+  }
+
+  if (!recentIds || recentIds.length === 0) return [];
+
+  // Fetch full template data for the IDs
+  const templateIds = recentIds.map((r) => r.template_id);
+  const { data: templates, error } = await supabase
+    .from('content_templates')
+    .select(`
+      *,
+      category:template_categories(id, slug, name, icon)
+    `)
+    .in('id', templateIds)
+    .eq('is_active', true);
+
+  if (error) throw error;
+
+  // Sort templates to match the order from history (most recent first)
+  const templateMap = new Map((templates || []).map((t) => [t.id, t]));
+  return templateIds
+    .map((id) => templateMap.get(id))
+    .filter(Boolean)
+    .map(formatTemplateForCard);
+}
+
+/**
+ * Fallback method for fetching recently used templates (without RPC)
+ */
+async function fetchRecentlyUsedTemplatesFallback(userId, limit) {
+  const { data, error } = await supabase
+    .from('user_template_history')
+    .select(`
+      template_id,
+      applied_at,
+      template:content_templates(
+        *,
+        category:template_categories(id, slug, name, icon)
+      )
+    `)
+    .eq('user_id', userId)
+    .order('applied_at', { ascending: false })
+    .limit(limit * 3); // Fetch more to allow for deduplication
+
+  if (error) throw error;
+
+  // Deduplicate by template_id, keeping most recent
+  const seen = new Set();
+  const deduplicated = [];
+  for (const item of data || []) {
+    if (!seen.has(item.template_id) && item.template) {
+      seen.add(item.template_id);
+      deduplicated.push(item.template);
+      if (deduplicated.length >= limit) break;
+    }
+  }
+
+  return deduplicated.map(formatTemplateForCard);
+}
+
 export default {
   fetchTemplateCategories,
   fetchTemplates,
@@ -247,6 +466,15 @@ export default {
   getPlaylistTemplates,
   getLayoutTemplates,
   getDefaultPackSlug,
+  // Favorites (US-120)
+  addFavoriteTemplate,
+  removeFavoriteTemplate,
+  fetchFavoriteTemplates,
+  getFavoriteTemplateIds,
+  isTemplateFavorited,
+  // History (US-121)
+  recordTemplateUsage,
+  fetchRecentlyUsedTemplates,
   CATEGORY_ICONS,
   TEMPLATE_TYPE_BADGES,
 };

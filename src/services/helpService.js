@@ -7,6 +7,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('HelpService');
+
 /**
  * Help topic categories
  */
@@ -86,7 +90,7 @@ export async function searchHelpTopics(query = null, category = null) {
   });
 
   if (error) {
-    console.error('Error searching help topics:', error);
+    logger.error('Error searching help topics:', { error: error });
     return [];
   }
 
@@ -104,7 +108,7 @@ export async function getHelpTopic(slug) {
   });
 
   if (error) {
-    console.error('Error getting help topic:', error);
+    logger.error('Error getting help topic:', { error: error });
     return null;
   }
 
@@ -122,7 +126,7 @@ export async function getContextualHelp(route) {
   });
 
   if (error) {
-    console.error('Error getting contextual help:', error);
+    logger.error('Error getting contextual help:', { error: error });
     return [];
   }
 

@@ -14,6 +14,10 @@ import { onCLS, onFCP, onLCP, onTTFB, onINP } from 'web-vitals';
 import { captureMessage, setContext } from '../utils/errorTracking';
 import { isProduction } from '../config/env';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('WebVitalsService');
+
 // Metrics storage for aggregation
 const metricsBuffer = [];
 const BUFFER_SIZE = 10;
@@ -49,7 +53,7 @@ function handleMetric(metric) {
   // Log in development
   if (!isProduction()) {
     const emoji = rating === 'good' ? '✅' : rating === 'needs-improvement' ? '⚠️' : '❌';
-    console.log(`[WebVitals] ${emoji} ${name}: ${value.toFixed(2)} (${rating})`);
+    logger.info('${emoji} ${name}: ${value.toFixed(2)} (${rating})');
   }
 
   // Store in buffer
@@ -141,7 +145,7 @@ function flushMetrics() {
 
   // Log summary in development
   if (!isProduction()) {
-    console.log('[WebVitals] Summary:', summary);
+    logger.info('Summary:', { data: summary });
   }
 
   // Send to analytics endpoint if configured
@@ -172,7 +176,7 @@ async function sendToAnalytics(metrics, summary) {
   } catch (error) {
     // Silently fail - don't impact user experience
     if (!isProduction()) {
-      console.warn('[WebVitals] Failed to send analytics:', error);
+      logger.warn('Failed to send analytics:', { data: error });
     }
   }
 }
@@ -214,7 +218,7 @@ export function initWebVitals() {
   window.addEventListener('pagehide', flushMetrics);
 
   if (!isProduction()) {
-    console.log('[WebVitals] Monitoring initialized');
+    logger.info('Monitoring initialized');
   }
 }
 

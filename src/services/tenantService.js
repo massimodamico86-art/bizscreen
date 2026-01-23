@@ -63,7 +63,7 @@ export async function startImpersonation(clientId, clientInfo = null) {
     });
 
     if (error) {
-      console.error('Impersonation permission check failed:', error);
+      logger.error('Impersonation permission check failed:', { error: error });
       return { success: false, error: 'Permission denied or client not found' };
     }
 
@@ -84,7 +84,7 @@ export async function startImpersonation(clientId, clientInfo = null) {
 
     return { success: true };
   } catch (err) {
-    console.error('startImpersonation error:', err);
+    logger.error('startImpersonation error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -97,7 +97,7 @@ export function stopImpersonation() {
     localStorage.removeItem(IMPERSONATION_KEY);
     localStorage.removeItem(`${IMPERSONATION_KEY}_info`);
   } catch (err) {
-    console.error('stopImpersonation error:', err);
+    logger.error('stopImpersonation error:', { error: err });
   }
 }
 
@@ -131,7 +131,7 @@ export async function getCurrentTenant() {
       });
 
       if (error) {
-        console.error('Error fetching impersonated profile:', error);
+        logger.error('Error fetching impersonated profile:', { error: error });
         // Clear invalid impersonation
         stopImpersonation();
         // Fall back to own profile
@@ -154,7 +154,7 @@ export async function getCurrentTenant() {
     const { data, error } = await supabase.rpc('get_current_tenant_profile');
 
     if (error) {
-      console.error('Error fetching own profile:', error);
+      logger.error('Error fetching own profile:', { error: error });
       return { data: null, error: error.message, isImpersonated: false };
     }
 
@@ -164,7 +164,7 @@ export async function getCurrentTenant() {
       isImpersonated: false,
     };
   } catch (err) {
-    console.error('getCurrentTenant error:', err);
+    logger.error('getCurrentTenant error:', { error: err });
     return { data: null, error: err.message, isImpersonated: false };
   }
 }
@@ -214,7 +214,7 @@ export async function getCurrentBranding() {
       isDarkTheme: tenant.branding_is_dark_theme ?? DEFAULT_BRANDING.isDarkTheme,
     };
   } catch (err) {
-    console.error('getCurrentBranding error:', err);
+    logger.error('getCurrentBranding error:', { error: err });
     return { ...DEFAULT_BRANDING };
   }
 }
@@ -301,7 +301,7 @@ export async function resolveTenantByDomain(domain) {
       branding: data.branding
     };
   } catch (err) {
-    console.error('resolveTenantByDomain error:', err);
+    logger.error('resolveTenantByDomain error:', { error: err });
     return { found: false };
   }
 }

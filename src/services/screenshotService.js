@@ -1,3 +1,7 @@
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ScreenshotService');
+
 // Screenshot Service - Captures player screenshots for remote diagnostics
 import html2canvas from 'html2canvas';
 import { supabase } from '../supabase';
@@ -59,7 +63,7 @@ export async function captureScreenshot(element) {
       );
     });
   } catch (error) {
-    console.error('[Screenshot] Capture failed:', error);
+    logger.error('Capture failed:', { error: error });
     throw error;
   }
 }
@@ -90,7 +94,7 @@ export async function uploadScreenshot(deviceId, blob) {
     if (uploadError) {
       // If bucket doesn't exist, try to create it (fallback)
       if (uploadError.message?.includes('not found')) {
-        console.error('[Screenshot] Storage bucket not found. Please create "device-screenshots" bucket.');
+        logger.error('Storage bucket not found. Please create "device-screenshots" bucket');
       }
       throw uploadError;
     }
@@ -102,7 +106,7 @@ export async function uploadScreenshot(deviceId, blob) {
 
     return urlData.publicUrl;
   } catch (error) {
-    console.error('[Screenshot] Upload failed:', error);
+    logger.error('Upload failed:', { error: error });
     throw error;
   }
 }
@@ -119,7 +123,7 @@ export async function storeScreenshotUrl(deviceId, url) {
   });
 
   if (error) {
-    console.error('[Screenshot] Failed to store URL:', error);
+    logger.error('Failed to store URL:', { error: error });
     throw error;
   }
 }
@@ -132,20 +136,20 @@ export async function storeScreenshotUrl(deviceId, url) {
  * @returns {Promise<string>} The public URL of the screenshot
  */
 export async function captureAndUploadScreenshot(deviceId, element, deviceInfo = null) {
-  console.log('[Screenshot] Starting capture for device:', deviceId);
+  logger.info('Starting capture for device:', { data: deviceId });
 
   try {
     // Capture the screenshot
     const blob = await captureScreenshot(element);
-    console.log('[Screenshot] Captured, size:', (blob.size / 1024).toFixed(1), 'KB');
+    logger.info('Captured, size:', (blob.size / 1024).toFixed(1), 'KB');
 
     // Upload to storage
     const url = await uploadScreenshot(deviceId, blob);
-    console.log('[Screenshot] Uploaded to:', url);
+    logger.info('Uploaded to:', { data: url });
 
     // Store URL in database
     await storeScreenshotUrl(deviceId, url);
-    console.log('[Screenshot] URL stored in database');
+    logger.info('URL stored in database');
 
     // Success - reset failure count and auto-resolve any open alerts
     deviceFailureCounts.set(deviceId, 0);
@@ -156,7 +160,7 @@ export async function captureAndUploadScreenshot(deviceId, element, deviceInfo =
         notes: 'Screenshot capture succeeded',
       });
     } catch (alertError) {
-      console.warn('[Screenshot] Error resolving screenshot alert:', alertError);
+      logger.warn('Error resolving screenshot alert:', { data: alertError });
     }
 
     return url;
@@ -165,7 +169,7 @@ export async function captureAndUploadScreenshot(deviceId, element, deviceInfo =
     const failureCount = (deviceFailureCounts.get(deviceId) || 0) + 1;
     deviceFailureCounts.set(deviceId, failureCount);
 
-    console.error(`[Screenshot] Capture failed (failure #${failureCount}):`, error);
+    logger.error('Capture failed (failure #${failureCount}):', { error: error });
 
     // Raise alert after 2+ consecutive failures
     if (failureCount >= 2 && deviceInfo) {
@@ -180,7 +184,7 @@ export async function captureAndUploadScreenshot(deviceId, element, deviceInfo =
           error.message
         );
       } catch (alertError) {
-        console.warn('[Screenshot] Error raising screenshot alert:', alertError);
+        logger.warn('Error raising screenshot alert:', { data: alertError });
       }
     }
 
@@ -204,7 +208,7 @@ export async function cleanupOldScreenshots(deviceId, keepCount = 5) {
       });
 
     if (listError || !files) {
-      console.warn('[Screenshot] Could not list files for cleanup:', listError);
+      logger.warn('Could not list files for cleanup:', { data: listError });
       return;
     }
 
@@ -217,13 +221,13 @@ export async function cleanupOldScreenshots(deviceId, keepCount = 5) {
         .remove(filesToDelete);
 
       if (deleteError) {
-        console.warn('[Screenshot] Cleanup error:', deleteError);
+        logger.warn('Cleanup error:', { data: deleteError });
       } else {
-        console.log('[Screenshot] Cleaned up', filesToDelete.length, 'old screenshots');
+        logger.info('Cleaned up', filesToDelete.length, 'old screenshots');
       }
     }
   } catch (error) {
     // Cleanup is non-critical, just log the error
-    console.warn('[Screenshot] Cleanup failed:', error);
+    logger.warn('Cleanup failed:', { data: error });
   }
 }

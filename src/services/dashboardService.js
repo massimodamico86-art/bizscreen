@@ -1,6 +1,10 @@
 // Dashboard Service - Stats and summary data for the dashboard
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('DashboardService');
+
 // Constants for online status detection
 export const ONLINE_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes
 export const ONLINE_THRESHOLD_MINUTES = 2;
@@ -29,7 +33,7 @@ export async function getDashboardStats() {
   const { data, error } = await supabase.rpc('get_dashboard_stats');
 
   if (error) {
-    console.error('Error fetching dashboard stats:', error);
+    logger.error('Error fetching dashboard stats:', { error: error });
     // Fallback to legacy method if function doesn't exist
     if (error.code === 'PGRST202') {
       return getDashboardStatsLegacy();
@@ -66,7 +70,7 @@ export async function getDashboardStats() {
  * @returns {Promise<Object>} Dashboard stats
  */
 async function getDashboardStatsLegacy() {
-  console.warn('Using legacy getDashboardStats - consider running migration 108');
+  logger.warn('Using legacy getDashboardStats - consider running migration 108');
 
   const [screensResult, playlistsResult, mediaResult] = await Promise.all([
     supabase.from('tv_devices').select('id, is_online, last_seen'),
@@ -230,7 +234,7 @@ export async function getDeviceHealthIssues(limit = 50) {
   });
 
   if (error) {
-    console.error('Error fetching device health issues:', error);
+    logger.error('Error fetching device health issues:', { error: error });
     // Fallback to legacy method if function doesn't exist
     if (error.code === 'PGRST202') {
       return getDeviceHealthIssuesLegacy();
@@ -247,7 +251,7 @@ export async function getDeviceHealthIssues(limit = 50) {
  * @returns {Promise<Array>} Devices with issues
  */
 async function getDeviceHealthIssuesLegacy() {
-  console.warn('Using legacy getDeviceHealthIssues - consider running migration 108');
+  logger.warn('Using legacy getDeviceHealthIssues - consider running migration 108');
 
   const { data, error } = await supabase
     .from('tv_devices')
@@ -312,7 +316,7 @@ export async function getAlertSummary() {
   });
 
   if (error) {
-    console.error('Error fetching alert summary:', error);
+    logger.error('Error fetching alert summary:', { error: error });
     // Fallback to legacy method if function doesn't exist
     if (error.code === 'PGRST202') {
       return getAlertSummaryLegacy();

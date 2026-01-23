@@ -6,6 +6,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ExperimentService');
+
 // In-memory cache for experiment variants
 let variantCache = {
   data: new Map(),
@@ -40,7 +44,7 @@ function loadFromLocalStorage() {
       }
     }
   } catch (e) {
-    console.warn('Failed to load experiment variants from localStorage:', e);
+    logger.warn('Failed to load experiment variants from localStorage:', { data: e });
   }
   return null;
 }
@@ -53,7 +57,7 @@ function saveToLocalStorage(cacheData) {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
   } catch (e) {
-    console.warn('Failed to save experiment variants to localStorage:', e);
+    logger.warn('Failed to save experiment variants to localStorage:', { data: e });
   }
 }
 
@@ -131,7 +135,7 @@ export async function getVariant(experimentKey, forceRefresh = false) {
   });
 
   if (error) {
-    console.error('Error fetching experiment variant:', error);
+    logger.error('Error fetching experiment variant:', { error: error });
     return null;
   }
 
@@ -240,7 +244,7 @@ export async function trackExperimentEvent(experimentKey, eventName, metadata = 
     });
 
   if (error) {
-    console.error('Error tracking experiment event:', error);
+    logger.error('Error tracking experiment event:', { error: error });
   }
 }
 
@@ -269,7 +273,7 @@ export async function getAllExperiments() {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching all experiments:', error);
+    logger.error('Error fetching all experiments:', { error: error });
     throw error;
   }
 
@@ -292,7 +296,7 @@ export async function getExperimentDetails(experimentId) {
     .single();
 
   if (expError) {
-    console.error('Error fetching experiment:', expError);
+    logger.error('Error fetching experiment:', { error: expError });
     throw expError;
   }
 
@@ -339,7 +343,7 @@ export async function createExperiment(experiment, variants) {
     .single();
 
   if (expError) {
-    console.error('Error creating experiment:', expError);
+    logger.error('Error creating experiment:', { error: expError });
     throw expError;
   }
 
@@ -358,7 +362,7 @@ export async function createExperiment(experiment, variants) {
       .insert(variantInserts);
 
     if (varError) {
-      console.error('Error creating variants:', varError);
+      logger.error('Error creating variants:', { error: varError });
       throw varError;
     }
   }
@@ -381,7 +385,7 @@ export async function updateExperimentStatus(experimentId, status) {
     .single();
 
   if (error) {
-    console.error('Error updating experiment status:', error);
+    logger.error('Error updating experiment status:', { error: error });
     throw error;
   }
 
@@ -401,7 +405,7 @@ export async function deleteExperiment(experimentId) {
     .eq('id', experimentId);
 
   if (error) {
-    console.error('Error deleting experiment:', error);
+    logger.error('Error deleting experiment:', { error: error });
     throw error;
   }
 

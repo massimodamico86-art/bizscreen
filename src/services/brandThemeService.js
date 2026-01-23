@@ -13,6 +13,10 @@
 import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('BrandThemeService');
+
 // Cloudinary config
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -116,7 +120,7 @@ export async function uploadLogo(file) {
     const result = await response.json();
     return { url: result.secure_url, error: null };
   } catch (err) {
-    console.error('uploadLogo error:', err);
+    logger.error('uploadLogo error:', { error: err });
     return { url: null, error: err.message };
   }
 }
@@ -377,7 +381,7 @@ export async function getBrandTheme() {
 
     return { data: data || DEFAULT_THEME, error: null };
   } catch (err) {
-    console.error('getBrandTheme error:', err);
+    logger.error('getBrandTheme error:', { error: err });
     return { data: DEFAULT_THEME, error: err.message };
   }
 }
@@ -403,7 +407,7 @@ export async function getAllBrandThemes() {
 
     return { data: data || [], error: null };
   } catch (err) {
-    console.error('getAllBrandThemes error:', err);
+    logger.error('getAllBrandThemes error:', { error: err });
     return { data: [], error: err.message };
   }
 }
@@ -459,7 +463,7 @@ export async function createBrandTheme(themeData) {
 
     return { data, error: null };
   } catch (err) {
-    console.error('createBrandTheme error:', err);
+    logger.error('createBrandTheme error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -495,7 +499,7 @@ export async function updateBrandTheme(themeId, updates) {
 
     return { data, error: null };
   } catch (err) {
-    console.error('updateBrandTheme error:', err);
+    logger.error('updateBrandTheme error:', { error: err });
     return { data: null, error: err.message };
   }
 }
@@ -516,7 +520,7 @@ export async function deleteBrandTheme(themeId) {
 
     return { success: true, error: null };
   } catch (err) {
-    console.error('deleteBrandTheme error:', err);
+    logger.error('deleteBrandTheme error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -537,7 +541,7 @@ export async function setActiveTheme(themeId) {
 
     return { success: true, error: null };
   } catch (err) {
-    console.error('setActiveTheme error:', err);
+    logger.error('setActiveTheme error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -564,7 +568,7 @@ export async function applyBrandThemeToScene(sceneId, themeId) {
 
     return { success: data === true, error: data ? null : 'Failed to apply theme' };
   } catch (err) {
-    console.error('applyBrandThemeToScene error:', err);
+    logger.error('applyBrandThemeToScene error:', { error: err });
     return { success: false, error: err.message };
   }
 }
@@ -640,7 +644,7 @@ export async function applyBrandThemeToSlides(slideIds, theme) {
 
     return { success: true, error: null };
   } catch (err) {
-    console.error('applyBrandThemeToSlides error:', err);
+    logger.error('applyBrandThemeToSlides error:', { error: err });
     return { success: false, error: err.message };
   }
 }

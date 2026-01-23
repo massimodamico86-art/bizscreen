@@ -80,7 +80,7 @@ export async function getCurrentMemberRole() {
     memberRoleCache = { tenantId, role: data.role, timestamp: now };
     return data.role;
   } catch (err) {
-    console.error('getCurrentMemberRole error:', err);
+    logger.error('getCurrentMemberRole error:', { error: err });
     return null;
   }
 }
@@ -105,7 +105,7 @@ export async function getProfileRole() {
     if (error || !data) return null;
     return data.role;
   } catch (err) {
-    console.error('getProfileRole error:', err);
+    logger.error('getProfileRole error:', { error: err });
     return null;
   }
 }

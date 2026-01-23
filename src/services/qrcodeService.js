@@ -1,6 +1,10 @@
 // QR Code Generation Service
 import QRCode from 'qrcode';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('QrcodeService');
+
 /**
  * Generate QR code as data URL from text/URL
  * @param {string} text - The text or URL to encode
@@ -29,7 +33,7 @@ export async function generateQRCode(text, options = {}) {
     const dataUrl = await QRCode.toDataURL(text, defaultOptions);
     return dataUrl;
   } catch (error) {
-    console.error('Error generating QR code:', error);
+    logger.error('Error generating QR code:', { error: error });
     throw new Error(`Failed to generate QR code: ${error.message}`);
   }
 }

@@ -7,6 +7,10 @@
 
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('MetricsService');
+
 // Metrics buffer for batching
 let metricsBuffer = [];
 const FLUSH_INTERVAL = 30000; // 30 seconds
@@ -86,7 +90,7 @@ export async function flushMetrics() {
       });
     }
   } catch (error) {
-    console.warn('Failed to flush metrics:', error.message);
+    logger.warn('Failed to flush metrics:', error.message);
     // Re-add to buffer for retry (up to limit)
     if (metricsBuffer.length < MAX_BUFFER_SIZE * 2) {
       metricsBuffer.unshift(...metrics);
@@ -160,7 +164,7 @@ export async function getMetricsDashboard(tenantId = null, hours = 24) {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Error fetching metrics dashboard:', error);
+    logger.error('Error fetching metrics dashboard:', { error: error });
     return [];
   }
 }
@@ -183,7 +187,7 @@ export async function getUsageCounters(tenantId, periodType = 'daily') {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Error fetching usage counters:', error);
+    logger.error('Error fetching usage counters:', { error: error });
     return [];
   }
 }
@@ -234,7 +238,7 @@ export async function getResponseTimeHistogram(tenantId, endpointName, hours = 2
 
     return aggregated;
   } catch (error) {
-    console.error('Error fetching response time histogram:', error);
+    logger.error('Error fetching response time histogram:', { error: error });
     return null;
   }
 }
@@ -283,7 +287,7 @@ export async function getPlayerNetworkMetrics(deviceId, hours = 24) {
       period: { hours, since },
     };
   } catch (error) {
-    console.error('Error fetching player network metrics:', error);
+    logger.error('Error fetching player network metrics:', { error: error });
     return null;
   }
 }
@@ -335,7 +339,7 @@ export async function getTenantNetworkSummary(tenantId, hours = 24) {
 
     return summary;
   } catch (error) {
-    console.error('Error fetching tenant network summary:', error);
+    logger.error('Error fetching tenant network summary:', { error: error });
     return null;
   }
 }
@@ -387,7 +391,7 @@ export async function getErrorBreakdown(tenantId, hours = 24) {
       period: { hours, since },
     };
   } catch (error) {
-    console.error('Error fetching error breakdown:', error);
+    logger.error('Error fetching error breakdown:', { error: error });
     return { errors: [], totalErrors: 0 };
   }
 }
@@ -409,7 +413,7 @@ export async function incrementUsageCounter(tenantId, counterType, amount = 1) {
     if (error) throw error;
     return data;
   } catch (error) {
-    console.warn('Failed to increment usage counter:', error.message);
+    logger.warn('Failed to increment usage counter:', error.message);
     return -1;
   }
 }

@@ -1,3 +1,7 @@
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ErrorTrackingService');
+
 /**
  * Error Tracking Service
  *
@@ -30,13 +34,13 @@ export async function initErrorTracking() {
 
   if (!ERROR_TRACKING_ENABLED) {
     if (import.meta.env.DEV) {
-      console.log('[ErrorTracking] Disabled');
+      logger.info('Disabled');
     }
     return;
   }
 
   // Log that tracking is enabled but using console-only mode
-  console.log('[ErrorTracking] Enabled (console mode). To add Sentry, install @sentry/browser and configure.');
+  logger.info('Enabled (console mode). To add Sentry, install @sentry/browser and configure.');
 
   // Process any queued errors
   errorQueue.forEach(({ error, context, additionalInfo }) => {
@@ -49,15 +53,9 @@ export async function initErrorTracking() {
  * Log error to console in a structured way
  */
 function logToConsole(error, context, additionalInfo) {
-  const timestamp = new Date().toISOString();
   const errorObj = error instanceof Error ? error : new Error(String(error));
 
-  console.group(`[Error] ${context} - ${timestamp}`);
-  console.error('Error:', errorObj);
-  if (Object.keys(additionalInfo || {}).length > 0) {
-    console.log('Additional Info:', additionalInfo);
-  }
-  console.groupEnd();
+  logger.error('Error', { context, error: errorObj, ...additionalInfo });
 }
 
 /**
@@ -104,11 +102,11 @@ export function captureError(error, context = 'unknown', additionalInfo = {}) {
  */
 export function captureWarning(message, data = {}) {
   if (import.meta.env.DEV) {
-    console.warn('[Warning]', message, data);
+    logger.warn(message, { data });
     return;
   }
 
-  console.warn(`[Warning] ${message}`, data);
+  logger.warn('${message}', { data: data });
 }
 
 /**
@@ -118,7 +116,7 @@ export function captureWarning(message, data = {}) {
 export function setUserContext(user) {
   // Store user context for error reports
   if (user) {
-    console.log('[ErrorTracking] User context set:', { id: user.id, role: user.role });
+    logger.debug('User context set', { userId: user.id, role: user.role });
   }
 }
 
@@ -127,7 +125,7 @@ export function setUserContext(user) {
  * @param {string} tenantId - Tenant identifier
  */
 export function setTenantContext(tenantId) {
-  console.log('[ErrorTracking] Tenant context set:', tenantId);
+  logger.info('Tenant context set:', { data: tenantId });
 }
 
 /**
@@ -136,7 +134,7 @@ export function setTenantContext(tenantId) {
  */
 export function addBreadcrumb(breadcrumb) {
   if (import.meta.env.DEV) {
-    console.log(`[Breadcrumb:${breadcrumb.category || 'default'}]`, breadcrumb.message, breadcrumb.data || '');
+    logger.info('Breadcrumb', { message: breadcrumb.message, data: breadcrumb.data || {} });
   }
 }
 

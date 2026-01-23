@@ -1,3 +1,7 @@
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('SocialFeedSyncService');
+
 /**
  * Social Feed Sync Service
  *
@@ -69,7 +73,7 @@ function isInCooldown(provider) {
  */
 function setRateLimitCooldown(provider) {
   rateLimitCooldowns[provider] = Date.now() + RATE_LIMIT_COOLDOWN_MS;
-  console.warn(`[SocialSync] Rate limit hit for ${provider}, cooling down for 1 minute`);
+  logger.warn('Rate limit hit for ${provider}, cooling down for 1 minute');
 }
 
 /**
@@ -80,20 +84,20 @@ async function syncAccount(account) {
 
   // Check cooldown
   if (isInCooldown(provider)) {
-    console.log(`[SocialSync] Skipping ${account.account_name} - provider in cooldown`);
+    logger.info('Skipping ${account.account_name} - provider in cooldown');
     return { success: false, reason: 'cooldown' };
   }
 
   const syncFn = getSyncFunction(provider);
   if (!syncFn) {
-    console.warn(`[SocialSync] No sync function for provider: ${provider}`);
+    logger.warn('No sync function for provider: ${provider}');
     return { success: false, reason: 'unknown_provider' };
   }
 
   try {
-    console.log(`[SocialSync] Syncing ${provider} account: ${account.account_name}`);
+    logger.info('Syncing ${provider} account: ${account.account_name}');
     const results = await syncFn(account);
-    console.log(`[SocialSync] Synced ${results.length} posts for ${account.account_name}`);
+    logger.info('Synced ${results.length} posts for ${account.account_name}');
 
     // Update last sync time
     lastSyncTime[account.id] = Date.now();
@@ -106,18 +110,18 @@ async function syncAccount(account) {
         notes: `Social feed sync succeeded for ${account.account_name}`,
       });
     } catch (alertError) {
-      console.warn('[SocialSync] Error resolving alert:', alertError);
+      logger.warn('Error resolving alert:', { data: alertError });
     }
 
     return { success: true, postsCount: results.length };
   } catch (error) {
-    console.error(`[SocialSync] Error syncing ${account.account_name}:`, error);
+    logger.error('Error syncing ${account.account_name}:', { error: error });
 
     // Raise sync failure alert
     try {
       await raiseSocialFeedSyncFailedAlert(account, error);
     } catch (alertError) {
-      console.warn('[SocialSync] Error raising alert:', alertError);
+      logger.warn('Error raising alert:', { data: alertError });
     }
 
     // Check for rate limit errors
@@ -138,7 +142,7 @@ async function syncAccount(account) {
  */
 async function runSyncCycle(staleThresholdMinutes = DEFAULT_STALE_THRESHOLD_MINUTES) {
   if (isSyncing) {
-    console.log('[SocialSync] Sync already in progress, skipping');
+    logger.info('Sync already in progress, skipping');
     return;
   }
 
@@ -151,16 +155,16 @@ async function runSyncCycle(staleThresholdMinutes = DEFAULT_STALE_THRESHOLD_MINU
     });
 
     if (error) {
-      console.error('[SocialSync] Error fetching accounts:', error);
+      logger.error('Error fetching accounts:', { error: error });
       return;
     }
 
     if (!accounts || accounts.length === 0) {
-      console.log('[SocialSync] No accounts need syncing');
+      logger.info('No accounts need syncing');
       return;
     }
 
-    console.log(`[SocialSync] Found ${accounts.length} accounts to sync`);
+    logger.info('Found ${accounts.length} accounts to sync');
 
     // Group accounts by provider to manage rate limits
     const accountsByProvider = accounts.reduce((acc, account) => {
@@ -175,7 +179,7 @@ async function runSyncCycle(staleThresholdMinutes = DEFAULT_STALE_THRESHOLD_MINU
 
     for (const [provider, providerAccounts] of Object.entries(accountsByProvider)) {
       if (isInCooldown(provider)) {
-        console.log(`[SocialSync] Skipping ${provider} accounts - in cooldown`);
+        logger.info('Skipping ${provider} accounts - in cooldown');
         continue;
       }
 
@@ -200,9 +204,9 @@ async function runSyncCycle(staleThresholdMinutes = DEFAULT_STALE_THRESHOLD_MINU
     // Wait for all remaining syncs
     await Promise.allSettled(syncPromises);
 
-    console.log(`[SocialSync] Sync cycle complete, synced ${syncedCount} accounts`);
+    logger.info('Sync cycle complete, synced ${syncedCount} accounts');
   } catch (error) {
-    console.error('[SocialSync] Sync cycle error:', error);
+    logger.error('Sync cycle error:', { error: error });
   } finally {
     isSyncing = false;
   }
@@ -213,11 +217,11 @@ async function runSyncCycle(staleThresholdMinutes = DEFAULT_STALE_THRESHOLD_MINU
  */
 export function startSocialFeedSync(intervalMs = DEFAULT_SYNC_INTERVAL_MS) {
   if (syncInterval) {
-    console.warn('[SocialSync] Sync already running');
+    logger.warn('Sync already running');
     return;
   }
 
-  console.log(`[SocialSync] Starting sync scheduler (interval: ${intervalMs}ms)`);
+  logger.info('Starting sync scheduler (interval: ${intervalMs}ms)');
 
   // Run immediately
   runSyncCycle();
@@ -235,7 +239,7 @@ export function stopSocialFeedSync() {
   if (syncInterval) {
     clearInterval(syncInterval);
     syncInterval = null;
-    console.log('[SocialSync] Sync scheduler stopped');
+    logger.info('Sync scheduler stopped');
   }
 }
 
@@ -289,7 +293,7 @@ export async function getSocialFeedPosts(widgetId, tenantId = null) {
   });
 
   if (error) {
-    console.error('[SocialSync] Error fetching feed posts:', error);
+    logger.error('Error fetching feed posts:', { error: error });
     throw error;
   }
 

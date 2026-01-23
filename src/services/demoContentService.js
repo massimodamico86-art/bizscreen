@@ -3,6 +3,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('DemoContentService');
+
 // Demo placeholder image URLs (using public placeholder services)
 const DEMO_IMAGES = {
   welcome: 'https://placehold.co/1920x1080/1e40af/ffffff?text=Welcome+to+BizScreen',
@@ -328,7 +332,7 @@ export async function createDemoWorkspace() {
       alreadyExisted: false
     };
   } catch (error) {
-    console.error('Error creating demo workspace:', error);
+    logger.error('Error creating demo workspace:', { error: error });
     throw new Error('Failed to create demo workspace: ' + error.message);
   }
 }

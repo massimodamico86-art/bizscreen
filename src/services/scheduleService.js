@@ -576,3 +576,395 @@ export async function createScheduleWithEntries({ name, description, timezone = 
 
   return fetchScheduleWithEntriesResolved(schedule.id);
 }
+
+// =====================================================
+// FILLER CONTENT (US-136)
+// =====================================================
+
+/**
+ * Update a schedule's filler content
+ * @param {string} scheduleId - Schedule UUID
+ * @param {string} contentType - 'playlist' | 'layout' | 'scene'
+ * @param {string} contentId - Content UUID
+ */
+export async function updateScheduleFillerContent(scheduleId, contentType, contentId) {
+  if (!scheduleId) throw new Error('Schedule ID is required');
+  if (!contentType || !contentId) throw new Error('Content type and ID are required');
+
+  const validTypes = ['playlist', 'layout', 'scene'];
+  if (!validTypes.includes(contentType)) {
+    throw new Error(`Invalid content type. Must be one of: ${validTypes.join(', ')}`);
+  }
+
+  const { data, error } = await supabase
+    .from('schedules')
+    .update({
+      filler_content_type: contentType,
+      filler_content_id: contentId
+    })
+    .eq('id', scheduleId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  // Log activity
+  if (data) {
+    logActivity(
+      ACTIONS.SCHEDULE_UPDATED,
+      RESOURCE_TYPES.SCHEDULE,
+      data.id,
+      data.name,
+      { filler_content_type: contentType, filler_content_id: contentId }
+    );
+  }
+
+  return data;
+}
+
+/**
+ * Clear a schedule's filler content
+ * @param {string} scheduleId - Schedule UUID
+ */
+export async function clearScheduleFillerContent(scheduleId) {
+  if (!scheduleId) throw new Error('Schedule ID is required');
+
+  const { data, error } = await supabase
+    .from('schedules')
+    .update({
+      filler_content_type: null,
+      filler_content_id: null
+    })
+    .eq('id', scheduleId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  // Log activity
+  if (data) {
+    logActivity(
+      ACTIONS.SCHEDULE_UPDATED,
+      RESOURCE_TYPES.SCHEDULE,
+      data.id,
+      data.name,
+      { filler_content_cleared: true }
+    );
+  }
+
+  return data;
+}
+
+// =====================================================
+// CONFLICT DETECTION (US-137)
+// =====================================================
+
+/**
+ * Check for schedule entry conflicts
+ * @param {string} scheduleId - Schedule UUID
+ * @param {object} entryData - Entry data to check
+ * @param {string} excludeEntryId - Entry ID to exclude (when editing)
+ * @returns {Promise<{hasConflicts: boolean, conflicts: Array}>}
+ */
+export async function checkEntryConflicts(scheduleId, entryData, excludeEntryId = null) {
+  if (!scheduleId) throw new Error('Schedule ID is required');
+
+  const { data, error } = await supabase.rpc('check_schedule_entry_conflicts', {
+    p_schedule_id: scheduleId,
+    p_entry_id: excludeEntryId,
+    p_start_time: entryData.start_time || '09:00',
+    p_end_time: entryData.end_time || '17:00',
+    p_days_of_week: entryData.days_of_week || null,
+    p_start_date: entryData.start_date || null,
+    p_end_date: entryData.end_date || null
+  });
+
+  if (error) throw error;
+
+  const conflicts = (data || []).map(conflict => ({
+    id: conflict.conflicting_entry_id,
+    start_time: conflict.conflicting_start_time,
+    end_time: conflict.conflicting_end_time,
+    days_of_week: conflict.conflicting_days_of_week,
+    content_type: conflict.content_type,
+    content_name: conflict.content_name
+  }));
+
+  return {
+    hasConflicts: conflicts.length > 0,
+    conflicts
+  };
+}
+
+// =====================================================
+// WEEK PREVIEW (US-138)
+// =====================================================
+
+/**
+ * Get week preview showing what plays each day
+ * @param {string} scheduleId - Schedule UUID
+ * @param {Date|string} weekStartDate - Start of week (Monday)
+ * @returns {Promise<Array>} Array of 7 day objects with entries
+ */
+export async function getWeekPreview(scheduleId, weekStartDate) {
+  if (!scheduleId) throw new Error('Schedule ID is required');
+
+  // Parse the start date
+  const startDate = new Date(weekStartDate);
+  const weekDays = [];
+
+  // Fetch schedule with entries and filler
+  const { data: schedule, error: scheduleError } = await supabase
+    .from('schedules')
+    .select(`
+      id,
+      filler_content_type,
+      filler_content_id,
+      schedule_entries(
+        id,
+        start_time,
+        end_time,
+        days_of_week,
+        start_date,
+        end_date,
+        content_type,
+        content_id,
+        event_type,
+        is_active,
+        priority
+      )
+    `)
+    .eq('id', scheduleId)
+    .single();
+
+  if (scheduleError) throw scheduleError;
+  if (!schedule) throw new Error('Schedule not found');
+
+  // Fetch filler content name if set
+  let fillerContent = null;
+  if (schedule.filler_content_type && schedule.filler_content_id) {
+    const fillerTable = schedule.filler_content_type === 'playlist' ? 'playlists' :
+                        schedule.filler_content_type === 'layout' ? 'layouts' : 'scenes';
+    const { data: filler } = await supabase
+      .from(fillerTable)
+      .select('id, name')
+      .eq('id', schedule.filler_content_id)
+      .single();
+    if (filler) {
+      fillerContent = {
+        type: schedule.filler_content_type,
+        id: filler.id,
+        name: filler.name
+      };
+    }
+  }
+
+  // Collect content IDs for batch lookup
+  const contentIds = {
+    playlist: new Set(),
+    layout: new Set(),
+    scene: new Set()
+  };
+
+  for (const entry of schedule.schedule_entries || []) {
+    if (entry.content_type && entry.content_id && contentIds[entry.content_type]) {
+      contentIds[entry.content_type].add(entry.content_id);
+    }
+  }
+
+  // Fetch content names in parallel
+  const [playlistsResult, layoutsResult, scenesResult] = await Promise.all([
+    contentIds.playlist.size > 0
+      ? supabase.from('playlists').select('id, name').in('id', Array.from(contentIds.playlist))
+      : { data: [] },
+    contentIds.layout.size > 0
+      ? supabase.from('layouts').select('id, name').in('id', Array.from(contentIds.layout))
+      : { data: [] },
+    contentIds.scene.size > 0
+      ? supabase.from('scenes').select('id, name').in('id', Array.from(contentIds.scene))
+      : { data: [] }
+  ]);
+
+  const contentNames = {
+    playlist: Object.fromEntries((playlistsResult.data || []).map(p => [p.id, p.name])),
+    layout: Object.fromEntries((layoutsResult.data || []).map(l => [l.id, l.name])),
+    scene: Object.fromEntries((scenesResult.data || []).map(s => [s.id, s.name]))
+  };
+
+  // Build 7 days
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
+    const dayOfWeek = date.getDay(); // 0=Sunday, 1=Monday, etc.
+    const dateStr = date.toISOString().split('T')[0];
+
+    // Filter entries that apply to this day
+    const dayEntries = (schedule.schedule_entries || [])
+      .filter(entry => {
+        if (!entry.is_active) return false;
+        // Check days_of_week
+        if (entry.days_of_week && !entry.days_of_week.includes(dayOfWeek)) return false;
+        // Check date range
+        if (entry.start_date && dateStr < entry.start_date) return false;
+        if (entry.end_date && dateStr > entry.end_date) return false;
+        return true;
+      })
+      .map(entry => ({
+        id: entry.id,
+        start_time: entry.start_time,
+        end_time: entry.end_time,
+        content_type: entry.content_type,
+        content_id: entry.content_id,
+        content_name: contentNames[entry.content_type]?.[entry.content_id] || 'Unknown',
+        event_type: entry.event_type,
+        priority: entry.priority
+      }))
+      .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''));
+
+    weekDays.push({
+      date: dateStr,
+      dayOfWeek,
+      dayName: DAYS_OF_WEEK[dayOfWeek].label,
+      dayShort: DAYS_OF_WEEK[dayOfWeek].short,
+      entries: dayEntries,
+      filler: dayEntries.length === 0 ? fillerContent : null
+    });
+  }
+
+  return weekDays;
+}
+
+// =====================================================
+// DEVICE/GROUP ASSIGNMENT (US-139)
+// =====================================================
+
+/**
+ * Get all devices and groups assigned to a schedule
+ * @param {string} scheduleId - Schedule UUID
+ * @returns {Promise<{devices: Array, groups: Array}>}
+ */
+export async function getAssignedDevicesAndGroups(scheduleId) {
+  if (!scheduleId) throw new Error('Schedule ID is required');
+
+  const [devicesResult, groupsResult] = await Promise.all([
+    getDevicesWithSchedule(scheduleId),
+    getGroupsWithSchedule(scheduleId)
+  ]);
+
+  return {
+    devices: devicesResult,
+    groups: groupsResult
+  };
+}
+
+/**
+ * Bulk assign a schedule to multiple devices
+ * @param {string} scheduleId - Schedule UUID
+ * @param {string[]} deviceIds - Array of device UUIDs
+ */
+export async function bulkAssignScheduleToDevices(scheduleId, deviceIds) {
+  if (!scheduleId) throw new Error('Schedule ID is required');
+  if (!deviceIds || deviceIds.length === 0) return { updated: 0 };
+
+  const { data, error } = await supabase
+    .from('tv_devices')
+    .update({ assigned_schedule_id: scheduleId })
+    .in('id', deviceIds)
+    .select('id, device_name');
+
+  if (error) throw error;
+
+  // Log activity
+  logActivity(
+    ACTIONS.SCHEDULE_ASSIGNED,
+    RESOURCE_TYPES.SCHEDULE,
+    scheduleId,
+    `Assigned to ${data?.length || 0} devices`,
+    { device_ids: deviceIds }
+  );
+
+  return { updated: data?.length || 0, devices: data };
+}
+
+/**
+ * Bulk unassign schedule from multiple devices
+ * @param {string[]} deviceIds - Array of device UUIDs
+ */
+export async function bulkUnassignScheduleFromDevices(deviceIds) {
+  if (!deviceIds || deviceIds.length === 0) return { updated: 0 };
+
+  const { data, error } = await supabase
+    .from('tv_devices')
+    .update({ assigned_schedule_id: null })
+    .in('id', deviceIds)
+    .select('id, device_name');
+
+  if (error) throw error;
+
+  // Log activity
+  logActivity(
+    ACTIONS.SCHEDULE_UNASSIGNED,
+    RESOURCE_TYPES.DEVICE,
+    null,
+    `Unassigned schedule from ${data?.length || 0} devices`,
+    { device_ids: deviceIds }
+  );
+
+  return { updated: data?.length || 0, devices: data };
+}
+
+/**
+ * Bulk assign a schedule to multiple screen groups
+ * @param {string} scheduleId - Schedule UUID
+ * @param {string[]} groupIds - Array of group UUIDs
+ */
+export async function bulkAssignScheduleToGroups(scheduleId, groupIds) {
+  if (!scheduleId) throw new Error('Schedule ID is required');
+  if (!groupIds || groupIds.length === 0) return { updated: 0 };
+
+  const { data, error } = await supabase
+    .from('screen_groups')
+    .update({ assigned_schedule_id: scheduleId })
+    .in('id', groupIds)
+    .select('id, name');
+
+  if (error) throw error;
+
+  // Log activity
+  logActivity(
+    ACTIONS.SCHEDULE_ASSIGNED,
+    RESOURCE_TYPES.SCHEDULE,
+    scheduleId,
+    `Assigned to ${data?.length || 0} groups`,
+    { group_ids: groupIds }
+  );
+
+  return { updated: data?.length || 0, groups: data };
+}
+
+/**
+ * Bulk unassign schedule from multiple screen groups
+ * @param {string[]} groupIds - Array of group UUIDs
+ */
+export async function bulkUnassignScheduleFromGroups(groupIds) {
+  if (!groupIds || groupIds.length === 0) return { updated: 0 };
+
+  const { data, error } = await supabase
+    .from('screen_groups')
+    .update({ assigned_schedule_id: null })
+    .in('id', groupIds)
+    .select('id, name');
+
+  if (error) throw error;
+
+  // Log activity
+  logActivity(
+    ACTIONS.SCHEDULE_UNASSIGNED,
+    RESOURCE_TYPES.SCREEN_GROUP,
+    null,
+    `Unassigned schedule from ${data?.length || 0} groups`,
+    { group_ids: groupIds }
+  );
+
+  return { updated: data?.length || 0, groups: data };
+}

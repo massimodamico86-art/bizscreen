@@ -7,6 +7,10 @@
 
 import { supabase } from '../../supabase';
 
+import { createScopedLogger } from '../loggingService.js';
+
+const logger = createScopedLogger('FacebookService');
+
 // Facebook API configuration
 const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID || '';
 const FACEBOOK_APP_SECRET = import.meta.env.VITE_FACEBOOK_APP_SECRET || '';
@@ -253,7 +257,7 @@ export async function connectFacebookPage(code, tenantId, selectedPageId = null)
       availablePages: pages,
     };
   } catch (error) {
-    console.error('Failed to connect Facebook page:', error);
+    logger.error('Failed to connect Facebook page:', { error: error });
     throw error;
   }
 }

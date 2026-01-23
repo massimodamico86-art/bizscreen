@@ -1,3 +1,7 @@
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('MediaPreloader');
+
 /**
  * Media Preloader Service
  *
@@ -91,7 +95,7 @@ export async function detectBandwidth() {
   lastBandwidth = result;
   lastBandwidthCheck = now;
 
-  console.log('[MediaPreloader] Bandwidth detected:', result.level, result.downlink ? `(${result.downlink} Mbps)` : '');
+  logger.info('Bandwidth detected:', result.level, result.downlink ? `(${result.downlink} Mbps)` : '');
 
   return result;
 }

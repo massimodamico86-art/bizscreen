@@ -6,6 +6,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('LimitsService');
+
 /**
  * @typedef {Object} EffectiveLimits
  * @property {string} planSlug - Plan slug (free, starter, pro)
@@ -41,7 +45,7 @@ export async function getEffectiveLimits() {
   const { data, error } = await supabase.rpc('get_effective_limits');
 
   if (error) {
-    console.error('Error fetching limits:', error);
+    logger.error('Error fetching limits:', { error: error });
     // Return free plan defaults on error
     return {
       planSlug: 'free',
@@ -78,7 +82,7 @@ export async function getUsageCounts() {
   const { data, error } = await supabase.rpc('get_usage_counts');
 
   if (error) {
-    console.error('Error fetching usage counts:', error);
+    logger.error('Error fetching usage counts:', { error: error });
     return {
       screensCount: 0,
       mediaCount: 0,
@@ -203,7 +207,7 @@ export async function checkResourceLimit(resourceType) {
 
     return { allowed: true };
   } catch (error) {
-    console.error('Error checking resource limit:', error);
+    logger.error('Error checking resource limit:', { error: error });
     return {
       allowed: false,
       error: error.message || 'Failed to check resource limit'

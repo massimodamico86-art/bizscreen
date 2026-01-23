@@ -282,7 +282,7 @@ export async function getTenantLifecycleStatus() {
   const { data, error } = await supabase.rpc('get_tenant_lifecycle_status');
 
   if (error) {
-    console.error('Error fetching lifecycle status:', error);
+    logger.error('Error fetching lifecycle status:', { error: error });
     return {
       planSlug: 'free',
       planName: 'Free',
@@ -327,7 +327,7 @@ export async function startTrial(planSlug = 'starter', trialDays = 14) {
   });
 
   if (error) {
-    console.error('Error starting trial:', error);
+    logger.error('Error starting trial:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -351,7 +351,7 @@ export async function getPlans() {
     .order('display_order', { ascending: true });
 
   if (error) {
-    console.error('Error fetching plans:', error);
+    logger.error('Error fetching plans:', { error: error });
     return [];
   }
 
@@ -375,7 +375,7 @@ export async function cancelSubscription() {
     .eq('owner_id', user.id);
 
   if (error) {
-    console.error('Error canceling subscription:', error);
+    logger.error('Error canceling subscription:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -399,7 +399,7 @@ export async function reactivateSubscription() {
     .eq('owner_id', user.id);
 
   if (error) {
-    console.error('Error reactivating subscription:', error);
+    logger.error('Error reactivating subscription:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -423,7 +423,7 @@ export async function getBillingHistory(limit = 20) {
     .limit(limit);
 
   if (error) {
-    console.error('Error fetching billing history:', error);
+    logger.error('Error fetching billing history:', { error: error });
     return [];
   }
 
@@ -442,7 +442,7 @@ export async function getAllTenantsStatus() {
   const { data, error } = await supabase.rpc('get_all_tenants_status');
 
   if (error) {
-    console.error('Error fetching tenants status:', error);
+    logger.error('Error fetching tenants status:', { error: error });
     return [];
   }
 
@@ -462,7 +462,7 @@ export async function suspendTenant(ownerId, reason = 'manual') {
   });
 
   if (error) {
-    console.error('Error suspending tenant:', error);
+    logger.error('Error suspending tenant:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -480,7 +480,7 @@ export async function reactivateTenant(ownerId) {
   });
 
   if (error) {
-    console.error('Error reactivating tenant:', error);
+    logger.error('Error reactivating tenant:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -500,7 +500,7 @@ export async function resetTrial(ownerId, trialDays = 14) {
   });
 
   if (error) {
-    console.error('Error resetting trial:', error);
+    logger.error('Error resetting trial:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -518,7 +518,7 @@ export async function expireTrial(ownerId) {
   });
 
   if (error) {
-    console.error('Error expiring trial:', error);
+    logger.error('Error expiring trial:', { error: error });
     return { success: false, error: error.message };
   }
 

@@ -10,6 +10,10 @@
 import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ActivityLogService');
+
 /**
  * Action codes for activity log
  */
@@ -138,14 +142,14 @@ export async function logActivity(action, resourceType, resourceId = null, resou
     // Get current user
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      console.warn('Cannot log activity: No authenticated user');
+      logger.warn('Cannot log activity: No authenticated user');
       return null;
     }
 
     // Get effective owner ID (respects impersonation)
     const ownerId = await getEffectiveOwnerId();
     if (!ownerId) {
-      console.warn('Cannot log activity: No owner ID');
+      logger.warn('Cannot log activity: No owner ID');
       return null;
     }
 
@@ -161,13 +165,13 @@ export async function logActivity(action, resourceType, resourceId = null, resou
     });
 
     if (error) {
-      console.error('Error logging activity:', error);
+      logger.error('Error logging activity:', { error: error });
       return null;
     }
 
     return data;
   } catch (error) {
-    console.error('Error logging activity:', error);
+    logger.error('Error logging activity:', { error: error });
     // Don't throw - logging failures shouldn't break the app
     return null;
   }
@@ -210,13 +214,13 @@ export async function getActivityLog(options = {}) {
     });
 
     if (error) {
-      console.error('Error fetching activity log:', error);
+      logger.error('Error fetching activity log:', { error: error });
       return { data: [], error: error.message };
     }
 
     return { data: data || [], error: null };
   } catch (error) {
-    console.error('Error fetching activity log:', error);
+    logger.error('Error fetching activity log:', { error: error });
     return { data: [], error: error.message };
   }
 }
@@ -248,13 +252,13 @@ export async function getActivityLogCount(options = {}) {
     });
 
     if (error) {
-      console.error('Error fetching activity count:', error);
+      logger.error('Error fetching activity count:', { error: error });
       return { count: 0, error: error.message };
     }
 
     return { count: data || 0, error: null };
   } catch (error) {
-    console.error('Error fetching activity count:', error);
+    logger.error('Error fetching activity count:', { error: error });
     return { count: 0, error: error.message };
   }
 }

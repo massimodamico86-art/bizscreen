@@ -1,3 +1,7 @@
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('GeolocationService');
+
 /**
  * Geolocation Service
  *
@@ -93,7 +97,7 @@ export async function reverseGeocode(lat, lon) {
         : `${location.name}, ${location.country}`,
     };
   } catch (error) {
-    console.error('Reverse geocoding error:', error);
+    logger.error('Reverse geocoding error:', { error: error });
     return {
       city: 'Unknown',
       country: 'Location',
@@ -147,7 +151,7 @@ export async function searchLocations(query, limit = 5) {
         : `${loc.name}, ${loc.country}`,
     }));
   } catch (error) {
-    console.error('Location search error:', error);
+    logger.error('Location search error:', { error: error });
     return [];
   }
 }

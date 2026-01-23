@@ -1,3 +1,7 @@
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('WeatherService');
+
 /**
  * Weather Service - OpenWeatherMap API Integration
  * Fetches current weather data for a given city
@@ -24,7 +28,7 @@ export async function getWeather(city, units = 'imperial') {
 
   // Check if API key is configured
   if (!OPENWEATHER_API_KEY) {
-    console.warn('OpenWeatherMap API key not configured. Set VITE_OPENWEATHER_API_KEY in .env file.');
+    logger.warn('OpenWeatherMap API key not configured. Set VITE_OPENWEATHER_API_KEY in .env file.');
     return getMockWeatherData(city, units);
   }
 
@@ -34,7 +38,7 @@ export async function getWeather(city, units = 'imperial') {
 
   // Check if cached data is still valid
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    console.log(`Using cached weather data for ${city} (${units})`);
+    logger.debug(`Using cached weather data for ${city} (${units})`);
     return cached.data;
   }
 
@@ -50,11 +54,11 @@ export async function getWeather(city, units = 'imperial') {
 
     if (!response.ok) {
       if (response.status === 404) {
-        console.error(`City not found: ${city}`);
+        logger.error(`City not found: ${city}`);
       } else if (response.status === 401) {
-        console.error('Invalid OpenWeatherMap API key');
+        logger.error('Invalid OpenWeatherMap API key');
       } else {
-        console.error(`Weather API error: ${response.status}`);
+        logger.error(`Weather API error: ${response.status}`);
       }
       return getMockWeatherData(city, units);
     }
@@ -67,7 +71,7 @@ export async function getWeather(city, units = 'imperial') {
       // Remove oldest entry (first entry in Map)
       const firstKey = weatherCache.keys().next().value;
       weatherCache.delete(firstKey);
-      console.log(`Weather cache limit reached, removed oldest entry: ${firstKey}`);
+      logger.debug(`Weather cache limit reached, removed oldest entry: ${firstKey}`);
     }
 
     // Cache the result
@@ -76,11 +80,11 @@ export async function getWeather(city, units = 'imperial') {
       timestamp: Date.now()
     });
 
-    console.log(`Cached weather data for ${city} (${units}). Cache size: ${weatherCache.size}`);
+    logger.debug(`Cached weather data for ${city} (${units}). Cache size: ${weatherCache.size}`);
 
     return weatherData;
   } catch (error) {
-    console.error('Error fetching weather data:', error);
+    logger.error('Error fetching weather data:', { error: error });
     return getMockWeatherData(city, units);
   }
 }
@@ -151,7 +155,7 @@ function capitalizeWords(str) {
  */
 export function clearWeatherCache() {
   weatherCache.clear();
-  console.log('Weather cache cleared');
+  logger.info('Weather cache cleared');
 }
 
 /**
@@ -170,7 +174,7 @@ export function cleanupExpiredCache() {
   }
 
   if (removedCount > 0) {
-    console.log(`Cleaned up ${removedCount} expired weather cache entries. Remaining: ${weatherCache.size}`);
+    logger.debug(`Cleaned up ${removedCount} expired weather cache entries. Remaining: ${weatherCache.size}`);
   }
 
   return removedCount;
@@ -224,7 +228,7 @@ export async function getWeatherByCoords(lat, lon, options = {}) {
   const { units = 'metric', lang = 'en' } = options;
 
   if (!OPENWEATHER_API_KEY) {
-    console.warn('OpenWeatherMap API key not configured');
+    logger.warn('OpenWeatherMap API key not configured');
     return getMockWeatherData('Location', units);
   }
 
@@ -241,7 +245,7 @@ export async function getWeatherByCoords(lat, lon, options = {}) {
     );
 
     if (!response.ok) {
-      console.error(`Weather API error: ${response.status}`);
+      logger.error(`Weather API error: ${response.status}`);
       return getMockWeatherData('Location', units);
     }
 
@@ -261,7 +265,7 @@ export async function getWeatherByCoords(lat, lon, options = {}) {
 
     return weatherData;
   } catch (error) {
-    console.error('Error fetching weather by coords:', error);
+    logger.error('Error fetching weather by coords:', { error: error });
     return getMockWeatherData('Location', units);
   }
 }
@@ -315,7 +319,7 @@ export async function getWeatherForecast(city, options = {}) {
 
     return forecast;
   } catch (error) {
-    console.error('Error fetching forecast:', error);
+    logger.error('Error fetching forecast:', { error: error });
     return getMockForecast(units);
   }
 }
@@ -452,7 +456,7 @@ export async function getWeatherWallData(config) {
       timestamp: Date.now()
     };
   } catch (error) {
-    console.error('Error getting weather wall data:', error);
+    logger.error('Error getting weather wall data:', { error: error });
     return getMockWeatherWallData(units, language);
   }
 }

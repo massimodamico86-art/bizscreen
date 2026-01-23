@@ -6,6 +6,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('AccountPlanService');
+
 /**
  * @typedef {Object} Plan
  * @property {string} id - Plan UUID
@@ -119,7 +123,7 @@ export async function changePlan(planSlug) {
   });
 
   if (error) {
-    console.error('Error changing plan:', error);
+    logger.error('Error changing plan:', { error: error });
     throw new Error(error.message || 'Failed to change plan');
   }
 

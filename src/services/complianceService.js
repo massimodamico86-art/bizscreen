@@ -7,6 +7,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ComplianceService');
+
 /**
  * Export statuses
  */
@@ -150,7 +154,7 @@ export async function hasEnterpriseFeatures(tenantId = null) {
   });
 
   if (error) {
-    console.error('Error checking enterprise features:', error);
+    logger.error('Error checking enterprise features:', { error: error });
     return false;
   }
 

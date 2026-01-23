@@ -8,6 +8,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('DemoService');
+
 /**
  * Business types for demo tenants
  */
@@ -43,7 +47,7 @@ export async function createDemoTenant(businessType, planLevel, email = null) {
   });
 
   if (error) {
-    console.error('Error creating demo tenant:', error);
+    logger.error('Error creating demo tenant:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -61,7 +65,7 @@ export async function resetDemoTenant(tenantId) {
   });
 
   if (error) {
-    console.error('Error resetting demo tenant:', error);
+    logger.error('Error resetting demo tenant:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -76,7 +80,7 @@ export async function listDemoTenants() {
   const { data, error } = await supabase.rpc('list_demo_tenants');
 
   if (error) {
-    console.error('Error listing demo tenants:', error);
+    logger.error('Error listing demo tenants:', { error: error });
     return [];
   }
 
@@ -91,7 +95,7 @@ export async function getStaleDemoTenants() {
   const { data, error } = await supabase.rpc('get_stale_demo_tenants');
 
   if (error) {
-    console.error('Error getting stale demo tenants:', error);
+    logger.error('Error getting stale demo tenants:', { error: error });
     return [];
   }
 
@@ -137,7 +141,7 @@ export async function isProtectedAsset(assetType, assetName) {
   });
 
   if (error) {
-    console.error('Error checking protected asset:', error);
+    logger.error('Error checking protected asset:', { error: error });
     return false;
   }
 
@@ -167,7 +171,7 @@ export async function updateDemoSettings(tenantId, settings) {
     .eq('is_demo_tenant', true);
 
   if (error) {
-    console.error('Error updating demo settings:', error);
+    logger.error('Error updating demo settings:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -209,7 +213,7 @@ export async function getDemoContentPacks() {
     .order('business_type');
 
   if (error) {
-    console.error('Error getting demo content packs:', error);
+    logger.error('Error getting demo content packs:', { error: error });
     return [];
   }
 

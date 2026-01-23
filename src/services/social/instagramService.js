@@ -7,6 +7,10 @@
 
 import { supabase } from '../../supabase';
 
+import { createScopedLogger } from '../loggingService.js';
+
+const logger = createScopedLogger('InstagramService');
+
 // Instagram API configuration
 const INSTAGRAM_APP_ID = import.meta.env.VITE_INSTAGRAM_APP_ID || '';
 const INSTAGRAM_APP_SECRET = import.meta.env.VITE_INSTAGRAM_APP_SECRET || '';
@@ -237,7 +241,7 @@ export async function connectInstagramAccount(code, tenantId) {
 
     return data;
   } catch (error) {
-    console.error('Failed to connect Instagram account:', error);
+    logger.error('Failed to connect Instagram account:', { error: error });
     throw error;
   }
 }

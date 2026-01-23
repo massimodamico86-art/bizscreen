@@ -10,6 +10,10 @@
  */
 import { supabase } from '../supabase';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('OnboardingService');
+
 /**
  * @typedef {Object} OnboardingProgress
  * @property {boolean} completedWelcome - Welcome step done
@@ -122,7 +126,7 @@ export async function getOnboardingProgress() {
   const { data, error } = await supabase.rpc('get_onboarding_progress');
 
   if (error) {
-    console.error('Error fetching onboarding progress:', error);
+    logger.error('Error fetching onboarding progress:', { error: error });
     // Fall back to checking resources directly
     const status = await checkIsFirstRun();
     return {
@@ -168,7 +172,7 @@ export async function updateOnboardingStep(step, completed = true) {
   });
 
   if (error) {
-    console.error('Error updating onboarding step:', error);
+    logger.error('Error updating onboarding step:', { error: error });
     return { success: false, error: error.message };
   }
 
@@ -190,7 +194,7 @@ export async function skipOnboarding() {
   const { data, error } = await supabase.rpc('skip_onboarding');
 
   if (error) {
-    console.error('Error skipping onboarding:', error);
+    logger.error('Error skipping onboarding:', { error: error });
     return { success: false, error: error.message };
   }
 

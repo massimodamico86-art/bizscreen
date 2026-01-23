@@ -1,6 +1,10 @@
 // Data Binding Resolver - Utilities for resolving data bindings in Editor and Player
 import { getDataSource, formatValue, FIELD_DATA_TYPES } from './dataSourceService';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('DataBindingResolver');
+
 /**
  * Cache for resolved data sources
  * Key: dataSourceId, Value: { data, timestamp, expiresAt }
@@ -58,7 +62,7 @@ export async function getCachedDataSource(dataSourceId, { cacheTTL = DEFAULT_CAC
     }
     return data;
   } catch (error) {
-    console.error('[DataBindingResolver] Failed to fetch data source:', error);
+    logger.error('Failed to fetch data source:', { error: error });
     // Return stale data if available
     return cached?.data || null;
   }
@@ -349,7 +353,7 @@ export async function prefetchSceneDataSources(designJson, options = { cacheTTL:
     await preloadDataSources(dataSourceIds, options);
     return true;
   } catch (error) {
-    console.error('[DataBindingResolver] Failed to prefetch data sources:', error);
+    logger.error('Failed to prefetch data sources:', { error: error });
     return false;
   }
 }

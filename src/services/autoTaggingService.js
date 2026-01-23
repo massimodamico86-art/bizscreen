@@ -7,6 +7,10 @@
 
 import { analyzeSvg, analyzeSvgFromUrl } from './svgAnalyzerService';
 
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('AutoTaggingService');
+
 // Predefined categories for digital signage templates
 const TEMPLATE_CATEGORIES = [
   'restaurant',
@@ -67,7 +71,7 @@ export async function generateTagsWithAI(analysis) {
     const result = await response.json();
     return parseAIResponse(result);
   } catch (error) {
-    console.warn('AI tagging failed, using fallback:', error.message);
+    logger.warn('AI tagging failed, using fallback:', error.message);
     // Fallback to rule-based tagging
     return generateTagsWithRules(analysis);
   }
@@ -138,7 +142,7 @@ function parseAIResponse(result) {
       };
     }
   } catch (e) {
-    console.warn('Failed to parse AI response:', e);
+    logger.warn('Failed to parse AI response:', { data: e });
   }
 
   // Return empty result if parsing fails
