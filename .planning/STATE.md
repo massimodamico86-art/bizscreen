@@ -28,6 +28,7 @@ Progress: [################░░░░░░░░] 67% (8/12 phases complete)
 
 **Gap Closure Plans:**
 - [x] 08-07: FeatureFlagsPage component extraction (eedcabb)
+- [x] 08-11: CampaignEditorPage modal extraction (701bf4d)
 
 **Phase 8 Final Results:**
 - 5 page hooks extracted and tested (89 new tests)
@@ -39,7 +40,7 @@ Progress: [################░░░░░░░░] 67% (8/12 phases complete)
 | Page | Original | After Hooks | After Components | Total Reduction |
 |------|----------|-------------|------------------|-----------------|
 | FeatureFlagsPage | ~1,700 | 1,256 | 218 | 87% |
-| CampaignEditorPage | 1,392 | 1,054 | - | 24% |
+| CampaignEditorPage | 1,392 | 1,054 | 586 | 58% |
 | PlaylistEditorPage | 1,917 | 1,036 | - | 46% |
 | ScreensPage | ~1,900 | 1,278 | - | 33% |
 | MediaLibraryPage | ~2,213 | 1,629 | - | 26% |
@@ -456,7 +457,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 08-07-PLAN.md (FeatureFlagsPage component extraction)
+Stopped at: Completed 08-11-PLAN.md (CampaignEditorPage modal extraction)
 Resume file: None
 
 ## Next Steps
