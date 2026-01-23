@@ -309,7 +309,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       setIsDirty(true);
       showToast?.('Content assigned to zone');
     } catch (error) {
-      logger.error('Failed to assign content', { zoneId: selectedZone.id, playlistId, error });
+      logger.error('Failed to assign content', { zoneId: selectedZone, type, contentId: id, error });
       showToast?.('Error assigning content: ' + error.message, 'error');
     }
   };
