@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -20,7 +20,6 @@ import {
   Clock,
   AlertCircle,
   CheckCircle,
-  Megaphone,
   Info,
   Send,
   Link2,
@@ -34,291 +33,69 @@ import {
 } from 'lucide-react';
 import { Button, Card, Badge } from '../design-system';
 import { useTranslation } from '../i18n';
-import { useLogger } from '../hooks/useLogger.js';
-import {
-  getCampaign,
-  createCampaign,
-  updateCampaign,
-  deleteCampaign,
-  activateCampaign,
-  pauseCampaign,
-  addTarget,
-  removeTarget,
-  addContent,
-  removeContent,
-  CAMPAIGN_STATUS,
-  TARGET_TYPES,
-  CONTENT_TYPES
-} from '../services/campaignService';
-import { fetchScreenGroups } from '../services/screenGroupService';
-import { fetchLocations } from '../services/locationService';
-import { fetchPlaylists } from '../services/playlistService';
-import { fetchLayouts } from '../services/layoutService';
-import { supabase } from '../supabase';
+import { CAMPAIGN_STATUS } from '../services/campaignService';
+import { formatPreviewLink, EXPIRY_PRESETS, getExpiryLabel } from '../services/previewService';
 import { canEditContent, canEditScreens } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
-import {
-  requestApproval,
-  getOpenReviewForResource,
-  revertToDraft,
-  getApprovalStatusConfig,
-} from '../services/approvalService';
-import {
-  createPreviewLinkWithPreset,
-  fetchPreviewLinksForResource,
-  revokePreviewLink,
-  formatPreviewLink,
-  EXPIRY_PRESETS,
-  getExpiryLabel,
-} from '../services/previewService';
+import { getApprovalStatusConfig } from '../services/approvalService';
+import { useCampaignEditor } from './hooks';
 
 const CampaignEditorPage = ({ showToast }) => {
   const { t } = useTranslation();
   const { campaignId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isNew = campaignId === 'new';
-  const logger = useLogger('CampaignEditorPage');
 
-  // Campaign state
-  const [campaign, setCampaign] = useState({
-    name: '',
-    description: '',
-    status: CAMPAIGN_STATUS.DRAFT,
-    start_at: '',
-    end_at: '',
-    priority: 100,
-    targets: [],
-    contents: []
-  });
-  const [loading, setLoading] = useState(!isNew);
-  const [saving, setSaving] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-
-  // Picker data
-  const [screens, setScreens] = useState([]);
-  const [screenGroups, setScreenGroups] = useState([]);
-  const [locations, setLocations] = useState([]);
-  const [playlists, setPlaylists] = useState([]);
-  const [layouts, setLayouts] = useState([]);
-
-  // Picker modals
-  const [showTargetPicker, setShowTargetPicker] = useState(false);
-  const [showContentPicker, setShowContentPicker] = useState(false);
-
-  // Approval & Preview state
-  const [showApprovalModal, setShowApprovalModal] = useState(false);
-  const [approvalMessage, setApprovalMessage] = useState('');
-  const [submittingApproval, setSubmittingApproval] = useState(false);
-  const [currentReview, setCurrentReview] = useState(null);
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [previewLinks, setPreviewLinks] = useState([]);
-  const [loadingPreviewLinks, setLoadingPreviewLinks] = useState(false);
-  const [creatingPreviewLink, setCreatingPreviewLink] = useState(false);
-  const [selectedExpiry, setSelectedExpiry] = useState('7_days');
-  const [allowComments, setAllowComments] = useState(true);
-  const [copiedLinkId, setCopiedLinkId] = useState(null);
+  // Use the campaign editor hook for all state and logic
+  const {
+    campaign,
+    loading,
+    saving,
+    hasChanges,
+    isNew,
+    screens,
+    screenGroups,
+    locations,
+    playlists,
+    layouts,
+    showTargetPicker,
+    setShowTargetPicker,
+    showContentPicker,
+    setShowContentPicker,
+    showApprovalModal,
+    setShowApprovalModal,
+    approvalMessage,
+    setApprovalMessage,
+    submittingApproval,
+    showPreviewModal,
+    setShowPreviewModal,
+    previewLinks,
+    loadingPreviewLinks,
+    creatingPreviewLink,
+    selectedExpiry,
+    setSelectedExpiry,
+    allowComments,
+    setAllowComments,
+    copiedLinkId,
+    handleChange,
+    handleSave,
+    handleDelete,
+    handleActivate,
+    handlePause,
+    handleAddTarget,
+    handleRemoveTarget,
+    handleAddContent,
+    handleRemoveContent,
+    handleSubmitForApproval,
+    handleRevertToDraft,
+    loadPreviewLinks,
+    handleCreatePreviewLink,
+    handleRevokePreviewLink,
+    handleCopyLink,
+  } = useCampaignEditor(campaignId, { showToast });
 
   // Permissions
   const canEdit = canEditContent(user) && canEditScreens(user);
-
-  // Load campaign data
-  useEffect(() => {
-    loadPickerData();
-    if (!isNew) {
-      loadCampaign();
-    }
-  }, [campaignId]);
-
-  const loadCampaign = async () => {
-    try {
-      setLoading(true);
-      const data = await getCampaign(campaignId);
-      setCampaign({
-        ...data,
-        start_at: data.start_at ? formatDateTimeLocal(data.start_at) : '',
-        end_at: data.end_at ? formatDateTimeLocal(data.end_at) : ''
-      });
-    } catch (error) {
-      logger.error('Failed to load campaign', { campaignId, error });
-      showToast?.('Error loading campaign', 'error');
-      navigate('/app/campaigns');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadPickerData = async () => {
-    try {
-      const [screensRes, groupsRes, locsRes, playlistsRes, layoutsRes] = await Promise.all([
-        supabase.from('tv_devices').select('id, name, location_id').order('name'),
-        fetchScreenGroups(),
-        fetchLocations(),
-        fetchPlaylists(),
-        fetchLayouts()
-      ]);
-
-      setScreens(screensRes.data || []);
-      setScreenGroups(groupsRes || []);
-      setLocations(locsRes || []);
-      setPlaylists(playlistsRes || []);
-      setLayouts(layoutsRes.data || []);
-    } catch (error) {
-      logger.error('Failed to load picker data', { error });
-    }
-  };
-
-  const formatDateTimeLocal = (dateStr) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toISOString().slice(0, 16);
-  };
-
-  const handleChange = (field, value) => {
-    setCampaign(prev => ({ ...prev, [field]: value }));
-    setHasChanges(true);
-  };
-
-  const handleSave = async () => {
-    if (!campaign.name?.trim()) {
-      showToast?.('Campaign name is required', 'error');
-      return;
-    }
-
-    setSaving(true);
-    try {
-      const saveData = {
-        name: campaign.name.trim(),
-        description: campaign.description?.trim() || '',
-        status: campaign.status,
-        startAt: campaign.start_at ? new Date(campaign.start_at).toISOString() : null,
-        endAt: campaign.end_at ? new Date(campaign.end_at).toISOString() : null,
-        priority: campaign.priority
-      };
-
-      if (isNew) {
-        const created = await createCampaign(saveData);
-        showToast?.('Campaign created');
-        navigate(`/app/campaigns/${created.id}`);
-      } else {
-        await updateCampaign(campaignId, saveData);
-        showToast?.('Campaign saved');
-        setHasChanges(false);
-      }
-    } catch (error) {
-      logger.error('Failed to save campaign', { campaignId, isNew, campaignName: campaign.name, error });
-      showToast?.('Error saving campaign: ' + error.message, 'error');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm('Delete this campaign? This cannot be undone.')) return;
-
-    try {
-      await deleteCampaign(campaignId);
-      showToast?.('Campaign deleted');
-      navigate('/app/campaigns');
-    } catch (error) {
-      logger.error('Failed to delete campaign', { campaignId, error });
-      showToast?.('Error deleting campaign: ' + error.message, 'error');
-    }
-  };
-
-  const handleActivate = async () => {
-    // Validate
-    if (!campaign.targets || campaign.targets.length === 0) {
-      showToast?.('Add at least one target before activating', 'error');
-      return;
-    }
-    if (!campaign.contents || campaign.contents.length === 0) {
-      showToast?.('Add at least one content item before activating', 'error');
-      return;
-    }
-
-    try {
-      await activateCampaign(campaignId);
-      showToast?.('Campaign activated');
-      loadCampaign();
-    } catch (error) {
-      logger.error('Failed to activate campaign', { campaignId, error });
-      showToast?.('Error activating campaign: ' + error.message, 'error');
-    }
-  };
-
-  const handlePause = async () => {
-    try {
-      await pauseCampaign(campaignId);
-      showToast?.('Campaign paused');
-      loadCampaign();
-    } catch (error) {
-      logger.error('Failed to pause campaign', { campaignId, error });
-      showToast?.('Error pausing campaign: ' + error.message, 'error');
-    }
-  };
-
-  // Target management
-  const handleAddTarget = async (targetType, targetId = null) => {
-    if (isNew) {
-      showToast?.('Save campaign first before adding targets', 'error');
-      return;
-    }
-
-    try {
-      await addTarget(campaignId, targetType, targetId);
-      showToast?.('Target added');
-      loadCampaign();
-    } catch (error) {
-      logger.error('Failed to add target', { campaignId, targetType, targetId, error });
-      showToast?.('Error adding target: ' + error.message, 'error');
-    }
-  };
-
-  const handleRemoveTarget = async (targetId) => {
-    try {
-      await removeTarget(targetId);
-      setCampaign(prev => ({
-        ...prev,
-        targets: prev.targets.filter(t => t.id !== targetId)
-      }));
-      showToast?.('Target removed');
-    } catch (error) {
-      logger.error('Failed to remove target', { targetId, error });
-      showToast?.('Error removing target: ' + error.message, 'error');
-    }
-  };
-
-  // Content management
-  const handleAddContent = async (contentType, contentId) => {
-    if (isNew) {
-      showToast?.('Save campaign first before adding content', 'error');
-      return;
-    }
-
-    try {
-      await addContent(campaignId, contentType, contentId);
-      showToast?.('Content added');
-      loadCampaign();
-    } catch (error) {
-      logger.error('Failed to add content', { campaignId, contentType, contentId, error });
-      showToast?.('Error adding content: ' + error.message, 'error');
-    }
-  };
-
-  const handleRemoveContent = async (contentId) => {
-    try {
-      await removeContent(contentId);
-      setCampaign(prev => ({
-        ...prev,
-        contents: prev.contents.filter(c => c.id !== contentId)
-      }));
-      showToast?.('Content removed');
-    } catch (error) {
-      logger.error('Failed to remove content', { contentId, error });
-      showToast?.('Error removing content: ' + error.message, 'error');
-    }
-  };
 
   // Get status badge config
   const getStatusBadge = () => {
@@ -348,125 +125,10 @@ const CampaignEditorPage = ({ showToast }) => {
     return parts.join(', ') || 'No targets';
   };
 
-  // Fetch current review request for this campaign
-  const fetchCurrentReview = async () => {
-    if (isNew) return;
-    try {
-      const review = await getOpenReviewForResource('campaign', campaignId);
-      setCurrentReview(review);
-    } catch (error) {
-      logger.error('Failed to fetch review', { campaignId, error });
-    }
-  };
-
-  // Fetch on campaign load
-  useEffect(() => {
-    if (campaign?.id || (!isNew && campaignId)) {
-      fetchCurrentReview();
-    }
-  }, [campaign?.id, campaignId, isNew]);
-
-  // Request approval handler
-  const handleRequestApproval = async () => {
-    try {
-      setSubmittingApproval(true);
-      await requestApproval({
-        resourceType: 'campaign',
-        resourceId: campaignId,
-        title: `Review request for campaign: ${campaign.name}`,
-        message: approvalMessage || undefined,
-      });
-      showToast?.('Approval requested successfully');
-      setShowApprovalModal(false);
-      setApprovalMessage('');
-      await loadCampaign();
-      await fetchCurrentReview();
-    } catch (error) {
-      logger.error('Failed to request approval', { campaignId, campaignName: campaign.name, error });
-      showToast?.(error.message || 'Error requesting approval', 'error');
-    } finally {
-      setSubmittingApproval(false);
-    }
-  };
-
-  // Revert to draft handler
-  const handleRevertToDraft = async () => {
-    if (!window.confirm('Revert this campaign to draft status? This will cancel any pending reviews.')) return;
-    try {
-      await revertToDraft('campaign', campaignId);
-      showToast?.('Reverted to draft');
-      await loadCampaign();
-      setCurrentReview(null);
-    } catch (error) {
-      logger.error('Failed to revert to draft', { campaignId, error });
-      showToast?.(error.message || 'Error reverting to draft', 'error');
-    }
-  };
-
-  // Fetch preview links
-  const fetchPreviewLinks = async () => {
-    if (isNew) return;
-    try {
-      setLoadingPreviewLinks(true);
-      const links = await fetchPreviewLinksForResource('campaign', campaignId);
-      setPreviewLinks(links);
-    } catch (error) {
-      logger.error('Failed to fetch preview links', { campaignId, error });
-    } finally {
-      setLoadingPreviewLinks(false);
-    }
-  };
-
   // Open preview modal
   const handleOpenPreviewModal = () => {
     setShowPreviewModal(true);
-    fetchPreviewLinks();
-  };
-
-  // Create preview link
-  const handleCreatePreviewLink = async () => {
-    try {
-      setCreatingPreviewLink(true);
-      await createPreviewLinkWithPreset({
-        resourceType: 'campaign',
-        resourceId: campaignId,
-        expiryPreset: selectedExpiry,
-        allowComments,
-      });
-      showToast?.('Preview link created');
-      await fetchPreviewLinks();
-    } catch (error) {
-      logger.error('Failed to create preview link', { campaignId, expiryPreset: selectedExpiry, error });
-      showToast?.(error.message || 'Error creating preview link', 'error');
-    } finally {
-      setCreatingPreviewLink(false);
-    }
-  };
-
-  // Revoke preview link
-  const handleRevokePreviewLink = async (linkId) => {
-    if (!window.confirm('Revoke this preview link? It will no longer work.')) return;
-    try {
-      await revokePreviewLink(linkId);
-      showToast?.('Preview link revoked');
-      await fetchPreviewLinks();
-    } catch (error) {
-      logger.error('Failed to revoke preview link', { linkId, error });
-      showToast?.(error.message || 'Error revoking link', 'error');
-    }
-  };
-
-  // Copy preview link
-  const handleCopyLink = async (link) => {
-    try {
-      const url = formatPreviewLink(link.token);
-      await navigator.clipboard.writeText(url);
-      setCopiedLinkId(link.id);
-      setTimeout(() => setCopiedLinkId(null), 2000);
-      showToast?.('Link copied to clipboard');
-    } catch (error) {
-      showToast?.('Failed to copy link', 'error');
-    }
+    loadPreviewLinks();
   };
 
   // Get approval status config
@@ -555,13 +217,13 @@ const CampaignEditorPage = ({ showToast }) => {
                   Activate
                 </Button>
               )}
-              <Button variant="outline" onClick={handleDelete} className="text-red-600 hover:bg-red-50">
+              <Button variant="outline" onClick={() => handleDelete(navigate)} className="text-red-600 hover:bg-red-50">
                 <Trash2 size={18} />
               </Button>
             </>
           )}
           {canEdit && (
-            <Button onClick={handleSave} disabled={saving}>
+            <Button onClick={() => handleSave(navigate)} disabled={saving}>
               <Save size={18} />
               {saving ? 'Saving...' : 'Save'}
             </Button>
@@ -945,7 +607,7 @@ const CampaignEditorPage = ({ showToast }) => {
               <Button variant="outline" onClick={() => setShowApprovalModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleRequestApproval} disabled={submittingApproval}>
+              <Button onClick={handleSubmitForApproval} disabled={submittingApproval}>
                 {submittingApproval ? (
                   <>
                     <Loader2 size={18} className="animate-spin mr-2" />
