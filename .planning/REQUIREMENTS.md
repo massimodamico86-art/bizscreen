@@ -63,9 +63,9 @@
 
 ### Device Experience
 
-- [ ] **DEV-01**: Player displays QR code for easier device pairing
-- [ ] **DEV-02**: Kiosk mode has emergency exit mechanism (tap sequence + PIN)
-- [ ] **DEV-03**: Emergency exit works offline without server verification
+- [x] **DEV-01**: Player displays QR code for easier device pairing
+- [x] **DEV-02**: Kiosk mode has emergency exit mechanism (tap sequence + PIN)
+- [x] **DEV-03**: Emergency exit works offline without server verification
 
 ### Advanced Analytics
 

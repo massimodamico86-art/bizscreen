@@ -18,7 +18,7 @@ BizScreen production release progresses through 12 phases: establishing testing 
 - [x] **Phase 6: Player Reliability** - Harden offline sync and error handling *(PLR-01 gap deferred to Phase 7)*
 - [x] **Phase 7: Player Refactoring** - Split Player.jsx into focused components *(hooks extracted, component splitting deferred)*
 - [x] **Phase 8: Page Refactoring** - Split large page components *(hooks + components extracted, 70% line reduction)*
-- [ ] **Phase 9: Device Experience** - QR pairing and kiosk exit improvements
+- [x] **Phase 9: Device Experience** - QR pairing and kiosk exit improvements *(49 tests added)*
 - [ ] **Phase 10: Analytics** - View duration and content performance tracking
 - [ ] **Phase 11: GDPR Compliance** - Data export and account deletion
 - [ ] **Phase 12: Content Approval** - Submit, review, and publish workflow
@@ -184,14 +184,14 @@ Plans:
 **Plans**: 8 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — Database schema and PIN service functions (DEV-03)
-- [ ] 09-02-PLAN.md — Create useTapSequence hook for hidden exit trigger (DEV-02)
-- [ ] 09-03-PLAN.md — Create PinEntry component with numeric keypad (DEV-02)
-- [ ] 09-04-PLAN.md — Create PairingScreen component with QR code (DEV-01)
-- [ ] 09-05-PLAN.md — Admin pairing page and routing (DEV-01)
-- [ ] 09-06-PLAN.md — Integrate QR pairing and PIN exit into Player.jsx (DEV-01, DEV-02, DEV-03)
-- [ ] 09-07-PLAN.md — Master PIN management in ScreensPage (DEV-03)
-- [ ] 09-08-PLAN.md — Unit tests for Phase 9 components
+- [x] 09-01-PLAN.md — Database schema and PIN service functions (DEV-03)
+- [x] 09-02-PLAN.md — Create useTapSequence hook for hidden exit trigger (DEV-02)
+- [x] 09-03-PLAN.md — Create PinEntry component with numeric keypad (DEV-02)
+- [x] 09-04-PLAN.md — Create PairingScreen component with QR code (DEV-01)
+- [x] 09-05-PLAN.md — Admin pairing page and routing (DEV-01)
+- [x] 09-06-PLAN.md — Integrate QR pairing and PIN exit into Player.jsx (DEV-01, DEV-02, DEV-03)
+- [x] 09-07-PLAN.md — Master PIN management in ScreensPage (DEV-03)
+- [x] 09-08-PLAN.md — Unit tests for Phase 9 components
 
 ### Phase 10: Analytics
 **Goal**: Content owners can see how long and how often their content is viewed
@@ -252,11 +252,11 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 6. Player Reliability | 3/3 | Complete | 2026-01-23 |
 | 7. Player Refactoring | 4/4 | Complete | 2026-01-23 |
 | 8. Page Refactoring | 12/12 | Complete | 2026-01-23 |
-| 9. Device Experience | 0/8 | Planned | - |
+| 9. Device Experience | 8/8 | Complete | 2026-01-23 |
 | 10. Analytics | 0/TBD | Not started | - |
 | 11. GDPR Compliance | 0/TBD | Not started | - |
 | 12. Content Approval | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 9 planned (8 plans in 3 waves)*
+*Last updated: 2026-01-23 — Phase 9 complete (8 plans executed, 49 tests added)*
