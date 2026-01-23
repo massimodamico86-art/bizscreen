@@ -76,6 +76,7 @@ import {
 import { useLogger } from './hooks/useLogger.js';
 import { createScopedLogger } from './services/loggingService.js';
 import { ClockWidget, DateWidget, WeatherWidget, QRCodeWidget } from './player/components/widgets';
+import { usePlayerContent, usePlayerHeartbeat, usePlayerCommands } from './player/hooks';
 
 // Module-level logger for utility functions
 const retryLogger = createScopedLogger('Player:retry');
@@ -1698,31 +1699,52 @@ function PairPage() {
 function ViewPage() {
   const logger = useLogger('ViewPage');
   const navigate = useNavigate();
-  const [content, setContent] = useState(null);
-  const [items, setItems] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [connectionStatus, setConnectionStatus] = useState('connecting'); // 'connecting', 'connected', 'reconnecting', 'offline'
-  const [retryCount, setRetryCount] = useState(0);
-  const [isOfflineMode, setIsOfflineMode] = useState(false);
+  const screenId = localStorage.getItem(STORAGE_KEYS.screenId);
+
+  // Content hook - manages all content state, loading, and polling
+  const {
+    content,
+    items,
+    currentIndex,
+    loading,
+    error,
+    connectionStatus,
+    isOfflineMode,
+    loadContent,
+    advanceToNext,
+    setContent,
+    setItems,
+    setCurrentIndex,
+    loadContentRef,
+    lastActivityRef,
+  } = usePlayerContent(screenId, navigate);
+
+  // Kiosk mode state (kept in ViewPage)
   const [kioskMode, setKioskMode] = useState(false);
   const [showKioskExit, setShowKioskExit] = useState(false);
   const [kioskPasswordInput, setKioskPasswordInput] = useState('');
   const [kioskPasswordError, setKioskPasswordError] = useState('');
 
+  // ViewPage-specific refs
   const videoRef = useRef(null);
   const timerRef = useRef(null);
-  const pollRef = useRef(null);
-  const retryTimeoutRef = useRef(null);
-  const commandPollRef = useRef(null);
-  const heartbeatRef = useRef(null);
   const stuckDetectionRef = useRef(null);
   const lastVideoTimeRef = useRef(0);
-  const lastActivityRef = useRef(Date.now());
   const contentContainerRef = useRef(null);
-  const screenshotInProgressRef = useRef(false);
-  const loadContentRef = useRef(null);
+  const advanceToNextRef = useRef(null);
+
+  // Commands hook - handles device commands
+  const { handleCommand } = usePlayerCommands(
+    screenId,
+    setContent,
+    setItems,
+    setCurrentIndex,
+    navigate,
+    logger
+  );
+
+  // Heartbeat hook - handles device status updates and screenshots
+  usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef);
 
   // Initialize analytics session on mount
   useEffect(() => {
@@ -1893,65 +1915,6 @@ function ViewPage() {
     };
   }, []);
 
-  // Heartbeat - update device status every 30 seconds
-  // Phase 6: Enhanced with refresh status checking for real-time sync
-  // Phase: Added screenshot capture support for remote diagnostics
-  useEffect(() => {
-    const screenId = localStorage.getItem(STORAGE_KEYS.screenId);
-    if (!screenId) return;
-
-    const sendBeat = async () => {
-      try {
-        const contentHash = localStorage.getItem(STORAGE_KEYS.contentHash);
-        const statusResult = await updateDeviceStatus(screenId, PLAYER_VERSION, contentHash);
-        lastActivityRef.current = Date.now();
-
-        // Check if screenshot is requested
-        if (statusResult?.needs_screenshot_update && !screenshotInProgressRef.current) {
-          logger.info('Screenshot requested, capturing...');
-          screenshotInProgressRef.current = true;
-          try {
-            const container = contentContainerRef.current || document.body;
-            await captureAndUploadScreenshot(screenId, container);
-            logger.info('Screenshot captured and uploaded');
-            // Clean up old screenshots (keep last 5)
-            await cleanupOldScreenshots(screenId, 5);
-          } catch (screenshotErr) {
-            logger.error('Screenshot capture failed', { error: screenshotErr });
-          } finally {
-            screenshotInProgressRef.current = false;
-          }
-        }
-
-        // Check if device needs to refresh content (Phase 6 real-time sync)
-        try {
-          const refreshStatus = await checkDeviceRefreshStatus(screenId);
-          if (refreshStatus?.needs_refresh) {
-            logger.info('Refresh needed, reloading content...');
-            // Reload content using ref to avoid dependency cycle
-            loadContentRef.current?.(screenId, false);
-            // Clear the refresh flag
-            await clearDeviceRefreshFlag(screenId, contentHash);
-          }
-        } catch (refreshErr) {
-          // Silently ignore refresh check errors to not block heartbeat
-          logger.warn('Refresh check failed', { message: refreshErr.message });
-        }
-      } catch (err) {
-        logger.error('Heartbeat error', { error: err });
-      }
-    };
-
-    sendBeat();
-    heartbeatRef.current = setInterval(sendBeat, HEARTBEAT_INTERVAL);
-
-    return () => {
-      if (heartbeatRef.current) {
-        clearInterval(heartbeatRef.current);
-      }
-    };
-  }, []); // Removed loadContent dependency - using ref instead
-
   // Stuck detection - auto-recovery for stalled playback
   useEffect(() => {
     const checkStuck = () => {
@@ -1972,7 +1935,7 @@ function ViewPage() {
             } catch (err) {
               logger.error('Video recovery failed', { error: err });
               // Skip to next item as fallback
-              advanceToNext?.();
+              advanceToNextRef.current?.();
             }
             lastActivityRef.current = now;
           }
@@ -1997,58 +1960,6 @@ function ViewPage() {
         clearInterval(stuckDetectionRef.current);
       }
     };
-  }, []);
-
-  // Handle device commands
-  const handleCommand = useCallback(async (command) => {
-    const { commandId, commandType } = command;
-
-    try {
-      switch (commandType) {
-        case 'reboot':
-          await reportCommandResult(commandId, true);
-          setTimeout(() => window.location.reload(), 500);
-          break;
-
-        case 'reload':
-          await reportCommandResult(commandId, true);
-          const screenId = localStorage.getItem(STORAGE_KEYS.screenId);
-          if (screenId) {
-            try {
-              const newContent = await getResolvedContent(screenId);
-              setContent(newContent);
-              // New format uses 'type' instead of 'mode', and items are in playlist.items
-              if (newContent.type === 'playlist') {
-                setItems(newContent.playlist?.items || []);
-                setCurrentIndex(0);
-              }
-            } catch (err) {
-              logger.error('Content reload failed', { error: err });
-            }
-          }
-          break;
-
-        case 'clear_cache':
-          await clearCache();
-          await reportCommandResult(commandId, true);
-          break;
-
-        case 'reset':
-          await clearCache();
-          localStorage.clear();
-          sessionStorage.clear();
-          await reportCommandResult(commandId, true);
-          setTimeout(() => window.location.reload(), 500);
-          break;
-
-        default:
-          logger.warn('Unknown command', { commandType });
-          await reportCommandResult(commandId, false, 'Unknown command');
-      }
-    } catch (err) {
-      logger.error('Command execution failed', { error: err });
-      await reportCommandResult(commandId, false, err.message);
-    }
   }, []);
 
   // Kiosk mode keyboard handler (Escape to show exit dialog)
@@ -2105,221 +2016,17 @@ function ViewPage() {
     exitFullscreen().catch(err => logger.warn('Failed to exit fullscreen', { error: err }));
   }, [kioskPasswordInput, logger]);
 
-  // Shuffle array using Fisher-Yates
-  const shuffleArray = useCallback((array) => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }, []);
-
-  // Load content with retry support and offline fallback
-  const loadContent = useCallback(async (screenId, useRetry = false) => {
-    const fetchContent = async () => {
-      const data = await getResolvedContent(screenId);
-      return data;
-    };
-
-    try {
-      setConnectionStatus(useRetry ? 'reconnecting' : 'connecting');
-
-      const data = useRetry
-        ? await retryWithBackoff(fetchContent)
-        : await fetchContent();
-
-      setContent(data);
-      setConnectionStatus('connected');
-      setIsOfflineMode(false);
-      setRetryCount(0);
-      lastActivityRef.current = Date.now();
-
-      // For playlist type, process items (shuffle if needed)
-      // RPC returns 'mode' field, items are at data.items directly
-      const contentMode = data.mode || data.type; // Support both field names
-      if (contentMode === 'playlist') {
-        let processedItems = data.items || data.playlist?.items || [];
-        if ((data.playlist?.shuffle || data.shuffle) && processedItems.length > 1) {
-          processedItems = shuffleArray(processedItems);
-        }
-        setItems(processedItems);
-      } else {
-        setItems([]);
-      }
-
-      // Store content hash for change detection (use 'mode' key to match polling)
-      const contentHashObj = {
-        mode: contentMode,
-        source: data.source,
-        playlistId: data.playlist?.id,
-        layoutId: data.layout?.id,
-        campaignId: data.campaign?.id
-      };
-      localStorage.setItem(STORAGE_KEYS.contentHash, JSON.stringify(contentHashObj));
-
-      // Cache content for offline use
-      try {
-        await cacheContent(`content-${screenId}`, data, 'playlist');
-        logger.debug('Content cached for offline use');
-      } catch (cacheErr) {
-        logger.warn('Failed to cache content', { error: cacheErr });
-      }
-
-      setError('');
-      return data;
-    } catch (err) {
-      logger.error('Failed to load content from server', { error: err });
-
-      // Try to load from offline cache
-      try {
-        const cachedData = await getCachedContent(`content-${screenId}`);
-        if (cachedData) {
-          logger.info('Using cached content (offline mode)');
-          setContent(cachedData);
-          setConnectionStatus('offline');
-          setIsOfflineMode(true);
-          lastActivityRef.current = Date.now();
-
-          // RPC returns 'mode' field, items are at data.items directly
-          const cachedMode = cachedData.mode || cachedData.type;
-          if (cachedMode === 'playlist') {
-            let processedItems = cachedData.items || cachedData.playlist?.items || [];
-            if ((cachedData.playlist?.shuffle || cachedData.shuffle) && processedItems.length > 1) {
-              processedItems = shuffleArray(processedItems);
-            }
-            setItems(processedItems);
-          } else {
-            setItems([]);
-          }
-
-          setError('');
-          return cachedData;
-        }
-      } catch (cacheErr) {
-        logger.warn('Failed to load from cache', { error: cacheErr });
-      }
-
-      setConnectionStatus('offline');
-      throw err;
-    }
-  }, [shuffleArray, logger]);
-
-  // Store loadContent in ref for use in heartbeat effect
-  useEffect(() => {
-    loadContentRef.current = loadContent;
-  }, [loadContent]);
-
-  // Initial load
-  useEffect(() => {
-    const screenId = localStorage.getItem(STORAGE_KEYS.screenId);
-
-    if (!screenId) {
-      navigate('/player', { replace: true });
-      return;
-    }
-
-    loadContent(screenId)
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setError(err.message || 'Failed to load content');
-        setLoading(false);
-        // If screen not found, clear storage and redirect
-        if (err.message?.includes('not found')) {
-          localStorage.removeItem(STORAGE_KEYS.screenId);
-          localStorage.removeItem(STORAGE_KEYS.playlistId);
-          navigate('/player', { replace: true });
-        }
-      });
-  }, [navigate, loadContent]);
-
-  // Polling for updates every 30s with error recovery
-  useEffect(() => {
-    const screenId = localStorage.getItem(STORAGE_KEYS.screenId);
-    if (!screenId) return;
-
-    let consecutiveErrors = 0;
-    const MAX_CONSECUTIVE_ERRORS = 3;
-
-    pollRef.current = setInterval(async () => {
-      try {
-        // Fetch fresh content
-        const newContent = await getResolvedContent(screenId);
-
-        // Reset error count on success
-        consecutiveErrors = 0;
-        setConnectionStatus('connected');
-
-        // Check if content has changed (RPC returns 'mode' not 'type')
-        const lastHash = localStorage.getItem(STORAGE_KEYS.contentHash);
-        const contentMode = newContent.mode || newContent.type;
-        const newHash = JSON.stringify({
-          mode: contentMode,
-          source: newContent.source,
-          playlistId: newContent.playlist?.id,
-          layoutId: newContent.layout?.id,
-          campaignId: newContent.campaign?.id
-        });
-
-        if (lastHash !== newHash) {
-          logger.info('Content updated, refreshing...');
-          setContent(newContent);
-
-          // RPC returns 'mode' field, items at data.items directly
-          if (contentMode === 'playlist') {
-            let processedItems = newContent.items || newContent.playlist?.items || [];
-            if ((newContent.shuffle || newContent.playlist?.shuffle) && processedItems.length > 1) {
-              processedItems = shuffleArray(processedItems);
-            }
-            setItems(processedItems);
-            setCurrentIndex(0);
-          } else {
-            setItems([]);
-          }
-
-          localStorage.setItem(STORAGE_KEYS.contentHash, newHash);
-        }
-
-        // Also send heartbeat
-        await sendHeartbeat(screenId);
-      } catch (err) {
-        consecutiveErrors++;
-        logger.error('Polling error', { consecutiveErrors, maxErrors: MAX_CONSECUTIVE_ERRORS, error: err });
-
-        if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
-          setConnectionStatus('reconnecting');
-          // Try to reconnect with exponential backoff
-          try {
-            await loadContent(screenId, true);
-            consecutiveErrors = 0;
-          } catch (reconnectError) {
-            logger.error('Reconnection failed', { error: reconnectError });
-            setConnectionStatus('offline');
-          }
-        }
-      }
-    }, 30000);
-
-    return () => {
-      if (pollRef.current) {
-        clearInterval(pollRef.current);
-      }
-    };
-  }, [shuffleArray, loadContent]);
-
-  // Advance to next item
-  const advanceToNext = useCallback(() => {
+  // Wrapper for advanceToNext that includes analytics tracking
+  const handleAdvanceToNext = useCallback(() => {
     // End current playback tracking before advancing
     analytics.endPlaybackEvent();
-    setCurrentIndex((prev) => {
-      const next = (prev + 1) % items.length;
-      // Re-shuffle when we complete a cycle
-      if (next === 0 && content?.playlist?.shuffle) {
-        setItems(shuffleArray(items));
-      }
-      return next;
-    });
-  }, [items, content?.playlist?.shuffle, shuffleArray]);
+    advanceToNext();
+  }, [advanceToNext]);
+
+  // Keep ref updated for use in stuck detection effect
+  useEffect(() => {
+    advanceToNextRef.current = handleAdvanceToNext;
+  }, [handleAdvanceToNext]);
 
   // Track playback analytics for playlist mode
   useEffect(() => {
@@ -2372,19 +2079,19 @@ function ViewPage() {
 
     // For images and other types, use duration timer
     const duration = (currentItem.duration || content?.playlist?.defaultDuration || 10) * 1000;
-    timerRef.current = setTimeout(advanceToNext, duration);
+    timerRef.current = setTimeout(handleAdvanceToNext, duration);
 
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
     };
-  }, [currentIndex, items, content?.playlist?.defaultDuration, advanceToNext]);
+  }, [currentIndex, items, content?.playlist?.defaultDuration, handleAdvanceToNext]);
 
   // Handle video end
   const handleVideoEnd = useCallback(() => {
-    advanceToNext();
-  }, [advanceToNext]);
+    handleAdvanceToNext();
+  }, [handleAdvanceToNext]);
 
   // Disconnect and return to pairing
   const handleDisconnect = () => {
@@ -2824,7 +2531,7 @@ function ViewPage() {
           muted
           playsInline
           onEnded={handleVideoEnd}
-          onError={() => advanceToNext()}
+          onError={() => handleAdvanceToNext()}
           style={{
             width: '100%',
             height: '100%',
@@ -2836,7 +2543,7 @@ function ViewPage() {
           key={currentItem.id}
           src={currentItem.url}
           alt={currentItem.name}
-          onError={() => advanceToNext()}
+          onError={() => handleAdvanceToNext()}
           style={{
             width: '100%',
             height: '100%',
