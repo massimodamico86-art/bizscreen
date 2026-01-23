@@ -26,7 +26,7 @@
  * @see {@link ../services/mediaService.js} - Media CRUD operations
  * @see {@link ../hooks/useCloudinaryUpload.js} - Upload widget hook
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Search,
   Plus,
@@ -70,6 +70,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 import { useS3Upload } from '../hooks/useS3Upload';
 import { useMediaFolders } from '../hooks/useMediaFolders';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   createMediaAsset,
   createWebPageAsset,
@@ -88,8 +89,21 @@ import {
 } from '../services/limitsService';
 import { fetchPlaylists, addPlaylistItem, createPlaylist } from '../services/playlistService';
 import { fetchScreens, assignPlaylistToScreen } from '../services/screenService';
-import { MediaDetailModal } from '../components/media';
+import {
+  MediaDetailModal,
+  BulkActionBar,
+  StorageUsageInline,
+  DropZoneOverlay,
+  useDropZone,
+  MediaPreviewPopover,
+  useMediaPreview,
+} from '../components/media';
 import YodeckAddMediaModal from '../components/media/YodeckAddMediaModal';
+import {
+  getBulkDownloadUrls,
+  batchDeleteMediaAssets,
+} from '../services/mediaService';
+import { bulkAddToPlaylist } from '../services/playlistService';
 
 // Design system imports
 import {
@@ -262,13 +276,15 @@ const MediaListRow = ({ asset, actionMenuId, onActionMenuToggle, onEdit, onDupli
   );
 };
 
-// Media grid card with drag support
+// Media grid card with drag support and bulk selection
 const MediaGridCard = ({
   asset,
   formatDate,
   onClick,
   onDoubleClick,
   isSelected,
+  isBulkSelected,
+  onToggleSelect,
   onDragStart,
   onDragEnd,
   onDragOver,
@@ -276,6 +292,8 @@ const MediaGridCard = ({
   isDragging,
   isDragOver,
   index,
+  onShowPreview,
+  onHidePreview,
 }) => {
   const TypeIcon = MEDIA_TYPE_ICONS[asset.type] || Image;
   const isGlobal = !asset.owner_id;
@@ -309,17 +327,22 @@ const MediaGridCard = ({
     }
   };
 
+  const cardRef = useRef(null);
+
   return (
     <Card
+      ref={cardRef}
       variant="outlined"
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
+      onMouseEnter={() => onShowPreview?.(asset, cardRef.current)}
+      onMouseLeave={() => onHidePreview?.()}
       className={`group cursor-pointer hover:shadow-md transition-all overflow-hidden ${
         isSelected ? 'ring-2 ring-[#f26f21] ring-offset-2' : ''
-      } ${isDragging ? 'opacity-50 scale-95' : ''} ${
+      } ${isBulkSelected ? 'ring-2 ring-blue-500 ring-offset-2' : ''} ${isDragging ? 'opacity-50 scale-95' : ''} ${
         isDragOver ? 'ring-2 ring-[#f26f21] ring-dashed' : ''
       }`}
       onClick={() => onClick?.(asset)}
@@ -335,6 +358,24 @@ const MediaGridCard = ({
           </div>
         )}
 
+        {/* Selection checkbox - visible on hover or when selected */}
+        <div className={`absolute top-2 left-2 z-20 ${isBulkSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
+          <label
+            className="flex items-center justify-center w-6 h-6 bg-white rounded shadow cursor-pointer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <input
+              type="checkbox"
+              checked={isBulkSelected}
+              onChange={(e) => {
+                e.stopPropagation();
+                onToggleSelect?.(asset.id);
+              }}
+              className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+          </label>
+        </div>
+
         {/* Drag handle - visible on hover */}
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
           <div className="p-1.5 bg-black/60 rounded cursor-grab active:cursor-grabbing">
@@ -347,9 +388,9 @@ const MediaGridCard = ({
           <Eye size={24} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
 
-        {/* Global badge */}
+        {/* Global badge - moved down to not overlap with checkbox */}
         {isGlobal && (
-          <div className="absolute top-2 left-2">
+          <div className="absolute top-10 left-2">
             <Badge variant="info" size="sm" className="bg-blue-600 text-white border-0 uppercase text-[10px] font-semibold">
               Global
             </Badge>
@@ -406,7 +447,7 @@ const FolderGridCard = ({ folder, onClick, onDragOver, onDragLeave, onDrop, isDr
         onDrop?.(data.id, folderId, data.name);
       }
     } catch (err) {
-      console.error('Drop error:', err);
+      // Silent fail on invalid drop data - parent component will log actual move errors
     }
   };
 
@@ -1061,6 +1102,7 @@ const SetToScreenModal = ({ open, onClose, mediaName, screens, onSet, setting })
 const MediaLibraryPage = ({ showToast, filter = null }) => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const logger = useLogger('MediaLibraryPage');
   const [mediaAssets, setMediaAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -1130,6 +1172,25 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
   const [availableScreens, setAvailableScreens] = useState([]);
   const [settingToScreen, setSettingToScreen] = useState(false);
 
+  // Bulk selection state (US-160)
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [isBulkDownloading, setIsBulkDownloading] = useState(false);
+  const [isBulkAddingToPlaylist, setIsBulkAddingToPlaylist] = useState(false);
+  const [showBulkPlaylistModal, setShowBulkPlaylistModal] = useState(false);
+
+  // Drop zone state (US-164)
+  const [showDropZone, setShowDropZone] = useState(false);
+
+  // Media preview popover hook (US-161)
+  const {
+    isVisible: isPreviewVisible,
+    asset: previewAsset,
+    anchorRect: previewAnchorRect,
+    showPreview,
+    hidePreview,
+  } = useMediaPreview(300);
+
   // Folder hook
   const {
     folders,
@@ -1156,7 +1217,11 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
   };
 
   const handleUploadSuccess = useCallback(async (uploadedFile) => {
-    console.log('[MediaLibrary] Upload success, file:', uploadedFile);
+    logger.info('Upload success, saving to library', {
+      filename: uploadedFile.originalFilename || uploadedFile.name,
+      mediaType: uploadedFile.mediaType || uploadedFile.resourceType,
+      size: uploadedFile.size
+    });
     showToast?.('File uploaded, saving to library...');
 
     // Auto-save to database immediately
@@ -1181,7 +1246,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       // Refresh folder counts if we're in a folder
       if (currentFolderId) refreshFolders();
     } catch (error) {
-      console.error('[MediaLibrary] Error saving media:', error);
+      logger.error('Error saving media to database', { error, folderId: currentFolderId });
       showToast?.(`Error saving media: ${error.message}`, 'error');
       // Still add to pending uploads for manual retry
       setUploadedFiles((prev) => [...prev, uploadedFile]);
@@ -1236,7 +1301,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       // Refresh folder counts if we're in a folder
       if (currentFolderId) refreshFolders();
     } catch (error) {
-      console.error('Error saving uploads:', error);
+      logger.error('Error saving batch uploads', { error, fileCount: uploadedFiles.length });
       showToast?.(`Error saving media: ${error.message}`, 'error');
     } finally {
       setSavingUploads(false);
@@ -1263,7 +1328,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       // Refresh folder counts
       if (currentFolderId) refreshFolders();
     } catch (error) {
-      console.error('Error adding web page:', error);
+      logger.error('Error adding web page', { error, url: webPageUrl });
       showToast?.(`Error adding web page: ${error.message}`, 'error');
     } finally {
       setSavingWebPage(false);
@@ -1287,7 +1352,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       setShowFolderModal(false);
       setNewFolderName('');
     } catch (err) {
-      console.error('Error creating folder:', err);
+      logger.error('Error creating folder', { error: err, folderName, parentId: currentFolderId });
       showToast?.('Failed to create folder: ' + err.message, 'error');
     } finally {
       setCreatingFolder(false);
@@ -1330,7 +1395,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       fetchMediaAssets();
       refreshFolders();
     } catch (error) {
-      console.error('Error moving media:', error);
+      logger.error('Error moving media to folder', { error, mediaId: mediaToMove.id, targetFolderId });
       showToast?.(`Error moving media: ${error.message}`, 'error');
     } finally {
       setMovingMedia(false);
@@ -1349,7 +1414,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       setAvailablePlaylists(playlists || []);
       setShowPlaylistModal(true);
     } catch (error) {
-      console.error('Error fetching playlists:', error);
+      logger.error('Error fetching playlists for media addition', { error });
       showToast?.('Error loading playlists', 'error');
     }
   };
@@ -1366,7 +1431,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       showToast?.(`Added "${selectedAsset.name}" to "${playlistName}"`, 'success');
       setShowPlaylistModal(false);
     } catch (error) {
-      console.error('Error adding to playlist:', error);
+      logger.error('Error adding media to playlist', { error, playlistId, assetId: selectedAsset?.id });
       showToast?.(`Error adding to playlist: ${error.message}`, 'error');
     } finally {
       setAddingToPlaylist(false);
@@ -1391,7 +1456,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       showToast?.(`Created playlist "${playlist.name}" with ${selectedAsset.name}`, 'success');
       setShowPlaylistModal(false);
     } catch (error) {
-      console.error('Error creating playlist:', error);
+      logger.error('Error creating new playlist from media', { error, assetId: selectedAsset?.id });
       showToast?.(`Error creating playlist: ${error.message}`, 'error');
     } finally {
       setAddingToPlaylist(false);
@@ -1409,7 +1474,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       setAvailableScreens(screens || []);
       setShowScreenModal(true);
     } catch (error) {
-      console.error('Error fetching screens:', error);
+      logger.error('Error fetching screens for media assignment', { error });
       showToast?.('Error loading screens', 'error');
     }
   };
@@ -1434,7 +1499,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       showToast?.(`"${selectedAsset.name}" is now playing on "${screenName}"`, 'success');
       setShowScreenModal(false);
     } catch (error) {
-      console.error('Error setting to screen:', error);
+      logger.error('Error assigning media to screen', { error, screenId, assetId: selectedAsset?.id });
       showToast?.(`Error: ${error.message}`, 'error');
     } finally {
       setSettingToScreen(false);
@@ -1492,7 +1557,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       await reorderMedia(draggedId, toIndex, currentFolderId);
       showToast?.('Media reordered', 'success');
     } catch (error) {
-      console.error('Error reordering media:', error);
+      logger.error('Error saving media reorder', { error, mediaId: draggedId, toIndex, folderId: currentFolderId });
       showToast?.('Failed to save order: ' + error.message, 'error');
       // Revert on error
       fetchMediaAssets();
@@ -1511,7 +1576,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       fetchMediaAssets();
       refreshFolders();
     } catch (error) {
-      console.error('Error moving media to folder:', error);
+      logger.error('Error moving media to folder via drag-drop', { error, mediaId, folderId });
       showToast?.('Failed to move: ' + error.message, 'error');
     }
   }, [showToast, handleDragEnd, refreshFolders]);
@@ -1526,7 +1591,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       const data = await getEffectiveLimits();
       setLimits(data);
     } catch (error) {
-      console.error('Error fetching limits:', error);
+      logger.error('Error fetching media limits', { error });
     }
   };
 
@@ -1547,7 +1612,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       setTotalCount(result.totalCount || 0);
       setTotalPages(result.totalPages || 0);
     } catch (err) {
-      console.error('Error fetching media:', err);
+      logger.error('Error fetching media assets', { error: err, page, folderId: currentFolderId });
       setError(err.message || 'Failed to load media');
       showToast?.('Error loading media: ' + err.message, 'error');
     } finally {
@@ -1573,6 +1638,10 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
   // For display, use filtered assets (client-side filters applied on top of server pagination)
   // Note: This means pagination is server-side but additional filters are client-side
   const paginatedAssets = filteredAssets;
+
+  // Calculate pagination indices for display
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
 
   // Reset to page 1 and refetch when filters/pagination change
   useEffect(() => {
@@ -1618,7 +1687,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       );
       setSelectedAsset((prev) => (prev?.id === assetId ? { ...prev, ...data } : prev));
     } catch (err) {
-      console.error('Error updating asset:', err);
+      logger.error('Error updating media asset', { error: err, assetId, updates });
       throw err;
     }
   };
@@ -1646,7 +1715,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       const usage = await getMediaUsage(asset.id);
       setDeleteConfirm({ id: asset.id, name: asset.name, usage, loading: false });
     } catch (error) {
-      console.error('Error checking usage:', error);
+      logger.error('Error checking media usage before delete', { error, assetId: asset.id });
       setDeleteConfirm({ id: asset.id, name: asset.name, usage: null, loading: false });
     }
   };
@@ -1668,7 +1737,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
         showToast?.(result.error || 'Error deleting media', 'error');
       }
     } catch (error) {
-      console.error('Error deleting media:', error);
+      logger.error('Error deleting media asset', { error, assetId: deleteConfirm.id, force });
       showToast?.('Error deleting media: ' + error.message, 'error');
     } finally {
       setDeletingForce(false);
@@ -1692,6 +1761,150 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
 
   const limitReached = limits ? hasReachedLimit(limits.maxMediaAssets, mediaAssets.length) : false;
 
+  // ============================================================
+  // Bulk Selection Handlers (US-160, US-162)
+  // ============================================================
+
+  const toggleSelection = useCallback((assetId) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(assetId)) {
+        next.delete(assetId);
+      } else {
+        next.add(assetId);
+      }
+      return next;
+    });
+  }, []);
+
+  const selectAll = useCallback(() => {
+    const allIds = new Set(paginatedAssets.map(a => a.id));
+    setSelectedIds(allIds);
+  }, [paginatedAssets]);
+
+  const deselectAll = useCallback(() => {
+    setSelectedIds(new Set());
+  }, []);
+
+  // Bulk delete handler
+  const handleBulkDelete = useCallback(async () => {
+    if (selectedIds.size === 0) return;
+
+    const confirmed = window.confirm(`Are you sure you want to delete ${selectedIds.size} item(s)? This action cannot be undone.`);
+    if (!confirmed) return;
+
+    setIsBulkDeleting(true);
+    try {
+      const idsArray = Array.from(selectedIds);
+      await batchDeleteMediaAssets(idsArray);
+      showToast?.(`${idsArray.length} items deleted successfully`);
+      setSelectedIds(new Set());
+      fetchMediaAssets();
+    } catch (error) {
+      logger.error('Bulk delete operation failed', { error, itemCount: selectedIds.size });
+      showToast?.('Failed to delete some items: ' + error.message, 'error');
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  }, [selectedIds, fetchMediaAssets, showToast]);
+
+  // Bulk download handler
+  const handleBulkDownload = useCallback(async () => {
+    if (selectedIds.size === 0) return;
+
+    setIsBulkDownloading(true);
+    try {
+      const idsArray = Array.from(selectedIds);
+      const urls = await getBulkDownloadUrls(idsArray);
+
+      // Download each file
+      urls.forEach((item, index) => {
+        setTimeout(() => {
+          const link = document.createElement('a');
+          link.href = item.url;
+          link.download = item.name || `media-${item.id}`;
+          link.target = '_blank';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }, index * 200); // Stagger downloads to avoid browser blocking
+      });
+
+      showToast?.(`Downloading ${urls.length} files...`);
+    } catch (error) {
+      logger.error('Bulk download operation failed', { error, itemCount: selectedIds.size });
+      showToast?.('Failed to download files: ' + error.message, 'error');
+    } finally {
+      setIsBulkDownloading(false);
+    }
+  }, [selectedIds, showToast]);
+
+  // Bulk add to playlist handler
+  const handleBulkAddToPlaylist = useCallback(async (playlistId) => {
+    if (selectedIds.size === 0 || !playlistId) return;
+
+    setIsBulkAddingToPlaylist(true);
+    try {
+      const idsArray = Array.from(selectedIds);
+      const result = await bulkAddToPlaylist(playlistId, idsArray);
+      showToast?.(`Added ${result.added} items to playlist`);
+      setShowBulkPlaylistModal(false);
+      setSelectedIds(new Set());
+    } catch (error) {
+      logger.error('Bulk add to playlist failed', { error, playlistId, itemCount: selectedIds.size });
+      showToast?.('Failed to add items to playlist: ' + error.message, 'error');
+    } finally {
+      setIsBulkAddingToPlaylist(false);
+    }
+  }, [selectedIds, showToast]);
+
+  // Open bulk playlist modal
+  const openBulkPlaylistModal = useCallback(async () => {
+    setShowBulkPlaylistModal(true);
+    try {
+      const playlists = await fetchPlaylists();
+      setAvailablePlaylists(playlists || []);
+    } catch (error) {
+      logger.error('Failed to fetch playlists for bulk operation', { error });
+    }
+  }, []);
+
+  // Bulk move handler (uses existing move modal)
+  const handleBulkMove = useCallback(() => {
+    if (selectedIds.size === 0) return;
+    // For now, we'll use the single-item move modal but could enhance later
+    const firstSelectedId = Array.from(selectedIds)[0];
+    const asset = mediaAssets.find(a => a.id === firstSelectedId);
+    if (asset) {
+      setMediaToMove(asset);
+      setShowMoveModal(true);
+    }
+  }, [selectedIds, mediaAssets]);
+
+  // ============================================================
+  // Drop Zone Handler (US-164)
+  // ============================================================
+
+  const handleFileDrop = useCallback((files) => {
+    // Trigger the upload widget with the dropped files
+    // For now, show the add media modal
+    setShowDropZone(false);
+    handleAddMedia();
+    // Note: Full drop-to-upload integration would require S3 upload refactoring
+  }, [handleAddMedia]);
+
+  // Set up window-level drag listeners
+  useEffect(() => {
+    const handleDragEnter = (e) => {
+      if (e.dataTransfer?.types?.includes('Files')) {
+        setShowDropZone(true);
+      }
+    };
+
+    window.addEventListener('dragenter', handleDragEnter);
+    return () => window.removeEventListener('dragenter', handleDragEnter);
+  }, []);
+
   const handleAddMedia = () => {
     if (limitReached) {
       setShowLimitModal(true);
@@ -1705,7 +1918,11 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
       {/* Yodeck-style page header */}
       <div className="px-6 py-4 border-b border-gray-200 bg-white">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">{getPageTitle()}</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-semibold text-gray-900">{getPageTitle()}</h1>
+            {/* Storage Usage (US-163) */}
+            <StorageUsageInline className="hidden md:flex" />
+          </div>
           <Inline gap="sm" className="items-center">
             <Button size="sm" icon={<Plus size={16} />} onClick={handleAddMedia} className="bg-[#f26f21] hover:bg-[#e05e10] text-white">
               Add Media
@@ -2049,12 +2266,16 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
                         onClick={handleSelectAsset}
                         onDoubleClick={handleOpenDetail}
                         isSelected={selectedAsset?.id === asset.id}
+                        isBulkSelected={selectedIds.has(asset.id)}
+                        onToggleSelect={toggleSelection}
                         onDragStart={handleDragStart}
                         onDragEnd={handleDragEnd}
                         onDragOver={handleDragOverMedia}
                         onDrop={handleDropOnMedia}
                         isDragging={draggingMedia?.id === asset.id}
                         isDragOver={dragOverIndex === index && draggingMedia?.id !== asset.id}
+                        onShowPreview={showPreview}
+                        onHidePreview={hidePreview}
                       />
                     ))}
                   </Grid>
@@ -2068,7 +2289,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-200">
               {/* Items info */}
               <div className="text-sm text-gray-500">
-                Showing {startIndex + 1}-{Math.min(endIndex, filteredAssets.length)} of {filteredAssets.length} items
+                Showing {startIndex + 1}-{Math.min(startIndex + filteredAssets.length, totalCount)} of {totalCount} items
               </div>
 
               {/* Pagination controls */}
@@ -2247,6 +2468,73 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
         onDelete={handleDeleteFromDetail}
         isGlobal={selectedAsset && !selectedAsset.owner_id}
         showToast={showToast}
+      />
+
+      {/* Bulk Action Bar (US-162) */}
+      <BulkActionBar
+        selectedCount={selectedIds.size}
+        totalCount={paginatedAssets.length}
+        onSelectAll={selectAll}
+        onDeselectAll={deselectAll}
+        onDelete={handleBulkDelete}
+        onMove={handleBulkMove}
+        onDownload={handleBulkDownload}
+        onAddToPlaylist={openBulkPlaylistModal}
+        isDeleting={isBulkDeleting}
+        isDownloading={isBulkDownloading}
+        isAddingToPlaylist={isBulkAddingToPlaylist}
+      />
+
+      {/* Bulk Add to Playlist Modal */}
+      <Modal isOpen={showBulkPlaylistModal} onClose={() => setShowBulkPlaylistModal(false)} size="md">
+        <ModalHeader>
+          <ModalTitle>Add to Playlist</ModalTitle>
+        </ModalHeader>
+        <ModalContent>
+          <p className="text-sm text-gray-500 mb-4">
+            Select a playlist to add {selectedIds.size} item(s) to:
+          </p>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {availablePlaylists.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-4">No playlists found. Create one first.</p>
+            ) : (
+              availablePlaylists.map((playlist) => (
+                <button
+                  key={playlist.id}
+                  onClick={() => handleBulkAddToPlaylist(playlist.id)}
+                  disabled={isBulkAddingToPlaylist}
+                  className="w-full p-3 text-left rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors disabled:opacity-50"
+                >
+                  <div className="font-medium text-gray-900">{playlist.name}</div>
+                  {playlist.description && (
+                    <div className="text-sm text-gray-500 truncate">{playlist.description}</div>
+                  )}
+                </button>
+              ))
+            )}
+          </div>
+        </ModalContent>
+        <ModalFooter>
+          <Button variant="secondary" onClick={() => setShowBulkPlaylistModal(false)}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      {/* Drop Zone Overlay (US-164) */}
+      <DropZoneOverlay
+        isVisible={showDropZone}
+        onClose={() => setShowDropZone(false)}
+        onDrop={handleFileDrop}
+        targetFolder={currentFolderId ? folderPath?.[folderPath.length - 1]?.name : null}
+      />
+
+      {/* Media Preview Popover (US-161) */}
+      <MediaPreviewPopover
+        asset={previewAsset}
+        isVisible={isPreviewVisible}
+        anchorRect={previewAnchorRect}
+        onClose={hidePreview}
       />
     </PageLayout>
   );

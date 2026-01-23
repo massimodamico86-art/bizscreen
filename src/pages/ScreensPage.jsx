@@ -74,6 +74,7 @@ import {
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   fetchScreens as fetchScreensService,
   createScreen,
@@ -92,7 +93,7 @@ import {
 } from '../services/screenService';
 import { fetchPlaylists } from '../services/playlistService';
 import { fetchLayouts } from '../services/layoutService';
-import { fetchSchedules } from '../services/scheduleService';
+import { fetchSchedules, bulkAssignScheduleToDevices } from '../services/scheduleService';
 import {
   getEffectiveLimits,
   hasReachedLimit,
@@ -277,6 +278,9 @@ const ScreenRow = ({
   onDelete,
   onOpenContentPicker,
   commandingDevice,
+  // Bulk selection props (US-148)
+  isSelected = false,
+  onToggleSelection,
 }) => {
   // Guard against null/undefined screen
   if (!screen) return null;
@@ -296,7 +300,17 @@ const ScreenRow = ({
   };
 
   return (
-    <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+    <tr className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}`}>
+      {/* Checkbox column (US-148) */}
+      <td className="px-4 py-4 w-10">
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={() => onToggleSelection?.(screen.id)}
+          onClick={(e) => e.stopPropagation()}
+          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        />
+      </td>
       {/* Screen Name */}
       <td className="px-4 py-4">
         <Inline gap="sm" align="center">
@@ -1107,6 +1121,7 @@ const KioskModeModal = ({ screen, onClose, onSubmit }) => {
 const ScreensPage = ({ showToast }) => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const logger = useLogger('ScreensPage');
   const [screens, setScreens] = useState([]);
   const [playlists, setPlaylists] = useState([]);
   const [layouts, setLayouts] = useState([]);
@@ -1154,6 +1169,10 @@ const ScreensPage = ({ showToast }) => {
   const [showContentPicker, setShowContentPicker] = useState(false);
   const [contentPickerScreen, setContentPickerScreen] = useState(null);
 
+  // Bulk selection state (US-148)
+  const [selectedScreenIds, setSelectedScreenIds] = useState(new Set());
+  const [bulkAssigning, setBulkAssigning] = useState(false);
+
   // Fetch screens and playlists
   useEffect(() => {
     loadData();
@@ -1188,7 +1207,7 @@ const ScreensPage = ({ showToast }) => {
         loadScreenGroups(),
       ]);
     } catch (err) {
-      console.error('Error loading screens data:', err);
+      logger.error('Error loading screens data', { error: err });
       setError(err.message || 'Failed to load screens data');
     } finally {
       setLoading(false);
@@ -1200,7 +1219,7 @@ const ScreensPage = ({ showToast }) => {
       const result = await fetchScreenGroups();
       setScreenGroups(result || []);
     } catch (error) {
-      console.error('Error fetching screen groups:', error);
+      logger.error('Error fetching screen groups', { error });
     }
   };
 
@@ -1209,7 +1228,7 @@ const ScreensPage = ({ showToast }) => {
       const result = await fetchLocations();
       setLocations(result.data || []);
     } catch (error) {
-      console.error('Error fetching locations:', error);
+      logger.error('Error fetching locations', { error });
     }
   };
 
@@ -1218,7 +1237,7 @@ const ScreensPage = ({ showToast }) => {
       const data = await getEffectiveLimits();
       setLimits(data);
     } catch (error) {
-      console.error('Error fetching limits:', error);
+      logger.error('Error fetching limits', { error });
     }
   };
 
@@ -1227,7 +1246,7 @@ const ScreensPage = ({ showToast }) => {
       const data = await fetchScreensService();
       setScreens(data || []);
     } catch (err) {
-      console.error('Error fetching screens:', err);
+      logger.error('Error fetching screens', { error: err });
       // Re-throw to let loadData catch it for inline error UI
       throw err;
     }
@@ -1238,7 +1257,7 @@ const ScreensPage = ({ showToast }) => {
       const data = await fetchPlaylists();
       setPlaylists(data || []);
     } catch (error) {
-      console.error('Error fetching playlists:', error);
+      logger.error('Error fetching playlists', { error });
     }
   };
 
@@ -1247,7 +1266,7 @@ const ScreensPage = ({ showToast }) => {
       const result = await fetchLayouts();
       setLayouts(result.data || []);
     } catch (error) {
-      console.error('Error fetching layouts:', error);
+      logger.error('Error fetching layouts', { error });
     }
   };
 
@@ -1256,7 +1275,7 @@ const ScreensPage = ({ showToast }) => {
       const data = await fetchSchedules();
       setSchedules(data || []);
     } catch (error) {
-      console.error('Error fetching schedules:', error);
+      logger.error('Error fetching schedules', { error });
     }
   };
 
@@ -1294,7 +1313,7 @@ const ScreensPage = ({ showToast }) => {
       );
       showToast?.('Location updated');
     } catch (error) {
-      console.error('Error assigning location:', error);
+      logger.error('Error assigning location to screen', { error, screenId, locationId });
       showToast?.('Error updating location', 'error');
     }
   };
@@ -1307,7 +1326,7 @@ const ScreensPage = ({ showToast }) => {
       setScreens((prev) => prev.filter((s) => s.id !== id));
       showToast?.('Screen deleted successfully');
     } catch (error) {
-      console.error('Error deleting screen:', error);
+      logger.error('Error deleting screen', { error, screenId: id });
       showToast?.('Error deleting screen: ' + error.message, 'error');
     }
   };
@@ -1320,7 +1339,7 @@ const ScreensPage = ({ showToast }) => {
       setScreens((prev) => [screen, ...prev]);
       showToast?.('Screen created successfully');
     } catch (error) {
-      console.error('Error creating screen:', error);
+      logger.error('Error creating screen', { error, screenName: name });
       showToast?.('Error creating screen: ' + error.message, 'error');
     } finally {
       setCreatingScreen(false);
@@ -1362,7 +1381,7 @@ const ScreensPage = ({ showToast }) => {
       showToast?.('Screen updated successfully');
       setEditingScreen(null);
     } catch (error) {
-      console.error('Error updating screen:', error);
+      logger.error('Error updating screen', { error, screenId: data.id, updates: data });
       showToast?.('Error updating screen: ' + error.message, 'error');
     } finally {
       setSavingEdit(false);
@@ -1390,7 +1409,7 @@ const ScreensPage = ({ showToast }) => {
 
       showToast?.('Playlist assigned successfully');
     } catch (error) {
-      console.error('Error assigning playlist:', error);
+      logger.error('Error assigning playlist to screen', { error, screenId, playlistId });
       showToast?.('Error assigning playlist: ' + error.message, 'error');
     } finally {
       setAssigningPlaylist(null);
@@ -1418,7 +1437,7 @@ const ScreensPage = ({ showToast }) => {
 
       showToast?.('Layout assigned successfully');
     } catch (error) {
-      console.error('Error assigning layout:', error);
+      logger.error('Error assigning layout to screen', { error, screenId, layoutId });
       showToast?.('Error assigning layout: ' + error.message, 'error');
     } finally {
       setAssigningLayout(null);
@@ -1446,10 +1465,62 @@ const ScreensPage = ({ showToast }) => {
 
       showToast?.('Schedule assigned successfully');
     } catch (error) {
-      console.error('Error assigning schedule:', error);
+      logger.error('Error assigning schedule to screen', { error, screenId, scheduleId });
       showToast?.('Error assigning schedule: ' + error.message, 'error');
     } finally {
       setAssigningSchedule(null);
+    }
+  };
+
+  // Bulk selection handlers (US-148)
+  const toggleScreenSelection = (screenId) => {
+    setSelectedScreenIds(prev => {
+      const next = new Set(prev);
+      if (next.has(screenId)) {
+        next.delete(screenId);
+      } else {
+        next.add(screenId);
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedScreenIds.size === filteredScreens.length) {
+      setSelectedScreenIds(new Set());
+    } else {
+      setSelectedScreenIds(new Set(filteredScreens.map(s => s.id)));
+    }
+  };
+
+  const handleBulkAssignSchedule = async (scheduleId) => {
+    if (!scheduleId || selectedScreenIds.size === 0) return;
+
+    setBulkAssigning(true);
+    try {
+      const deviceIds = Array.from(selectedScreenIds);
+      const result = await bulkAssignScheduleToDevices(scheduleId, deviceIds);
+
+      // Update local state
+      const schedule = schedules.find(s => s.id === scheduleId);
+      setScreens(prev => prev.map(screen => {
+        if (selectedScreenIds.has(screen.id)) {
+          return {
+            ...screen,
+            assigned_schedule_id: scheduleId,
+            assigned_schedule: schedule ? { id: schedule.id, name: schedule.name } : null
+          };
+        }
+        return screen;
+      }));
+
+      showToast?.(`Assigned schedule to ${result.updated} screens`);
+      setSelectedScreenIds(new Set()); // Clear selection
+    } catch (error) {
+      logger.error('Error bulk assigning schedule', { error, scheduleId, screenCount: selectedScreenIds.size });
+      showToast?.('Error assigning schedule: ' + error.message, 'error');
+    } finally {
+      setBulkAssigning(false);
     }
   };
 
@@ -1467,7 +1538,7 @@ const ScreensPage = ({ showToast }) => {
       const data = await getScreenAnalytics(screen.id, range);
       setAnalyticsData(data);
     } catch (error) {
-      console.error('Error loading screen analytics:', error);
+      logger.error('Error loading screen analytics', { error, screenId: screen.id, range });
       showToast?.('Error loading analytics', 'error');
     } finally {
       setAnalyticsLoading(false);
@@ -1513,7 +1584,7 @@ const ScreensPage = ({ showToast }) => {
           throw new Error('Unknown command type');
       }
     } catch (error) {
-      console.error(`Error sending ${commandType} command:`, error);
+      logger.error('Error sending device command', { error, screenId, commandType, screenName });
       showToast?.(`Error: ${error.message}`, 'error');
     } finally {
       setCommandingDevice(null);
@@ -1526,7 +1597,7 @@ const ScreensPage = ({ showToast }) => {
       showToast?.(enabled ? 'Kiosk mode enabled' : 'Kiosk mode disabled');
       setShowKioskModal(null);
     } catch (error) {
-      console.error('Error setting kiosk mode:', error);
+      logger.error('Error setting kiosk mode', { error, screenId, enabled });
       showToast?.(`Error: ${error.message}`, 'error');
     }
   };
@@ -1558,7 +1629,7 @@ const ScreensPage = ({ showToast }) => {
         showToast?.('To display apps, add them to a playlist or layout first');
       }
     } catch (error) {
-      console.error('Error assigning content:', error);
+      logger.error('Error assigning content to screen', { error, screenId: contentPickerScreen?.id, contentType });
       showToast?.('Error assigning content', 'error');
     }
   };
@@ -1688,10 +1759,50 @@ const ScreensPage = ({ showToast }) => {
             </div>
           ) : !error && screens.length > 0 && (
             <Card variant="outlined">
+              {/* Bulk Action Bar (US-148) */}
+              {selectedScreenIds.size > 0 && (
+                <div className="px-4 py-3 bg-blue-50 border-b border-blue-100 flex items-center gap-4">
+                  <span className="text-sm font-medium text-blue-700">
+                    {selectedScreenIds.size} screen{selectedScreenIds.size !== 1 ? 's' : ''} selected
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} className="text-blue-500" />
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) handleBulkAssignSchedule(e.target.value);
+                      }}
+                      disabled={bulkAssigning}
+                      className="px-3 py-1.5 text-sm border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                    >
+                      <option value="">Assign Schedule...</option>
+                      {schedules.map(schedule => (
+                        <option key={schedule.id} value={schedule.id}>{schedule.name}</option>
+                      ))}
+                    </select>
+                    {bulkAssigning && <Loader2 size={14} className="animate-spin text-blue-500" />}
+                  </div>
+                  <button
+                    onClick={() => setSelectedScreenIds(new Set())}
+                    className="ml-auto text-sm text-blue-600 hover:text-blue-800"
+                  >
+                    Clear selection
+                  </button>
+                </div>
+              )}
+
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
+                      {/* Checkbox column (US-148) */}
+                      <th className="px-4 py-3 w-10">
+                        <input
+                          type="checkbox"
+                          checked={selectedScreenIds.size === filteredScreens.length && filteredScreens.length > 0}
+                          onChange={toggleSelectAll}
+                          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                      </th>
                       <th className="px-4 py-3 font-medium">Name</th>
                       <th className="px-4 py-3 font-medium">Player Status</th>
                       <th className="px-4 py-3 font-medium">Player Type</th>
@@ -1729,6 +1840,8 @@ const ScreensPage = ({ showToast }) => {
                         onDelete={handleDelete}
                         onOpenContentPicker={handleOpenContentPicker}
                         commandingDevice={commandingDevice}
+                        isSelected={selectedScreenIds.has(screen.id)}
+                        onToggleSelection={toggleScreenSelection}
                       />
                     ))}
                   </tbody>
