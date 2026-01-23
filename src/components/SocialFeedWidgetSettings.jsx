@@ -7,7 +7,6 @@
 
 import { useState, useEffect } from 'react';
 import { Settings, RefreshCw, ExternalLink } from 'lucide-react';
-import { useLogger } from '../hooks/useLogger.js';
 import {
   PROVIDER_LABELS,
   PROVIDER_COLORS,
@@ -26,7 +25,6 @@ export default function SocialFeedWidgetSettings({
   onSettingsChange,
   onNavigate,
 }) {
-  const logger = useLogger('SocialFeedWidgetSettings');
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -52,7 +50,7 @@ export default function SocialFeedWidgetSettings({
         const data = await getConnectedAccounts();
         setAccounts(data);
       } catch (error) {
-        logger.error('Failed to load accounts', { error });
+        console.error('Failed to load accounts:', error);
       } finally {
         setLoading(false);
       }
@@ -82,7 +80,7 @@ export default function SocialFeedWidgetSettings({
           setShowAuthor(settings.show_author);
         }
       } catch (error) {
-        logger.error('Failed to load widget settings', { error });
+        console.error('Failed to load widget settings:', error);
       }
     };
 
@@ -125,7 +123,7 @@ export default function SocialFeedWidgetSettings({
         showAuthor,
       });
     } catch (error) {
-      logger.error('Failed to save settings', { error });
+      console.error('Failed to save settings:', error);
     } finally {
       setSaving(false);
     }

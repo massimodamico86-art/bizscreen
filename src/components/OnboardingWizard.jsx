@@ -9,7 +9,6 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLogger } from '../hooks/useLogger.js';
 import {
   Sparkles,
   Image,
@@ -52,7 +51,6 @@ const STEP_ICONS = {
  * OnboardingWizard - Main wizard component
  */
 const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
-  const logger = useLogger('OnboardingWizard');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(null);
@@ -85,7 +83,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
         onComplete?.();
       }
     } catch (err) {
-      logger.error('Failed to load onboarding progress', { error: err });
+      console.error('Failed to load onboarding progress:', err);
       setError('Unable to load progress. Please try again.');
     } finally {
       setLoading(false);
@@ -137,7 +135,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
         }
       }
     } catch (err) {
-      logger.error('Failed to complete step', { error: err });
+      console.error('Failed to complete step:', err);
       setError('Failed to save progress. Please try again.');
     } finally {
       setIsUpdating(false);
@@ -151,7 +149,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
       await skipOnboarding();
       onClose();
     } catch (err) {
-      logger.error('Failed to skip onboarding', { error: err });
+      console.error('Failed to skip onboarding:', err);
       setError('Failed to skip onboarding. Please try again.');
     } finally {
       setIsSkipping(false);

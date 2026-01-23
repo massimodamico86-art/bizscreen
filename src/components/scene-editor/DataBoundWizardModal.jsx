@@ -11,7 +11,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useLogger } from '../../hooks/useLogger.js';
 import {
   X,
   ArrowLeft,
@@ -73,7 +72,6 @@ export default function DataBoundWizardModal({
   onSlideCreated,
   onShowToast,
 }) {
-  const logger = useLogger('DataBoundWizardModal');
   // Wizard state
   const [step, setStep] = useState(1);
   const [dataSources, setDataSources] = useState([]);
@@ -126,7 +124,7 @@ export default function DataBoundWizardModal({
       const sources = await fetchDataSources();
       setDataSources(sources);
     } catch (err) {
-      logger.error('Error loading data sources', { error: err });
+      console.error('Error loading data sources:', err);
       setError('Failed to load data sources');
     } finally {
       setIsLoading(false);
@@ -156,7 +154,7 @@ export default function DataBoundWizardModal({
         setSelectedFields(newSelectedFields);
       }
     } catch (err) {
-      logger.error('Error loading source details', { error: err });
+      console.error('Error loading source details:', err);
     }
   }
 
@@ -211,7 +209,7 @@ export default function DataBoundWizardModal({
       onSlideCreated?.(slide);
       onClose();
     } catch (err) {
-      logger.error('Error creating data-bound slide', { error: err });
+      console.error('Error creating data-bound slide:', err);
       onShowToast?.('Failed to create slide', 'error');
     } finally {
       setIsCreating(false);

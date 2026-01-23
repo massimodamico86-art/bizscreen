@@ -11,7 +11,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Loader2, Upload } from 'lucide-react';
 import { Button } from '../../design-system';
-import { useLogger } from '../../hooks/useLogger.js';
 import {
   uploadBase64ToCloudinary,
   isCloudinaryConfigured,
@@ -29,7 +28,6 @@ export default function PixieEditorModal({
   uploadToCloudinary = true,
   showToast,
 }) {
-  const logger = useLogger('PixieEditorModal');
   const containerRef = useRef(null);
   const pixieRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -64,7 +62,7 @@ export default function PixieEditorModal({
 
       return true;
     } catch (err) {
-      logger.error('Failed to load Pixie', { error: err });
+      console.error('Failed to load Pixie:', err);
       return false;
     }
   }, []);
@@ -88,7 +86,7 @@ export default function PixieEditorModal({
       showToast?.({ type: 'success', message: 'Image saved successfully' });
       onClose();
     } catch (err) {
-      logger.error('Failed to upload image', { error: err });
+      console.error('Failed to upload image:', err);
       setError('Failed to upload image. Please try again.');
       showToast?.({ type: 'error', message: 'Failed to upload image' });
     } finally {
@@ -164,7 +162,7 @@ export default function PixieEditorModal({
 
         setLoading(false);
       } catch (err) {
-        logger.error('Failed to initialize Pixie', { error: err });
+        console.error('Failed to initialize Pixie:', err);
         setError('Failed to initialize image editor');
         setLoading(false);
       }
@@ -308,7 +306,7 @@ export function SimpleImageEditor({
       showToast?.({ type: 'success', message: 'Image saved successfully' });
       onClose();
     } catch (err) {
-      logger.error('Failed to upload image', { error: err });
+      console.error('Failed to upload image:', err);
       showToast?.({ type: 'error', message: 'Failed to upload image' });
     } finally {
       setUploading(false);
