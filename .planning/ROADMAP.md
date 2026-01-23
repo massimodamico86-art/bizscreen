@@ -100,17 +100,18 @@ Plans:
 ### Phase 5: Critical Fixes
 **Goal**: Incomplete features work end-to-end without "not implemented" errors
 **Depends on**: Phase 4 (logging for debugging)
-**Requirements**: FIX-01, FIX-02, FIX-03, FIX-04, FIX-05
+**Requirements**: FIX-02, FIX-05 (FIX-01, FIX-03, FIX-04 already complete)
 **Success Criteria** (what must be TRUE):
-  1. Schedule editor shows conflict warning when creating overlapping time entries
+  1. ~~Schedule editor shows conflict warning when creating overlapping time entries~~ (already complete)
   2. User can click "Save as Template" on a layout and find it in template library
-  3. Timezone selector validates IANA format and handles DST transitions
-  4. Media upload shows warning at 80% storage quota and blocks at 100%
+  3. ~~Timezone selector validates IANA format and handles DST transitions~~ (already complete)
+  4. ~~Media upload shows warning at 80% storage quota and blocks at 100%~~ (already complete)
   5. Email notifications send via Resend provider (not stub)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md — Save Layout as Template (FIX-02)
+- [ ] 05-02-PLAN.md — Email notifications via Resend (FIX-05)
 
 ### Phase 6: Player Reliability
 **Goal**: Player handles network failures and errors gracefully without user intervention
@@ -224,7 +225,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 2. XSS Prevention | 5/5 | Complete | 2026-01-22 |
 | 3. Auth Hardening | 4/4 | Complete | 2026-01-22 |
 | 4. Logging Migration | 6/6 | Complete | 2026-01-22 |
-| 5. Critical Fixes | 0/TBD | Not started | - |
+| 5. Critical Fixes | 0/2 | Ready | - |
 | 6. Player Reliability | 0/TBD | Not started | - |
 | 7. Player Refactoring | 0/TBD | Not started | - |
 | 8. Page Refactoring | 0/TBD | Not started | - |
@@ -235,4 +236,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 — Phase 4 complete (6 plans executed)*
+*Last updated: 2026-01-22 — Phase 5 planned (2 plans in 1 wave)*
