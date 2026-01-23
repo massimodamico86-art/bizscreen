@@ -544,11 +544,11 @@ export function validateKioskPassword(input, password) {
 }
 
 /**
- * Hash password using SHA-256
+ * Hash password/PIN using SHA-256
  * @param {string} password
  * @returns {Promise<string>} Hex-encoded hash
  */
-async function hashPassword(password) {
+export async function hashPassword(password) {
   const encoder = new TextEncoder();
   const data = encoder.encode(password);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -600,6 +600,68 @@ export async function validateKioskPasswordOffline(input, password) {
 
   logger.error('[PlayerService] No cached hash and no password provided');
   return false;
+}
+
+// ============================================
+// KIOSK PIN FUNCTIONS (Phase 9)
+// ============================================
+
+/**
+ * Hash a 4-digit PIN using SHA-256
+ * @param {string} pin - 4-digit PIN
+ * @returns {Promise<string>} Hex-encoded hash
+ */
+export async function hashPin(pin) {
+  return hashPassword(pin);
+}
+
+/**
+ * Cache PIN hashes for offline validation
+ * Stores both device-specific and master PIN hashes in localStorage
+ * Call this after device pairing/sync when online
+ * @param {string|null} devicePinHash - Device-specific PIN hash
+ * @param {string|null} masterPinHash - Tenant master PIN hash
+ */
+export function cacheKioskPinHashes(devicePinHash, masterPinHash) {
+  if (devicePinHash) {
+    localStorage.setItem('kiosk_device_pin_hash', devicePinHash);
+  }
+  if (masterPinHash) {
+    localStorage.setItem('kiosk_master_pin_hash', masterPinHash);
+  }
+  logger.debug('[PlayerService] Cached kiosk PIN hashes for offline use');
+}
+
+/**
+ * Validate PIN offline using cached hashes
+ * Checks both device-specific and master PIN
+ * @param {string} inputPin - PIN attempt from user
+ * @returns {Promise<boolean>} True if PIN matches either device or master PIN
+ */
+export async function validatePinOffline(inputPin) {
+  const deviceHash = localStorage.getItem('kiosk_device_pin_hash');
+  const masterHash = localStorage.getItem('kiosk_master_pin_hash');
+
+  if (!deviceHash && !masterHash) {
+    logger.warn('[PlayerService] No cached PIN hashes for offline validation');
+    return false;
+  }
+
+  try {
+    const inputHash = await hashPassword(inputPin);
+    if (deviceHash && inputHash === deviceHash) {
+      logger.debug('[PlayerService] Device PIN validated offline');
+      return true;
+    }
+    if (masterHash && inputHash === masterHash) {
+      logger.debug('[PlayerService] Master PIN validated offline');
+      return true;
+    }
+    return false;
+  } catch (error) {
+    logger.error('[PlayerService] PIN validation failed', { error: error.message });
+    return false;
+  }
 }
 
 // ============================================
