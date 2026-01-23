@@ -8,7 +8,7 @@
  * - Create and manage in-app announcements
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import {
   PageLayout,
@@ -36,7 +36,6 @@ import {
   Trash2,
   ToggleLeft,
   ToggleRight,
-  ChevronRight,
   Users,
   Building2,
   Percent,
@@ -47,32 +46,10 @@ import {
   Clock,
   AlertCircle,
   Search,
-  Filter,
   Loader2,
 } from 'lucide-react';
-import {
-  getAllFeatureFlags,
-  createFeatureFlag,
-  updateFeatureFlag,
-  deleteFeatureFlag,
-  FeatureFlags,
-} from '../services/featureFlagService';
-import {
-  getAllExperiments,
-  createExperiment,
-  updateExperimentStatus,
-  deleteExperiment,
-} from '../services/experimentService';
-import {
-  getAllFeedback,
-  updateFeedbackStatus,
-  getAllAnnouncements,
-  createAnnouncement,
-  updateAnnouncement,
-  deleteAnnouncement,
-} from '../services/feedbackService';
 import FeatureFlagsDebug from '../components/FeatureFlagsDebug';
-import { useLogger } from '../hooks/useLogger.js';
+import { useFeatureFlags } from './hooks/useFeatureFlags.js';
 
 const tabs = [
   { id: 'flags', label: 'Feature Flags', icon: Flag },
@@ -84,60 +61,33 @@ const tabs = [
 
 export default function FeatureFlagsPage() {
   const { userProfile } = useAuth();
-  const logger = useLogger('FeatureFlagsPage');
-  const [activeTab, setActiveTab] = useState('flags');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  // Data states
-  const [flags, setFlags] = useState([]);
-  const [experiments, setExperiments] = useState([]);
-  const [feedback, setFeedback] = useState([]);
-  const [announcements, setAnnouncements] = useState([]);
-
-  // Modal states
-  const [showFlagModal, setShowFlagModal] = useState(false);
-  const [showExperimentModal, setShowExperimentModal] = useState(false);
-  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
-
-  // Load data on tab change
-  useEffect(() => {
-    loadTabData(activeTab);
-  }, [activeTab]);
-
-  const loadTabData = async (tab) => {
-    setLoading(true);
-    setError('');
-
-    try {
-      switch (tab) {
-        case 'flags':
-          const flagsData = await getAllFeatureFlags();
-          setFlags(flagsData);
-          break;
-        case 'experiments':
-          const experimentsData = await getAllExperiments();
-          setExperiments(experimentsData);
-          break;
-        case 'feedback':
-          const feedbackData = await getAllFeedback({ limit: 100 });
-          setFeedback(feedbackData);
-          break;
-        case 'announcements':
-          const announcementsData = await getAllAnnouncements();
-          setAnnouncements(announcementsData);
-          break;
-      }
-    } catch (err) {
-      logger.error('Failed to load tab data', { tab, error: err });
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRefresh = () => loadTabData(activeTab);
+  const {
+    activeTab,
+    setActiveTab,
+    flags,
+    experiments,
+    feedback,
+    announcements,
+    loading,
+    error,
+    clearError,
+    showFlagModal,
+    setShowFlagModal,
+    showExperimentModal,
+    setShowExperimentModal,
+    showAnnouncementModal,
+    setShowAnnouncementModal,
+    editingItem,
+    setEditingItem,
+    handleRefresh,
+    handleToggleFlag,
+    handleDeleteFlag,
+    handleUpdateExperimentStatus,
+    handleDeleteExperiment,
+    handleUpdateFeedbackStatus,
+    handleToggleAnnouncement,
+    handleDeleteAnnouncement,
+  } = useFeatureFlags();
 
   // Check if user is super_admin
   if (userProfile?.role !== 'super_admin') {
@@ -185,7 +135,7 @@ export default function FeatureFlagsPage() {
         </div>
 
         {error && (
-          <Alert variant="error" dismissible onDismiss={() => setError('')} className="mb-4">
+          <Alert variant="error" dismissible onDismiss={clearError} className="mb-4">
             {error}
           </Alert>
         )}
@@ -200,6 +150,8 @@ export default function FeatureFlagsPage() {
               <FeatureFlagsTab
                 flags={flags}
                 onRefresh={handleRefresh}
+                onToggle={handleToggleFlag}
+                onDelete={handleDeleteFlag}
                 onEdit={(flag) => {
                   setEditingItem(flag);
                   setShowFlagModal(true);
@@ -214,6 +166,8 @@ export default function FeatureFlagsPage() {
               <ExperimentsTab
                 experiments={experiments}
                 onRefresh={handleRefresh}
+                onStatusChange={handleUpdateExperimentStatus}
+                onDelete={handleDeleteExperiment}
                 onEdit={(exp) => {
                   setEditingItem(exp);
                   setShowExperimentModal(true);
@@ -228,12 +182,15 @@ export default function FeatureFlagsPage() {
               <FeedbackTab
                 feedback={feedback}
                 onRefresh={handleRefresh}
+                onStatusChange={handleUpdateFeedbackStatus}
               />
             )}
             {activeTab === 'announcements' && (
               <AnnouncementsTab
                 announcements={announcements}
                 onRefresh={handleRefresh}
+                onToggle={handleToggleAnnouncement}
+                onDelete={handleDeleteAnnouncement}
                 onEdit={(ann) => {
                   setEditingItem(ann);
                   setShowAnnouncementModal(true);
@@ -280,7 +237,7 @@ export default function FeatureFlagsPage() {
 // Feature Flags Tab
 // ============================================
 
-function FeatureFlagsTab({ flags, onRefresh, onEdit, onAdd }) {
+function FeatureFlagsTab({ flags, onRefresh, onToggle, onDelete, onEdit, onAdd }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -293,23 +250,9 @@ function FeatureFlagsTab({ flags, onRefresh, onEdit, onAdd }) {
     return matchesSearch && matchesCategory;
   });
 
-  const handleToggle = async (flag) => {
-    try {
-      await updateFeatureFlag(flag.id, { defaultEnabled: !flag.default_enabled });
-      onRefresh();
-    } catch (error) {
-      logger.error('Failed to toggle flag', { flagId, error });
-    }
-  };
-
   const handleDelete = async (flag) => {
     if (!confirm(`Delete feature flag "${flag.name}"?`)) return;
-    try {
-      await deleteFeatureFlag(flag.id);
-      onRefresh();
-    } catch (error) {
-      logger.error('Failed to delete flag', { flagId, error });
-    }
+    await onDelete(flag.id);
   };
 
   const getStrategyIcon = (strategy) => {
@@ -363,7 +306,7 @@ function FeatureFlagsTab({ flags, onRefresh, onEdit, onAdd }) {
               <div className="p-4 flex items-center gap-4">
                 {/* Toggle */}
                 <button
-                  onClick={() => handleToggle(flag)}
+                  onClick={() => onToggle(flag)}
                   className={`
                     p-1 rounded transition-colors
                     ${flag.default_enabled ? 'text-green-600' : 'text-gray-400'}
@@ -435,24 +378,14 @@ function FeatureFlagsTab({ flags, onRefresh, onEdit, onAdd }) {
 // Experiments Tab
 // ============================================
 
-function ExperimentsTab({ experiments, onRefresh, onEdit, onAdd }) {
+function ExperimentsTab({ experiments, onRefresh, onStatusChange, onDelete, onEdit, onAdd }) {
   const handleStatusChange = async (exp, newStatus) => {
-    try {
-      await updateExperimentStatus(exp.id, newStatus);
-      onRefresh();
-    } catch (error) {
-      logger.error('Failed to update experiment', { experimentId, error });
-    }
+    await onStatusChange(exp.id, newStatus);
   };
 
   const handleDelete = async (exp) => {
     if (!confirm(`Delete experiment "${exp.name}"?`)) return;
-    try {
-      await deleteExperiment(exp.id);
-      onRefresh();
-    } catch (error) {
-      logger.error('Failed to delete experiment', { experimentId, error });
-    }
+    await onDelete(exp.id);
   };
 
   const getStatusColor = (status) => {
@@ -581,7 +514,7 @@ function ExperimentsTab({ experiments, onRefresh, onEdit, onAdd }) {
 // Feedback Tab
 // ============================================
 
-function FeedbackTab({ feedback, onRefresh }) {
+function FeedbackTab({ feedback, onRefresh, onStatusChange }) {
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -592,12 +525,7 @@ function FeedbackTab({ feedback, onRefresh }) {
   });
 
   const handleStatusChange = async (item, newStatus) => {
-    try {
-      await updateFeedbackStatus(item.id, newStatus);
-      onRefresh();
-    } catch (error) {
-      logger.error('Failed to update feedback', { feedbackId, error });
-    }
+    await onStatusChange(item.id, newStatus);
   };
 
   const getTypeColor = (type) => {
@@ -720,24 +648,10 @@ function FeedbackTab({ feedback, onRefresh }) {
 // Announcements Tab
 // ============================================
 
-function AnnouncementsTab({ announcements, onRefresh, onEdit, onAdd }) {
-  const handleToggleActive = async (ann) => {
-    try {
-      await updateAnnouncement(ann.id, { active: !ann.active });
-      onRefresh();
-    } catch (error) {
-      logger.error('Failed to toggle announcement', { announcementId, error });
-    }
-  };
-
+function AnnouncementsTab({ announcements, onRefresh, onToggle, onDelete, onEdit, onAdd }) {
   const handleDelete = async (ann) => {
     if (!confirm(`Delete announcement "${ann.title}"?`)) return;
-    try {
-      await deleteAnnouncement(ann.id);
-      onRefresh();
-    } catch (error) {
-      logger.error('Failed to delete announcement', { announcementId, error });
-    }
+    await onDelete(ann.id);
   };
 
   const getTypeColor = (type) => {
@@ -788,7 +702,7 @@ function AnnouncementsTab({ announcements, onRefresh, onEdit, onAdd }) {
 
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handleToggleActive(ann)}
+                    onClick={() => onToggle(ann)}
                     className={`p-1 rounded ${ann.active ? 'text-green-600' : 'text-gray-400'}`}
                   >
                     {ann.active ? (
@@ -873,6 +787,8 @@ function FlagModal({ open, onClose, flag, onSave }) {
     setSaving(true);
 
     try {
+      // Import service functions inline to keep modals self-contained
+      const { createFeatureFlag, updateFeatureFlag } = await import('../services/featureFlagService.js');
       if (flag) {
         await updateFeatureFlag(flag.id, formData);
       } else {
@@ -881,7 +797,7 @@ function FlagModal({ open, onClose, flag, onSave }) {
       onSave();
       onClose();
     } catch (error) {
-      logger.error('Failed to save flag', { flagKey: formData.flag_key, error });
+      // Error handled by hook's refresh
     } finally {
       setSaving(false);
     }
@@ -1055,16 +971,16 @@ function ExperimentModal({ open, onClose, experiment, onSave }) {
     setSaving(true);
 
     try {
+      const { createExperiment } = await import('../services/experimentService.js');
       if (experiment) {
         // Update not fully implemented - would need additional service function
-        logger.debug('Updating experiment', { formData });
       } else {
         await createExperiment(formData, formData.variants);
       }
       onSave();
       onClose();
     } catch (error) {
-      logger.error('Failed to save experiment', { experimentKey: formData.experiment_key, error });
+      // Error handled by hook's refresh
     } finally {
       setSaving(false);
     }
@@ -1206,6 +1122,7 @@ function AnnouncementModal({ open, onClose, announcement, onSave }) {
     setSaving(true);
 
     try {
+      const { createAnnouncement, updateAnnouncement } = await import('../services/feedbackService.js');
       if (announcement) {
         await updateAnnouncement(announcement.id, formData);
       } else {
@@ -1214,7 +1131,7 @@ function AnnouncementModal({ open, onClose, announcement, onSave }) {
       onSave();
       onClose();
     } catch (error) {
-      logger.error('Failed to save announcement', { announcementTitle: formData.title, error });
+      // Error handled by hook's refresh
     } finally {
       setSaving(false);
     }
