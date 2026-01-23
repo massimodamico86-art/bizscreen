@@ -44,6 +44,7 @@ import { FormField, Input, Textarea } from '../design-system';
 import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../design-system';
 import { Banner, Alert } from '../design-system';
 import { EmptyState } from '../design-system';
+import { useLogger } from '../hooks/useLogger.js';
 
 // --------------------------------------------------------------------------
 // Sub-components
@@ -670,6 +671,7 @@ const SetToScreenModal = ({ open, onClose, playlist, screens, screensLoading, on
 const PlaylistsPage = ({ showToast, onNavigate }) => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const logger = useLogger('PlaylistsPage');
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -712,7 +714,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       const data = await getEffectiveLimits();
       setLimits(data);
     } catch (error) {
-      console.error('Error fetching limits:', error);
+      logger.error('Failed to fetch limits', { userId: user?.id, error });
     }
   };
 
@@ -728,7 +730,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       if (fetchError) throw fetchError;
       setPlaylists(data || []);
     } catch (err) {
-      console.error('Error fetching playlists:', err);
+      logger.error('Failed to fetch playlists', { userId: user?.id, error: err });
       setError(err.message || 'Failed to load playlists');
     } finally {
       setLoading(false);
@@ -755,7 +757,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       const data = await getPlaylistTemplates();
       setTemplates(data);
     } catch (error) {
-      console.error('Error loading templates:', error);
+      logger.error('Failed to load templates', { error });
       showToast?.('Error loading templates', 'error');
     } finally {
       setTemplatesLoading(false);
@@ -788,7 +790,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         }
       }
     } catch (error) {
-      console.error('Error applying template:', error);
+      logger.error('Failed to apply template', { templateId: selectedTemplate.id, playlistId: newPlaylist.id, error });
       showToast?.(error.message || 'Error applying template', 'error');
     } finally {
       setApplyingTemplate(null);
@@ -826,7 +828,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         onNavigate(`playlist-editor-${data.id}`);
       }
     } catch (error) {
-      console.error('Error creating playlist:', error);
+      logger.error('Failed to create playlist', { playlistName: newPlaylistName, error });
       showToast?.('Error creating playlist: ' + error.message, 'error');
     } finally {
       setCreating(false);
@@ -873,7 +875,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       setPlaylists((prev) => [newData, ...prev]);
       showToast?.('Playlist duplicated successfully');
     } catch (error) {
-      console.error('Error duplicating playlist:', error);
+      logger.error('Failed to duplicate playlist', { playlistId, error });
       showToast?.('Error duplicating playlist: ' + error.message, 'error');
     }
   };
@@ -885,7 +887,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       const usage = await getPlaylistUsage(playlist.id);
       setDeleteConfirm({ id: playlist.id, name: playlist.name, usage, loading: false });
     } catch (error) {
-      console.error('Error checking usage:', error);
+      logger.error('Failed to check usage', { playlistId, error });
       setDeleteConfirm({ id: playlist.id, name: playlist.name, usage: null, loading: false });
     }
   };
@@ -907,7 +909,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         showToast?.(result.error || 'Error deleting playlist', 'error');
       }
     } catch (error) {
-      console.error('Error deleting playlist:', error);
+      logger.error('Failed to delete playlist', { playlistId, error });
       showToast?.('Error deleting playlist: ' + error.message, 'error');
     } finally {
       setDeletingForce(false);
@@ -937,7 +939,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         };
       }));
     } catch (error) {
-      console.error('Error fetching screens:', error);
+      logger.error('Failed to fetch screens', { error });
     } finally {
       setScreensLoading(false);
     }
@@ -964,7 +966,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       await Promise.all(updates);
       showToast?.(`Playlist assigned to ${screenIds.length} screen${screenIds.length > 1 ? 's' : ''}`, 'success');
     } catch (error) {
-      console.error('Error setting playlist to screen:', error);
+      logger.error('Failed to set playlist to screen', { playlistId, screenId, error });
       showToast?.('Error assigning playlist to screen', 'error');
     }
   };
@@ -1026,7 +1028,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         showToast?.(`Failed to delete ${failCount} playlist${failCount > 1 ? 's' : ''}`, 'error');
       }
     } catch (error) {
-      console.error('Error bulk deleting:', error);
+      logger.error('Failed to bulk delete', { count: selectedIds.length, error });
       showToast?.('Error deleting playlists', 'error');
     } finally {
       setBulkDeleting(false);
@@ -1045,7 +1047,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       setSelectedIds(new Set());
       showToast?.(`Duplicated ${selectedIds.size} playlist${selectedIds.size > 1 ? 's' : ''} successfully`);
     } catch (error) {
-      console.error('Error bulk duplicating:', error);
+      logger.error('Failed to bulk duplicate', { count: selectedIds.length, error });
       showToast?.('Error duplicating playlists', 'error');
     }
   };

@@ -72,6 +72,7 @@ import {
   deleteAnnouncement,
 } from '../services/feedbackService';
 import FeatureFlagsDebug from '../components/FeatureFlagsDebug';
+import { useLogger } from '../hooks/useLogger.js';
 
 const tabs = [
   { id: 'flags', label: 'Feature Flags', icon: Flag },
@@ -83,6 +84,7 @@ const tabs = [
 
 export default function FeatureFlagsPage() {
   const { userProfile } = useAuth();
+  const logger = useLogger('FeatureFlagsPage');
   const [activeTab, setActiveTab] = useState('flags');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -128,7 +130,7 @@ export default function FeatureFlagsPage() {
           break;
       }
     } catch (err) {
-      console.error(`Error loading ${tab} data:`, err);
+      logger.error('Failed to load tab data', { tab, error: err });
       setError(err.message);
     } finally {
       setLoading(false);
@@ -296,7 +298,7 @@ function FeatureFlagsTab({ flags, onRefresh, onEdit, onAdd }) {
       await updateFeatureFlag(flag.id, { defaultEnabled: !flag.default_enabled });
       onRefresh();
     } catch (error) {
-      console.error('Error toggling flag:', error);
+      logger.error('Failed to toggle flag', { flagId, error });
     }
   };
 
@@ -306,7 +308,7 @@ function FeatureFlagsTab({ flags, onRefresh, onEdit, onAdd }) {
       await deleteFeatureFlag(flag.id);
       onRefresh();
     } catch (error) {
-      console.error('Error deleting flag:', error);
+      logger.error('Failed to delete flag', { flagId, error });
     }
   };
 
@@ -439,7 +441,7 @@ function ExperimentsTab({ experiments, onRefresh, onEdit, onAdd }) {
       await updateExperimentStatus(exp.id, newStatus);
       onRefresh();
     } catch (error) {
-      console.error('Error updating experiment:', error);
+      logger.error('Failed to update experiment', { experimentId, error });
     }
   };
 
@@ -449,7 +451,7 @@ function ExperimentsTab({ experiments, onRefresh, onEdit, onAdd }) {
       await deleteExperiment(exp.id);
       onRefresh();
     } catch (error) {
-      console.error('Error deleting experiment:', error);
+      logger.error('Failed to delete experiment', { experimentId, error });
     }
   };
 
@@ -594,7 +596,7 @@ function FeedbackTab({ feedback, onRefresh }) {
       await updateFeedbackStatus(item.id, newStatus);
       onRefresh();
     } catch (error) {
-      console.error('Error updating feedback:', error);
+      logger.error('Failed to update feedback', { feedbackId, error });
     }
   };
 
@@ -724,7 +726,7 @@ function AnnouncementsTab({ announcements, onRefresh, onEdit, onAdd }) {
       await updateAnnouncement(ann.id, { active: !ann.active });
       onRefresh();
     } catch (error) {
-      console.error('Error toggling announcement:', error);
+      logger.error('Failed to toggle announcement', { announcementId, error });
     }
   };
 
@@ -734,7 +736,7 @@ function AnnouncementsTab({ announcements, onRefresh, onEdit, onAdd }) {
       await deleteAnnouncement(ann.id);
       onRefresh();
     } catch (error) {
-      console.error('Error deleting announcement:', error);
+      logger.error('Failed to delete announcement', { announcementId, error });
     }
   };
 
@@ -879,7 +881,7 @@ function FlagModal({ open, onClose, flag, onSave }) {
       onSave();
       onClose();
     } catch (error) {
-      console.error('Error saving flag:', error);
+      logger.error('Failed to save flag', { flagKey: formData.flag_key, error });
     } finally {
       setSaving(false);
     }
@@ -1055,14 +1057,14 @@ function ExperimentModal({ open, onClose, experiment, onSave }) {
     try {
       if (experiment) {
         // Update not fully implemented - would need additional service function
-        console.log('Update experiment:', formData);
+        logger.debug('Updating experiment', { formData });
       } else {
         await createExperiment(formData, formData.variants);
       }
       onSave();
       onClose();
     } catch (error) {
-      console.error('Error saving experiment:', error);
+      logger.error('Failed to save experiment', { experimentKey: formData.experiment_key, error });
     } finally {
       setSaving(false);
     }
@@ -1212,7 +1214,7 @@ function AnnouncementModal({ open, onClose, announcement, onSave }) {
       onSave();
       onClose();
     } catch (error) {
-      console.error('Error saving announcement:', error);
+      logger.error('Failed to save announcement', { announcementTitle: formData.title, error });
     } finally {
       setSaving(false);
     }
