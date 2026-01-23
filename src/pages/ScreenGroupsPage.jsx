@@ -45,10 +45,12 @@ import {
 import { fetchLocations } from '../services/locationService';
 import { canEditScreens } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
+import { useLogger } from '../hooks/useLogger.js';
 
 const ScreenGroupsPage = ({ showToast }) => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const logger = useLogger('ScreenGroupsPage');
   const [groups, setGroups] = useState([]);
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -87,7 +89,7 @@ const ScreenGroupsPage = ({ showToast }) => {
       setGroups(filtered);
       setLocations(locationsData);
     } catch (error) {
-      console.error('Error loading screen groups:', error);
+      logger.error('Failed to load screen groups', { error });
       showToast?.('Error loading screen groups', 'error');
     } finally {
       setLoading(false);
@@ -100,7 +102,7 @@ const ScreenGroupsPage = ({ showToast }) => {
       showToast?.(t('screenGroups.sceneCleared', 'Scene cleared from group'));
       loadData();
     } catch (error) {
-      console.error('Error clearing scene:', error);
+      logger.error('Failed to clear scene', { groupId, error });
       showToast?.(t('screenGroups.clearError', 'Error clearing scene: {{error}}', { error: error.message }), 'error');
     }
     setOpenMenuId(null);
@@ -121,7 +123,7 @@ const ScreenGroupsPage = ({ showToast }) => {
       setGroups(groups.filter(g => g.id !== id));
       showToast?.('Screen group deleted');
     } catch (error) {
-      console.error('Error deleting group:', error);
+      logger.error('Failed to delete group', { groupId, error });
       showToast?.('Error deleting group: ' + error.message, 'error');
     }
     setOpenMenuId(null);
@@ -361,7 +363,7 @@ const ScreenGroupsPage = ({ showToast }) => {
                 setShowCreateModal(false);
                 loadData(); // Refresh to get counts
               } catch (error) {
-                console.error('Error creating group:', error);
+                logger.error('Failed to create group', { groupName: formData.name, error });
                 showToast?.(t('screenGroups.createError', 'Error creating group: {{error}}', { error: error.message }), 'error');
               } finally {
                 setSaving(false);
@@ -390,7 +392,7 @@ const ScreenGroupsPage = ({ showToast }) => {
                 setSelectedGroup(null);
                 loadData();
               } catch (error) {
-                console.error('Error updating group:', error);
+                logger.error('Failed to update group', { groupId: editingGroup.id, groupName: formData.name, error });
                 showToast?.(t('screenGroups.updateError', 'Error updating group: {{error}}', { error: error.message }), 'error');
               } finally {
                 setSaving(false);
@@ -529,7 +531,7 @@ function AssignScreensModal({ group, onClose, onUpdate, showToast, t }) {
       setAssignedScreens(assigned);
       setAvailableScreens(available);
     } catch (error) {
-      console.error('Error loading screens:', error);
+      logger.error('Failed to load screens', { groupId, error });
       showToast?.(t('screenGroups.loadError', 'Error loading screens'), 'error');
     } finally {
       setLoading(false);
@@ -547,7 +549,7 @@ function AssignScreensModal({ group, onClose, onUpdate, showToast, t }) {
       loadScreens();
       onUpdate();
     } catch (error) {
-      console.error('Error adding screens:', error);
+      logger.error('Failed to add screens', { groupId, screenIds: selectedScreenIds, error });
       showToast?.(t('screenGroups.addError', 'Error adding screens: {{error}}', { error: error.message }), 'error');
     } finally {
       setSaving(false);
@@ -565,7 +567,7 @@ function AssignScreensModal({ group, onClose, onUpdate, showToast, t }) {
       loadScreens();
       onUpdate();
     } catch (error) {
-      console.error('Error removing screens:', error);
+      logger.error('Failed to remove screens', { groupId, screenIds: selectedScreenIds, error });
       showToast?.(t('screenGroups.removeError', 'Error removing screens: {{error}}', { error: error.message }), 'error');
     } finally {
       setSaving(false);
