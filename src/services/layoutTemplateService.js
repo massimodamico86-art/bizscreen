@@ -6,6 +6,9 @@
  * @module services/layoutTemplateService
  */
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('layoutTemplateService');
 
 /**
  * @typedef {Object} LayoutTemplate
@@ -225,21 +228,104 @@ export async function fetchTemplateCategories() {
 }
 
 /**
- * Create a template from an existing layout (stub for future implementation)
+ * Create a template from an existing layout
  *
  * @param {string} layoutId - Layout ID to convert to template
  * @param {Object} options - Template options
+ * @param {string} options.name - Template name
+ * @param {string} options.category - Template category
+ * @param {string} options.description - Template description
  * @returns {Promise<LayoutTemplate>}
  */
 export async function createTemplateFromLayout(layoutId, options = {}) {
-  // TODO: Implement this when needed
-  // Steps:
-  // 1. Fetch the layout
-  // 2. Create a new template with the layout's data
-  // 3. Generate a thumbnail (could use a service like Puppeteer)
-  // 4. Return the new template
+  logger.info('Creating template from layout', { layoutId, options });
 
-  throw new Error('createTemplateFromLayout is not yet implemented');
+  // 1. Fetch the source layout with zones
+  const { data: layout, error: layoutError } = await supabase
+    .from('layouts')
+    .select('*, layout_zones (*)')
+    .eq('id', layoutId)
+    .single();
+
+  if (layoutError) {
+    logger.error('Failed to fetch layout', { layoutId, error: layoutError });
+    throw layoutError;
+  }
+
+  if (!layout) {
+    throw new Error('Layout not found');
+  }
+
+  // 2. Get user's tenant_id from profile
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('tenant_id')
+    .eq('id', layout.owner_id)
+    .single();
+
+  if (profileError) {
+    logger.error('Failed to fetch profile', { ownerId: layout.owner_id, error: profileError });
+    throw profileError;
+  }
+
+  if (!profile?.tenant_id) {
+    throw new Error('User tenant not found');
+  }
+
+  // 3. Map aspect_ratio to orientation
+  const orientationMap = {
+    '16:9': '16_9',
+    '9:16': '9_16',
+    '1:1': 'square',
+  };
+
+  // 4. Prepare template data - convert zones to data format if needed
+  let templateData = layout.data;
+  if ((!templateData || Object.keys(templateData).length === 0) && layout.layout_zones?.length > 0) {
+    // Convert zones to data format
+    templateData = {
+      zones: layout.layout_zones.map(zone => ({
+        id: zone.id,
+        name: zone.zone_name,
+        x: zone.x_percent,
+        y: zone.y_percent,
+        width: zone.width_percent,
+        height: zone.height_percent,
+        zIndex: zone.z_index,
+      })),
+    };
+  }
+
+  // 5. Create the template
+  const templateRecord = {
+    tenant_id: profile.tenant_id, // Private to user's tenant
+    name: options.name || `${layout.name} Template`,
+    description: options.description || layout.description || '',
+    category: options.category || 'General',
+    orientation: orientationMap[layout.aspect_ratio] || '16_9',
+    width: layout.width,
+    height: layout.height,
+    background_color: layout.background_color,
+    background_image_url: layout.background_image,
+    data: templateData || {},
+    thumbnail_url: null, // Placeholder - could be generated later
+    is_active: true,
+    use_count: 0,
+  };
+
+  const { data: template, error: insertError } = await supabase
+    .from('layout_templates')
+    .insert(templateRecord)
+    .select()
+    .single();
+
+  if (insertError) {
+    logger.error('Failed to create template', { layoutId, error: insertError });
+    throw insertError;
+  }
+
+  logger.info('Template created successfully', { templateId: template.id, layoutId });
+  return template;
 }
 
 export default {
