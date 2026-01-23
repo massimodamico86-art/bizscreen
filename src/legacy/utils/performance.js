@@ -3,6 +3,10 @@
  * Provides tools for tracking component render times, API call durations, and custom metrics
  */
 
+import { createScopedLogger } from '../../services/loggingService.js';
+
+const logger = createScopedLogger('performance');
+
 /**
  * Measure the duration of an async operation
  * @param {string} operationName - Name of the operation being measured
@@ -78,7 +82,7 @@ export function measure(measureName, startMark, endMark) {
       }
     }
   } catch (error) {
-    console.warn('Performance measurement failed:', error);
+    logger.warn('Performance measurement failed:', error);
   }
   return null;
 }
@@ -91,9 +95,9 @@ export function measure(measureName, startMark, endMark) {
  */
 function logPerformance(name, duration, metadata = {}) {
   const threshold = 1000; // Log warning if operation takes more than 1 second
-  const logLevel = duration > threshold ? 'warn' : 'log';
+  const logLevel = duration > threshold ? 'warn' : 'debug';
 
-  console[logLevel](`⏱️  [Performance] ${name}: ${duration.toFixed(2)}ms`, metadata);
+  logger[logLevel](`${name}: ${duration.toFixed(2)}ms`, metadata);
 
   // In production, this could send to analytics service
   if (import.meta.env.PROD && duration > threshold) {
@@ -134,7 +138,7 @@ export function getWebVitals() {
 export function logWebVitals() {
   const vitals = getWebVitals();
   if (vitals) {
-    console.log('📊 [Web Vitals]', {
+    logger.debug('📊 [Web Vitals]', {
       'First Contentful Paint': vitals.fcp ? `${vitals.fcp.toFixed(2)}ms` : 'N/A',
       'DOM Content Loaded': vitals.domContentLoaded ? `${vitals.domContentLoaded.toFixed(2)}ms` : 'N/A',
       'Page Load Time': vitals.loadTime ? `${vitals.loadTime.toFixed(2)}ms` : 'N/A',

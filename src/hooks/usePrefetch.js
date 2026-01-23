@@ -6,6 +6,9 @@
  */
 
 import { useCallback, useEffect, useRef } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('usePrefetch');
 import { prefetch as prefetchData, cacheKeys } from './useDataCache';
 import { supabase } from '../supabase';
 
@@ -160,7 +163,7 @@ export async function prefetchPageData(pageName, tenantId) {
         break;
     }
   } catch (err) {
-    console.warn(`Prefetch failed for ${pageName}:`, err.message);
+    logger.warn(`Prefetch failed for ${pageName}:`, err.message);
   }
 }
 

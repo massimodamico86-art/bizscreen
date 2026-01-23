@@ -4,6 +4,9 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useAuditLogs');
 import { useAuth } from '../contexts/AuthContext';
 import {
   listAuditLogs,
@@ -72,7 +75,7 @@ export function useAuditLogs(initialFilters = {}, tenantId = null) {
         setPagination(result.pagination || { page, limit: 50, total: 0, totalPages: 0 });
         setFilterOptions(result.filters || { eventTypes: [], entityTypes: [] });
       } catch (err) {
-        console.error('Failed to fetch audit logs:', err);
+        logger.error('Failed to fetch audit logs:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -188,7 +191,7 @@ export function useSystemEvents(initialFilters = {}) {
         setPagination({ page, limit: pagination.limit });
         setFilterOptions(result.filters || { sources: [], severities: [] });
       } catch (err) {
-        console.error('Failed to fetch system events:', err);
+        logger.error('Failed to fetch system events:', err);
         setError(err.message);
       } finally {
         setLoading(false);

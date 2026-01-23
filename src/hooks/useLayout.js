@@ -7,6 +7,9 @@
  * @module hooks/useLayout
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useLayout');
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -125,7 +128,7 @@ export function useLayout(layoutId, options = {}) {
 
       setLayout(parseLayoutFromDB(data));
     } catch (err) {
-      console.error('Failed to fetch layout:', err);
+      logger.error('Failed to fetch layout:', err);
       setError(err.message || 'Failed to load layout');
     } finally {
       setIsLoading(false);
@@ -181,7 +184,7 @@ export function useLayout(layoutId, options = {}) {
         return newLayout;
       }
     } catch (err) {
-      console.error('Failed to save layout:', err);
+      logger.error('Failed to save layout:', err);
       const errorMsg = err.message || 'Failed to save layout';
       setError(errorMsg);
       onSaveError?.(errorMsg);
@@ -329,7 +332,7 @@ export function useLayout(layoutId, options = {}) {
       setLayout(null);
       return true;
     } catch (err) {
-      console.error('Failed to delete layout:', err);
+      logger.error('Failed to delete layout:', err);
       setError(err.message || 'Failed to delete layout');
       return false;
     }

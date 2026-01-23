@@ -6,6 +6,9 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useS3Upload');
 import {
   uploadFileToS3,
   uploadFilesToS3,
@@ -58,11 +61,11 @@ export function useS3Upload({
    * Open file picker dialog
    */
   const openFilePicker = useCallback(() => {
-    console.log('[S3Upload] openFilePicker called, ref:', fileInputRef.current);
+    logger.debug('[S3Upload] openFilePicker called, ref:', fileInputRef.current);
     if (fileInputRef.current) {
       fileInputRef.current.click();
     } else {
-      console.error('[S3Upload] fileInputRef.current is null - file input not mounted');
+      logger.error('[S3Upload] fileInputRef.current is null - file input not mounted');
     }
   }, []);
 
@@ -122,7 +125,7 @@ export function useS3Upload({
 
         completedFiles++;
       } catch (error) {
-        console.error(`Error uploading ${file.name}:`, error);
+        logger.error(`Error uploading ${file.name}:`, error);
         setErrors(prev => [...prev, { file: file.name, errors: [error.message] }]);
         onError?.(error);
       }
@@ -143,7 +146,7 @@ export function useS3Upload({
 
   // Stable handler that always calls the latest implementation
   const handleFileSelect = useCallback((event) => {
-    console.log('[S3Upload] handleFileSelect called, files:', event?.target?.files?.length);
+    logger.debug('[S3Upload] handleFileSelect called, files:', event?.target?.files?.length);
     handlerRef.current?.(event);
   }, []);
 

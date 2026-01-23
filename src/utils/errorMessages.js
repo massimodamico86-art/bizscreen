@@ -4,6 +4,9 @@
  */
 
 import { captureError } from '../services/errorTrackingService';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('errorMessages');
 
 /**
  * Standard error messages for common operations
@@ -111,10 +114,10 @@ export function getSupabaseErrorMessage(error, operation = 'operation', resource
  * @param {Object} additionalInfo - Additional debugging information
  */
 export function logError(error, context, additionalInfo = {}) {
-  console.error(`[${context}] Error:`, error);
+  logger.error(`[${context}] Error:`, error);
 
   if (Object.keys(additionalInfo).length > 0) {
-    console.error(`[${context}] Additional info:`, additionalInfo);
+    logger.error(`[${context}] Additional info:`, additionalInfo);
   }
 
   // Send to error tracking service in production
@@ -221,7 +224,7 @@ export async function retryOperation(operation, options = {}) {
       }
 
       // Log retry attempt
-      console.warn(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms for error:`, error.message);
+      logger.warn(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms for error:`, error.message);
 
       // Wait before retrying
       await new Promise(resolve => setTimeout(resolve, delay));

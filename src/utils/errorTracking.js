@@ -13,6 +13,9 @@ import React from 'react';
 import * as Sentry from '@sentry/react';
 import { config, isProduction, isLocal } from '../config/env';
 import { logError } from './logger';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('errorTracking');
 
 // Error tracking providers
 const providers = {
@@ -24,27 +27,21 @@ const providers = {
       // No initialization needed
     },
     captureException(error, context = {}) {
-      console.error('[ErrorTracking] Exception:', error);
-      if (Object.keys(context).length > 0) {
-        console.error('[ErrorTracking] Context:', context);
-      }
+      logger.error('Exception', { error, context });
     },
     captureMessage(message, level = 'error', context = {}) {
-      const logMethod = level === 'warning' ? console.warn : console.error;
-      logMethod(`[ErrorTracking] ${level.toUpperCase()}: ${message}`);
-      if (Object.keys(context).length > 0) {
-        logMethod('[ErrorTracking] Context:', context);
-      }
+      const logMethod = level === 'warning' ? logger.warn : logger.error;
+      logMethod(message, context);
     },
     setUser(user) {
-      console.log('[ErrorTracking] User set:', user?.id || 'anonymous');
+      logger.debug('User set', { userId: user?.id || 'anonymous' });
     },
     setContext(name, context) {
-      console.log(`[ErrorTracking] Context ${name}:`, context);
+      logger.debug('Context set', { name, context });
     },
     addBreadcrumb(breadcrumb) {
       if (!isProduction()) {
-        console.log('[ErrorTracking] Breadcrumb:', breadcrumb);
+        logger.debug('Breadcrumb', breadcrumb);
       }
     },
     startTransaction(name, op) {
@@ -137,10 +134,11 @@ const providers = {
           ],
         });
 
-        console.log('[ErrorTracking] Sentry initialized');
+        logger.info('Sentry initialized');
         return true;
       } catch (error) {
-        console.error('[ErrorTracking] Sentry initialization failed:', error);
+        // Keep console.warn here as fallback when logging itself might fail
+        console.warn('[ErrorTracking] Sentry initialization failed:', error);
         return false;
       }
     },
@@ -221,7 +219,8 @@ export function initErrorTracking() {
       activeProvider = providers.console;
     }
   } catch (error) {
-    console.error('[ErrorTracking] Failed to initialize:', error);
+    // Keep console.warn here as fallback when logging itself might fail
+    console.warn('[ErrorTracking] Failed to initialize:', error);
     activeProvider = providers.console;
   }
 

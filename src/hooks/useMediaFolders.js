@@ -9,6 +9,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabase';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useMediaFolders');
 
 /**
  * useMediaFolders hook
@@ -40,7 +43,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
       setFolders(data || []);
     } catch (err) {
-      console.error('Error fetching folders:', err);
+      logger.error('Error fetching folders:', err);
       setError(err.message);
 
       // Fallback to direct query if RPC fails
@@ -70,7 +73,7 @@ export function useMediaFolders({ parentId = null } = {}) {
           setError(null);
         }
       } catch (fallbackErr) {
-        console.error('Fallback query also failed:', fallbackErr);
+        logger.error('Fallback query also failed:', fallbackErr);
       }
     } finally {
       setIsLoading(false);
@@ -95,7 +98,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
       setFolderPath(data || []);
     } catch (err) {
-      console.error('Error fetching folder path:', err);
+      logger.error('Error fetching folder path:', err);
       // Fallback: just show current folder
       try {
         const { data: folder } = await supabase
@@ -108,7 +111,7 @@ export function useMediaFolders({ parentId = null } = {}) {
           setFolderPath([{ id: folder.id, name: folder.name, depth: 0 }]);
         }
       } catch (fallbackErr) {
-        console.error('Fallback path query failed:', fallbackErr);
+        logger.error('Fallback path query failed:', fallbackErr);
       }
     }
   }, [parentId]);
@@ -145,7 +148,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
         return data;
       } catch (err) {
-        console.error('Error creating folder:', err);
+        logger.error('Error creating folder:', err);
         throw err;
       }
     },
@@ -174,7 +177,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
         return data;
       } catch (err) {
-        console.error('Error renaming folder:', err);
+        logger.error('Error renaming folder:', err);
         throw err;
       }
     },
@@ -199,7 +202,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
         return true;
       } catch (err) {
-        console.error('Error deleting folder:', err);
+        logger.error('Error deleting folder:', err);
         throw err;
       }
     },
@@ -224,7 +227,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
         return data;
       } catch (err) {
-        console.error('Error moving folder:', err);
+        logger.error('Error moving folder:', err);
         throw err;
       }
     },
@@ -245,7 +248,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
       return data;
     } catch (err) {
-      console.error('Error moving media to folder:', err);
+      logger.error('Error moving media to folder:', err);
       throw err;
     }
   }, []);
@@ -264,7 +267,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
       return data;
     } catch (err) {
-      console.error('Error moving media to folder:', err);
+      logger.error('Error moving media to folder:', err);
       throw err;
     }
   }, []);
@@ -286,7 +289,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
       return data;
     } catch (err) {
-      console.error('Error reordering folder:', err);
+      logger.error('Error reordering folder:', err);
       throw err;
     }
   }, [fetchFolders]);
@@ -306,7 +309,7 @@ export function useMediaFolders({ parentId = null } = {}) {
 
       return data;
     } catch (err) {
-      console.error('Error fetching folder:', err);
+      logger.error('Error fetching folder:', err);
       throw err;
     }
   }, []);

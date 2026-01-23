@@ -6,6 +6,9 @@
  * @module hooks/useLayoutTemplates
  */
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useLayoutTemplates');
 import {
   fetchLayoutTemplates,
   fetchTemplateCategories,
@@ -86,7 +89,7 @@ export function useLayoutTemplates(initialFilters = {}) {
       setHasMore(result.hasMore);
       setPage(pageNum);
     } catch (err) {
-      console.error('Failed to fetch templates:', err);
+      logger.error('Failed to fetch templates:', err);
       setError(err.message || 'Failed to load templates');
     } finally {
       setIsLoading(false);
@@ -102,7 +105,7 @@ export function useLayoutTemplates(initialFilters = {}) {
       const cats = await fetchTemplateCategories();
       setCategories(['All', ...cats]);
     } catch (err) {
-      console.error('Failed to fetch categories:', err);
+      logger.error('Failed to fetch categories:', err);
     }
   }, []);
 

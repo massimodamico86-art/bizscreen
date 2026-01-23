@@ -8,6 +8,9 @@
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useMedia');
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -134,7 +137,7 @@ export function useMedia(initialFilters = {}) {
       setHasMore((data?.length || 0) === DEFAULT_PAGE_SIZE);
       pageRef.current = page;
     } catch (err) {
-      console.error('Error fetching media assets:', err);
+      logger.error('Error fetching media assets:', err);
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -222,7 +225,7 @@ export function useMedia(initialFilters = {}) {
 
       return data;
     } catch (err) {
-      console.error('Error creating media asset:', err);
+      logger.error('Error creating media asset:', err);
       throw err;
     }
   }, []);
@@ -256,7 +259,7 @@ export function useMedia(initialFilters = {}) {
 
       return data;
     } catch (err) {
-      console.error('Error updating media asset:', err);
+      logger.error('Error updating media asset:', err);
       throw err;
     }
   }, []);
@@ -278,7 +281,7 @@ export function useMedia(initialFilters = {}) {
 
       return true;
     } catch (err) {
-      console.error('Error deleting media asset:', err);
+      logger.error('Error deleting media asset:', err);
       throw err;
     }
   }, []);
@@ -301,7 +304,7 @@ export function useMedia(initialFilters = {}) {
 
       return true;
     } catch (err) {
-      console.error('Error permanently deleting media asset:', err);
+      logger.error('Error permanently deleting media asset:', err);
       throw err;
     }
   }, []);
@@ -337,7 +340,7 @@ export function useMedia(initialFilters = {}) {
 
       return clonedAsset;
     } catch (err) {
-      console.error('Error cloning media asset:', err);
+      logger.error('Error cloning media asset:', err);
       throw err;
     }
   }, []);
@@ -391,7 +394,7 @@ export function useMedia(initialFilters = {}) {
 
       return { deleted: ids.length };
     } catch (err) {
-      console.error('Error bulk deleting media assets:', err);
+      logger.error('Error bulk deleting media assets:', err);
       throw err;
     }
   }, [selectedIds, clearSelection]);

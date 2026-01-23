@@ -9,6 +9,9 @@
  */
 
 import { initErrorTracking, setUser as setErrorUser, setContext } from './errorTracking';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('observability');
 import { initWebVitals } from '../services/webVitalsService';
 import { initLogging, setLogContext, log } from '../services/loggingService';
 import { startHealthMonitoring } from '../services/healthService';
@@ -51,7 +54,7 @@ export function initObservability() {
       production: isProduction(),
     });
   } catch (error) {
-    console.error('[Observability] Initialization failed:', error);
+    logger.error('[Observability] Initialization failed:', error);
   }
 }
 

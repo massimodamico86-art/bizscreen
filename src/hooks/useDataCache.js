@@ -7,6 +7,9 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useDataCache');
 
 // In-memory cache store (persists across component renders)
 const cache = new Map();
@@ -309,7 +312,7 @@ export async function prefetch(key, fetcher, ttlMs = DEFAULT_TTL_MS) {
       isRefreshing: false,
     });
   } catch (err) {
-    console.warn(`Prefetch failed for ${key}:`, err.message);
+    logger.warn(`Prefetch failed for ${key}:`, err.message);
   }
 }
 

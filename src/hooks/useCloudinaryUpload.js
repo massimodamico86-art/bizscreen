@@ -1,4 +1,7 @@
 import { useCallback } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useCloudinaryUpload');
 
 /**
  * Custom hook for Cloudinary image uploads
@@ -32,7 +35,7 @@ export const useCloudinaryUpload = ({
     // Check if Cloudinary is loaded
     if (!window.cloudinary) {
       const error = new Error('Cloudinary Upload Widget not loaded. Make sure the script is included in index.html');
-      console.error(error);
+      logger.error(error);
       onError?.(error);
       return;
     }
@@ -40,7 +43,7 @@ export const useCloudinaryUpload = ({
     // Check if credentials are configured
     if (!cloudName || !uploadPreset) {
       const error = new Error('Cloudinary credentials not configured. Please add VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET to your .env file');
-      console.error(error);
+      logger.error(error);
       onError?.(error);
       return;
     }
@@ -126,7 +129,7 @@ export const useCloudinaryUpload = ({
       widgetConfig,
       (error, result) => {
         if (error) {
-          console.error('Cloudinary upload error:', error);
+          logger.error('Cloudinary upload error:', error);
           onError?.(error);
           return;
         }
@@ -154,16 +157,16 @@ export const useCloudinaryUpload = ({
             transformedUrl: info.eager?.[0]?.secure_url || info.secure_url
           };
 
-          console.log('File uploaded successfully:', uploadedFile);
+          logger.debug('File uploaded successfully:', uploadedFile);
           onSuccess?.(uploadedFile);
         }
 
         if (result.event === 'close') {
-          console.log('Upload widget closed');
+          logger.debug('Upload widget closed');
         }
 
         if (result.event === 'abort') {
-          console.log('Upload aborted');
+          logger.debug('Upload aborted');
         }
       }
     );

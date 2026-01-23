@@ -6,6 +6,9 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('usePlayerMetrics');
 import { supabase } from '../supabase';
 
 // Latency buckets matching database enum
@@ -174,7 +177,7 @@ export function usePlayerMetrics({ deviceId, tenantId, enabled = true }) {
         packetLossPercent: Math.round(packetLoss * 100) / 100
       }));
     } catch (error) {
-      console.warn('Failed to report player metrics:', error.message);
+      logger.warn('Failed to report player metrics:', error.message);
     } finally {
       setIsReporting(false);
     }
@@ -318,7 +321,7 @@ export function usePlayerMetricsHistory({ deviceId, hours = 24 }) {
           setData(null);
         }
       } catch (err) {
-        console.error('Error fetching player metrics history:', err);
+        logger.error('Error fetching player metrics history:', err);
         setError(err.message);
       } finally {
         setLoading(false);

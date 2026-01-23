@@ -1,5 +1,8 @@
 import DOMPurify from 'isomorphic-dompurify';
+import { createScopedLogger } from '../services/loggingService.js';
 import { logSanitizationEvent } from '../services/securityService.js';
+
+const logger = createScopedLogger('sanitize');
 
 /**
  * Default sanitization configuration for DOMPurify.
@@ -34,7 +37,7 @@ let getCurrentUserFn = null;
  */
 export function initSanitizationLogging(getCurrentUser) {
   if (loggingInitialized) {
-    console.warn('Sanitization logging already initialized');
+    logger.warn('Sanitization logging already initialized');
     return;
   }
 

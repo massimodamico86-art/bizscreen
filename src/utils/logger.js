@@ -1,5 +1,10 @@
 /**
- * Frontend Logger
+ * Frontend Logger (DEPRECATED)
+ *
+ * TODO(04-06): Remove this file - replaced by loggingService.js
+ * This old logger is being phased out. New code should use:
+ * - loggingService.js: createScopedLogger() for non-React code
+ * - hooks/useLogger.js: useLogger() hook for React components
  *
  * Provides structured logging for the frontend with:
  * - Log levels (debug, info, warn, error)

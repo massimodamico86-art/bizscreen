@@ -8,6 +8,9 @@
  */
 
 import { useState, useEffect, useCallback, useMemo, createContext, useContext } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useFeatureFlag');
 import {
   isFeatureEnabled as checkFeatureEnabled,
   isFeatureEnabledSync,
@@ -69,7 +72,7 @@ export function FeatureFlagProvider({ children, plan = PlanSlug.FREE, tenantId =
 
       setTenantOverrides(overrides);
     } catch (err) {
-      console.error('Failed to load feature flags:', err);
+      logger.error('Failed to load feature flags:', err);
       setError(err);
     } finally {
       setIsLoading(false);
@@ -250,7 +253,7 @@ export function useAsyncFeatureFlag(flagKey, defaultValue = false) {
           setIsEnabled(result);
         }
       } catch (err) {
-        console.error('Error checking feature flag:', err);
+        logger.error('Error checking feature flag:', err);
         if (mounted) {
           setIsEnabled(defaultValue);
         }

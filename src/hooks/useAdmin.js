@@ -16,6 +16,9 @@ import {
   disableUser,
   rebootScreen,
 } from '../services/adminService';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('useAdmin');
 
 // ============================================================================
 // TENANT LIST HOOK
@@ -64,7 +67,7 @@ export function useTenantList(initialOptions = {}) {
       setTenants(result.tenants);
       setPagination(result.pagination);
     } catch (err) {
-      console.error('Failed to fetch tenants:', err);
+      logger.error('Failed to fetch tenants:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -129,7 +132,7 @@ export function useTenantDetail(tenantId) {
       const result = await getTenantById(tenantId);
       setTenant(result);
     } catch (err) {
-      console.error('Failed to fetch tenant:', err);
+      logger.error('Failed to fetch tenant:', err);
       setError(err.message);
     } finally {
       setLoading(false);
