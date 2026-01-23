@@ -426,17 +426,17 @@ export function setConnectionStatus(status) {
 // ============================================
 
 /**
- * Calculate exponential backoff delay
- * @param {number} attempt - Retry attempt number (0-based)
- * @param {number} baseDelay - Base delay in ms (default 1000)
- * @param {number} maxDelay - Maximum delay in ms (default 60000)
- * @returns {number} Delay in milliseconds
+ * Calculates exponential backoff delay with full jitter
+ * @param {number} attempt - Retry attempt number (0-indexed)
+ * @param {number} baseDelay - Base delay in milliseconds (default: 1000)
+ * @param {number} maxDelay - Maximum delay cap (default: 60000)
+ * @returns {number} Delay in milliseconds with full jitter (0-100% of calculated delay)
  */
 export function calculateBackoff(attempt, baseDelay = 1000, maxDelay = 60000) {
   const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
-  // Add jitter (±20%)
-  const jitter = delay * 0.2 * (Math.random() - 0.5);
-  return Math.round(delay + jitter);
+  // Use full jitter (0-100% of delay) to prevent thundering herd
+  const jitter = delay * Math.random();
+  return Math.round(jitter);
 }
 
 /**
