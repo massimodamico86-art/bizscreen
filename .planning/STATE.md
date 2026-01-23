@@ -10,17 +10,21 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 4 of 12 (Logging Migration)
-Plan: 1 of 2 in phase 4 complete
+Plan: 2 of 6 in phase 4 complete
 Status: In Progress
-Last activity: 2026-01-23 - Completed 04-01-PLAN.md (Logging Infrastructure Enhancement)
+Last activity: 2026-01-23 - Completed 04-02-PLAN.md (Build Enforcement)
 
-Progress: [######------] 29% (3.5/12 phases complete)
+Progress: [######------] 30% (3.6/12 phases complete)
 
 ## Phase 4 Progress Summary
 
 **Logging Migration Plans:**
 - [x] 04-01: Logging infrastructure enhancement (8125b8c, 61dd802, 7bff91d)
-- [ ] 04-02: Console.log migration (pending)
+- [x] 04-02: Build enforcement (22a189b, 7bff91d)
+- [ ] 04-03: Console audit (pending)
+- [ ] 04-04: Incremental migration (pending)
+- [ ] 04-05: Service worker migration (pending)
+- [ ] 04-06: Final cleanup (pending)
 
 **Logging Infrastructure Enhancement:**
 - PII redaction utilities (email, phone, credit card, SSN detection)
@@ -28,6 +32,13 @@ Progress: [######------] 29% (3.5/12 phases complete)
 - useLogger React hook for component-scoped logging
 - loggingService enhanced with automatic PII redaction
 - All log messages, data objects, and error messages now redacted
+
+**Build Enforcement:**
+- ESLint flat config with no-console rule (warn level)
+- console.warn and console.error allowed for graceful degradation
+- Test files, config files, and scripts exempt from no-console rule
+- Terser configured for production console stripping
+- Production builds automatically remove console.log from application code
 
 ## Phase 3 Completion Summary
 
@@ -114,9 +125,9 @@ Progress: [######------] 29% (3.5/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
-- Average duration: 5.3 min
-- Total execution time: 79 min (1.3 hours)
+- Total plans completed: 16
+- Average duration: 5.1 min
+- Total execution time: 82 min (1.4 hours)
 
 **By Phase:**
 
@@ -125,11 +136,11 @@ Progress: [######------] 29% (3.5/12 phases complete)
 | 01-testing-infrastructure | 5 | 50 min | 10 min |
 | 02-xss-prevention | 5 | 16 min | 3.2 min |
 | 03-auth-hardening | 4 | 11 min | 2.8 min |
-| 04-logging-migration | 1 | 2 min | 2 min |
+| 04-logging-migration | 2 | 5 min | 2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (1 min), 03-03 (2 min), 03-04 (3 min), 04-01 (2 min)
-- Trend: Very fast (infrastructure enhancements)
+- Last 5 plans: 03-03 (2 min), 03-04 (3 min), 04-01 (2 min), 04-02 (3 min)
+- Trend: Very fast (infrastructure configuration)
 
 *Updated after each plan completion*
 
@@ -180,6 +191,11 @@ Recent decisions affecting current work:
 - [04-01]: WeakSet prevents infinite recursion on circular references
 - [04-01]: Error objects serialized with name, message, and first 5 stack lines
 - [04-01]: useLogger hook uses useMemo for stable logger reference across re-renders
+- [04-02]: ESLint no-console at warn level initially (will become error after migration in Plan 06)
+- [04-02]: console.warn and console.error allowed for graceful degradation
+- [04-02]: Test files, config files, and scripts exempt from no-console rule
+- [04-02]: Terser used instead of esbuild for drop_console support
+- [04-02]: Service worker console calls preserved (not bundled through Vite)
 
 ### Pending Todos
 
@@ -195,9 +211,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 04-01-PLAN.md (Logging Infrastructure Enhancement)
+Stopped at: Completed 04-02-PLAN.md (Build Enforcement)
 Resume file: None
 
 ## Next Steps
 
-04-02-PLAN.md: Console.log migration to structured logging
+04-03-PLAN.md: Console audit and migration planning
