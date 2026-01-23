@@ -5,16 +5,31 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 8 - Ready to begin
+**Current focus:** Phase 8 - Page Refactoring (in progress)
 
 ## Current Position
 
-Phase: 7 of 12 (Player Refactoring) - COMPLETE (with gap closure)
-Plan: 4 of 4 in phase 7 - COMPLETE
-Status: Phase complete (all gaps closed)
-Last activity: 2026-01-23 - Completed 07-04 (Gap closure - playbackTrackingService fix)
+Phase: 8 of 12 (Page Refactoring) - IN PROGRESS
+Plan: 2 of 5 in phase 8 - COMPLETE
+Status: Phase in progress
+Last activity: 2026-01-23 - Completed 08-02 (CampaignEditor hook extraction)
 
-Progress: [##############░░░░░░░░░░] 58% (7/12 phases complete)
+Progress: [###############░░░░░░░░░] 60% (7.4/12 phases complete)
+
+## Phase 8 Progress Summary
+
+**Page Refactoring Plans:**
+- [ ] 08-01: ScreensPage refactoring (pending)
+- [x] 08-02: CampaignEditorPage hook extraction (62ef62d, d8585a6)
+- [ ] 08-03: PlaylistEditorPage refactoring (pending)
+- [ ] 08-04: MediaLibraryPage refactoring (pending)
+- [ ] 08-05: SettingsPage refactoring (pending)
+
+**CampaignEditor Hook Extraction (08-02):**
+- Created useCampaignEditor hook (467 lines)
+- Campaign state, picker data, approval workflow, preview links
+- CampaignEditorPage reduced by 338 lines (1392 -> 1054, 24% reduction)
+- Note: 600-line target not met; would require modal extraction
 
 ## Phase 7 Completion Summary
 
@@ -384,6 +399,9 @@ Recent decisions affecting current work:
 - [07-03]: useKioskMode handles fullscreen, password validation, exit dialog state
 - [07-03]: usePlayerPlayback manages timer, video ref, analytics tracking
 - [07-03]: localStorage mock pattern for hook tests matches Player.test.jsx approach
+- [08-02]: Hook returns all state setters for full page control flexibility
+- [08-02]: useCallback wraps all handlers to prevent unnecessary re-renders
+- [08-02]: Error handling throws to allow page-level navigation on failures
 
 ### Pending Todos
 
@@ -405,23 +423,21 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 07-04-PLAN.md (Gap closure - playbackTrackingService fix) - Phase 7 COMPLETE
+Stopped at: Completed 08-02-PLAN.md (CampaignEditor hook extraction)
 Resume file: None
 
 ## Next Steps
 
-**Phase 7 Complete with Gap Closure!** Ready for Phase 8.
+**Phase 8 In Progress!** Continue with remaining page refactoring plans.
 
-**Phase 7: Player Refactoring** — COMPLETE
-- [x] 07-01: Extract widgets + fix PLR-01 (47fcba4, 2c177a5)
-- [x] 07-02: Extract custom hooks (8bf0aee, 293c991, 5553176)
-- [x] 07-03: Final hooks + tests (5ba3221, ab3f9cc, cb6d88e)
-- [x] 07-04: Gap closure - playbackTrackingService fix (d0ab9f0)
+**Phase 8: Page Refactoring** — IN PROGRESS
+- [ ] 08-01: ScreensPage refactoring
+- [x] 08-02: CampaignEditorPage hook extraction (62ef62d, d8585a6)
+- [ ] 08-03: PlaylistEditorPage refactoring
+- [ ] 08-04: MediaLibraryPage refactoring
+- [ ] 08-05: SettingsPage refactoring
 
-**Results:**
-- Player.jsx reduced by 720 lines (21%)
-- 5 custom hooks extracted and tested
-- 4 widget components extracted
-- 29 new hook unit tests
-- PLR-01 thundering herd issue fixed
-- playbackTrackingService ReferenceError bugs fixed (10 test failures resolved)
+**08-02 Results:**
+- useCampaignEditor hook created (467 lines)
+- CampaignEditorPage reduced by 24% (1392 -> 1054 lines)
+- Hook extraction pattern established for remaining plans
