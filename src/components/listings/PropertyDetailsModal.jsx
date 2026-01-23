@@ -19,7 +19,9 @@ import { getWeather } from '../../services/weatherService';
 import { useMediaPlayback } from '../../hooks/useMediaPlayback';
 import { migrateToUnifiedMedia } from '../../utils/mediaMigration';
 import { DEFAULT_UNIFIED_MEDIA_STATE } from '../../types/media';
+import { useLogger } from '../../hooks/useLogger.js';
 export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, listings }) => {
+  const logger = useLogger('PropertyDetailsModal');
   // Migrate old format to unified media on init
   const [formData, setFormData] = useState(() => {
     const migrated = { ...listing };
@@ -51,7 +53,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
           const weather = await getWeather(formData.weatherCity, units);
           setWeatherData(weather);
         } catch (err) {
-          console.error('Failed to fetch weather:', err);
+          logger.error('Failed to fetch weather', { error: err, city: formData.weatherCity, unit: formData.weatherUnit });
           setWeatherData(null);
         }
       };

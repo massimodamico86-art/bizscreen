@@ -9,6 +9,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Heart, MessageCircle, Share2, Star } from 'lucide-react';
 import { supabase } from '../../supabase';
+import { loggingService } from '../../services/loggingService.js';
 
 /**
  * Fetch cached posts for player (no API calls, cached data only)
@@ -49,7 +50,7 @@ async function fetchCachedPosts(widgetId, accountId, maxItems = 6) {
 
     return { posts: [], settings: null };
   } catch (error) {
-    console.error('[SocialFeedRenderer] Error fetching cached posts:', error);
+    loggingService.error('[SocialFeedRenderer] Error fetching cached posts', { error, widgetId, accountId });
     return { posts: [], settings: null };
   }
 }
@@ -95,7 +96,7 @@ export default function SocialFeedRenderer({
         setPosts(result.posts);
         setSettings(result.settings);
       } catch (error) {
-        console.error('[SocialFeedRenderer] Error:', error);
+        loggingService.error('[SocialFeedRenderer] Error loading posts', { error, widgetId, accountId });
         onError?.(error);
       } finally {
         setLoading(false);

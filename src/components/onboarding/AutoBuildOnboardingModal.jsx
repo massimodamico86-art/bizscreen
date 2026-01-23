@@ -32,6 +32,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { completeOnboarding, BUSINESS_TYPES } from '../../services/autoBuildService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Icon mapping for business types
 const BUSINESS_ICONS = {
@@ -71,6 +72,7 @@ const AutoBuildOnboardingModal = ({
   user,
   userProfile
 }) => {
+  const logger = useLogger('AutoBuildOnboardingModal');
   // Wizard state
   const [step, setStep] = useState(1); // 1: business type, 2: brand (optional), 3: generating
   const [selectedType, setSelectedType] = useState(null);
@@ -122,7 +124,7 @@ const AutoBuildOnboardingModal = ({
       setResult(result);
       setStep(4); // Success step
     } catch (err) {
-      console.error('Autobuild failed:', err);
+      logger.error('Autobuild failed', { error: err, businessType: selectedType, tenantId: userProfile?.id });
       setError(err.message || 'Failed to generate your TV scene. Please try again.');
       setStep(2); // Go back to brand step to retry
     } finally {

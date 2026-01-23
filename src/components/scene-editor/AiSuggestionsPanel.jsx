@@ -34,6 +34,7 @@ import {
   highlightPromo,
   getAiPolishActions,
 } from '../../services/sceneAiService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 export default function AiSuggestionsPanel({
   businessType,
@@ -43,6 +44,7 @@ export default function AiSuggestionsPanel({
   brandTheme,
   onClose,
 }) {
+  const logger = useLogger('AiSuggestionsPanel');
   const [activeTab, setActiveTab] = useState('presets'); // 'presets' | 'actions' | 'improve' | 'polish'
   const [loading, setLoading] = useState(false);
 
@@ -388,7 +390,7 @@ function PolishSlidePanel({ currentSlide, onPolish, brandTheme, businessType, se
         onPolish(newDesign);
       }
     } catch (err) {
-      console.error('Polish slide error:', err);
+      logger.error('Polish slide error', { error: err, action: polishAction.id, slideId: currentSlide?.id });
     } finally {
       setLoading(false);
     }

@@ -6,8 +6,10 @@ import { getConfig } from '../../getConfig';
 import { getWeather } from '../../services/weatherService';
 import { useMediaPlayback } from '../../hooks/useMediaPlayback';
 import { DEFAULT_UNIFIED_MEDIA_STATE } from '../../types/media';
+import { useLogger } from '../../hooks/useLogger.js';
 
 export const TVPreviewModal = ({ listing, onClose }) => {
+  const logger = useLogger('TVPreviewModal');
   const layout = listing.tvLayout || 'layout1';
   const [weatherData, setWeatherData] = useState(null);
 
@@ -24,7 +26,7 @@ export const TVPreviewModal = ({ listing, onClose }) => {
           const weather = await getWeather(listing.weatherCity, units);
           setWeatherData(weather);
         } catch (err) {
-          console.error('Failed to fetch weather:', err);
+          logger.error('Failed to fetch weather', { error: err, city: listing.weatherCity, unit: listing.weatherUnit });
           setWeatherData(null);
         }
       };
