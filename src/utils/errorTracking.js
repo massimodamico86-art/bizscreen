@@ -12,7 +12,6 @@
 import React from 'react';
 import * as Sentry from '@sentry/react';
 import { config, isProduction, isLocal } from '../config/env';
-import { logError } from './logger';
 import { createScopedLogger } from '../services/loggingService.js';
 
 const logger = createScopedLogger('errorTracking');
@@ -273,7 +272,14 @@ function getProvider() {
  */
 export function captureException(error, context = {}) {
   // Also log to our logger
-  logError(error, context);
+  logger.error('Exception captured', {
+    error: {
+      message: error.message || String(error),
+      name: error.name || 'Error',
+      stack: error.stack
+    },
+    ...context
+  });
 
   // Send to error tracking provider
   getProvider().captureException(error, context);

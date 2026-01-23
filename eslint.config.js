@@ -27,8 +27,8 @@ export default [
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
-      // Console rule - warn for now (will become error after migration)
-      'no-console': ['warn', {
+      // Console rule - error level (migration complete)
+      'no-console': ['error', {
         allow: ['warn', 'error']
       }],
     },
