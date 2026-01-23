@@ -5,6 +5,7 @@
  */
 
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
+import { createScopedLogger } from '../services/loggingService.js';
 import {
   DEFAULT_LOCALE,
   FALLBACK_LOCALE,
@@ -15,6 +16,8 @@ import {
   NUMBER_FORMATS,
   CURRENCY_FORMATS,
 } from './i18nConfig';
+
+const logger = createScopedLogger('I18n');
 
 // Import locale files
 import enMessages from './locales/en.json';
@@ -137,7 +140,10 @@ export function I18nProvider({ children, initialLocale }) {
    */
   const setLocale = useCallback((newLocale) => {
     if (!isLocaleSupported(newLocale)) {
-      console.warn(`Locale "${newLocale}" is not supported. Using "${DEFAULT_LOCALE}".`);
+      logger.warn('Unsupported locale requested', {
+        requestedLocale: newLocale,
+        fallbackLocale: DEFAULT_LOCALE
+      });
       newLocale = DEFAULT_LOCALE;
     }
 

@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { logError } from '../utils/logger';
+import { handleReactError } from '../utils/errorTracking.js';
 
 export class ErrorBoundary extends Component {
   constructor(props) {
@@ -12,12 +12,8 @@ export class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log to centralized logger (will report to backend in production)
-    logError(error, {
-      componentStack: errorInfo?.componentStack,
-      source: 'ErrorBoundary',
-      severe: true
-    });
+    // Log to centralized error tracking (will report to backend in production)
+    handleReactError(error, errorInfo);
   }
 
   render() {

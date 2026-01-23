@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabase';
-import { createLogger } from '../utils/logger';
+import { createScopedLogger } from '../services/loggingService.js';
 import { startTrial } from '../services/billingService';
 
-const log = createLogger('AuthContext');
+const log = createScopedLogger('AuthContext');
 
 // Auth context for user authentication and profile management
 const AuthContext = createContext({});

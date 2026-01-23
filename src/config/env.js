@@ -5,6 +5,10 @@
  * Distinguishes between local, staging, and production environments.
  */
 
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('env');
+
 // Environment types
 export const ENV_LOCAL = 'local';
 export const ENV_STAGING = 'staging';
@@ -222,10 +226,14 @@ export function initializeEnv() {
   const config = getConfig();
 
   if (config.isLocal) {
-    console.log(`[Config] Environment: ${config.env}`);
-    console.log(`[Config] Supabase URL: ${config.supabaseUrl}`);
+    logger.info('Environment initialized', {
+      env: config.env,
+      supabaseUrl: config.supabaseUrl
+    });
     if (config.validation.warnings.length > 0) {
-      console.warn('[Config] Warnings:', config.validation.warnings);
+      logger.warn('Configuration warnings', {
+        warnings: config.validation.warnings
+      });
     }
   }
 
