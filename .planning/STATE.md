@@ -5,23 +5,31 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 7 Player Refactoring - In Progress
+**Current focus:** Phase 8 - Ready to begin
 
 ## Current Position
 
-Phase: 7 of 12 (Player Refactoring)
-Plan: 2 of 3 in phase 7
-Status: In Progress
-Last activity: 2026-01-23 - Completed 07-02 (Custom hooks extraction)
+Phase: 7 of 12 (Player Refactoring) - COMPLETE
+Plan: 3 of 3 in phase 7 - COMPLETE
+Status: Phase complete
+Last activity: 2026-01-23 - Completed 07-03 (Final hooks + tests)
 
-Progress: [#############░░░░░░░░░░░] 56% (6.7/12 phases complete)
+Progress: [##############░░░░░░░░░░] 58% (7/12 phases complete)
 
-## Phase 7 Progress Summary
+## Phase 7 Completion Summary
 
 **Player Refactoring Plans:**
 - [x] 07-01: Extract widgets + fix PLR-01 (47fcba4, 2c177a5)
 - [x] 07-02: Extract custom hooks (8bf0aee, 293c991, 5553176)
-- [ ] 07-03: Split Player.jsx into focused components
+- [x] 07-03: Final hooks + tests (5ba3221, ab3f9cc, cb6d88e)
+
+**Final Hooks + Tests (07-03):**
+- Created useKioskMode hook (135 lines) - kiosk state, fullscreen, password exit
+- Created usePlayerPlayback hook (125 lines) - timer, video ref, analytics
+- Updated ViewPage to use all 5 hooks
+- Created Player.hooks.test.jsx with 29 tests
+- Player.jsx reduced by 120 lines (2895 -> 2775)
+- All 42 Player tests pass (13 original + 29 new)
 
 **Custom Hooks Extraction (07-02):**
 - Created usePlayerContent hook (356 lines) - content state, loading, polling, offline fallback
@@ -29,17 +37,18 @@ Progress: [#############░░░░░░░░░░░] 56% (6.7/12 phases co
 - Created usePlayerCommands hook (104 lines) - reboot, reload, clear_cache, reset
 - Barrel export at src/player/hooks/index.js
 - Player.jsx reduced by 293 lines (3188 -> 2895)
-- All 73 Player tests pass
 
 **Widget Extraction + PLR-01 Fix (07-01):**
 - Extracted ClockWidget, DateWidget, WeatherWidget, QRCodeWidget to src/player/components/widgets/
 - PLR-01 gap fixed: Removed getRetryDelay (0-25% jitter), now uses calculateBackoff (0-100% full jitter)
 - Player.jsx reduced by 307 lines (3495 -> 3188)
 - SceneWidgetRenderer simplified to ~30 lines (was ~330 lines)
-- All 60 Player tests pass
 
-**Phase 7 Cumulative Progress:**
-- Player.jsx: 3495 -> 2895 lines (-600 lines, 17% reduction)
+**Phase 7 Final Results:**
+- Player.jsx: 3495 -> 2775 lines (-720 lines, 21% reduction)
+- 5 custom hooks extracted and tested (29 new tests)
+- 4 widget components extracted
+- PLR-01 thundering herd issue fixed
 - New directories: src/player/components/widgets/, src/player/hooks/
 
 ## Phase 6 Progress Summary
@@ -240,9 +249,9 @@ Progress: [#############░░░░░░░░░░░] 56% (6.7/12 phases co
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 30
+- Total plans completed: 31
 - Average duration: 5.6 min
-- Total execution time: 169 min (2.8 hours)
+- Total execution time: 175 min (2.9 hours)
 
 **By Phase:**
 
@@ -254,11 +263,12 @@ Progress: [#############░░░░░░░░░░░] 56% (6.7/12 phases co
 | 04-logging-migration | 6 | 62 min | 10.3 min |
 | 05-critical-fixes | 2 | 11 min | 5.5 min |
 | 06-player-reliability | 2 | 8 min | 4 min |
-| 07-player-refactoring | 2 | 11 min | 5.5 min |
+| 07-player-refactoring | 3 | 17 min | 5.7 min |
 
 **Phase 7 Plan Breakdown:**
 - 07-01: 5 min (widget extraction + PLR-01 fix)
 - 07-02: 6 min (custom hooks extraction)
+- 07-03: 6 min (final hooks + tests)
 
 **Phase 6 Plan Breakdown:**
 - 06-01: 3 min (retry backoff + error logging)
@@ -277,8 +287,8 @@ Progress: [#############░░░░░░░░░░░] 56% (6.7/12 phases co
 - 04-06: 6.4 min (final cleanup, tests)
 
 **Recent Trend:**
-- Last 5 plans: 06-01 (3 min), 06-02 (5 min), 07-01 (5 min), 07-02 (6 min)
-- Trend: Consistent 3-6 min per plan for focused extraction/fix tasks
+- Last 5 plans: 06-02 (5 min), 07-01 (5 min), 07-02 (6 min), 07-03 (6 min)
+- Trend: Consistent 5-6 min per plan for focused extraction/fix tasks
 
 *Updated after each plan completion*
 
@@ -364,6 +374,9 @@ Recent decisions affecting current work:
 - [07-02]: handleAdvanceToNext wrapper in ViewPage for analytics.endPlaybackEvent() before advancing
 - [07-02]: advanceToNextRef pattern for stuck detection effect to access latest callback
 - [07-02]: Keep kiosk mode, stuck detection, and analytics tracking in ViewPage (UI-specific)
+- [07-03]: useKioskMode handles fullscreen, password validation, exit dialog state
+- [07-03]: usePlayerPlayback manages timer, video ref, analytics tracking
+- [07-03]: localStorage mock pattern for hook tests matches Player.test.jsx approach
 
 ### Pending Todos
 
@@ -384,14 +397,21 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 07-02-PLAN.md (Custom hooks extraction)
+Stopped at: Completed 07-03-PLAN.md (Final hooks + tests) - Phase 7 COMPLETE
 Resume file: None
 
 ## Next Steps
 
-**Phase 7 In Progress!** Continue with 07-03.
+**Phase 7 Complete!** Ready for Phase 8.
 
-**Phase 7: Player Refactoring** — Split Player.jsx into focused components
-- [x] 07-01: Extract widgets + fix PLR-01 (complete)
-- [x] 07-02: Extract custom hooks (complete)
-- [ ] 07-03: Split Player.jsx into focused components (SceneRenderer, PlayerControls, etc.)
+**Phase 7: Player Refactoring** — COMPLETE
+- [x] 07-01: Extract widgets + fix PLR-01 (47fcba4, 2c177a5)
+- [x] 07-02: Extract custom hooks (8bf0aee, 293c991, 5553176)
+- [x] 07-03: Final hooks + tests (5ba3221, ab3f9cc, cb6d88e)
+
+**Results:**
+- Player.jsx reduced by 720 lines (21%)
+- 5 custom hooks extracted and tested
+- 4 widget components extracted
+- 29 new hook unit tests
+- PLR-01 thundering herd issue fixed
