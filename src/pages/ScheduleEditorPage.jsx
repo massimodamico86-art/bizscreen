@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   ArrowLeft,
   Plus,
@@ -13,7 +13,8 @@ import {
   RefreshCw,
   Power,
   Monitor,
-  Info
+  Info,
+  Users
 } from 'lucide-react';
 import {
   fetchScheduleWithEntriesResolved,
@@ -21,11 +22,17 @@ import {
   createScheduleEntry,
   updateScheduleEntry,
   deleteScheduleEntry,
+  checkEntryConflicts,
+  updateScheduleFillerContent,
+  clearScheduleFillerContent,
+  getAssignedDevicesAndGroups,
   TARGET_TYPES
 } from '../services/scheduleService';
 import { supabase } from '../supabase';
 import { Button, Card } from '../design-system';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
+import { FillerContentPicker, ConflictWarning, WeekPreview, AssignScreensModal } from '../components/schedules';
 
 // Yodeck-style repeat options
 const REPEAT_OPTIONS = [
@@ -103,6 +110,7 @@ for (let h = 8; h <= 19; h++) {
 
 const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
   const { t } = useTranslation();
+  const logger = useLogger('ScheduleEditorPage');
   const [schedule, setSchedule] = useState(null);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -138,6 +146,22 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
     repeatUntilCount: 10
   });
 
+  // Conflict detection state (US-144)
+  const [conflicts, setConflicts] = useState([]);
+  const [isCheckingConflicts, setIsCheckingConflicts] = useState(false);
+
+  // Filler content state (US-145)
+  const [fillerType, setFillerType] = useState(null);
+  const [fillerId, setFillerId] = useState(null);
+  const [fillerName, setFillerName] = useState(null);
+
+  // Assign screens modal state (US-147)
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [assignedCount, setAssignedCount] = useState({ devices: 0, groups: 0 });
+
+  // Week preview refresh key (US-146)
+  const [weekPreviewKey, setWeekPreviewKey] = useState(0);
+
   const weekDates = useMemo(() => getWeekDates(currentDate), [currentDate]);
 
   useEffect(() => {
@@ -154,8 +178,37 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       const data = await fetchScheduleWithEntriesResolved(scheduleId);
       setSchedule(data);
       setEntries(data.schedule_entries || []);
+
+      // Load filler content info (US-145)
+      setFillerType(data.filler_content_type || null);
+      setFillerId(data.filler_content_id || null);
+
+      // Load filler name if set
+      if (data.filler_content_type && data.filler_content_id) {
+        const table = data.filler_content_type === 'playlist' ? 'playlists' :
+                      data.filler_content_type === 'layout' ? 'layouts' : 'scenes';
+        const { data: fillerData } = await supabase
+          .from(table)
+          .select('name')
+          .eq('id', data.filler_content_id)
+          .single();
+        setFillerName(fillerData?.name || null);
+      } else {
+        setFillerName(null);
+      }
+
+      // Load assigned counts (US-147)
+      try {
+        const assigned = await getAssignedDevicesAndGroups(scheduleId);
+        setAssignedCount({
+          devices: assigned.devices?.length || 0,
+          groups: assigned.groups?.length || 0
+        });
+      } catch (assignErr) {
+        logger.warn('Failed to load assigned counts', { scheduleId, error: assignErr });
+      }
     } catch (err) {
-      console.error('Error loading schedule:', err);
+      logger.error('Failed to load schedule', { scheduleId, error: err });
       setError(err.message || 'Failed to load schedule');
     } finally {
       setLoading(false);
@@ -173,6 +226,84 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
     setScenes(scenesResult.data || []);
   };
 
+  // Check for conflicts when event form changes (US-144)
+  const checkConflicts = useCallback(async () => {
+    if (!scheduleId || !showEventModal) return;
+
+    setIsCheckingConflicts(true);
+    try {
+      // Convert repeat type to days_of_week
+      let daysOfWeek = null;
+      if (eventForm.repeat === 'weekday') {
+        daysOfWeek = [1, 2, 3, 4, 5];
+      } else if (eventForm.repeat !== 'none') {
+        daysOfWeek = [0, 1, 2, 3, 4, 5, 6];
+      }
+
+      const result = await checkEntryConflicts(
+        scheduleId,
+        {
+          start_time: eventForm.startTime,
+          end_time: eventForm.endTime,
+          days_of_week: daysOfWeek,
+          start_date: eventForm.startDate,
+          end_date: eventForm.endDate
+        },
+        editingEntry?.id || null
+      );
+
+      setConflicts(result.conflicts || []);
+    } catch (err) {
+      logger.error('Failed to check conflicts', { scheduleId, error: err });
+      setConflicts([]);
+    } finally {
+      setIsCheckingConflicts(false);
+    }
+  }, [scheduleId, showEventModal, eventForm.startTime, eventForm.endTime, eventForm.startDate, eventForm.endDate, eventForm.repeat, editingEntry?.id]);
+
+  // Check conflicts when relevant form fields change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      checkConflicts();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [checkConflicts]);
+
+  // Handle filler content change (US-145)
+  const handleFillerChange = async (type, id, name) => {
+    try {
+      if (type && id) {
+        await updateScheduleFillerContent(scheduleId, type, id);
+        setFillerType(type);
+        setFillerId(id);
+        setFillerName(name);
+        showToast?.('Filler content updated');
+      } else {
+        await clearScheduleFillerContent(scheduleId);
+        setFillerType(null);
+        setFillerId(null);
+        setFillerName(null);
+        showToast?.('Filler content cleared');
+      }
+      // Refresh week preview
+      setWeekPreviewKey(prev => prev + 1);
+    } catch (err) {
+      logger.error('Failed to update filler content', { scheduleId, playlistId, error: err });
+      showToast?.('Error updating filler content: ' + err.message, 'error');
+    }
+  };
+
+  // Handle assign screens modal close (US-147)
+  const handleAssignComplete = (result) => {
+    setAssignedCount({
+      devices: result.totalDevices || 0,
+      groups: result.totalGroups || 0
+    });
+    if (result.devicesAssigned > 0 || result.groupsAssigned > 0) {
+      showToast?.(`Schedule assigned to ${result.devicesAssigned} screens and ${result.groupsAssigned} groups`);
+    }
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
@@ -183,7 +314,7 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       setIsDirty(false);
       showToast?.('Schedule saved successfully');
     } catch (error) {
-      console.error('Error saving schedule:', error);
+      logger.error('Failed to save schedule', { scheduleId, scheduleName: schedule.name, error });
       showToast?.('Error saving schedule: ' + error.message, 'error');
     } finally {
       setSaving(false);
@@ -281,8 +412,10 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
 
       await loadSchedule();
       setShowEventModal(false);
+      setConflicts([]); // Clear conflicts
+      setWeekPreviewKey(prev => prev + 1); // Refresh week preview
     } catch (error) {
-      console.error('Error saving event:', error);
+      logger.error('Failed to save event', { scheduleId, eventId: editingEntry?.id, error });
       showToast?.('Error saving event: ' + error.message, 'error');
     }
   };
@@ -293,8 +426,9 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       await deleteScheduleEntry(entryId);
       setEntries(prev => prev.filter(e => e.id !== entryId));
       showToast?.('Event deleted');
+      setWeekPreviewKey(prev => prev + 1); // Refresh week preview
     } catch (error) {
-      console.error('Error deleting event:', error);
+      logger.error('Failed to delete event', { entryId, error });
       showToast?.('Error deleting event: ' + error.message, 'error');
     }
   };
@@ -416,6 +550,20 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       <div className="flex-1 flex overflow-hidden">
         {/* Calendar section */}
         <div className="flex-1 flex flex-col bg-white">
+          {/* Week Preview (US-146) */}
+          <div className="p-4 border-b border-gray-200">
+            <WeekPreview
+              key={weekPreviewKey}
+              scheduleId={scheduleId}
+              onDayClick={(dateStr) => {
+                const date = new Date(dateStr + 'T00:00:00');
+                setCurrentDate(date);
+              }}
+              collapsible={true}
+              defaultCollapsed={false}
+            />
+          </div>
+
           {/* Calendar toolbar */}
           <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -606,25 +754,37 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
               )}
             </div>
 
-            {/* Filler Content */}
+            {/* Filler Content (US-145) */}
             <div className="p-4 border-t border-gray-200">
-              <div className="p-3 border-2 border-dashed border-orange-200 rounded-lg bg-orange-50">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#f26f21]"></div>
-                  <span className="font-medium text-sm text-gray-900">Filler Content</span>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Shown on the screens when no events are scheduled
-                </p>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-2 h-2 rounded-full bg-[#f26f21]"></div>
+                <span className="font-medium text-sm text-gray-900">Filler Content</span>
               </div>
+              <FillerContentPicker
+                scheduleId={scheduleId}
+                currentType={fillerType}
+                currentId={fillerId}
+                currentName={fillerName}
+                onChange={handleFillerChange}
+              />
             </div>
           </div>
 
-          {/* View assigned screens */}
+          {/* Assign Screens (US-147) */}
           <div className="p-4 border-t border-gray-200">
-            <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
-              <Monitor size={14} />
-              View assigned screens
+            <button
+              onClick={() => setShowAssignModal(true)}
+              className="w-full px-3 py-2 text-sm text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg flex items-center justify-between transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Users size={14} />
+                <span>Assign Screens</span>
+              </div>
+              <span className="text-xs text-gray-500">
+                {assignedCount.devices + assignedCount.groups > 0
+                  ? `${assignedCount.devices} screens, ${assignedCount.groups} groups`
+                  : 'None assigned'}
+              </span>
             </button>
           </div>
         </div>
@@ -828,6 +988,14 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
                   The schedule runs on the screens' local time zone.
                 </p>
               </div>
+
+              {/* Conflict Warning (US-144) */}
+              {conflicts.length > 0 && (
+                <ConflictWarning
+                  conflicts={conflicts}
+                  className="mt-4"
+                />
+              )}
             </div>
 
             {/* Modal footer */}
@@ -835,13 +1003,25 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
               <Button variant="secondary" onClick={() => setShowEventModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSaveEvent}>
-                Save
+              <Button
+                onClick={handleSaveEvent}
+                disabled={conflicts.length > 0 || isCheckingConflicts}
+              >
+                {isCheckingConflicts ? 'Checking...' : 'Save'}
               </Button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Assign Screens Modal (US-147) */}
+      <AssignScreensModal
+        isOpen={showAssignModal}
+        onClose={() => setShowAssignModal(false)}
+        scheduleId={scheduleId}
+        scheduleName={schedule?.name}
+        onAssigned={handleAssignComplete}
+      />
     </div>
   );
 };

@@ -29,9 +29,11 @@ import { getEffectiveLimits, hasReachedLimit, formatLimitDisplay } from '../serv
 import { Button, Card, Badge, EmptyState, Alert } from '../design-system';
 import { useTranslation } from '../i18n';
 import YodeckEmptyState from '../components/YodeckEmptyState';
+import { useLogger } from '../hooks/useLogger.js';
 
 const SchedulesPage = ({ showToast, onNavigate }) => {
   const { t } = useTranslation();
+  const logger = useLogger('SchedulesPage');
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,7 +60,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
       const data = await getEffectiveLimits();
       setLimits(data);
     } catch (error) {
-      console.error('Error fetching limits:', error);
+      logger.error('Failed to fetch limits', { error });
     }
   };
 
@@ -69,7 +71,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
       const data = await fetchSchedules();
       setSchedules(data);
     } catch (err) {
-      console.error('Error fetching schedules:', err);
+      logger.error('Failed to fetch schedules', { error: err });
       setError(err.message || 'Failed to load schedules');
     } finally {
       setLoading(false);
@@ -116,7 +118,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
         onNavigate(`schedule-editor-${data.id}`);
       }
     } catch (error) {
-      console.error('Error creating schedule:', error);
+      logger.error('Failed to create schedule', { scheduleName: newScheduleName, error });
       showToast?.('Error creating schedule: ' + error.message, 'error');
     } finally {
       setCreating(false);
@@ -131,7 +133,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
       setSchedules(prev => prev.filter(s => s.id !== id));
       showToast?.('Schedule deleted successfully');
     } catch (error) {
-      console.error('Error deleting schedule:', error);
+      logger.error('Failed to delete schedule', { scheduleId, error });
       showToast?.('Error deleting schedule: ' + error.message, 'error');
     }
   };
@@ -142,7 +144,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
       setSchedules(prev => [{ ...newData, entry_count: newData.schedule_entries?.length || 0 }, ...prev]);
       showToast?.('Schedule duplicated successfully');
     } catch (error) {
-      console.error('Error duplicating schedule:', error);
+      logger.error('Failed to duplicate schedule', { scheduleId, error });
       showToast?.('Error duplicating schedule: ' + error.message, 'error');
     }
   };
@@ -161,7 +163,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
       );
       showToast?.(schedule.is_active ? 'Schedule paused' : 'Schedule activated');
     } catch (error) {
-      console.error('Error updating schedule:', error);
+      logger.error('Failed to update schedule', { scheduleId, updates, error });
       showToast?.('Error updating schedule: ' + error.message, 'error');
     }
   };

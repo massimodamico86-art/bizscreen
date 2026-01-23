@@ -2,9 +2,10 @@
  * Templates Page
  *
  * Gallery of content templates and vertical packs for quick-start content.
+ * Features: search, favorites, recently used, hover preview, customize modal
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   LayoutTemplate,
@@ -24,17 +25,28 @@ import {
   ChevronRight,
   ChevronLeft,
   Info,
+  Search,
+  Heart,
+  Star,
+  Clock,
 } from 'lucide-react';
 import {
   fetchTemplateCategories,
   fetchTemplates,
+  fetchFavoriteTemplates,
+  fetchRecentlyUsedTemplates,
+  getFavoriteTemplateIds,
+  addFavoriteTemplate,
+  removeFavoriteTemplate,
   applyTemplate,
   applyPack,
+  recordTemplateUsage,
   formatTemplateForCard,
 } from '../services/templateService';
 import { canEditContent } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   PageLayout,
   PageHeader,
@@ -49,6 +61,12 @@ import {
   ModalContent,
   ModalFooter,
 } from '../design-system';
+import {
+  TemplatePreviewPopover,
+  useTemplatePreview,
+  TemplateLivePreview,
+  TemplateCustomizeModal,
+} from '../components/templates';
 
 // Icon mapping for categories
 const getCategoryIcon = (iconKey) => {
@@ -74,11 +92,24 @@ const getBadgeVariant = (type) => {
 
 const PAGE_SIZE = 24; // Good for grid display
 
+// Debounce hook
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 const TemplatesPage = ({ showToast }) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const { t } = useTranslation();
+  const logger = useLogger('TemplatesPage');
 
   // State
   const [categories, setCategories] = useState([]);
@@ -87,10 +118,29 @@ const TemplatesPage = ({ showToast }) => {
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
+  // Search state (US-128)
+  const [searchInput, setSearchInput] = useState(searchParams.get('search') || '');
+  const debouncedSearch = useDebounce(searchInput, 300);
+
+  // Favorites state (US-130, US-131)
+  const [favoriteIds, setFavoriteIds] = useState(new Set());
+  const [favoriteTemplates, setFavoriteTemplates] = useState([]);
+  const [loadingFavorites, setLoadingFavorites] = useState(false);
+
+  // Recently used state (US-129)
+  const [recentlyUsed, setRecentlyUsed] = useState([]);
+  const [loadingRecent, setLoadingRecent] = useState(false);
+
   // Get filters from URL params
   const activeCategory = searchParams.get('category') || 'all';
   const activeType = searchParams.get('type') || 'all';
+  const showFavorites = searchParams.get('favorites') === 'true';
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const searchQuery = searchParams.get('search') || '';
+
+  // Customize modal state (US-126, US-127)
+  const [customizeModal, setCustomizeModal] = useState(null);
+  const [applyError, setApplyError] = useState(null);
 
   // Apply state
   const [applying, setApplying] = useState(null);
@@ -98,6 +148,9 @@ const TemplatesPage = ({ showToast }) => {
 
   // Permissions
   const [canEdit, setCanEdit] = useState(false);
+
+  // Preview state (US-132)
+  const preview = useTemplatePreview(300);
 
   // Check permissions
   useEffect(() => {
@@ -113,17 +166,60 @@ const TemplatesPage = ({ showToast }) => {
     fetchTemplateCategories()
       .then(setCategories)
       .catch((err) => {
-        console.error('Error loading categories:', err);
+        logger.error('Failed to load categories', { error: err });
       });
   }, []);
+
+  // Load favorite IDs on mount (US-130)
+  useEffect(() => {
+    const loadFavoriteIds = async () => {
+      try {
+        const ids = await getFavoriteTemplateIds();
+        setFavoriteIds(new Set(ids));
+      } catch (err) {
+        logger.error('Failed to load favorite IDs', { userId: user?.id, error: err });
+      }
+    };
+    if (user) loadFavoriteIds();
+  }, [user]);
+
+  // Load recently used templates (US-129)
+  useEffect(() => {
+    const loadRecentlyUsed = async () => {
+      try {
+        setLoadingRecent(true);
+        const recent = await fetchRecentlyUsedTemplates(6);
+        setRecentlyUsed(recent);
+      } catch (err) {
+        logger.error('Failed to load recently used templates', { userId: user?.id, error: err });
+      } finally {
+        setLoadingRecent(false);
+      }
+    };
+    if (user) loadRecentlyUsed();
+  }, [user]);
 
   // Load templates with server-side filtering and pagination
   const loadTemplates = useCallback(async () => {
     try {
       setLoading(true);
+
+      // If showing favorites, use different fetch
+      if (showFavorites) {
+        setLoadingFavorites(true);
+        const favs = await fetchFavoriteTemplates();
+        setFavoriteTemplates(favs);
+        setTemplates(favs);
+        setTotalCount(favs.length);
+        setTotalPages(1);
+        setLoadingFavorites(false);
+        return;
+      }
+
       const result = await fetchTemplates({
         categorySlug: activeCategory === 'all' ? undefined : activeCategory,
         type: activeType === 'all' ? undefined : activeType,
+        search: debouncedSearch || undefined,
         page: currentPage,
         pageSize: PAGE_SIZE,
       });
@@ -131,23 +227,38 @@ const TemplatesPage = ({ showToast }) => {
       setTotalCount(result.totalCount || 0);
       setTotalPages(result.totalPages || 0);
     } catch (error) {
-      console.error('Error loading templates:', error);
+      logger.error('Failed to load templates', { categoryId, searchQuery: debouncedSearch, error });
       showToast?.('Error loading templates', 'error');
     } finally {
       setLoading(false);
+      setLoadingFavorites(false);
     }
-  }, [activeCategory, activeType, currentPage, showToast]);
+  }, [activeCategory, activeType, currentPage, debouncedSearch, showFavorites, showToast]);
 
   // Fetch templates when filters or page change
   useEffect(() => {
     loadTemplates();
   }, [loadTemplates]);
 
+  // Update search URL param when debounced search changes
+  useEffect(() => {
+    if (debouncedSearch !== searchQuery) {
+      const newParams = new URLSearchParams(searchParams);
+      if (debouncedSearch) {
+        newParams.set('search', debouncedSearch);
+        newParams.set('page', '1'); // Reset to page 1 on search
+      } else {
+        newParams.delete('search');
+      }
+      setSearchParams(newParams);
+    }
+  }, [debouncedSearch, searchQuery, searchParams, setSearchParams]);
+
   // Update URL params helper
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
     Object.entries(updates).forEach(([key, value]) => {
-      if (value === 'all' || value === '1' || value === null || value === undefined) {
+      if (value === 'all' || value === '1' || value === null || value === undefined || value === 'false') {
         newParams.delete(key);
       } else {
         newParams.set(key, value);
@@ -158,31 +269,87 @@ const TemplatesPage = ({ showToast }) => {
 
   // Handle filter changes (reset page to 1)
   const handleCategoryChange = (category) => {
-    updateParams({ category, page: '1' });
+    updateParams({ category, page: '1', favorites: null });
   };
 
   const handleTypeChange = (type) => {
-    updateParams({ type, page: '1' });
+    updateParams({ type, page: '1', favorites: null });
+  };
+
+  const handleFavoritesToggle = () => {
+    updateParams({ favorites: showFavorites ? null : 'true', page: '1' });
   };
 
   const handlePageChange = (newPage) => {
     updateParams({ page: newPage.toString() });
   };
 
-  // Group by type for display when showing all types
-  const packs = activeType === 'all' ? templates.filter((t) => t.type === 'pack') : [];
-  const playlistTemplates = activeType === 'all' ? templates.filter((t) => t.type === 'playlist') : [];
-  const layoutTemplates = activeType === 'all' ? templates.filter((t) => t.type === 'layout') : [];
+  const handleSearchClear = () => {
+    setSearchInput('');
+    updateParams({ search: null, page: '1' });
+  };
 
-  // Apply template handler
-  const handleApply = async (template) => {
-    if (!canEdit) {
-      showToast?.('You do not have permission to use templates', 'error');
-      return;
-    }
+  // Toggle favorite (US-130)
+  const handleToggleFavorite = async (template, e) => {
+    e?.stopPropagation();
+    if (!user) return;
+
+    const isFavorited = favoriteIds.has(template.id);
+
+    // Optimistic update
+    setFavoriteIds((prev) => {
+      const next = new Set(prev);
+      if (isFavorited) {
+        next.delete(template.id);
+      } else {
+        next.add(template.id);
+      }
+      return next;
+    });
 
     try {
+      if (isFavorited) {
+        await removeFavoriteTemplate(template.id);
+        showToast?.(t('templates.removedFromFavorites', 'Removed from favorites'), 'success');
+      } else {
+        await addFavoriteTemplate(template.id);
+        showToast?.(t('templates.addedToFavorites', 'Added to favorites'), 'success');
+      }
+    } catch (error) {
+      // Revert optimistic update
+      setFavoriteIds((prev) => {
+        const next = new Set(prev);
+        if (isFavorited) {
+          next.add(template.id);
+        } else {
+          next.delete(template.id);
+        }
+        return next;
+      });
+      showToast?.('Error updating favorites', 'error');
+    }
+  };
+
+  // Group by type for display when showing all types
+  const packs = activeType === 'all' && !showFavorites ? templates.filter((t) => t.type === 'pack') : [];
+  const playlistTemplates = activeType === 'all' && !showFavorites ? templates.filter((t) => t.type === 'playlist') : [];
+  const layoutTemplates = activeType === 'all' && !showFavorites ? templates.filter((t) => t.type === 'layout') : [];
+
+  // Open customize modal instead of applying directly (US-127)
+  const handleUseTemplate = (template) => {
+    if (!canEdit) {
+      showToast?.(t('templates.noPermission', 'You do not have permission to use templates'), 'error');
+      return;
+    }
+    setApplyError(null);
+    setCustomizeModal(template);
+  };
+
+  // Apply template from customize modal (US-127)
+  const handleApplyFromModal = async (template, customization) => {
+    try {
       setApplying(template.slug);
+      setApplyError(null);
       let result;
 
       if (template.type === 'pack') {
@@ -191,15 +358,26 @@ const TemplatesPage = ({ showToast }) => {
         result = await applyTemplate(template.slug);
       }
 
+      // Record template usage (US-121)
+      try {
+        await recordTemplateUsage(template.id);
+        // Refresh recently used
+        const recent = await fetchRecentlyUsedTemplates(6);
+        setRecentlyUsed(recent);
+      } catch (historyError) {
+        logger.warn('Failed to record template usage', { templateId: template.id, error: historyError });
+      }
+
+      setCustomizeModal(null);
       setSuccessModal({
         template,
         result,
       });
 
-      showToast?.('Template applied successfully!', 'success');
+      showToast?.(t('templates.appliedSuccessfully', 'Template applied successfully!'), 'success');
     } catch (error) {
-      console.error('Error applying template:', error);
-      showToast?.(error.message || 'Error applying template', 'error');
+      logger.error('Failed to apply template', { templateId: template.id, templateName: template.name, error });
+      setApplyError(error.message || 'Error applying template');
     } finally {
       setApplying(null);
     }
@@ -221,15 +399,8 @@ const TemplatesPage = ({ showToast }) => {
     navigate('/app/screens');
   };
 
-  if (loading) {
-    return (
-      <PageLayout>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" aria-label={t('common.loading', 'Loading')} />
-        </div>
-      </PageLayout>
-    );
-  }
+  // Show loading state only on initial load
+  const isInitialLoading = loading && templates.length === 0 && !showFavorites;
 
   return (
     <PageLayout>
@@ -241,15 +412,95 @@ const TemplatesPage = ({ showToast }) => {
       />
 
       <PageContent>
+        {/* Search Bar (US-128) */}
+        <div className="mb-4">
+          <div className="relative max-w-md">
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder={t('templates.searchPlaceholder', 'Search templates...')}
+              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              aria-label={t('templates.searchTemplates', 'Search templates')}
+            />
+            {searchInput && (
+              <button
+                onClick={handleSearchClear}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label={t('common.clearSearch', 'Clear search')}
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
+          {debouncedSearch && (
+            <p className="mt-2 text-sm text-gray-500">
+              {t('templates.searchResults', '{{count}} results for "{{query}}"', {
+                count: totalCount,
+                query: debouncedSearch,
+              })}
+            </p>
+          )}
+        </div>
+
+        {/* Recently Used Section (US-129) */}
+        {recentlyUsed.length > 0 && !showFavorites && !debouncedSearch && (
+          <section className="mb-6" aria-labelledby="recently-used-heading">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock size={16} className="text-gray-500" />
+              <h2 id="recently-used-heading" className="text-sm font-medium text-gray-700">
+                {t('templates.recentlyUsed', 'Recently Used')}
+              </h2>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2">
+              {recentlyUsed.map((template) => (
+                <div
+                  key={template.id}
+                  className="flex-shrink-0 w-36 cursor-pointer group"
+                  onClick={() => handleUseTemplate(template)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleUseTemplate(template);
+                    }
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={t('templates.useTemplate', 'Use {{name}}', { name: template.title })}
+                >
+                  <div className="h-20 rounded-lg overflow-hidden bg-gray-100 group-hover:ring-2 group-hover:ring-blue-500 transition-all">
+                    {template.thumbnail ? (
+                      <img
+                        src={template.thumbnail}
+                        alt={template.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <TemplateLivePreview template={template} />
+                      </div>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-gray-600 truncate">{template.title}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Category Filter Tabs */}
         <div className="flex flex-wrap gap-2 mb-4" role="tablist" aria-label={t('templates.categoryFilter', 'Category filter')}>
           <button
             onClick={() => handleCategoryChange('all')}
             disabled={loading}
             role="tab"
-            aria-selected={activeCategory === 'all'}
+            aria-selected={activeCategory === 'all' && !showFavorites}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
-              activeCategory === 'all'
+              activeCategory === 'all' && !showFavorites
                 ? 'bg-blue-100 text-blue-700'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
@@ -264,9 +515,9 @@ const TemplatesPage = ({ showToast }) => {
                 onClick={() => handleCategoryChange(cat.slug)}
                 disabled={loading}
                 role="tab"
-                aria-selected={activeCategory === cat.slug}
+                aria-selected={activeCategory === cat.slug && !showFavorites}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
-                  activeCategory === cat.slug
+                  activeCategory === cat.slug && !showFavorites
                     ? 'bg-blue-100 text-blue-700'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
@@ -278,15 +529,15 @@ const TemplatesPage = ({ showToast }) => {
           })}
         </div>
 
-        {/* Type Filter */}
+        {/* Type Filter with Favorites (US-131) */}
         <div className="flex gap-2 mb-6" role="tablist" aria-label={t('templates.typeFilter', 'Type filter')}>
           <button
             onClick={() => handleTypeChange('all')}
             disabled={loading}
             role="tab"
-            aria-selected={activeType === 'all'}
+            aria-selected={activeType === 'all' && !showFavorites}
             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
-              activeType === 'all'
+              activeType === 'all' && !showFavorites
                 ? 'bg-gray-800 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
@@ -294,12 +545,26 @@ const TemplatesPage = ({ showToast }) => {
             {t('templates.allTypes', 'All Types')}
           </button>
           <button
+            onClick={handleFavoritesToggle}
+            disabled={loading}
+            role="tab"
+            aria-selected={showFavorites}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 disabled:opacity-50 ${
+              showFavorites
+                ? 'bg-yellow-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            <Star size={14} aria-hidden="true" />
+            {t('templates.favorites', 'Favorites')}
+          </button>
+          <button
             onClick={() => handleTypeChange('pack')}
             disabled={loading}
             role="tab"
-            aria-selected={activeType === 'pack'}
+            aria-selected={activeType === 'pack' && !showFavorites}
             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-50 ${
-              activeType === 'pack'
+              activeType === 'pack' && !showFavorites
                 ? 'bg-green-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
@@ -311,9 +576,9 @@ const TemplatesPage = ({ showToast }) => {
             onClick={() => handleTypeChange('playlist')}
             disabled={loading}
             role="tab"
-            aria-selected={activeType === 'playlist'}
+            aria-selected={activeType === 'playlist' && !showFavorites}
             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
-              activeType === 'playlist'
+              activeType === 'playlist' && !showFavorites
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
@@ -325,9 +590,9 @@ const TemplatesPage = ({ showToast }) => {
             onClick={() => handleTypeChange('layout')}
             disabled={loading}
             role="tab"
-            aria-selected={activeType === 'layout'}
+            aria-selected={activeType === 'layout' && !showFavorites}
             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 disabled:opacity-50 ${
-              activeType === 'layout'
+              activeType === 'layout' && !showFavorites
                 ? 'bg-purple-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
@@ -337,8 +602,24 @@ const TemplatesPage = ({ showToast }) => {
           </button>
         </div>
 
+        {/* Loading State */}
+        {isInitialLoading && (
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-600" aria-label={t('common.loading', 'Loading')} />
+          </div>
+        )}
+
+        {/* Favorites Empty State (US-131) */}
+        {showFavorites && !loadingFavorites && templates.length === 0 && (
+          <EmptyState
+            icon={Star}
+            title={t('templates.noFavoritesYet', 'No favorites yet')}
+            description={t('templates.noFavoritesDescription', 'Click the heart icon on any template to add it to your favorites.')}
+          />
+        )}
+
         {/* When "All Types" is selected, show grouped sections */}
-        {activeType === 'all' && (
+        {!isInitialLoading && activeType === 'all' && !showFavorites && (
           <>
             {/* Starter Packs Section */}
             {packs.length > 0 && (
@@ -356,9 +637,12 @@ const TemplatesPage = ({ showToast }) => {
                     <TemplateCard
                       key={template.id}
                       template={template}
-                      onApply={handleApply}
+                      onApply={handleUseTemplate}
                       applying={applying === template.slug}
                       disabled={!canEdit}
+                      isFavorite={favoriteIds.has(template.id)}
+                      onToggleFavorite={handleToggleFavorite}
+                      preview={preview}
                       t={t}
                     />
                   ))}
@@ -382,9 +666,12 @@ const TemplatesPage = ({ showToast }) => {
                     <TemplateCard
                       key={template.id}
                       template={template}
-                      onApply={handleApply}
+                      onApply={handleUseTemplate}
                       applying={applying === template.slug}
                       disabled={!canEdit}
+                      isFavorite={favoriteIds.has(template.id)}
+                      onToggleFavorite={handleToggleFavorite}
+                      preview={preview}
                       t={t}
                     />
                   ))}
@@ -408,9 +695,12 @@ const TemplatesPage = ({ showToast }) => {
                     <TemplateCard
                       key={template.id}
                       template={template}
-                      onApply={handleApply}
+                      onApply={handleUseTemplate}
                       applying={applying === template.slug}
                       disabled={!canEdit}
+                      isFavorite={favoriteIds.has(template.id)}
+                      onToggleFavorite={handleToggleFavorite}
+                      preview={preview}
                       t={t}
                     />
                   ))}
@@ -420,16 +710,19 @@ const TemplatesPage = ({ showToast }) => {
           </>
         )}
 
-        {/* When a specific type is selected, show flat grid with pagination */}
-        {activeType !== 'all' && templates.length > 0 && (
+        {/* When a specific type or favorites is selected, show flat grid with pagination */}
+        {!isInitialLoading && (activeType !== 'all' || showFavorites) && templates.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {templates.map((template) => (
               <TemplateCard
                 key={template.id}
                 template={template}
-                onApply={handleApply}
+                onApply={handleUseTemplate}
                 applying={applying === template.slug}
                 disabled={!canEdit}
+                isFavorite={favoriteIds.has(template.id)}
+                onToggleFavorite={handleToggleFavorite}
+                preview={preview}
                 t={t}
               />
             ))}
@@ -437,7 +730,7 @@ const TemplatesPage = ({ showToast }) => {
         )}
 
         {/* Pagination Controls */}
-        {totalPages > 1 && (
+        {totalPages > 1 && !showFavorites && (
           <div className="flex items-center justify-center gap-4 mt-8 pt-6 border-t">
             <Button
               variant="secondary"
@@ -465,13 +758,33 @@ const TemplatesPage = ({ showToast }) => {
         )}
 
         {/* Empty State */}
-        {templates.length === 0 && !loading && (
+        {!isInitialLoading && templates.length === 0 && !showFavorites && (
           <EmptyState
             icon={LayoutTemplate}
             title={t('templates.noTemplatesFound', 'No templates found')}
             description={t('templates.adjustFilters', 'Try adjusting your filters to see more templates.')}
           />
         )}
+
+        {/* Preview Popover (US-132) */}
+        <TemplatePreviewPopover
+          template={preview.template}
+          isVisible={preview.isVisible}
+          anchorRect={preview.anchorRect}
+          onClose={preview.hidePreview}
+          livePreview={preview.template ? <TemplateLivePreview template={preview.template} /> : null}
+        />
+
+        {/* Customize Modal (US-126, US-127) */}
+        <TemplateCustomizeModal
+          isOpen={!!customizeModal}
+          onClose={() => setCustomizeModal(null)}
+          template={customizeModal}
+          onApply={handleApplyFromModal}
+          isApplying={applying === customizeModal?.slug}
+          error={applyError}
+          t={t}
+        />
 
         {/* Success Modal */}
         {successModal && (
@@ -584,8 +897,9 @@ const TemplatesPage = ({ showToast }) => {
   );
 };
 
-// Template Card Component
-const TemplateCard = ({ template, onApply, applying, disabled, t }) => {
+// Template Card Component with favorites and hover preview (US-130, US-132, US-133)
+const TemplateCard = ({ template, onApply, applying, disabled, isFavorite, onToggleFavorite, preview, t }) => {
+  const cardRef = useRef(null);
   const Icon = getCategoryIcon(template.categoryIcon);
 
   const getTypeBadgeLabel = (type) => {
@@ -596,10 +910,37 @@ const TemplateCard = ({ template, onApply, applying, disabled, t }) => {
     }
   };
 
+  // Keyboard handler (US-133)
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onApply(template);
+    } else if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+      onToggleFavorite(template, e);
+    }
+  };
+
   return (
-    <Card padding="none" className="overflow-hidden hover:shadow-md transition-shadow">
-      {/* Thumbnail */}
-      <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 relative">
+    <Card
+      padding="none"
+      className="overflow-hidden hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-blue-500"
+    >
+      {/* Thumbnail with hover preview trigger */}
+      <div
+        ref={cardRef}
+        className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 relative cursor-pointer"
+        onMouseEnter={() => preview.showPreview(template, cardRef.current)}
+        onMouseLeave={preview.hidePreview}
+        onFocus={() => preview.showPreview(template, cardRef.current)}
+        onBlur={preview.hidePreview}
+        onClick={() => onApply(template)}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="button"
+        aria-label={t('templates.previewTemplate', 'Preview {{name}}', { name: template.title })}
+        aria-describedby={`template-desc-${template.id}`}
+      >
         {template.thumbnail ? (
           <img
             src={template.thumbnail}
@@ -632,12 +973,26 @@ const TemplateCard = ({ template, onApply, applying, disabled, t }) => {
             {template.category}
           </div>
         </div>
+
+        {/* Favorite Button (US-130) */}
+        <button
+          onClick={(e) => onToggleFavorite(template, e)}
+          className={`absolute top-2 left-2 p-1.5 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 ${
+            isFavorite
+              ? 'bg-yellow-100 text-yellow-500'
+              : 'bg-white/80 text-gray-400 hover:text-yellow-500 hover:bg-yellow-50'
+          }`}
+          aria-label={isFavorite ? t('templates.removeFromFavorites', 'Remove from favorites') : t('templates.addToFavorites', 'Add to favorites')}
+          aria-pressed={isFavorite}
+        >
+          <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
+        </button>
       </div>
 
       {/* Content */}
       <div className="p-4">
         <h3 className="font-semibold text-gray-900 mb-1">{template.title}</h3>
-        <p className="text-sm text-gray-500 line-clamp-2 mb-3">
+        <p id={`template-desc-${template.id}`} className="text-sm text-gray-500 line-clamp-2 mb-3">
           {template.description}
         </p>
 
