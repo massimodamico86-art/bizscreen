@@ -34,6 +34,7 @@ import {
   getCompletedCount,
   getProgressPercent
 } from '../services/onboardingService';
+import { useLogger } from '../hooks/useLogger.js';
 
 /**
  * Icon mapping for step IDs
@@ -51,6 +52,7 @@ const STEP_ICONS = {
  * OnboardingWizard - Main wizard component
  */
 const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
+  const logger = useLogger('OnboardingWizard');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(null);
@@ -83,7 +85,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
         onComplete?.();
       }
     } catch (err) {
-      console.error('Failed to load onboarding progress:', err);
+      logger.error('Failed to load onboarding progress', { error: err });
       setError('Unable to load progress. Please try again.');
     } finally {
       setLoading(false);
@@ -135,7 +137,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
         }
       }
     } catch (err) {
-      console.error('Failed to complete step:', err);
+      logger.error('Failed to complete step', { error: err, stepId: currentStep?.id });
       setError('Failed to save progress. Please try again.');
     } finally {
       setIsUpdating(false);
@@ -149,7 +151,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
       await skipOnboarding();
       onClose();
     } catch (err) {
-      console.error('Failed to skip onboarding:', err);
+      logger.error('Failed to skip onboarding', { error: err });
       setError('Failed to skip onboarding. Please try again.');
     } finally {
       setIsSkipping(false);

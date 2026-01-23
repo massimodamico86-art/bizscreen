@@ -18,6 +18,7 @@ import {
   saveFeedWidgetSettings,
   getFeedWidgetSettings,
 } from '../services/socialFeedSyncService';
+import { useLogger } from '../hooks/useLogger.js';
 
 export default function SocialFeedWidgetSettings({
   widgetId,
@@ -25,6 +26,7 @@ export default function SocialFeedWidgetSettings({
   onSettingsChange,
   onNavigate,
 }) {
+  const logger = useLogger('SocialFeedWidgetSettings');
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -50,7 +52,7 @@ export default function SocialFeedWidgetSettings({
         const data = await getConnectedAccounts();
         setAccounts(data);
       } catch (error) {
-        console.error('Failed to load accounts:', error);
+        logger.error('Failed to load accounts', { error });
       } finally {
         setLoading(false);
       }
@@ -80,7 +82,7 @@ export default function SocialFeedWidgetSettings({
           setShowAuthor(settings.show_author);
         }
       } catch (error) {
-        console.error('Failed to load widget settings:', error);
+        logger.error('Failed to load widget settings', { error, widgetId });
       }
     };
 
