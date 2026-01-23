@@ -1,6 +1,9 @@
 // Screen Service - CRUD operations for TV devices (screens)
 import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('ScreenService');
 
 /**
  * Fetch all screens for the current user
@@ -577,4 +580,78 @@ export async function fetchScreensWithStatus({ search = '', limit = 100 } = {}) 
       supports_kiosk: true
     };
   });
+}
+
+// ============================================
+// KIOSK PIN MANAGEMENT (Phase 9)
+// ============================================
+
+/**
+ * Set master kiosk PIN for tenant
+ * The master PIN works across all devices for a tenant
+ * @param {string} pin - 4-digit PIN to set
+ * @returns {Promise<boolean>} True on success
+ */
+export async function setMasterKioskPin(pin) {
+  const { hashPin } = await import('./playerService.js');
+  const pinHash = await hashPin(pin);
+
+  const { error } = await supabase.rpc('set_master_kiosk_pin', {
+    p_pin_hash: pinHash
+  });
+
+  if (error) {
+    logger.error('Failed to set master PIN', { error: error.message });
+    throw error;
+  }
+
+  logger.info('Master kiosk PIN updated');
+  return true;
+}
+
+/**
+ * Get master PIN status (whether set and when)
+ * Does NOT return the actual PIN or hash
+ * @returns {Promise<{isSet: boolean, setAt: string|null}>}
+ */
+export async function getMasterPinStatus() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User must be authenticated');
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('master_kiosk_pin_hash, master_kiosk_pin_set_at')
+    .eq('id', user.id)
+    .single();
+
+  if (error) throw error;
+
+  return {
+    isSet: !!data?.master_kiosk_pin_hash,
+    setAt: data?.master_kiosk_pin_set_at
+  };
+}
+
+/**
+ * Set device-specific kiosk PIN during screen configuration
+ * @param {string} deviceId - The device/screen UUID
+ * @param {string} pin - 4-digit PIN to set
+ * @returns {Promise<boolean>} True on success
+ */
+export async function setDeviceKioskPin(deviceId, pin) {
+  const { hashPin } = await import('./playerService.js');
+  const pinHash = await hashPin(pin);
+
+  const { error } = await supabase.rpc('set_device_kiosk_pin', {
+    p_device_id: deviceId,
+    p_pin_hash: pinHash
+  });
+
+  if (error) {
+    logger.error('Failed to set device PIN', { error: error.message, deviceId });
+    throw error;
+  }
+
+  logger.info('Device kiosk PIN updated', { deviceId });
+  return true;
 }
