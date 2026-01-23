@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 9 of 12 (Device Experience) - IN PROGRESS
-Plan: 7 of 8 in phase 9
-Status: In progress
-Last activity: 2026-01-23 - Completed 09-07 (Kiosk PIN settings UI)
+Phase: 9 of 12 (Device Experience) - COMPLETE
+Plan: 8 of 8 in phase 9
+Status: Phase complete
+Last activity: 2026-01-23 - Completed 09-08 (Testing and verification)
 
-Progress: [##################░░░░░░] 74% (8.9/12 phases complete)
+Progress: [██████████████████████░░] 75% (9/12 phases complete)
 
 ## Phase 9 Progress
 
@@ -26,7 +26,13 @@ Progress: [##################░░░░░░] 74% (8.9/12 phases complete)
 - [x] 09-05: Admin pairing page (4905366, 236868f, 4343643)
 - [x] 09-06: Player integration (4bc0fce, 81ada66, c423cce)
 - [x] 09-07: Kiosk PIN settings UI (993550d)
-- [ ] 09-08: Testing and verification
+- [x] 09-08: Testing and verification (a81552f, 0d09240)
+
+**Plan 09-08 Results:**
+- 20 unit tests for useTapSequence hook (tap counting, timeout, reset)
+- 29 unit tests for PinEntry component (input, validation, dismissal, visual feedback)
+- Bug fix: PinEntry clear/backspace buttons were non-functional
+- Total: 49 new tests, 907 lines of test code
 
 **Plan 09-07 Results:**
 - Master PIN button in ScreensPage header toolbar
@@ -489,6 +495,8 @@ Recent decisions affecting current work:
 - [09-05]: SCREEN_PAIRED action added to activityLogService for audit trail
 - [09-05]: Pairing functions accept optional PIN parameter for immediate security setup
 - [09-05]: Route uses RequireAuth wrapper to ensure only authenticated admins can pair
+- [09-08]: Use vi.runAllTimersAsync() for async operations with fake timers
+- [09-08]: Select SVG-only buttons by index position for testing (screen.getAllByRole('button')[index])
 
 ### Pending Todos
 
@@ -510,14 +518,14 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 09-07-PLAN.md (Kiosk PIN settings UI)
+Stopped at: Completed 09-08-PLAN.md (Testing and verification)
 Resume file: None
 
 ## Next Steps
 
-**Phase 9 in progress:** Device Experience
+**Phase 9 complete:** Device Experience
 
-**Completed plans:**
+**All plans completed:**
 - [x] 09-01: PIN hash/validation infrastructure (2 min)
 - [x] 09-02: useTapSequence hook
 - [x] 09-03: PinEntry component
