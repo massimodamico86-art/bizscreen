@@ -543,6 +543,65 @@ export function validateKioskPassword(input, password) {
   return input === password;
 }
 
+/**
+ * Hash password using SHA-256
+ * @param {string} password
+ * @returns {Promise<string>} Hex-encoded hash
+ */
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Cache kiosk password hash for offline verification
+ * Call this after successful admin login when online
+ * @param {string} password - Admin password to cache
+ */
+export async function cacheKioskPasswordHash(password) {
+  try {
+    const hash = await hashPassword(password);
+    localStorage.setItem('kiosk_password_hash', hash);
+    logger.debug('[PlayerService] Cached kiosk password hash for offline use');
+  } catch (error) {
+    logger.error('[PlayerService] Failed to cache password hash', { error: error.message });
+  }
+}
+
+/**
+ * Validate kiosk password using cached hash (works offline)
+ * Falls back to plaintext comparison if hash not available (legacy support)
+ * @param {string} input - Password attempt
+ * @param {string} password - Plaintext password (fallback)
+ * @returns {Promise<boolean>}
+ */
+export async function validateKioskPasswordOffline(input, password) {
+  const storedHash = localStorage.getItem('kiosk_password_hash');
+
+  if (storedHash) {
+    // Hash-based verification (preferred)
+    try {
+      const inputHash = await hashPassword(input);
+      return inputHash === storedHash;
+    } catch (error) {
+      logger.error('[PlayerService] Password hash verification failed', { error: error.message });
+      // Fall through to plaintext comparison
+    }
+  }
+
+  // Legacy plaintext comparison (fallback)
+  if (password) {
+    logger.warn('[PlayerService] Using plaintext password verification (hash not cached)');
+    return input === password;
+  }
+
+  logger.error('[PlayerService] No cached hash and no password provided');
+  return false;
+}
+
 // ============================================
 // PLAYER MANAGER CLASS
 // ============================================
