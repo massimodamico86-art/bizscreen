@@ -5,3 +5,4 @@
  */
 
 export { useFeatureFlags } from './useFeatureFlags.js';
+export { useCampaignEditor } from './useCampaignEditor.js';
