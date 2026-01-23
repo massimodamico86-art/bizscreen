@@ -10,20 +10,21 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 4 of 12 (Logging Migration)
-Plan: 2 of 6 in phase 4 complete
+Plan: 2.5 of 6 in phase 4 complete (04-05 partially complete)
 Status: In Progress
-Last activity: 2026-01-23 - Completed 04-02-PLAN.md (Build Enforcement)
+Last activity: 2026-01-23 - Partially completed 04-05-PLAN.md (Player & Core Migration)
 
-Progress: [######------] 30% (3.6/12 phases complete)
+Progress: [######------] 31% (3.7/12 phases complete)
 
 ## Phase 4 Progress Summary
 
 **Logging Migration Plans:**
 - [x] 04-01: Logging infrastructure enhancement (8125b8c, 61dd802, 7bff91d)
 - [x] 04-02: Build enforcement (22a189b, 7bff91d)
-- [ ] 04-03: Console audit (pending)
-- [ ] 04-04: Incremental migration (pending)
-- [ ] 04-05: Service worker migration (pending)
+- [x] 04-03: Auth & security services migration (d3f1007)
+- [~] 04-05: Player & core files migration (67ebb65, e7e518f) - **PARTIAL: 3/11 Task 1 files complete**
+- [ ] 04-05: Remaining Task 1 files (pending)
+- [ ] 04-05: Tasks 2-3 (hooks, components, pages - pending)
 - [ ] 04-06: Final cleanup (pending)
 
 **Logging Infrastructure Enhancement:**
@@ -39,6 +40,14 @@ Progress: [######------] 30% (3.6/12 phases complete)
 - Test files, config files, and scripts exempt from no-console rule
 - Terser configured for production console stripping
 - Production builds automatically remove console.log from application code
+
+**Player & Core Migration (Partial - 04-05):**
+- Player.jsx: 47 console calls → structured logging
+  - ViewPage, SceneRenderer, SceneWidgetRenderer, PairPage with useLogger
+  - Module functions (retry, appData) with createScopedLogger
+- TV.jsx: 6 console calls → structured logging
+- getConfig.js: 1 console call → structured logging
+- **Remaining:** 8 core files, 12 hooks, ~50 components, ~60 pages
 
 ## Phase 3 Completion Summary
 
