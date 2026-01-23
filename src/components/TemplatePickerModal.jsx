@@ -12,6 +12,7 @@ import {
   installTemplateAsScene,
   LICENSE_LABELS,
 } from '../services/marketplaceService';
+import { useLogger } from '../hooks/useLogger.js';
 
 // License badge colors
 const LICENSE_COLORS = {
@@ -21,6 +22,7 @@ const LICENSE_COLORS = {
 };
 
 export default function TemplatePickerModal({ onClose, onSelectTemplate }) {
+  const logger = useLogger('TemplatePickerModal');
   // State
   const [templates, setTemplates] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -36,7 +38,7 @@ export default function TemplatePickerModal({ onClose, onSelectTemplate }) {
   useEffect(() => {
     fetchCategories()
       .then(setCategories)
-      .catch(err => console.error('Failed to load categories:', err));
+      .catch(err => logger.error('Failed to load categories', { error: err }));
   }, []);
 
   // Load templates
@@ -50,7 +52,7 @@ export default function TemplatePickerModal({ onClose, onSelectTemplate }) {
       });
       setTemplates(data);
     } catch (err) {
-      console.error('Failed to load templates:', err);
+      logger.error('Failed to load templates', { error: err });
       setError('Failed to load templates');
     } finally {
       setLoading(false);
@@ -76,7 +78,7 @@ export default function TemplatePickerModal({ onClose, onSelectTemplate }) {
       const sceneId = await installTemplateAsScene(template.id, template.name);
       onSelectTemplate?.(sceneId);
     } catch (err) {
-      console.error('Failed to install template:', err);
+      logger.error('Failed to install template', { error: err });
       setError(err.message || 'Failed to install template');
       setInstalling(null);
     }
