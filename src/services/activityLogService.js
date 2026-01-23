@@ -22,6 +22,7 @@ export const ACTIONS = {
   SCREEN_CREATED: 'screen.created',
   SCREEN_UPDATED: 'screen.updated',
   SCREEN_DELETED: 'screen.deleted',
+  SCREEN_PAIRED: 'screen.paired',
   SCREEN_ASSIGNMENT_UPDATED: 'screen.assignment_updated',
 
   // Playlist actions
@@ -78,6 +79,7 @@ export const ACTION_LABELS = {
   'screen.created': 'Screen Created',
   'screen.updated': 'Screen Updated',
   'screen.deleted': 'Screen Deleted',
+  'screen.paired': 'Screen Paired',
   'screen.assignment_updated': 'Screen Assignment Changed',
   'playlist.created': 'Playlist Created',
   'playlist.updated': 'Playlist Updated',

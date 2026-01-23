@@ -655,3 +655,126 @@ export async function setDeviceKioskPin(deviceId, pin) {
   logger.info('Device kiosk PIN updated', { deviceId });
   return true;
 }
+
+// ============================================
+// QR-BASED DEVICE PAIRING (Phase 9)
+// ============================================
+
+/**
+ * Pair a device to a screen using the device's unique ID
+ * This is called when admin scans QR code and selects a screen
+ *
+ * @param {string} deviceId - Device UUID from QR code
+ * @param {string} screenId - Screen UUID to pair with
+ * @param {string} pin - Optional 4-digit kiosk PIN to set during pairing
+ * @returns {Promise<Object>} Paired screen data
+ */
+export async function pairDeviceToScreen(deviceId, screenId, pin = null) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User must be authenticated');
+
+  // Update screen with device ID and mark as paired
+  const updateData = {
+    device_id: deviceId,
+    is_paired: true,
+    paired_at: new Date().toISOString(),
+    last_seen_at: new Date().toISOString(),
+  };
+
+  const { data, error } = await supabase
+    .from('tv_devices')
+    .update(updateData)
+    .eq('id', screenId)
+    .eq('owner_id', user.id)
+    .select(`
+      *,
+      assigned_playlist:playlists(id, name),
+      assigned_layout:layouts(id, name)
+    `)
+    .single();
+
+  if (error) throw error;
+
+  // Set device PIN if provided
+  if (pin && pin.length === 4) {
+    await setDeviceKioskPin(screenId, pin);
+  }
+
+  logActivity(
+    ACTIONS.SCREEN_PAIRED,
+    RESOURCE_TYPES.SCREEN,
+    screenId,
+    data.device_name
+  );
+
+  return data;
+}
+
+/**
+ * Create a new screen and pair it to a device in one operation
+ *
+ * @param {string} deviceId - Device UUID from QR code
+ * @param {string} name - Name for the new screen
+ * @param {string} pin - Optional 4-digit kiosk PIN
+ * @returns {Promise<Object>} Created and paired screen data
+ */
+export async function createAndPairScreen(deviceId, name, pin = null) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User must be authenticated');
+
+  const otpCode = generateOtpCode();
+
+  const { data, error } = await supabase
+    .from('tv_devices')
+    .insert({
+      owner_id: user.id,
+      device_name: name,
+      otp_code: otpCode,
+      device_id: deviceId,
+      is_paired: true,
+      paired_at: new Date().toISOString(),
+      last_seen_at: new Date().toISOString(),
+    })
+    .select(`
+      *,
+      assigned_playlist:playlists(id, name),
+      assigned_layout:layouts(id, name)
+    `)
+    .single();
+
+  if (error) throw error;
+
+  // Set device PIN if provided
+  if (pin && pin.length === 4) {
+    await setDeviceKioskPin(data.id, pin);
+  }
+
+  logActivity(
+    ACTIONS.SCREEN_CREATED,
+    RESOURCE_TYPES.SCREEN,
+    data.id,
+    data.device_name
+  );
+
+  return data;
+}
+
+/**
+ * Check if a device ID is already paired
+ * @param {string} deviceId - Device UUID
+ * @returns {Promise<Object|null>} Screen data if paired, null if not
+ */
+export async function getScreenByDeviceId(deviceId) {
+  const { data, error } = await supabase
+    .from('tv_devices')
+    .select(`
+      *,
+      assigned_playlist:playlists(id, name),
+      assigned_layout:layouts(id, name)
+    `)
+    .eq('device_id', deviceId)
+    .single();
+
+  if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+  return data || null;
+}
