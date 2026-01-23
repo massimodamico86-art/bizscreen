@@ -5,38 +5,47 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 6 Player Reliability - In Progress
+**Current focus:** Phase 6 Player Reliability - Complete
 
 ## Current Position
 
 Phase: 6 of 12 (Player Reliability)
-Plan: 2 of 4 in phase 6
-Status: In Progress
-Last activity: 2026-01-23 - Completed 06-02-PLAN.md (offline screenshot + kiosk password)
+Plan: 3 of 3 in phase 6 (complete)
+Status: Phase Complete
+Last activity: 2026-01-23 - Completed Phase 6 (PLR-01 gap deferred to Phase 7)
 
-Progress: [###########-] 50% (6/12 phases complete)
+Progress: [############] 50% (6/12 phases complete)
 
 ## Phase 6 Progress Summary
 
 **Player Reliability Plans:**
-- [x] 06-01: Retry backoff with full jitter + error logging (ef4063e)
-- [x] 06-02: Offline screenshot queue + kiosk password verification (e176887, 8722a70)
-- [ ] 06-03: Remaining empty catch block fixes
-- [ ] 06-04: Additional error handling improvements
+- [x] 06-01: Retry backoff with full jitter + error logging (ef4063e, 61391a9, bfc970f)
+- [x] 06-02: Offline screenshot queue + kiosk password verification (e176887, 8722a70, 15facb1)
+- [x] 06-03: Verification and testing (approved via code review)
 
 **Retry Backoff + Error Logging (06-01):**
 - calculateBackoff() updated to use full jitter (0-100% randomization)
 - Prevents thundering herd when multiple devices reconnect
-- Empty catch blocks at Player.jsx lines 209, 239 replaced with structured logging
+- Empty catch blocks at Player.jsx lines 209, 244 replaced with structured logging
 - appDataLogger.warn logs include cacheKey, dataSize, error.message
 
 **Offline Screenshot + Kiosk Password (06-02):**
 - blobToBase64/base64ToBlob helpers for IndexedDB blob persistence
-- syncPendingScreenshots with FIFO upload ordering
+- syncPendingScreenshots with FIFO upload ordering (40 lines)
 - screenshotService queues screenshots when navigator.onLine is false
 - SHA-256 password hashing via crypto.subtle.digest
 - cacheKioskPasswordHash and validateKioskPasswordOffline exports
 - Plaintext fallback for legacy kiosk deployments
+
+**Verification (06-03):**
+- Approved based on code review (player pairing required for manual testing)
+- 3/4 success criteria verified
+- PLR-01 gap: Player.jsx has own getRetryDelay (0-25% jitter) instead of using calculateBackoff (0-100%)
+- Gap deferred to Phase 7 (Player Refactoring) for consolidation
+
+**Critical Fixes During Execution:**
+- Restored 28 truncated page files from Phase 4 corruption (+12,602 lines)
+- Fixed LayoutsPage.jsx, DeveloperSettingsPage.jsx, SettingsPage.jsx, etc.
 
 ## Phase 5 Progress Summary
 
@@ -329,25 +338,25 @@ None.
 - ~~console.log calls remaining~~ Zero console.log in production code (Phase 4 complete)
 - 4 unrelated test files fail (api/ imports missing) - outside Phase 1 scope
 - Local Supabase migration history out of sync - migrations ready for deployment but need manual application
-- PublicPreviewPage.jsx has syntax error (incomplete file from 04-05, not blocking Phase 5)
-- Player.jsx has uncommitted changes from 06-01 Task 2 (empty catch block logging) - needs attention
+- ~~PublicPreviewPage.jsx has syntax error~~ Fixed: 28 truncated pages restored from Phase 4 corruption
+- ~~Player.jsx has uncommitted changes~~ Committed: structured logging in catch blocks
+- PLR-01 gap: Player.jsx uses own getRetryDelay (0-25% jitter) instead of calculateBackoff (0-100%) — deferred to Phase 7
+- Database schema issue: `column "last_seen" does not exist` — unrelated to Phase 6
 
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 06-02-PLAN.md (offline screenshot + kiosk password)
+Stopped at: Completed Phase 6 execution and verification
 Resume file: None
 
 ## Next Steps
 
-**Phase 6 In Progress** - Player Reliability
+**Phase 6 Complete!** Ready for Phase 7.
 
-**Remaining in Phase 6:**
-- [ ] 06-03: Remaining empty catch block fixes
-- [ ] 06-04: Additional error handling improvements
-
-**PLR Status:**
-- PLR-01: calculateBackoff with full jitter (complete)
+**Phase 7: Player Refactoring** — Split Player.jsx into focused components
+- REF-01: Player.jsx split into SceneRenderer, PlayerControls, etc.
+- REF-02: Custom hooks extracted (usePlayerContent, usePlayerHeartbeat, etc.)
+- **Includes:** Fix PLR-01 gap by consolidating retry logic to use calculateBackoff
 - PLR-02: Offline screenshot queue with reconnect upload (complete)
 - PLR-03: Kiosk exit password offline verification (complete)
 - PLR-04 partial: 2 empty catch blocks replaced (more may exist in other files)

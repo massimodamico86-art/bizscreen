@@ -15,7 +15,7 @@ BizScreen production release progresses through 12 phases: establishing testing 
 - [x] **Phase 3: Auth Hardening** - Strengthen password and rate limiting policies
 - [x] **Phase 4: Logging Migration** - Replace console.log with structured logging
 - [x] **Phase 5: Critical Fixes** - Wire up incomplete features and logic gaps
-- [ ] **Phase 6: Player Reliability** - Harden offline sync and error handling
+- [x] **Phase 6: Player Reliability** - Harden offline sync and error handling *(PLR-01 gap deferred to Phase 7)*
 - [ ] **Phase 7: Player Refactoring** - Split Player.jsx into focused components
 - [ ] **Phase 8: Page Refactoring** - Split large page components
 - [ ] **Phase 9: Device Experience** - QR pairing and kiosk exit improvements
@@ -125,9 +125,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Retry logic with full jitter and error logging (PLR-01, PLR-04)
-- [ ] 06-02-PLAN.md — Offline screenshot sync and kiosk password (PLR-02, PLR-03)
-- [ ] 06-03-PLAN.md — Verification and testing
+- [x] 06-01-PLAN.md — Retry logic with full jitter and error logging (PLR-01, PLR-04)
+- [x] 06-02-PLAN.md — Offline screenshot sync and kiosk password (PLR-02, PLR-03)
+- [x] 06-03-PLAN.md — Verification and testing
 
 ### Phase 7: Player Refactoring
 **Goal**: Player.jsx is decomposed into focused, testable components under 500 lines each
@@ -228,7 +228,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Auth Hardening | 4/4 | Complete | 2026-01-22 |
 | 4. Logging Migration | 6/6 | Complete | 2026-01-22 |
 | 5. Critical Fixes | 2/2 | Complete | 2026-01-23 |
-| 6. Player Reliability | 0/3 | Not started | - |
+| 6. Player Reliability | 3/3 | Complete* | 2026-01-23 |
 | 7. Player Refactoring | 0/TBD | Not started | - |
 | 8. Page Refactoring | 0/TBD | Not started | - |
 | 9. Device Experience | 0/TBD | Not started | - |
@@ -238,4 +238,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 5 complete (2 plans executed in parallel)*
+*Last updated: 2026-01-23 — Phase 6 complete (PLR-01 gap deferred to Phase 7)*

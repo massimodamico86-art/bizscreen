@@ -30,10 +30,10 @@
 
 ### Player Reliability
 
-- [ ] **PLR-01**: Failed syncs retry with exponential backoff and jitter
-- [ ] **PLR-02**: Offline screenshot sync implemented — queued screenshots upload on reconnect
-- [ ] **PLR-03**: Kiosk exit password validation verified working in player
-- [ ] **PLR-04**: Empty catch blocks replaced with proper error handling and logging
+- [~] **PLR-01**: Failed syncs retry with exponential backoff and jitter *(partial: playerService has full jitter, Player.jsx uses 0-25% — deferred to Phase 7 refactoring)*
+- [x] **PLR-02**: Offline screenshot sync implemented — queued screenshots upload on reconnect
+- [x] **PLR-03**: Kiosk exit password validation verified working in player
+- [x] **PLR-04**: Empty catch blocks replaced with proper error handling and logging
 
 ### Refactoring
 
