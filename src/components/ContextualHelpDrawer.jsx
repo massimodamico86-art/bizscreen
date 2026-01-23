@@ -22,6 +22,7 @@ import {
   getCategoryForPage,
   HELP_CATEGORIES
 } from '../services/helpService';
+import { useLogger } from '../hooks/useLogger.js';
 
 /**
  * Help button that triggers the drawer
@@ -48,6 +49,7 @@ export default function ContextualHelpDrawer({
   pageId,
   onNavigate
 }) {
+  const logger = useLogger('ContextualHelpDrawer');
   const [loading, setLoading] = useState(false);
   const [relatedTopics, setRelatedTopics] = useState([]);
   const tips = getQuickTips(pageId);
@@ -66,7 +68,7 @@ export default function ContextualHelpDrawer({
       const topics = await getContextualHelp(pageId);
       setRelatedTopics(topics);
     } catch (err) {
-      console.error('Error loading contextual help:', err);
+      logger.error('Error loading contextual help', { pageId, error: err.message });
     } finally {
       setLoading(false);
     }

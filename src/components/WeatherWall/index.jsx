@@ -10,8 +10,10 @@ import AnimatedTheme from './AnimatedTheme';
 import ClassicTheme from './ClassicTheme';
 import GlassTheme from './GlassTheme';
 import { getWeatherWallData, getWeatherEmoji } from '../../services/weatherService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 export default function WeatherWall({ config, appId }) {
+  const logger = useLogger('WeatherWall');
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,12 +27,12 @@ export default function WeatherWall({ config, appId }) {
       const data = await getWeatherWallData(config);
       setWeatherData(data);
     } catch (err) {
-      console.error('Weather fetch error:', err);
+      logger.error('Weather fetch error', { error: err.message });
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [config]);
+  }, [config, logger]);
 
   useEffect(() => {
     fetchWeather();

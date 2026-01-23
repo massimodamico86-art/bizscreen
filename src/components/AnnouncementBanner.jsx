@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { X, ChevronRight, Megaphone, Sparkles, AlertTriangle, Wrench, Info } from 'lucide-react';
 import { getPriorityAnnouncements, dismissAnnouncement } from '../services/feedbackService';
+import { useLogger } from '../hooks/useLogger.js';
 
 const typeConfig = {
   info: {
@@ -33,6 +34,7 @@ const typeConfig = {
 };
 
 export function AnnouncementBanner({ onHeightChange }) {
+  const logger = useLogger('AnnouncementBanner');
   const [announcements, setAnnouncements] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
@@ -45,14 +47,14 @@ export function AnnouncementBanner({ onHeightChange }) {
         const priority = await getPriorityAnnouncements();
         setAnnouncements(priority);
       } catch (error) {
-        console.error('Failed to load announcements:', error);
+        logger.error('Failed to load announcements', { error: error.message });
       } finally {
         setIsLoading(false);
       }
     }
 
     loadAnnouncements();
-  }, []);
+  }, [logger]);
 
   // Auto-rotate if multiple announcements
   useEffect(() => {
@@ -77,9 +79,9 @@ export function AnnouncementBanner({ onHeightChange }) {
       await dismissAnnouncement(announcement.id);
       setAnnouncements(prev => prev.filter(a => a.id !== announcement.id));
     } catch (error) {
-      console.error('Failed to dismiss announcement:', error);
+      logger.error('Failed to dismiss announcement', { announcementId: announcement.id, error: error.message });
     }
-  }, []);
+  }, [logger]);
 
   const handleCtaClick = useCallback((announcement) => {
     if (announcement.ctaUrl) {

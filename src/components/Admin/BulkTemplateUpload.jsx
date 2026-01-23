@@ -9,6 +9,7 @@ import { useState, useCallback } from 'react';
 import { Upload, X, Check, Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import { autoTagSvg } from '../../services/autoTaggingService';
 import { createTemplate } from '../../services/marketplaceService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // File status states
 const STATUS = {
@@ -21,6 +22,7 @@ const STATUS = {
 };
 
 export default function BulkTemplateUpload({ onComplete, onCancel }) {
+  const logger = useLogger('BulkTemplateUpload');
   const [files, setFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -78,7 +80,7 @@ export default function BulkTemplateUpload({ onComplete, onCancel }) {
       const orientation = height > width ? 'portrait' : 'landscape';
       return { width, height, orientation };
     } catch (err) {
-      console.warn('Could not parse SVG dimensions:', err);
+      logger.warn('Could not parse SVG dimensions', { error: err.message });
       return { width: 1920, height: 1080, orientation: 'landscape' };
     }
   };

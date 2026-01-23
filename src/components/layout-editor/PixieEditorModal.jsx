@@ -15,6 +15,7 @@ import {
   uploadBase64ToCloudinary,
   isCloudinaryConfigured,
 } from '../../services/cloudinaryService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Pixie CDN URL
 const PIXIE_CDN_URL = 'https://unpkg.com/@nicholask/pixie@latest/dist/pixie.umd.js';
@@ -28,6 +29,7 @@ export default function PixieEditorModal({
   uploadToCloudinary = true,
   showToast,
 }) {
+  const logger = useLogger('PixieEditorModal');
   const containerRef = useRef(null);
   const pixieRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -62,10 +64,10 @@ export default function PixieEditorModal({
 
       return true;
     } catch (err) {
-      console.error('Failed to load Pixie:', err);
+      logger.error('Failed to load Pixie', { error: err.message });
       return false;
     }
-  }, []);
+  }, [logger]);
 
   // Handle save with optional Cloudinary upload
   const handleSaveImage = useCallback(async (dataUrl) => {
@@ -86,13 +88,13 @@ export default function PixieEditorModal({
       showToast?.({ type: 'success', message: 'Image saved successfully' });
       onClose();
     } catch (err) {
-      console.error('Failed to upload image:', err);
+      logger.error('Failed to upload image', { error: err.message });
       setError('Failed to upload image. Please try again.');
       showToast?.({ type: 'error', message: 'Failed to upload image' });
     } finally {
       setUploading(false);
     }
-  }, [uploadToCloudinary, onSave, onClose, showToast]);
+  }, [uploadToCloudinary, onSave, onClose, showToast, logger]);
 
   // Initialize Pixie when modal opens
   useEffect(() => {
@@ -162,7 +164,7 @@ export default function PixieEditorModal({
 
         setLoading(false);
       } catch (err) {
-        console.error('Failed to initialize Pixie:', err);
+        logger.error('Failed to initialize Pixie', { error: err.message });
         setError('Failed to initialize image editor');
         setLoading(false);
       }
@@ -181,7 +183,7 @@ export default function PixieEditorModal({
         pixieRef.current = null;
       }
     };
-  }, [isOpen, imageUrl, loadPixie, handleSaveImage, onClose]);
+  }, [isOpen, imageUrl, loadPixie, handleSaveImage, onClose, logger]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -306,7 +308,7 @@ export function SimpleImageEditor({
       showToast?.({ type: 'success', message: 'Image saved successfully' });
       onClose();
     } catch (err) {
-      console.error('Failed to upload image:', err);
+      logger.error('Failed to upload image', { error: err.message });
       showToast?.({ type: 'error', message: 'Failed to upload image' });
     } finally {
       setUploading(false);

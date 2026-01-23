@@ -22,6 +22,7 @@ import {
   X
 } from 'lucide-react';
 import { getTenantLifecycleStatus } from '../services/billingService';
+import { useLogger } from '../hooks/useLogger.js';
 
 /**
  * Banner severity colors and icons
@@ -57,6 +58,7 @@ const BANNER_STYLES = {
  * BillingBanner - Main component
  */
 const BillingBanner = ({ className = '' }) => {
+  const logger = useLogger('BillingBanner');
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dismissed, setDismissed] = useState(false);
@@ -70,7 +72,7 @@ const BillingBanner = ({ className = '' }) => {
       const data = await getTenantLifecycleStatus();
       setStatus(data);
     } catch (err) {
-      console.error('Failed to load billing status:', err);
+      logger.error('Failed to load billing status', { error: err.message });
     } finally {
       setLoading(false);
     }

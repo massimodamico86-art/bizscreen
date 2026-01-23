@@ -36,6 +36,7 @@ import ThemePreviewCard, {
   ColorPaletteGrid,
   FontPairingPreview,
 } from './ThemePreviewCard';
+import { useLogger } from '../../hooks/useLogger.js';
 
 const STEPS = [
   { id: 'upload', title: 'Upload Logo', icon: Upload },
@@ -45,6 +46,7 @@ const STEPS = [
 ];
 
 export default function BrandImporterModal({ isOpen, onClose, onThemeCreated }) {
+  const logger = useLogger('BrandImporterModal');
   // Step management
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -150,7 +152,7 @@ export default function BrandImporterModal({ isOpen, onClose, onThemeCreated }) 
       setExtracting(false);
       setCurrentStep(1);
     } catch (err) {
-      console.error('Upload/Extract error:', err);
+      logger.error('Upload/Extract error', { error: err.message });
       setError(err.message || 'Failed to process logo');
       setUploading(false);
       setExtracting(false);
@@ -214,7 +216,7 @@ export default function BrandImporterModal({ isOpen, onClose, onThemeCreated }) 
       onClose();
       resetModal();
     } catch (err) {
-      console.error('Save theme error:', err);
+      logger.error('Save theme error', { error: err.message });
       setError(err.message || 'Failed to save theme');
     } finally {
       setSaving(false);

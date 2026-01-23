@@ -9,6 +9,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Bell, X, ChevronRight, Sparkles, AlertTriangle, Wrench, Info, CheckCircle } from 'lucide-react';
 import { getActiveAnnouncements, dismissAnnouncement } from '../services/feedbackService';
+import { useLogger } from '../hooks/useLogger.js';
 
 const typeConfig = {
   info: {
@@ -44,6 +45,7 @@ const typeConfig = {
 };
 
 export function AnnouncementCenter() {
+  const logger = useLogger('AnnouncementCenter');
   const [announcements, setAnnouncements] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,14 +60,14 @@ export function AnnouncementCenter() {
         // Filter out priority announcements (those are shown in banner)
         setAnnouncements(all.filter(a => !a.priority));
       } catch (error) {
-        console.error('Failed to load announcements:', error);
+        logger.error('Failed to load announcements', { error: error.message });
       } finally {
         setIsLoading(false);
       }
     }
 
     loadAnnouncements();
-  }, []);
+  }, [logger]);
 
   // Close on outside click
   useEffect(() => {
@@ -108,9 +110,9 @@ export function AnnouncementCenter() {
       await dismissAnnouncement(announcement.id);
       setAnnouncements(prev => prev.filter(a => a.id !== announcement.id));
     } catch (error) {
-      console.error('Failed to dismiss announcement:', error);
+      logger.error('Failed to dismiss announcement', { announcementId: announcement.id, error: error.message });
     }
-  }, []);
+  }, [logger]);
 
   const handleCtaClick = useCallback((announcement) => {
     if (announcement.ctaUrl) {

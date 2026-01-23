@@ -9,6 +9,7 @@ import { useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { MessageSquarePlus, X, Bug, Lightbulb, MessageCircle, ThumbsUp, ThumbsDown, Send, Check, Loader2 } from 'lucide-react';
 import { submitQuickFeedback, submitBugReport, submitFeatureRequest, FeedbackTypes } from '../services/feedbackService';
+import { useLogger } from '../hooks/useLogger.js';
 
 const feedbackCategories = [
   {
@@ -38,6 +39,7 @@ const feedbackCategories = [
 ];
 
 export function FeedbackWidget({ position = 'bottom-right' }) {
+  const logger = useLogger('FeedbackWidget');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState(null);
   const [message, setMessage] = useState('');
@@ -100,12 +102,12 @@ export function FeedbackWidget({ position = 'bottom-right' }) {
         setSubmitStatus('error');
       }
     } catch (error) {
-      console.error('Failed to submit feedback:', error);
+      logger.error('Failed to submit feedback', { feedbackType: selectedType, error: error.message });
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
     }
-  }, [selectedType, message, sentiment, handleClose]);
+  }, [selectedType, message, sentiment, handleClose, logger]);
 
   return (
     <>

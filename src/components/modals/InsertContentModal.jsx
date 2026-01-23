@@ -29,6 +29,7 @@ import { fetchMediaAssets, fetchApps } from '../../services/mediaService';
 import { fetchPlaylists } from '../../services/playlistService';
 import { fetchLayouts } from '../../services/layoutService';
 import { useMediaFolders } from '../../hooks/useMediaFolders';
+import { useLogger } from '../../hooks/useLogger.js';
 
 /**
  * Tab configuration
@@ -236,6 +237,7 @@ export function InsertContentModal({
   title = 'Insert Content',
   allowedTabs,
 }) {
+  const logger = useLogger('InsertContentModal');
   const [activeTab, setActiveTab] = useState(initialTab);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentFolderId, setCurrentFolderId] = useState(null);
@@ -292,14 +294,14 @@ export function InsertContentModal({
             break;
         }
       } catch (error) {
-        console.error('Error loading content:', error);
+        logger.error('Error loading content', { activeTab, error: error.message });
       } finally {
         setLoading(false);
       }
     };
 
     loadContent();
-  }, [open, activeTab, currentFolderId]);
+  }, [open, activeTab, currentFolderId, logger]);
 
   // Reset state when modal closes
   useEffect(() => {

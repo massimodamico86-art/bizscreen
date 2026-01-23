@@ -30,6 +30,7 @@ import { Button } from '../../design-system';
 import { fetchDataSources, getDataSource, FIELD_DATA_TYPES } from '../../services/dataSourceService';
 import { createSlide } from '../../services/sceneDesignService';
 import { getBrandTheme } from '../../services/brandThemeService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Layout options
 const LAYOUT_OPTIONS = [
@@ -72,6 +73,7 @@ export default function DataBoundWizardModal({
   onSlideCreated,
   onShowToast,
 }) {
+  const logger = useLogger('DataBoundWizardModal');
   // Wizard state
   const [step, setStep] = useState(1);
   const [dataSources, setDataSources] = useState([]);
@@ -124,7 +126,7 @@ export default function DataBoundWizardModal({
       const sources = await fetchDataSources();
       setDataSources(sources);
     } catch (err) {
-      console.error('Error loading data sources:', err);
+      logger.error('Error loading data sources', { error: err.message });
       setError('Failed to load data sources');
     } finally {
       setIsLoading(false);
@@ -154,7 +156,7 @@ export default function DataBoundWizardModal({
         setSelectedFields(newSelectedFields);
       }
     } catch (err) {
-      console.error('Error loading source details:', err);
+      logger.error('Error loading source details', { sourceId, error: err.message });
     }
   }
 
@@ -209,7 +211,7 @@ export default function DataBoundWizardModal({
       onSlideCreated?.(slide);
       onClose();
     } catch (err) {
-      console.error('Error creating data-bound slide:', err);
+      logger.error('Error creating data-bound slide', { sourceId: selectedSource, error: err.message });
       onShowToast?.('Failed to create slide', 'error');
     } finally {
       setIsCreating(false);

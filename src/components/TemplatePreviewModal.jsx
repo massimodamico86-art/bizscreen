@@ -11,6 +11,7 @@ import {
   installTemplateAsScene,
   LICENSE_LABELS,
 } from '../services/marketplaceService';
+import { useLogger } from '../hooks/useLogger.js';
 
 // License badge colors
 const LICENSE_COLORS = {
@@ -24,6 +25,7 @@ export default function TemplatePreviewModal({
   onClose,
   onInstallSuccess,
 }) {
+  const logger = useLogger('TemplatePreviewModal');
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [installing, setInstalling] = useState(false);
@@ -44,11 +46,11 @@ export default function TemplatePreviewModal({
         setCustomName(data.name);
       })
       .catch(err => {
-        console.error('Failed to load template detail:', err);
+        logger.error('Failed to load template detail', { templateId: template.id, error: err.message });
         setError('Failed to load template details');
       })
       .finally(() => setLoading(false));
-  }, [template?.id]);
+  }, [template?.id, logger]);
 
   // Handle install
   const handleInstall = async () => {
@@ -64,7 +66,7 @@ export default function TemplatePreviewModal({
       );
       onInstallSuccess?.(sceneId);
     } catch (err) {
-      console.error('Failed to install template:', err);
+      logger.error('Failed to install template', { templateId: template.id, error: err.message });
       setError(err.message || 'Failed to install template');
       setInstalling(false);
     }
