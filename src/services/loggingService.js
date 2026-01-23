@@ -12,6 +12,8 @@
 
 import { isProduction } from '../config/env';
 import { supabase } from '../supabase';
+import { redactObject, redactPII } from '../utils/pii.js';
+import { safeStringify } from '../utils/safeStringify.js';
 
 // Log levels
 const LOG_LEVELS = {
@@ -100,19 +102,25 @@ function shouldSample(level) {
 function createLogEntry(level, message, data = {}) {
   const { error, ...rest } = data;
 
+  // Apply PII redaction to message
+  const redactedMessage = redactPII(message);
+
+  // Apply PII redaction to data object
+  const redactedData = redactObject(rest);
+
   return {
     timestamp: new Date().toISOString(),
     level,
-    message,
+    message: redactedMessage,
     correlationId,
     sessionId: sessionContext.sessionId,
     userId: sessionContext.userId,
     tenantId: sessionContext.tenantId,
     url: typeof window !== 'undefined' ? window.location.pathname : null,
-    data: rest,
+    data: redactedData,
     error: error ? {
       name: error.name,
-      message: error.message,
+      message: redactPII(error.message || ''),
       stack: error.stack?.split('\n').slice(0, 5).join('\n'),
     } : undefined,
     metadata: {
@@ -148,11 +156,14 @@ function formatForConsole(entry) {
     fatal: '💀',
   };
 
+  // Use safeStringify to handle any complex data safely
+  const dataWithCorrelation = { ...entry.data, correlationId: entry.correlationId };
+
   return {
     style: levelColors[entry.level],
     prefix: `${icon[entry.level]} [${entry.level.toUpperCase()}]`,
     message: entry.message,
-    data: { ...entry.data, correlationId: entry.correlationId },
+    data: dataWithCorrelation,
   };
 }
 

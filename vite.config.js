@@ -141,6 +141,18 @@ export default defineConfig({
     }),
   ],
   build: {
+    // Use terser for console removal (esbuild doesn't support drop_console)
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,      // Remove all console.* calls
+        drop_debugger: true,     // Remove debugger statements
+        pure_funcs: ['console.log', 'console.debug', 'console.trace'],
+      },
+      format: {
+        comments: false,         // Remove comments in production
+      },
+    },
     // Increase warning limit since we have intentionally large pages
     chunkSizeWarningLimit: 600,
     rollupOptions: {
