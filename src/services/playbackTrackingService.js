@@ -156,7 +156,7 @@ export function trackSceneStart({ sceneId, scheduleId, groupId }) {
     itemType: 'scene',
   };
 
-  logger.debug('Scene started', { sceneId, playlistId, screenId });
+  logger.debug('Scene started', { sceneId, scheduleId, screenId: deviceContext.deviceId });
 
   return currentSceneEvent;
 }
@@ -404,7 +404,7 @@ export function trackMediaError({ url, mediaType, error, httpStatus }) {
   };
 
   queueEvent(event);
-  logger.warn('Media error', { mediaType, error, mediaId, sceneId });
+  logger.warn('Media error', { mediaType, error: error.substring(0, 100), url: url.substring(0, 100), sceneId: currentSceneEvent?.sceneId });
 }
 
 /**
