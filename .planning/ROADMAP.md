@@ -148,19 +148,24 @@ Plans:
 - [x] 07-04-PLAN.md — Gap closure: Fix test failures (playbackTrackingService bug)
 
 ### Phase 8: Page Refactoring
-**Goal**: Large page components are decomposed into maintainable sub-components
+**Goal**: Large page components are decomposed into maintainable sub-components with custom hooks
 **Depends on**: Phase 7 (Player refactoring pattern proven)
 **Requirements**: REF-03, REF-04, REF-05, REF-06, REF-07
 **Success Criteria** (what must be TRUE):
-  1. MediaLibraryPage.jsx is under 500 lines with useMediaLibrary hook
-  2. ScreensPage.jsx is under 500 lines with useScreensData hook
-  3. PlaylistEditorPage.jsx is under 500 lines with custom hooks
-  4. CampaignEditorPage.jsx is under 500 lines with custom hooks
-  5. FeatureFlagsPage.jsx is under 500 lines with custom hooks
-**Plans**: TBD
+  1. MediaLibraryPage.jsx is under 800 lines with useMediaLibrary hook
+  2. ScreensPage.jsx is under 700 lines with useScreensData hook
+  3. PlaylistEditorPage.jsx is under 700 lines with usePlaylistEditor hook
+  4. CampaignEditorPage.jsx is under 600 lines with useCampaignEditor hook
+  5. FeatureFlagsPage.jsx is under 600 lines with useFeatureFlags hook
+**Plans**: 6 plans
 
 Plans:
-- [ ] 08-01: TBD
+- [ ] 08-01-PLAN.md — Extract useFeatureFlags hook (REF-07)
+- [ ] 08-02-PLAN.md — Extract useCampaignEditor hook (REF-06)
+- [ ] 08-03-PLAN.md — Extract usePlaylistEditor hook (REF-05)
+- [ ] 08-04-PLAN.md — Extract useScreensData hook (REF-04)
+- [ ] 08-05-PLAN.md — Extract useMediaLibrary hook (REF-03)
+- [ ] 08-06-PLAN.md — Hook tests and verification
 
 ### Phase 9: Device Experience
 **Goal**: Device pairing and kiosk management are easier for field technicians
@@ -233,7 +238,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 5. Critical Fixes | 2/2 | Complete | 2026-01-23 |
 | 6. Player Reliability | 3/3 | Complete | 2026-01-23 |
 | 7. Player Refactoring | 4/4 | Complete | 2026-01-23 |
-| 8. Page Refactoring | 0/TBD | Not started | - |
+| 8. Page Refactoring | 0/6 | Planning complete | - |
 | 9. Device Experience | 0/TBD | Not started | - |
 | 10. Analytics | 0/TBD | Not started | - |
 | 11. GDPR Compliance | 0/TBD | Not started | - |
@@ -241,4 +246,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 7 complete (4/4 plans, hooks extracted)*
+*Last updated: 2026-01-23 — Phase 8 planning complete (6 plans)*
