@@ -5,16 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 3 Auth Hardening - Complete
+**Current focus:** Phase 4 Logging Migration - In Progress
 
 ## Current Position
 
-Phase: 3 of 12 (Auth Hardening) - Complete
-Plan: 4 of 4 in phase 3 complete
-Status: Phase Complete
-Last activity: 2026-01-22 - Completed 03-04-PLAN.md (Verification and Testing)
+Phase: 4 of 12 (Logging Migration)
+Plan: 1 of 2 in phase 4 complete
+Status: In Progress
+Last activity: 2026-01-23 - Completed 04-01-PLAN.md (Logging Infrastructure Enhancement)
 
-Progress: [######------] 25% (3/12 phases complete)
+Progress: [######------] 29% (3.5/12 phases complete)
+
+## Phase 4 Progress Summary
+
+**Logging Migration Plans:**
+- [x] 04-01: Logging infrastructure enhancement (8125b8c, 61dd802, 7bff91d)
+- [ ] 04-02: Console.log migration (pending)
+
+**Logging Infrastructure Enhancement:**
+- PII redaction utilities (email, phone, credit card, SSN detection)
+- Safe stringify with circular reference handling
+- useLogger React hook for component-scoped logging
+- loggingService enhanced with automatic PII redaction
+- All log messages, data objects, and error messages now redacted
 
 ## Phase 3 Completion Summary
 
@@ -101,9 +114,9 @@ Progress: [######------] 25% (3/12 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
-- Average duration: 5.5 min
-- Total execution time: 77 min (1.3 hours)
+- Total plans completed: 15
+- Average duration: 5.3 min
+- Total execution time: 79 min (1.3 hours)
 
 **By Phase:**
 
@@ -112,10 +125,11 @@ Progress: [######------] 25% (3/12 phases complete)
 | 01-testing-infrastructure | 5 | 50 min | 10 min |
 | 02-xss-prevention | 5 | 16 min | 3.2 min |
 | 03-auth-hardening | 4 | 11 min | 2.8 min |
+| 04-logging-migration | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (4 min), 03-02 (1 min), 03-03 (2 min), 03-04 (3 min)
-- Trend: Fast (service integration and testing)
+- Last 5 plans: 03-02 (1 min), 03-03 (2 min), 03-04 (3 min), 04-01 (2 min)
+- Trend: Very fast (infrastructure enhancements)
 
 *Updated after each plan completion*
 
@@ -161,6 +175,11 @@ Recent decisions affecting current work:
 - [03-03]: Error message shows "try again in X minutes" for clarity
 - [03-04]: Added PASSWORD_REQUIREMENTS export for test access
 - [03-04]: Common password check is exact-match after lowercase
+- [04-01]: Redact patterns applied in order: credit card, SSN, phone, email (most to least specific)
+- [04-01]: Sensitive keys include password, token, secret, key, authorization, credential, apiKey, accessToken, refreshToken
+- [04-01]: WeakSet prevents infinite recursion on circular references
+- [04-01]: Error objects serialized with name, message, and first 5 stack lines
+- [04-01]: useLogger hook uses useMemo for stable logger reference across re-renders
 
 ### Pending Todos
 
@@ -175,10 +194,10 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-22
-Stopped at: Completed 03-04-PLAN.md (Verification and Testing) - Phase 3 Complete
+Last session: 2026-01-23
+Stopped at: Completed 04-01-PLAN.md (Logging Infrastructure Enhancement)
 Resume file: None
 
 ## Next Steps
 
-Phase 4: Next phase in ROADMAP.md
+04-02-PLAN.md: Console.log migration to structured logging
