@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { Button, Card, Badge } from '../design-system';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   getCampaign,
   createCampaign,
@@ -77,6 +78,7 @@ const CampaignEditorPage = ({ showToast }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isNew = campaignId === 'new';
+  const logger = useLogger('CampaignEditorPage');
 
   // Campaign state
   const [campaign, setCampaign] = useState({
@@ -138,7 +140,7 @@ const CampaignEditorPage = ({ showToast }) => {
         end_at: data.end_at ? formatDateTimeLocal(data.end_at) : ''
       });
     } catch (error) {
-      console.error('Error loading campaign:', error);
+      logger.error('Failed to load campaign', { campaignId, error });
       showToast?.('Error loading campaign', 'error');
       navigate('/app/campaigns');
     } finally {
@@ -162,7 +164,7 @@ const CampaignEditorPage = ({ showToast }) => {
       setPlaylists(playlistsRes || []);
       setLayouts(layoutsRes.data || []);
     } catch (error) {
-      console.error('Error loading picker data:', error);
+      logger.error('Failed to load picker data', { error });
     }
   };
 
@@ -204,7 +206,7 @@ const CampaignEditorPage = ({ showToast }) => {
         setHasChanges(false);
       }
     } catch (error) {
-      console.error('Error saving campaign:', error);
+      logger.error('Failed to save campaign', { campaignId, isNew, campaignName: campaign.name, error });
       showToast?.('Error saving campaign: ' + error.message, 'error');
     } finally {
       setSaving(false);
@@ -219,7 +221,7 @@ const CampaignEditorPage = ({ showToast }) => {
       showToast?.('Campaign deleted');
       navigate('/app/campaigns');
     } catch (error) {
-      console.error('Error deleting campaign:', error);
+      logger.error('Failed to delete campaign', { campaignId, error });
       showToast?.('Error deleting campaign: ' + error.message, 'error');
     }
   };
@@ -240,7 +242,7 @@ const CampaignEditorPage = ({ showToast }) => {
       showToast?.('Campaign activated');
       loadCampaign();
     } catch (error) {
-      console.error('Error activating campaign:', error);
+      logger.error('Failed to activate campaign', { campaignId, error });
       showToast?.('Error activating campaign: ' + error.message, 'error');
     }
   };
@@ -251,7 +253,7 @@ const CampaignEditorPage = ({ showToast }) => {
       showToast?.('Campaign paused');
       loadCampaign();
     } catch (error) {
-      console.error('Error pausing campaign:', error);
+      logger.error('Failed to pause campaign', { campaignId, error });
       showToast?.('Error pausing campaign: ' + error.message, 'error');
     }
   };
@@ -268,7 +270,7 @@ const CampaignEditorPage = ({ showToast }) => {
       showToast?.('Target added');
       loadCampaign();
     } catch (error) {
-      console.error('Error adding target:', error);
+      logger.error('Failed to add target', { campaignId, targetType, targetId, error });
       showToast?.('Error adding target: ' + error.message, 'error');
     }
   };
@@ -282,7 +284,7 @@ const CampaignEditorPage = ({ showToast }) => {
       }));
       showToast?.('Target removed');
     } catch (error) {
-      console.error('Error removing target:', error);
+      logger.error('Failed to remove target', { targetId, error });
       showToast?.('Error removing target: ' + error.message, 'error');
     }
   };
@@ -299,7 +301,7 @@ const CampaignEditorPage = ({ showToast }) => {
       showToast?.('Content added');
       loadCampaign();
     } catch (error) {
-      console.error('Error adding content:', error);
+      logger.error('Failed to add content', { campaignId, contentType, contentId, error });
       showToast?.('Error adding content: ' + error.message, 'error');
     }
   };
@@ -313,7 +315,7 @@ const CampaignEditorPage = ({ showToast }) => {
       }));
       showToast?.('Content removed');
     } catch (error) {
-      console.error('Error removing content:', error);
+      logger.error('Failed to remove content', { contentId, error });
       showToast?.('Error removing content: ' + error.message, 'error');
     }
   };
@@ -353,7 +355,7 @@ const CampaignEditorPage = ({ showToast }) => {
       const review = await getOpenReviewForResource('campaign', campaignId);
       setCurrentReview(review);
     } catch (error) {
-      console.error('Error fetching review:', error);
+      logger.error('Failed to fetch review', { campaignId, error });
     }
   };
 
@@ -380,7 +382,7 @@ const CampaignEditorPage = ({ showToast }) => {
       await loadCampaign();
       await fetchCurrentReview();
     } catch (error) {
-      console.error('Error requesting approval:', error);
+      logger.error('Failed to request approval', { campaignId, campaignName: campaign.name, error });
       showToast?.(error.message || 'Error requesting approval', 'error');
     } finally {
       setSubmittingApproval(false);
@@ -396,7 +398,7 @@ const CampaignEditorPage = ({ showToast }) => {
       await loadCampaign();
       setCurrentReview(null);
     } catch (error) {
-      console.error('Error reverting to draft:', error);
+      logger.error('Failed to revert to draft', { campaignId, error });
       showToast?.(error.message || 'Error reverting to draft', 'error');
     }
   };
@@ -409,7 +411,7 @@ const CampaignEditorPage = ({ showToast }) => {
       const links = await fetchPreviewLinksForResource('campaign', campaignId);
       setPreviewLinks(links);
     } catch (error) {
-      console.error('Error fetching preview links:', error);
+      logger.error('Failed to fetch preview links', { campaignId, error });
     } finally {
       setLoadingPreviewLinks(false);
     }
@@ -434,7 +436,7 @@ const CampaignEditorPage = ({ showToast }) => {
       showToast?.('Preview link created');
       await fetchPreviewLinks();
     } catch (error) {
-      console.error('Error creating preview link:', error);
+      logger.error('Failed to create preview link', { campaignId, expiryPreset: selectedExpiry, error });
       showToast?.(error.message || 'Error creating preview link', 'error');
     } finally {
       setCreatingPreviewLink(false);
@@ -449,7 +451,7 @@ const CampaignEditorPage = ({ showToast }) => {
       showToast?.('Preview link revoked');
       await fetchPreviewLinks();
     } catch (error) {
-      console.error('Error revoking preview link:', error);
+      logger.error('Failed to revoke preview link', { linkId, error });
       showToast?.(error.message || 'Error revoking link', 'error');
     }
   };

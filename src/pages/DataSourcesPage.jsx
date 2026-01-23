@@ -46,6 +46,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
+import { useLogger } from '../hooks/useLogger.js';
 import {
   fetchDataSources,
   getDataSource,
@@ -321,6 +322,7 @@ const RowEditor = ({ row, fields, onUpdate, onDelete }) => {
 export default function DataSourcesPage() {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const logger = useLogger('DataSourcesPage');
 
   // List state
   const [dataSources, setDataSources] = useState([]);
@@ -363,7 +365,7 @@ export default function DataSourcesPage() {
       const data = await fetchDataSources();
       setDataSources(data);
     } catch (err) {
-      console.error('[DataSourcesPage] Failed to load:', err);
+      logger.error('Failed to load data sources', { error: err });
       setError('Failed to load data sources');
     } finally {
       setLoading(false);
@@ -386,7 +388,7 @@ export default function DataSourcesPage() {
       const data = await getDataSource(sourceId);
       setSourceData(data);
     } catch (err) {
-      console.error('[DataSourcesPage] Failed to load source:', err);
+      logger.error('Failed to load source details', { sourceId, error: err });
       setError('Failed to load data source details');
     } finally {
       setLoadingSource(false);
@@ -425,7 +427,7 @@ export default function DataSourcesPage() {
             await loadDataSources();
             setSelectedSource(newSource);
           } catch (err) {
-            console.error('[DataSourcesPage] CSV import failed:', err);
+            logger.error('CSV import failed', { name: createData.name, filename: csvFile.name, error: err });
             setError('Failed to import CSV: ' + err.message);
           } finally {
             setCreating(false);
@@ -446,7 +448,7 @@ export default function DataSourcesPage() {
         setSelectedSource(newSource);
       }
     } catch (err) {
-      console.error('[DataSourcesPage] Create failed:', err);
+      logger.error('Create data source failed', { name: campaign.name, type: createData.type, error: err });
       setError('Failed to create data source: ' + err.message);
     } finally {
       setCreating(false);
@@ -467,7 +469,7 @@ export default function DataSourcesPage() {
       }
       await loadDataSources();
     } catch (err) {
-      console.error('[DataSourcesPage] Delete failed:', err);
+      logger.error('Delete data source failed', { dataSourceId: deleteTarget.id, error: err });
       setError('Failed to delete data source');
     }
   };
@@ -488,7 +490,7 @@ export default function DataSourcesPage() {
       await loadSourceDetails(sourceData.id);
       await loadDataSources();
     } catch (err) {
-      console.error('[DataSourcesPage] Add field failed:', err);
+      logger.error('Add field failed', { dataSourceId: sourceData.id, fieldName: newField.name, error: err });
       setError('Failed to add field: ' + err.message);
     }
   };
@@ -498,7 +500,7 @@ export default function DataSourcesPage() {
       await updateField(fieldId, updates);
       await loadSourceDetails(sourceData.id);
     } catch (err) {
-      console.error('[DataSourcesPage] Update field failed:', err);
+      logger.error('Update field failed', { fieldId, error: err });
       setError('Failed to update field');
     }
   };
@@ -509,7 +511,7 @@ export default function DataSourcesPage() {
       await loadSourceDetails(sourceData.id);
       await loadDataSources();
     } catch (err) {
-      console.error('[DataSourcesPage] Delete field failed:', err);
+      logger.error('Delete field failed', { fieldId, error: err });
       setError('Failed to delete field');
     }
   };
@@ -527,7 +529,7 @@ export default function DataSourcesPage() {
       );
       await loadSourceDetails(sourceData.id);
     } catch (err) {
-      console.error('[DataSourcesPage] Reorder failed:', err);
+      logger.error('Reorder fields failed', { dataSourceId: sourceData.id, error: err });
     }
   };
 
@@ -543,7 +545,7 @@ export default function DataSourcesPage() {
       await loadSourceDetails(sourceData.id);
       await loadDataSources();
     } catch (err) {
-      console.error('[DataSourcesPage] Add row failed:', err);
+      logger.error('Add row failed', { dataSourceId: sourceData.id, error: err });
       setError('Failed to add row');
     }
   };
@@ -553,7 +555,7 @@ export default function DataSourcesPage() {
       await updateRow(rowId, updates);
       await loadSourceDetails(sourceData.id);
     } catch (err) {
-      console.error('[DataSourcesPage] Update row failed:', err);
+      logger.error('Update row failed', { rowId, error: err });
       setError('Failed to update row');
     }
   };
@@ -564,7 +566,7 @@ export default function DataSourcesPage() {
       await loadSourceDetails(sourceData.id);
       await loadDataSources();
     } catch (err) {
-      console.error('[DataSourcesPage] Delete row failed:', err);
+      logger.error('Delete row failed', { rowId, error: err });
       setError('Failed to delete row');
     }
   };
@@ -593,7 +595,7 @@ export default function DataSourcesPage() {
       await loadSourceDetails(sourceData.id);
       await loadDataSources();
     } catch (err) {
-      console.error('[DataSourcesPage] Link to sheet failed:', err);
+      logger.error('Link to Google Sheets failed', { dataSourceId: sourceData.id, sheetUrl: linkData.sheetUrl, error: err });
       setError('Failed to link to Google Sheets: ' + err.message);
     } finally {
       setLinking(false);
@@ -608,7 +610,7 @@ export default function DataSourcesPage() {
       await loadSourceDetails(sourceData.id);
       await loadDataSources();
     } catch (err) {
-      console.error('[DataSourcesPage] Unlink failed:', err);
+      logger.error('Unlink integration failed', { dataSourceId: sourceData.id, error: err });
       setError('Failed to unlink integration');
     }
   };
@@ -625,7 +627,7 @@ export default function DataSourcesPage() {
       const history = await getSyncHistory(sourceData.id, 5);
       setSyncHistory(history);
     } catch (err) {
-      console.error('[DataSourcesPage] Manual sync failed:', err);
+      logger.error('Manual sync failed', { dataSourceId: sourceData.id, error: err });
       setError('Failed to sync: ' + err.message);
     } finally {
       setSyncing(false);
@@ -637,7 +639,7 @@ export default function DataSourcesPage() {
       const history = await getSyncHistory(dataSourceId, 5);
       setSyncHistory(history);
     } catch (err) {
-      console.error('[DataSourcesPage] Failed to load sync history:', err);
+      logger.error('Failed to load sync history', { dataSourceId, error: err });
     }
   }, []);
 
