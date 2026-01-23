@@ -1,6 +1,9 @@
 // src/getConfig.js
 import { supabase } from "./supabase";
 import { getWeather } from "./services/weatherService";
+import { createScopedLogger } from "./services/loggingService.js";
+
+const logger = createScopedLogger('getConfig');
 
 export async function getConfig(otp) {
   if (!otp) {
@@ -19,7 +22,7 @@ export async function getConfig(otp) {
       const units = data.layout.weatherUnit === 'C' ? 'metric' : 'imperial';
       weatherData = await getWeather(data.layout.weatherCity, units);
     } catch (err) {
-      console.error('Failed to fetch weather:', err);
+      logger.error('Failed to fetch weather', { error: err, city: data.layout.weatherCity });
     }
   }
 

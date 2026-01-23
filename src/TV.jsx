@@ -7,6 +7,7 @@ import { Layout1, Layout2, Layout3, Layout4 } from "./layouts";
 import ScaledStage from "./ScaledStage.jsx";
 import { getConfig } from "./getConfig.js";
 import { supabase } from "./supabase";
+import { useLogger } from "./hooks/useLogger.js";
 
 const LAYOUTS = {
   layout1: Layout1,
@@ -16,6 +17,7 @@ const LAYOUTS = {
 };
 
 export default function TV() {
+  const logger = useLogger('TV');
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const otpParam = params.get("otp");
@@ -57,7 +59,7 @@ export default function TV() {
       .then((payload) => {
         if (!alive) return;
         // payload shape: { guest, layout: {...} }
-        console.log("TV loaded config:", payload?.layout?.layout_key, payload);
+        logger.info('TV loaded config', { layoutKey: payload?.layout?.layout_key, guestId: payload?.guest?.id });
         setConfig(payload);
         contentHashRef = createContentHash(payload);
         setError("");
@@ -81,7 +83,7 @@ export default function TV() {
       try {
         await supabase.rpc('ping_tv_device', { p_otp: otp });
       } catch (e) {
-        console.error("Failed to ping server:", e);
+        logger.error('Failed to ping server', { error: e });
       }
     }, 60 * 1000); // 1 minute
 
@@ -95,12 +97,12 @@ export default function TV() {
 
         const newHash = createContentHash(payload);
         if (newHash !== contentHashRef) {
-          console.log("Content updated at", new Date().toLocaleTimeString());
+          logger.info('Content updated', { time: new Date().toLocaleTimeString() });
           setConfig(payload);
           contentHashRef = newHash;
         }
       } catch (e) {
-        console.error("Content poll error:", e);
+        logger.error('Content poll error', { error: e });
         // Don't clear OTP on poll errors - might be temporary
       }
     }, 5 * 60 * 1000); // 5 minutes
@@ -112,12 +114,12 @@ export default function TV() {
       getConfig(otp)
         .then((payload) => {
           if (!alive) return;
-          console.log("Weather refreshed at", new Date().toLocaleTimeString());
+          logger.debug('Weather refreshed', { time: new Date().toLocaleTimeString() });
           setConfig(payload);
           contentHashRef = createContentHash(payload);
         })
         .catch((e) => {
-          console.error("Failed to refresh weather:", e);
+          logger.error('Failed to refresh weather', { error: e });
         });
     }, 30 * 60 * 1000); // 30 minutes
 
