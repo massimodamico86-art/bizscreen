@@ -37,6 +37,7 @@ import {
 } from '../../services/sceneDesignService';
 import { fetchDataSources, getDataSource, FIELD_DATA_TYPES } from '../../services/dataSourceService';
 import { getBindingDisplayText } from '../../services/dataBindingResolver';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -269,6 +270,7 @@ function TextControls({ block, onUpdate }) {
 // ===========================================
 
 function DataBindingSection({ binding, onChange }) {
+  const logger = useLogger('DataBindingSection');
   const [dataSources, setDataSources] = useState([]);
   const [selectedSource, setSelectedSource] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -283,7 +285,7 @@ function DataBindingSection({ binding, onChange }) {
         const sources = await fetchDataSources();
         setDataSources(sources || []);
       } catch (error) {
-        console.error('Failed to load data sources:', error);
+        logger.error('Failed to load data sources', { error });
       }
     }
     loadDataSources();
@@ -298,7 +300,7 @@ function DataBindingSection({ binding, onChange }) {
           const source = await getDataSource(binding.sourceId);
           setSelectedSource(source);
         } catch (error) {
-          console.error('Failed to load data source:', error);
+          logger.error('Failed to load data source', { error, sourceId: binding.sourceId });
           setSelectedSource(null);
         }
         setLoading(false);

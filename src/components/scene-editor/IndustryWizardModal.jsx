@@ -53,6 +53,7 @@ import {
   getWizardByKey,
 } from '../../services/industryWizardService';
 import { getBrandTheme } from '../../services/brandThemeService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Icon mapping for wizard types
 const WIZARD_ICONS = {
@@ -111,6 +112,7 @@ export default function IndustryWizardModal({
   onSlideCreated,
   onShowToast,
 }) {
+  const logger = useLogger('IndustryWizardModal');
   // Wizard state
   const [step, setStep] = useState(1);
   const [selectedWizard, setSelectedWizard] = useState(null);
@@ -208,7 +210,7 @@ export default function IndustryWizardModal({
       onSlideCreated?.(slide);
       onClose();
     } catch (err) {
-      console.error('Error creating wizard slide:', err);
+      logger.error('Error creating wizard slide', { error: err, wizardKey: selectedWizard.key });
       onShowToast?.('Failed to create slide', 'error');
     } finally {
       setIsCreating(false);

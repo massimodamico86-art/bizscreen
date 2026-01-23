@@ -12,8 +12,10 @@ import {
   disableMfa,
   generateRecoveryCodes,
 } from '../../services/mfaService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 export default function TwoFactorSetup({ showToast }) {
+  const logger = useLogger('TwoFactorSetup');
   const [loading, setLoading] = useState(true);
   const [mfaStatus, setMfaStatus] = useState({ enrolled: false, verified: false, factors: [] });
   const [step, setStep] = useState('status'); // status, setup, verify, recovery, disable
@@ -34,7 +36,7 @@ export default function TwoFactorSetup({ showToast }) {
       const status = await getMfaStatus();
       setMfaStatus(status);
     } catch (err) {
-      console.error('Error loading MFA status:', err);
+      logger.error('Error loading MFA status', { error: err });
     } finally {
       setLoading(false);
     }

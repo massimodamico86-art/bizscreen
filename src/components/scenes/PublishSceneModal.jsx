@@ -31,6 +31,7 @@ import {
   fetchScreenGroupsWithScenes,
   publishSceneToMultipleGroups,
 } from '../../services/screenGroupService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Format last seen time
 function formatLastSeen(lastSeen) {
@@ -63,6 +64,7 @@ export default function PublishSceneModal({
   tenantId,
   onSuccess,
 }) {
+  const logger = useLogger('PublishSceneModal');
   const [activeTab, setActiveTab] = useState('screens'); // 'screens' or 'groups'
   const [devices, setDevices] = useState([]);
   const [groups, setGroups] = useState([]);
@@ -116,7 +118,7 @@ export default function PublishSceneModal({
       );
       setSelectedGroups(preSelectedGroups);
     } catch (err) {
-      console.error('Error loading data:', err);
+      logger.error('Error loading data', { error: err, tenantId, sceneId: scene?.id });
       setError('Failed to load screens. Please try again.');
     } finally {
       setLoading(false);
@@ -198,7 +200,7 @@ export default function PublishSceneModal({
       onSuccess?.(totalDevices, totalGroups);
       onClose();
     } catch (err) {
-      console.error('Error publishing scene:', err);
+      logger.error('Error publishing scene', { error: err, sceneId: scene?.id, deviceCount: selectedDevices.size, groupCount: selectedGroups.size });
       setError('Failed to publish scene. Please try again.');
     } finally {
       setPublishing(false);

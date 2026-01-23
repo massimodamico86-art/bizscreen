@@ -27,6 +27,7 @@ import {
   markAsClicked,
 } from '../../services/notificationDispatcherService';
 import { ALERT_TYPES } from '../../services/alertEngineService';
+import { useLogger } from '../../hooks/useLogger.js';
 
 // Map alert types to icons
 const TYPE_ICONS = {
@@ -66,6 +67,7 @@ const SEVERITY_STYLES = {
 };
 
 export default function NotificationBell({ onNavigate }) {
+  const logger = useLogger('NotificationBell');
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -80,7 +82,7 @@ export default function NotificationBell({ onNavigate }) {
       const count = await getUnreadCount();
       setUnreadCount(count);
     } catch (error) {
-      console.error('[NotificationBell] Error loading unread count:', error);
+      logger.error('Error loading unread count', { error });
     }
   }, []);
 
@@ -91,7 +93,7 @@ export default function NotificationBell({ onNavigate }) {
       const data = await getNotifications({ limit: 10 });
       setNotifications(data);
     } catch (error) {
-      console.error('[NotificationBell] Error loading notifications:', error);
+      logger.error('Error loading notifications', { error });
     } finally {
       setLoading(false);
     }
