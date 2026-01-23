@@ -122,10 +122,12 @@ Plans:
   2. Screenshots taken offline upload automatically when connection restores
   3. Kiosk exit requires correct password (incorrect password is rejected)
   4. Player error logs include context instead of empty catch blocks
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — Retry logic with full jitter and error logging (PLR-01, PLR-04)
+- [ ] 06-02-PLAN.md — Offline screenshot sync and kiosk password (PLR-02, PLR-03)
+- [ ] 06-03-PLAN.md — Verification and testing
 
 ### Phase 7: Player Refactoring
 **Goal**: Player.jsx is decomposed into focused, testable components under 500 lines each
@@ -226,7 +228,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Auth Hardening | 4/4 | Complete | 2026-01-22 |
 | 4. Logging Migration | 6/6 | Complete | 2026-01-22 |
 | 5. Critical Fixes | 2/2 | Complete | 2026-01-23 |
-| 6. Player Reliability | 0/TBD | Not started | - |
+| 6. Player Reliability | 0/3 | Not started | - |
 | 7. Player Refactoring | 0/TBD | Not started | - |
 | 8. Page Refactoring | 0/TBD | Not started | - |
 | 9. Device Experience | 0/TBD | Not started | - |
