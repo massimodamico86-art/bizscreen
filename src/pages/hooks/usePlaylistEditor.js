@@ -31,7 +31,7 @@ import {
   revokePreviewLink,
   formatPreviewLink,
 } from '../../services/previewService';
-import { savePlaylistAsTemplate } from '../../services/playlistService';
+import { savePlaylistAsTemplate, savePlaylistWithApproval } from '../../services/playlistService';
 
 // Module-level logger
 const logger = createScopedLogger('usePlaylistEditor');
@@ -917,6 +917,66 @@ export function usePlaylistEditor(playlistId, { showToast }) {
   }, [playlistId, templateName, templateDescription, showToast]);
 
   // ============================================================
+  // Save Playlist with Auto-Submit for Approval
+  // ============================================================
+
+  /**
+   * Save playlist and auto-submit for approval if user role requires it.
+   * This handles:
+   * - Saving playlist metadata (name, description, shuffle, loop, default_duration)
+   * - Auto-submitting for approval when user is editor/viewer
+   * - Re-submitting for approval when editing approved content
+   * - Avoiding duplicate review requests
+   */
+  const handleSavePlaylist = useCallback(async () => {
+    if (!playlist) return;
+
+    try {
+      setSaving(true);
+
+      // Build the updates object from current playlist state
+      const updates = {
+        name: playlist.name,
+        description: playlist.description,
+        shuffle: playlist.shuffle,
+        loop: playlist.loop,
+        default_duration: playlist.default_duration,
+      };
+
+      // Use savePlaylistWithApproval for auto-submit behavior
+      const result = await savePlaylistWithApproval(
+        playlistId,
+        updates,
+        playlist.name
+      );
+
+      // Refresh playlist state
+      await fetchPlaylist();
+
+      // Update current review state and show appropriate toast
+      if (result.wasResubmission) {
+        const review = await getOpenReviewForResource('playlist', playlistId);
+        setCurrentReview(review);
+        showToast?.('Saved and resubmitted for approval');
+      } else if (result.submittedForApproval) {
+        const review = await getOpenReviewForResource('playlist', playlistId);
+        setCurrentReview(review);
+        showToast?.('Saved and submitted for approval');
+      } else if (result.existingReview) {
+        setCurrentReview(result.existingReview);
+        showToast?.('Saved (already pending approval)');
+      } else {
+        showToast?.('Playlist saved');
+      }
+    } catch (error) {
+      logger.error('Error saving playlist', { error, playlistId });
+      showToast?.(error.message || 'Error saving playlist', 'error');
+    } finally {
+      setSaving(false);
+    }
+  }, [playlist, playlistId, fetchPlaylist, showToast]);
+
+  // ============================================================
   // Playback Controls
   // ============================================================
 
@@ -1113,6 +1173,9 @@ export function usePlaylistEditor(playlistId, { showToast }) {
     // Actions - template
     handleOpenTemplateModal,
     handleSaveAsTemplate,
+
+    // Actions - save with approval
+    handleSavePlaylist,
 
     // Actions - playback
     getEffectiveDuration,
