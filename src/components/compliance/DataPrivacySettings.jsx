@@ -287,30 +287,40 @@ export default function DataPrivacySettings({ showToast, user }) {
             </p>
 
             {deletionStatus && (
-              <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <div className="flex items-center gap-2 text-yellow-800">
-                  <Clock className="w-4 h-4" />
-                  <span className="font-medium">
-                    Deletion scheduled for {new Date(deletionStatus.scheduled_deletion_at).toLocaleDateString()}
-                  </span>
+              <div className="mt-3 p-4 bg-yellow-50 border border-yellow-300 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-yellow-800">
+                      Account Scheduled for Deletion
+                    </h4>
+                    <p className="text-sm text-yellow-700 mt-1">
+                      Your account and all data will be permanently deleted on{' '}
+                      <strong>{new Date(deletionStatus.scheduled_deletion_at).toLocaleDateString()}</strong>.
+                    </p>
+                    <p className="text-sm text-yellow-600 mt-1">
+                      {deletionStatus.days_remaining} days remaining to cancel.
+                    </p>
+                    <div className="mt-2 p-2 bg-yellow-100 rounded text-xs text-yellow-800">
+                      During the grace period, your account is in read-only mode.
+                      You can view your data but cannot make changes.
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCancelDeletion}
+                      disabled={deletionLoading}
+                      className="mt-3"
+                    >
+                      {deletionLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <X className="w-4 h-4" />
+                      )}
+                      Cancel Deletion & Keep Account
+                    </Button>
+                  </div>
                 </div>
-                <p className="text-sm text-yellow-700 mt-1">
-                  {deletionStatus.days_remaining} days remaining. You can cancel this request if you change your mind.
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCancelDeletion}
-                  disabled={deletionLoading}
-                  className="mt-2"
-                >
-                  {deletionLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <X className="w-4 h-4" />
-                  )}
-                  Cancel Deletion
-                </Button>
               </div>
             )}
 
