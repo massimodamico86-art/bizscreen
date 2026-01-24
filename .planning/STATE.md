@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 12 of 12 (Content Approval)
-Plan: 9 of 10 in phase 12 (block unapproved content from schedules)
+Plan: 10 of 10 in phase 12 (testing and verification)
 Status: In progress
-Last activity: 2026-01-24 - Completed 12-07 (Block Unapproved Content from Schedules)
+Last activity: 2026-01-24 - Completed 12-09 (Content Approval Tests)
 
 Progress: [█████████████████████████████░] 99% (11/12 phases + 9/10 plans complete)
 
@@ -27,8 +27,14 @@ Progress: [███████████████████████
 - [x] 12-06: Layout auto-submit for approval
 - [x] 12-07: Block unapproved content from schedules (268963e, 27232ae)
 - [x] 12-08: Scene support in review inbox (0abb571, 37d17bd)
-- [ ] 12-09: Content status indicators
+- [x] 12-09: Content approval tests (ed88c80, 0d5a7d3)
 - [ ] 12-10: Testing and verification
+
+**Plan 12-09 Results:**
+- permissionsService.test.js: 18 tests for requiresApproval, canApproveContent, getCurrentMemberRole
+- approvalService.test.js: 29 tests for RESOURCE_TYPES, requestApproval, approve/reject, email notifications
+- All 47 new tests pass
+- APR-01 through APR-05 success criteria have test coverage
 
 **Plan 12-03 Results:**
 - savePlaylistWithApproval: saves playlist and auto-submits when user role requires approval
