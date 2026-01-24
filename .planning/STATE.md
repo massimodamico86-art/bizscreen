@@ -64,6 +64,13 @@ Progress: [███████████████████████
 - Both functions handle missing API key gracefully
 - Green badge for approved, orange badge for revision needed
 
+**Plan 12-06 Results:**
+- Email notifications wired to approvalService functions
+- requestApproval: sends email to owners/managers on submission
+- approveReview: sends approval email to content creator
+- rejectReview: sends rejection email with required feedback
+- ReviewInboxPage: rejection modal validates feedback with visible error message
+
 ## Phase 11 Progress
 
 **GDPR Compliance Plans:**
