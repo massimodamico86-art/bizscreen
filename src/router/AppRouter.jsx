@@ -31,6 +31,7 @@ const TV = lazy(() => import('../TV'));
 const Player = lazy(() => import('../Player'));
 const PublicPreviewPage = lazy(() => import('../pages/PublicPreviewPage'));
 const PairDevicePage = lazy(() => import('../pages/PairDevicePage'));
+const ContentDetailAnalyticsPage = lazy(() => import('../pages/ContentDetailAnalyticsPage'));
 
 // Loading fallback
 const LoadingSpinner = () => (
@@ -154,6 +155,18 @@ export default function AppRouter() {
           <RequireAuth>
             <Suspense fallback={<LoadingSpinner />}>
               <PairDevicePage />
+            </Suspense>
+          </RequireAuth>
+        }
+      />
+
+      {/* Content Detail Analytics Route (protected - requires auth) */}
+      <Route
+        path="/analytics/content/:contentType/:contentId"
+        element={
+          <RequireAuth>
+            <Suspense fallback={<LoadingSpinner />}>
+              <ContentDetailAnalyticsPage />
             </Suspense>
           </RequireAuth>
         }
