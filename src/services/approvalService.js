@@ -264,14 +264,21 @@ export async function rejectReview(reviewId, { comment = '' } = {}) {
 
   if (!comment) throw new Error('A comment is required when rejecting');
 
-  // Get the review to find resource info
+  // Get the review with creator info
   const { data: review, error: fetchError } = await supabase
     .from('review_requests')
-    .select('*')
+    .select('*, requester:profiles!review_requests_requested_by_fkey(email, full_name)')
     .eq('id', reviewId)
     .single();
 
   if (fetchError) throw fetchError;
+
+  // Get reviewer's name
+  const { data: reviewerProfile } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .eq('id', user.id)
+    .single();
 
   // Update review status
   const { data: updatedReview, error: reviewError } = await supabase
@@ -299,6 +306,22 @@ export async function rejectReview(reviewId, { comment = '' } = {}) {
       approval_comment: comment
     })
     .eq('id', review.resource_id);
+
+  // Send email notification to creator with feedback (async, don't block)
+  if (review.requester?.email) {
+    const contentUrl = `${window.location.origin}/${review.resource_type}s/${review.resource_id}/edit`;
+    sendApprovalDecisionEmail({
+      to: review.requester.email,
+      contentName: review.title || 'Content',
+      contentType: review.resource_type,
+      decision: 'rejected',
+      reviewerName: reviewerProfile?.full_name || 'A reviewer',
+      feedback: comment, // Always included for rejection
+      contentUrl,
+    }).catch(err => {
+      console.error('Failed to send rejection email:', err);
+    });
+  }
 
   return updatedReview;
 }
