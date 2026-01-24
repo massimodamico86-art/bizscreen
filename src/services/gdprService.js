@@ -7,6 +7,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+
+const logger = createScopedLogger('GdprService');
 
 // ============================================
 // DATA EXPORT
@@ -165,6 +168,70 @@ export async function downloadClientSideExport() {
   }
 }
 
+/**
+ * Get completed export data for download
+ * Retrieves the stored JSON export data from a completed request
+ * @param {string} requestId - Export request ID
+ * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+ */
+export async function getExportData(requestId) {
+  try {
+    const { data, error } = await supabase
+      .from('data_export_requests')
+      .select('export_data, status, expires_at')
+      .eq('id', requestId)
+      .single();
+
+    if (error) {
+      logger.error('Failed to fetch export data:', { error, requestId });
+      return { success: false, error: error.message };
+    }
+
+    if (data.status !== 'completed') {
+      return { success: false, error: 'Export not yet ready' };
+    }
+
+    if (new Date(data.expires_at) < new Date()) {
+      return { success: false, error: 'Export has expired' };
+    }
+
+    return { success: true, data: data.export_data };
+  } catch (error) {
+    logger.error('Failed to get export data:', { error, requestId });
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Download completed export as JSON file
+ * Retrieves the export data and triggers a browser download
+ * @param {string} requestId - Export request ID
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function downloadExportAsFile(requestId) {
+  const result = await getExportData(requestId);
+
+  if (!result.success) {
+    throw new Error(result.error);
+  }
+
+  const blob = new Blob(
+    [JSON.stringify(result.data, null, 2)],
+    { type: 'application/json' }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `bizscreen-data-export-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  return { success: true };
+}
+
 // ============================================
 // ACCOUNT DELETION
 // ============================================
@@ -279,6 +346,8 @@ export default {
   downloadExport,
   generateClientSideExport,
   downloadClientSideExport,
+  getExportData,
+  downloadExportAsFile,
   // Account Deletion
   requestAccountDeletion,
   cancelAccountDeletion,
