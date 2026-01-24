@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 11 of 12 (GDPR Compliance)
-Plan: 8 of 8 in phase 11
+Plan: 9 of 9 in phase 11 (gap closure)
 Status: Phase complete
-Last activity: 2026-01-24 - Completed 11-08 (Testing and Verification)
+Last activity: 2026-01-24 - Completed 11-09 (Gap Closure)
 
 Progress: [████████████████████████████░░] 92% (11/12 phases complete)
 
@@ -27,6 +27,7 @@ Progress: [███████████████████████
 - [x] 11-06: GDPR email notifications (e797cbf)
 - [x] 11-07: Export Download UI (8ccb1bb, d91d9c6, 5e613f7)
 - [x] 11-08: Testing and verification (4a84d98, 5f40943)
+- [x] 11-09: Gap closure - wire placeholders to implementations (28e1c0b, 4346a67)
 
 **Plan 11-01 Results:**
 - collect_user_export_data(p_user_id) - main RPC returning comprehensive JSONB
@@ -84,6 +85,13 @@ Progress: [███████████████████████
 - Tests cover categorizeMediaUrls for separation, deduplication, edge cases
 - Supabase and loggingService properly mocked
 - All 53 tests pass
+
+**Plan 11-09 Results (Gap Closure):**
+- process-exports.js: wired sendExportReadyEmail via dynamic import to emailService
+- process-deletions.js: wired deleteExternalMedia to /api/gdpr/delete-s3 and /api/gdpr/delete-cloudinary
+- S3 deletion in batches of 1000 (AWS DeleteObjects limit)
+- Cloudinary deletion in batches of 100 (Admin API limit)
+- Closes GDPR-02 (export notification) and GDPR-05 (media deletion) gaps
 
 ## Phase 10 Progress
 
@@ -659,18 +667,18 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 11-08-PLAN.md (Testing and Verification)
+Stopped at: Completed 11-09-PLAN.md (Gap Closure)
 Resume file: None
 
 ## Next Steps
 
 **Phase 11 COMPLETE:** GDPR Compliance
 
-**Plan 11-08 Accomplishments:**
-- 26 unit tests for gdprDeletionService (URL parsing for Cloudinary/S3/unknown)
-- 27 unit tests for gdprService (export, deletion, DELETION_REASONS)
-- Mock strategy for supabase and loggingService
-- All 53 tests pass
+**Plan 11-09 Accomplishments (Gap Closure):**
+- Wired export email notification to emailService (closes GDPR-02 gap)
+- Wired media deletion to S3/Cloudinary endpoints (closes GDPR-05 gap)
+- Dynamic import pattern for server-side emailService
+- Batch processing with API limits (S3: 1000, Cloudinary: 100)
 
 **Phase 11 Wave Summary:**
 - Wave 1 (Database): 11-01, 11-02, 11-03 complete
@@ -678,5 +686,6 @@ Resume file: None
 - Wave 3 (API): 11-05 complete
 - Wave 4 (UI): 11-06, 11-07 complete
 - Wave 5 (Testing): 11-08 complete
+- Gap Closure: 11-09 complete (all placeholder code replaced)
 
 **Next:** Phase 12 (Final Review and Documentation)
