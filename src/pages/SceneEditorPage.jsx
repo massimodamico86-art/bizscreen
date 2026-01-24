@@ -66,6 +66,7 @@ import IndustryWizardModal from '../components/scene-editor/IndustryWizardModal'
 import DataBoundWizardModal from '../components/scene-editor/DataBoundWizardModal';
 import LivePreviewWindow, { InlinePreview } from '../components/scene-editor/LivePreviewWindow';
 import { emitDesignChange } from '../services/deviceSyncService';
+import { ContentInlineMetrics } from '../components/analytics';
 
 import { Button } from '../design-system';
 import { Badge } from '../design-system';
@@ -647,14 +648,26 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
                 onClose={() => setShowAiPanel(false)}
               />
             ) : (
-              <PropertiesPanel
-                block={selectedBlock}
-                design={currentDesign}
-                onBlockUpdate={(updates) => handleBlockUpdate(selectedBlockId, updates)}
-                onDesignUpdate={updateDesign}
-                smartGuidesEnabled={smartGuidesEnabled}
-                onSmartGuidesChange={setSmartGuidesEnabled}
-              />
+              <>
+                <PropertiesPanel
+                  block={selectedBlock}
+                  design={currentDesign}
+                  onBlockUpdate={(updates) => handleBlockUpdate(selectedBlockId, updates)}
+                  onDesignUpdate={updateDesign}
+                  smartGuidesEnabled={smartGuidesEnabled}
+                  onSmartGuidesChange={setSmartGuidesEnabled}
+                />
+                {/* Analytics Summary (only for existing scenes) */}
+                {sceneId && (
+                  <div className="p-4 border-t border-gray-800">
+                    <ContentInlineMetrics
+                      contentId={sceneId}
+                      contentType="scene"
+                      dateRange="7d"
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
