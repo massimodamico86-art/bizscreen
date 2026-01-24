@@ -8,6 +8,7 @@ import {
   ListVideo,
   Layout,
   Zap,
+  Film,
   Filter,
   ChevronRight,
   Send,
@@ -56,7 +57,8 @@ const STATUS_CONFIG = {
 const RESOURCE_ICONS = {
   playlist: ListVideo,
   layout: Layout,
-  campaign: Zap
+  campaign: Zap,
+  scene: Film
 };
 
 const ReviewInboxPage = ({ showToast, onNavigate }) => {
@@ -332,6 +334,7 @@ const ReviewInboxPage = ({ showToast, onNavigate }) => {
             <option value="playlist">{t('reviews.playlists', 'Playlists')}</option>
             <option value="layout">{t('reviews.layouts', 'Layouts')}</option>
             <option value="campaign">{t('reviews.campaigns', 'Campaigns')}</option>
+            <option value="scene">{t('reviews.scenes', 'Scenes')}</option>
           </select>
         </div>
 
@@ -390,11 +393,13 @@ const ReviewInboxPage = ({ showToast, onNavigate }) => {
                             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                               review.resource_type === 'playlist' ? 'bg-orange-100' :
                               review.resource_type === 'layout' ? 'bg-purple-100' :
+                              review.resource_type === 'scene' ? 'bg-pink-100' :
                               'bg-indigo-100'
                             }`} aria-hidden="true">
                               <ResourceIcon size={16} className={
                                 review.resource_type === 'playlist' ? 'text-orange-600' :
                                 review.resource_type === 'layout' ? 'text-purple-600' :
+                                review.resource_type === 'scene' ? 'text-pink-600' :
                                 'text-indigo-600'
                               } />
                             </div>
