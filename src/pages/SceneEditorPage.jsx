@@ -35,7 +35,9 @@ import {
   Database,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchScene } from '../services/sceneService';
+import { fetchScene, saveSceneWithApproval } from '../services/sceneService';
+import { getApprovalStatusConfig, getOpenReviewForResource } from '../services/approvalService.js';
+import { requiresApproval } from '../services/permissionsService.js';
 import {
   fetchSlidesForScene,
   createSlide,
@@ -114,6 +116,11 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
   // Brand theme
   const [activeTheme, setActiveTheme] = useState(null);
 
+  // Approval state
+  const [currentReview, setCurrentReview] = useState(null);
+  const [userRequiresApproval, setUserRequiresApproval] = useState(false);
+  const [approvalPending, setApprovalPending] = useState(false);
+
   // Save debounce
   const saveTimeoutRef = useRef(null);
 
@@ -141,16 +148,28 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
     setLoading(true);
     setError(null);
     try {
-      const [sceneData, slidesData, brandTheme] = await Promise.all([
+      const [sceneData, slidesData, brandTheme, needsApproval] = await Promise.all([
         fetchScene(sceneId),
         fetchSlidesForScene(sceneId),
         getBrandTheme().catch(() => null), // Graceful fallback if no theme
+        requiresApproval(),
       ]);
       setScene(sceneData);
       // Normalize slides to ensure all blocks have required properties
       const normalizedSlides = slidesData.map(slide => normalizeSlide(slide));
       setSlides(normalizedSlides);
       setActiveTheme(brandTheme);
+      setUserRequiresApproval(needsApproval);
+
+      // Load current review status if exists
+      if (sceneData?.id) {
+        getOpenReviewForResource('scene', sceneData.id)
+          .then(review => {
+            setCurrentReview(review);
+            setApprovalPending(!!review);
+          })
+          .catch(() => {}); // Graceful fallback
+      }
 
       // Initialize history with first slide state
       if (normalizedSlides.length > 0) {
@@ -381,7 +400,28 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
   // NAVIGATION & PREVIEW
   // ===========================================
 
-  function handleBack() {
+  async function handleBack() {
+    // If user requires approval and not already pending, submit scene for approval
+    if (userRequiresApproval && !approvalPending && scene) {
+      try {
+        // Use saveSceneWithApproval to trigger approval workflow
+        // We pass empty updates since slide changes are saved via updateSlide
+        // but this ensures the scene goes through approval
+        const result = await saveSceneWithApproval(sceneId, {}, scene.name);
+
+        if (result.wasResubmission) {
+          onShowToast?.('Scene resubmitted for approval', 'success');
+        } else if (result.submittedForApproval) {
+          onShowToast?.('Scene submitted for approval', 'success');
+        } else if (result.existingReview) {
+          // Already pending - no action needed
+        }
+      } catch (err) {
+        console.error('Error submitting for approval:', err);
+        // Don't block navigation on approval error
+      }
+    }
+
     onNavigate?.(`scene-detail-${sceneId}`);
   }
 
@@ -466,6 +506,14 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
             <Badge variant="default" className="bg-gray-800 text-gray-300">
               {businessTypeLabel}
             </Badge>
+            {scene?.approval_status && scene.approval_status !== 'draft' && (
+              <Badge
+                variant={getApprovalStatusConfig(scene.approval_status).variant}
+                className="ml-1"
+              >
+                {getApprovalStatusConfig(scene.approval_status).label}
+              </Badge>
+            )}
           </div>
         </div>
 
