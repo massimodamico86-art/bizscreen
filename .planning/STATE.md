@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 10 of 12 (Analytics)
-Plan: 4 of 8 in phase 10
+Plan: 6 of 8 in phase 10
 Status: In progress
-Last activity: 2026-01-24 - Completed 10-04 (ContentInlineMetrics component)
+Last activity: 2026-01-24 - Completed 10-06 (ContentDetailAnalyticsPage)
 
-Progress: [██████████████████████░░] 75% (9/12 phases complete, phase 10 started)
+Progress: [██████████████████████░░] 77% (9/12 phases complete, phase 10 in progress)
 
 ## Phase 10 Progress
 
@@ -23,6 +23,14 @@ Progress: [██████████████████████░
 - [x] 10-02: Service layer integration (a16a491)
 - [x] 10-03: ViewingHeatmap component (43af794, 139b6c3)
 - [x] 10-04: ContentInlineMetrics component (a820069, ec140b3)
+- [x] 10-06: ContentDetailAnalyticsPage (414ee2e, 14ebf5a)
+
+**Plan 10-06 Results:**
+- ContentDetailAnalyticsPage: dedicated analytics page for single content (386 lines)
+- Primary metrics: Avg View Duration (ANA-01), Completion Rate (ANA-02)
+- Timeline bar chart for scene view activity
+- Route /analytics/content/:contentType/:contentId added to AppRouter
+- Color-coded completion rate with date range pills
 
 **Plan 10-04 Results:**
 - ContentInlineMetrics: inline analytics for content detail pages (165 lines)
@@ -395,13 +403,14 @@ Progress: [██████████████████████░
 | 07-player-refactoring | 3 | 17 min | 5.7 min |
 | 08-page-refactoring | 12 | ~60 min | ~5 min |
 | 09-device-experience | 8 | ~40 min | ~5 min |
-| 10-analytics | 4 | 5 min | 1.3 min |
+| 10-analytics | 6 | 8 min | 1.3 min |
 
 **Phase 10 Plan Breakdown:**
 - 10-01: 1 min (content analytics RPCs)
 - 10-02: 2 min (service layer integration)
 - 10-03: 1 min (ViewingHeatmap component)
 - 10-04: 2 min (ContentInlineMetrics component)
+- 10-06: 3 min (ContentDetailAnalyticsPage)
 
 **Recent Trend:**
 - Last 5 plans: 09-06, 09-07, 09-08, 10-01
@@ -522,6 +531,9 @@ Recent decisions affecting current work:
 - [10-03]: Hover-only interaction (no drill-down per CONTEXT.md)
 - [10-04]: Color-coded completion rate: green >= 80%, orange >= 50%, blue < 50%
 - [10-04]: MetricItem pattern: icon + label + value + optional subValue with color variants
+- [10-06]: Use useParams for contentType/contentId from URL
+- [10-06]: Timeline visualization only for scenes (has dedicated RPC)
+- [10-06]: PrimaryMetric component pattern: large display with icon, label, value, subValue
 
 ### Pending Todos
 
@@ -543,7 +555,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 10-04-PLAN.md (ContentInlineMetrics component)
+Stopped at: Completed 10-06-PLAN.md (ContentDetailAnalyticsPage)
 Resume file: None
 
 ## Next Steps
@@ -555,5 +567,6 @@ Resume file: None
 - [x] 10-02: Service layer integration (2 min)
 - [x] 10-03: ViewingHeatmap component (1 min)
 - [x] 10-04: ContentInlineMetrics component (2 min)
+- [x] 10-06: ContentDetailAnalyticsPage (3 min)
 
-**Next:** Continue with remaining phase 10 plans (10-05+)
+**Next:** Continue with remaining phase 10 plans (10-05, 10-07, 10-08)
