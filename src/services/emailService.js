@@ -415,10 +415,196 @@ function buildGdprEmailHtml({ title, message, actionUrl, actionText, warning, fo
   `.trim();
 }
 
+/**
+ * Build HTML for approval notification emails
+ *
+ * @param {Object} options Template options
+ * @param {string} options.title Email title
+ * @param {string} options.message Email message
+ * @param {string|null} options.actionUrl CTA button URL
+ * @param {string|null} options.actionText CTA button text
+ * @param {Object} [options.badge] Optional badge {text, bgColor, textColor}
+ * @param {string} options.footer Footer text
+ * @returns {string} HTML email content
+ */
+function buildApprovalEmailHtml({ title, message, actionUrl, actionText, badge, footer }) {
+  // Default badge if not provided
+  const badgeConfig = badge || { text: 'Content Review', bgColor: '#dbeafe', textColor: '#1e40af' };
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f9fafb;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; padding: 20px;">
+    <tr>
+      <td style="background-color: white; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <!-- Logo -->
+        <div style="text-align: center; margin-bottom: 24px;">
+          <span style="font-size: 24px; font-weight: 700; color: #f97316;">BizScreen</span>
+        </div>
+
+        <!-- Badge -->
+        <div style="text-align: center; margin-bottom: 16px;">
+          <span style="display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; background-color: ${badgeConfig.bgColor}; color: ${badgeConfig.textColor};">
+            ${escapeHtml(badgeConfig.text)}
+          </span>
+        </div>
+
+        <!-- Title -->
+        <h1 style="color: #111827; font-size: 20px; font-weight: 600; text-align: center; margin: 0 0 16px 0;">
+          ${escapeHtml(title)}
+        </h1>
+
+        <!-- Message -->
+        <p style="color: #6b7280; font-size: 16px; line-height: 1.6; text-align: center; margin: 0 0 24px 0; white-space: pre-line;">
+          ${escapeHtml(message)}
+        </p>
+
+        ${actionUrl && actionText ? `
+        <!-- CTA Button -->
+        <div style="text-align: center; margin-bottom: 24px;">
+          <a href="${escapeHtml(actionUrl)}" style="display: inline-block; background-color: #f97316; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px;">
+            ${escapeHtml(actionText)}
+          </a>
+        </div>
+        ` : ''}
+
+        <!-- Footer -->
+        <div style="border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 24px;">
+          <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">
+            ${escapeHtml(footer)}
+          </p>
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+/**
+ * Send approval request notification to approvers
+ *
+ * @param {Object} options Email options
+ * @param {string} options.to Recipient email address (approver)
+ * @param {string} options.contentName Name of content submitted
+ * @param {string} options.contentType Type of content (playlist, scene, layout, campaign)
+ * @param {string} options.submitterName Name of person who submitted
+ * @param {string} options.reviewUrl URL to review the content
+ * @param {string} [options.message] Optional message from submitter
+ * @returns {Promise<{success: boolean, messageId?: string, error?: string}>}
+ */
+export async function sendApprovalRequestEmail({ to, contentName, contentType, submitterName, reviewUrl, message }) {
+  if (!resend) {
+    logger.warn('Email not sent - VITE_RESEND_API_KEY not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const html = buildApprovalEmailHtml({
+      title: 'Content Submitted for Review',
+      message: `${submitterName} submitted "${contentName}" (${contentType}) for your approval.${message ? `\n\nMessage: "${message}"` : ''}`,
+      actionUrl: reviewUrl,
+      actionText: 'Review Now',
+      footer: 'You are receiving this because you have approval permissions in BizScreen.',
+    });
+
+    const { data, error } = await resend.emails.send({
+      from: 'BizScreen <noreply@bizscreen.com>',
+      to: [to],
+      subject: `[Review Requested] ${contentName}`,
+      html,
+    });
+
+    if (error) {
+      logger.error('Approval request email failed', { error, to });
+      return { success: false, error: error.message };
+    }
+
+    logger.info('Approval request email sent', { messageId: data.id, to, contentName });
+    return { success: true, messageId: data.id };
+  } catch (error) {
+    logger.error('Failed to send approval request email', { error: error.message, to });
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Send approval decision notification to content creator
+ *
+ * @param {Object} options Email options
+ * @param {string} options.to Recipient email address (content creator)
+ * @param {string} options.contentName Name of content
+ * @param {string} options.contentType Type of content (playlist, scene, layout, campaign)
+ * @param {string} options.decision 'approved' or 'rejected'
+ * @param {string} options.reviewerName Name of person who made decision
+ * @param {string} [options.feedback] Feedback/comment from reviewer (required for rejection)
+ * @param {string} options.contentUrl URL to view the content
+ * @returns {Promise<{success: boolean, messageId?: string, error?: string}>}
+ */
+export async function sendApprovalDecisionEmail({ to, contentName, contentType, decision, reviewerName, feedback, contentUrl }) {
+  if (!resend) {
+    logger.warn('Email not sent - VITE_RESEND_API_KEY not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const isApproved = decision === 'approved';
+    const title = isApproved ? 'Content Approved' : 'Content Needs Revision';
+    const subject = isApproved
+      ? `[Approved] ${contentName}`
+      : `[Revision Needed] ${contentName}`;
+
+    let messageText = isApproved
+      ? `Your ${contentType} "${contentName}" has been approved by ${reviewerName} and is now available for screens.`
+      : `Your ${contentType} "${contentName}" was not approved by ${reviewerName}.`;
+
+    if (feedback) {
+      messageText += `\n\nFeedback: "${feedback}"`;
+    }
+
+    const html = buildApprovalEmailHtml({
+      title,
+      message: messageText,
+      actionUrl: contentUrl,
+      actionText: isApproved ? 'View Content' : 'Edit Content',
+      badge: isApproved
+        ? { text: 'Approved', bgColor: '#dcfce7', textColor: '#166534' }
+        : { text: 'Revision Needed', bgColor: '#fef3c7', textColor: '#92400e' },
+      footer: 'You are receiving this because you submitted content for approval in BizScreen.',
+    });
+
+    const { data, error } = await resend.emails.send({
+      from: 'BizScreen <noreply@bizscreen.com>',
+      to: [to],
+      subject,
+      html,
+    });
+
+    if (error) {
+      logger.error('Approval decision email failed', { error, to, decision });
+      return { success: false, error: error.message };
+    }
+
+    logger.info('Approval decision email sent', { messageId: data.id, to, decision, contentName });
+    return { success: true, messageId: data.id };
+  } catch (error) {
+    logger.error('Failed to send approval decision email', { error: error.message, to });
+    return { success: false, error: error.message };
+  }
+}
+
 export default {
   sendAlertEmail,
   sendExportReadyEmail,
   sendDeletionConfirmationEmail,
   sendDeletionReminderEmail,
   sendDeletionCompletedEmail,
+  sendApprovalRequestEmail,
+  sendApprovalDecisionEmail,
 };
