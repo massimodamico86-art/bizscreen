@@ -144,16 +144,57 @@ async function deleteExternalMedia(mediaUrls) {
     }
   }
 
-  // Call deletion endpoints (self-referential for now)
-  // In production, these would be direct SDK calls
-  const results = { s3: { deleted: 0 }, cloudinary: { deleted: 0 } };
+  const results = { s3: { deleted: 0, errors: [] }, cloudinary: { deleted: 0, errors: [] } };
+  const token = process.env.GDPR_API_SECRET;
+  const apiBase = process.env.VITE_API_URL || process.env.API_URL || 'http://localhost:3000';
 
-  // S3 deletion would use DeleteObjectsCommand here
-  // Cloudinary would use cloudinary.v2.api.delete_resources
-  // Simplified for client-side bundling - actual deletion in dedicated endpoints
+  // Helper to chunk arrays
+  const chunkArray = (arr, size) => {
+    const chunks = [];
+    for (let i = 0; i < arr.length; i += size) {
+      chunks.push(arr.slice(i, i + size));
+    }
+    return chunks;
+  };
 
-  results.s3.deleted = s3Keys.length; // Placeholder
-  results.cloudinary.deleted = cloudinaryIds.length; // Placeholder
+  // Delete from S3 in batches of 1000 (AWS limit)
+  for (const chunk of chunkArray(s3Keys, 1000)) {
+    try {
+      const response = await fetch(`${apiBase}/api/gdpr/delete-s3`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ keys: chunk }),
+      });
+      const result = await response.json();
+      results.s3.deleted += result.deleted || 0;
+      if (result.errors?.length) {
+        results.s3.errors.push(...result.errors);
+      }
+    } catch (error) {
+      results.s3.errors.push(error.message);
+    }
+  }
+
+  // Delete from Cloudinary in batches of 100 (Cloudinary Admin API limit)
+  for (const chunk of chunkArray(cloudinaryIds, 100)) {
+    try {
+      const response = await fetch(`${apiBase}/api/gdpr/delete-cloudinary`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ publicIds: chunk }),
+      });
+      const result = await response.json();
+      results.cloudinary.deleted += result.deleted || 0;
+    } catch (error) {
+      results.cloudinary.errors.push(error.message);
+    }
+  }
 
   return results;
 }
