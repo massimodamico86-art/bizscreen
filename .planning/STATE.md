@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 Phase: 10 of 12 (Analytics)
 Plan: 6 of 8 in phase 10
 Status: In progress
-Last activity: 2026-01-24 - Completed 10-06 (ContentDetailAnalyticsPage)
+Last activity: 2026-01-24 - Completed 10-05 (AnalyticsDashboardPage)
 
 Progress: [██████████████████████░░] 77% (9/12 phases complete, phase 10 in progress)
 
@@ -23,7 +23,15 @@ Progress: [██████████████████████░
 - [x] 10-02: Service layer integration (a16a491)
 - [x] 10-03: ViewingHeatmap component (43af794, 139b6c3)
 - [x] 10-04: ContentInlineMetrics component (a820069, ec140b3)
+- [x] 10-05: AnalyticsDashboardPage (58f5a4d, 9cd28a6, 1dc21aa)
 - [x] 10-06: ContentDetailAnalyticsPage (414ee2e, 14ebf5a)
+
+**Plan 10-05 Results:**
+- AnalyticsDashboardPage: main analytics dashboard with 3 tabs (600 lines)
+- Overview tab: summary metrics (view hours, active screens, content count)
+- Content tab: sortable performance table by view time (ANA-03)
+- Patterns tab: ViewingHeatmap integration with insights (ANA-04)
+- Route 'analytics-dashboard' with ADVANCED_ANALYTICS feature gate
 
 **Plan 10-06 Results:**
 - ContentDetailAnalyticsPage: dedicated analytics page for single content (386 lines)
@@ -403,13 +411,14 @@ Progress: [██████████████████████░
 | 07-player-refactoring | 3 | 17 min | 5.7 min |
 | 08-page-refactoring | 12 | ~60 min | ~5 min |
 | 09-device-experience | 8 | ~40 min | ~5 min |
-| 10-analytics | 6 | 8 min | 1.3 min |
+| 10-analytics | 6 | 11 min | 1.8 min |
 
 **Phase 10 Plan Breakdown:**
 - 10-01: 1 min (content analytics RPCs)
 - 10-02: 2 min (service layer integration)
 - 10-03: 1 min (ViewingHeatmap component)
 - 10-04: 2 min (ContentInlineMetrics component)
+- 10-05: 3 min (AnalyticsDashboardPage)
 - 10-06: 3 min (ContentDetailAnalyticsPage)
 
 **Recent Trend:**
@@ -531,6 +540,10 @@ Recent decisions affecting current work:
 - [10-03]: Hover-only interaction (no drill-down per CONTEXT.md)
 - [10-04]: Color-coded completion rate: green >= 80%, orange >= 50%, blue < 50%
 - [10-04]: MetricItem pattern: icon + label + value + optional subValue with color variants
+- [10-05]: Sub-components defined after main export for tab content organization
+- [10-05]: Date range filter (7d, 30d, 90d, 365d) applies to all tabs globally
+- [10-05]: Sortable table headers for Content tab (client-side sorting)
+- [10-05]: ViewingHeatmap metric toggle (view count vs duration)
 - [10-06]: Use useParams for contentType/contentId from URL
 - [10-06]: Timeline visualization only for scenes (has dedicated RPC)
 - [10-06]: PrimaryMetric component pattern: large display with icon, label, value, subValue
@@ -555,7 +568,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 10-06-PLAN.md (ContentDetailAnalyticsPage)
+Stopped at: Completed 10-05-PLAN.md (AnalyticsDashboardPage)
 Resume file: None
 
 ## Next Steps
