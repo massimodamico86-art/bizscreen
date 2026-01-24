@@ -9,6 +9,8 @@
  */
 import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
+import { requiresApproval } from './permissionsService.js';
+import { requestApproval, getOpenReviewForResource, APPROVAL_STATUS } from './approvalService.js';
 
 /**
  * @typedef {Object} PlaylistItem
@@ -159,6 +161,72 @@ export async function updatePlaylist(id, updates) {
   }
 
   return data;
+}
+
+/**
+ * Save playlist and auto-submit for approval if user role requires it
+ * Handles re-approval when editing already approved content.
+ *
+ * @param {string} playlistId - Playlist ID
+ * @param {Object} updates - Playlist updates
+ * @param {string} playlistName - Playlist name (for review request title)
+ * @returns {Promise<{playlist: Object, submittedForApproval: boolean, existingReview: Object|null, wasResubmission?: boolean}>}
+ */
+export async function savePlaylistWithApproval(playlistId, updates, playlistName) {
+  // Get current approval status before saving
+  const { data: currentPlaylist } = await supabase
+    .from('playlists')
+    .select('approval_status')
+    .eq('id', playlistId)
+    .single();
+
+  // Save the playlist first
+  const playlist = await updatePlaylist(playlistId, updates);
+
+  // Check if user requires approval
+  const needsApproval = await requiresApproval();
+
+  if (!needsApproval) {
+    // Owner/manager - save only, no approval needed
+    return { playlist, submittedForApproval: false, existingReview: null };
+  }
+
+  // If content was approved and is being edited, reset to draft and create new review
+  if (currentPlaylist?.approval_status === APPROVAL_STATUS.APPROVED) {
+    // Reset to draft
+    await supabase
+      .from('playlists')
+      .update({ approval_status: APPROVAL_STATUS.DRAFT })
+      .eq('id', playlistId);
+
+    // Submit for re-approval
+    await requestApproval({
+      resourceType: 'playlist',
+      resourceId: playlistId,
+      title: `Re-review playlist: ${playlistName}`,
+      message: 'Content was edited after approval.',
+    });
+
+    return { playlist, submittedForApproval: true, existingReview: null, wasResubmission: true };
+  }
+
+  // Check for existing open review (avoid duplicates - Pitfall #3 from RESEARCH.md)
+  const existingReview = await getOpenReviewForResource('playlist', playlistId);
+
+  if (existingReview) {
+    // Already has open review - don't create another
+    return { playlist, submittedForApproval: false, existingReview };
+  }
+
+  // Auto-submit for approval
+  await requestApproval({
+    resourceType: 'playlist',
+    resourceId: playlistId,
+    title: `Review playlist: ${playlistName}`,
+    message: '', // Auto-submit has no message
+  });
+
+  return { playlist, submittedForApproval: true, existingReview: null };
 }
 
 /**
