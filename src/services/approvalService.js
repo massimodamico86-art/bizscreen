@@ -1,5 +1,6 @@
 // Approval Service - Content review and approval workflow management
 import { supabase } from '../supabase';
+import { sendApprovalRequestEmail, sendApprovalDecisionEmail } from './emailService.js';
 
 /**
  * Approval statuses
@@ -58,10 +59,10 @@ export async function requestApproval({ resourceType, resourceId, title, message
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User must be authenticated');
 
-  // Get user's tenant_id
+  // Get user's tenant_id and name
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, managed_tenant_id')
+    .select('id, managed_tenant_id, full_name')
     .eq('id', user.id)
     .single();
 
@@ -98,6 +99,34 @@ export async function requestApproval({ resourceType, resourceId, title, message
     .eq('id', resourceId);
 
   if (updateError) throw updateError;
+
+  // Get approvers (owners/managers) to notify
+  const { data: approvers } = await supabase
+    .from('profiles')
+    .select('id, email, full_name')
+    .eq('managed_tenant_id', tenantId)
+    .in('role', ['owner', 'manager']);
+
+  // Send email notification to each approver (async, don't block)
+  if (approvers?.length > 0) {
+    const reviewUrl = `${window.location.origin}/review-inbox?reviewId=${review.id}`;
+
+    for (const approver of approvers) {
+      if (approver.email) {
+        sendApprovalRequestEmail({
+          to: approver.email,
+          contentName: title || 'Content',
+          contentType: resourceType,
+          submitterName: profile?.full_name || 'A team member',
+          reviewUrl,
+          message: message || undefined,
+        }).catch(err => {
+          // Log but don't fail the submission
+          console.error('Failed to send approval request email:', err);
+        });
+      }
+    }
+  }
 
   return review;
 }
