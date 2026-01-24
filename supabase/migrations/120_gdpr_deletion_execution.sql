@@ -182,3 +182,70 @@ REVOKE EXECUTE ON FUNCTION execute_account_deletion FROM PUBLIC;
 
 COMMENT ON FUNCTION execute_account_deletion IS
   'Executes account deletion after grace period. Must call get_media_urls_for_user BEFORE this to capture external URLs.';
+
+-- ============================================
+-- GDPR AUDIT LOG TABLE
+-- ============================================
+-- Required for GDPR Article 5(2) accountability
+-- Tracks all deletion events for compliance verification
+
+CREATE TABLE IF NOT EXISTS gdpr_audit_log (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_type TEXT NOT NULL CHECK (
+    event_type IN (
+      'deletion_started',
+      'external_deleted',
+      'db_deleted',
+      'deletion_completed',
+      'deletion_failed'
+    )
+  ),
+  user_id UUID, -- May be null after deletion completes
+  email TEXT NOT NULL, -- Preserved for audit (required for compliance)
+  request_id UUID REFERENCES account_deletion_requests(id) ON DELETE SET NULL,
+  details JSONB, -- Additional event-specific information
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for efficient querying
+CREATE INDEX IF NOT EXISTS idx_gdpr_audit_email ON gdpr_audit_log(email);
+CREATE INDEX IF NOT EXISTS idx_gdpr_audit_created ON gdpr_audit_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_gdpr_audit_event_type ON gdpr_audit_log(event_type);
+CREATE INDEX IF NOT EXISTS idx_gdpr_audit_request ON gdpr_audit_log(request_id);
+
+-- Retention comment for compliance
+COMMENT ON TABLE gdpr_audit_log IS
+  'GDPR Article 5(2) accountability - deletion audit trail retained 1 year for compliance verification.';
+
+-- No RLS - only service_role accesses this table
+ALTER TABLE gdpr_audit_log ENABLE ROW LEVEL SECURITY;
+
+-- No policies for authenticated/anon - only service_role can access
+-- Service role bypasses RLS by default
+
+-- ============================================
+-- GDPR AUDIT LOGGING FUNCTION
+-- ============================================
+
+CREATE OR REPLACE FUNCTION log_gdpr_event(
+  p_event_type TEXT,
+  p_user_id UUID,
+  p_email TEXT,
+  p_request_id UUID,
+  p_details JSONB DEFAULT NULL
+)
+RETURNS UUID
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  INSERT INTO gdpr_audit_log (event_type, user_id, email, request_id, details)
+  VALUES (p_event_type, p_user_id, p_email, p_request_id, p_details)
+  RETURNING id;
+$$;
+
+-- Only service_role can log events
+GRANT EXECUTE ON FUNCTION log_gdpr_event TO service_role;
+REVOKE EXECUTE ON FUNCTION log_gdpr_event FROM PUBLIC;
+
+COMMENT ON FUNCTION log_gdpr_event IS
+  'Logs GDPR deletion events for compliance audit trail. Call at each stage of deletion process.';
