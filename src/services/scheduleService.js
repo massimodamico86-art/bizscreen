@@ -1,6 +1,54 @@
 // Schedule Service - CRUD operations for time-based content scheduling
 import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
+import { requiresApproval } from './permissionsService.js';
+import { APPROVAL_STATUS } from './approvalService.js';
+
+/**
+ * Check if content can be assigned to a schedule
+ * Editors can only assign approved content; owners/managers can assign anything
+ *
+ * @param {string} contentType - 'playlist' or 'scene'
+ * @param {string} contentId - Content ID
+ * @returns {Promise<{canAssign: boolean, reason?: string}>}
+ */
+export async function canAssignContent(contentType, contentId) {
+  // Check if user requires approval (editors/viewers do, owners/managers don't)
+  const needsApprovalCheck = await requiresApproval();
+
+  if (!needsApprovalCheck) {
+    // Owners/managers can assign any content
+    return { canAssign: true };
+  }
+
+  // Editors need to check approval status
+  const tableName = contentType === 'playlist' ? 'playlists' : 'scenes';
+  const { data, error } = await supabase
+    .from(tableName)
+    .select('approval_status')
+    .eq('id', contentId)
+    .single();
+
+  if (error) {
+    return { canAssign: false, reason: 'Unable to verify content status' };
+  }
+
+  // Only approved content can be assigned by editors
+  if (data.approval_status !== APPROVAL_STATUS.APPROVED) {
+    const statusLabels = {
+      draft: 'pending submission',
+      in_review: 'awaiting approval',
+      rejected: 'needs revision',
+    };
+    const statusLabel = statusLabels[data.approval_status] || data.approval_status;
+    return {
+      canAssign: false,
+      reason: `This content is ${statusLabel}. Only approved content can be scheduled.`,
+    };
+  }
+
+  return { canAssign: true };
+}
 
 /**
  * Days of the week
@@ -262,6 +310,17 @@ export async function updateSchedule(id, updates) {
  * Create a new schedule entry
  */
 export async function createScheduleEntry(scheduleId, entryData = {}) {
+  // Validate content can be assigned (approval check for editors)
+  const contentType = entryData.content_type || entryData.target_type;
+  const contentId = entryData.content_id || entryData.target_id;
+
+  if (contentType && contentId && (contentType === 'playlist' || contentType === 'scene')) {
+    const { canAssign, reason } = await canAssignContent(contentType, contentId);
+    if (!canAssign) {
+      throw new Error(reason);
+    }
+  }
+
   // Build repeat_config from individual fields if provided
   const repeatConfig = {};
   if (entryData.repeat_every) repeatConfig.repeat_every = entryData.repeat_every;
@@ -306,6 +365,17 @@ export async function createScheduleEntry(scheduleId, entryData = {}) {
  * Update a schedule entry
  */
 export async function updateScheduleEntry(entryId, updates) {
+  // Validate content can be assigned if content is being changed
+  const contentType = updates.content_type;
+  const contentId = updates.content_id;
+
+  if (contentType && contentId && (contentType === 'playlist' || contentType === 'scene')) {
+    const { canAssign, reason } = await canAssignContent(contentType, contentId);
+    if (!canAssign) {
+      throw new Error(reason);
+    }
+  }
+
   const allowedFields = [
     'target_type', 'target_id', 'content_type', 'content_id',
     'start_date', 'end_date', 'start_time', 'end_time',
@@ -545,7 +615,7 @@ export async function getGroupsWithSchedule(scheduleId) {
 export async function getScenesForSchedule() {
   const { data, error } = await supabase
     .from('scenes')
-    .select('id, name, business_type, is_active')
+    .select('id, name, business_type, is_active, approval_status')
     .eq('is_active', true)
     .order('name');
 
@@ -594,6 +664,14 @@ export async function updateScheduleFillerContent(scheduleId, contentType, conte
   const validTypes = ['playlist', 'layout', 'scene'];
   if (!validTypes.includes(contentType)) {
     throw new Error(`Invalid content type. Must be one of: ${validTypes.join(', ')}`);
+  }
+
+  // Validate content can be assigned (approval check for editors)
+  if (contentType === 'playlist' || contentType === 'scene') {
+    const { canAssign, reason } = await canAssignContent(contentType, contentId);
+    if (!canAssign) {
+      throw new Error(reason);
+    }
   }
 
   const { data, error } = await supabase
