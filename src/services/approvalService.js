@@ -27,7 +27,8 @@ export const REVIEW_STATUS = {
 export const RESOURCE_TYPES = {
   PLAYLIST: 'playlist',
   LAYOUT: 'layout',
-  CAMPAIGN: 'campaign'
+  CAMPAIGN: 'campaign',
+  SCENE: 'scene'
 };
 
 /**
@@ -37,7 +38,8 @@ function getTableName(resourceType) {
   const tableMap = {
     playlist: 'playlists',
     layout: 'layouts',
-    campaign: 'campaigns'
+    campaign: 'campaigns',
+    scene: 'scenes'
   };
   return tableMap[resourceType];
 }
