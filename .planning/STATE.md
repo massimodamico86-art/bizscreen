@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 12 of 12 (Content Approval)
-Plan: 8 of 10 in phase 12 (scene support in review inbox)
+Plan: 9 of 10 in phase 12 (block unapproved content from schedules)
 Status: In progress
-Last activity: 2026-01-24 - Completed 12-08 (Scene Support in Review Inbox)
+Last activity: 2026-01-24 - Completed 12-07 (Block Unapproved Content from Schedules)
 
-Progress: [█████████████████████████████░] 98% (11/12 phases + 8/10 plans complete)
+Progress: [█████████████████████████████░] 99% (11/12 phases + 9/10 plans complete)
 
 ## Phase 12 Progress
 
@@ -25,7 +25,7 @@ Progress: [███████████████████████
 - [x] 12-04: Scene auto-submit for approval (d00d466, 933fad3)
 - [x] 12-05: Approval queue UI (48c8ed9, 4cbb357)
 - [x] 12-06: Layout auto-submit for approval
-- [x] 12-07: Campaign auto-submit for approval
+- [x] 12-07: Block unapproved content from schedules (268963e, 27232ae)
 - [x] 12-08: Scene support in review inbox (0abb571, 37d17bd)
 - [ ] 12-09: Content status indicators
 - [ ] 12-10: Testing and verification
@@ -725,16 +725,17 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 12-08-PLAN.md (Scene Support in Review Inbox)
+Stopped at: Completed 12-07-PLAN.md (Block Unapproved Content from Schedules)
 Resume file: None
 
 ## Next Steps
 
 **Phase 12 IN PROGRESS:** Content Approval Workflow
 
-**Plan 12-08 Accomplishments (Scene Support in Review Inbox):**
-- Film icon for scene resource type with pink color scheme
-- Scenes filter option in type dropdown
-- Scene navigation to scene-editor on review click
+**Plan 12-07 Accomplishments (Block Unapproved Content from Schedules):**
+- canAssignContent() validates approval status before schedule assignment
+- createScheduleEntry, updateScheduleEntry, updateScheduleFillerContent wired
+- ScheduleEditorPage shows approval status in content picker
+- Unapproved items disabled for editors; owners/managers can assign any content
 
 **Next:** 12-09 (Content Status Indicators)
