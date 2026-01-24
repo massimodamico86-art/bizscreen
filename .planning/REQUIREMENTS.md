@@ -47,11 +47,11 @@
 
 ### Content Approval Workflow
 
-- [ ] **APR-01**: Content can be submitted for approval with status tracking
-- [ ] **APR-02**: Approvers see review queue with pending submissions
-- [ ] **APR-03**: Approvers can approve/reject with comments
-- [ ] **APR-04**: Content publishing conditional on approval status
-- [ ] **APR-05**: Email notifications sent for approval requests and decisions
+- [x] **APR-01**: Content can be submitted for approval with status tracking
+- [x] **APR-02**: Approvers see review queue with pending submissions
+- [x] **APR-03**: Approvers can approve/reject with comments
+- [x] **APR-04**: Content publishing conditional on approval status
+- [x] **APR-05**: Email notifications sent for approval requests and decisions
 
 ### GDPR Compliance
 
@@ -143,11 +143,11 @@ Deferred to future release:
 | GDPR-03 | Phase 11 | Pending |
 | GDPR-04 | Phase 11 | Pending |
 | GDPR-05 | Phase 11 | Pending |
-| APR-01 | Phase 12 | Pending |
-| APR-02 | Phase 12 | Pending |
-| APR-03 | Phase 12 | Pending |
-| APR-04 | Phase 12 | Pending |
-| APR-05 | Phase 12 | Pending |
+| APR-01 | Phase 12 | Complete |
+| APR-02 | Phase 12 | Complete |
+| APR-03 | Phase 12 | Complete |
+| APR-04 | Phase 12 | Complete |
+| APR-05 | Phase 12 | Complete |
 
 **Coverage:**
 - v1 requirements: 42 total

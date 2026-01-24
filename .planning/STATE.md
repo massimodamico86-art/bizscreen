@@ -5,29 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 12 (Content Approval) in progress
+**Current focus:** All 12 phases complete — Milestone ready for audit
 
 ## Current Position
 
 Phase: 12 of 12 (Content Approval)
-Plan: 10 of 10 in phase 12 (testing and verification)
-Status: In progress
-Last activity: 2026-01-24 - Completed 12-09 (Content Approval Tests)
+Plan: 9 of 9 in phase 12 (complete)
+Status: Phase complete
+Last activity: 2026-01-24 - Completed Phase 12 execution
 
-Progress: [█████████████████████████████░] 99% (11/12 phases + 9/10 plans complete)
+Progress: [██████████████████████████████] 100% (12/12 phases complete)
 
 ## Phase 12 Progress
 
 **Content Approval Plans:**
-- [x] 12-01: Content approval database schema (3790983, 3ad4d58, 2fde744)
-- [x] 12-02: Approval email notifications (e391764)
-- [x] 12-03: Playlist auto-submit for approval (ed6aa72, 54d138b)
-- [x] 12-04: Scene auto-submit for approval (d00d466, 933fad3)
-- [x] 12-05: Approval queue UI (48c8ed9, 4cbb357)
-- [x] 12-06: Layout auto-submit for approval
-- [x] 12-07: Block unapproved content from schedules (268963e, 27232ae)
-- [x] 12-08: Scene support in review inbox (0abb571, 37d17bd)
-- [x] 12-09: Content approval tests (ed88c80, 0d5a7d3)
+- [x] 12-01: Approval infrastructure (3790983, 3ad4d58, 2fde744, 61ef34f)
+- [x] 12-02: Approval email templates (e391764, 7faa853)
+- [x] 12-03: Playlist auto-submit (ed6aa72, 54d138b, ec80f37)
+- [x] 12-04: Scene auto-submit (d00d466, 933fad3, f75d387)
+- [x] 12-05: Dashboard widget (48c8ed9, 4cbb357, c4a4bda)
+- [x] 12-06: Email notification wiring (8340839, 438bf24, 516ce84, 2cc446f, edfa2f9)
+- [x] 12-07: Publishing gate (268963e, 27232ae, b69ca85)
+- [x] 12-08: Scene inbox support (0abb571, 37d17bd, 3dccbf5)
+- [x] 12-09: Testing and verification (ed88c80, 0d5a7d3, cfe2ec2)
 - [ ] 12-10: Testing and verification
 
 **Plan 12-09 Results:**
@@ -736,12 +736,15 @@ Resume file: None
 
 ## Next Steps
 
-**Phase 12 IN PROGRESS:** Content Approval Workflow
+**MILESTONE COMPLETE:** BizScreen Production Release
 
-**Plan 12-07 Accomplishments (Block Unapproved Content from Schedules):**
-- canAssignContent() validates approval status before schedule assignment
-- createScheduleEntry, updateScheduleEntry, updateScheduleFillerContent wired
-- ScheduleEditorPage shows approval status in content picker
-- Unapproved items disabled for editors; owners/managers can assign any content
+**Phase 12 Accomplishments (Content Approval):**
+- Approval infrastructure: migration 122, RESOURCE_TYPES.SCENE, requiresApproval/canApproveContent
+- Auto-submit: savePlaylistWithApproval, saveSceneWithApproval with re-approval handling
+- Dashboard widget: PendingApprovalsWidget with pending review count
+- Email notifications: request/approve/reject emails via Resend SDK
+- Publishing gate: canAssignContent validation in scheduleService
+- Scene support: ReviewInboxPage handles scene reviews
+- Tests: 47 tests (1,288 lines) covering approval and permissions logic
 
-**Next:** 12-09 (Content Status Indicators)
+**Next:** /gsd:audit-milestone
