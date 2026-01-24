@@ -199,7 +199,8 @@ const ReviewInboxPage = ({ showToast, onNavigate }) => {
     const routes = {
       playlist: `playlist-editor-${resourceId}`,
       layout: `layout-editor-${resourceId}`,
-      campaign: `campaign-editor-${resourceId}`
+      campaign: `campaign-editor-${resourceId}`,
+      scene: `scene-editor-${resourceId}`
     };
     onNavigate?.(routes[resourceType]);
   };
