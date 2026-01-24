@@ -92,7 +92,26 @@ These capabilities shipped in v1 Production Release (2026-01-24):
 
 ### Active
 
-*(To be defined in next milestone)*
+**Current Milestone: v2 Templates & Platform Polish**
+
+**Goal:** Enable users to easily find and use pre-built content while improving the admin experience across all devices.
+
+**Target features:**
+
+*New capabilities:*
+- Templates marketplace (browse, import, customize pre-built scenes/layouts)
+- Multi-language content (same content in multiple languages, device selection)
+- Advanced scheduling (campaigns, date ranges, priority rules, content rotation)
+
+*Platform polish:*
+- Mobile responsive admin UI
+- Guided onboarding flow for new users
+- Dashboard redesign with better overview and quick actions
+
+*Technical foundation:*
+- Player.jsx component splitting
+- Structured logging completion (38% remaining)
+- Test coverage improvements (flaky test fix, critical path coverage)
 
 ### Out of Scope
 
@@ -145,4 +164,4 @@ These capabilities shipped in v1 Production Release (2026-01-24):
 | Full jitter for retry backoff | Prevents thundering herd | ✓ Good — implemented |
 
 ---
-*Last updated: 2026-01-24 after v1 milestone*
+*Last updated: 2026-01-24 after v2 milestone started*

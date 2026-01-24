@@ -4,36 +4,36 @@
 
 See: .planning/PROJECT.md (updated 2026-01-24)
 
-**Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** v1 shipped — planning next milestone
+**Core value:** Users can easily find and use pre-built content (v2: Templates)
+**Current focus:** v2 Templates & Platform Polish — defining requirements
 
 ## Current Position
 
-Phase: N/A (between milestones)
-Plan: N/A
-Status: v1 complete, ready for v2 planning
-Last activity: 2026-01-24 — v1 milestone archived
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-01-24 — Milestone v2 started
 
 ## Milestone Summary
 
-**v1 Production Release shipped 2026-01-24**
+**v2 Templates & Platform Polish (in progress)**
 
-- 12 phases, 75 plans executed
-- 251 commits over 3 days
-- 41/42 requirements satisfied
-- Tagged: v1
+Target scope:
+- Templates marketplace
+- Multi-language content
+- Advanced scheduling
+- Mobile responsive admin
+- Onboarding flow
+- Dashboard redesign
+- Player.jsx splitting
+- Logging completion
+- Test coverage improvements
 
 ## Archived
 
 - `.planning/milestones/v1-ROADMAP.md` — full phase details
 - `.planning/milestones/v1-REQUIREMENTS.md` — requirements with status
 - `.planning/milestones/v1-MILESTONE-AUDIT.md` — verification report
-
-## Next Steps
-
-**Start Next Milestone:**
-
-`/gsd:new-milestone` — questioning → research → requirements → roadmap
 
 ## Tech Debt Carried Forward
 
@@ -44,4 +44,4 @@ Last activity: 2026-01-24 — v1 milestone archived
 
 ---
 
-*Updated: 2026-01-24 — v1 milestone complete*
+*Updated: 2026-01-24 — v2 milestone started*
