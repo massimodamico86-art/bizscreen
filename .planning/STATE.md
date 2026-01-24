@@ -5,16 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 11 complete — Phase 12 (Content Approval) ready to plan
+**Current focus:** Phase 12 (Content Approval) in progress
 
 ## Current Position
 
-Phase: 11 of 12 (GDPR Compliance)
-Plan: 9 of 9 in phase 11 (gap closure)
-Status: Phase complete
-Last activity: 2026-01-24 - Completed 11-09 (Gap Closure)
+Phase: 12 of 12 (Content Approval)
+Plan: 2 of 7 in phase 12 (approval email notifications)
+Status: In progress
+Last activity: 2026-01-24 - Completed 12-02 (Approval Email Notifications)
 
-Progress: [████████████████████████████░░] 92% (11/12 phases complete)
+Progress: [█████████████████████████████░] 97% (11/12 phases + 2/7 plans complete)
+
+## Phase 12 Progress
+
+**Content Approval Plans:**
+- [x] 12-01: Content approval database schema (3790983, 3ad4d58, 2fde744)
+- [x] 12-02: Approval email notifications (e391764)
+- [ ] 12-03: Approval API endpoints
+- [ ] 12-04: Submit for approval UI
+- [ ] 12-05: Approval queue UI
+- [ ] 12-06: Content status indicators
+- [ ] 12-07: Testing and verification
+
+**Plan 12-02 Results:**
+- sendApprovalRequestEmail: notifies approvers when content submitted for review
+- sendApprovalDecisionEmail: notifies creator of approval/rejection with feedback
+- buildApprovalEmailHtml: reusable template with badge customization
+- Both functions handle missing API key gracefully
+- Green badge for approved, orange badge for revision needed
 
 ## Phase 11 Progress
 
@@ -646,6 +664,9 @@ Recent decisions affecting current work:
 - [10-08]: Extended existing test file rather than creating new file
 - [10-08]: Test names explicitly reference ANA-XX requirements for traceability
 - [10-08]: Timezone detection testing via Intl.DateTimeFormat().resolvedOptions() mocking
+- [12-02]: Use same buildApprovalEmailHtml for both request and decision emails with badge customization
+- [12-02]: Include white-space: pre-line for message text to preserve feedback newlines
+- [12-02]: Green badge (#dcfce7) for approved, orange badge (#fef3c7) for rejected
 
 ### Pending Todos
 
@@ -667,25 +688,17 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 11-09-PLAN.md (Gap Closure)
+Stopped at: Completed 12-02-PLAN.md (Approval Email Notifications)
 Resume file: None
 
 ## Next Steps
 
-**Phase 11 COMPLETE:** GDPR Compliance
+**Phase 12 IN PROGRESS:** Content Approval Workflow
 
-**Plan 11-09 Accomplishments (Gap Closure):**
-- Wired export email notification to emailService (closes GDPR-02 gap)
-- Wired media deletion to S3/Cloudinary endpoints (closes GDPR-05 gap)
-- Dynamic import pattern for server-side emailService
-- Batch processing with API limits (S3: 1000, Cloudinary: 100)
+**Plan 12-02 Accomplishments (Approval Email Notifications):**
+- sendApprovalRequestEmail: notifies approvers when content submitted
+- sendApprovalDecisionEmail: notifies creator of approval/rejection with feedback
+- Both functions use Resend SDK following existing patterns
+- Graceful fallback when VITE_RESEND_API_KEY not configured
 
-**Phase 11 Wave Summary:**
-- Wave 1 (Database): 11-01, 11-02, 11-03 complete
-- Wave 2 (Services): 11-04 complete
-- Wave 3 (API): 11-05 complete
-- Wave 4 (UI): 11-06, 11-07 complete
-- Wave 5 (Testing): 11-08 complete
-- Gap Closure: 11-09 complete (all placeholder code replaced)
-
-**Next:** Phase 12 (Content Approval Workflow)
+**Next:** 12-03 (Approval API Endpoints)
