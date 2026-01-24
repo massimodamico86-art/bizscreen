@@ -69,10 +69,10 @@
 
 ### Advanced Analytics
 
-- [ ] **ANA-01**: View duration tracked (how long content displayed)
-- [ ] **ANA-02**: View completion rates calculated (% of scheduled duration shown)
-- [ ] **ANA-03**: Content performance dashboard shows metrics by content item
-- [ ] **ANA-04**: Time-based heatmap shows peak viewing periods
+- [x] **ANA-01**: View duration tracked (how long content displayed)
+- [x] **ANA-02**: View completion rates calculated (% of scheduled duration shown)
+- [x] **ANA-03**: Content performance dashboard shows metrics by content item
+- [x] **ANA-04**: Time-based heatmap shows peak viewing periods
 
 ## v2 Requirements
 

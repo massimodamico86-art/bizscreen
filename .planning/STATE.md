@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 10 (Analytics) in progress
+**Current focus:** Phase 10 complete — Phase 11 (GDPR Compliance) ready to plan
 
 ## Current Position
 
