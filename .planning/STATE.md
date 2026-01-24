@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 11 of 12 (GDPR Compliance)
-Plan: 4 of 8 in phase 11
+Plan: 5 of 8 in phase 11
 Status: In progress
-Last activity: 2026-01-24 - Completed 11-03 (Export Processing RPC)
+Last activity: 2026-01-24 - Completed 11-05 (GDPR Processing API Endpoints)
 
 Progress: [██████████████████████████░░] 83% (10/12 phases complete)
 
@@ -23,7 +23,7 @@ Progress: [███████████████████████
 - [x] 11-02: GDPR deletion execution RPCs (dd84987, ea2b4c3, c2c6acc)
 - [x] 11-03: Export Processing RPC (87991d1, ca0227a)
 - [x] 11-04: External Media Deletion Service (3b514b1)
-- [ ] 11-05: Export download UI
+- [x] 11-05: GDPR Processing API Endpoints (87c552d, 360f234, 29485d4)
 - [ ] 11-06: Deletion flow UI
 - [ ] 11-07: Scheduled jobs
 - [ ] 11-08: Testing and verification
@@ -59,6 +59,14 @@ Progress: [███████████████████████
 - deleteCloudinaryFiles - batch deletion with 100 per request limit
 - deleteUserMediaFiles - orchestrator for complete media cleanup
 - Best-effort deletion pattern (errors logged, don't block process)
+
+**Plan 11-05 Results:**
+- POST /api/gdpr/process-exports - processes pending exports via get_pending_exports and process_data_export RPCs
+- POST /api/gdpr/process-deletions - orchestrates deletion: get_media_urls -> delete_external -> auth.admin.deleteUser
+- POST /api/gdpr/delete-s3 - S3 file deletion via AWS SDK DeleteObjectsCommand
+- POST /api/gdpr/delete-cloudinary - Cloudinary file deletion via Admin API delete_resources
+- All endpoints require GDPR_API_SECRET bearer token authorization
+- GDPR audit logging at each deletion step (deletion_started, external_deleted, deletion_completed/failed)
 
 ## Phase 10 Progress
 
@@ -634,18 +642,17 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 11-03-PLAN.md (Export Processing RPC)
+Stopped at: Completed 11-05-PLAN.md (GDPR Processing API Endpoints)
 Resume file: None
 
 ## Next Steps
 
 **Phase 11 IN PROGRESS:** GDPR Compliance
 
-**Plan 11-03 Accomplishments:**
-- process_data_export RPC with status state machine (pending -> processing -> completed)
-- get_pending_exports RPC for batch processing
-- export_data JSONB column for database storage
-- getExportData and downloadExportAsFile functions in gdprService.js
-- 7-day expiration enforcement
+**Plan 11-05 Accomplishments:**
+- Server-side API endpoints for GDPR processing operations
+- Export processing endpoint with batch processing
+- Deletion execution endpoint with full orchestration and audit logging
+- S3 and Cloudinary deletion endpoints with server credentials
 
-**Next:** Continue with 11-05 (Export download UI) or 11-06 (Deletion flow UI)
+**Next:** Continue with 11-06 (Deletion flow UI) or 11-07 (Scheduled jobs)
