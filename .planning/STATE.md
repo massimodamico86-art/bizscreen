@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 10 complete — Phase 11 (GDPR Compliance) ready to plan
+**Current focus:** Phase 11 complete — Phase 12 (Content Approval) ready to plan
 
 ## Current Position
 
@@ -688,4 +688,4 @@ Resume file: None
 - Wave 5 (Testing): 11-08 complete
 - Gap Closure: 11-09 complete (all placeholder code replaced)
 
-**Next:** Phase 12 (Final Review and Documentation)
+**Next:** Phase 12 (Content Approval Workflow)

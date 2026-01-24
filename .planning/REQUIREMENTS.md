@@ -55,11 +55,11 @@
 
 ### GDPR Compliance
 
-- [ ] **GDPR-01**: User can request data export (right to portability)
-- [ ] **GDPR-02**: Data export generates downloadable file within 30 days
-- [ ] **GDPR-03**: User can request account deletion (right to be forgotten)
-- [ ] **GDPR-04**: Account deletion cascades to all user data with 30-day grace period
-- [ ] **GDPR-05**: Deletion propagates to third-party processors (S3, Cloudinary)
+- [x] **GDPR-01**: User can request data export (right to portability)
+- [x] **GDPR-02**: Data export generates downloadable file within 30 days
+- [x] **GDPR-03**: User can request account deletion (right to be forgotten)
+- [x] **GDPR-04**: Account deletion cascades to all user data with 30-day grace period
+- [x] **GDPR-05**: Deletion propagates to third-party processors (S3, Cloudinary)
 
 ### Device Experience
 

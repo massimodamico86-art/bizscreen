@@ -20,7 +20,7 @@ BizScreen production release progresses through 12 phases: establishing testing 
 - [x] **Phase 8: Page Refactoring** - Split large page components *(hooks + components extracted, 70% line reduction)*
 - [x] **Phase 9: Device Experience** - QR pairing and kiosk exit improvements *(49 tests added)*
 - [x] **Phase 10: Analytics** - View duration and content performance tracking *(28 tests added)*
-- [ ] **Phase 11: GDPR Compliance** - Data export and account deletion
+- [x] **Phase 11: GDPR Compliance** - Data export and account deletion
 - [ ] **Phase 12: Content Approval** - Submit, review, and publish workflow
 
 ## Phase Details
@@ -224,17 +224,18 @@ Plans:
   3. User can request account deletion with 30-day grace period
   4. After grace period, all user data is permanently removed from database
   5. Media files in S3 and Cloudinary are deleted when account is deleted
-**Plans**: 8 plans
+**Plans**: 9 plans (8 original + 1 gap closure)
 
 Plans:
-- [ ] 11-01-PLAN.md — Data collection RPC for comprehensive export (GDPR-01, GDPR-02)
-- [ ] 11-02-PLAN.md — Deletion execution RPC with audit logging (GDPR-03, GDPR-04)
-- [ ] 11-03-PLAN.md — Export processing RPC and service extension (GDPR-01, GDPR-02)
-- [ ] 11-04-PLAN.md — Media deletion service for S3/Cloudinary (GDPR-05)
-- [ ] 11-05-PLAN.md — Server API endpoints for GDPR processing (GDPR-01, GDPR-03, GDPR-05)
-- [ ] 11-06-PLAN.md — Email notifications for export and deletion (GDPR-01, GDPR-03)
-- [ ] 11-07-PLAN.md — Update DataPrivacySettings UI (GDPR-01, GDPR-03)
-- [ ] 11-08-PLAN.md — Testing and verification
+- [x] 11-01-PLAN.md — Data collection RPC for comprehensive export (GDPR-01, GDPR-02)
+- [x] 11-02-PLAN.md — Deletion execution RPC with audit logging (GDPR-03, GDPR-04)
+- [x] 11-03-PLAN.md — Export processing RPC and service extension (GDPR-01, GDPR-02)
+- [x] 11-04-PLAN.md — Media deletion service for S3/Cloudinary (GDPR-05)
+- [x] 11-05-PLAN.md — Server API endpoints for GDPR processing (GDPR-01, GDPR-03, GDPR-05)
+- [x] 11-06-PLAN.md — Email notifications for export and deletion (GDPR-01, GDPR-03)
+- [x] 11-07-PLAN.md — Update DataPrivacySettings UI (GDPR-01, GDPR-03)
+- [x] 11-08-PLAN.md — Testing and verification
+- [x] 11-09-PLAN.md — Gap closure: Wire email and media deletion
 
 ### Phase 12: Content Approval
 **Goal**: Content goes through review before appearing on screens
@@ -268,9 +269,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 8. Page Refactoring | 12/12 | Complete | 2026-01-23 |
 | 9. Device Experience | 8/8 | Complete | 2026-01-23 |
 | 10. Analytics | 8/8 | Complete | 2026-01-24 |
-| 11. GDPR Compliance | 0/8 | Planned | - |
+| 11. GDPR Compliance | 9/9 | Complete | 2026-01-24 |
 | 12. Content Approval | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-24 — Phase 11 planned (8 plans, 5 waves)*
+*Last updated: 2026-01-24 — Phase 11 complete (9 plans, 5/5 verified)*
