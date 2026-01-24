@@ -188,14 +188,21 @@ export async function approveReview(reviewId, { comment = '' } = {}) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User must be authenticated');
 
-  // Get the review to find resource info
+  // Get the review with creator info
   const { data: review, error: fetchError } = await supabase
     .from('review_requests')
-    .select('*')
+    .select('*, requester:profiles!review_requests_requested_by_fkey(email, full_name)')
     .eq('id', reviewId)
     .single();
 
   if (fetchError) throw fetchError;
+
+  // Get reviewer's name
+  const { data: reviewerProfile } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .eq('id', user.id)
+    .single();
 
   // Update review status
   const { data: updatedReview, error: reviewError } = await supabase
@@ -223,6 +230,23 @@ export async function approveReview(reviewId, { comment = '' } = {}) {
       approval_comment: comment
     })
     .eq('id', review.resource_id);
+
+  // Send email notification to creator (async, don't block)
+  if (review.requester?.email) {
+    const contentUrl = `${window.location.origin}/${review.resource_type}s/${review.resource_id}`;
+    sendApprovalDecisionEmail({
+      to: review.requester.email,
+      contentName: review.title || 'Content',
+      contentType: review.resource_type,
+      decision: 'approved',
+      reviewerName: reviewerProfile?.full_name || 'A reviewer',
+      feedback: comment || undefined,
+      contentUrl,
+    }).catch(err => {
+      // Log but don't fail the approval
+      console.error('Failed to send approval email:', err);
+    });
+  }
 
   return updatedReview;
 }
