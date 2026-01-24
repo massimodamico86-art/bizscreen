@@ -202,10 +202,17 @@ Plans:
   2. Content detail page shows completion rate (% of scheduled time displayed)
   3. Analytics dashboard lists content sorted by total view time
   4. Heatmap visualization shows viewing patterns by hour and day of week
-**Plans**: TBD
+**Plans**: 8 plans
 
 Plans:
-- [ ] 10-01: TBD
+- [ ] 10-01-PLAN.md — Database RPCs for content metrics, performance list, and heatmap (ANA-01, ANA-02, ANA-03, ANA-04)
+- [ ] 10-02-PLAN.md — Extend contentAnalyticsService with new functions (ANA-01, ANA-02, ANA-03, ANA-04)
+- [ ] 10-03-PLAN.md — ViewingHeatmap component (ANA-04)
+- [ ] 10-04-PLAN.md — ContentInlineMetrics component (ANA-01, ANA-02)
+- [ ] 10-05-PLAN.md — AnalyticsDashboardPage with tabs (ANA-03, ANA-04)
+- [ ] 10-06-PLAN.md — ContentDetailAnalyticsPage (ANA-01, ANA-02)
+- [ ] 10-07-PLAN.md — Integrate inline metrics into SceneEditorPage (ANA-01, ANA-02)
+- [ ] 10-08-PLAN.md — Testing and verification
 
 ### Phase 11: GDPR Compliance
 **Goal**: Users can export their data and request account deletion per EU regulations
@@ -253,10 +260,10 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Player Refactoring | 4/4 | Complete | 2026-01-23 |
 | 8. Page Refactoring | 12/12 | Complete | 2026-01-23 |
 | 9. Device Experience | 8/8 | Complete | 2026-01-23 |
-| 10. Analytics | 0/TBD | Not started | - |
+| 10. Analytics | 0/8 | Planned | - |
 | 11. GDPR Compliance | 0/TBD | Not started | - |
 | 12. Content Approval | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 — Phase 9 complete (8 plans executed, 49 tests added)*
+*Last updated: 2026-01-24 — Phase 10 planned (8 plans in 4 waves)*
