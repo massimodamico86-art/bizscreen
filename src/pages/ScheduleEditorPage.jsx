@@ -29,10 +29,12 @@ import {
   TARGET_TYPES
 } from '../services/scheduleService';
 import { supabase } from '../supabase';
-import { Button, Card } from '../design-system';
+import { Button, Card, Badge } from '../design-system';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 import { FillerContentPicker, ConflictWarning, WeekPreview, AssignScreensModal } from '../components/schedules';
+import { requiresApproval } from '../services/permissionsService.js';
+import { APPROVAL_STATUS, getApprovalStatusConfig } from '../services/approvalService.js';
 
 // Yodeck-style repeat options
 const REPEAT_OPTIONS = [
@@ -162,6 +164,9 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
   // Week preview refresh key (US-146)
   const [weekPreviewKey, setWeekPreviewKey] = useState(0);
 
+  // Approval check for content assignment (12-07)
+  const [userRequiresApproval, setUserRequiresApproval] = useState(false);
+
   const weekDates = useMemo(() => getWeekDates(currentDate), [currentDate]);
 
   useEffect(() => {
@@ -170,6 +175,11 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       loadContentOptions();
     }
   }, [scheduleId]);
+
+  // Check if user requires approval for content assignment
+  useEffect(() => {
+    requiresApproval().then(setUserRequiresApproval);
+  }, []);
 
   const loadSchedule = async () => {
     try {
@@ -217,9 +227,9 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
 
   const loadContentOptions = async () => {
     const [playlistsResult, layoutsResult, scenesResult] = await Promise.all([
-      supabase.from('playlists').select('id, name').order('name'),
+      supabase.from('playlists').select('id, name, approval_status').order('name'),
       supabase.from('layouts').select('id, name').order('name'),
-      supabase.from('scenes').select('id, name').eq('is_active', true).order('name')
+      supabase.from('scenes').select('id, name, approval_status').eq('is_active', true).order('name')
     ]);
     setPlaylists(playlistsResult.data || []);
     setLayouts(layoutsResult.data || []);
@@ -862,14 +872,32 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
                         >
                           <option value="">Select {eventForm.contentType}</option>
-                          {getContentOptions().map(item => (
-                            <option key={item.id} value={item.id}>{item.name}</option>
-                          ))}
+                          {getContentOptions().map(item => {
+                            // Check if content requires approval and is not approved
+                            const needsApproval = userRequiresApproval &&
+                              (eventForm.contentType === 'playlist' || eventForm.contentType === 'scene') &&
+                              item.approval_status && item.approval_status !== APPROVAL_STATUS.APPROVED;
+                            const statusLabel = needsApproval ? ` (${getApprovalStatusConfig(item.approval_status).label})` : '';
+                            return (
+                              <option
+                                key={item.id}
+                                value={item.id}
+                                disabled={needsApproval}
+                              >
+                                {item.name}{statusLabel}
+                              </option>
+                            );
+                          })}
                         </select>
                       )}
                     </div>
                     {!eventForm.contentId && eventForm.contentType && (
                       <p className="text-xs text-gray-400 mt-1">No Content Assigned</p>
+                    )}
+                    {userRequiresApproval && (eventForm.contentType === 'playlist' || eventForm.contentType === 'scene') && (
+                      <p className="text-xs text-amber-600 mt-1">
+                        Only approved content can be scheduled. Items awaiting approval are disabled.
+                      </p>
                     )}
                   </div>
                 )}
