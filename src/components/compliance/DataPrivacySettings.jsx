@@ -186,18 +186,38 @@ export default function DataPrivacySettings({ showToast, user }) {
               </div>
             )}
 
-            {exportStatus && exportStatus.status === 'completed' && exportStatus.file_url && (
-              <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-sm text-green-700">
-                <Check className="w-4 h-4" />
-                <span>Your export is ready!</span>
-                <a
-                  href={exportStatus.file_url}
-                  className="ml-auto text-green-700 hover:underline font-medium"
-                  target="_blank"
-                  rel="noopener noreferrer"
+            {exportStatus && exportStatus.status === 'completed' && (
+              <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center gap-2 text-sm text-green-700">
+                  <Check className="w-4 h-4" />
+                  <span>Your export is ready!</span>
+                </div>
+                {exportStatus.expires_at && (
+                  <p className="text-xs text-green-600 mt-1">
+                    Available until {new Date(exportStatus.expires_at).toLocaleDateString()}
+                  </p>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadExport}
+                  disabled={exportLoading}
+                  className="mt-2"
                 >
-                  Download
-                </a>
+                  {exportLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
+                  Download Export
+                </Button>
+              </div>
+            )}
+
+            {exportStatus && exportStatus.status === 'expired' && (
+              <div className="mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center gap-2 text-sm text-gray-600">
+                <Clock className="w-4 h-4" />
+                Your previous export has expired. Request a new export to download your data.
               </div>
             )}
 
