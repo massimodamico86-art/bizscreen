@@ -164,6 +164,37 @@ export async function isViewerOnly() {
   return role === 'viewer';
 }
 
+/**
+ * Check if the current user requires content approval before publishing
+ * Editors and viewers require approval; owners and managers can publish directly
+ * @returns {Promise<boolean>} True if user needs approval, false if can publish directly
+ */
+export async function requiresApproval() {
+  // Super admins and admins never need approval
+  const profileRole = await getProfileRole();
+  if (profileRole === 'super_admin' || profileRole === 'admin') return false;
+
+  const memberRole = await getCurrentMemberRole();
+  // Owners and managers can publish directly
+  if (['owner', 'manager'].includes(memberRole)) return false;
+  // Editors and viewers require approval
+  // Also require approval if no role (not a member)
+  return true;
+}
+
+/**
+ * Check if the current user can approve/reject content
+ * Only owners and managers can approve
+ * @returns {Promise<boolean>}
+ */
+export async function canApproveContent() {
+  // Super admins and admins can always approve
+  const profileRole = await getProfileRole();
+  if (profileRole === 'super_admin' || profileRole === 'admin') return true;
+
+  return isAtLeastManager();
+}
+
 // =====================================================
 // CAPABILITY CHECKS
 // =====================================================
@@ -333,6 +364,8 @@ export default {
   isAtLeastManager,
   isAtLeastEditor,
   isViewerOnly,
+  requiresApproval,
+  canApproveContent,
   canManageBilling,
   canManageTeam,
   canManageLocations,
