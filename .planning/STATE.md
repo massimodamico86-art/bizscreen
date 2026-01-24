@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 12 of 12 (Content Approval)
-Plan: 4 of 7 in phase 12 (scene auto-submit for approval)
+Plan: 8 of 10 in phase 12 (scene support in review inbox)
 Status: In progress
-Last activity: 2026-01-24 - Completed 12-04 (Scene Auto-Submit for Approval)
+Last activity: 2026-01-24 - Completed 12-08 (Scene Support in Review Inbox)
 
-Progress: [█████████████████████████████░] 97% (11/12 phases + 4/7 plans complete)
+Progress: [█████████████████████████████░] 98% (11/12 phases + 8/10 plans complete)
 
 ## Phase 12 Progress
 
@@ -23,9 +23,12 @@ Progress: [███████████████████████
 - [x] 12-02: Approval email notifications (e391764)
 - [x] 12-03: Playlist auto-submit for approval (ed6aa72, 54d138b)
 - [x] 12-04: Scene auto-submit for approval (d00d466, 933fad3)
-- [ ] 12-05: Approval queue UI
-- [ ] 12-06: Content status indicators
-- [ ] 12-07: Testing and verification
+- [x] 12-05: Approval queue UI (48c8ed9, 4cbb357)
+- [x] 12-06: Layout auto-submit for approval
+- [x] 12-07: Campaign auto-submit for approval
+- [x] 12-08: Scene support in review inbox (0abb571, 37d17bd)
+- [ ] 12-09: Content status indicators
+- [ ] 12-10: Testing and verification
 
 **Plan 12-03 Results:**
 - savePlaylistWithApproval: saves playlist and auto-submits when user role requires approval
@@ -47,6 +50,12 @@ Progress: [███████████████████████
 - FIFO ordering (oldest first) for fairness in review queue
 - Self-hiding when user lacks approval permissions or no pending reviews
 - Click navigates to review-inbox page
+
+**Plan 12-08 Results:**
+- ReviewInboxPage: Film icon for scene resource type, pink color scheme
+- Scenes filter option added to type dropdown
+- Scene navigation to scene-editor on review click
+- View already includes scene name lookup (from 12-01)
 
 **Plan 12-02 Results:**
 - sendApprovalRequestEmail: notifies approvers when content submitted for review
@@ -709,17 +718,16 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 12-03-PLAN.md (Playlist Auto-Submit for Approval)
+Stopped at: Completed 12-08-PLAN.md (Scene Support in Review Inbox)
 Resume file: None
 
 ## Next Steps
 
 **Phase 12 IN PROGRESS:** Content Approval Workflow
 
-**Plan 12-03 Accomplishments (Playlist Auto-Submit for Approval):**
-- savePlaylistWithApproval: saves playlist and auto-submits when user role requires approval
-- handleSavePlaylist: hook callback with appropriate toast messages
-- Re-approval flow for editing approved content
-- Duplicate review request prevention
+**Plan 12-08 Accomplishments (Scene Support in Review Inbox):**
+- Film icon for scene resource type with pink color scheme
+- Scenes filter option in type dropdown
+- Scene navigation to scene-editor on review click
 
-**Next:** 12-05 (Approval Queue UI)
+**Next:** 12-09 (Content Status Indicators)
