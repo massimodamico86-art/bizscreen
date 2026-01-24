@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 12 of 12 (Content Approval)
-Plan: 2 of 7 in phase 12 (approval email notifications)
+Plan: 5 of 7 in phase 12 (approval queue UI)
 Status: In progress
-Last activity: 2026-01-24 - Completed 12-02 (Approval Email Notifications)
+Last activity: 2026-01-24 - Completed 12-05 (Approval Queue UI)
 
-Progress: [█████████████████████████████░] 97% (11/12 phases + 2/7 plans complete)
+Progress: [█████████████████████████████░] 97% (11/12 phases + 3/7 plans complete)
 
 ## Phase 12 Progress
 
@@ -23,9 +23,16 @@ Progress: [███████████████████████
 - [x] 12-02: Approval email notifications (e391764)
 - [ ] 12-03: Approval API endpoints
 - [ ] 12-04: Submit for approval UI
-- [ ] 12-05: Approval queue UI
+- [x] 12-05: Approval queue UI (48c8ed9, 4cbb357)
 - [ ] 12-06: Content status indicators
 - [ ] 12-07: Testing and verification
+
+**Plan 12-05 Results:**
+- PendingApprovalsWidget: dashboard widget for approvers showing pending reviews
+- Widget shows content name, type, submitter, and submission time
+- FIFO ordering (oldest first) for fairness in review queue
+- Self-hiding when user lacks approval permissions or no pending reviews
+- Click navigates to review-inbox page
 
 **Plan 12-02 Results:**
 - sendApprovalRequestEmail: notifies approvers when content submitted for review
