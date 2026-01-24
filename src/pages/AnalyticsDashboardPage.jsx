@@ -15,14 +15,12 @@ import {
   Monitor,
   Play,
   Clock,
-  Eye,
   TrendingUp,
   RefreshCw,
   Calendar,
   Layers,
   Grid3X3,
   ArrowUpRight,
-  ChevronRight,
 } from 'lucide-react';
 import { useLogger } from '../hooks/useLogger.js';
 import {
@@ -183,21 +181,18 @@ export default function AnalyticsDashboardPage({ showToast }) {
               <OverviewTab
                 summary={summary}
                 topScenes={topScenes}
-                dateRange={dateRange}
               />
             )}
 
             {activeTab === 'content' && (
               <ContentTab
                 contentList={contentList}
-                dateRange={dateRange}
               />
             )}
 
             {activeTab === 'patterns' && (
               <PatternsTab
                 heatmapData={heatmapData}
-                dateRange={dateRange}
               />
             )}
           </div>
@@ -210,7 +205,7 @@ export default function AnalyticsDashboardPage({ showToast }) {
 /**
  * Overview Tab - Summary metrics and top content
  */
-function OverviewTab({ summary, topScenes, dateRange }) {
+function OverviewTab({ summary, topScenes }) {
   // Calculate total view hours from summary
   const totalViewHours = summary?.total_playback_hours || 0;
   const activeScreens = summary?.active_devices || 0;
@@ -360,7 +355,7 @@ function OverviewTab({ summary, topScenes, dateRange }) {
 /**
  * Content Tab - Performance list sorted by total view time (ANA-03)
  */
-function ContentTab({ contentList, dateRange }) {
+function ContentTab({ contentList }) {
   // Sort controls
   const [sortField, setSortField] = useState('total_view_time_seconds');
   const [sortDirection, setSortDirection] = useState('desc');
@@ -483,7 +478,7 @@ function ContentTab({ contentList, dateRange }) {
 /**
  * Patterns Tab - Viewing heatmap (ANA-04)
  */
-function PatternsTab({ heatmapData, dateRange }) {
+function PatternsTab({ heatmapData }) {
   const [metric, setMetric] = useState('view_count');
 
   return (
