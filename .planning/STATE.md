@@ -709,17 +709,17 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 12-02-PLAN.md (Approval Email Notifications)
+Stopped at: Completed 12-03-PLAN.md (Playlist Auto-Submit for Approval)
 Resume file: None
 
 ## Next Steps
 
 **Phase 12 IN PROGRESS:** Content Approval Workflow
 
-**Plan 12-02 Accomplishments (Approval Email Notifications):**
-- sendApprovalRequestEmail: notifies approvers when content submitted
-- sendApprovalDecisionEmail: notifies creator of approval/rejection with feedback
-- Both functions use Resend SDK following existing patterns
-- Graceful fallback when VITE_RESEND_API_KEY not configured
+**Plan 12-03 Accomplishments (Playlist Auto-Submit for Approval):**
+- savePlaylistWithApproval: saves playlist and auto-submits when user role requires approval
+- handleSavePlaylist: hook callback with appropriate toast messages
+- Re-approval flow for editing approved content
+- Duplicate review request prevention
 
-**Next:** 12-03 (Approval API Endpoints)
+**Next:** 12-05 (Approval Queue UI)
