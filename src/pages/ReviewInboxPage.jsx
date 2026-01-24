@@ -663,8 +663,16 @@ const ReviewInboxPage = ({ showToast, onNavigate }) => {
                   onChange={(e) => setDecisionComment(e.target.value)}
                   placeholder={showDecisionModal === 'approve' ? t('reviews.optionalComment', 'Optional comment...') : t('reviews.rejectionReason', 'Reason for rejection...')}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                    showDecisionModal === 'reject' && !decisionComment.trim() ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  required={showDecisionModal === 'reject'}
                 />
+                {showDecisionModal === 'reject' && !decisionComment.trim() && (
+                  <p className="text-sm text-red-500 mt-2">
+                    {t('reviews.feedbackRequired', 'Feedback is required when rejecting content.')}
+                  </p>
+                )}
               </div>
             </ModalContent>
             <ModalFooter>
