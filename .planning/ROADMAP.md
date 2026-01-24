@@ -247,10 +247,18 @@ Plans:
   3. Approver can approve or reject with written feedback
   4. Rejected content cannot be published to screens
   5. Approval request and decision trigger email notifications
-**Plans**: TBD
+**Plans**: 9 plans
 
 Plans:
-- [ ] 12-01: TBD
+- [ ] 12-01-PLAN.md — Approval infrastructure (migration, service, permissions) (APR-01)
+- [ ] 12-02-PLAN.md — Approval email templates (APR-05)
+- [ ] 12-03-PLAN.md — Playlist auto-submit on save (APR-01)
+- [ ] 12-04-PLAN.md — Scene auto-submit on save (APR-01)
+- [ ] 12-05-PLAN.md — Pending approvals dashboard widget (APR-02)
+- [ ] 12-06-PLAN.md — Wire email notifications to approve/reject (APR-03, APR-05)
+- [ ] 12-07-PLAN.md — Publishing gate for unapproved content (APR-04)
+- [ ] 12-08-PLAN.md — Scene support in ReviewInboxPage (APR-02, APR-03)
+- [ ] 12-09-PLAN.md — Testing and verification
 
 ## Progress
 
@@ -270,8 +278,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Device Experience | 8/8 | Complete | 2026-01-23 |
 | 10. Analytics | 8/8 | Complete | 2026-01-24 |
 | 11. GDPR Compliance | 9/9 | Complete | 2026-01-24 |
-| 12. Content Approval | 0/TBD | Not started | - |
+| 12. Content Approval | 0/9 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-24 — Phase 11 complete (9 plans, 5/5 verified)*
+*Last updated: 2026-01-24 — Phase 12 planned (9 plans in 4 waves)*
