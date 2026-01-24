@@ -116,6 +116,7 @@ const SceneEditorPage = lazy(() => import('./pages/SceneEditorPage'));
 const DeviceDiagnosticsPage = lazy(() => import('./pages/DeviceDiagnosticsPage'));
 const DataSourcesPage = lazy(() => import('./pages/DataSourcesPage'));
 const ContentPerformancePage = lazy(() => import('./pages/ContentPerformancePage'));
+const AnalyticsDashboardPage = lazy(() => import('./pages/AnalyticsDashboardPage'));
 const TemplateMarketplacePage = lazy(() => import('./pages/TemplateMarketplacePage'));
 const AdminTemplatesPage = lazy(() => import('./pages/Admin/AdminTemplatesPage'));
 const AdminEditTemplatePage = lazy(() => import('./pages/Admin/AdminEditTemplatePage'));
@@ -544,6 +545,7 @@ function BizScreenAppInner() {
     'device-diagnostics': <Suspense fallback={<PageLoader />}><DeviceDiagnosticsPage /></Suspense>,
     'data-sources': <Suspense fallback={<PageLoader />}><DataSourcesPage showToast={showToast} /></Suspense>,
     'content-performance': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><ContentPerformancePage showToast={showToast} /></FeatureGate></Suspense>,
+    'analytics-dashboard': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsDashboardPage showToast={showToast} /></FeatureGate></Suspense>,
     'template-marketplace': <Suspense fallback={<PageLoader />}><TemplateMarketplacePage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'admin-templates': <Suspense fallback={<PageLoader />}><AdminTemplatesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'social-accounts': <Suspense fallback={<PageLoader />}><SocialAccountsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
