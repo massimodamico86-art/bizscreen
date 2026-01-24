@@ -19,6 +19,7 @@ import {
   requestDataExport,
   getLatestExportStatus,
   downloadClientSideExport,
+  downloadExportAsFile,
   requestAccountDeletion,
   cancelAccountDeletion,
   getDeletionStatus,
@@ -81,6 +82,20 @@ export default function DataPrivacySettings({ showToast, user }) {
       }
     } catch (error) {
       showToast?.(error.message || 'Export request failed', 'error');
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handleDownloadExport = async () => {
+    if (!exportStatus?.id) return;
+
+    setExportLoading(true);
+    try {
+      await downloadExportAsFile(exportStatus.id);
+      showToast?.('Your data export has been downloaded');
+    } catch (error) {
+      showToast?.(error.message || 'Failed to download export', 'error');
     } finally {
       setExportLoading(false);
     }
