@@ -10,22 +10,36 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 12 of 12 (Content Approval)
-Plan: 5 of 7 in phase 12 (approval queue UI)
+Plan: 4 of 7 in phase 12 (scene auto-submit for approval)
 Status: In progress
-Last activity: 2026-01-24 - Completed 12-05 (Approval Queue UI)
+Last activity: 2026-01-24 - Completed 12-04 (Scene Auto-Submit for Approval)
 
-Progress: [█████████████████████████████░] 97% (11/12 phases + 3/7 plans complete)
+Progress: [█████████████████████████████░] 97% (11/12 phases + 4/7 plans complete)
 
 ## Phase 12 Progress
 
 **Content Approval Plans:**
 - [x] 12-01: Content approval database schema (3790983, 3ad4d58, 2fde744)
 - [x] 12-02: Approval email notifications (e391764)
-- [ ] 12-03: Approval API endpoints
-- [ ] 12-04: Submit for approval UI
-- [x] 12-05: Approval queue UI (48c8ed9, 4cbb357)
+- [x] 12-03: Playlist auto-submit for approval (ed6aa72, 54d138b)
+- [x] 12-04: Scene auto-submit for approval (d00d466, 933fad3)
+- [ ] 12-05: Approval queue UI
 - [ ] 12-06: Content status indicators
 - [ ] 12-07: Testing and verification
+
+**Plan 12-03 Results:**
+- savePlaylistWithApproval: saves playlist and auto-submits when user role requires approval
+- handleSavePlaylist: hook callback using savePlaylistWithApproval with appropriate toast messages
+- Re-approval flow: editing approved content resets to draft and creates new review request
+- Duplicate prevention: checks for existing open review before creating new
+- Role-based: owners/managers save without approval, editors/viewers auto-submit
+
+**Plan 12-04 Results:**
+- saveSceneWithApproval: saves scene and auto-submits when user role requires approval
+- SceneEditorPage: submits for approval when user clicks Done (handleBack)
+- Approval status badge visible in editor header for non-draft scenes
+- Re-approval flow: editing approved scene resets to draft and creates new review
+- Duplicate prevention: checks for existing open review before creating new
 
 **Plan 12-05 Results:**
 - PendingApprovalsWidget: dashboard widget for approvers showing pending reviews
