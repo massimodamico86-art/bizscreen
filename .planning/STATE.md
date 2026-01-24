@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 10 of 12 (Analytics)
-Plan: 3 of 8 in phase 10
+Plan: 4 of 8 in phase 10
 Status: In progress
-Last activity: 2026-01-24 - Completed 10-03 (ViewingHeatmap component)
+Last activity: 2026-01-24 - Completed 10-02 (Service layer integration)
 
 Progress: [██████████████████████░░] 75% (9/12 phases complete, phase 10 started)
 
@@ -20,6 +20,7 @@ Progress: [██████████████████████░
 
 **Content Analytics Plans:**
 - [x] 10-01: Content Analytics RPCs (af79afc)
+- [x] 10-02: Service layer integration (a16a491)
 - [x] 10-03: ViewingHeatmap component (43af794, 139b6c3)
 
 **Plan 10-03 Results:**
@@ -28,6 +29,12 @@ Progress: [██████████████████████░
 - Pure Tailwind CSS (no Recharts dependency)
 - Blue color scale with 4 intensity levels
 - Consumes get_viewing_heatmap RPC data format
+
+**Plan 10-02 Results:**
+- getContentMetrics: view duration and completion rate for specific content
+- getContentPerformanceList: content sorted by total view time
+- getViewingHeatmap: 7x24 viewing pattern with browser timezone detection
+- All functions follow existing patterns (getEffectiveOwnerId, getDateRange, throw on error)
 
 **Plan 10-01 Results:**
 - Migration 118 adds 3 new RPC functions for content analytics
@@ -380,10 +387,11 @@ Progress: [██████████████████████░
 | 07-player-refactoring | 3 | 17 min | 5.7 min |
 | 08-page-refactoring | 12 | ~60 min | ~5 min |
 | 09-device-experience | 8 | ~40 min | ~5 min |
-| 10-analytics | 2 | 2 min | 1 min |
+| 10-analytics | 3 | 3 min | 1 min |
 
 **Phase 10 Plan Breakdown:**
 - 10-01: 1 min (content analytics RPCs)
+- 10-02: 2 min (service layer integration)
 - 10-03: 1 min (ViewingHeatmap component)
 
 **Recent Trend:**
@@ -499,6 +507,7 @@ Recent decisions affecting current work:
 - [10-01]: Cap completion rate at 100% using LEAST() to handle over-viewing
 - [10-01]: Generate full 7x24 grid with zeros for empty cells (pitfall #2 from RESEARCH.md)
 - [10-01]: Added p_timezone parameter to get_viewing_heatmap for local time display
+- [10-02]: Use Intl.DateTimeFormat().resolvedOptions().timeZone for browser timezone detection with UTC fallback
 - [10-03]: Pure Tailwind CSS for heatmap (simpler than Recharts for fixed 7x24 grid)
 - [10-03]: Blue color scale with 4 intensity levels (gray-100/blue-200/blue-300/blue-400/blue-600)
 - [10-03]: Hover-only interaction (no drill-down per CONTEXT.md)
@@ -523,7 +532,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 10-03-PLAN.md (ViewingHeatmap component)
+Stopped at: Completed 10-02-PLAN.md (Service layer integration)
 Resume file: None
 
 ## Next Steps
@@ -532,6 +541,7 @@ Resume file: None
 
 **Plans completed:**
 - [x] 10-01: Content Analytics RPCs (1 min)
+- [x] 10-02: Service layer integration (2 min)
 - [x] 10-03: ViewingHeatmap component (1 min)
 
-**Next:** Continue with remaining phase 10 plans
+**Next:** Continue with remaining phase 10 plans (10-04+)
