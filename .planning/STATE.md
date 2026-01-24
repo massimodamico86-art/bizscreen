@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 11 of 12 (GDPR Compliance)
-Plan: 5 of 8 in phase 11
+Plan: 7 of 8 in phase 11
 Status: In progress
-Last activity: 2026-01-24 - Completed 11-05 (GDPR Processing API Endpoints)
+Last activity: 2026-01-24 - Completed 11-07 (Export Download UI)
 
 Progress: [██████████████████████████░░] 83% (10/12 phases complete)
 
@@ -24,8 +24,8 @@ Progress: [███████████████████████
 - [x] 11-03: Export Processing RPC (87991d1, ca0227a)
 - [x] 11-04: External Media Deletion Service (3b514b1)
 - [x] 11-05: GDPR Processing API Endpoints (87c552d, 360f234, 29485d4)
-- [ ] 11-06: Deletion flow UI
-- [ ] 11-07: Scheduled jobs
+- [ ] 11-06: GDPR email notifications (e797cbf)
+- [x] 11-07: Export Download UI (8ccb1bb, d91d9c6, 5e613f7)
 - [ ] 11-08: Testing and verification
 
 **Plan 11-01 Results:**
@@ -67,6 +67,15 @@ Progress: [███████████████████████
 - POST /api/gdpr/delete-cloudinary - Cloudinary file deletion via Admin API delete_resources
 - All endpoints require GDPR_API_SECRET bearer token authorization
 - GDPR audit logging at each deletion step (deletion_started, external_deleted, deletion_completed/failed)
+
+**Plan 11-07 Results:**
+- downloadExportAsFile import added to DataPrivacySettings component
+- handleDownloadExport function retrieves export data by request ID and triggers browser download
+- Completed export status shows Download button (replaces external file_url link)
+- Expiration date displayed for completed exports
+- Expired status shows message prompting new export request
+- Enhanced deletion grace period banner with read-only mode messaging
+- Cancel button renamed to "Cancel Deletion & Keep Account"
 
 ## Phase 10 Progress
 
@@ -642,17 +651,16 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 11-05-PLAN.md (GDPR Processing API Endpoints)
+Stopped at: Completed 11-07-PLAN.md (Export Download UI)
 Resume file: None
 
 ## Next Steps
 
 **Phase 11 IN PROGRESS:** GDPR Compliance
 
-**Plan 11-05 Accomplishments:**
-- Server-side API endpoints for GDPR processing operations
-- Export processing endpoint with batch processing
-- Deletion execution endpoint with full orchestration and audit logging
-- S3 and Cloudinary deletion endpoints with server credentials
+**Plan 11-07 Accomplishments:**
+- Export download functionality integrated into DataPrivacySettings UI
+- Status display shows processing, completed (with expiration), and expired states
+- Enhanced deletion grace period banner with read-only mode messaging
 
-**Next:** Continue with 11-06 (Deletion flow UI) or 11-07 (Scheduled jobs)
+**Next:** Continue with 11-06 (GDPR email notifications) or 11-08 (Testing and verification)
