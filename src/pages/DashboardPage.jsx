@@ -68,6 +68,9 @@ import { WelcomeModal } from './dashboard/WelcomeModal';
 // Yodeck-style welcome components
 import { WelcomeHero, WelcomeFeatureCards } from '../components/welcome';
 
+// Approval workflow widget
+import { PendingApprovalsWidget } from '../components/dashboard/PendingApprovalsWidget';
+
 /** localStorage key for tracking welcome modal dismissal */
 const WELCOME_MODAL_KEY = 'bizscreen_welcome_modal_shown';
 
@@ -355,6 +358,9 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
               isFirstRun={isFirstRun}
               demoResult={demoResult}
             />
+
+            {/* Pending Approvals Widget - only shows for approvers with pending items */}
+            <PendingApprovalsWidget onNavigate={setCurrentPage} className="mb-0" />
 
             {/* Two Column Layout - Responsive */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
