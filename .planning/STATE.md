@@ -10,17 +10,31 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 11 of 12 (GDPR Compliance)
-Plan: 2 of ? in phase 11
+Plan: 3 of 8 in phase 11
 Status: In progress
-Last activity: 2026-01-24 - Completed 11-02 (GDPR Deletion Execution)
+Last activity: 2026-01-24 - Completed 11-01 (GDPR Data Export Collection)
 
 Progress: [██████████████████████████░░] 83% (10/12 phases complete)
 
 ## Phase 11 Progress
 
 **GDPR Compliance Plans:**
-- [x] 11-01: GDPR consent and deletion tables (baseline - migration 106)
+- [x] 11-01: GDPR Data Export Collection RPC (048ea26)
 - [x] 11-02: GDPR deletion execution RPCs (dd84987, ea2b4c3, c2c6acc)
+- [ ] 11-03: Export processing Edge Function
+- [ ] 11-04: Deletion execution Edge Function
+- [ ] 11-05: Export download UI
+- [ ] 11-06: Deletion flow UI
+- [ ] 11-07: Scheduled jobs
+- [ ] 11-08: Testing and verification
+
+**Plan 11-01 Results:**
+- collect_user_export_data(p_user_id) - main RPC returning comprehensive JSONB
+- Helper functions: get_playlist_with_items, get_layout_with_zones, get_schedule_with_entries, get_listing_with_devices
+- Collects from 12 tables: profiles, user_settings, media_assets, playlists, layouts, schedules, scenes, listings, tv_devices, qr_codes, activity_log, consent_records
+- Activity logs aggregated by month (YYYY-MM) per CONTEXT.md
+- Media assets include metadata only (URLs, sizes), not actual files
+- SECURITY DEFINER with service_role-only GRANT
 
 **Plan 11-02 Results:**
 - get_media_urls_for_user(p_user_id) - collects S3/Cloudinary URLs before cascade delete
@@ -604,18 +618,17 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 11-02-PLAN.md (GDPR Deletion Execution)
+Stopped at: Completed 11-01-PLAN.md (GDPR Data Export Collection)
 Resume file: None
 
 ## Next Steps
 
 **Phase 11 IN PROGRESS:** GDPR Compliance
 
-**Plan 11-02 Accomplishments:**
-- get_media_urls_for_user RPC for S3/Cloudinary URL capture before cascade delete
-- get_pending_deletions RPC to query accounts past 30-day grace period
-- execute_account_deletion RPC with row locking for safe concurrent execution
-- gdpr_audit_log table for compliance accountability (Article 5(2))
-- log_gdpr_event RPC for deletion audit trail
+**Plan 11-01 Accomplishments:**
+- collect_user_export_data RPC for comprehensive JSONB export (GDPR Article 20)
+- Helper functions for nested content (playlists, layouts, schedules, listings)
+- Activity logs aggregated by month (not individual events) per CONTEXT.md
+- Media metadata only (URLs, sizes), not actual file contents
 
-**Next:** Continue with 11-03 (deletion worker) or next GDPR plan
+**Next:** Continue with 11-03 (Export processing Edge Function) or next GDPR plan
