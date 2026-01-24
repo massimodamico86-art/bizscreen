@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 Phase: 11 of 12 (GDPR Compliance)
 Plan: 4 of 8 in phase 11
 Status: In progress
-Last activity: 2026-01-24 - Completed 11-04 (External Media Deletion Service)
+Last activity: 2026-01-24 - Completed 11-03 (Export Processing RPC)
 
 Progress: [██████████████████████████░░] 83% (10/12 phases complete)
 
@@ -21,7 +21,7 @@ Progress: [███████████████████████
 **GDPR Compliance Plans:**
 - [x] 11-01: GDPR Data Export Collection RPC (048ea26)
 - [x] 11-02: GDPR deletion execution RPCs (dd84987, ea2b4c3, c2c6acc)
-- [ ] 11-03: Export processing Edge Function
+- [x] 11-03: Export Processing RPC (87991d1, ca0227a)
 - [x] 11-04: External Media Deletion Service (3b514b1)
 - [ ] 11-05: Export download UI
 - [ ] 11-06: Deletion flow UI
@@ -43,6 +43,14 @@ Progress: [███████████████████████
 - gdpr_audit_log table with 5 event types for deletion tracking
 - log_gdpr_event() - audit logging function for compliance accountability
 - All functions SECURITY DEFINER with service_role GRANT only
+
+**Plan 11-03 Results:**
+- process_data_export(p_request_id) - processes pending requests with status state machine
+- get_pending_exports() - returns up to 10 pending requests for batch processing
+- export_data JSONB column added to data_export_requests table
+- getExportData/downloadExportAsFile functions in gdprService.js
+- 7-day expiration enforced in both database and service layer
+- Fixed missing logger import in gdprService (bug fix)
 
 **Plan 11-04 Results:**
 - parseMediaUrl - identifies S3 vs Cloudinary from media URLs
@@ -626,17 +634,18 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 11-04-PLAN.md (External Media Deletion Service)
+Stopped at: Completed 11-03-PLAN.md (Export Processing RPC)
 Resume file: None
 
 ## Next Steps
 
 **Phase 11 IN PROGRESS:** GDPR Compliance
 
-**Plan 11-04 Accomplishments:**
-- gdprDeletionService.js with S3 and Cloudinary batch deletion
-- URL parsing for multi-cloud storage identification
-- Best-effort deletion pattern for GDPR Article 17 compliance
-- Integrates with 11-02's get_media_urls_for_user RPC
+**Plan 11-03 Accomplishments:**
+- process_data_export RPC with status state machine (pending -> processing -> completed)
+- get_pending_exports RPC for batch processing
+- export_data JSONB column for database storage
+- getExportData and downloadExportAsFile functions in gdprService.js
+- 7-day expiration enforcement
 
-**Next:** Continue with 11-03 (Export processing Edge Function) or 11-05 (Export download UI)
+**Next:** Continue with 11-05 (Export download UI) or 11-06 (Deletion flow UI)
