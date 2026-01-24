@@ -58,8 +58,29 @@ export async function POST(request) {
       if (error) {
         results.push({ id: exportRequest.id, success: false, error: error.message });
       } else {
-        // Send notification email (fire and forget)
-        await sendExportReadyEmail(exportRequest.user_id, exportRequest.id);
+        // Send notification email
+        try {
+          const { data: profile } = await supabaseAdmin
+            .from('profiles')
+            .select('email')
+            .eq('id', exportRequest.user_id)
+            .single();
+
+          if (profile?.email) {
+            // Dynamic import to avoid bundling issues in API routes
+            const { sendExportReadyEmail } = await import('../../services/emailService.js');
+
+            const appUrl = process.env.VITE_APP_URL || process.env.APP_URL || 'https://app.bizscreen.com';
+            await sendExportReadyEmail({
+              to: profile.email,
+              downloadUrl: `${appUrl}/settings/privacy?export=${exportRequest.id}`,
+              expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            });
+          }
+        } catch (emailError) {
+          // Email is non-critical, log but don't fail the export
+          console.error('Failed to send export ready email:', emailError.message);
+        }
         results.push({ id: exportRequest.id, success: true });
       }
     }
@@ -79,21 +100,3 @@ export async function POST(request) {
   }
 }
 
-async function sendExportReadyEmail(userId, requestId) {
-  try {
-    // Get user email
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('email, full_name')
-      .eq('id', userId)
-      .single();
-
-    if (!profile?.email) return;
-
-    // TODO: Integrate with emailService when running server-side
-    // For now, log the notification
-    console.log(`Export ready notification for ${profile.email}, request ${requestId}`);
-  } catch {
-    // Silent fail - email is non-critical
-  }
-}
