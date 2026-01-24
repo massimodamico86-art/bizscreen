@@ -5,18 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline.
-**Current focus:** Phase 9 complete — Phase 10 (Analytics) ready to plan
+**Current focus:** Phase 10 (Analytics) in progress
 
 ## Current Position
 
-Phase: 9 of 12 (Device Experience) - COMPLETE
-Plan: 8 of 8 in phase 9
-Status: Phase complete
-Last activity: 2026-01-23 - Completed 09-08 (Testing and verification)
+Phase: 10 of 12 (Analytics)
+Plan: 1 of X in phase 10
+Status: In progress
+Last activity: 2026-01-24 - Completed 10-01 (Content Analytics RPCs)
 
-Progress: [██████████████████████░░] 75% (9/12 phases complete)
+Progress: [██████████████████████░░] 75% (9/12 phases complete, phase 10 started)
 
-## Phase 9 Progress
+## Phase 10 Progress
+
+**Content Analytics Plans:**
+- [x] 10-01: Content Analytics RPCs (af79afc)
+
+**Plan 10-01 Results:**
+- Migration 118 adds 3 new RPC functions for content analytics
+- get_content_metrics: avg view duration, completion rate, total views for single content item
+- get_content_performance_list: content sorted by total view time with aggregated metrics
+- get_viewing_heatmap: full 7x24 grid with view counts and duration (using generate_series)
+- Completion rate calculation joins with content source for scheduled duration
+
+## Phase 9 Completion Summary
 
 **Device Experience Plans:**
 - [x] 09-01: PIN hash/validation infrastructure (8347f07, 6958085, f93c095)
@@ -343,9 +355,9 @@ Progress: [██████████████████████░
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 31
-- Average duration: 5.6 min
-- Total execution time: 175 min (2.9 hours)
+- Total plans completed: 32
+- Average duration: 5.5 min
+- Total execution time: 176 min (2.9 hours)
 
 **By Phase:**
 
@@ -358,39 +370,16 @@ Progress: [██████████████████████░
 | 05-critical-fixes | 2 | 11 min | 5.5 min |
 | 06-player-reliability | 2 | 8 min | 4 min |
 | 07-player-refactoring | 3 | 17 min | 5.7 min |
+| 08-page-refactoring | 12 | ~60 min | ~5 min |
+| 09-device-experience | 8 | ~40 min | ~5 min |
+| 10-analytics | 1 | 1 min | 1 min |
 
-**Phase 7 Plan Breakdown:**
-- 07-01: 5 min (widget extraction + PLR-01 fix)
-- 07-02: 6 min (custom hooks extraction)
-- 07-03: 6 min (final hooks + tests)
-
-**Phase 6 Plan Breakdown:**
-- 06-01: 3 min (retry backoff + error logging)
-- 06-02: 5 min (offline screenshot + kiosk password)
-
-**Phase 5 Plan Breakdown:**
-- 05-01: 8 min (Save as Template feature)
-- 05-02: 3 min (Resend email integration)
-
-**Phase 4 Plan Breakdown:**
-- 04-01: 2 min (infrastructure)
-- 04-02: 3 min (build config)
-- 04-03: 15 min (12 service files)
-- 04-04: 15 min (51 service files)
-- 04-05: 21 min (40+ component/page files)
-- 04-06: 6.4 min (final cleanup, tests)
-
-**Phase 8 Plan Breakdown:**
-- 08-01: ~5 min (FeatureFlagsPage hook extraction)
-- 08-02: ~5 min (CampaignEditorPage hook extraction)
-- 08-03: ~5 min (PlaylistEditorPage hook extraction)
-- 08-04: ~5 min (ScreensPage hook extraction)
-- 08-05: ~5 min (MediaLibraryPage hook extraction)
-- 08-06: 5 min (testing and verification)
+**Phase 10 Plan Breakdown:**
+- 10-01: 1 min (content analytics RPCs)
 
 **Recent Trend:**
-- Last 5 plans: 08-02 (5 min), 08-03 (5 min), 08-04 (5 min), 08-05 (5 min), 08-06 (5 min)
-- Trend: Consistent 5 min per plan for hook extraction tasks
+- Last 5 plans: 09-06, 09-07, 09-08, 10-01
+- Trend: Fast execution for database-only plans (1 min)
 
 *Updated after each plan completion*
 
@@ -497,6 +486,10 @@ Recent decisions affecting current work:
 - [09-05]: Route uses RequireAuth wrapper to ensure only authenticated admins can pair
 - [09-08]: Use vi.runAllTimersAsync() for async operations with fake timers
 - [09-08]: Select SVG-only buttons by index position for testing (screen.getAllByRole('button')[index])
+- [10-01]: Use 30 seconds default for scenes (no explicit duration in schema)
+- [10-01]: Cap completion rate at 100% using LEAST() to handle over-viewing
+- [10-01]: Generate full 7x24 grid with zeros for empty cells (pitfall #2 from RESEARCH.md)
+- [10-01]: Added p_timezone parameter to get_viewing_heatmap for local time display
 
 ### Pending Todos
 
@@ -517,21 +510,15 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-23
-Stopped at: Completed 09-08-PLAN.md (Testing and verification)
+Last session: 2026-01-24
+Stopped at: Completed 10-01-PLAN.md (Content Analytics RPCs)
 Resume file: None
 
 ## Next Steps
 
-**Phase 9 complete:** Device Experience
+**Phase 10 in progress:** Analytics
 
-**All plans completed:**
-- [x] 09-01: PIN hash/validation infrastructure (2 min)
-- [x] 09-02: useTapSequence hook
-- [x] 09-03: PinEntry component
-- [x] 09-04: PairingScreen component
-- [x] 09-05: Admin pairing page (3 min)
-- [x] 09-06: Player integration
-- [x] 09-07: Kiosk PIN settings UI (1 min)
+**Plans completed:**
+- [x] 10-01: Content Analytics RPCs (1 min)
 
-**Next:** 09-08 (Testing and verification)
+**Next:** 10-02 (Service layer integration or dashboard UI)
