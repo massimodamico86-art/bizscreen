@@ -213,6 +213,90 @@ export async function getDeviceUptimeSummary(dateRange = '7d', groupId = null) {
 }
 
 // ============================================================================
+// CONTENT-SPECIFIC METRICS (Phase 10)
+// ============================================================================
+
+/**
+ * Get view duration and completion rate for specific content
+ * @param {string} contentId - Scene/media/playlist UUID
+ * @param {string} contentType - 'scene' | 'media' | 'playlist'
+ * @param {string} dateRange - Date range preset
+ * @returns {Promise<Object>} Content metrics
+ */
+export async function getContentMetrics(contentId, contentType, dateRange = '7d') {
+  const tenantId = await getEffectiveOwnerId();
+  if (!tenantId) throw new Error('No tenant context');
+
+  const { fromTs, toTs } = getDateRange(dateRange);
+
+  const { data, error } = await supabase.rpc('get_content_metrics', {
+    p_tenant_id: tenantId,
+    p_content_id: contentId,
+    p_content_type: contentType,
+    p_from_ts: fromTs,
+    p_to_ts: toTs,
+  });
+
+  if (error) throw error;
+  return data?.[0] || {
+    avg_view_duration_seconds: 0,
+    completion_rate: 0,
+    total_views: 0,
+    last_viewed_at: null,
+    total_view_time_seconds: 0,
+  };
+}
+
+/**
+ * Get content performance list sorted by total view time
+ * @param {string} dateRange - Date range preset
+ * @param {number} limit - Max items to return
+ * @returns {Promise<Array>} Content performance list
+ */
+export async function getContentPerformanceList(dateRange = '7d', limit = 20) {
+  const tenantId = await getEffectiveOwnerId();
+  if (!tenantId) throw new Error('No tenant context');
+
+  const { fromTs, toTs } = getDateRange(dateRange);
+
+  const { data, error } = await supabase.rpc('get_content_performance_list', {
+    p_tenant_id: tenantId,
+    p_from_ts: fromTs,
+    p_to_ts: toTs,
+    p_limit: limit,
+  });
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Get viewing pattern heatmap data
+ * @param {string} dateRange - Date range preset
+ * @param {string} timezone - IANA timezone (default: browser timezone)
+ * @returns {Promise<Array>} Heatmap data (168 cells: 7 days x 24 hours)
+ */
+export async function getViewingHeatmap(dateRange = '7d', timezone = null) {
+  const tenantId = await getEffectiveOwnerId();
+  if (!tenantId) throw new Error('No tenant context');
+
+  const { fromTs, toTs } = getDateRange(dateRange);
+
+  // Use browser timezone if not specified
+  const tz = timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+
+  const { data, error } = await supabase.rpc('get_viewing_heatmap', {
+    p_tenant_id: tenantId,
+    p_from_ts: fromTs,
+    p_to_ts: toTs,
+    p_timezone: tz,
+  });
+
+  if (error) throw error;
+  return data || [];
+}
+
+// ============================================================================
 // COMBINED ANALYTICS FOR DASHBOARD
 // ============================================================================
 
