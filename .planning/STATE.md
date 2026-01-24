@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 11 of 12 (GDPR Compliance)
-Plan: 3 of 8 in phase 11
+Plan: 4 of 8 in phase 11
 Status: In progress
-Last activity: 2026-01-24 - Completed 11-01 (GDPR Data Export Collection)
+Last activity: 2026-01-24 - Completed 11-04 (External Media Deletion Service)
 
 Progress: [██████████████████████████░░] 83% (10/12 phases complete)
 
@@ -22,7 +22,7 @@ Progress: [███████████████████████
 - [x] 11-01: GDPR Data Export Collection RPC (048ea26)
 - [x] 11-02: GDPR deletion execution RPCs (dd84987, ea2b4c3, c2c6acc)
 - [ ] 11-03: Export processing Edge Function
-- [ ] 11-04: Deletion execution Edge Function
+- [x] 11-04: External Media Deletion Service (3b514b1)
 - [ ] 11-05: Export download UI
 - [ ] 11-06: Deletion flow UI
 - [ ] 11-07: Scheduled jobs
@@ -43,6 +43,14 @@ Progress: [███████████████████████
 - gdpr_audit_log table with 5 event types for deletion tracking
 - log_gdpr_event() - audit logging function for compliance accountability
 - All functions SECURITY DEFINER with service_role GRANT only
+
+**Plan 11-04 Results:**
+- parseMediaUrl - identifies S3 vs Cloudinary from media URLs
+- categorizeMediaUrls - separates URLs by provider with deduplication
+- deleteS3Files - batch deletion with 1000 per request limit
+- deleteCloudinaryFiles - batch deletion with 100 per request limit
+- deleteUserMediaFiles - orchestrator for complete media cleanup
+- Best-effort deletion pattern (errors logged, don't block process)
 
 ## Phase 10 Progress
 
@@ -618,17 +626,17 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 11-01-PLAN.md (GDPR Data Export Collection)
+Stopped at: Completed 11-04-PLAN.md (External Media Deletion Service)
 Resume file: None
 
 ## Next Steps
 
 **Phase 11 IN PROGRESS:** GDPR Compliance
 
-**Plan 11-01 Accomplishments:**
-- collect_user_export_data RPC for comprehensive JSONB export (GDPR Article 20)
-- Helper functions for nested content (playlists, layouts, schedules, listings)
-- Activity logs aggregated by month (not individual events) per CONTEXT.md
-- Media metadata only (URLs, sizes), not actual file contents
+**Plan 11-04 Accomplishments:**
+- gdprDeletionService.js with S3 and Cloudinary batch deletion
+- URL parsing for multi-cloud storage identification
+- Best-effort deletion pattern for GDPR Article 17 compliance
+- Integrates with 11-02's get_media_urls_for_user RPC
 
-**Next:** Continue with 11-03 (Export processing Edge Function) or next GDPR plan
+**Next:** Continue with 11-03 (Export processing Edge Function) or 11-05 (Export download UI)
