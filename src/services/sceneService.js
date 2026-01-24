@@ -7,6 +7,8 @@
 
 import { supabase } from '../supabase';
 import { checkRateLimit, createRateLimitError } from './rateLimitService.js';
+import { requiresApproval } from './permissionsService.js';
+import { requestApproval, getOpenReviewForResource, APPROVAL_STATUS } from './approvalService.js';
 
 /**
  * Create a new scene
@@ -134,6 +136,69 @@ export async function updateScene(sceneId, updates) {
 
   if (error) throw error;
   return data;
+}
+
+/**
+ * Save scene and auto-submit for approval if user role requires it
+ * @param {string} sceneId - Scene ID
+ * @param {Object} updates - Scene updates
+ * @param {string} sceneName - Scene name (for review request title)
+ * @returns {Promise<{scene: Object, submittedForApproval: boolean, existingReview: Object|null, wasResubmission?: boolean}>}
+ */
+export async function saveSceneWithApproval(sceneId, updates, sceneName) {
+  // Get current approval status before saving
+  const { data: currentScene } = await supabase
+    .from('scenes')
+    .select('approval_status')
+    .eq('id', sceneId)
+    .single();
+
+  // Save the scene
+  const scene = await updateScene(sceneId, updates);
+
+  // Check if user requires approval
+  const needsApproval = await requiresApproval();
+
+  if (!needsApproval) {
+    // Owner/manager - save only, no approval needed
+    return { scene, submittedForApproval: false, existingReview: null };
+  }
+
+  // If content was approved and is being edited, reset to draft and create new review
+  if (currentScene?.approval_status === APPROVAL_STATUS.APPROVED) {
+    // Reset to draft
+    await supabase
+      .from('scenes')
+      .update({ approval_status: APPROVAL_STATUS.DRAFT })
+      .eq('id', sceneId);
+
+    // Submit for re-approval
+    await requestApproval({
+      resourceType: 'scene',
+      resourceId: sceneId,
+      title: `Re-review scene: ${sceneName}`,
+      message: 'Content was edited after approval.',
+    });
+
+    return { scene, submittedForApproval: true, existingReview: null, wasResubmission: true };
+  }
+
+  // Check for existing open review (avoid duplicates)
+  const existingReview = await getOpenReviewForResource('scene', sceneId);
+
+  if (existingReview) {
+    return { scene, submittedForApproval: false, existingReview };
+  }
+
+  // Auto-submit for approval
+  await requestApproval({
+    resourceType: 'scene',
+    resourceId: sceneId,
+    title: `Review scene: ${sceneName}`,
+    message: '',
+  });
+
+  return { scene, submittedForApproval: true, existingReview: null };
 }
 
 /**
@@ -287,6 +352,7 @@ export default {
   fetchScenesForTenant,
   fetchScene,
   updateScene,
+  saveSceneWithApproval,
   deleteScene,
   hasScenesForTenant,
   getSceneCount,
