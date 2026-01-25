@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 13 of 23 (Technical Foundation)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-24 - Roadmap created for v2 milestone
+Plan: 03 of 04 (useCampaignEditor Test Hardening)
+Status: In progress
+Last activity: 2026-01-25 - Completed 13-03-PLAN.md
 
-Progress: [░░░░░░░░░░] 0% (0/32 plans)
+Progress: [███░░░░░░░] 3% (1/32 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0 (v2)
-- Average duration: -
-- Total execution time: -
+- Total plans completed: 1 (v2)
+- Average duration: 4min
+- Total execution time: 4min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 13-technical-foundation | 1 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: -
+- Last 5 plans: 13-03 (4min)
 - Trend: -
 
 *Updated after each plan completion*
@@ -45,6 +45,8 @@ Recent decisions affecting current work:
 - [v2 Roadmap]: Player.jsx splitting must precede all feature work (2775 lines blocking)
 - [v2 Roadmap]: Build order: Scheduling (extends) > Templates (enhances) > Multi-Language (new pattern)
 - [v2 Roadmap]: Install @date-fns/tz and @smastrom/react-rating early
+- [13-03]: Use 3000ms timeout for async waitFor operations to accommodate CI variability
+- [13-03]: Wait for actual picker data instead of loading flag for new campaigns
 
 ### Pending Todos
 
@@ -59,11 +61,14 @@ From research - critical pitfalls to address:
 - **Phase 20**: Offline cache explosion with language variants
 - **Phase 20**: Missing translation fallback can cause blank screens
 
+Test infrastructure note:
+- 18-19 pre-existing failing test files in services (unrelated to v2 work)
+
 ## Session Continuity
 
-Last session: 2026-01-24
-Stopped at: Roadmap created, ready to plan Phase 13
+Last session: 2026-01-25
+Stopped at: Completed 13-03-PLAN.md
 Resume file: None
 
 ---
-*Updated: 2026-01-24 - v2 roadmap created*
+*Updated: 2026-01-25 - Completed 13-03 (useCampaignEditor test hardening)*
