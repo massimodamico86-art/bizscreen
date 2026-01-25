@@ -7,6 +7,9 @@
 
 import { supabase } from '../supabase';
 import { getMetricsSummary, isPerformanceAcceptable } from './webVitalsService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('HealthService');
 
 // Health check configuration
 const CONFIG = {

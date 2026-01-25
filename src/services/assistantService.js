@@ -6,6 +6,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('AssistantService');
 
 /**
  * Business type options for the assistant

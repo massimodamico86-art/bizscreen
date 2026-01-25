@@ -11,6 +11,9 @@
 import { supabase } from '../supabase';
 import { applyPack } from './templateService';
 import { createScene } from './sceneService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('AutoBuildService');
 
 /**
  * Business type to pack slug mapping

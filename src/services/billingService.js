@@ -7,6 +7,9 @@
  * - Mapping subscription status to UI state
  */
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('BillingService');
 
 /**
  * Get the current session token for API authentication

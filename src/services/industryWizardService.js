@@ -13,6 +13,9 @@
 
 import { createSlide, getDefaultDesign, normalizeDesign } from './sceneDesignService';
 import { getBrandTheme, getThemedBlockDefaults } from './brandThemeService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('IndustryWizardService');
 
 // ===========================================
 // WIZARD DEFINITIONS BY INDUSTRY

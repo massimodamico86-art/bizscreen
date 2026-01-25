@@ -6,6 +6,9 @@
 
 import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('AnalyticsService');
 
 /**
  * Date range presets

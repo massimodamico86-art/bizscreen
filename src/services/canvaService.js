@@ -5,6 +5,10 @@
  * Documentation: https://www.canva.dev/docs/connect/
  */
 
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('CanvaService');
+
 const CANVA_CLIENT_ID = import.meta.env.VITE_CANVA_CLIENT_ID;
 const CANVA_OAUTH_URL = 'https://www.canva.com/api/oauth/authorize';
 const CANVA_TOKEN_URL = 'https://api.canva.com/rest/v1/oauth/token';

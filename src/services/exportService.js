@@ -1,5 +1,9 @@
 // Export Service - Export data to various formats
 
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('ExportService');
+
 /**
  * Convert array of objects to CSV string
  * @param {Array} data - Array of objects to convert

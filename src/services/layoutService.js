@@ -9,6 +9,9 @@
  */
 import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('LayoutService');
 
 /**
  * @typedef {Object} LayoutZone

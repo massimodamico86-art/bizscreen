@@ -1,5 +1,8 @@
 // Campaign Service - CRUD operations for campaigns
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('CampaignService');
 
 /**
  * Campaign statuses

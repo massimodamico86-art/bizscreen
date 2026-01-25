@@ -4,6 +4,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('AuditService');
 
 // ============================================================================
 // HELPERS

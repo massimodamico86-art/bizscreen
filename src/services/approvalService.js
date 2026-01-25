@@ -1,6 +1,9 @@
 // Approval Service - Content review and approval workflow management
 import { supabase } from '../supabase';
 import { sendApprovalRequestEmail, sendApprovalDecisionEmail } from './emailService.js';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('ApprovalService');
 
 /**
  * Approval statuses
@@ -122,7 +125,7 @@ export async function requestApproval({ resourceType, resourceId, title, message
           message: message || undefined,
         }).catch(err => {
           // Log but don't fail the submission
-          console.error('Failed to send approval request email:', err);
+          logger.error('Failed to send approval request email', { error: err });
         });
       }
     }
@@ -244,7 +247,7 @@ export async function approveReview(reviewId, { comment = '' } = {}) {
       contentUrl,
     }).catch(err => {
       // Log but don't fail the approval
-      console.error('Failed to send approval email:', err);
+      logger.error('Failed to send approval email', { error: err });
     });
   }
 
@@ -319,7 +322,7 @@ export async function rejectReview(reviewId, { comment = '' } = {}) {
       feedback: comment, // Always included for rejection
       contentUrl,
     }).catch(err => {
-      console.error('Failed to send rejection email:', err);
+      logger.error('Failed to send rejection email', { error: err });
     });
   }
 

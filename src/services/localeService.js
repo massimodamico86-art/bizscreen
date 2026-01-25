@@ -11,6 +11,9 @@ import {
   isLocaleSupported,
   detectBrowserLocale,
 } from '../i18n/i18nConfig';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('LocaleService');
 
 // Cache for effective locale
 let cachedLocale = null;
