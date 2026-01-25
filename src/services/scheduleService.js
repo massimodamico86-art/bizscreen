@@ -853,23 +853,39 @@ export async function getWeekPreview(scheduleId, weekStartDate) {
     }
   }
 
-  // Fetch content names in parallel
+  // Fetch content names and thumbnails in parallel
   const [playlistsResult, layoutsResult, scenesResult] = await Promise.all([
     contentIds.playlist.size > 0
-      ? supabase.from('playlists').select('id, name').in('id', Array.from(contentIds.playlist))
+      ? supabase
+          .from('playlists')
+          .select(`
+            id, name,
+            playlist_items(
+              position,
+              media_assets(thumbnail_url)
+            )
+          `)
+          .in('id', Array.from(contentIds.playlist))
+          .order('position', { referencedTable: 'playlist_items', ascending: true })
       : { data: [] },
     contentIds.layout.size > 0
-      ? supabase.from('layouts').select('id, name').in('id', Array.from(contentIds.layout))
+      ? supabase.from('layouts').select('id, name, thumbnail_url').in('id', Array.from(contentIds.layout))
       : { data: [] },
     contentIds.scene.size > 0
-      ? supabase.from('scenes').select('id, name').in('id', Array.from(contentIds.scene))
+      ? supabase.from('scenes').select('id, name, thumbnail_url').in('id', Array.from(contentIds.scene))
       : { data: [] }
   ]);
 
-  const contentNames = {
-    playlist: Object.fromEntries((playlistsResult.data || []).map(p => [p.id, p.name])),
-    layout: Object.fromEntries((layoutsResult.data || []).map(l => [l.id, l.name])),
-    scene: Object.fromEntries((scenesResult.data || []).map(s => [s.id, s.name]))
+  // Build content info maps with names and thumbnails
+  const contentInfo = {
+    playlist: Object.fromEntries((playlistsResult.data || []).map(p => {
+      // Get thumbnail from first playlist item's media asset
+      const firstItem = p.playlist_items?.find(item => item?.media_assets?.thumbnail_url);
+      const thumbnail = firstItem?.media_assets?.thumbnail_url || null;
+      return [p.id, { name: p.name, thumbnail }];
+    })),
+    layout: Object.fromEntries((layoutsResult.data || []).map(l => [l.id, { name: l.name, thumbnail: l.thumbnail_url || null }])),
+    scene: Object.fromEntries((scenesResult.data || []).map(s => [s.id, { name: s.name, thumbnail: s.thumbnail_url || null }]))
   };
 
   // Build 7 days
@@ -896,7 +912,8 @@ export async function getWeekPreview(scheduleId, weekStartDate) {
         end_time: entry.end_time,
         content_type: entry.content_type,
         content_id: entry.content_id,
-        content_name: contentNames[entry.content_type]?.[entry.content_id] || 'Unknown',
+        content_name: contentInfo[entry.content_type]?.[entry.content_id]?.name || 'Unknown',
+        thumbnail_url: contentInfo[entry.content_type]?.[entry.content_id]?.thumbnail || null,
         event_type: entry.event_type,
         priority: entry.priority
       }))
