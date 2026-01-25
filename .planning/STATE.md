@@ -10,27 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 14 of 23 (Scheduling Core)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-24 - Phase 13 complete (3/3 plans, verified)
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-01-25 - Completed 14-01-PLAN.md (Date Range & Priority UI)
 
-Progress: [███░░░░░░░] 9% (3/32 plans)
+Progress: [████░░░░░░] 12% (4/32 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3 (v2)
+- Total plans completed: 4 (v2)
 - Average duration: 7min
-- Total execution time: 22min
+- Total execution time: 28min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 13-technical-foundation | 3 | 22min | 7min |
+| 14-scheduling-core | 1 | 6min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 13-01 (10min), 13-03 (4min), 13-02 (8min)
+- Last 5 plans: 13-01 (10min), 13-03 (4min), 13-02 (8min), 14-01 (6min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -50,6 +51,8 @@ Recent decisions affecting current work:
 - [13-02]: Use PascalCase service names for logger scopes (e.g., AdminService, CampaignService)
 - [13-01]: Keep ViewPage in Player.jsx as orchestration shell (1265 lines)
 - [13-01]: Barrel export pattern for player/components/index.js
+- [14-01]: Start date + duration approach for date selection (not calendar range picker)
+- [14-01]: 5 named priority levels: Lowest/Low/Normal/High/Critical (1-5), default: Normal (3)
 
 ### Pending Todos
 
@@ -68,11 +71,15 @@ Test infrastructure note:
 - 18-19 pre-existing failing test files in services (unrelated to v2 work)
 - loggingService circular dependency with supabase.js causes industryWizardService test failure
 
+Note for 14-02:
+- DateDurationPicker created but not yet wired to replace existing date inputs in modal
+- Database may need priority column added to schedule_entries table
+
 ## Session Continuity
 
-Last session: 2026-01-24
-Stopped at: Phase 13 complete, ready to plan Phase 14
+Last session: 2026-01-25
+Stopped at: Completed 14-01-PLAN.md, ready for 14-02
 Resume file: None
 
 ---
-*Updated: 2026-01-24 - Phase 13 complete (verified with accepted gap: 1265 lines vs <1000 target)*
+*Updated: 2026-01-25 - Plan 14-01 complete (DateDurationPicker + PriorityBadge components)*
