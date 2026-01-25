@@ -158,9 +158,10 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
     priority: DEFAULT_PRIORITY // Normal (3) by default (SCHED-02)
   });
 
-  // Conflict detection state (US-144)
+  // Conflict detection state (US-144, SCHED-03)
   const [conflicts, setConflicts] = useState([]);
   const [isCheckingConflicts, setIsCheckingConflicts] = useState(false);
+  const [conflictingEntryIds, setConflictingEntryIds] = useState(new Set()); // Existing entries with conflicts
 
   // Filler content state (US-145)
   const [fillerType, setFillerType] = useState(null);
@@ -227,12 +228,50 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       } catch (assignErr) {
         logger.warn('Failed to load assigned counts', { scheduleId, error: assignErr });
       }
+
+      // Check for existing entry conflicts (SCHED-03)
+      if (data.schedule_entries && data.schedule_entries.length > 1) {
+        checkExistingEntryConflicts(data.schedule_entries);
+      }
     } catch (err) {
       logger.error('Failed to load schedule', { scheduleId, error: err });
       setError(err.message || 'Failed to load schedule');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Check for conflicts among existing entries (SCHED-03)
+  const checkExistingEntryConflicts = async (entries) => {
+    const conflictIds = new Set();
+
+    // Check each entry for conflicts with other entries
+    for (const entry of entries) {
+      try {
+        const result = await checkEntryConflicts(
+          scheduleId,
+          {
+            start_time: entry.start_time,
+            end_time: entry.end_time,
+            days_of_week: entry.days_of_week,
+            start_date: entry.start_date,
+            end_date: entry.end_date
+          },
+          entry.id // Exclude self
+        );
+
+        if (result.hasConflicts) {
+          // This entry conflicts with others
+          conflictIds.add(entry.id);
+          // Also mark the conflicting entries
+          result.conflicts.forEach(c => conflictIds.add(c.id));
+        }
+      } catch (err) {
+        logger.warn('Failed to check conflicts for entry', { entryId: entry.id, error: err });
+      }
+    }
+
+    setConflictingEntryIds(conflictIds);
   };
 
   const loadContentOptions = async () => {
@@ -246,7 +285,7 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
     setScenes(scenesResult.data || []);
   };
 
-  // Check for conflicts when event form changes (US-144)
+  // Check for conflicts when event form changes (US-144, SCHED-03)
   const checkConflicts = useCallback(async () => {
     if (!scheduleId || !showEventModal) return;
 
@@ -272,7 +311,18 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
         editingEntry?.id || null
       );
 
-      setConflicts(result.conflicts || []);
+      // Enrich conflicts with device info (SCHED-03)
+      // All devices/groups assigned to this schedule are affected by any conflict
+      if (result.hasConflicts && result.conflicts.length > 0) {
+        const { devices } = await getAssignedDevicesAndGroups(scheduleId);
+        const enrichedConflicts = result.conflicts.map(conflict => ({
+          ...conflict,
+          devices: devices || []
+        }));
+        setConflicts(enrichedConflicts);
+      } else {
+        setConflicts([]);
+      }
     } catch (err) {
       logger.error('Failed to check conflicts', { scheduleId, error: err });
       setConflicts([]);
@@ -747,40 +797,50 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {entries.map(entry => (
-                    <div
-                      key={entry.id}
-                      className="p-3 border border-gray-200 rounded-lg hover:border-gray-300 cursor-pointer"
-                      onClick={() => openEditEventModal(entry)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-sm text-gray-900 truncate">
-                              {entry.event_type === 'screen_off' ? 'Screen Off' : (entry.target?.name || 'No content')}
-                            </span>
-                            <PriorityBadge
-                              priority={entry.priority ?? DEFAULT_PRIORITY}
-                              size="sm"
-                              showLabel={false}
-                            />
+                  {entries.map(entry => {
+                    const hasConflict = conflictingEntryIds.has(entry.id);
+                    return (
+                      <div
+                        key={entry.id}
+                        className={`p-3 border rounded-lg cursor-pointer ${
+                          hasConflict
+                            ? 'border-red-300 bg-red-50 hover:border-red-400'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        onClick={() => openEditEventModal(entry)}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-sm text-gray-900 truncate">
+                                {entry.event_type === 'screen_off' ? 'Screen Off' : (entry.target?.name || 'No content')}
+                              </span>
+                              <PriorityBadge
+                                priority={entry.priority ?? DEFAULT_PRIORITY}
+                                size="sm"
+                                showLabel={false}
+                              />
+                              {hasConflict && (
+                                <Badge variant="error" size="sm">Conflict</Badge>
+                              )}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-0.5">
+                              {formatTime12(entry.start_time)} - {formatTime12(entry.end_time)}
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-500 mt-0.5">
-                            {formatTime12(entry.start_time)} - {formatTime12(entry.end_time)}
-                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteEntry(entry.id);
+                            }}
+                            className="p-1 text-gray-400 hover:text-red-500"
+                          >
+                            <Trash2 size={14} />
+                          </button>
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteEntry(entry.id);
-                          }}
-                          className="p-1 text-gray-400 hover:text-red-500"
-                        >
-                          <Trash2 size={14} />
-                        </button>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1070,8 +1130,9 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
               <Button
                 onClick={handleSaveEvent}
                 disabled={conflicts.length > 0 || isCheckingConflicts}
+                className={conflicts.length > 0 ? 'opacity-50 cursor-not-allowed' : ''}
               >
-                {isCheckingConflicts ? 'Checking...' : 'Save'}
+                {isCheckingConflicts ? 'Checking...' : conflicts.length > 0 ? 'Resolve Conflicts to Save' : 'Save'}
               </Button>
             </div>
           </div>
