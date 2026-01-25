@@ -471,3 +471,310 @@ All library versions verified against npm as of 2026-01-22:
 | dompurify | 3.3.1 | Jan 2026 | [npm](https://www.npmjs.com/package/dompurify) |
 | fetch-retry | 6.0.0 | - | [npm](https://www.npmjs.com/package/fetch-retry) |
 | lodash | 4.17.21 | Stable | [npm](https://www.npmjs.com/package/lodash) |
+
+---
+
+## v2 Stack Additions
+
+**Researched:** 2026-01-24
+**Focus:** Templates Marketplace, Multi-Language Content, Advanced Scheduling
+
+### Executive Summary
+
+v2 features require minimal stack additions. The existing foundation (date-fns v4.1.0, lodash, React 19, Tailwind) handles most needs. Key additions:
+
+1. **Timezone handling** - `@date-fns/tz` for DST-aware scheduling
+2. **Star ratings** - `@smastrom/react-rating` for template reviews
+3. **Calendar visualization** - Custom build recommended over third-party (React 19 compatibility issues with major libraries)
+
+**Philosophy:** Prefer extending existing patterns over adding new dependencies. BizScreen already has sophisticated services; v2 should leverage them.
+
+---
+
+### Templates Marketplace Stack
+
+#### Star Ratings Component
+
+| Library | Version | Purpose | Confidence |
+|---------|---------|---------|------------|
+| [@smastrom/react-rating](https://github.com/smastrom/react-rating) | 1.5.0 | Template ratings UI | HIGH |
+
+**Why this library:**
+- Zero dependencies (keeps bundle small)
+- 7,000+ weekly downloads, actively maintained
+- Supports half-star ratings with smart fill
+- RTL support (important for future i18n expansion)
+- SSR compatible
+- Works with React Hook Form if needed
+- Simple DOM structure, customizable via any SVG
+
+**Alternative considered:** Building custom with Lucide icons (already installed). However, `@smastrom/react-rating` provides accessibility (ARIA), keyboard navigation, and half-star precision that would take effort to replicate.
+
+**Installation:**
+```bash
+npm install @smastrom/react-rating
+```
+
+**Usage pattern:**
+```javascript
+import { Rating } from '@smastrom/react-rating';
+import '@smastrom/react-rating/style.css';
+
+// Display rating
+<Rating value={template.avg_rating} readOnly />
+
+// Input rating
+<Rating
+  value={userRating}
+  onChange={setUserRating}
+  halfFillMode="svg"
+/>
+```
+
+#### Template Preview/Rendering
+
+**No new library needed.** Existing infrastructure handles this:
+- `thumbnail_url` field stores preview images
+- Polotno editor already renders scene previews
+- Existing `html2canvas` can generate thumbnails if needed
+
+---
+
+### Multi-Language Content Stack
+
+#### Content Translation Approach
+
+**No new library needed for translation storage/retrieval.** The architecture uses JSON overlay pattern:
+
+```javascript
+// Translation stored as JSON path overrides
+{
+  "blocks.0.props.text": "Bienvenido",
+  "blocks.1.props.text": "Menu del dia"
+}
+```
+
+**For JSON path operations, use existing lodash:**
+```javascript
+import { get, set, cloneDeep } from 'lodash';
+
+function mergeTranslations(designJson, translations) {
+  if (!translations) return designJson;
+
+  const merged = cloneDeep(designJson);
+  for (const [path, value] of Object.entries(translations)) {
+    set(merged, path, value);
+  }
+  return merged;
+}
+
+// Usage
+const localizedDesign = mergeTranslations(
+  slide.design_json,
+  slide.translations?.es
+);
+```
+
+**Why NOT add a dedicated i18n library for content:**
+- Content translations are different from UI translations
+- UI i18n (react-i18next pattern) already exists for admin interface
+- Content translations are per-scene, not per-app
+- JSON overlay pattern is simpler and fits existing Polotno design_json structure
+
+#### UI Locale Picker Component
+
+**No new library needed.** Build with existing Tailwind + Lucide:
+```javascript
+// LocaleSwitcher.jsx using existing patterns
+import { Globe } from 'lucide-react';
+import { SUPPORTED_LOCALES } from '../i18n/i18nConfig';
+
+// Dropdown using existing UI patterns from the codebase
+```
+
+---
+
+### Advanced Scheduling Stack
+
+#### Timezone/DST Handling
+
+| Library | Version | Purpose | Confidence |
+|---------|---------|---------|------------|
+| [@date-fns/tz](https://github.com/date-fns/tz) | 1.2.0 | Timezone-aware date operations | HIGH |
+
+**Critical for v2:** PITFALLS.md identifies DST handling as a critical issue. The existing `date-fns` v4.1.0 works with `@date-fns/tz` for timezone support.
+
+**Why @date-fns/tz:**
+- Official date-fns companion package
+- Only 1.2 kB (TZDate) or 916 B (TZDateMini)
+- Uses IANA timezone database via Intl API (no bundled timezone data)
+- Handles DST transitions correctly
+- Already compatible with installed date-fns v4.1.0
+
+**Installation:**
+```bash
+npm install @date-fns/tz
+```
+
+**Usage for schedule resolution:**
+```javascript
+import { TZDate } from '@date-fns/tz';
+import { isWithinInterval, format } from 'date-fns';
+
+// Create timezone-aware date for device's timezone
+const deviceNow = new TZDate(new Date(), device.timezone || 'UTC');
+
+// Check if schedule entry is active (DST-aware)
+function isScheduleActive(entry, deviceTimezone) {
+  const now = new TZDate(new Date(), deviceTimezone);
+  const startTime = new TZDate(
+    `${format(now, 'yyyy-MM-dd')}T${entry.start_time}`,
+    deviceTimezone
+  );
+  const endTime = new TZDate(
+    `${format(now, 'yyyy-MM-dd')}T${entry.end_time}`,
+    deviceTimezone
+  );
+
+  return isWithinInterval(now, { start: startTime, end: endTime });
+}
+```
+
+**DST transition handling:**
+```javascript
+import { tzScan } from '@date-fns/tz';
+
+// Find DST transitions in a date range (for schedule validation warnings)
+const dstTransitions = tzScan('America/New_York', {
+  start: campaign.start_date,
+  end: campaign.end_date
+});
+
+if (dstTransitions.length > 0) {
+  log.warn('Campaign spans DST transition', {
+    campaign: campaign.id,
+    transitions: dstTransitions
+  });
+}
+```
+
+#### Calendar/Timeline Visualization
+
+**Recommendation: Build custom with existing stack.**
+
+| Approach | Recommendation | Confidence |
+|----------|----------------|------------|
+| Full calendar library | **Avoid** | HIGH |
+| Custom week grid | **Recommended** | HIGH |
+
+**Why NOT use FullCalendar or react-big-calendar:**
+- **react-big-calendar has React 19 compatibility issues** ([GitHub Issue #2701](https://github.com/jquense/react-big-calendar/issues/2701))
+- Navigation buttons and view controls reported broken with React 19.0.0
+- FullCalendar v6 bundles Preact internally, adding complexity
+- BizScreen already has `getWeekPreview()` function returning schedule data
+- Custom implementation gives full control over UX
+
+**Custom week grid approach:**
+```javascript
+// Components to build (using existing Tailwind patterns)
+// src/components/scheduling/
+//   WeekGrid.jsx        - 7-day x 24-hour grid
+//   TimeSlot.jsx        - Individual hour cell
+//   ScheduleEntry.jsx   - Positioned content block
+//   DayColumn.jsx       - Single day column
+
+// Data flow
+const weekData = await scheduleService.getWeekPreview(scheduleId, startDate);
+// weekData already structured for display
+```
+
+**If calendar library absolutely needed:** Consider [Planby](https://planby.app/) (designed for TV guide schedules, aligns with digital signage use case) but verify React 19 compatibility first.
+
+---
+
+### What NOT to Add (and Why)
+
+| Library | Why NOT |
+|---------|---------|
+| **react-i18next** (for content) | Already have i18n for UI; content translations use different pattern (JSON overlays) |
+| **react-big-calendar** | React 19 compatibility issues; custom build preferred |
+| **moment.js / moment-timezone** | date-fns v4 + @date-fns/tz is modern, smaller alternative |
+| **Additional logging library** | loggingService.js already production-ready |
+| **Additional retry library** | fetch-retry + p-retry already installed from v1 |
+| **Translation management platform SDK** | Overkill for content translations; simple DB tables suffice |
+| **deepmerge library** | lodash.set/cloneDeep handles JSON overlay merging |
+
+---
+
+### v2 Installation Summary
+
+```bash
+# New dependencies for v2
+npm install @date-fns/tz @smastrom/react-rating
+```
+
+**Total new dependencies: 2**
+
+Both are lightweight:
+- `@date-fns/tz`: ~1.2 kB
+- `@smastrom/react-rating`: ~3 kB (zero dependencies)
+
+---
+
+### v2 Stack Integration Points
+
+| v2 Feature | Integrates With | How |
+|------------|-----------------|-----|
+| Template ratings | existing `marketplaceService.js` | Add rating CRUD methods |
+| Template preview | existing Polotno editor | Reuse scene rendering |
+| Content translations | existing `design_json` structure | JSON overlay pattern |
+| Locale picker | existing `i18nConfig.js` | Reuse locale definitions |
+| Timezone handling | existing `schedules.timezone` column | Use @date-fns/tz for calculations |
+| Week preview | existing `getWeekPreview()` | Enhance with campaign data |
+| Campaign calendar | existing Tailwind + React patterns | Custom grid component |
+
+---
+
+### Version Verification (v2)
+
+| Library | Version | Verified | Source |
+|---------|---------|----------|--------|
+| @date-fns/tz | 1.2.0 | 2026-01-24 | [GitHub](https://github.com/date-fns/tz), [date-fns v4 announcement](https://blog.date-fns.org/v40-with-time-zone-support/) |
+| @smastrom/react-rating | 1.5.0 | 2026-01-24 | [GitHub](https://github.com/smastrom/react-rating), [npm](https://www.npmjs.com/package/@smastrom/react-rating) |
+| date-fns (existing) | 4.1.0 | Already installed | package.json |
+| lodash (implicit via lodash.throttle/debounce) | 4.17.21 | Already available | package.json patterns |
+
+---
+
+### Confidence Assessment (v2)
+
+| Area | Confidence | Reason |
+|------|------------|--------|
+| @date-fns/tz | HIGH | Official date-fns package, verified v4 compatibility, documented DST handling |
+| @smastrom/react-rating | HIGH | Zero dependencies, active maintenance, 7k+ weekly downloads |
+| Custom calendar approach | HIGH | Avoids React 19 compatibility issues, leverages existing patterns |
+| JSON overlay translations | MEDIUM | Pattern is sound but player merge logic needs testing |
+| Avoiding additional libraries | HIGH | Existing stack covers most needs |
+
+---
+
+### Sources (v2)
+
+**Timezone Handling:**
+- [date-fns v4 with Time Zone Support](https://blog.date-fns.org/v40-with-time-zone-support/) - Official announcement
+- [@date-fns/tz GitHub](https://github.com/date-fns/tz) - Package documentation
+- [Working with Timezones using date-fns](https://masteringjs.io/tutorials/date-fns/tz) - Implementation guide
+
+**Star Ratings:**
+- [@smastrom/react-rating GitHub](https://github.com/smastrom/react-rating) - Zero-dependency React rating component
+- [npm package](https://www.npmjs.com/package/@smastrom/react-rating) - 7,179 weekly downloads
+
+**Calendar Libraries (evaluated):**
+- [react-big-calendar React 19 Issue](https://github.com/jquense/react-big-calendar/issues/2701) - Compatibility problems
+- [FullCalendar React Docs](https://fullcalendar.io/docs/react) - v6.1.20 uses internal Preact
+- [Planby](https://planby.app/) - TV guide/schedule focused alternative
+- [Best React Scheduler Libraries](https://blog.logrocket.com/best-react-scheduler-component-libraries/) - Overview
+
+**Translation Patterns:**
+- [JSON path manipulation with lodash](https://lodash.com/docs/#set) - set/get for nested paths
+- [i18next principles](https://www.i18next.com/principles/fallback) - Fallback patterns (applied to content)

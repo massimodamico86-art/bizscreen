@@ -1,369 +1,492 @@
-# Project Research Summary
+# Project Research Summary - v2
 
-**Project:** BizScreen Digital Signage Platform - Stabilization & Feature Completion
-**Domain:** Production stabilization for existing React/Supabase SaaS application
-**Researched:** 2026-01-22
+**Project:** BizScreen Digital Signage Platform - v2 Templates & Platform Polish
+**Domain:** Feature expansion for production React/Supabase digital signage platform
+**Researched:** 2026-01-24
 **Confidence:** HIGH
 
 ## Executive Summary
 
-BizScreen is a production digital signage platform built on React 19 and Supabase, serving multi-tenant deployments with offline-capable TV player devices. The stabilization effort focuses on hardening existing infrastructure rather than replacing it. Key finding: foundational systems exist (custom logging service, GDPR database schemas, analytics tracking, offline caching) but need completion and migration from ad-hoc patterns.
+BizScreen v2 adds three major feature sets to an existing multi-tenant digital signage platform: Templates Marketplace, Multi-Language Content, and Advanced Scheduling. v1 has shipped with 12 phases complete, including testing infrastructure, security hardening, player reliability, and GDPR compliance. The v2 research reveals that existing architecture provides strong foundations - template marketplace schema already exists (migration 080), basic i18n for admin UI is functional, and the scheduling system supports scene-based scheduling with priority handling.
 
-The recommended approach is incremental stabilization with characterization tests first, followed by migration phases that leverage existing architecture. The four parallel research tracks reveal strong architectural foundations with specific gaps: 197+ console.log calls need migration to existing structured logger, retry logic lacks jitter for thundering herd prevention, large components (Player.jsx at 3,476 lines) need decomposition without test coverage, and GDPR implementation exists in database but lacks UI and data export generation.
+The recommended approach is phased implementation prioritizing features with lower architectural risk first. Advanced Scheduling extends existing systems with minimal new patterns (campaigns as grouped schedule entries). Templates Marketplace enhances existing infrastructure with ratings, reviews, and improved UX. Multi-Language Content introduces the most architectural complexity through a translation overlay pattern that requires careful player integration and offline cache management. Critical dependencies: timezone handling for DST-aware scheduling (@date-fns/tz), star ratings for templates (@smastrom/react-rating), and careful handling of cache size explosion with language variants.
 
-Critical risk is refactoring without tests in a production system with offline sync complexity. Mitigation: establish characterization tests before any refactoring, use Strangler Fig pattern for incremental extraction, and maintain offline capability as non-negotiable constraint throughout all phases. Secondary risk is GDPR backup resurrection where deleted data reappears after disaster recovery - requires erasure log replay after any restore.
+Key risks center on integration complexity rather than greenfield features. The three highest-impact pitfalls are: (1) DST transitions causing schedule gaps or double-plays during time changes, (2) offline cache size explosion when multiple language variants multiply storage requirements, and (3) template marketplace tenant isolation where shared templates must never leak data between tenants. Mitigation: use IANA timezone database for DST-aware calculations, implement selective language caching with LRU eviction, and verify RLS policies on all new template-related tables. Secondary risk is Player.jsx complexity growth (currently 2775 lines) - must complete component splitting BEFORE adding language switching, template refresh, and campaign priority handling.
 
 ## Key Findings
 
 ### Recommended Stack
 
-BizScreen's existing stack is production-ready with targeted enhancements needed. The research confirms keeping existing infrastructure rather than wholesale replacement.
+BizScreen v2 requires minimal new dependencies. The existing foundation (date-fns v4.1.0, lodash, React 19, Tailwind) handles most needs. Only two new packages required.
 
-**Core technologies:**
-- **Keep existing loggingService.js**: Custom structured logger with correlation IDs, batching, and scoped loggers already production-ready - work is migrating 197+ console.log calls, not replacing the service
-- **lodash.throttle/debounce 4.1.1**: For Supabase rate limiting client-side smoothing - simple, battle-tested, no need for complex rate limiting library since Supabase handles server-side enforcement
-- **fetch-retry 6.0.0 + p-retry 7.1.0**: Dual approach for retry logic - fetch-retry integrates at Supabase client level, p-retry for general async operations with exponential backoff and jitter
-- **DOMPurify 3.3.1**: OWASP-recommended XSS prevention for existing dangerouslySetInnerHTML usage in HelpCenterPage - 18M+ weekly downloads, whitelist-based sanitization
+**New dependencies for v2:**
+- **@date-fns/tz 1.2.0**: Timezone-aware date operations with DST handling - official date-fns companion package, uses IANA timezone database via Intl API, critical for schedule resolution across timezones
+- **@smastrom/react-rating 1.5.0**: Template ratings UI component - zero dependencies, 7k+ weekly downloads, supports half-star ratings and keyboard navigation
 
-**Installation:** `npm install fetch-retry p-retry dompurify lodash.throttle lodash.debounce`
+**Installation:** `npm install @date-fns/tz @smastrom/react-rating`
 
-**Version confidence:** All verified against npm as of 2026-01-22, actively maintained packages
+**Existing stack reuse:**
+- **date-fns v4.1.0** (installed): Time calculations, schedule previews, campaign date ranges
+- **lodash** (available): JSON path manipulation for translation overlays (set/get/cloneDeep), already used for throttle/debounce
+- **Polotno editor** (existing): Template rendering, scene preview generation
+- **Tailwind + Lucide** (existing): Custom calendar grid components (avoiding React 19 compatibility issues with react-big-calendar)
+
+**Explicitly avoiding:**
+- react-big-calendar (React 19 navigation bugs documented in GitHub issue #2701)
+- moment-timezone (date-fns v4 + @date-fns/tz is modern, smaller alternative)
+- Translation management platform SDKs (overkill for content translations, simple DB tables suffice)
+- deepmerge library (lodash.set/cloneDeep handles JSON overlay merging)
+
+**Version confidence:** All verified 2026-01-24, actively maintained
 
 ### Expected Features
 
-BizScreen has strong database foundations (migrations 027, 106, 079) but needs UI completion and backend logic implementation.
+Research reveals clear patterns for the three target v2 capabilities, with existing BizScreen infrastructure providing substantial foundations.
 
-**Must have (table stakes):**
-- **Approval workflow**: Status changes, approval queue UI, approve/reject with comment, email notification - migration 027 provides review_requests and review_comments tables, needs frontend implementation
-- **GDPR data export**: Machine-readable format (JSON), aggregates all user data within 30 days - table exists but needs generation logic and background job
-- **GDPR account deletion**: Cascade delete with 30-day grace period - foundation exists but needs verification of hard vs soft delete approach
-- **Content analytics completion**: View duration tracking, proof of play, export reports - playback_events table exists, needs completion rate tracking and heatmap aggregation
-- **Device QR pairing**: QR code displays pairing URL with OTP, admin scans to auto-fill - qrcodeService.js exists, needs player-side display
-- **Emergency kiosk exit**: Tap sequence + PIN, remote unlock command - player needs exit flow with lockout after failed attempts
+**Templates Marketplace - Must have (table stakes):**
+- **Category browsing** - Templates organized by industry (restaurant, retail, corporate) - `template_categories` table EXISTS
+- **Search functionality** - Text search by name/description - `fetchTemplates` service EXISTS
+- **Template preview** - Visual preview before applying - `thumbnail_url` field EXISTS, needs modal
+- **One-click apply** - Apply template creates usable content immediately - `applyTemplate` RPC EXISTS
+- **Featured templates** - Curated selection on homepage - `is_featured` flag EXISTS
+- **Orientation filter** - Landscape vs portrait - `meta.orientation` EXISTS
+- **Template ratings/reviews** - Community feedback on template quality - NEW (simple star rating + review text)
 
-**Should have (competitive):**
-- **Multi-level approval chains**: Sequential approval workflow for compliance-heavy industries - requires new approval_chains table
-- **Analytics heatmaps**: Time-based (24x7 grid) and location-based playback patterns - foundation exists, needs aggregation functions
-- **Scheduled reports**: Automated delivery of analytics and proof of play - depends on email provider setup
-- **Bulk QR generation**: Print device pairing labels for hardware rollouts - extends existing QR service
+**Templates Marketplace - Should have (competitive):**
+- **Starter packs** - Pre-configured scene+layout+schedule bundles - `apply_pack_template` RPC EXISTS, needs UX refinement
+- **Template customization wizard** - Guided replacement of placeholder content (logo, colors, text) - NEW, improves on raw editor for non-designers
+- **Smart template suggestions** - Recommend templates based on user's industry/usage - NEW, leverages `business_type` from onboarding
+- **Usage analytics** - Show which templates perform best - NEW, extends existing analytics infrastructure
 
-**Defer (v2+):**
-- **Content diff view for approvals**: Requires versioning system - HIGH complexity
-- **A/B content testing**: Variant tracking with statistical analysis - VERY HIGH complexity
-- **Audience demographics**: Computer vision for viewer analytics - privacy concerns, very high complexity
-- **Geofenced kiosk mode**: Location-based auto-exit - HIGH complexity, requires location services
+**Multi-Language Content - Must have (table stakes):**
+- **Content language variants** - Same scene/playlist with multiple language versions - NEW (needs schema: translation table pattern)
+- **Per-device language assignment** - Device plays content in assigned language - NEW (add `language_code` to `tv_devices`)
+- **Language fallback** - If variant missing, show default language - NEW (player content resolution logic)
+- **CMS language selector** - Easy toggle between language versions when editing - NEW (UI component for scene editor)
+- **Language indicator** - Visual badge showing which languages have content - NEW (UI badge on content cards)
+- **Bulk language management** - View all content needing translation in one place - NEW (translation status dashboard)
+
+**Multi-Language Content - Should have (competitive):**
+- **Screen group language assignment** - Assign language to group, all devices inherit - NEW, leverages existing `screen_groups` table
+- **Translation workflow** - Track draft/review/approved status per language - NEW, similar to existing content approval workflow
+- **AI translation suggestions** - Machine translation as starting point - DEFER to post-v2 (medium complexity, quality concerns)
+
+**Advanced Scheduling - Must have (table stakes):**
+- **Date range scheduling** - Content plays only between start/end dates - `start_date`/`end_date` fields EXIST in `schedule_entries`
+- **Priority levels** - Higher priority content overrides lower - `priority` field EXISTS, verify player respects it
+- **Conflict detection** - Warn when entries overlap - `check_schedule_entry_conflicts` RPC EXISTS
+- **Week preview** - Visual 7-day view of schedule - `getWeekPreview` function EXISTS
+- **Campaign grouping** - Group related schedule entries as campaign - NEW (needs `campaigns` table or campaign_id field)
+- **Emergency override** - Instant content push that overrides all schedules - NEW (max priority entry + push notification to players)
+
+**Advanced Scheduling - Should have (competitive):**
+- **Campaign analytics** - Performance metrics grouped by campaign - NEW, extends existing analytics to campaign level
+- **Content rotation rules** - Percentage-based content mix within time slot - NEW (multiple entries same slot with rotation logic)
+- **Frequency limits** - Play content max N times per hour/day - NEW (add to `schedule_entries`)
+- **Campaign templates** - Save campaign configuration for reuse - NEW (serialize campaign as JSON template)
+
+**Defer to Post-v2:**
+- **Canva integration** - Edit templates with Canva, sync to BizScreen - HIGH complexity, requires Canva Connect API
+- **User template marketplace** - Buy/sell templates between users - Not aligned with platform model, requires complex moderation
+- **AI-generated templates** - Generative AI for templates - Emerging trend but adds complexity, unpredictable results
+- **RTL language support** - Hebrew, Arabic require complete UI/content mirroring - Current i18n config is LTR only
+- **Real-time translation display** - On-screen language switching - Viewer-confusing and technically complex
+- **Conditional triggers** - Play based on external data (weather, inventory) - HIGH complexity (though data feeds infrastructure exists)
+- **Multi-zone scheduling** - Different content per zone within layout, per time - HIGH complexity, extends layout zone concept
 
 ### Architecture Approach
 
-React component decomposition follows feature-based state grouping with custom hooks. The existing pattern of Context for global state (auth, branding) works well - extend with custom hooks for page-level state rather than adding more Context providers.
+Research shows three distinct integration patterns, prioritized by architectural risk: Scheduling extends existing systems, Templates enhances existing infrastructure, Multi-Language introduces new translation overlay pattern.
 
-**Major components requiring refactoring:**
-1. **Player.jsx (3,476 lines)** — Extract to usePlayerContent, usePlayerHeartbeat, usePlayerCommands, useOfflineMode, useKioskMode hooks + separate widget components (ClockWidget, WeatherWidget, QRCodeWidget, DateWidget)
-2. **ScreensPage.jsx (~1,900 lines)** — Extract to useScreensData, useScreensFilters, useScreenActions hooks + separate modal components (AddScreenModal, EditScreenModal, AnalyticsModal)
-3. **MediaLibraryPage.jsx (~2,500 lines)** — Extract to useMediaLibraryData hook + separate grid/list components already partially defined
-4. **PlaylistEditorPage.jsx (~1,300+ lines)** — Similar hook extraction pattern for data management
+**Build order recommendation:** Advanced Scheduling → Templates Marketplace → Multi-Language Content (lowest to highest architectural complexity and risk).
 
-**Refactoring strategy:** Strangler Fig pattern with characterization tests first. Maximum PR size 200 lines for refactoring changes. Extract one responsibility per PR. Test offline capability after every Player.jsx change - non-negotiable constraint.
+**Advanced Scheduling Architecture:**
+Extends existing `schedules` and `schedule_entries` tables with campaigns concept. Priority resolution logic already exists in `get_resolved_player_content()` - campaign check inserts before schedule check in existing priority chain.
 
-**Hook extraction order for Player.jsx (dependency-aware):**
-1. useStuckDetection (isolated, no dependencies)
-2. useKioskMode (localStorage only)
-3. usePlayerHeartbeat (screenId dependency)
-4. usePlayerCommands (screenId + callbacks)
-5. usePlayerContent (most complex, central state)
+**Major components:**
+1. **campaigns table** - Date-bounded content pushes with priority, device/group targeting
+2. **campaign_entries table** - Content for campaign with optional time-of-day rules, rotation settings
+3. **rotation_state table** - Tracks sequential rotation per device/campaign
+4. **Enhanced priority resolution** - Device override → Campaign (priority-sorted) → Group scene → Device schedule → Group schedule → Device fallback
+5. **DST-aware calculations** - @date-fns/tz for timezone-aware date operations using device.timezone
+
+**Templates Marketplace Architecture:**
+Enhances existing `template_library` tables (migration 080) with community features.
+
+**Major components:**
+1. **template_reviews table** - Ratings (1-5 stars) + review text, one per user per template
+2. **template_submissions table** - User-submitted templates pending approval
+3. **MarketplacePage.jsx** - Template browsing with category filters, search, ratings display
+4. **Template installation flow** - Extends existing `clone_template_to_scene()` RPC, must use tenant context correctly
+5. **Rating aggregation** - avg_rating and review_count columns on template_library
+
+**Multi-Language Content Architecture:**
+Translation table pattern to avoid content duplication. Stores translations separately from base scenes.
+
+**Major components:**
+1. **scene_slide_translations table** - Per-locale overrides stored as JSON path overrides (e.g., `{"blocks.0.props.text": "Bienvenido"}`)
+2. **Translation merge strategy** - Player fetches base design_json + translations for device locale, applies lodash.set() to merge
+3. **LocaleSwitcher UI** - Side panel in scene editor for switching editing locale
+4. **Device language preference** - `display_locale` column on `tv_devices` and `screen_groups`
+5. **Offline cache consideration** - Cache device locale + fallback (en) to avoid cache explosion
+
+**Integration points with existing architecture:**
+- Templates ratings integrate with `marketplaceService.js` (add rating CRUD methods)
+- Template preview reuses Polotno editor scene rendering
+- Content translations integrate with existing `design_json` structure (JSON overlay pattern)
+- Locale picker reuses existing `i18nConfig.js` locale definitions
+- Timezone handling uses existing `schedules.timezone` column
+- Campaign calendar uses existing Tailwind + React patterns (custom grid, avoiding third-party libraries)
+
+**Player.jsx impact:**
+Templates: minimal (template refresh on install)
+Multi-Language: moderate (locale switching, translation merge logic)
+Advanced Scheduling: moderate (campaign priority handling, rotation algorithms)
+
+**CRITICAL:** Must complete Player.jsx component splitting (currently 2775 lines) BEFORE adding v2 features. Extract LanguageController, ScheduleResolver, ContentRenderer as separate components. New features add to extracted components, not monolith.
 
 ### Critical Pitfalls
 
-Based on codebase analysis and production stabilization patterns, these are must-avoid mistakes:
+Based on codebase analysis, existing architecture constraints (offline-first, multi-tenant), and domain research, these are must-avoid mistakes for v2:
 
-1. **Refactoring without characterization tests** — Player.jsx handles offline mode, caching, real-time sync, playback tracking - any regression affects all customer screens. Current state: no test files found in src/. Prevention: Write E2E tests for critical paths BEFORE refactoring (pairing, playback, offline fallback, command execution). Use Strangler Fig pattern, not Big Bang refactoring.
+1. **DST Transition Causes Content to Skip or Double-Play** (CRITICAL) — Schedule entry for "2:30 AM daily" plays twice when clocks fall back, or not at all during spring-forward "impossible hour". BizScreen's `scheduleService.js` uses `start_time` and `end_time` as time strings; `getWeekPreview()` date arithmetic may not handle DST boundaries correctly. CONCERNS.md already flags "Edge case: daylight saving time transitions" under Schedule Engine fragility. **Prevention:** Use @date-fns/tz for DST-aware calculations, store all schedule times with explicit timezone (already have `timezone` column), add explicit handling for DST transition days (skip impossible hour with warning, handle double hour by playing once at first occurrence), add integration tests for DST transition dates. **Phase mapping:** Must address in scheduling core logic phase.
 
-2. **GDPR: Backups restoring deleted data** — Disaster recovery or backup testing brings "deleted" user data back, causing compliance violation. Multi-tenant complicates selective restore. Prevention: Maintain separate deleted_user_ids table with timestamps, replay deletions after any backup restore, document 30-day backup retention, implement cryptographic erasure (delete encryption key) for immediate compliance.
+2. **Offline Cache Size Explosion with Language Variants** (CRITICAL) — Player caches content for offline use. Multi-language scenes create N copies of each scene (one per language). Cache size multiplies by number of languages. Current `offlineService.js` caches scenes by ID. `OFFLINE_CONFIG.MAX_QUEUE_SIZE: 100` exists but only for events, no cache size limit for scenes/media. Player devices (especially Tizen/WebOS) have limited storage. **Prevention:** Design decision for one scene with language-embedded content vs. separate scene per language, implement LRU eviction in cache (only keep active language cached), implement selective caching (only cache user's selected language(s)), add cache size limit (e.g., 500MB) with automatic eviction, add player diagnostic showing cache usage by language. **Phase mapping:** Critical design decision for multi-language architecture phase.
 
-3. **Thundering herd on network recovery** — Current retry logic in Player.jsx lines 109-118 has only 0-25% jitter. Hundreds of devices recovering simultaneously overwhelm backend. Prevention: Increase jitter to 50-100% (AWS full jitter recommendation), add startup randomization (0-30 seconds), implement circuit breaker (3 consecutive failures = longer wait), use decorrelated jitter formula.
+3. **Template Cloning Leaks Tenant Context** (CRITICAL) — When user installs a template, the cloned scene inherits incorrect tenant context. Scene appears in wrong tenant's library, or RLS policies block access entirely. BizScreen uses `owner_id` for RLS policies (verified in 53 services). Template cloning must set the correct owner, but the `clone_template_to_scene` RPC may inherit the template creator's ID instead of the installing user's tenant. Current `marketplaceService.js` calls `clone_template_to_scene` RPC. The RPC must explicitly use `getEffectiveOwnerId()` pattern from `tenantService.js` to resolve the correct tenant. **Prevention:** Verify `clone_template_to_scene` RPC uses `auth.uid()` or equivalent (not template's `created_by`), add test for installing template while impersonating client (verify scene owned by client), add test for installing same template from two tenants (verify no cross-contamination), log `owner_id` assignment during clone operation for audit. **Phase mapping:** Must address in early templates phase before public release.
 
-4. **Logging performance degradation** — Migrating 197+ console.log calls to structured logging adds serialization overhead in hot paths (Player.jsx has 16 calls, cacheService.js). console.log is lazy, structured logging serializes on every call. Prevention: Profile before/after migration in Player.jsx, use lazy evaluation for complex objects, skip serialization for filtered log levels, test with DevTools closed.
+4. **Missing Translation Fallback Causes Blank Screens** (CRITICAL) — Content created in English, user adds Spanish translation but misses some text fields. Player in Spanish mode shows blank text or crashes on undefined content. No fallback chain implemented. If Spanish translation missing, should fall back to English. Current i18n (`I18nContext.jsx`) has fallback for admin UI, but content translations are different pattern. Content is stored in `design_json` in scenes. If multi-language adds language-keyed text values, missing keys need graceful handling. **Prevention:** Implement content translation fallback (missing translation → default language → original value), add translation completeness indicator in editor ("Spanish: 80% translated"), prevent publishing content with incomplete critical translations, in player log missing translation keys for debugging but never show blank, follow i18next fallback principles. **Phase mapping:** Must address in multi-language content editor design.
 
-5. **Rate limiting GET requests unprotected** — PostgreSQL-based rate limiting (pg_headerkit) only works for write operations, read replicas can't write rate limit state. Player endpoints (get_resolved_player_content, player_heartbeat) are high-frequency and vulnerable. Prevention: Use Supabase Edge Functions with Upstash Redis for API-level rate limiting, implement per-device, per-user, and per-IP dimensions, test both read and write operations.
+5. **Campaign Priority Conflicts with Real-Time Updates Create Race Conditions** (CRITICAL) — Admin changes campaign priority while content is playing. Player receives update mid-playback. Player shows content from old schedule, then jumps to new, creating jarring experience. Real-time subscriptions push changes immediately. Player may be mid-slide when priority changes affect what should be showing. Player uses `subscribeToDeviceRefresh` from `realtimeService.js`. Immediate refresh during playback disrupts experience. Current Player.jsx handles real-time sync with `checkDeviceRefreshStatus` and `clearDeviceRefreshFlag`. **Prevention:** Queue schedule updates to apply at content boundary (after current item finishes), add transition buffer (don't apply changes during active playback, wait for natural transition), priority changes effective "on next cycle" not immediately, exception for emergency/interrupt content with highest priority can preempt immediately, display "updating schedule..." transition screen during refresh. **Phase mapping:** Address in campaign scheduling implementation.
+
+**Additional moderate pitfalls:**
+- **Template Versioning Breaks Installed Scenes** - Marketplace admin updates template, users who installed it either lose customizations when auto-updated or never see important fixes. Store `source_template_id` and `source_template_version`, provide "update available" notification, never auto-update without explicit user action.
+- **Language Sync Race Condition on Device Language Change** - Device language setting changes while offline, player shows mixed content until full sync occurs. Define language source (device setting, user profile, or screen assignment), cache content for all configured languages (limited set: 2-3), add visual indicator showing content language vs device language mismatch.
+- **Player.jsx Grows Even Larger with New Features** - Templates, multi-language, and scheduling all add code to Player.jsx (already 2775 lines). Complete Player.jsx component splitting BEFORE adding new features, extract LanguageController/ScheduleResolver/ContentRenderer as separate components, set hard limit of 1000 lines for Player.jsx (enforce in CI).
+- **New Database Migrations Break Existing Player Cache** - New features add columns to scenes/schedules tables, cached content in player IndexedDB doesn't have new fields, player code assumes fields exist and crashes. All new fields must have default values in migration, player code must handle missing fields gracefully (optional chaining), bump `PLAYER_VERSION` constant to invalidate old cache on major schema changes.
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure with clear dependencies and risk mitigation:
+Based on research findings, dependencies, and risk assessment, recommended phase structure for v2:
 
-### Phase 1: Foundation - Testing Infrastructure
-**Rationale:** Must precede any refactoring work. Zero test coverage in src/ makes all changes high-risk. Player.jsx complexity (offline sync, real-time, caching) requires safety net before decomposition.
-
-**Delivers:**
-- E2E test suite (Playwright infrastructure exists) covering Player.jsx critical paths: pairing flow, playlist playback, scene rendering, offline fallback, command execution
-- Integration test patterns for extracted hooks using Vitest + React Testing Library
-- Characterization tests that capture current behavior (not intended behavior)
-- Testing documentation for future refactoring phases
-
-**Addresses:** Refactoring without tests pitfall (PITFALLS.md critical #1)
-
-**Avoids:** Silent regressions, customer-reported bugs with no repro steps, "it worked before the refactor" issues
-
-**Research needed:** None - patterns documented in ARCHITECTURE.md, existing test utilities in /tests/
-
-### Phase 2: XSS Prevention (Security Quick Win)
-**Rationale:** High impact, low effort, security vulnerability. HelpCenterPage.jsx uses dangerouslySetInnerHTML without sanitization (STACK.md lines 289, 293). Can be implemented independently while tests are being written.
+### Phase 1: Technical Foundation - Player.jsx Splitting
+**Rationale:** MUST precede v2 features. Player.jsx at 2775 lines (PROJECT.md tech debt). Templates, multi-language, scheduling will ALL add code to Player. Component splitting deferred from v1 but now blocking. Multi-language needs LanguageController, scheduling needs ScheduleResolver, templates need ContentRenderer. Adding features to monolith increases fragility.
 
 **Delivers:**
-- DOMPurify 3.3.1 integration with whitelist configuration
-- SafeHtml wrapper component
-- XSS audit of all dangerouslySetInnerHTML usage
-- URL sanitization for javascript: protocol blocking
-
-**Uses:** dompurify package from STACK.md
-**Addresses:** Security vulnerability before public-facing features
-**Complexity:** LOW - isolated change, no dependencies
-
-**Research needed:** None - implementation patterns documented in STACK.md
-
-### Phase 3: Logging Migration
-**Rationale:** Foundation for observability in all subsequent phases. Existing loggingService.js is production-ready, work is migration not replacement. Must happen before retry logic and rate limiting to make issues visible.
-
-**Delivers:**
-- Migration of 197+ console.log calls to scoped loggers
-- Log level conventions documented (error/warn/info/debug)
-- PII sanitization for common objects (profiles, tenants, devices)
-- Performance profiling for Player.jsx (16 calls in hot paths)
-
-**Uses:** Existing loggingService.js from src/services/
-**Addresses:** Must-have observability for debugging subsequent stabilization work
-**Avoids:** Logging sensitive data pitfall (PITFALLS.md moderate), performance degradation pitfall (PITFALLS.md critical #4)
-
-**Research needed:** None - service exists, migration pattern in STACK.md
-
-### Phase 4: Retry Logic Hardening
-**Rationale:** After logging (so issues are visible), before rate limiting (to handle 429s properly). Player.jsx offline capability depends on proper retry with backoff. Current implementation lacks jitter and retries non-retryable errors.
-
-**Delivers:**
-- fetch-retry 6.0.0 integration at Supabase client level
-- p-retry 7.1.0 for general async operations
-- Decorrelated jitter (50-100%) to prevent thundering herd
-- Non-retryable error classification (400, 401, 403, 404, 422)
-- Circuit breaker for extended outages
-- Offline queue size enforcement (MAX_QUEUE_SIZE: 100)
-
-**Uses:** fetch-retry + p-retry from STACK.md
-**Addresses:** Thundering herd pitfall (PITFALLS.md critical #3), retrying non-retryable errors (PITFALLS.md critical)
-**Complexity:** MEDIUM - touches Player.jsx offline logic, requires careful testing
-
-**Research needed:** None - patterns documented in STACK.md and PITFALLS.md
-
-### Phase 5: Rate Limiting
-**Rationale:** After retry logic (so 429s trigger proper backoff), preventive measure for API abuse. Client-side throttling for UX smoothing, server-side enforcement via Supabase Edge Functions.
-
-**Delivers:**
-- lodash.throttle/debounce for client-side smoothing (search debounce, realtime subscriptions throttle)
-- Supabase Edge Functions with Upstash Redis for API-level limits
-- Multi-dimension tracking (per-device, per-user, per-IP)
-- Sliding window algorithm (not fixed window)
-- 429 error handling with user-friendly messaging
-
-**Uses:** lodash utilities + Supabase Edge Functions from STACK.md
-**Addresses:** GET requests unprotected pitfall (PITFALLS.md critical #5), fixed window boundary abuse (PITFALLS.md moderate)
-**Complexity:** MEDIUM - requires Edge Functions deployment
-
-**Research needed:** None - implementation patterns in STACK.md
-
-### Phase 6: Component Refactoring - Player.jsx
-**Rationale:** After tests exist (Phase 1), logging is in place (Phase 3), and retry/offline logic is hardened (Phase 4). Player.jsx is highest priority due to complexity and customer impact. Strangler Fig approach with dependency-aware extraction order.
-
-**Delivers:**
-- Widget extraction: ClockWidget, DateWidget, WeatherWidget, QRCodeWidget to src/player/components/widgets/
-- Hook extraction (order matters): useStuckDetection → useKioskMode → usePlayerHeartbeat → usePlayerCommands → usePlayerContent
+- Widget extraction: ClockWidget, DateWidget, WeatherWidget, QRCodeWidget to `src/player/components/widgets/`
+- Hook extraction (dependency order): useStuckDetection → useKioskMode → usePlayerHeartbeat → usePlayerCommands → usePlayerContent
 - Scene/Layout extraction: SceneRenderer, SceneBlock, LayoutRenderer, ZoneRenderer
-- Directory restructure: src/player/ with pages/, components/, hooks/, context/
+- LanguageController component (placeholder for multi-language)
+- ScheduleResolver component (placeholder for campaigns)
+- Directory restructure: `src/player/` with pages/, components/, hooks/, context/
+- Set hard limit: Player.jsx max 1000 lines, enforce in CI
 
-**Implements:** Component boundaries from ARCHITECTURE.md
-**Avoids:** Big Bang refactoring pitfall (PITFALLS.md critical), hooks migration gotchas (PITFALLS.md moderate)
-**Constraint:** Offline capability MUST work after every change - non-negotiable
+**Addresses:** Player.jsx growth pitfall (PITFALLS.md), v1 tech debt from PROJECT.md
+**Avoids:** Adding features to 2775-line monolith
+**Uses:** Strangler Fig pattern from v1 refactoring
+**Complexity:** HIGH - offline capability MUST work after every change
 
-**Research needed:** None - extraction order and patterns documented in ARCHITECTURE.md
+**Research needed:** None - extraction patterns documented in V2_ARCHITECTURE.md
 
-### Phase 7: Component Refactoring - Page Components
-**Rationale:** After Player.jsx pattern is proven. Lower risk than Player (no offline sync), but similar complexity in state management.
-
-**Delivers:**
-- ScreensPage hooks: useScreensData, useScreensFilters, useScreenActions, useBulkSelection
-- ScreensPage component extraction: ScreenRow, ScreenActionMenu, modals
-- MediaLibraryPage hooks: useMediaLibraryData, useMediaFilters
-- MediaLibraryPage component extraction: grid/list items, folder navigation
-- Directory structure: src/pages/[PageName]/ with hooks/ and components/
-
-**Implements:** Feature-based state grouping with useReducer from ARCHITECTURE.md
-**Complexity:** MEDIUM - real-time subscriptions need careful testing
-
-**Research needed:** None - patterns documented in ARCHITECTURE.md
-
-### Phase 8: Device QR Pairing & Kiosk Exit
-**Rationale:** Independent features, no dependencies on stabilization work. Improve device management immediately. Low risk, contained scope.
+### Phase 2: Advanced Scheduling - Core Infrastructure
+**Rationale:** Lowest architectural risk. Extends existing `schedule_entries` table. `get_resolved_player_content()` already has priority logic. Player already handles schedule-based content. DST handling is critical pitfall that must be addressed early.
 
 **Delivers:**
-- QR code display on unpaired device (encodes pairing URL with OTP)
-- Admin scan flow with auto-fill pairing code
-- Emergency kiosk exit with tap sequence (5 taps bottom-right corner)
-- Kiosk exit PIN (6 digits, 3 attempts, 5-minute lockout)
-- Remote unlock command via device_commands table
-- Offline PIN storage (encrypted on device)
+- @date-fns/tz integration for DST-aware calculations
+- Add date range columns to `schedule_entries`
+- Create `campaigns` and `campaign_entries` tables
+- Update `get_resolved_player_content()` with campaign logic (insert before schedule check)
+- DST transition handling (skip impossible hour, handle double hour)
+- Integration tests for DST transition dates (spring-forward, fall-back)
 
-**Addresses:** Table stakes features from FEATURES.md
-**Uses:** Existing qrcodeService.js, extends device pairing flow
-**Complexity:** LOW-MEDIUM - contained scope, player changes needed
+**Addresses:** Table stakes date range scheduling, DST pitfall (PITFALLS.md critical #1)
+**Uses:** @date-fns/tz 1.2.0, existing schedules.timezone column
+**Integrates with:** ScheduleResolver component from Phase 1
+**Complexity:** MEDIUM - extends existing system
+
+**Research needed:** None - DST handling patterns documented in PITFALLS.md
+
+### Phase 3: Advanced Scheduling - Campaign Management
+**Rationale:** After core scheduling infrastructure (Phase 2). Adds campaign grouping, priority override, content rotation. Builds on Phase 2 date range foundation.
+
+**Delivers:**
+- CampaignManager.jsx UI for campaign CRUD
+- Campaign calendar visualization (custom week grid with Tailwind, avoiding react-big-calendar)
+- Content rotation algorithms (sequential, weighted random)
+- `rotation_state` table for sequential rotation tracking
+- Priority conflict resolution (queue updates to content boundary)
+- Emergency override capability (max priority + push notification)
+
+**Addresses:** Campaign grouping (table stakes), emergency override (enterprise requirement), priority race condition pitfall (PITFALLS.md critical #5)
+**Uses:** Existing Tailwind + React patterns for calendar grid
+**Integrates with:** ScheduleResolver component, existing realtimeService.js
+**Complexity:** MEDIUM - new UI, rotation logic
+
+**Research needed:** None - campaign patterns documented in V2_ARCHITECTURE.md
+
+### Phase 4: Advanced Scheduling - Polish & Analytics
+**Rationale:** After core campaigns (Phase 3). Adds frequency limits, campaign templates, analytics. Lower priority than core functionality.
+
+**Delivers:**
+- Frequency limits (max N plays per hour/day)
+- Campaign templates (save/reuse configuration)
+- Campaign analytics view (performance metrics by campaign)
+- Conflict detection enhancements (visual timeline showing all scheduled content)
+- DaypartingGrid component for 7x24 hour grid editing
+
+**Addresses:** Competitive features (frequency limits, analytics)
+**Uses:** Existing analytics infrastructure
+**Complexity:** LOW-MEDIUM - extends existing features
 
 **Research needed:** None - patterns documented in FEATURES.md
 
-### Phase 9: Content Analytics Enhancements
-**Rationale:** Foundation exists (playback_events table, aggregation functions). Adding completion rates and heatmaps builds on existing system. High user value for proof of play and scheduling optimization.
+### Phase 5: Templates Marketplace - Core Infrastructure
+**Rationale:** Independent of scheduling. Core infrastructure exists (template_library, marketplaceService.js). Lower risk than multi-language. Tenant isolation is critical pitfall.
 
 **Delivers:**
-- View completion tracking (% of duration viewed)
-- Time-based heatmap (24x7 grid: hour x day)
-- Location-based heatmap (compare screen performance)
-- Daily aggregation table (content_analytics_daily) for performance
-- Proof of play reports with CSV export
-- Real-time analytics dashboard (WebSocket updates)
+- @smastrom/react-rating integration
+- `template_reviews` table with RLS policies
+- Verify `clone_template_to_scene` RPC uses correct tenant context (`auth.uid()` not template creator)
+- Test: install template while impersonating client (verify scene owned by client)
+- Test: install same template from two tenants (verify no cross-contamination)
+- Template rating/review CRUD in marketplaceService.js
 
-**Addresses:** Must-have and should-have analytics from FEATURES.md
-**Uses:** Existing playback_events table from migration 079
-**Database changes:** Add completion_percent column, create content_analytics_daily table
+**Addresses:** Template ratings (table stakes), tenant isolation pitfall (PITFALLS.md critical #3)
+**Uses:** @smastrom/react-rating 1.5.0, existing marketplaceService.js
+**Complexity:** LOW - extends existing system
 
-**Research needed:** None - metrics and aggregation patterns in FEATURES.md
+**Research needed:** None - RLS patterns documented in PITFALLS.md
 
-### Phase 10: GDPR Data Export
-**Rationale:** Legal requirement with 30-day response mandate. Must happen before account deletion (users need export before delete). Migration 106 provides foundation but needs generation logic.
-
-**Delivers:**
-- Background function to aggregate all user data (generate_user_data_export)
-- Data sources: profiles, media_assets, playlists, layouts, scenes, schedules, activity_logs, playback_events, consent_records, tv_devices
-- Machine-readable JSON format
-- Self-service data portal UI
-- 7-day download expiration
-- Export status tracking (pending, processing, completed)
-
-**Addresses:** Table stakes GDPR compliance from FEATURES.md
-**Uses:** Existing data_export_requests table from migration 106
-**Complexity:** HIGH - multi-table aggregation, background job
-
-**Research needed:** None - data sources and implementation pattern in FEATURES.md
-
-### Phase 11: GDPR Account Deletion
-**Rationale:** After data export (Phase 10) so users can download before delete. Most complex GDPR requirement due to third-party data and backup resurrection risk.
+### Phase 6: Templates Marketplace - Enhanced Discovery
+**Rationale:** After core marketplace (Phase 5). Improves UX with better browsing, search, preview. Category infrastructure exists.
 
 **Delivers:**
-- Audit of soft vs hard delete (verify current implementation)
-- Cascading deletion order (dependents first)
-- Deleted user IDs log with timestamps (for backup replay)
-- Third-party deletion: Cloudinary, S3, email service
-- Account deletion UI with 30-day grace period confirmation
-- Deletion verification via data subject access request test
-- Backup restoration procedure with erasure replay
+- MarketplacePage.jsx with category sidebar, search, rating filters
+- TemplateCard.jsx for grid view
+- TemplateDetailModal.jsx with full-size preview, rating display, install button
+- Template preview using existing Polotno editor rendering
+- Featured templates widget on dashboard (uses existing `is_featured` flag)
+- Rating aggregation (avg_rating, review_count on template_library)
 
-**Addresses:** Table stakes GDPR compliance + critical pitfall from PITFALLS.md
-**Uses:** Existing account_deletion_requests table from migration 106
-**Avoids:** Backups restoring deleted data (PITFALLS.md critical #2), soft delete not satisfying GDPR (PITFALLS.md critical), incomplete data discovery (PITFALLS.md moderate), third-party data not deleted (PITFALLS.md moderate)
+**Addresses:** Table stakes category browsing, search, preview
+**Uses:** Existing template_categories table, Polotno editor
+**Complexity:** MEDIUM - new UI components
 
-**Research needed:** None - complete data map and deletion patterns in FEATURES.md and PITFALLS.md
+**Research needed:** None - UI patterns documented in V2_ARCHITECTURE.md
 
-### Phase 12: Content Approval Workflow
-**Rationale:** Most complex feature due to notification system dependency. Migration 027 provides foundation but needs complete UI implementation and email provider. Saved for last after stabilization and GDPR compliance complete.
+### Phase 7: Templates Marketplace - Submission Workflow
+**Rationale:** After marketplace browsing (Phase 6). User submissions add moderation complexity. Similar to existing content approval workflow.
 
 **Delivers:**
-- Submit content for approval (status change + review_request creation)
-- Approval queue UI for reviewers (filter by type/status)
-- Approve/reject with comment (review_comments)
-- Email notification on submit/approve/reject
-- Preview link generation (existing SECURITY DEFINER functions)
-- Approval expiration (expires_at on review_requests)
-- Bulk approval actions (batch update endpoint)
-- State machine validation (draft → in_review → approved/rejected → published)
+- `template_submissions` table with RLS policies
+- SubmitTemplateModal.jsx in Scene Editor ("Submit as Template" button)
+- Admin approval UI (review submissions, approve/reject with notes)
+- Copy scene/slides to template_library on approval
+- Template versioning support (store `source_template_id`, `source_template_version`)
+- "Update available" notification for installed templates
 
-**Addresses:** Table stakes approval workflow from FEATURES.md
-**Uses:** Existing review_requests, review_comments, preview_links tables from migration 027
-**Dependencies:** Email provider setup (shared with GDPR, analytics scheduled reports)
-**Complexity:** HIGH - UI + backend + notifications
+**Addresses:** User template submissions (competitive), versioning pitfall (PITFALLS.md moderate)
+**Uses:** Existing approval workflow patterns from v1
+**Complexity:** MEDIUM - approval flow, version tracking
 
-**Research needed:** None - state machine pattern and implementation in FEATURES.md
+**Research needed:** None - patterns documented in FEATURES.md
+
+### Phase 8: Multi-Language Content - Schema & Core Logic
+**Rationale:** After templates (independent). Highest architectural complexity. Requires careful design for cache management and fallback handling.
+
+**Delivers:**
+- `scene_slide_translations` table with RLS policies (stores JSON path overrides)
+- `playlist_item_translations` table
+- `display_locale` column on `tv_devices` and `screen_groups`
+- translationService.js for translation CRUD
+- Translation merge strategy (lodash.set for JSON path overrides)
+- Translation fallback logic (missing → default language → original value)
+- Cache management strategy (device locale + fallback, LRU eviction)
+
+**Addresses:** Content language variants (table stakes), cache explosion pitfall (PITFALLS.md critical #2), translation fallback pitfall (PITFALLS.md critical #4)
+**Uses:** Existing lodash for JSON path manipulation, design_json structure
+**Complexity:** HIGH - new pattern, player integration
+
+**Research needed:** None - translation patterns documented in V2_ARCHITECTURE.md
+
+### Phase 9: Multi-Language Content - Editor & UI
+**Rationale:** After schema/logic (Phase 8). Builds UI for translation management on solid foundation.
+
+**Delivers:**
+- LocaleSwitcher component in scene editor toolbar
+- TranslationPanel side panel for editing translations
+- TranslationBadge showing translation status ("es: 80% translated")
+- Device language settings UI (device detail page)
+- Screen group language assignment (inherit to devices)
+- Bulk language management dashboard (translation status across all content)
+
+**Addresses:** CMS language selector, language indicator, bulk management (table stakes)
+**Uses:** Existing i18nConfig.js locale definitions
+**Integrates with:** LanguageController component from Phase 1
+**Complexity:** MEDIUM - new UI components
+
+**Research needed:** None - UI patterns documented in V2_ARCHITECTURE.md
+
+### Phase 10: Multi-Language Content - Player Integration
+**Rationale:** After editor (Phase 9). Player changes are highest risk due to offline complexity.
+
+**Delivers:**
+- Update `get_resolved_player_content()` with translation merge logic
+- Locale resolution for devices (device.display_locale or group.display_locale)
+- Offline cache updates (cache device locale + fallback)
+- Cache size monitoring (diagnostic showing cache usage by language)
+- Language sync handling (visual indicator for content vs device language mismatch)
+- Testing across locales (verify merge logic, fallback, offline behavior)
+
+**Addresses:** Player content resolution, language sync race condition pitfall (PITFALLS.md moderate)
+**Uses:** LanguageController component, existing offlineService.js
+**Complexity:** HIGH - offline cache complexity, careful testing needed
+
+**Research needed:** None - player integration documented in V2_ARCHITECTURE.md
+
+### Phase 11: Platform Polish - Mobile Responsive Admin
+**Rationale:** Independent of core features. Improves UX for mobile device management. Can be implemented in parallel with other phases.
+
+**Delivers:**
+- Mobile-responsive navigation (hamburger menu, bottom nav)
+- Touch-optimized controls (larger tap targets, swipe gestures)
+- Mobile-optimized tables (card view, horizontal scroll)
+- Mobile scene editor (simplified controls, preview mode)
+- Mobile dashboard (widget grid, pull-to-refresh)
+
+**Addresses:** Platform polish goal from v2 target features
+**Uses:** Existing Tailwind responsive utilities
+**Complexity:** MEDIUM - responsive design patterns
+
+**Research needed:** Minimal - responsive patterns well-documented
+
+### Phase 12: Platform Polish - Onboarding & Dashboard
+**Rationale:** After core features complete. Improves first-time user experience and daily usage.
+
+**Delivers:**
+- Onboarding wizard (account setup, first device pairing, first content)
+- Template starter packs on onboarding (use existing `apply_pack_template` RPC)
+- Dashboard redesign (activity feed, quick actions, template suggestions)
+- Smart template suggestions (based on `business_type` from onboarding)
+- Welcome tour (product walkthrough for new users)
+
+**Addresses:** Platform polish goal, starter packs (competitive feature)
+**Uses:** Existing templates infrastructure
+**Complexity:** MEDIUM - new user flows
+
+**Research needed:** Minimal - onboarding patterns well-documented
 
 ### Phase Ordering Rationale
 
 **Dependency-driven sequence:**
-- Testing (Phase 1) must precede refactoring (Phases 6-7) - no test coverage makes all changes high-risk
-- Logging (Phase 3) must precede retry logic (Phase 4) and rate limiting (Phase 5) - observability needed to debug issues
-- Retry logic (Phase 4) must precede rate limiting (Phase 5) - need proper 429 handling
-- Data export (Phase 10) must precede deletion (Phase 11) - users need export before delete
-- Stabilization (Phases 1-7) before new features (Phases 8-12) - foundation must be solid
+- Player splitting (Phase 1) must precede ALL feature work - cannot add to 2775-line monolith
+- Scheduling phases sequential (2 → 3 → 4) - core infrastructure before campaigns before polish
+- Templates phases sequential (5 → 6 → 7) - ratings before discovery before submissions
+- Multi-language phases sequential (8 → 9 → 10) - schema before editor before player
+- Platform polish phases (11-12) independent, can run in parallel
 
 **Risk mitigation:**
-- XSS (Phase 2) early as quick security win while tests being written
-- Player refactoring (Phase 6) only after tests, logging, retry/offline hardened
-- GDPR (Phases 10-11) before approval workflow (Phase 12) - legal requirements take priority
+- Lowest risk first: Scheduling extends existing, Templates enhances existing, Multi-Language new pattern
+- DST handling early (Phase 2) - critical pitfall, affects all scheduling features
+- Tenant isolation verification early (Phase 5) - critical security concern
+- Player integration last (Phase 10) - highest complexity, offline testing needed
 
-**Complexity graduation:**
-- Start with isolated changes (XSS, logging, device pairing)
-- Progress to system-wide changes (retry, rate limiting, refactoring)
-- End with feature completion (analytics, GDPR, approvals)
+**Architecture-driven grouping:**
+- Scheduling phases grouped (all campaign-related)
+- Templates phases grouped (all marketplace-related)
+- Multi-language phases grouped (all translation-related)
+- Each group delivers value incrementally
+
+**Value delivery:**
+- Phase 2-4: Complete advanced scheduling feature set
+- Phase 5-7: Complete templates marketplace feature set
+- Phase 8-10: Complete multi-language content feature set
+- Phase 11-12: Platform polish improvements
 
 ### Research Flags
 
 **Phases with standard patterns (skip /gsd:research-phase):**
-- **Phase 1 (Testing):** Vitest + Playwright infrastructure exists, React Testing Library patterns well-documented
-- **Phase 2 (XSS):** DOMPurify usage straightforward, OWASP guidance clear
-- **Phase 3 (Logging):** loggingService.js exists, migration is find/replace pattern
-- **Phase 6-7 (Refactoring):** Custom hook extraction is standard React pattern, documented in ARCHITECTURE.md
-- **Phase 8 (QR/Kiosk):** QR code generation exists, kiosk patterns from MDM providers
+- **Phase 1 (Player Splitting):** React custom hook extraction well-documented, Strangler Fig pattern from v1
+- **Phase 2-4 (Scheduling):** date-fns-tz usage clear, campaign patterns documented
+- **Phase 5-7 (Templates):** RLS patterns established, marketplace UX patterns clear
+- **Phase 8-10 (Multi-Language):** Translation table pattern documented, i18n fallback principles clear
+- **Phase 11-12 (Polish):** Responsive design and onboarding patterns well-documented
 
 **Phases needing validation during planning:**
-- **Phase 5 (Rate Limiting):** Supabase Edge Functions deployment - verify Upstash Redis setup, test Edge Function with read/write operations
-- **Phase 10 (GDPR Export):** Background job infrastructure - verify Supabase Functions support for long-running jobs, test multi-table aggregation performance
-- **Phase 11 (GDPR Deletion):** Third-party API integration - verify Cloudinary/S3 deletion APIs, test backup restoration with erasure replay
-- **Phase 12 (Approvals):** Email provider selection - evaluate SendGrid vs AWS SES vs Resend, test notification delivery reliability
+- **Phase 2:** @date-fns/tz integration - verify date-fns v4.1.0 compatibility, test DST transition handling for specific timezones (America/New_York spring-forward, fall-back)
+- **Phase 8:** Translation cache strategy - benchmark cache size growth with multiple languages, test LRU eviction on actual player devices (Tizen/WebOS storage limits)
+- **Phase 10:** Player merge logic - extensive testing needed for offline scenarios, translation fallback, cache invalidation
+
+**No deep research needed:** Existing architecture analysis, domain research, and library documentation provide sufficient guidance for all phases.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Existing infrastructure verified by code review, library versions checked against npm 2026-01-22 |
-| Features | HIGH | Database migrations reviewed (027, 079, 106), industry standards verified with competitor analysis |
-| Architecture | HIGH | Codebase analyzed, component boundaries identified, React patterns verified with official docs |
-| Pitfalls | HIGH | Specific to codebase (Player.jsx lines 109-118, 197 console.log locations), verified with production stabilization patterns |
+| Stack | HIGH | Minimal new dependencies (@date-fns/tz, @smastrom/react-rating), existing stack handles most needs, versions verified 2026-01-24 |
+| Features | HIGH | Industry research from Yodeck, ScreenCloud, Xibo, existing BizScreen infrastructure verified from migrations 080, 074, 041 |
+| Architecture | HIGH | Translation table pattern sound, campaign extension clear, player integration points identified from codebase analysis |
+| Pitfalls | HIGH | BizScreen-specific (DST from CONCERNS.md, cache explosion from offlineService.js, tenant isolation from RLS patterns), domain-specific (marketplace moderation, language fallback) |
 
 **Overall confidence:** HIGH
 
-Research based on actual codebase analysis, not theoretical patterns. All library versions verified current. Database migrations examined for existing foundations. Component line counts and specific code locations identified. Industry practices cross-referenced with multiple digital signage providers (OptiSigns, Signagelive, ScreenCloud, AIScreen, DISPL, Navori).
+Research based on actual codebase analysis (migrations 080, 074, 041 reviewed), existing infrastructure verified (marketplaceService.js, scheduleService.js, i18nConfig.js examined), library compatibility confirmed (@date-fns/tz with date-fns v4.1.0, @smastrom/react-rating zero dependencies), industry practices cross-referenced (Yodeck 400+ templates, ScreenCloud multi-language, Xibo priority scheduling), Player.jsx impact assessed (current 2775 lines, component boundaries identified).
 
 ### Gaps to Address
 
 **During planning/execution:**
 
-- **Test coverage baseline:** Establish current coverage metrics before Phase 1, set target thresholds (minimum 80% for Player.jsx critical paths)
-- **Email provider selection:** Choose between SendGrid, AWS SES, Resend before Phase 12 - evaluate deliverability, pricing, multi-tenant isolation
-- **Backup restoration procedure:** Document current backup/restore process before Phase 11, test erasure log replay in staging
-- **Edge Functions quota:** Verify Supabase plan supports Edge Functions + Upstash Redis before Phase 5, check rate limit dimensions supported
-- **Third-party audit:** Inventory all external data processors before Phase 11 (confirmed: Cloudinary, S3, check for analytics services)
-- **Performance baselines:** Profile Player.jsx before Phase 3 (logging) and Phase 6 (refactoring) - establish frame rate and memory benchmarks
-- **Multi-tenant isolation:** Verify rate limiting and GDPR operations properly scope to tenant_id, test cross-tenant data leak scenarios
+- **Cache size benchmarking:** Measure actual cache growth with 2-3 language variants before Phase 8, test on target devices (Tizen, WebOS) to establish cache limits
+- **DST transition testing:** Add integration tests for specific DST transition dates (2026-03-08 spring-forward, 2026-11-01 fall-back) during Phase 2, verify skip/double-play handling
+- **Tenant isolation verification:** Comprehensive cross-tenant testing during Phase 5 (install template as Tenant A, verify no access from Tenant B), admin impersonation test (verify correct owner_id)
+- **Translation completeness thresholds:** Define "critical translation" fields during Phase 8 (e.g., main heading required, footer text optional), establish completeness percentage for publish gate
+- **Player.jsx refactoring validation:** Establish offline capability tests before Phase 1 (pairing flow, playlist playback, offline fallback), run after every extraction to verify no regression
+- **Campaign priority resolution:** Test real-time priority changes during Phase 3 (change campaign priority mid-playback), verify content boundary queueing works
+- **Template versioning policy:** Document update notification behavior during Phase 7 (when to notify, how to handle breaking changes), establish version numbering scheme
 
-**No blockers identified:** All gaps are execution details, not fundamental unknowns. Research provides sufficient direction for roadmap creation.
+**No blockers identified:** All gaps are execution details, not fundamental unknowns. Research provides clear direction for v2 roadmap creation. v1 completion provides testing infrastructure, logging foundation, and component patterns to build upon.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- **Codebase analysis:** Player.jsx (3,476 lines), ScreensPage.jsx (~1,900 lines), MediaLibraryPage.jsx (~2,500 lines), existing services (loggingService.js, offlineService.js, cacheService.js, gdprService.js)
-- **Database migrations:** 027 (approval workflow), 079 (playback analytics), 106 (GDPR compliance)
-- **Official documentation:** React 19 docs, Supabase docs (rate limits, Edge Functions, DPA), OWASP XSS prevention, GDPR Article 17
-- **Package verification:** npm registry for DOMPurify 3.3.1, p-retry 7.1.0, fetch-retry 6.0.0, lodash 4.17.21 (all verified 2026-01-22)
+
+**Codebase analysis:**
+- `/Users/massimodamico/bizscreen/supabase/migrations/080_template_marketplace.sql` - template_library, template_library_slides, template_categories tables
+- `/Users/massimodamico/bizscreen/supabase/migrations/074_scene_scheduling.sql` - schedules, schedule_entries tables
+- `/Users/massimodamico/bizscreen/supabase/migrations/041_internationalization_locale_preferences.sql` - profiles.preferred_locale
+- `/Users/massimodamico/bizscreen/src/services/marketplaceService.js` - template CRUD, clone_template_to_scene RPC
+- `/Users/massimodamico/bizscreen/src/services/scheduleService.js` - getWeekPreview, priority resolution
+- `/Users/massimodamico/bizscreen/src/i18n/i18nConfig.js` - 6 locales (en, es, pt, it, fr, de)
+- `/Users/massimodamico/bizscreen/src/services/offlineService.js` - cache management, OFFLINE_CONFIG
+- CONCERNS.md - "Edge case: daylight saving time transitions" flagged
+- PROJECT.md - "Player.jsx at 2775 lines (hooks extracted, component splitting deferred)"
+
+**Official documentation:**
+- [date-fns v4 with Time Zone Support](https://blog.date-fns.org/v40-with-time-zone-support/) - @date-fns/tz official announcement
+- [@date-fns/tz GitHub](https://github.com/date-fns/tz) - Package documentation
+- [@smastrom/react-rating GitHub](https://github.com/smastrom/react-rating) - Zero-dependency React rating component
+- [npm package verification](https://www.npmjs.com/) - @date-fns/tz 1.2.0, @smastrom/react-rating 1.5.0 (verified 2026-01-24)
 
 ### Secondary (MEDIUM confidence)
-- **Industry standards:** OptiSigns, Signagelive, ScreenCloud (approval workflows), AIScreen, DISPL, Navori (analytics metrics), Hexnode, Samsung Knox (kiosk patterns)
-- **Production patterns:** AWS Builders Library (retry with jitter), Shopify Engineering (Strangler Fig), Better Stack (logging best practices)
-- **GDPR compliance:** Microsoft GDPR DSR guide, GDPR4SaaS deletion requirements, Intuiface digital signage GDPR
+
+**Industry standards:**
+- [Yodeck Digital Signage](https://www.yodeck.com/) - 400+ templates, Canva integration
+- [ScreenCloud Multilingual](https://screencloud.com/digital-signage/multilingual) - Language assignment patterns
+- [Xibo Priority and Display Order](https://account.xibosignage.com/manual/en/scheduling_priority_display_order) - Priority scheduling documentation
+- [NowSignage Content Scheduling](https://www.nowsignage.com/2024/07/content-scheduling) - Campaign scheduling
+- [MetroClick Multi-Language Support](https://www.metroclick.com/digital-signage/software/implementing-multi-language-support-in-digital-signage-software/) - Technical considerations
+- [Fugo Multi-Language Support](https://www.fugo.ai/wiki/localized-multi-language-support/) - Cultural adaptation
+
+**Technical patterns:**
+- [react-big-calendar React 19 Issue #2701](https://github.com/jquense/react-big-calendar/issues/2701) - Compatibility problems
+- [PWA Service Worker Caching Strategies](https://www.magicbell.com/blog/offline-first-pwas-service-worker-caching-strategies) - Offline caching
+- [i18next Fallback Principles](https://www.i18next.com/principles/fallback) - Translation fallback
+- [Rails DST Handling](https://medium.com/@kabirpathak99/understanding-daylight-saving-time-dst-and-how-rails-handles-it-be218bb1ecd8) - DST patterns
+- [Supabase RLS Multi-Tenant](https://dev.to/blackie360/-enforcing-row-level-security-in-supabase-a-deep-dive-into-lockins-multi-tenant-architecture-4hd2) - Tenant isolation
 
 ### Tertiary (LOW confidence - already validated)
 - None - all sources cross-referenced and verified
 
 ---
-*Research completed: 2026-01-22*
+*Research completed: 2026-01-24*
 *Ready for roadmap: yes*
