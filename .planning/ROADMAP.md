@@ -34,12 +34,12 @@ BizScreen v2 delivers three major feature sets (Templates Marketplace, Multi-Lan
   2. All services emit structured logs (100% coverage, up from 62%)
   3. useCampaignEditor test passes reliably on 10 consecutive runs
   4. Offline playback works identically before and after refactoring
-**Plans**: TBD
+**Plans**: 3 plans (Wave 1 - all parallel)
 
 Plans:
-- [ ] 13-01: Player.jsx component extraction
-- [ ] 13-02: Structured logging migration
-- [ ] 13-03: Flaky test investigation and fix
+- [ ] 13-01-PLAN.md - Player.jsx component extraction (SceneRenderer, LayoutRenderer, ZonePlayer, AppRenderer)
+- [ ] 13-02-PLAN.md - Structured logging migration (37 services)
+- [ ] 13-03-PLAN.md - Flaky test hardening (useCampaignEditor async fixes)
 
 ### Phase 14: Scheduling Core
 **Goal**: Users can schedule content with date ranges and priorities, see conflicts and weekly preview
@@ -219,7 +219,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 13. Technical Foundation | 0/3 | Not started | - |
+| 13. Technical Foundation | 0/3 | Planned | - |
 | 14. Scheduling Core | 0/3 | Not started | - |
 | 15. Scheduling Campaigns | 0/3 | Not started | - |
 | 16. Scheduling Polish | 0/3 | Not started | - |
@@ -235,3 +235,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Roadmap created: 2026-01-24*
 *v2 phases: 11 (Phases 13-23)*
 *v2 requirements: 49 mapped*
+*Phase 13 planned: 2026-01-24*
