@@ -4,6 +4,7 @@ import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
 import { requiresApproval } from './permissionsService.js';
 import { APPROVAL_STATUS } from './approvalService.js';
 import { createScopedLogger } from './loggingService';
+import { TZDate } from '@date-fns/tz';
 
 const logger = createScopedLogger('ScheduleService');
 
@@ -790,8 +791,9 @@ export async function checkEntryConflicts(scheduleId, entryData, excludeEntryId 
 export async function getWeekPreview(scheduleId, weekStartDate) {
   if (!scheduleId) throw new Error('Schedule ID is required');
 
-  // Parse the start date
-  const startDate = new Date(weekStartDate);
+  // Use TZDate for DST-safe date calculations
+  // Default to UTC if no timezone provided, actual device timezone used at playback
+  const startDate = new TZDate(weekStartDate, 'UTC');
   const weekDays = [];
 
   // Fetch schedule with entries and filler
@@ -890,8 +892,8 @@ export async function getWeekPreview(scheduleId, weekStartDate) {
 
   // Build 7 days
   for (let i = 0; i < 7; i++) {
-    const date = new Date(startDate);
-    date.setDate(startDate.getDate() + i);
+    // Use TZDate for DST-safe day increments
+    const date = new TZDate(startDate.getTime() + i * 24 * 60 * 60 * 1000, 'UTC');
     const dayOfWeek = date.getDay(); // 0=Sunday, 1=Monday, etc.
     const dateStr = date.toISOString().split('T')[0];
 
