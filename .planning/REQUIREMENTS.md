@@ -131,63 +131,63 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TMPL-01 | TBD | Pending |
-| TMPL-02 | TBD | Pending |
-| TMPL-03 | TBD | Pending |
-| TMPL-04 | TBD | Pending |
-| TMPL-05 | TBD | Pending |
-| TMPL-06 | TBD | Pending |
-| TMPL-07 | TBD | Pending |
-| TMPL-08 | TBD | Pending |
-| TMPL-09 | TBD | Pending |
-| TMPL-10 | TBD | Pending |
-| TMPL-11 | TBD | Pending |
-| TMPL-12 | TBD | Pending |
-| TMPL-13 | TBD | Pending |
-| LANG-01 | TBD | Pending |
-| LANG-02 | TBD | Pending |
-| LANG-03 | TBD | Pending |
-| LANG-04 | TBD | Pending |
-| LANG-05 | TBD | Pending |
-| LANG-06 | TBD | Pending |
-| LANG-07 | TBD | Pending |
-| LANG-08 | TBD | Pending |
-| LANG-09 | TBD | Pending |
-| LANG-10 | TBD | Pending |
-| SCHED-01 | TBD | Pending |
-| SCHED-02 | TBD | Pending |
-| SCHED-03 | TBD | Pending |
-| SCHED-04 | TBD | Pending |
-| SCHED-05 | TBD | Pending |
-| SCHED-06 | TBD | Pending |
-| SCHED-07 | TBD | Pending |
-| SCHED-08 | TBD | Pending |
-| SCHED-09 | TBD | Pending |
-| SCHED-10 | TBD | Pending |
-| SCHED-11 | TBD | Pending |
-| SCHED-12 | TBD | Pending |
-| MOBIL-01 | TBD | Pending |
-| MOBIL-02 | TBD | Pending |
-| MOBIL-03 | TBD | Pending |
-| MOBIL-04 | TBD | Pending |
-| ONBRD-01 | TBD | Pending |
-| ONBRD-02 | TBD | Pending |
-| ONBRD-03 | TBD | Pending |
-| ONBRD-04 | TBD | Pending |
-| DASH-01 | TBD | Pending |
-| DASH-02 | TBD | Pending |
-| DASH-03 | TBD | Pending |
-| DASH-04 | TBD | Pending |
-| TECH-01 | TBD | Pending |
-| TECH-02 | TBD | Pending |
-| TECH-03 | TBD | Pending |
-| TECH-04 | TBD | Pending |
+| TECH-01 | Phase 13 | Pending |
+| TECH-02 | Phase 13 | Pending |
+| TECH-03 | Phase 13 | Pending |
+| SCHED-01 | Phase 14 | Pending |
+| SCHED-02 | Phase 14 | Pending |
+| SCHED-03 | Phase 14 | Pending |
+| SCHED-04 | Phase 14 | Pending |
+| SCHED-05 | Phase 15 | Pending |
+| SCHED-06 | Phase 15 | Pending |
+| SCHED-07 | Phase 15 | Pending |
+| SCHED-08 | Phase 16 | Pending |
+| SCHED-09 | Phase 16 | Pending |
+| SCHED-10 | Phase 16 | Pending |
+| SCHED-11 | Phase 16 | Pending |
+| SCHED-12 | Phase 16 | Pending |
+| TMPL-01 | Phase 17 | Pending |
+| TMPL-02 | Phase 17 | Pending |
+| TMPL-03 | Phase 17 | Pending |
+| TMPL-04 | Phase 17 | Pending |
+| TMPL-05 | Phase 17 | Pending |
+| TMPL-06 | Phase 17 | Pending |
+| TMPL-07 | Phase 18 | Pending |
+| TMPL-08 | Phase 18 | Pending |
+| TMPL-09 | Phase 18 | Pending |
+| TMPL-10 | Phase 18 | Pending |
+| TMPL-11 | Phase 19 | Pending |
+| TMPL-12 | Phase 19 | Pending |
+| TMPL-13 | Phase 19 | Pending |
+| LANG-01 | Phase 20 | Pending |
+| LANG-02 | Phase 20 | Pending |
+| LANG-03 | Phase 20 | Pending |
+| LANG-04 | Phase 20 | Pending |
+| LANG-05 | Phase 20 | Pending |
+| LANG-06 | Phase 21 | Pending |
+| LANG-07 | Phase 21 | Pending |
+| LANG-08 | Phase 21 | Pending |
+| LANG-09 | Phase 21 | Pending |
+| LANG-10 | Phase 21 | Pending |
+| TECH-04 | Phase 21 | Pending |
+| MOBIL-01 | Phase 22 | Pending |
+| MOBIL-02 | Phase 22 | Pending |
+| MOBIL-03 | Phase 22 | Pending |
+| MOBIL-04 | Phase 22 | Pending |
+| DASH-01 | Phase 22 | Pending |
+| DASH-02 | Phase 22 | Pending |
+| DASH-03 | Phase 22 | Pending |
+| DASH-04 | Phase 22 | Pending |
+| ONBRD-01 | Phase 23 | Pending |
+| ONBRD-02 | Phase 23 | Pending |
+| ONBRD-03 | Phase 23 | Pending |
+| ONBRD-04 | Phase 23 | Pending |
 
 **Coverage:**
 - v2 requirements: 49 total
-- Mapped to phases: 0
-- Unmapped: 49 (pending roadmap creation)
+- Mapped to phases: 49
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-24 after initial definition*
+*Last updated: 2026-01-24 after roadmap creation*
