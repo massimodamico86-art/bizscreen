@@ -607,9 +607,10 @@ describe('useCampaignEditor', () => {
         useCampaignEditor('123', { showToast: mockShowToast })
       );
 
+      // Wait for loading to complete FIRST with explicit timeout
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
-      });
+      }, { timeout: 3000 });
 
       expect(campaignService.getCampaign).toHaveBeenCalledWith('123');
       expect(result.current.campaign.name).toBe('Test Campaign');
@@ -620,12 +621,13 @@ describe('useCampaignEditor', () => {
         useCampaignEditor('new', { showToast: mockShowToast })
       );
 
+      // Wait for picker data to be loaded with explicit timeout
+      // For new campaigns, loading is already false, so we wait for actual data
       await waitFor(() => {
-        expect(result.current.playlists).toBeDefined();
-      });
+        expect(result.current.playlists).toHaveLength(1);
+      }, { timeout: 3000 });
 
-      // Picker data should be loaded
-      expect(result.current.playlists).toHaveLength(1);
+      // Verify all picker data
       expect(result.current.layouts).toHaveLength(1);
     });
   });
