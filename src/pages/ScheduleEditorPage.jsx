@@ -998,54 +998,28 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Event Starts */}
+                {/* Date and Time Selection (SCHED-01) */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Starts</label>
-                  <div className="flex gap-2">
-                    <div className="flex-1 relative">
-                      <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                      <input
-                        type="date"
-                        value={eventForm.startDate}
-                        onChange={(e) => setEventForm(prev => ({ ...prev, startDate: e.target.value }))}
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
-                      />
-                    </div>
-                    <div className="w-32 relative">
-                      <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                      <input
-                        type="time"
-                        value={eventForm.startTime}
-                        onChange={(e) => setEventForm(prev => ({ ...prev, startTime: e.target.value }))}
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Event Ends */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Ends</label>
-                  <div className="flex gap-2">
-                    <div className="flex-1 relative">
-                      <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                      <input
-                        type="date"
-                        value={eventForm.endDate}
-                        onChange={(e) => setEventForm(prev => ({ ...prev, endDate: e.target.value }))}
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
-                      />
-                    </div>
-                    <div className="w-32 relative">
-                      <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                      <input
-                        type="time"
-                        value={eventForm.endTime}
-                        onChange={(e) => setEventForm(prev => ({ ...prev, endTime: e.target.value }))}
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f26f21] focus:border-[#f26f21]"
-                      />
-                    </div>
-                  </div>
+                  <DateDurationPicker
+                    startDate={eventForm.startDate ? new Date(eventForm.startDate + 'T00:00:00') : null}
+                    endDate={eventForm.endDate ? new Date(eventForm.endDate + 'T00:00:00') : null}
+                    startTime={eventForm.startTime}
+                    endTime={eventForm.endTime}
+                    onChange={({ startDate, endDate, startTime, endTime }) => {
+                      setEventForm(prev => ({
+                        ...prev,
+                        startDate: startDate
+                          ? `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`
+                          : prev.startDate,
+                        endDate: endDate
+                          ? `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`
+                          : prev.endDate,
+                        startTime: startTime || prev.startTime,
+                        endTime: endTime || prev.endTime
+                      }));
+                    }}
+                    timezone="Device Local"
+                  />
                 </div>
               </div>
 
