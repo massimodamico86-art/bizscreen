@@ -18,7 +18,6 @@ import { useState, useMemo, useCallback } from 'react';
 import {
   format,
   addDays,
-  addWeeks,
   addMonths,
   startOfWeek,
   endOfWeek,

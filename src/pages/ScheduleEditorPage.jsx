@@ -32,7 +32,16 @@ import { supabase } from '../supabase';
 import { Button, Card, Badge } from '../design-system';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
-import { FillerContentPicker, ConflictWarning, WeekPreview, AssignScreensModal } from '../components/schedules';
+import {
+  FillerContentPicker,
+  ConflictWarning,
+  WeekPreview,
+  AssignScreensModal,
+  DateDurationPicker,
+  PriorityBadge,
+  PRIORITY_LEVELS,
+  DEFAULT_PRIORITY
+} from '../components/schedules';
 import { requiresApproval } from '../services/permissionsService.js';
 import { APPROVAL_STATUS, getApprovalStatusConfig } from '../services/approvalService.js';
 
@@ -145,7 +154,8 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
     repeatUnit: 'day',
     repeatUntil: 'forever',
     repeatUntilDate: '',
-    repeatUntilCount: 10
+    repeatUntilCount: 10,
+    priority: DEFAULT_PRIORITY // Normal (3) by default (SCHED-02)
   });
 
   // Conflict detection state (US-144)
@@ -298,7 +308,7 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       // Refresh week preview
       setWeekPreviewKey(prev => prev + 1);
     } catch (err) {
-      logger.error('Failed to update filler content', { scheduleId, playlistId, error: err });
+      logger.error('Failed to update filler content', { scheduleId, type, id, error: err });
       showToast?.('Error updating filler content: ' + err.message, 'error');
     }
   };
@@ -352,7 +362,8 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       repeatUnit: 'day',
       repeatUntil: 'forever',
       repeatUntilDate: '',
-      repeatUntilCount: 10
+      repeatUntilCount: 10,
+      priority: DEFAULT_PRIORITY // Normal (3) by default
     });
     setShowEventModal(true);
   };
@@ -374,7 +385,8 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       repeatUnit: repeatConfig.repeat_unit || 'day',
       repeatUntil: repeatConfig.repeat_until || 'forever',
       repeatUntilDate: repeatConfig.repeat_until_date || '',
-      repeatUntilCount: repeatConfig.repeat_until_count || 10
+      repeatUntilCount: repeatConfig.repeat_until_count || 10,
+      priority: entry.priority ?? DEFAULT_PRIORITY // Load existing priority or default
     });
     setShowEventModal(true);
   };
@@ -400,6 +412,8 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
         end_time: eventForm.endTime,
         // Event type
         event_type: eventForm.eventType === 'screenOff' ? 'screen_off' : 'content',
+        // Priority (SCHED-02)
+        priority: eventForm.priority,
         // Repeat settings
         repeat_type: eventForm.repeat,
         repeat_every: eventForm.repeatEvery,
@@ -741,8 +755,15 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm text-gray-900 truncate">
-                            {entry.event_type === 'screen_off' ? 'Screen Off' : (entry.target?.name || 'No content')}
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm text-gray-900 truncate">
+                              {entry.event_type === 'screen_off' ? 'Screen Off' : (entry.target?.name || 'No content')}
+                            </span>
+                            <PriorityBadge
+                              priority={entry.priority ?? DEFAULT_PRIORITY}
+                              size="sm"
+                              showLabel={false}
+                            />
                           </div>
                           <div className="text-xs text-gray-500 mt-0.5">
                             {formatTime12(entry.start_time)} - {formatTime12(entry.end_time)}
@@ -901,6 +922,21 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
                     )}
                   </div>
                 )}
+
+                {/* Priority selector (SCHED-02) */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                  <div className="flex items-center gap-3">
+                    <PriorityBadge
+                      priority={eventForm.priority}
+                      onChange={(newPriority) => setEventForm(prev => ({ ...prev, priority: newPriority }))}
+                      size="md"
+                    />
+                    <span className="text-xs text-gray-500">
+                      Higher priority events display over lower priority during overlaps
+                    </span>
+                  </div>
+                </div>
 
                 {/* Event Starts */}
                 <div className="mb-4">
