@@ -51,12 +51,14 @@ Plans:
   3. System blocks saving when schedule entries overlap on same device
   4. User can view 7-day visual preview of scheduled content with drag-drop
   5. DST transitions handled correctly (no double-plays or skips)
-**Plans**: 3 plans (Wave 1: 14-01, Wave 2: 14-02, 14-03 parallel)
+**Plans**: 5 plans (Wave 1: 14-01, Wave 2: 14-02, 14-03 parallel, Wave 3: 14-04, 14-05 gap closure parallel)
 
 Plans:
-- [ ] 14-01-PLAN.md - Date range and priority components (DateDurationPicker, PriorityBadge)
-- [ ] 14-02-PLAN.md - Enhanced conflict detection (blocking saves, device info)
-- [ ] 14-03-PLAN.md - Interactive week preview (drag-drop, resize, thumbnails)
+- [x] 14-01-PLAN.md - Date range and priority components (DateDurationPicker, PriorityBadge)
+- [x] 14-02-PLAN.md - Enhanced conflict detection (blocking saves, device info)
+- [x] 14-03-PLAN.md - Interactive week preview (drag-drop, resize, thumbnails)
+- [ ] 14-04-PLAN.md - [Gap Closure] Wire DateDurationPicker in event modal
+- [ ] 14-05-PLAN.md - [Gap Closure] Integrate @date-fns/tz for DST handling
 
 ### Phase 15: Scheduling Campaigns
 **Goal**: Users can group schedule entries into campaigns and push emergency content
@@ -220,7 +222,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 13. Technical Foundation | 3/3 | Complete | 2026-01-24 |
-| 14. Scheduling Core | 0/3 | Planned | - |
+| 14. Scheduling Core | 3/5 | Gap closure | - |
 | 15. Scheduling Campaigns | 0/3 | Not started | - |
 | 16. Scheduling Polish | 0/3 | Not started | - |
 | 17. Templates Core | 0/3 | Not started | - |
@@ -237,3 +239,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *v2 requirements: 49 mapped*
 *Phase 13 planned: 2026-01-24*
 *Phase 14 planned: 2026-01-24*
+*Phase 14 gap closure: 2026-01-25*
