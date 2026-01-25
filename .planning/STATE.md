@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 14 of 23 (Scheduling Core)
-Plan: 3 of 3 complete
+Plan: 5 of 5 complete (including 2 gap closure plans)
 Status: Phase complete
-Last activity: 2026-01-25 - Completed 14-03-PLAN.md (Interactive Week Preview)
+Last activity: 2026-01-25 - Completed 14-05-PLAN.md (DST-Safe Date Handling)
 
-Progress: [█████░░░░░] 18% (6/32 plans)
+Progress: [██████░░░░] 22% (8/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6 (v2)
-- Average duration: 5.5min
-- Total execution time: 33min
+- Total plans completed: 8 (v2)
+- Average duration: 4.6min
+- Total execution time: 37min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 13-technical-foundation | 3 | 22min | 7min |
-| 14-scheduling-core | 3 | 11min | 3.7min |
+| 14-scheduling-core | 5 | 15min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 13-02 (8min), 14-01 (6min), 14-02 (2min), 14-03 (3min)
+- Last 5 plans: 14-01 (6min), 14-02 (2min), 14-03 (3min), 14-04 (2min), 14-05 (2min)
 - Trend: Accelerating
 
 *Updated after each plan completion*
@@ -57,6 +57,8 @@ Recent decisions affecting current work:
 - [14-02]: All devices assigned to schedule are affected by conflicts in that schedule
 - [14-03]: 32px slot height (h-8), 8px drag activation constraint
 - [14-03]: Optimistic updates with revert on error for drag/resize operations
+- [14-05]: Use TZDate from @date-fns/tz for all schedule date calculations (DST-safe)
+- [14-05]: Default to UTC timezone for internal calculations, device timezone at playback
 
 ### Pending Todos
 
@@ -66,7 +68,7 @@ None yet.
 
 From research - critical pitfalls to address:
 
-- **Phase 14**: DST transitions can cause schedule gaps/double-plays
+- **Phase 14**: ~~DST transitions can cause schedule gaps/double-plays~~ RESOLVED (14-05: TZDate integration)
 - **Phase 17**: Template cloning must use correct tenant context (RLS)
 - **Phase 20**: Offline cache explosion with language variants
 - **Phase 20**: Missing translation fallback can cause blank screens
@@ -78,8 +80,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed Phase 14 (Scheduling Core), ready for Phase 15
+Stopped at: Completed Phase 14 (Scheduling Core) including gap closure plans, ready for Phase 15
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Phase 14 complete (3/3 plans: DateDurationPicker, ConflictWarning, WeekPreview)*
+*Updated: 2026-01-25 - Phase 14 complete (5/5 plans: DateDurationPicker, ConflictWarning, WeekPreview, DateDurationPicker render, DST-safe TZDate)*
