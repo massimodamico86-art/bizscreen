@@ -4,6 +4,10 @@
  * Inline calendar with duration presets for schedule entry date range selection.
  * Implements SCHED-01 requirements: start date + duration approach.
  *
+ * Uses @date-fns/tz TZDate for DST-safe date calculations.
+ * All internal date operations use UTC timezone to ensure consistent
+ * behavior. Display formatting respects the provided timezone prop.
+ *
  * @example
  * <DateDurationPicker
  *   startDate={new Date()}
@@ -15,6 +19,7 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
+import { TZDate } from '@date-fns/tz';
 import {
   format,
   addDays,
@@ -99,7 +104,8 @@ export function DateDurationPicker({
   // Calculate end date based on duration preset
   const calculateEndDate = useCallback((start, durationValue) => {
     if (!start) return null;
-    const startDateObj = new Date(start);
+    // Use TZDate for DST-safe duration calculations
+    const startDateObj = new TZDate(start, 'UTC');
     const preset = DURATION_PRESETS.find(p => p.value === durationValue);
 
     if (!preset) return null;
