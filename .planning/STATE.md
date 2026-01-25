@@ -5,21 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content (v2: Templates)
-**Current focus:** v2 Templates & Platform Polish — defining requirements
+**Current focus:** v2 Templates & Platform Polish — research paused (rate limit)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: Not started (research paused)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-01-24 — Milestone v2 started
+Status: Research paused — resume after 8pm ET
+Last activity: 2026-01-24 — Research agents hit rate limit
+
+## Resume Instructions
+
+Run `/gsd:new-milestone` after rate limit resets. The workflow will:
+1. Detect existing PROJECT.md with v2 goals
+2. Skip questioning (goals already captured)
+3. Ask about research again
+4. Continue to requirements and roadmap
 
 ## Milestone Summary
 
 **v2 Templates & Platform Polish (in progress)**
 
 Target scope:
-- Templates marketplace
+- Templates marketplace (CORE VALUE)
 - Multi-language content
 - Advanced scheduling
 - Mobile responsive admin
@@ -44,4 +52,4 @@ Target scope:
 
 ---
 
-*Updated: 2026-01-24 — v2 milestone started*
+*Updated: 2026-01-24 — research paused (rate limit)*
