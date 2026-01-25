@@ -13,6 +13,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { DndContext, useSensor, useSensors, PointerSensor, useDroppable, DragOverlay } from '@dnd-kit/core';
+import { TZDate } from '@date-fns/tz';
 import { useLogger } from '../../hooks/useLogger.js';
 import { ChevronLeft, ChevronRight, Calendar, Loader2, Film } from 'lucide-react';
 import { getWeekPreview, formatTime, updateScheduleEntry } from '../../services/scheduleService';
@@ -30,12 +31,12 @@ const SLOT_HEIGHT = 32;
 
 // Get Monday of the week containing the given date
 function getWeekStart(date) {
-  const d = new Date(date);
+  // Use TZDate for DST-safe week start calculation
+  const d = new TZDate(date, 'UTC');
   const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
-  d.setDate(diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
+  const result = new TZDate(d.getFullYear(), d.getMonth(), diff, 0, 0, 0, 0, 'UTC');
+  return result;
 }
 
 // Format date for display
@@ -165,23 +166,21 @@ export function WeekPreview({
 
   // Navigation handlers
   const goToPreviousWeek = () => {
-    const prev = new Date(weekStart);
-    prev.setDate(prev.getDate() - 7);
-    setWeekStart(prev);
+    const prevTime = weekStart.getTime() - 7 * 24 * 60 * 60 * 1000;
+    setWeekStart(new TZDate(prevTime, 'UTC'));
   };
 
   const goToNextWeek = () => {
-    const next = new Date(weekStart);
-    next.setDate(next.getDate() + 7);
-    setWeekStart(next);
+    const nextTime = weekStart.getTime() + 7 * 24 * 60 * 60 * 1000;
+    setWeekStart(new TZDate(nextTime, 'UTC'));
   };
 
   const goToCurrentWeek = () => {
-    setWeekStart(getWeekStart(new Date()));
+    setWeekStart(getWeekStart(new TZDate(Date.now(), 'UTC')));
   };
 
   // Check if current week is selected
-  const isCurrentWeek = getWeekStart(new Date()).getTime() === weekStart.getTime();
+  const isCurrentWeek = getWeekStart(new TZDate(Date.now(), 'UTC')).getTime() === weekStart.getTime();
 
   // Get the active entry being dragged
   const activeEntry = useMemo(() => {
