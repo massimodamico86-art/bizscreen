@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 14 of 23 (Scheduling Core)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-01-25 - Completed 14-01-PLAN.md (Date Range & Priority UI)
+Last activity: 2026-01-25 - Completed 14-02-PLAN.md (Conflict Blocking & Device Info)
 
-Progress: [████░░░░░░] 12% (4/32 plans)
+Progress: [████░░░░░░] 15% (5/32 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4 (v2)
-- Average duration: 7min
-- Total execution time: 28min
+- Total plans completed: 5 (v2)
+- Average duration: 6min
+- Total execution time: 30min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 13-technical-foundation | 3 | 22min | 7min |
-| 14-scheduling-core | 1 | 6min | 6min |
+| 14-scheduling-core | 2 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 13-01 (10min), 13-03 (4min), 13-02 (8min), 14-01 (6min)
-- Trend: Stable
+- Last 5 plans: 13-03 (4min), 13-02 (8min), 14-01 (6min), 14-02 (2min)
+- Trend: Accelerating
 
 *Updated after each plan completion*
 
@@ -53,6 +53,8 @@ Recent decisions affecting current work:
 - [13-01]: Barrel export pattern for player/components/index.js
 - [14-01]: Start date + duration approach for date selection (not calendar range picker)
 - [14-01]: 5 named priority levels: Lowest/Low/Normal/High/Critical (1-5), default: Normal (3)
+- [14-02]: Conflicts block saves completely - no dismiss, must resolve
+- [14-02]: All devices assigned to schedule are affected by conflicts in that schedule
 
 ### Pending Todos
 
@@ -71,15 +73,16 @@ Test infrastructure note:
 - 18-19 pre-existing failing test files in services (unrelated to v2 work)
 - loggingService circular dependency with supabase.js causes industryWizardService test failure
 
-Note for 14-02:
+Note for 14-03:
 - DateDurationPicker created but not yet wired to replace existing date inputs in modal
 - Database may need priority column added to schedule_entries table
+- @dnd-kit packages ready for drag-and-drop week preview
 
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 14-01-PLAN.md, ready for 14-02
+Stopped at: Completed 14-02-PLAN.md, ready for 14-03
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Plan 14-01 complete (DateDurationPicker + PriorityBadge components)*
+*Updated: 2026-01-25 - Plan 14-02 complete (Conflict blocking with device info)*
