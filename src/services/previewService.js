@@ -1,6 +1,9 @@
 // Preview Service - Shareable preview link management
 import { supabase } from '../supabase';
 import { getOpenReviewForResource } from './approvalService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('PreviewService');
 
 /**
  * Resource types that support preview

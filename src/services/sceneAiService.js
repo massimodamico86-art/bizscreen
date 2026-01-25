@@ -15,6 +15,9 @@ import {
   createWidgetBlock,
   normalizeDesign,
 } from './sceneDesignService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('SceneAiService');
 
 // ============================================
 // INDUSTRY-SPECIFIC PRESETS

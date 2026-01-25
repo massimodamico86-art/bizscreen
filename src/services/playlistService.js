@@ -11,6 +11,9 @@ import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
 import { requiresApproval } from './permissionsService.js';
 import { requestApproval, getOpenReviewForResource, APPROVAL_STATUS } from './approvalService.js';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('PlaylistService');
 
 /**
  * @typedef {Object} PlaylistItem

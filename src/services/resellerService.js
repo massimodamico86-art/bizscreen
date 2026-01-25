@@ -7,6 +7,9 @@
  * @module services/resellerService
  */
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('ResellerService');
 
 /**
  * Reseller status values

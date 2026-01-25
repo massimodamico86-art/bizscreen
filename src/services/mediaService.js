@@ -1,6 +1,9 @@
 // Media Asset Service - CRUD operations for media library
 import { supabase } from '../supabase';
 import { checkRateLimit, createRateLimitError } from './rateLimitService.js';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('MediaService');
 
 /**
  * Media asset types

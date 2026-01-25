@@ -15,6 +15,9 @@
 
 import { supabase } from '../supabase';
 import { getEffectiveOwnerId, isImpersonating } from './tenantService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('PermissionsService');
 
 // Cache for member role to avoid repeated queries
 let memberRoleCache = {

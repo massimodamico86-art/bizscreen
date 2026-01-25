@@ -6,6 +6,9 @@
  * @module services/ssoService
  */
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('SsoService');
 
 /**
  * SSO Provider types

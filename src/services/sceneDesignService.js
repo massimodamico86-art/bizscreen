@@ -8,6 +8,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('SceneDesignService');
 
 // ============================================
 // SLIDE CRUD OPERATIONS

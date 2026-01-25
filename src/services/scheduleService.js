@@ -3,6 +3,9 @@ import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
 import { requiresApproval } from './permissionsService.js';
 import { APPROVAL_STATUS } from './approvalService.js';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('ScheduleService');
 
 /**
  * Check if content can be assigned to a schedule

@@ -1,5 +1,8 @@
 // Screen Group Service - CRUD operations for screen groups
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('ScreenGroupService');
 
 /**
  * Fetch all screen groups for the current tenant

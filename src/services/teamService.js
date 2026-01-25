@@ -11,6 +11,9 @@
 import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
 import { clearPermissionsCache } from './permissionsService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('TeamService');
 
 /**
  * Fetch all team members for the current tenant

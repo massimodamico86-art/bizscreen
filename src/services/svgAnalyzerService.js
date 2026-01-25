@@ -9,6 +9,9 @@
  * - Dimensions and orientation
  * - Font styles
  */
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('SvgAnalyzerService');
 
 /**
  * Parse SVG content and extract analyzable features

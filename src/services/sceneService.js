@@ -9,6 +9,9 @@ import { supabase } from '../supabase';
 import { checkRateLimit, createRateLimitError } from './rateLimitService.js';
 import { requiresApproval } from './permissionsService.js';
 import { requestApproval, getOpenReviewForResource, APPROVAL_STATUS } from './approvalService.js';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('SceneService');
 
 /**
  * Create a new scene

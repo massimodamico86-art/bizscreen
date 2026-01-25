@@ -14,6 +14,9 @@
 
 import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('WebhookService');
 
 // Retry configuration
 export const WEBHOOK_RETRY_CONFIG = {

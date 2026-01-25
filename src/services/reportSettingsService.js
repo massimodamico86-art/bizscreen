@@ -6,6 +6,9 @@
 
 import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('ReportSettingsService');
 
 /**
  * Get all report subscriptions for the current tenant

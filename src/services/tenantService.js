@@ -14,6 +14,9 @@
  */
 
 import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService';
+
+const logger = createScopedLogger('TenantService');
 
 // Storage key for impersonation
 const IMPERSONATION_KEY = 'bizscreen_impersonated_client';
