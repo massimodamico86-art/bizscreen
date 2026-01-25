@@ -12,7 +12,7 @@ BizScreen v2 delivers three major feature sets (Templates Marketplace, Multi-Lan
 ## Phases
 
 - [x] **Phase 13: Technical Foundation** - Player.jsx splitting and structured logging completion
-- [ ] **Phase 14: Scheduling Core** - Date ranges, priorities, conflict detection, and week preview
+- [x] **Phase 14: Scheduling Core** - Date ranges, priorities, conflict detection, and week preview
 - [ ] **Phase 15: Scheduling Campaigns** - Campaign grouping, emergency override, and dayparting
 - [ ] **Phase 16: Scheduling Polish** - Analytics, rotation rules, frequency limits, and templates
 - [ ] **Phase 17: Templates Core** - Category browsing, search, preview, and one-click apply
@@ -57,8 +57,8 @@ Plans:
 - [x] 14-01-PLAN.md - Date range and priority components (DateDurationPicker, PriorityBadge)
 - [x] 14-02-PLAN.md - Enhanced conflict detection (blocking saves, device info)
 - [x] 14-03-PLAN.md - Interactive week preview (drag-drop, resize, thumbnails)
-- [ ] 14-04-PLAN.md - [Gap Closure] Wire DateDurationPicker in event modal
-- [ ] 14-05-PLAN.md - [Gap Closure] Integrate @date-fns/tz for DST handling
+- [x] 14-04-PLAN.md - [Gap Closure] Wire DateDurationPicker in event modal
+- [x] 14-05-PLAN.md - [Gap Closure] Integrate @date-fns/tz for DST handling
 
 ### Phase 15: Scheduling Campaigns
 **Goal**: Users can group schedule entries into campaigns and push emergency content
@@ -222,7 +222,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 13. Technical Foundation | 3/3 | Complete | 2026-01-24 |
-| 14. Scheduling Core | 3/5 | Gap closure | - |
+| 14. Scheduling Core | 5/5 | Complete | 2026-01-25 |
 | 15. Scheduling Campaigns | 0/3 | Not started | - |
 | 16. Scheduling Polish | 0/3 | Not started | - |
 | 17. Templates Core | 0/3 | Not started | - |

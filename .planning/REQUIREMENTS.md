@@ -45,10 +45,10 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 ### Advanced Scheduling
 
 **Table Stakes:**
-- [ ] **SCHED-01**: User can schedule content with date range (start/end dates)
-- [ ] **SCHED-02**: User can set priority levels (higher priority overrides lower)
-- [ ] **SCHED-03**: System warns when schedule entries conflict
-- [ ] **SCHED-04**: User can view 7-day visual schedule preview
+- [x] **SCHED-01**: User can schedule content with date range (start/end dates)
+- [x] **SCHED-02**: User can set priority levels (higher priority overrides lower)
+- [x] **SCHED-03**: System warns when schedule entries conflict
+- [x] **SCHED-04**: User can view 7-day visual schedule preview
 - [ ] **SCHED-05**: User can group related schedule entries as a campaign
 - [ ] **SCHED-06**: User can push emergency content that overrides all schedules
 - [ ] **SCHED-07**: User can apply dayparting presets (breakfast/lunch/dinner)
