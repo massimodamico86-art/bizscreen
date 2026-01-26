@@ -16,6 +16,7 @@ import {
   fetchMarketplaceTemplates,
   fetchFeaturedTemplates,
   fetchCategories,
+  fetchStarterPacks,
   installTemplateAsScene,
 } from '../services/marketplaceService';
 import {
@@ -23,6 +24,7 @@ import {
   FeaturedTemplatesRow,
   TemplateGrid,
   TemplatePreviewPanel,
+  StarterPacksRow,
 } from '../components/templates';
 
 export default function TemplateMarketplacePage() {
@@ -32,10 +34,12 @@ export default function TemplateMarketplacePage() {
   // State
   const [templates, setTemplates] = useState([]);
   const [featuredTemplates, setFeaturedTemplates] = useState([]);
+  const [starterPacks, setStarterPacks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [applyingId, setApplyingId] = useState(null);
+  const [applyingPackId, setApplyingPackId] = useState(null);
 
   // Filters from URL
   const categoryId = searchParams.get('category') || '';
@@ -76,6 +80,13 @@ export default function TemplateMarketplacePage() {
     fetchFeaturedTemplates(6)
       .then(setFeaturedTemplates)
       .catch(err => console.error('Failed to load featured templates:', err));
+  }, []);
+
+  // Load starter packs on mount
+  useEffect(() => {
+    fetchStarterPacks()
+      .then(setStarterPacks)
+      .catch(err => console.error('Failed to load starter packs:', err));
   }, []);
 
   // Load templates when filters change
@@ -136,6 +147,29 @@ export default function TemplateMarketplacePage() {
   const handleApplySuccess = (sceneId) => {
     setSelectedTemplate(null);
     navigate(`/scene-editor/${sceneId}`);
+  };
+
+  // Handle applying selected templates from a starter pack
+  const handleApplyPackTemplates = async (pack, selectedTemplates) => {
+    if (selectedTemplates.length === 0) return;
+
+    setApplyingPackId(pack.id);
+    try {
+      // Apply templates sequentially
+      let lastSceneId = null;
+      for (const template of selectedTemplates) {
+        const sceneName = `${template.name} - ${format(new Date(), 'MMM d, yyyy')}`;
+        lastSceneId = await installTemplateAsScene(template.id, sceneName);
+      }
+      // Navigate to the last created scene
+      if (lastSceneId) {
+        navigate(`/scene-editor/${lastSceneId}`);
+      }
+    } catch (err) {
+      console.error('Failed to apply pack templates:', err);
+    } finally {
+      setApplyingPackId(null);
+    }
   };
 
   // Clear all filters
@@ -220,6 +254,15 @@ export default function TemplateMarketplacePage() {
           {/* Content when not loading */}
           {!loading && (
             <>
+              {/* Starter Packs Row (only when no filters active) */}
+              {!hasActiveFilters && starterPacks.length > 0 && (
+                <StarterPacksRow
+                  packs={starterPacks}
+                  onApplySelected={handleApplyPackTemplates}
+                  applyingPackId={applyingPackId}
+                />
+              )}
+
               {/* Featured Templates Row (only when no filters active) */}
               {!hasActiveFilters && featuredTemplates.length > 0 && (
                 <FeaturedTemplatesRow
