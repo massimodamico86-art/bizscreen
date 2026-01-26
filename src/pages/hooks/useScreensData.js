@@ -283,6 +283,7 @@ export function useScreensData({ showToast }) {
         screen_group_id: data.groupId,
         assigned_playlist_id: data.playlistId,
         assigned_layout_id: data.layoutId,
+        display_language: data.displayLanguage,
       });
 
       setScreens((prev) =>
@@ -299,6 +300,7 @@ export function useScreensData({ showToast }) {
               assigned_playlist: playlist ? { id: playlist.id, name: playlist.name } : null,
               assigned_layout_id: data.layoutId,
               assigned_layout: layout ? { id: layout.id, name: layout.name } : null,
+              display_language: data.displayLanguage,
             };
           }
           return s;

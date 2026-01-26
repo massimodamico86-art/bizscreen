@@ -56,7 +56,8 @@ export async function getScreen(id) {
 export async function updateScreen(id, updates) {
   const allowedFields = [
     'device_name', 'assigned_playlist_id', 'assigned_layout_id',
-    'assigned_schedule_id', 'screen_group_id', 'location_id', 'latitude', 'longitude', 'timezone'
+    'assigned_schedule_id', 'screen_group_id', 'location_id', 'latitude', 'longitude', 'timezone',
+    'display_language'
   ];
 
   const filteredUpdates = {};
@@ -777,4 +778,38 @@ export async function getScreenByDeviceId(deviceId) {
 
   if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
   return data || null;
+}
+
+// ============================================
+// DEVICE LANGUAGE (Phase 20)
+// ============================================
+
+/**
+ * Update a device's display language
+ * Sets needs_refresh=true to trigger content reload with new language
+ *
+ * @param {string} deviceId - The device/screen UUID
+ * @param {string} languageCode - The display language code (e.g., 'en', 'es')
+ * @returns {Promise<Object>} Updated device
+ */
+export async function updateDeviceLanguage(deviceId, languageCode) {
+  logger.debug('Updating device language', { deviceId, languageCode });
+
+  const { data, error } = await supabase
+    .from('tv_devices')
+    .update({
+      display_language: languageCode,
+      needs_refresh: true, // Trigger player to fetch new content
+    })
+    .eq('id', deviceId)
+    .select()
+    .single();
+
+  if (error) {
+    logger.error('Failed to update device language', { error: error.message, deviceId });
+    throw error;
+  }
+
+  logger.info('Device language updated', { deviceId, languageCode });
+  return data;
 }

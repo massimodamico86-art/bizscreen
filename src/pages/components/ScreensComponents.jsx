@@ -35,7 +35,9 @@ import {
   Lock,
   Unlock,
   Eye,
+  Globe,
 } from 'lucide-react';
+import { SUPPORTED_LOCALES } from '../../i18n/i18nConfig';
 import { formatLimitDisplay } from '../../services/limitsService';
 import { formatDuration, getUptimeColor, DATE_RANGES } from '../../services/analyticsService';
 import YodeckEmptyState from '../../components/YodeckEmptyState';
@@ -761,6 +763,7 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
   const [groupId, setGroupId] = useState(screen?.screen_group_id || '');
   const [playlistId, setPlaylistId] = useState(screen?.assigned_playlist_id || '');
   const [layoutId, setLayoutId] = useState(screen?.assigned_layout_id || '');
+  const [displayLanguage, setDisplayLanguage] = useState(screen?.display_language || 'en');
 
   useEffect(() => {
     if (screen) {
@@ -769,6 +772,7 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
       setGroupId(screen.screen_group_id || '');
       setPlaylistId(screen.assigned_playlist_id || '');
       setLayoutId(screen.assigned_layout_id || '');
+      setDisplayLanguage(screen.display_language || 'en');
     }
   }, [screen]);
 
@@ -783,6 +787,7 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
       groupId: groupId || null,
       playlistId: playlistId || null,
       layoutId: layoutId || null,
+      displayLanguage: displayLanguage,
     });
   };
 
@@ -818,6 +823,23 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
                 <option value="">No group</option>
                 {(screenGroups || []).map((group) => (
                   <option key={group.id} value={group.id}>{group.name}</option>
+                ))}
+              </Select>
+            </FormField>
+            <FormField
+              label={
+                <Inline gap="xs" align="center">
+                  <Globe size={14} className="text-blue-500" />
+                  <span>Display Language</span>
+                </Inline>
+              }
+              hint="Content will display in this language when available"
+            >
+              <Select value={displayLanguage} onChange={(e) => setDisplayLanguage(e.target.value)}>
+                {SUPPORTED_LOCALES.map((locale) => (
+                  <option key={locale.code} value={locale.code}>
+                    {locale.nativeName} ({locale.name})
+                  </option>
                 ))}
               </Select>
             </FormField>
