@@ -22,9 +22,9 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 **Differentiators:**
 - [x] **TMPL-09**: User can apply starter packs (pre-configured scene+layout+schedule bundles)
 - [x] **TMPL-10**: User can customize template with guided wizard (logo, colors, text replacement)
-- [ ] **TMPL-11**: System suggests templates based on user's industry/usage patterns
-- [ ] **TMPL-12**: User can rate and review templates
-- [ ] **TMPL-13**: User can view template usage analytics (which templates perform best)
+- [x] **TMPL-11**: System suggests templates based on user's industry/usage patterns
+- [x] **TMPL-12**: User can rate and review templates
+- [x] **TMPL-13**: User can view template usage analytics (which templates perform best)
 
 ### Multi-Language Content
 
@@ -156,9 +156,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TMPL-08 | Phase 18 | Pending |
 | TMPL-09 | Phase 18 | Pending |
 | TMPL-10 | Phase 18 | Pending |
-| TMPL-11 | Phase 19 | Pending |
-| TMPL-12 | Phase 19 | Pending |
-| TMPL-13 | Phase 19 | Pending |
+| TMPL-11 | Phase 19 | Complete |
+| TMPL-12 | Phase 19 | Complete |
+| TMPL-13 | Phase 19 | Complete |
 | LANG-01 | Phase 20 | Pending |
 | LANG-02 | Phase 20 | Pending |
 | LANG-03 | Phase 20 | Pending |
