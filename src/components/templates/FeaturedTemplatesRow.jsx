@@ -18,12 +18,16 @@ import { TemplateCard } from './TemplateGrid';
  * @param {Function} props.onTemplateClick - Called when template card clicked
  * @param {Function} props.onQuickApply - Called when Quick Apply clicked
  * @param {string|null} props.applyingId - ID of template currently being applied
+ * @param {Set} props.favoriteIds - Set of favorited template IDs
+ * @param {Function} props.onToggleFavorite - Called when favorite icon clicked
  */
 export function FeaturedTemplatesRow({
   templates = [],
   onTemplateClick,
   onQuickApply,
   applyingId = null,
+  favoriteIds = null,
+  onToggleFavorite,
 }) {
   if (templates.length === 0) {
     return null;
@@ -40,6 +44,8 @@ export function FeaturedTemplatesRow({
               onClick={onTemplateClick}
               onQuickApply={onQuickApply}
               isApplying={applyingId === template.id}
+              isFavorited={favoriteIds?.has(template.id) || false}
+              onToggleFavorite={onToggleFavorite}
             />
           </div>
         ))}
@@ -59,6 +65,8 @@ FeaturedTemplatesRow.propTypes = {
   onTemplateClick: PropTypes.func,
   onQuickApply: PropTypes.func,
   applyingId: PropTypes.string,
+  favoriteIds: PropTypes.instanceOf(Set),
+  onToggleFavorite: PropTypes.func,
 };
 
 export default FeaturedTemplatesRow;

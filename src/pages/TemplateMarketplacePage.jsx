@@ -18,6 +18,10 @@ import {
   fetchCategories,
   fetchStarterPacks,
   installTemplateAsScene,
+  fetchMarketplaceFavorites,
+  fetchRecentMarketplaceTemplates,
+  toggleMarketplaceFavorite,
+  checkFavoritedTemplates,
 } from '../services/marketplaceService';
 import {
   TemplateSidebar,
@@ -40,6 +44,11 @@ export default function TemplateMarketplacePage() {
   const [error, setError] = useState(null);
   const [applyingId, setApplyingId] = useState(null);
   const [applyingPackId, setApplyingPackId] = useState(null);
+
+  // Favorites and recents state
+  const [recentTemplates, setRecentTemplates] = useState([]);
+  const [favoriteTemplates, setFavoriteTemplates] = useState([]);
+  const [favoritedIds, setFavoritedIds] = useState(new Set());
 
   // Filters from URL
   const categoryId = searchParams.get('category') || '';
@@ -89,6 +98,20 @@ export default function TemplateMarketplacePage() {
       .catch(err => console.error('Failed to load starter packs:', err));
   }, []);
 
+  // Load recents and favorites on mount
+  useEffect(() => {
+    fetchRecentMarketplaceTemplates(5)
+      .then(setRecentTemplates)
+      .catch(err => console.error('Failed to load recent templates:', err));
+
+    fetchMarketplaceFavorites(10)
+      .then((favorites) => {
+        setFavoriteTemplates(favorites);
+        setFavoritedIds(new Set(favorites.map(f => f.id)));
+      })
+      .catch(err => console.error('Failed to load favorites:', err));
+  }, []);
+
   // Load templates when filters change
   const loadTemplates = useCallback(async () => {
     setLoading(true);
@@ -114,6 +137,15 @@ export default function TemplateMarketplacePage() {
   useEffect(() => {
     loadTemplates();
   }, [loadTemplates]);
+
+  // Check favorited status for grid templates when templates load
+  useEffect(() => {
+    if (templates.length > 0) {
+      checkFavoritedTemplates(templates.map(t => t.id))
+        .then(setFavoritedIds)
+        .catch(err => console.error('Failed to check favorites:', err));
+    }
+  }, [templates]);
 
   // Debounced search
   useEffect(() => {
@@ -144,9 +176,45 @@ export default function TemplateMarketplacePage() {
   };
 
   // Handle apply success from preview panel
-  const handleApplySuccess = (sceneId) => {
+  const handleApplySuccess = async (sceneId) => {
     setSelectedTemplate(null);
+    // Refresh recents (will show on next visit)
+    fetchRecentMarketplaceTemplates(5).then(setRecentTemplates);
     navigate(`/scene-editor/${sceneId}`);
+  };
+
+  // Handle favorite toggle
+  const handleToggleFavorite = async (templateId, shouldBeFavorited) => {
+    // Optimistic update
+    setFavoritedIds((prev) => {
+      const next = new Set(prev);
+      if (shouldBeFavorited) {
+        next.add(templateId);
+      } else {
+        next.delete(templateId);
+      }
+      return next;
+    });
+
+    try {
+      await toggleMarketplaceFavorite(templateId);
+      // Refresh favorites list
+      const favorites = await fetchMarketplaceFavorites(10);
+      setFavoriteTemplates(favorites);
+      setFavoritedIds(new Set(favorites.map(f => f.id)));
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+      // Revert optimistic update
+      setFavoritedIds((prev) => {
+        const next = new Set(prev);
+        if (shouldBeFavorited) {
+          next.delete(templateId);
+        } else {
+          next.add(templateId);
+        }
+        return next;
+      });
+    }
   };
 
   // Handle applying selected templates from a starter pack
@@ -205,6 +273,9 @@ export default function TemplateMarketplacePage() {
           selectedCategory={categoryId || null}
           selectedOrientation={orientation || null}
           onFilterChange={updateFilters}
+          recentTemplates={recentTemplates}
+          favoriteTemplates={favoriteTemplates}
+          onSidebarTemplateClick={handleTemplateClick}
         />
 
         {/* Main Content */}
@@ -270,6 +341,8 @@ export default function TemplateMarketplacePage() {
                   onTemplateClick={handleTemplateClick}
                   onQuickApply={handleQuickApply}
                   applyingId={applyingId}
+                  favoriteIds={favoritedIds}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               )}
 
@@ -280,6 +353,8 @@ export default function TemplateMarketplacePage() {
                   onTemplateClick={handleTemplateClick}
                   onQuickApply={handleQuickApply}
                   applyingId={applyingId}
+                  favoriteIds={favoritedIds}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               ) : (
                 /* Empty State */
