@@ -7,6 +7,7 @@ import { I18nProvider } from "./i18n";
 import ErrorBoundary from "./components/ErrorBoundary";
 import AppRouter from "./router/AppRouter";
 import "./index.css";
+import "@smastrom/react-rating/style.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
