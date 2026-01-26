@@ -87,12 +87,12 @@ Plans:
   3. User can set maximum play frequency (e.g., max 5 plays per hour)
   4. User can save campaign configuration as template and reuse it
   5. User can create seasonal campaigns that auto-activate by date
-**Plans**: TBD
+**Plans**: 3 plans (Wave 1 - all parallel)
 
 Plans:
-- [ ] 16-01: Campaign analytics
-- [ ] 16-02: Content rotation and frequency limits
-- [ ] 16-03: Campaign templates and seasonal scheduling
+- [ ] 16-01-PLAN.md - Campaign analytics (RPC, service, CampaignAnalyticsCard)
+- [ ] 16-02-PLAN.md - Content rotation and frequency limits (schema, RotationControls, FrequencyLimitControls)
+- [ ] 16-03-PLAN.md - Campaign templates and seasonal scheduling (templates table, TemplatePickerModal, SeasonalDatePicker)
 
 ### Phase 17: Templates Core
 **Goal**: Users can browse, search, preview, and apply templates from the marketplace
@@ -243,3 +243,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 14 gap closure: 2026-01-25*
 *Phase 15 planned: 2026-01-25*
 *Phase 15 complete: 2026-01-25*
+*Phase 16 planned: 2026-01-25*
