@@ -60,6 +60,7 @@ import AutoBuildOnboardingModal from './components/onboarding/AutoBuildOnboardin
 import { fetchScenesForTenant } from './services/sceneService';
 import { EmergencyProvider, useEmergency } from './contexts/EmergencyContext';
 import { EmergencyBanner } from './components/campaigns';
+import { Header } from './components/layout';
 import { useTranslation } from './i18n';
 import { useFeatureFlags } from './hooks/useFeatureFlag';
 import { Feature } from './config/plans';
@@ -936,86 +937,16 @@ function ClientUILayout({
       </aside>
 
       <main id="main-content" className="flex-1 flex flex-col overflow-hidden bg-[#f6f8fb]" style={{ marginTop: topOffset }}>
-        {/* Top Header Bar - Yodeck style */}
-        <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
-          {/* Breadcrumbs - improved for editor pages */}
-          <nav className="flex items-center text-sm text-gray-500">
-            <button onClick={() => setCurrentPage('dashboard')} className="hover:text-gray-700">
-              Home
-            </button>
-            <ChevronRight size={14} className="mx-2 text-gray-400" />
-            {/* Handle editor pages with parent navigation */}
-            {currentPage.startsWith('playlist-editor-') ? (
-              <>
-                <button onClick={() => setCurrentPage('playlists')} className="hover:text-gray-700">
-                  Playlists
-                </button>
-                <ChevronRight size={14} className="mx-2 text-gray-400" />
-                <span className="text-gray-900 font-medium">Edit Playlist</span>
-              </>
-            ) : currentPage.startsWith('layout-editor-') ? (
-              <>
-                <button onClick={() => setCurrentPage('layouts')} className="hover:text-gray-700">
-                  Layouts
-                </button>
-                <ChevronRight size={14} className="mx-2 text-gray-400" />
-                <span className="text-gray-900 font-medium">Edit Layout</span>
-              </>
-            ) : currentPage.startsWith('schedule-editor-') ? (
-              <>
-                <button onClick={() => setCurrentPage('schedules')} className="hover:text-gray-700">
-                  Schedules
-                </button>
-                <ChevronRight size={14} className="mx-2 text-gray-400" />
-                <span className="text-gray-900 font-medium">Edit Schedule</span>
-              </>
-            ) : currentPage.startsWith('scene-editor-') || currentPage.startsWith('scene-detail-') ? (
-              <>
-                <button onClick={() => setCurrentPage('scenes')} className="hover:text-gray-700">
-                  Scenes
-                </button>
-                <ChevronRight size={14} className="mx-2 text-gray-400" />
-                <span className="text-gray-900 font-medium">Edit Scene</span>
-              </>
-            ) : currentPage.startsWith('admin-tenant-') ? (
-              <>
-                <button onClick={() => setCurrentPage('admin')} className="hover:text-gray-700">
-                  Admin
-                </button>
-                <ChevronRight size={14} className="mx-2 text-gray-400" />
-                <span className="text-gray-900 font-medium">Tenant Details</span>
-              </>
-            ) : (
-              <span className="text-gray-900 font-medium capitalize">
-                {currentPage.replace(/-/g, ' ').replace(/^media /, '')}
-              </span>
-            )}
-          </nav>
-
-          {/* Right side - Notifications & User Menu */}
-          <div className="flex items-center gap-4">
-            {/* Notification Bell */}
-            <NotificationBell onNavigate={setCurrentPage} />
-            {/* Announcement Center */}
-            <AnnouncementCenter />
-            {/* User Menu */}
-            <div className="flex items-center gap-2 pl-4 border-l border-gray-200">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-sm"
-                style={{ backgroundColor: branding.primaryColor }}
-              >
-                {(userProfile?.full_name || user.email || 'U')[0].toUpperCase()}
-              </div>
-              <button
-                onClick={handleSignOut}
-                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Sign out"
-              >
-                <LogOut size={16} className="text-gray-400" />
-              </button>
-            </div>
-          </div>
-        </header>
+        {/* Top Header Bar with Emergency Push */}
+        <Header
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          branding={branding}
+          user={user}
+          userProfile={userProfile}
+          handleSignOut={handleSignOut}
+          showToast={showToast}
+        />
 
         {/* Main Content Area */}
         <div className="flex-1 overflow-auto p-6">
