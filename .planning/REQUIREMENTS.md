@@ -10,12 +10,12 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 ### Templates Marketplace
 
 **Table Stakes:**
-- [ ] **TMPL-01**: User can browse templates organized by category (restaurant, retail, salon, etc.)
-- [ ] **TMPL-02**: User can search templates by name and description
-- [ ] **TMPL-03**: User can preview template before applying (full-size modal with details)
-- [ ] **TMPL-04**: User can apply template with one click (creates usable scene immediately)
-- [ ] **TMPL-05**: User can view featured templates on marketplace homepage
-- [ ] **TMPL-06**: User can filter templates by orientation (landscape/portrait)
+- [x] **TMPL-01**: User can browse templates organized by category (restaurant, retail, salon, etc.)
+- [x] **TMPL-02**: User can search templates by name and description
+- [x] **TMPL-03**: User can preview template before applying (full-size modal with details)
+- [x] **TMPL-04**: User can apply template with one click (creates usable scene immediately)
+- [x] **TMPL-05**: User can view featured templates on marketplace homepage
+- [x] **TMPL-06**: User can filter templates by orientation (landscape/portrait)
 - [ ] **TMPL-07**: User can access recently used templates
 - [ ] **TMPL-08**: User can favorite/bookmark templates for later
 

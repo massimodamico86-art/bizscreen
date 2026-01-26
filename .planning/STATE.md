@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 17 In Progress (Templates Core)
+**Current focus:** v2 Templates & Platform Polish - Phase 17 Complete (Templates Core)
 
 ## Current Position
 
 Phase: 17 of 23 (Templates Core)
-Plan: 3 of 4 complete (17-01, 17-02, 17-03 complete)
-Status: In progress
-Last activity: 2026-01-25 - Completed 17-03-PLAN.md
+Plan: 3 of 3 complete (17-01, 17-02, 17-03 complete)
+Status: Phase complete
+Last activity: 2026-01-25 - Completed Phase 17 (Templates Core)
 
 Progress: [█████████░] 50% (18/36 plans)
 
@@ -102,8 +102,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 17-03-PLAN.md
+Stopped at: Completed Phase 17 (Templates Core) - all 3 plans
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Completed 17-03-PLAN.md (Preview Panel)*
+*Updated: 2026-01-25 - Completed Phase 17 (Templates Core)*
