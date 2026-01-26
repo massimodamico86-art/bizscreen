@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 17 of 23 (Templates Core)
-Plan: 2 of 4 complete (17-01, 17-02 complete)
+Plan: 3 of 4 complete (17-01, 17-02, 17-03 complete)
 Status: In progress
-Last activity: 2026-01-25 - Completed 17-02-PLAN.md
+Last activity: 2026-01-25 - Completed 17-03-PLAN.md
 
-Progress: [█████████░] 47% (17/36 plans)
+Progress: [█████████░] 50% (18/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17 (v2)
+- Total plans completed: 18 (v2)
 - Average duration: 4.1min
-- Total execution time: 73min
+- Total execution time: 75min
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [█████████░] 47% (17/36 plans)
 | 14-scheduling-core | 5 | 15min | 3min |
 | 15-scheduling-campaigns | 4 | 18min | 5min |
 | 16-scheduling-polish | 3 | 16min | 5min |
-| 17-templates-core | 2 | 5min | 3min |
+| 17-templates-core | 3 | 7min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 16-02 (6min), 16-03 (6min), 17-01 (2min), 17-02 (3min)
+- Last 5 plans: 16-03 (6min), 17-01 (2min), 17-02 (3min), 17-03 (2min)
 - Trend: Fast UI integration plans
 
 *Updated after each plan completion*
@@ -79,6 +79,8 @@ Recent decisions affecting current work:
 - [17-02]: Featured row hidden when any filter active
 - [17-02]: Client-side orientation filter using metadata.orientation
 - [17-02]: Quick Apply auto-names scenes: Template Name - MMM d, yyyy
+- [17-03]: Panel replaces modal completely (480px width, bg-black/30 backdrop)
+- [17-03]: Clicking another template swaps content in place (natural re-render)
 
 ### Pending Todos
 
@@ -100,8 +102,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 17-02-PLAN.md
+Stopped at: Completed 17-03-PLAN.md
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Completed 17-02-PLAN.md (Marketplace Page Integration)*
+*Updated: 2026-01-25 - Completed 17-03-PLAN.md (Preview Panel)*
