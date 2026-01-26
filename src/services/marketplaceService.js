@@ -631,3 +631,178 @@ export async function checkFavoritedTemplates(templateIds) {
   if (error) throw error;
   return new Set((data || []).map(f => f.template_id));
 }
+
+// ============================================================================
+// CUSTOMIZATION
+// ============================================================================
+
+/**
+ * Apply customizations to a scene
+ * Updates scene slides with logo, colors, and text replacements.
+ *
+ * @param {string} sceneId - Scene UUID
+ * @param {Object} customization - Customization data
+ * @param {File|null} customization.logo - Logo file to upload
+ * @param {string} customization.primaryColor - Hex color
+ * @param {Object} customization.texts - Key-value text replacements
+ * @returns {Promise<void>}
+ */
+export async function applyCustomizationToScene(sceneId, customization) {
+  const { logo, primaryColor, texts } = customization;
+
+  // 1. Upload logo if provided
+  let logoUrl = null;
+  if (logo) {
+    const fileExt = logo.name.split('.').pop();
+    const fileName = `scenes/${sceneId}/logo.${fileExt}`;
+    const { error: uploadError } = await supabase.storage
+      .from('scene-assets')
+      .upload(fileName, logo, { upsert: true });
+
+    if (uploadError) {
+      logger.error({ error: uploadError, sceneId }, 'Failed to upload logo');
+      throw uploadError;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('scene-assets')
+      .getPublicUrl(fileName);
+
+    logoUrl = urlData.publicUrl;
+  }
+
+  // 2. Fetch scene slides
+  const { data: slides, error: fetchError } = await supabase
+    .from('scene_slides')
+    .select('id, design_json')
+    .eq('scene_id', sceneId);
+
+  if (fetchError) throw fetchError;
+  if (!slides || slides.length === 0) return;
+
+  // 3. Apply customizations to each slide's design_json
+  for (const slide of slides) {
+    let designJson = slide.design_json || {};
+    let modified = false;
+
+    // Apply color replacement (if design has color placeholders)
+    if (primaryColor && designJson) {
+      designJson = applyColorToDesign(designJson, primaryColor);
+      modified = true;
+    }
+
+    // Apply text replacements
+    if (texts && Object.keys(texts).length > 0) {
+      designJson = applyTextsToDesign(designJson, texts);
+      modified = true;
+    }
+
+    // Apply logo URL
+    if (logoUrl) {
+      designJson = applyLogoToDesign(designJson, logoUrl);
+      modified = true;
+    }
+
+    // Update slide if modified
+    if (modified) {
+      const { error: updateError } = await supabase
+        .from('scene_slides')
+        .update({ design_json: designJson })
+        .eq('id', slide.id);
+
+      if (updateError) {
+        logger.error({ error: updateError, slideId: slide.id }, 'Failed to update slide');
+      }
+    }
+  }
+
+  logger.info(
+    { sceneId, hasLogo: !!logoUrl, hasColor: !!primaryColor, textCount: Object.keys(texts || {}).length },
+    'Applied customizations to scene'
+  );
+}
+
+/**
+ * Apply primary color to design JSON
+ * Looks for elements with customizable color flags
+ * @param {Object} designJson - Slide design JSON
+ * @param {string} color - Hex color string
+ * @returns {Object} Modified design JSON
+ */
+function applyColorToDesign(designJson, color) {
+  // Deep clone to avoid mutation
+  const design = JSON.parse(JSON.stringify(designJson));
+
+  // Recursively find elements with customizable_color flag
+  function walkElements(elements) {
+    if (!Array.isArray(elements)) return;
+    for (const el of elements) {
+      if (el.customizable_color || el.type === 'primary_color') {
+        el.fill = color;
+        el.backgroundColor = color;
+      }
+      if (el.children) walkElements(el.children);
+      if (el.objects) walkElements(el.objects);
+    }
+  }
+
+  if (design.objects) walkElements(design.objects);
+  if (design.elements) walkElements(design.elements);
+
+  return design;
+}
+
+/**
+ * Apply text replacements to design JSON
+ * Looks for elements with text_key property
+ * @param {Object} designJson - Slide design JSON
+ * @param {Object} texts - Key-value text replacements
+ * @returns {Object} Modified design JSON
+ */
+function applyTextsToDesign(designJson, texts) {
+  const design = JSON.parse(JSON.stringify(designJson));
+
+  function walkElements(elements) {
+    if (!Array.isArray(elements)) return;
+    for (const el of elements) {
+      if (el.text_key && texts[el.text_key] !== undefined) {
+        el.text = texts[el.text_key];
+      }
+      if (el.children) walkElements(el.children);
+      if (el.objects) walkElements(el.objects);
+    }
+  }
+
+  if (design.objects) walkElements(design.objects);
+  if (design.elements) walkElements(design.elements);
+
+  return design;
+}
+
+/**
+ * Apply logo URL to design JSON
+ * Looks for elements with logo placeholder
+ * @param {Object} designJson - Slide design JSON
+ * @param {string} logoUrl - Public URL of uploaded logo
+ * @returns {Object} Modified design JSON
+ */
+function applyLogoToDesign(designJson, logoUrl) {
+  const design = JSON.parse(JSON.stringify(designJson));
+
+  function walkElements(elements) {
+    if (!Array.isArray(elements)) return;
+    for (const el of elements) {
+      if (el.is_logo || el.type === 'logo_placeholder') {
+        el.src = logoUrl;
+        el.type = 'image';
+      }
+      if (el.children) walkElements(el.children);
+      if (el.objects) walkElements(el.objects);
+    }
+  }
+
+  if (design.objects) walkElements(design.objects);
+  if (design.elements) walkElements(design.elements);
+
+  return design;
+}
