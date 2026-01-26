@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 20 of 23 (Multi-Language Core)
-Plan: 2 of 3 complete (20-01, 20-03 complete)
-Status: In progress
-Last activity: 2026-01-26 - Completed 20-03-PLAN.md (Editor Language Switching)
+Plan: 3 of 3 complete (20-01, 20-02, 20-03 complete)
+Status: Phase complete
+Last activity: 2026-01-26 - Completed 20-02-PLAN.md (Device Language & Language Badges)
 
-Progress: [█████████████░] 78% (28/36 plans)
+Progress: [█████████████░] 81% (29/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 28 (v2)
+- Total plans completed: 29 (v2)
 - Average duration: 3.8min
-- Total execution time: 106min
+- Total execution time: 110min
 
 **By Phase:**
 
@@ -34,10 +34,10 @@ Progress: [█████████████░] 78% (28/36 plans)
 | 17-templates-core | 3 | 7min | 2min |
 | 18-templates-discovery | 4 | 15min | 4min |
 | 19-templates-intelligence | 4 | 12min | 3min |
-| 20-multi-language-core | 2 | 7min | 4min |
+| 20-multi-language-core | 3 | 11min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 19-03 (4min), 19-04 (2min), 20-01 (4min), 20-03 (3min)
+- Last 5 plans: 19-04 (2min), 20-01 (4min), 20-02 (4min), 20-03 (3min)
 - Trend: Fast UI component plans
 
 *Updated after each plan completion*
@@ -115,6 +115,10 @@ Recent decisions affecting current work:
 - [20-01]: Copy original content to new variant (not blank scene)
 - [20-01]: Server-side RPC for language resolution ensures consistent fallback
 - [20-01]: ON DELETE SET NULL for language_group_id (orphan scenes, don't cascade delete)
+- [20-02]: Display Language dropdown in EditScreenModal (not separate settings page)
+- [20-02]: Native language names with English in parens (e.g., 'Espanol (Spanish)')
+- [20-02]: Batch fetch languages after scenes load (MVP approach)
+- [20-02]: Hide badges when scene has only English (per CONTEXT.md)
 - [20-03]: Native names only in dropdown per CONTEXT.md
 - [20-03]: Navigation-based variant switching reloads editor with different scene
 - [20-03]: Grid tile selection for language creation modal
@@ -139,8 +143,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 20-03-PLAN.md (Editor Language Switching)
+Stopped at: Completed 20-02-PLAN.md (Device Language & Language Badges) - Phase 20 complete
 Resume file: None
 
 ---
-*Updated: 2026-01-26 - Completed 20-03 (Editor Language Switching)*
+*Updated: 2026-01-26 - Completed 20-02 (Device Language & Language Badges) - Phase 20 complete*
