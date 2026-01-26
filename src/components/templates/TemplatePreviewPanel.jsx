@@ -16,6 +16,8 @@ import {
   installTemplateAsScene,
   LICENSE_LABELS,
 } from '../../services/marketplaceService';
+import { TemplateRating } from './TemplateRating';
+import { SimilarTemplatesRow } from './SimilarTemplatesRow';
 
 // License badge colors
 const LICENSE_COLORS = {
@@ -29,6 +31,7 @@ export function TemplatePreviewPanel({ template, onClose, onApply }) {
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [error, setError] = useState(null);
+  const [showSimilar, setShowSimilar] = useState(false);
 
   // Load template detail on mount/template change
   useEffect(() => {
@@ -37,6 +40,7 @@ export function TemplatePreviewPanel({ template, onClose, onApply }) {
     setLoading(true);
     setError(null);
     setDetail(null);
+    setShowSimilar(false);
 
     fetchTemplateDetail(template.id)
       .then(setDetail)
@@ -63,6 +67,7 @@ export function TemplatePreviewPanel({ template, onClose, onApply }) {
     try {
       const sceneName = `${template.name} - ${format(new Date(), 'MMM d, yyyy')}`;
       const sceneId = await installTemplateAsScene(template.id, sceneName);
+      setShowSimilar(true);
       onApply(sceneId);
     } catch (err) {
       console.error('Failed to apply template:', err);
@@ -197,6 +202,25 @@ export function TemplatePreviewPanel({ template, onClose, onApply }) {
                     ))}
                   </div>
                 </div>
+              )}
+
+              {/* Rating Section */}
+              {detail && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">Rating</h3>
+                  <TemplateRating templateId={template.id} />
+                </div>
+              )}
+
+              {/* Similar Templates - shown after apply */}
+              {showSimilar && detail?.category_id && (
+                <SimilarTemplatesRow
+                  categoryId={detail.category_id}
+                  excludeTemplateId={template.id}
+                  onTemplateClick={() => {
+                    setShowSimilar(false);
+                  }}
+                />
               )}
 
               {/* Access Warning */}
