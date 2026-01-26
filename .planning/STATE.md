@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 15 Complete (Scheduling Campaigns)
+**Current focus:** v2 Templates & Platform Polish - Phase 16 In Progress (Scheduling Polish)
 
 ## Current Position
 
-Phase: 15 of 23 (Scheduling Campaigns)
-Plan: 4 of 4 complete (15-01, 15-02, 15-03, 15-04 complete)
-Status: Phase complete
-Last activity: 2026-01-26 - Completed 15-04-PLAN.md (Emergency Override Integration)
+Phase: 16 of 23 (Scheduling Polish)
+Plan: 1 of 4 complete (16-01 complete)
+Status: In progress
+Last activity: 2026-01-26 - Completed 16-01-PLAN.md (Campaign Analytics)
 
-Progress: [████████░░] 33% (12/36 plans)
+Progress: [████████░░] 36% (13/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12 (v2)
-- Average duration: 4.3min
-- Total execution time: 52min
+- Total plans completed: 13 (v2)
+- Average duration: 4.2min
+- Total execution time: 56min
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [████████░░] 33% (12/36 plans)
 | 13-technical-foundation | 3 | 22min | 7min |
 | 14-scheduling-core | 5 | 15min | 3min |
 | 15-scheduling-campaigns | 4 | 18min | 5min |
+| 16-scheduling-polish | 1 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 15-01 (6min), 15-02 (2min), 15-03 (3min), 15-04 (7min)
-- Trend: Stable at ~4-5min/plan
+- Last 5 plans: 15-02 (2min), 15-03 (3min), 15-04 (7min), 16-01 (4min)
+- Trend: Stable at ~4min/plan
 
 *Updated after each plan completion*
 
@@ -68,6 +69,8 @@ Recent decisions affecting current work:
 - [15-03]: DaypartPicker fills form fields (quick-fill), not persistent association
 - [15-04]: Header extracted to separate component for Emergency Push integration
 - [15-04]: Player returns emergency source, priority=999, and expiry info
+- [16-01]: Use SECURITY DEFINER on RPC for tenant context enforcement
+- [16-01]: Re-export DATE_RANGES from campaignAnalyticsService for consistent API
 
 ### Pending Todos
 
@@ -89,8 +92,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 15-04-PLAN.md (Emergency Override Integration) - Phase 15 complete
+Stopped at: Completed 16-01-PLAN.md (Campaign Analytics)
 Resume file: None
 
 ---
-*Updated: 2026-01-26 - Completed 15-04-PLAN.md (Emergency Override Integration)*
+*Updated: 2026-01-26 - Completed 16-01-PLAN.md (Campaign Analytics)*
