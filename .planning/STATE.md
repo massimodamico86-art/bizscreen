@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 17 Complete (Templates Core)
+**Current focus:** v2 Templates & Platform Polish - Phase 18 In Progress (Templates Discovery)
 
 ## Current Position
 
-Phase: 17 of 23 (Templates Core)
-Plan: 3 of 3 complete (17-01, 17-02, 17-03 complete)
-Status: Phase complete
-Last activity: 2026-01-25 - Completed Phase 17 (Templates Core)
+Phase: 18 of 23 (Templates Discovery)
+Plan: 3 of 4 complete (18-01, 18-02, 18-03 complete)
+Status: In progress
+Last activity: 2026-01-26 - Completed 18-03-PLAN.md (Starter Packs)
 
-Progress: [█████████░] 50% (18/36 plans)
+Progress: [█████████░] 53% (19/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18 (v2)
-- Average duration: 4.1min
-- Total execution time: 75min
+- Total plans completed: 19 (v2)
+- Average duration: 4.0min
+- Total execution time: 78min
 
 **By Phase:**
 
@@ -32,9 +32,10 @@ Progress: [█████████░] 50% (18/36 plans)
 | 15-scheduling-campaigns | 4 | 18min | 5min |
 | 16-scheduling-polish | 3 | 16min | 5min |
 | 17-templates-core | 3 | 7min | 2min |
+| 18-templates-discovery | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 16-03 (6min), 17-01 (2min), 17-02 (3min), 17-03 (2min)
+- Last 5 plans: 17-01 (2min), 17-02 (3min), 17-03 (2min), 18-03 (3min)
 - Trend: Fast UI integration plans
 
 *Updated after each plan completion*
@@ -81,6 +82,10 @@ Recent decisions affecting current work:
 - [17-02]: Quick Apply auto-names scenes: Template Name - MMM d, yyyy
 - [17-03]: Panel replaces modal completely (480px width, bg-black/30 backdrop)
 - [17-03]: Clicking another template swaps content in place (natural re-render)
+- [18-03]: Packs use junction table with position for ordering
+- [18-03]: RPC returns templates as JSONB array within pack row
+- [18-03]: Expand/collapse via framer-motion AnimatePresence
+- [18-03]: Sequential template install (not parallel) for simplicity
 
 ### Pending Todos
 
@@ -101,9 +106,9 @@ Test infrastructure note:
 
 ## Session Continuity
 
-Last session: 2026-01-25
-Stopped at: Completed Phase 17 (Templates Core) - all 3 plans
+Last session: 2026-01-26
+Stopped at: Completed 18-03-PLAN.md (Starter Packs)
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Completed Phase 17 (Templates Core)*
+*Updated: 2026-01-26 - Completed 18-03 (Starter Packs)*
