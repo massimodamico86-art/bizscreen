@@ -72,6 +72,9 @@ import { ContentInlineMetrics } from '../components/analytics';
 
 import { Button } from '../design-system';
 import { Badge } from '../design-system';
+import EditorLanguageSwitcher from '../components/scene-editor/EditorLanguageSwitcher';
+import AddLanguageModal from '../components/scenes/AddLanguageModal';
+import { fetchLanguageVariants } from '../services/languageService';
 
 // Business type config
 const BUSINESS_TYPE_LABELS = {
@@ -121,6 +124,11 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
   const [userRequiresApproval, setUserRequiresApproval] = useState(false);
   const [approvalPending, setApprovalPending] = useState(false);
 
+  // Language variants state
+  const [languageVariants, setLanguageVariants] = useState([]);
+  const [currentLanguageCode, setCurrentLanguageCode] = useState('en');
+  const [showAddLanguageModal, setShowAddLanguageModal] = useState(false);
+
   // Save debounce
   const saveTimeoutRef = useRef(null);
 
@@ -160,6 +168,18 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
       setSlides(normalizedSlides);
       setActiveTheme(brandTheme);
       setUserRequiresApproval(needsApproval);
+
+      // Load language variants for this scene
+      fetchLanguageVariants(sceneId)
+        .then(variants => {
+          setLanguageVariants(variants);
+          // Set current language from scene or default to 'en'
+          setCurrentLanguageCode(sceneData.language_code || 'en');
+        })
+        .catch(() => {
+          // Graceful fallback - just show current scene
+          setLanguageVariants([]);
+        });
 
       // Load current review status if exists
       if (sceneData?.id) {
@@ -397,6 +417,25 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
   }
 
   // ===========================================
+  // LANGUAGE SWITCHING
+  // ===========================================
+
+  const handleLanguageChange = (variant) => {
+    // Navigate to the variant's scene - this reloads the editor with different content
+    if (onNavigate) {
+      onNavigate('scene-editor', { sceneId: variant.id });
+    }
+  };
+
+  const handleVariantCreated = (newVariant) => {
+    // Add new variant to list and navigate to it
+    setLanguageVariants(prev => [...prev, newVariant]);
+    if (onNavigate) {
+      onNavigate('scene-editor', { sceneId: newVariant.id });
+    }
+  };
+
+  // ===========================================
   // NAVIGATION & PREVIEW
   // ===========================================
 
@@ -513,6 +552,18 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
               >
                 {getApprovalStatusConfig(scene.approval_status).label}
               </Badge>
+            )}
+
+            {/* Language Switcher */}
+            {languageVariants.length > 0 && (
+              <EditorLanguageSwitcher
+                currentLanguage={currentLanguageCode}
+                availableVariants={languageVariants}
+                onLanguageChange={handleLanguageChange}
+                onAddLanguage={() => setShowAddLanguageModal(true)}
+                hasUnsavedChanges={saveStatus === 'unsaved'}
+                disabled={loading}
+              />
             )}
           </div>
         </div>
@@ -752,6 +803,15 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
         sceneId={sceneId}
         onSlideCreated={handleWizardSlideCreated}
         onShowToast={onShowToast}
+      />
+
+      {/* Add Language Modal */}
+      <AddLanguageModal
+        isOpen={showAddLanguageModal}
+        onClose={() => setShowAddLanguageModal(false)}
+        sceneId={sceneId}
+        existingLanguages={languageVariants.map(v => v.language_code)}
+        onVariantCreated={handleVariantCreated}
       />
     </div>
   );
