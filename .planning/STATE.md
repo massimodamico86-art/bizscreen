@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 19 of 23 (Templates Intelligence)
-Plan: 3 of 4 complete (19-03 complete)
-Status: In progress
-Last activity: 2026-01-26 - Completed 19-03-PLAN.md (Rating UI)
+Plan: 4 of 4 complete (19-04 complete)
+Status: Phase complete
+Last activity: 2026-01-26 - Completed 19-04-PLAN.md (Usage Counts Wiring)
 
-Progress: [███████████░] 69% (25/36 plans)
+Progress: [████████████░] 72% (26/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25 (v2)
-- Average duration: 3.9min
-- Total execution time: 97min
+- Total plans completed: 26 (v2)
+- Average duration: 3.8min
+- Total execution time: 99min
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [███████████░] 69% (25/36 plans)
 | 16-scheduling-polish | 3 | 16min | 5min |
 | 17-templates-core | 3 | 7min | 2min |
 | 18-templates-discovery | 4 | 15min | 4min |
-| 19-templates-intelligence | 3 | 10min | 3min |
+| 19-templates-intelligence | 4 | 12min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 18-04 (4min), 19-01 (3min), 19-02 (3min), 19-03 (4min)
-- Trend: Fast infrastructure and UI plans
+- Last 5 plans: 19-01 (3min), 19-02 (3min), 19-03 (4min), 19-04 (2min)
+- Trend: Fast wiring and UI plans
 
 *Updated after each plan completion*
 
@@ -108,6 +108,8 @@ Recent decisions affecting current work:
 - [19-03]: 300ms debounce for rating submission to prevent rapid API calls
 - [19-03]: Optimistic UI update for immediate rating feedback
 - [19-03]: Similar templates row appears after Quick Apply success
+- [19-04]: Reuse same usageCounts Map for both FeaturedTemplatesRow and TemplateGrid
+- [19-04]: Fetch counts when templates array changes (single useEffect dependency)
 
 ### Pending Todos
 
@@ -129,8 +131,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 19-03-PLAN.md (Rating UI)
+Stopped at: Completed 19-04-PLAN.md (Usage Counts Wiring) - Phase 19 complete
 Resume file: None
 
 ---
-*Updated: 2026-01-26 - Completed 19-03 (Rating UI)*
+*Updated: 2026-01-26 - Completed 19-04 (Usage Counts Wiring) - Phase 19 complete*
