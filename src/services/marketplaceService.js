@@ -103,6 +103,23 @@ export async function fetchTemplatesByCategory(categoryId, limit = 20) {
 }
 
 // ============================================================================
+// STARTER PACKS
+// ============================================================================
+
+/**
+ * Fetch all active starter packs with their templates
+ * @returns {Promise<Array>} Starter packs with embedded template arrays
+ */
+export async function fetchStarterPacks() {
+  const { data, error } = await supabase.rpc('get_starter_packs');
+  if (error) throw error;
+  return (data || []).map(pack => ({
+    ...pack,
+    templates: pack.templates || [],
+  }));
+}
+
+// ============================================================================
 // TEMPLATE DETAILS
 // ============================================================================
 
@@ -199,6 +216,12 @@ export async function installTemplateAsScene(templateId, sceneName = null) {
   });
 
   if (error) throw error;
+
+  // Record usage for recents tracking (non-blocking)
+  recordMarketplaceUsage(templateId).catch((err) => {
+    logger.warn('Failed to record template usage', { templateId, error: err.message });
+  });
+
   return data;
 }
 
@@ -525,4 +548,86 @@ export async function uploadTemplatePreview(templateId, file) {
   await updateTemplate(templateId, { previewUrl: urlData.publicUrl });
 
   return urlData.publicUrl;
+}
+
+// ============================================================================
+// FAVORITES AND HISTORY
+// ============================================================================
+
+/**
+ * Toggle favorite status for a marketplace template
+ * @param {string} templateId - Template UUID
+ * @returns {Promise<boolean>} New favorite status (true = favorited, false = unfavorited)
+ */
+export async function toggleMarketplaceFavorite(templateId) {
+  const { data, error } = await supabase.rpc('toggle_marketplace_favorite', {
+    p_template_id: templateId,
+  });
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Fetch user's favorite marketplace templates
+ * @param {number} [limit=10] - Max results
+ * @returns {Promise<Array>} Favorited templates
+ */
+export async function fetchMarketplaceFavorites(limit = 10) {
+  const { data, error } = await supabase.rpc('get_marketplace_favorites', {
+    p_limit: limit,
+  });
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Fetch user's recently used marketplace templates
+ * @param {number} [limit=5] - Max results
+ * @returns {Promise<Array>} Recent templates (deduplicated)
+ */
+export async function fetchRecentMarketplaceTemplates(limit = 5) {
+  const { data, error } = await supabase.rpc('get_recent_marketplace_templates', {
+    p_limit: limit,
+  });
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Record template usage in history
+ * @param {string} templateId - Template UUID
+ */
+export async function recordMarketplaceUsage(templateId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return; // Silently fail for anonymous
+
+  const { error } = await supabase
+    .from('marketplace_template_history')
+    .insert({ user_id: user.id, template_id: templateId });
+
+  if (error) {
+    logger.warn('Failed to record template usage', { templateId, error: error.message });
+    // Don't throw - this is non-critical
+  }
+}
+
+/**
+ * Check if templates are favorited (batch check)
+ * @param {string[]} templateIds - Array of template UUIDs
+ * @returns {Promise<Set<string>>} Set of favorited template IDs
+ */
+export async function checkFavoritedTemplates(templateIds) {
+  if (!templateIds.length) return new Set();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return new Set();
+
+  const { data, error } = await supabase
+    .from('marketplace_template_favorites')
+    .select('template_id')
+    .eq('user_id', user.id)
+    .in('template_id', templateIds);
+
+  if (error) throw error;
+  return new Set((data || []).map(f => f.template_id));
 }

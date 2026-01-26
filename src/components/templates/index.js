@@ -9,6 +9,8 @@ export { FeaturedTemplatesRow } from './FeaturedTemplatesRow';
 export { TemplateGrid, TemplateCard } from './TemplateGrid';
 export { TemplateSidebar } from './TemplateSidebar';
 export { TemplatePreviewPanel } from './TemplatePreviewPanel';
+export { StarterPacksRow } from './StarterPacksRow';
+export { StarterPackCard } from './StarterPackCard';
 
 // Preview components
 export { TemplatePreviewPopover, useTemplatePreview } from './TemplatePreviewPopover';
