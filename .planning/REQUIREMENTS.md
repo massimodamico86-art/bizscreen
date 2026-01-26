@@ -16,12 +16,12 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 - [x] **TMPL-04**: User can apply template with one click (creates usable scene immediately)
 - [x] **TMPL-05**: User can view featured templates on marketplace homepage
 - [x] **TMPL-06**: User can filter templates by orientation (landscape/portrait)
-- [ ] **TMPL-07**: User can access recently used templates
-- [ ] **TMPL-08**: User can favorite/bookmark templates for later
+- [x] **TMPL-07**: User can access recently used templates
+- [x] **TMPL-08**: User can favorite/bookmark templates for later
 
 **Differentiators:**
-- [ ] **TMPL-09**: User can apply starter packs (pre-configured scene+layout+schedule bundles)
-- [ ] **TMPL-10**: User can customize template with guided wizard (logo, colors, text replacement)
+- [x] **TMPL-09**: User can apply starter packs (pre-configured scene+layout+schedule bundles)
+- [x] **TMPL-10**: User can customize template with guided wizard (logo, colors, text replacement)
 - [ ] **TMPL-11**: System suggests templates based on user's industry/usage patterns
 - [ ] **TMPL-12**: User can rate and review templates
 - [ ] **TMPL-13**: User can view template usage analytics (which templates perform best)

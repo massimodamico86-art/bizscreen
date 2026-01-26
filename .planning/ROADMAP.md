@@ -16,7 +16,7 @@ BizScreen v2 delivers three major feature sets (Templates Marketplace, Multi-Lan
 - [x] **Phase 15: Scheduling Campaigns** - Campaign grouping, emergency override, and dayparting
 - [x] **Phase 16: Scheduling Polish** - Analytics, rotation rules, frequency limits, and templates
 - [x] **Phase 17: Templates Core** - Category browsing, search, preview, and one-click apply
-- [ ] **Phase 18: Templates Discovery** - Recent, favorites, starter packs, and customization wizard
+- [x] **Phase 18: Templates Discovery** - Recent, favorites, starter packs, and customization wizard
 - [ ] **Phase 19: Templates Intelligence** - Suggestions, ratings, and usage analytics
 - [ ] **Phase 20: Multi-Language Core** - Language variants, device assignment, and fallback
 - [ ] **Phase 21: Multi-Language Advanced** - Group assignment, auto-assignment, workflow, and AI suggestions
@@ -124,10 +124,10 @@ Plans:
 **Plans**: 4 plans (Wave 1: 18-01, 18-03 parallel; Wave 2: 18-02, 18-04 parallel)
 
 Plans:
-- [ ] 18-01-PLAN.md - Favorites/history database and service layer with heart icon on TemplateCard
-- [ ] 18-02-PLAN.md - Sidebar sections for Recent and Favorite templates
-- [ ] 18-03-PLAN.md - Starter packs with inline expansion and multi-select apply
-- [ ] 18-04-PLAN.md - Template customization wizard with side-by-side form and preview
+- [x] 18-01-PLAN.md - Favorites/history database and service layer with heart icon on TemplateCard
+- [x] 18-02-PLAN.md - Sidebar sections for Recent and Favorite templates
+- [x] 18-03-PLAN.md - Starter packs with inline expansion and multi-select apply
+- [x] 18-04-PLAN.md - Template customization wizard with side-by-side form and preview
 
 ### Phase 19: Templates Intelligence
 **Goal**: Users get template suggestions, can rate templates, and view usage analytics
@@ -228,7 +228,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 | 15. Scheduling Campaigns | 4/4 | Complete | 2026-01-25 |
 | 16. Scheduling Polish | 3/3 | Complete | 2026-01-25 |
 | 17. Templates Core | 3/3 | Complete | 2026-01-25 |
-| 18. Templates Discovery | 0/4 | Planned | - |
+| 18. Templates Discovery | 4/4 | Complete | 2026-01-26 |
 | 19. Templates Intelligence | 0/3 | Not started | - |
 | 20. Multi-Language Core | 0/3 | Not started | - |
 | 21. Multi-Language Advanced | 0/3 | Not started | - |
@@ -249,3 +249,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 17 planned: 2026-01-25*
 *Phase 17 complete: 2026-01-25*
 *Phase 18 planned: 2026-01-26*
+*Phase 18 complete: 2026-01-26*
