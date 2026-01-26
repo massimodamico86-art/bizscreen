@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 15 of 23 (Scheduling Campaigns)
-Plan: 3 of 4 complete
+Plan: 3 of 4 complete (15-02, 15-03 complete; 15-01 partial, 15-04 pending)
 Status: In progress
-Last activity: 2026-01-25 - Completed 15-03-PLAN.md (Dayparting Presets)
+Last activity: 2026-01-25 - Completed 15-02-PLAN.md (Emergency Override)
 
 Progress: [███████░░░] 31% (11/36 plans)
 
@@ -62,6 +62,8 @@ Recent decisions affecting current work:
 - [14-05]: Default to UTC timezone for internal calculations, device timezone at playback
 - [15-03]: Three daypart preset types: meal, period, custom
 - [15-03]: DaypartPicker fills form fields (quick-fill), not persistent association
+- [15-02]: Store started_at (not expires_at) for emergency duration calculation
+- [15-02]: needs_refresh=true on all tenant devices for emergency push/stop
 
 ### Pending Todos
 
@@ -83,8 +85,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 15-03-PLAN.md (Dayparting Presets), ready for 15-04
+Stopped at: Completed 15-02-PLAN.md (Emergency Override), 15-01 partial, 15-04 pending
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Phase 15 progress (3/4 plans: CampaignPicker, ScheduleTemplates, DaypartingPresets)*
+*Updated: 2026-01-25 - Phase 15 progress (15-02 Emergency Override complete, 15-03 Dayparting complete)*
