@@ -101,16 +101,16 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can browse templates organized by category (restaurant, retail, salon, etc.)
   2. User can search templates by name and description
-  3. User can preview template in full-size modal before applying
+  3. User can preview template in full-size side panel before applying
   4. User can apply template with one click and immediately use the created scene
   5. User can see featured templates prominently on marketplace homepage
   6. User can filter templates by orientation (landscape/portrait)
-**Plans**: TBD
+**Plans**: 3 plans (Wave 1: 17-01, Wave 2: 17-02, Wave 3: 17-03)
 
 Plans:
-- [ ] 17-01: Marketplace page and category browsing
-- [ ] 17-02: Search and filtering
-- [ ] 17-03: Preview modal and one-click apply
+- [ ] 17-01-PLAN.md - Marketplace components (TemplateSidebar, FeaturedTemplatesRow, TemplateGrid with hover)
+- [ ] 17-02-PLAN.md - Page restructure with sidebar, search, and filter integration
+- [ ] 17-03-PLAN.md - Preview panel and one-click apply flow
 
 ### Phase 18: Templates Discovery
 **Goal**: Users can easily find and organize templates with recents, favorites, starter packs, and customization
@@ -245,3 +245,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 15 complete: 2026-01-25*
 *Phase 16 planned: 2026-01-25*
 *Phase 16 complete: 2026-01-25*
+*Phase 17 planned: 2026-01-25*
