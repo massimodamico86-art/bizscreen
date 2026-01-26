@@ -29,11 +29,11 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 ### Multi-Language Content
 
 **Table Stakes:**
-- [ ] **LANG-01**: User can create language variants of the same scene
-- [ ] **LANG-02**: User can assign display language per device
-- [ ] **LANG-03**: System falls back to default language when translation missing
-- [ ] **LANG-04**: User can switch between language versions when editing in CMS
-- [ ] **LANG-05**: System displays language indicator badge on content cards
+- [x] **LANG-01**: User can create language variants of the same scene
+- [x] **LANG-02**: User can assign display language per device
+- [x] **LANG-03**: System falls back to default language when translation missing
+- [x] **LANG-04**: User can switch between language versions when editing in CMS
+- [x] **LANG-05**: System displays language indicator badge on content cards
 - [ ] **LANG-06**: User can view all content needing translation in bulk dashboard
 
 **Differentiators:**
@@ -159,11 +159,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TMPL-11 | Phase 19 | Complete |
 | TMPL-12 | Phase 19 | Complete |
 | TMPL-13 | Phase 19 | Complete |
-| LANG-01 | Phase 20 | Pending |
-| LANG-02 | Phase 20 | Pending |
-| LANG-03 | Phase 20 | Pending |
-| LANG-04 | Phase 20 | Pending |
-| LANG-05 | Phase 20 | Pending |
+| LANG-01 | Phase 20 | Complete |
+| LANG-02 | Phase 20 | Complete |
+| LANG-03 | Phase 20 | Complete |
+| LANG-04 | Phase 20 | Complete |
+| LANG-05 | Phase 20 | Complete |
 | LANG-06 | Phase 21 | Pending |
 | LANG-07 | Phase 21 | Pending |
 | LANG-08 | Phase 21 | Pending |

@@ -18,7 +18,7 @@ BizScreen v2 delivers three major feature sets (Templates Marketplace, Multi-Lan
 - [x] **Phase 17: Templates Core** - Category browsing, search, preview, and one-click apply
 - [x] **Phase 18: Templates Discovery** - Recent, favorites, starter packs, and customization wizard
 - [x] **Phase 19: Templates Intelligence** - Suggestions, ratings, and usage analytics
-- [ ] **Phase 20: Multi-Language Core** - Language variants, device assignment, and fallback
+- [x] **Phase 20: Multi-Language Core** - Language variants, device assignment, and fallback
 - [ ] **Phase 21: Multi-Language Advanced** - Group assignment, auto-assignment, workflow, and AI suggestions
 - [ ] **Phase 22: Platform Polish - Mobile & Dashboard** - Responsive admin and dashboard redesign
 - [ ] **Phase 23: Platform Polish - Onboarding** - Welcome tour, starter packs, and industry suggestions
@@ -161,7 +161,7 @@ Plans:
 - [x] 20-01-PLAN.md - Language schema, RPC, and service (scene_language_groups, display_language, languageService)
 - [x] 20-02-PLAN.md - Device language assignment and language badges (settings dropdown, LanguageBadges component)
 - [x] 20-03-PLAN.md - CMS language editing (EditorLanguageSwitcher, AddLanguageModal, variant creation)
-- [ ] 20-04-PLAN.md - [Gap Closure] Integrate language resolution into player content RPC
+- [x] 20-04-PLAN.md - [Gap Closure] Integrate language resolution into player content RPC
 
 ### Phase 21: Multi-Language Advanced
 **Goal**: Users have advanced multi-language features including group assignment, workflow tracking, and AI suggestions
@@ -232,7 +232,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 | 17. Templates Core | 3/3 | Complete | 2026-01-25 |
 | 18. Templates Discovery | 4/4 | Complete | 2026-01-26 |
 | 19. Templates Intelligence | 4/4 | Complete | 2026-01-26 |
-| 20. Multi-Language Core | 3/4 | In progress | - |
+| 20. Multi-Language Core | 4/4 | Complete | 2026-01-26 |
 | 21. Multi-Language Advanced | 0/3 | Not started | - |
 | 22. Platform Polish - Mobile & Dashboard | 0/3 | Not started | - |
 | 23. Platform Polish - Onboarding | 0/2 | Not started | - |
@@ -256,3 +256,5 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 19 gap closure: 2026-01-26*
 *Phase 19 complete: 2026-01-26*
 *Phase 20 planned: 2026-01-26*
+*Phase 20 gap closure: 2026-01-26*
+*Phase 20 complete: 2026-01-26*
