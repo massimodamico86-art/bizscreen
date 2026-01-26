@@ -35,6 +35,16 @@ export const CONTENT_TYPES = {
 };
 
 /**
+ * Rotation modes for campaign content
+ */
+export const ROTATION_MODES = {
+  WEIGHT: 'weight',
+  PERCENTAGE: 'percentage',
+  SEQUENCE: 'sequence',
+  RANDOM: 'random'
+};
+
+/**
  * Fetch all campaigns for the current tenant
  * @param {Object} options - Filter options
  * @param {string} options.status - Filter by status
@@ -510,6 +520,160 @@ export async function reorderContents(campaignId, orderedIds) {
 }
 
 // ============================================================================
+// ROTATION AND FREQUENCY LIMITS
+// ============================================================================
+
+/**
+ * Calculate effective rotation percentages from weights or explicit percentages
+ * @param {Array} contents - Campaign contents with weight and rotation_percentage
+ * @param {string} mode - Rotation mode (weight, percentage, sequence, random)
+ * @returns {Array} Contents with effectivePercent calculated
+ */
+export function calculateEffectiveRotation(contents, mode = ROTATION_MODES.WEIGHT) {
+  if (!contents || contents.length === 0) {
+    return [];
+  }
+
+  // For percentage mode, use explicit rotation_percentage values
+  if (mode === ROTATION_MODES.PERCENTAGE) {
+    return contents.map(c => ({
+      ...c,
+      effectivePercent: c.rotation_percentage ?? 0
+    }));
+  }
+
+  // For sequence and random modes, use equal distribution
+  if (mode === ROTATION_MODES.SEQUENCE || mode === ROTATION_MODES.RANDOM) {
+    const equalPercent = Math.round(100 / contents.length);
+    // Adjust last item to ensure total is exactly 100
+    return contents.map((c, i) => ({
+      ...c,
+      effectivePercent: i === contents.length - 1
+        ? 100 - (equalPercent * (contents.length - 1))
+        : equalPercent
+    }));
+  }
+
+  // For weight mode (default), calculate from weights
+  const totalWeight = contents.reduce((sum, c) => sum + (c.weight || 1), 0);
+  if (totalWeight === 0) {
+    // Avoid division by zero - equal distribution
+    const equalPercent = Math.round(100 / contents.length);
+    return contents.map((c, i) => ({
+      ...c,
+      effectivePercent: i === contents.length - 1
+        ? 100 - (equalPercent * (contents.length - 1))
+        : equalPercent
+    }));
+  }
+
+  // Calculate percentages from weights, ensuring total sums to 100
+  let runningTotal = 0;
+  return contents.map((c, i) => {
+    if (i === contents.length - 1) {
+      // Last item gets remainder to ensure exact 100%
+      return { ...c, effectivePercent: 100 - runningTotal };
+    }
+    const percent = Math.round(((c.weight || 1) / totalWeight) * 100);
+    runningTotal += percent;
+    return { ...c, effectivePercent: percent };
+  });
+}
+
+/**
+ * Update rotation settings for campaign contents
+ * @param {string} campaignId - Campaign ID
+ * @param {Array} contents - Array of {id, rotation_percentage, weight}
+ * @param {string} mode - Rotation mode (weight, percentage, sequence, random)
+ * @returns {Promise<Array>} Updated contents
+ */
+export async function updateContentRotation(campaignId, contents, mode = ROTATION_MODES.WEIGHT) {
+  // Validate mode
+  if (!Object.values(ROTATION_MODES).includes(mode)) {
+    throw new Error('Invalid rotation mode');
+  }
+
+  // Validate percentages sum to 100 if mode is 'percentage'
+  if (mode === ROTATION_MODES.PERCENTAGE) {
+    const total = contents.reduce((sum, c) => sum + (c.rotation_percentage ?? 0), 0);
+    if (total !== 100) {
+      throw new Error(`Rotation percentages must sum to 100 (current: ${total})`);
+    }
+  }
+
+  // Update each content's rotation settings
+  const updatedContents = [];
+  for (const content of contents) {
+    const { data, error } = await supabase
+      .from('campaign_contents')
+      .update({
+        rotation_percentage: content.rotation_percentage ?? null,
+        weight: content.weight ?? 1,
+        rotation_mode: mode
+      })
+      .eq('id', content.id)
+      .eq('campaign_id', campaignId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    updatedContents.push(data);
+  }
+
+  logger.info('Updated content rotation', { campaignId, mode, contentCount: contents.length });
+  return updatedContents;
+}
+
+/**
+ * Update frequency limits for a campaign content
+ * @param {string} contentId - Campaign content ID
+ * @param {Object} limits - Frequency limits
+ * @param {number|null} limits.max_plays_per_hour - Max plays per hour (null = unlimited)
+ * @param {number|null} limits.max_plays_per_day - Max plays per day (null = unlimited)
+ * @returns {Promise<Object>} Updated content
+ */
+export async function updateContentFrequencyLimits(contentId, limits) {
+  const { max_plays_per_hour, max_plays_per_day } = limits;
+
+  // Validate limits if provided
+  if (max_plays_per_hour !== null && max_plays_per_hour !== undefined && max_plays_per_hour <= 0) {
+    throw new Error('max_plays_per_hour must be a positive number');
+  }
+  if (max_plays_per_day !== null && max_plays_per_day !== undefined && max_plays_per_day <= 0) {
+    throw new Error('max_plays_per_day must be a positive number');
+  }
+
+  const { data, error } = await supabase
+    .from('campaign_contents')
+    .update({
+      max_plays_per_hour: max_plays_per_hour ?? null,
+      max_plays_per_day: max_plays_per_day ?? null
+    })
+    .eq('id', contentId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  logger.info('Updated content frequency limits', { contentId, limits });
+  return data;
+}
+
+/**
+ * Check if frequency limits are considered restrictive
+ * @param {Object} content - Content with max_plays_per_hour and max_plays_per_day
+ * @returns {boolean} True if limits are restrictive
+ */
+export function isFrequencyLimitRestrictive(content) {
+  const hourLimit = content?.max_plays_per_hour;
+  const dayLimit = content?.max_plays_per_day;
+
+  // Restrictive thresholds from RESEARCH.md
+  return (hourLimit !== null && hourLimit < 3) ||
+         (dayLimit !== null && dayLimit < 10);
+}
+
+// ============================================================================
 // ANALYTICS
 // ============================================================================
 
@@ -574,6 +738,7 @@ export default {
   CAMPAIGN_STATUS,
   TARGET_TYPES,
   CONTENT_TYPES,
+  ROTATION_MODES,
   fetchCampaigns,
   getCampaign,
   createCampaign,
@@ -590,6 +755,10 @@ export default {
   updateContent,
   getContents,
   reorderContents,
+  calculateEffectiveRotation,
+  updateContentRotation,
+  updateContentFrequencyLimits,
+  isFrequencyLimitRestrictive,
   getCampaignStats,
   getCampaignOptions
 };
