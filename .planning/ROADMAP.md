@@ -137,12 +137,13 @@ Plans:
   1. System suggests templates based on user's industry and usage patterns
   2. User can rate templates with stars (no written reviews)
   3. User can view which templates perform best based on personal usage analytics
-**Plans**: 3 plans (Wave 1: 19-01, Wave 2: 19-02, 19-03 parallel)
+**Plans**: 4 plans (Wave 1: 19-01, Wave 2: 19-02, 19-03 parallel, Wave 3: 19-04 gap closure)
 
 Plans:
-- [ ] 19-01-PLAN.md - Ratings and suggestions database layer (migration, RPCs, service functions)
-- [ ] 19-02-PLAN.md - Sidebar suggestions section and usage badges on TemplateCard
-- [ ] 19-03-PLAN.md - Star ratings UI in preview panel and similar templates post-apply
+- [x] 19-01-PLAN.md - Ratings and suggestions database layer (migration, RPCs, service functions)
+- [x] 19-02-PLAN.md - Sidebar suggestions section and usage badges on TemplateCard
+- [x] 19-03-PLAN.md - Star ratings UI in preview panel and similar templates post-apply
+- [ ] 19-04-PLAN.md - [Gap Closure] Wire usage counts in TemplateMarketplacePage
 
 ### Phase 20: Multi-Language Core
 **Goal**: Users can create language variants of content and assign languages to devices
@@ -229,7 +230,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 | 16. Scheduling Polish | 3/3 | Complete | 2026-01-25 |
 | 17. Templates Core | 3/3 | Complete | 2026-01-25 |
 | 18. Templates Discovery | 4/4 | Complete | 2026-01-26 |
-| 19. Templates Intelligence | 0/3 | Not started | - |
+| 19. Templates Intelligence | 3/4 | In progress | - |
 | 20. Multi-Language Core | 0/3 | Not started | - |
 | 21. Multi-Language Advanced | 0/3 | Not started | - |
 | 22. Platform Polish - Mobile & Dashboard | 0/3 | Not started | - |
@@ -251,3 +252,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 18 planned: 2026-01-26*
 *Phase 18 complete: 2026-01-26*
 *Phase 19 planned: 2026-01-26*
+*Phase 19 gap closure: 2026-01-26*
