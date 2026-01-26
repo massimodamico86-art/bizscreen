@@ -15,6 +15,7 @@ import { Heart, Layout, Loader2 } from 'lucide-react';
  *
  * Individual template card with hover overlay showing title and Quick Apply.
  * Includes optional favorite heart icon in top-right corner.
+ * Shows usage badge (bottom-left) when user has applied this template before.
  *
  * @param {Object} props
  * @param {Object} props.template - Template data with id, name, thumbnail_url
@@ -23,6 +24,7 @@ import { Heart, Layout, Loader2 } from 'lucide-react';
  * @param {boolean} props.isApplying - Whether this template is currently being applied
  * @param {boolean} props.isFavorited - Whether this template is favorited
  * @param {Function} props.onToggleFavorite - Called when favorite icon clicked
+ * @param {number} props.usageCount - Number of times user has applied this template
  */
 export function TemplateCard({
   template,
@@ -31,6 +33,7 @@ export function TemplateCard({
   isApplying = false,
   isFavorited = false,
   onToggleFavorite,
+  usageCount = 0,
 }) {
   const handleQuickApply = (e) => {
     e.stopPropagation();
@@ -94,6 +97,13 @@ export function TemplateCard({
           </button>
         )}
 
+        {/* Usage badge - bottom-left, only show if used */}
+        {usageCount > 0 && (
+          <div className="absolute bottom-2 left-2 z-10 px-2 py-0.5 rounded-full bg-gray-900/70 text-white text-xs font-medium">
+            Used {usageCount}x
+          </div>
+        )}
+
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
           <h3 className="text-white font-medium text-sm text-center px-3 line-clamp-2">
@@ -130,6 +140,7 @@ TemplateCard.propTypes = {
   isApplying: PropTypes.bool,
   isFavorited: PropTypes.bool,
   onToggleFavorite: PropTypes.func,
+  usageCount: PropTypes.number,
 };
 
 /**
@@ -144,6 +155,7 @@ TemplateCard.propTypes = {
  * @param {string|null} props.applyingId - ID of template currently being applied
  * @param {Set} props.favoriteIds - Set of favorited template IDs
  * @param {Function} props.onToggleFavorite - Called when favorite icon clicked
+ * @param {Map} props.usageCounts - Map of template ID to usage count
  */
 export function TemplateGrid({
   templates = [],
@@ -152,6 +164,7 @@ export function TemplateGrid({
   applyingId = null,
   favoriteIds = null,
   onToggleFavorite,
+  usageCounts = null,
 }) {
   if (templates.length === 0) {
     return null;
@@ -168,6 +181,7 @@ export function TemplateGrid({
           isApplying={applyingId === template.id}
           isFavorited={favoriteIds?.has(template.id) || false}
           onToggleFavorite={onToggleFavorite}
+          usageCount={usageCounts?.get(template.id) || 0}
         />
       ))}
     </div>
@@ -187,6 +201,7 @@ TemplateGrid.propTypes = {
   applyingId: PropTypes.string,
   favoriteIds: PropTypes.instanceOf(Set),
   onToggleFavorite: PropTypes.func,
+  usageCounts: PropTypes.instanceOf(Map),
 };
 
 export default TemplateGrid;
