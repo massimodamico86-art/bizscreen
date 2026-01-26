@@ -41,7 +41,8 @@ import {
   PriorityBadge,
   PRIORITY_LEVELS,
   DEFAULT_PRIORITY,
-  DaypartPicker
+  DaypartPicker,
+  CampaignPicker
 } from '../components/schedules';
 import { requiresApproval } from '../services/permissionsService.js';
 import { APPROVAL_STATUS, getApprovalStatusConfig } from '../services/approvalService.js';
@@ -156,7 +157,8 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
     repeatUntil: 'forever',
     repeatUntilDate: '',
     repeatUntilCount: 10,
-    priority: DEFAULT_PRIORITY // Normal (3) by default (SCHED-02)
+    priority: DEFAULT_PRIORITY, // Normal (3) by default (SCHED-02)
+    campaignId: null // Campaign assignment (US-148)
   });
 
   // Conflict detection state (US-144, SCHED-03)
@@ -414,7 +416,8 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       repeatUntil: 'forever',
       repeatUntilDate: '',
       repeatUntilCount: 10,
-      priority: DEFAULT_PRIORITY // Normal (3) by default
+      priority: DEFAULT_PRIORITY, // Normal (3) by default
+      campaignId: null
     });
     setShowEventModal(true);
   };
@@ -437,7 +440,8 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       repeatUntil: repeatConfig.repeat_until || 'forever',
       repeatUntilDate: repeatConfig.repeat_until_date || '',
       repeatUntilCount: repeatConfig.repeat_until_count || 10,
-      priority: entry.priority ?? DEFAULT_PRIORITY // Load existing priority or default
+      priority: entry.priority ?? DEFAULT_PRIORITY, // Load existing priority or default
+      campaignId: entry.campaign_id || null // Load campaign assignment (US-148)
     });
     setShowEventModal(true);
   };
@@ -465,6 +469,8 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
         event_type: eventForm.eventType === 'screenOff' ? 'screen_off' : 'content',
         // Priority (SCHED-02)
         priority: eventForm.priority,
+        // Campaign assignment (US-148)
+        campaign_id: eventForm.campaignId,
         // Repeat settings
         repeat_type: eventForm.repeat,
         repeat_every: eventForm.repeatEvery,
@@ -997,6 +1003,15 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
                       Higher priority events display over lower priority during overlaps
                     </span>
                   </div>
+                </div>
+
+                {/* Campaign Picker (US-148) */}
+                <div className="mb-4">
+                  <CampaignPicker
+                    value={eventForm.campaignId}
+                    onChange={(campaignId) => setEventForm(prev => ({ ...prev, campaignId }))}
+                    disabled={false}
+                  />
                 </div>
 
                 {/* Quick Apply Time Block (15-03) */}

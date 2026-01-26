@@ -184,7 +184,8 @@ export async function fetchScheduleWithEntries(id) {
         is_active,
         event_type,
         repeat_type,
-        repeat_config
+        repeat_config,
+        campaign_id
       )
     `)
     .eq('id', id)
@@ -384,7 +385,8 @@ export async function updateScheduleEntry(entryId, updates) {
     'target_type', 'target_id', 'content_type', 'content_id',
     'start_date', 'end_date', 'start_time', 'end_time',
     'days_of_week', 'priority', 'is_active',
-    'event_type', 'repeat_type', 'repeat_config'
+    'event_type', 'repeat_type', 'repeat_config',
+    'campaign_id' // US-148: Allow campaign assignment
   ];
 
   const filteredUpdates = {};
