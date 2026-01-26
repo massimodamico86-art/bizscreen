@@ -58,6 +58,8 @@ import FeedbackWidget from './components/FeedbackWidget';
 import { NotificationBell } from './components/notifications';
 import AutoBuildOnboardingModal from './components/onboarding/AutoBuildOnboardingModal';
 import { fetchScenesForTenant } from './services/sceneService';
+import { EmergencyProvider, useEmergency } from './contexts/EmergencyContext';
+import { EmergencyBanner } from './components/campaigns';
 import { useTranslation } from './i18n';
 import { useFeatureFlags } from './hooks/useFeatureFlag';
 import { Feature } from './config/plans';
@@ -170,6 +172,8 @@ function BizScreenAppInner() {
   const [isPasswordReset, setIsPasswordReset] = useState(false);
   // Track announcement banner height for layout offset - must be before early returns
   const [announcementHeight, setAnnouncementHeight] = useState(0);
+  // Track emergency banner height (40px when active, 0 when not)
+  const [emergencyHeight, setEmergencyHeight] = useState(0);
   // AI Autobuild onboarding modal
   const [showAutoBuildModal, setShowAutoBuildModal] = useState(false);
 
@@ -695,7 +699,78 @@ function BizScreenAppInner() {
   };
 
   // Client UI (shown for clients, or admins/super_admins when impersonating)
-  const topOffset = (isImpersonating ? 40 : 0) + announcementHeight;
+  const topOffset = (isImpersonating ? 40 : 0) + announcementHeight + emergencyHeight;
+
+  return (
+    <EmergencyProvider>
+      <ClientUILayout
+        topOffset={topOffset}
+        announcementHeight={announcementHeight}
+        emergencyHeight={emergencyHeight}
+        setAnnouncementHeight={setAnnouncementHeight}
+        setEmergencyHeight={setEmergencyHeight}
+        isImpersonating={isImpersonating}
+        impersonatedClient={impersonatedClient}
+        handleStopImpersonation={handleStopImpersonation}
+        branding={branding}
+        navigation={navigation}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        mediaExpanded={mediaExpanded}
+        setMediaExpanded={setMediaExpanded}
+        featureFlags={featureFlags}
+        authUserProfile={authUserProfile}
+        pages={pages}
+        user={user}
+        userProfile={userProfile}
+        toast={toast}
+        setToast={setToast}
+        showToast={showToast}
+        t={t}
+        handleSignOut={handleSignOut}
+        showAutoBuildModal={showAutoBuildModal}
+        setShowAutoBuildModal={setShowAutoBuildModal}
+        PageLoader={PageLoader}
+      />
+    </EmergencyProvider>
+  );
+}
+
+// Inner component to access EmergencyContext inside the provider
+function ClientUILayout({
+  topOffset,
+  announcementHeight,
+  setAnnouncementHeight,
+  setEmergencyHeight,
+  isImpersonating,
+  impersonatedClient,
+  handleStopImpersonation,
+  branding,
+  navigation,
+  currentPage,
+  setCurrentPage,
+  mediaExpanded,
+  setMediaExpanded,
+  featureFlags,
+  authUserProfile,
+  pages,
+  user,
+  userProfile,
+  toast,
+  setToast,
+  showToast,
+  t,
+  handleSignOut,
+  showAutoBuildModal,
+  setShowAutoBuildModal,
+  PageLoader,
+}) {
+  const { isActive: isEmergencyActive } = useEmergency();
+
+  // Update emergency height based on active state
+  useEffect(() => {
+    setEmergencyHeight(isEmergencyActive ? 40 : 0);
+  }, [isEmergencyActive, setEmergencyHeight]);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -703,6 +778,13 @@ function BizScreenAppInner() {
       <a href="#main-content" className="skip-link">
         {t('accessibility.skipToContent')}
       </a>
+
+      {/* Emergency Banner - Shows when emergency content is active */}
+      {isEmergencyActive && (
+        <div style={{ top: announcementHeight }}>
+          <EmergencyBanner />
+        </div>
+      )}
 
       {/* Announcement Banner - Top priority announcements */}
       <div className="fixed top-0 left-0 right-0 z-50">
