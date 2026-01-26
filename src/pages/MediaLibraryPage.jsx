@@ -83,6 +83,7 @@ import {
   MoveToFolderModal,
   AddToPlaylistModal,
   SetToScreenModal,
+  EmergencyDurationModal,
 } from './components/MediaLibraryComponents';
 
 // Filter options for sidebar
@@ -246,6 +247,9 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
   const [actionMenuId, setActionMenuId] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [showDropZone, setShowDropZone] = useState(false);
+
+  // Emergency push state
+  const [emergencyPushTarget, setEmergencyPushTarget] = useState(null);
 
   // Media preview popover hook
   const {
@@ -564,6 +568,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
                             onActionMenuToggle={setActionMenuId}
                             onDelete={handleDelete}
                             onDuplicate={handleDuplicateAsset}
+                            onPushEmergency={setEmergencyPushTarget}
                             formatDate={formatDate}
                             onClick={handleSelectAsset}
                             onDoubleClick={handleOpenDetail}
@@ -867,6 +872,15 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
         isVisible={isPreviewVisible}
         anchorRect={previewAnchorRect}
         onClose={hidePreview}
+      />
+
+      <EmergencyDurationModal
+        open={!!emergencyPushTarget}
+        onClose={() => setEmergencyPushTarget(null)}
+        contentType="media"
+        contentId={emergencyPushTarget?.id}
+        contentName={emergencyPushTarget?.name}
+        showToast={showToast}
       />
     </PageLayout>
   );

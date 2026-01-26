@@ -16,7 +16,7 @@
  * - SetToScreenModal: Push media to screen modal
  */
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
   Trash2,
   Edit,
@@ -43,6 +43,7 @@ import {
   Grid3X3,
   Plus,
 } from 'lucide-react';
+import { pushEmergencyContent, EMERGENCY_DURATIONS } from '../../services/emergencyService';
 import {
   Stack,
   Inline,
@@ -96,7 +97,7 @@ export const LimitWarningBanner = ({ limits, onUpgrade }) => {
 };
 
 // Media list row
-export const MediaListRow = ({ asset, actionMenuId, onActionMenuToggle, onEdit, onDuplicate, onDelete, onMove, formatDate, onClick, onDoubleClick, isSelected }) => {
+export const MediaListRow = ({ asset, actionMenuId, onActionMenuToggle, onEdit, onDuplicate, onDelete, onMove, onPushEmergency, formatDate, onClick, onDoubleClick, isSelected }) => {
   const TypeIcon = MEDIA_TYPE_ICONS[asset.type] || Image;
 
   return (
@@ -149,7 +150,7 @@ export const MediaListRow = ({ asset, actionMenuId, onActionMenuToggle, onEdit, 
             <MoreVertical size={18} className="text-gray-400" />
           </button>
           {actionMenuId === asset.id && (
-            <div className="absolute right-0 mt-1 w-40 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-10">
+            <div className="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-10">
               <button
                 onClick={(e) => { e.stopPropagation(); onActionMenuToggle(null); onEdit?.(asset); }}
                 className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
@@ -171,6 +172,16 @@ export const MediaListRow = ({ asset, actionMenuId, onActionMenuToggle, onEdit, 
                 <Folder size={14} />
                 Move to Folder
               </button>
+              {onPushEmergency && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onActionMenuToggle(null); onPushEmergency?.(asset); }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 flex items-center gap-2 text-red-600"
+                >
+                  <AlertTriangle size={14} />
+                  Push as Emergency
+                </button>
+              )}
+              <div className="border-t border-gray-100 my-1" />
               <button
                 onClick={(e) => { e.stopPropagation(); onDelete(asset); }}
                 className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-red-600"
@@ -800,6 +811,90 @@ export const SetToScreenModal = ({ open, onClose, mediaName, screens, onSet, set
             Setting...
           </span>
         )}
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+// Emergency Duration Modal - Select duration for emergency push
+export const EmergencyDurationModal = ({ open, onClose, contentType, contentId, contentName, showToast }) => {
+  const [duration, setDuration] = useState(EMERGENCY_DURATIONS[0].value);
+  const [pushing, setPushing] = useState(false);
+
+  const handlePush = async () => {
+    setPushing(true);
+    try {
+      await pushEmergencyContent(contentType, contentId, duration);
+      showToast?.('Emergency content pushed to all screens', 'success');
+      onClose();
+    } catch (err) {
+      console.error('Failed to push emergency:', err);
+      showToast?.('Failed to push emergency content: ' + err.message, 'error');
+    } finally {
+      setPushing(false);
+    }
+  };
+
+  const handleClose = () => {
+    if (!pushing) {
+      setDuration(EMERGENCY_DURATIONS[0].value);
+      onClose();
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <Modal open={open} onClose={handleClose} size="sm">
+      <ModalHeader>
+        <ModalTitle className="flex items-center gap-2 text-red-600">
+          <AlertTriangle size={20} />
+          Push as Emergency
+        </ModalTitle>
+      </ModalHeader>
+      <ModalContent>
+        <Stack gap="md">
+          <p className="text-sm text-gray-600">
+            Push <span className="font-medium">&quot;{contentName}&quot;</span> to all screens immediately. This overrides all schedules and campaigns.
+          </p>
+
+          <FormField label="Duration">
+            <select
+              value={duration ?? ''}
+              onChange={(e) => setDuration(e.target.value === '' ? null : parseInt(e.target.value, 10))}
+              disabled={pushing}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            >
+              {EMERGENCY_DURATIONS.map((opt) => (
+                <option key={opt.label} value={opt.value ?? ''}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        </Stack>
+      </ModalContent>
+      <ModalFooter>
+        <Button variant="ghost" onClick={handleClose} disabled={pushing}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handlePush}
+          disabled={pushing}
+          className="bg-red-600 hover:bg-red-700 text-white"
+        >
+          {pushing ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Pushing...
+            </>
+          ) : (
+            <>
+              <AlertTriangle className="w-4 h-4 mr-2" />
+              Push Emergency
+            </>
+          )}
+        </Button>
       </ModalFooter>
     </Modal>
   );

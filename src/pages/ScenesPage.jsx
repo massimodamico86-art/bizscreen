@@ -28,7 +28,9 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  AlertTriangle,
 } from 'lucide-react';
+import { pushEmergencyContent, EMERGENCY_DURATIONS } from '../services/emergencyService';
 import { useAuth } from '../contexts/AuthContext';
 import { formatDate } from '../utils/formatters';
 import { fetchScenesWithDeviceCounts } from '../services/sceneService';
@@ -45,6 +47,8 @@ import { Button } from '../design-system';
 import { Card, CardContent } from '../design-system';
 import { Badge } from '../design-system';
 import { EmptyState } from '../design-system';
+import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../design-system';
+import { Stack, FormField } from '../design-system';
 
 import PublishSceneModal from '../components/scenes/PublishSceneModal';
 
@@ -67,7 +71,7 @@ function getBusinessTypeConfig(type) {
 }
 
 // Scene Card Component
-function SceneCard({ scene, onOpenScene, onPublish }) {
+function SceneCard({ scene, onOpenScene, onPublish, onPushEmergency }) {
   const config = getBusinessTypeConfig(scene.business_type);
   const Icon = config.icon;
   const deviceCount = scene.deviceCount || 0;
@@ -127,8 +131,102 @@ function SceneCard({ scene, onOpenScene, onPublish }) {
             <ArrowRight className="w-4 h-4 ml-1.5" />
           </Button>
         </div>
+
+        {/* Emergency Push - smaller action below */}
+        <button
+          onClick={() => onPushEmergency(scene)}
+          className="mt-3 w-full text-xs text-red-600 hover:text-red-700 hover:bg-red-50 py-1.5 rounded transition-colors flex items-center justify-center gap-1.5"
+        >
+          <AlertTriangle className="w-3.5 h-3.5" />
+          Push as Emergency
+        </button>
       </CardContent>
     </Card>
+  );
+}
+
+// Emergency Duration Modal for Scenes
+function SceneEmergencyModal({ scene, onClose, onShowToast }) {
+  const [duration, setDuration] = useState(EMERGENCY_DURATIONS[0].value);
+  const [pushing, setPushing] = useState(false);
+
+  const handlePush = async () => {
+    if (!scene) return;
+    setPushing(true);
+    try {
+      await pushEmergencyContent('scene', scene.id, duration);
+      onShowToast?.('Emergency content pushed to all screens', 'success');
+      onClose();
+    } catch (err) {
+      console.error('Failed to push emergency:', err);
+      onShowToast?.('Failed to push emergency content: ' + err.message, 'error');
+    } finally {
+      setPushing(false);
+    }
+  };
+
+  const handleClose = () => {
+    if (!pushing) {
+      setDuration(EMERGENCY_DURATIONS[0].value);
+      onClose();
+    }
+  };
+
+  if (!scene) return null;
+
+  return (
+    <Modal open={!!scene} onClose={handleClose} size="sm">
+      <ModalHeader>
+        <ModalTitle className="flex items-center gap-2 text-red-600">
+          <AlertTriangle size={20} />
+          Push as Emergency
+        </ModalTitle>
+      </ModalHeader>
+      <ModalContent>
+        <Stack gap="md">
+          <p className="text-sm text-gray-600">
+            Push <span className="font-medium">&quot;{scene.name}&quot;</span> to all screens immediately. This overrides all schedules and campaigns.
+          </p>
+
+          <FormField label="Duration">
+            <select
+              value={duration ?? ''}
+              onChange={(e) => setDuration(e.target.value === '' ? null : parseInt(e.target.value, 10))}
+              disabled={pushing}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            >
+              {EMERGENCY_DURATIONS.map((opt) => (
+                <option key={opt.label} value={opt.value ?? ''}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        </Stack>
+      </ModalContent>
+      <ModalFooter>
+        <Button variant="ghost" onClick={handleClose} disabled={pushing}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handlePush}
+          disabled={pushing}
+          className="bg-red-600 hover:bg-red-700 text-white"
+        >
+          {pushing ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Pushing...
+            </>
+          ) : (
+            <>
+              <AlertTriangle className="w-4 h-4 mr-2" />
+              Push Emergency
+            </>
+          )}
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 }
 
@@ -141,6 +239,7 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [publishModalScene, setPublishModalScene] = useState(null);
+  const [emergencyModalScene, setEmergencyModalScene] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
@@ -245,6 +344,7 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
                   scene={scene}
                   onOpenScene={handleOpenScene}
                   onPublish={handlePublish}
+                  onPushEmergency={setEmergencyModalScene}
                 />
               ))}
             </Grid>
@@ -287,6 +387,13 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
         scene={publishModalScene}
         tenantId={userProfile?.id}
         onSuccess={handlePublishSuccess}
+      />
+
+      {/* Emergency Push Modal */}
+      <SceneEmergencyModal
+        scene={emergencyModalScene}
+        onClose={() => setEmergencyModalScene(null)}
+        onShowToast={onShowToast}
       />
     </PageLayout>
   );
