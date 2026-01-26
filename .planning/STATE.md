@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 14 (Scheduling Core)
+**Current focus:** v2 Templates & Platform Polish - Phase 15 (Scheduling Campaigns)
 
 ## Current Position
 
-Phase: 14 of 23 (Scheduling Core)
-Plan: 5 of 5 complete (including 2 gap closure plans)
-Status: Phase verified ✓
-Last activity: 2026-01-25 - Completed 14-05-PLAN.md (DST-Safe Date Handling)
+Phase: 15 of 23 (Scheduling Campaigns)
+Plan: 3 of 4 complete
+Status: In progress
+Last activity: 2026-01-25 - Completed 15-03-PLAN.md (Dayparting Presets)
 
-Progress: [██████░░░░] 22% (8/36 plans)
+Progress: [███████░░░] 31% (11/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8 (v2)
-- Average duration: 4.6min
-- Total execution time: 37min
+- Total plans completed: 11 (v2)
+- Average duration: 4.1min
+- Total execution time: 45min
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [██████░░░░] 22% (8/36 plans)
 |-------|-------|-------|----------|
 | 13-technical-foundation | 3 | 22min | 7min |
 | 14-scheduling-core | 5 | 15min | 3min |
+| 15-scheduling-campaigns | 3 | 8min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 14-01 (6min), 14-02 (2min), 14-03 (3min), 14-04 (2min), 14-05 (2min)
-- Trend: Accelerating
+- Last 5 plans: 14-04 (2min), 14-05 (2min), 15-01 (3min), 15-02 (2min), 15-03 (3min)
+- Trend: Stable at ~3min/plan
 
 *Updated after each plan completion*
 
@@ -59,6 +60,8 @@ Recent decisions affecting current work:
 - [14-03]: Optimistic updates with revert on error for drag/resize operations
 - [14-05]: Use TZDate from @date-fns/tz for all schedule date calculations (DST-safe)
 - [14-05]: Default to UTC timezone for internal calculations, device timezone at playback
+- [15-03]: Three daypart preset types: meal, period, custom
+- [15-03]: DaypartPicker fills form fields (quick-fill), not persistent association
 
 ### Pending Todos
 
@@ -80,8 +83,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed Phase 14 (Scheduling Core) including gap closure plans, ready for Phase 15
+Stopped at: Completed 15-03-PLAN.md (Dayparting Presets), ready for 15-04
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Phase 14 complete (5/5 plans: DateDurationPicker, ConflictWarning, WeekPreview, DateDurationPicker render, DST-safe TZDate)*
+*Updated: 2026-01-25 - Phase 15 progress (3/4 plans: CampaignPicker, ScheduleTemplates, DaypartingPresets)*
