@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 16 of 23 (Scheduling Polish)
-Plan: 1 of 4 complete (16-01 complete)
+Plan: 3 of 4 complete (16-01, 16-02, 16-03 complete)
 Status: In progress
-Last activity: 2026-01-26 - Completed 16-01-PLAN.md (Campaign Analytics)
+Last activity: 2026-01-26 - Completed 16-03-PLAN.md (Campaign Templates and Seasonal)
 
-Progress: [████████░░] 36% (13/36 plans)
+Progress: [█████████░] 42% (15/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13 (v2)
-- Average duration: 4.2min
-- Total execution time: 56min
+- Total plans completed: 15 (v2)
+- Average duration: 4.3min
+- Total execution time: 68min
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [████████░░] 36% (13/36 plans)
 | 13-technical-foundation | 3 | 22min | 7min |
 | 14-scheduling-core | 5 | 15min | 3min |
 | 15-scheduling-campaigns | 4 | 18min | 5min |
-| 16-scheduling-polish | 1 | 4min | 4min |
+| 16-scheduling-polish | 3 | 16min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 15-02 (2min), 15-03 (3min), 15-04 (7min), 16-01 (4min)
-- Trend: Stable at ~4min/plan
+- Last 5 plans: 15-04 (7min), 16-01 (4min), 16-02 (6min), 16-03 (6min)
+- Trend: Stable at ~5min/plan
 
 *Updated after each plan completion*
 
@@ -71,6 +71,8 @@ Recent decisions affecting current work:
 - [15-04]: Player returns emergency source, priority=999, and expiry info
 - [16-01]: Use SECURITY DEFINER on RPC for tenant context enforcement
 - [16-01]: Re-export DATE_RANGES from campaignAnalyticsService for consistent API
+- [16-03]: Templates store structure only (target types, content types), not specific IDs
+- [16-03]: Seasonal recurrence: yearly only with month/day/duration_days format
 
 ### Pending Todos
 
@@ -92,8 +94,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 16-01-PLAN.md (Campaign Analytics)
+Stopped at: Completed 16-03-PLAN.md (Campaign Templates and Seasonal)
 Resume file: None
 
 ---
-*Updated: 2026-01-26 - Completed 16-01-PLAN.md (Campaign Analytics)*
+*Updated: 2026-01-26 - Completed 16-03-PLAN.md (Campaign Templates and Seasonal)*
