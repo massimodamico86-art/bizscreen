@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 17 of 23 (Templates Core)
-Plan: 1 of 4 complete (17-01 complete)
+Plan: 2 of 4 complete (17-01, 17-02 complete)
 Status: In progress
-Last activity: 2026-01-25 - Completed 17-01-PLAN.md
+Last activity: 2026-01-25 - Completed 17-02-PLAN.md
 
-Progress: [█████████░] 44% (16/36 plans)
+Progress: [█████████░] 47% (17/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16 (v2)
-- Average duration: 4.2min
-- Total execution time: 70min
+- Total plans completed: 17 (v2)
+- Average duration: 4.1min
+- Total execution time: 73min
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: [█████████░] 44% (16/36 plans)
 | 14-scheduling-core | 5 | 15min | 3min |
 | 15-scheduling-campaigns | 4 | 18min | 5min |
 | 16-scheduling-polish | 3 | 16min | 5min |
-| 17-templates-core | 1 | 2min | 2min |
+| 17-templates-core | 2 | 5min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 16-01 (4min), 16-02 (6min), 16-03 (6min), 17-01 (2min)
-- Trend: Fast UI component plans
+- Last 5 plans: 16-02 (6min), 16-03 (6min), 17-01 (2min), 17-02 (3min)
+- Trend: Fast UI integration plans
 
 *Updated after each plan completion*
 
@@ -76,6 +76,9 @@ Recent decisions affecting current work:
 - [16-03]: Seasonal recurrence: yearly only with month/day/duration_days format
 - [17-01]: TemplateCard exported separately for reuse in FeaturedTemplatesRow
 - [17-01]: Orientation filter toggle behavior (clicking selected clears filter)
+- [17-02]: Featured row hidden when any filter active
+- [17-02]: Client-side orientation filter using metadata.orientation
+- [17-02]: Quick Apply auto-names scenes: Template Name - MMM d, yyyy
 
 ### Pending Todos
 
@@ -97,8 +100,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 17-01-PLAN.md
+Stopped at: Completed 17-02-PLAN.md
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Completed 17-01-PLAN.md (Marketplace Components)*
+*Updated: 2026-01-25 - Completed 17-02-PLAN.md (Marketplace Page Integration)*
