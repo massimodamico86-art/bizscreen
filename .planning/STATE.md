@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 15 of 23 (Scheduling Campaigns)
-Plan: 3 of 4 complete (15-02, 15-03 complete; 15-01 partial, 15-04 pending)
+Plan: 3 of 4 complete (15-01, 15-02, 15-03 complete; 15-04 pending)
 Status: In progress
-Last activity: 2026-01-25 - Completed 15-02-PLAN.md (Emergency Override)
+Last activity: 2026-01-26 - Completed 15-01-PLAN.md (Campaign-Entry Linking)
 
 Progress: [███████░░░] 31% (11/36 plans)
 
@@ -29,11 +29,11 @@ Progress: [███████░░░] 31% (11/36 plans)
 |-------|-------|-------|----------|
 | 13-technical-foundation | 3 | 22min | 7min |
 | 14-scheduling-core | 5 | 15min | 3min |
-| 15-scheduling-campaigns | 3 | 8min | 3min |
+| 15-scheduling-campaigns | 3 | 11min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 14-04 (2min), 14-05 (2min), 15-01 (3min), 15-02 (2min), 15-03 (3min)
-- Trend: Stable at ~3min/plan
+- Last 5 plans: 14-05 (2min), 15-01 (6min), 15-02 (2min), 15-03 (3min), 15-04 (pending)
+- Trend: Stable at ~3-4min/plan
 
 *Updated after each plan completion*
 
@@ -60,10 +60,12 @@ Recent decisions affecting current work:
 - [14-03]: Optimistic updates with revert on error for drag/resize operations
 - [14-05]: Use TZDate from @date-fns/tz for all schedule date calculations (DST-safe)
 - [14-05]: Default to UTC timezone for internal calculations, device timezone at playback
-- [15-03]: Three daypart preset types: meal, period, custom
-- [15-03]: DaypartPicker fills form fields (quick-fill), not persistent association
+- [15-01]: ON DELETE SET NULL for campaign_id FK (orphan entries, don't delete)
+- [15-01]: Entry counts via separate query in getCampaignsWithEntryCounts
 - [15-02]: Store started_at (not expires_at) for emergency duration calculation
 - [15-02]: needs_refresh=true on all tenant devices for emergency push/stop
+- [15-03]: Three daypart preset types: meal, period, custom
+- [15-03]: DaypartPicker fills form fields (quick-fill), not persistent association
 
 ### Pending Todos
 
@@ -84,9 +86,9 @@ Test infrastructure note:
 
 ## Session Continuity
 
-Last session: 2026-01-25
-Stopped at: Completed 15-02-PLAN.md (Emergency Override), 15-01 partial, 15-04 pending
+Last session: 2026-01-26
+Stopped at: Completed 15-01-PLAN.md (Campaign-Entry Linking), 15-04 pending
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Phase 15 progress (15-02 Emergency Override complete, 15-03 Dayparting complete)*
+*Updated: 2026-01-26 - Completed 15-01-PLAN.md (Campaign-Entry Linking)*
