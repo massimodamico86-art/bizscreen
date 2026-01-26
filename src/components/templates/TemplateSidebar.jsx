@@ -2,12 +2,15 @@
  * Template Sidebar
  *
  * Persistent left sidebar for template marketplace category navigation.
- * Displays category list with "All Templates" option and orientation filter.
+ * Displays recent templates, favorites, category list with "All Templates" option,
+ * and orientation filter.
  *
  * @module components/templates/TemplateSidebar
  */
 
 import PropTypes from 'prop-types';
+import { SidebarRecentsSection } from './SidebarRecentsSection';
+import { SidebarFavoritesSection } from './SidebarFavoritesSection';
 
 /**
  * TemplateSidebar component
@@ -17,12 +20,18 @@ import PropTypes from 'prop-types';
  * @param {string|null} props.selectedCategory - Currently selected category ID
  * @param {string|null} props.selectedOrientation - Current orientation filter ('landscape', 'portrait', or null)
  * @param {Function} props.onFilterChange - Callback for filter changes ({ category?: string, orientation?: string })
+ * @param {Array} props.recentTemplates - Array of recently used templates
+ * @param {Array} props.favoriteTemplates - Array of favorited templates
+ * @param {Function} props.onSidebarTemplateClick - Called when a template in the sidebar is clicked
  */
 export function TemplateSidebar({
   categories = [],
   selectedCategory = null,
   selectedOrientation = null,
   onFilterChange,
+  recentTemplates = [],
+  favoriteTemplates = [],
+  onSidebarTemplateClick = () => {},
 }) {
   const handleCategoryClick = (categoryId) => {
     onFilterChange({ category: categoryId });
@@ -37,6 +46,18 @@ export function TemplateSidebar({
   return (
     <aside className="w-64 flex-shrink-0">
       <div className="sticky top-4 space-y-6">
+        {/* Recents Section */}
+        <SidebarRecentsSection
+          templates={recentTemplates}
+          onTemplateClick={onSidebarTemplateClick}
+        />
+
+        {/* Favorites Section */}
+        <SidebarFavoritesSection
+          templates={favoriteTemplates}
+          onTemplateClick={onSidebarTemplateClick}
+        />
+
         {/* Categories Section */}
         <div className="space-y-1">
           {/* All Templates button */}
@@ -108,6 +129,21 @@ TemplateSidebar.propTypes = {
   selectedCategory: PropTypes.string,
   selectedOrientation: PropTypes.oneOf(['landscape', 'portrait', null]),
   onFilterChange: PropTypes.func.isRequired,
+  recentTemplates: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      thumbnail_url: PropTypes.string,
+    })
+  ),
+  favoriteTemplates: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      thumbnail_url: PropTypes.string,
+    })
+  ),
+  onSidebarTemplateClick: PropTypes.func,
 };
 
 export default TemplateSidebar;
