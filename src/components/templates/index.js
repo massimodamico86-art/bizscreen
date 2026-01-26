@@ -8,6 +8,7 @@
 export { FeaturedTemplatesRow } from './FeaturedTemplatesRow';
 export { TemplateGrid, TemplateCard } from './TemplateGrid';
 export { TemplateSidebar } from './TemplateSidebar';
+export { TemplatePreviewPanel } from './TemplatePreviewPanel';
 
 // Preview components
 export { TemplatePreviewPopover, useTemplatePreview } from './TemplatePreviewPopover';
