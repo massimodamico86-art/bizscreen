@@ -8,6 +8,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { Search } from 'lucide-react';
 import PageLayout from '../design-system/components/PageLayout';
@@ -17,8 +18,12 @@ import {
   fetchCategories,
   installTemplateAsScene,
 } from '../services/marketplaceService';
-import { TemplateSidebar, FeaturedTemplatesRow, TemplateGrid } from '../components/templates';
-import TemplatePreviewModal from '../components/TemplatePreviewModal';
+import {
+  TemplateSidebar,
+  FeaturedTemplatesRow,
+  TemplateGrid,
+  TemplatePreviewPanel,
+} from '../components/templates';
 
 export default function TemplateMarketplacePage() {
   const navigate = useNavigate();
@@ -37,9 +42,8 @@ export default function TemplateMarketplacePage() {
   const orientation = searchParams.get('orientation') || '';
   const search = searchParams.get('q') || '';
 
-  // Modal state
+  // Panel state (truthy check controls visibility)
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [previewOpen, setPreviewOpen] = useState(false);
 
   // Search input state (debounced)
   const [searchInput, setSearchInput] = useState(search);
@@ -110,10 +114,9 @@ export default function TemplateMarketplacePage() {
     return () => clearTimeout(timer);
   }, [searchInput, search, updateFilters]);
 
-  // Handle template click (open preview)
+  // Handle template click (open preview panel)
   const handleTemplateClick = (template) => {
     setSelectedTemplate(template);
-    setPreviewOpen(true);
   };
 
   // Handle Quick Apply - creates scene with auto-naming and navigates to editor
@@ -129,9 +132,9 @@ export default function TemplateMarketplacePage() {
     }
   };
 
-  // Handle install success from preview modal
-  const handleInstallSuccess = (sceneId) => {
-    setPreviewOpen(false);
+  // Handle apply success from preview panel
+  const handleApplySuccess = (sceneId) => {
+    setSelectedTemplate(null);
     navigate(`/scene-editor/${sceneId}`);
   };
 
@@ -264,14 +267,16 @@ export default function TemplateMarketplacePage() {
         </main>
       </div>
 
-      {/* Preview Modal */}
-      {previewOpen && selectedTemplate && (
-        <TemplatePreviewModal
-          template={selectedTemplate}
-          onClose={() => setPreviewOpen(false)}
-          onInstallSuccess={handleInstallSuccess}
-        />
-      )}
+      {/* Preview Panel */}
+      <AnimatePresence>
+        {selectedTemplate && (
+          <TemplatePreviewPanel
+            template={selectedTemplate}
+            onClose={() => setSelectedTemplate(null)}
+            onApply={handleApplySuccess}
+          />
+        )}
+      </AnimatePresence>
     </PageLayout>
   );
 }
