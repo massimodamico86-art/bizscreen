@@ -11,7 +11,10 @@ import {
   removeTarget,
   addContent,
   removeContent,
-  CAMPAIGN_STATUS
+  updateContentRotation,
+  updateContentFrequencyLimits,
+  CAMPAIGN_STATUS,
+  ROTATION_MODES
 } from '../../services/campaignService.js';
 import { fetchScreenGroups } from '../../services/screenGroupService.js';
 import { fetchLocations } from '../../services/locationService.js';
@@ -99,6 +102,11 @@ export function useCampaignEditor(campaignId, { showToast }) {
   const [analytics, setAnalytics] = useState(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsDateRange, setAnalyticsDateRange] = useState('7d');
+
+  // Rotation state
+  const [rotationMode, setRotationMode] = useState(ROTATION_MODES.WEIGHT);
+  const [savingRotation, setSavingRotation] = useState(false);
+  const [expandedContentId, setExpandedContentId] = useState(null);
 
   // Load campaign data
   const loadCampaign = useCallback(async () => {
@@ -346,6 +354,77 @@ export function useCampaignEditor(campaignId, { showToast }) {
     }
   }, [showToast]);
 
+  // Rotation handlers
+  const handleRotationChange = useCallback(async (updatedContents) => {
+    if (isNew) return;
+
+    try {
+      setSavingRotation(true);
+      await updateContentRotation(campaignId, updatedContents, rotationMode);
+      setCampaign(prev => ({
+        ...prev,
+        contents: prev.contents.map(c => {
+          const updated = updatedContents.find(u => u.id === c.id);
+          return updated ? { ...c, ...updated } : c;
+        })
+      }));
+    } catch (error) {
+      logger.error('Failed to update rotation', { campaignId, error });
+      showToast?.('Error updating rotation: ' + error.message, 'error');
+    } finally {
+      setSavingRotation(false);
+    }
+  }, [campaignId, isNew, rotationMode, showToast]);
+
+  const handleRotationModeChange = useCallback(async (newMode) => {
+    setRotationMode(newMode);
+
+    // If we have contents, update their rotation mode in database
+    if (!isNew && campaign.contents?.length > 0) {
+      try {
+        setSavingRotation(true);
+        const contentsWithMode = campaign.contents.map(c => ({
+          id: c.id,
+          rotation_percentage: c.rotation_percentage,
+          weight: c.weight ?? 1
+        }));
+        await updateContentRotation(campaignId, contentsWithMode, newMode);
+        setCampaign(prev => ({
+          ...prev,
+          contents: prev.contents.map(c => ({ ...c, rotation_mode: newMode }))
+        }));
+      } catch (error) {
+        logger.error('Failed to update rotation mode', { campaignId, newMode, error });
+        showToast?.('Error updating rotation mode: ' + error.message, 'error');
+      } finally {
+        setSavingRotation(false);
+      }
+    }
+  }, [campaignId, isNew, campaign.contents, showToast]);
+
+  // Frequency limit handlers
+  const handleFrequencyChange = useCallback(async (contentId, limits) => {
+    if (isNew) return;
+
+    try {
+      await updateContentFrequencyLimits(contentId, limits);
+      setCampaign(prev => ({
+        ...prev,
+        contents: prev.contents.map(c =>
+          c.id === contentId ? { ...c, ...limits } : c
+        )
+      }));
+    } catch (error) {
+      logger.error('Failed to update frequency limits', { contentId, limits, error });
+      showToast?.('Error updating frequency limits: ' + error.message, 'error');
+    }
+  }, [isNew, showToast]);
+
+  // Toggle expanded content for frequency settings
+  const handleToggleContentSettings = useCallback((contentId) => {
+    setExpandedContentId(prev => prev === contentId ? null : contentId);
+  }, []);
+
   // Approval handlers
   const handleSubmitForApproval = useCallback(async () => {
     try {
@@ -485,6 +564,11 @@ export function useCampaignEditor(campaignId, { showToast }) {
     analyticsDateRange,
     handleAnalyticsDateRangeChange,
 
+    // Rotation state
+    rotationMode,
+    savingRotation,
+    expandedContentId,
+
     // Actions
     handleChange,
     handleSave,
@@ -495,6 +579,10 @@ export function useCampaignEditor(campaignId, { showToast }) {
     handleRemoveTarget,
     handleAddContent,
     handleRemoveContent,
+    handleRotationChange,
+    handleRotationModeChange,
+    handleFrequencyChange,
+    handleToggleContentSettings,
     handleSubmitForApproval,
     handleRevertToDraft,
     loadPreviewLinks,
