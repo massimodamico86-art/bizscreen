@@ -40,7 +40,8 @@ import {
   DateDurationPicker,
   PriorityBadge,
   PRIORITY_LEVELS,
-  DEFAULT_PRIORITY
+  DEFAULT_PRIORITY,
+  DaypartPicker
 } from '../components/schedules';
 import { requiresApproval } from '../services/permissionsService.js';
 import { APPROVAL_STATUS, getApprovalStatusConfig } from '../services/approvalService.js';
@@ -996,6 +997,26 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
                       Higher priority events display over lower priority during overlaps
                     </span>
                   </div>
+                </div>
+
+                {/* Quick Apply Time Block (15-03) */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Quick Apply</label>
+                  <DaypartPicker
+                    onApply={(preset) => {
+                      // Apply preset times to form
+                      setEventForm(prev => ({
+                        ...prev,
+                        startTime: preset.start_time?.substring(0, 5) || preset.start_time,
+                        endTime: preset.end_time?.substring(0, 5) || preset.end_time
+                      }));
+                      showToast?.(`Applied ${preset.name} time block`);
+                    }}
+                    disabled={false}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">
+                    Quickly apply preset time blocks to this event
+                  </p>
                 </div>
 
                 {/* Date and Time Selection (SCHED-01) */}
