@@ -135,14 +135,14 @@ Plans:
 **Requirements**: TMPL-11, TMPL-12, TMPL-13
 **Success Criteria** (what must be TRUE):
   1. System suggests templates based on user's industry and usage patterns
-  2. User can rate templates with stars and leave reviews
-  3. User can view which templates perform best based on usage analytics
-**Plans**: TBD
+  2. User can rate templates with stars (no written reviews)
+  3. User can view which templates perform best based on personal usage analytics
+**Plans**: 3 plans (Wave 1: 19-01, Wave 2: 19-02, 19-03 parallel)
 
 Plans:
-- [ ] 19-01: Template suggestions engine
-- [ ] 19-02: Ratings and reviews
-- [ ] 19-03: Template usage analytics
+- [ ] 19-01-PLAN.md - Ratings and suggestions database layer (migration, RPCs, service functions)
+- [ ] 19-02-PLAN.md - Sidebar suggestions section and usage badges on TemplateCard
+- [ ] 19-03-PLAN.md - Star ratings UI in preview panel and similar templates post-apply
 
 ### Phase 20: Multi-Language Core
 **Goal**: Users can create language variants of content and assign languages to devices
@@ -250,3 +250,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 17 complete: 2026-01-25*
 *Phase 18 planned: 2026-01-26*
 *Phase 18 complete: 2026-01-26*
+*Phase 19 planned: 2026-01-26*
