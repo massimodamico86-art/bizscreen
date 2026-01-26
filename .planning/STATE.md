@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 19 of 23 (Templates Intelligence)
-Plan: 1 of 4 complete (19-01 complete)
+Plan: 2 of 4 complete (19-02 complete)
 Status: In progress
-Last activity: 2026-01-26 - Completed 19-01-PLAN.md (Ratings & Suggestions Infrastructure)
+Last activity: 2026-01-26 - Completed 19-02-PLAN.md (Suggestions UI & Usage Badges)
 
-Progress: [███████████░] 64% (23/36 plans)
+Progress: [███████████░] 67% (24/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23 (v2)
+- Total plans completed: 24 (v2)
 - Average duration: 3.9min
-- Total execution time: 90min
+- Total execution time: 93min
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [███████████░] 64% (23/36 plans)
 | 16-scheduling-polish | 3 | 16min | 5min |
 | 17-templates-core | 3 | 7min | 2min |
 | 18-templates-discovery | 4 | 15min | 4min |
-| 19-templates-intelligence | 1 | 3min | 3min |
+| 19-templates-intelligence | 2 | 6min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 18-01 (5min), 18-02 (3min), 18-04 (4min), 19-01 (3min)
-- Trend: Fast infrastructure plans
+- Last 5 plans: 18-02 (3min), 18-04 (4min), 19-01 (3min), 19-02 (3min)
+- Trend: Fast infrastructure and UI plans
 
 *Updated after each plan completion*
 
@@ -102,6 +102,9 @@ Recent decisions affecting current work:
 - [19-01]: Public SELECT on ratings table for aggregate display
 - [19-01]: Suggestions exclude already-used templates via history check
 - [19-01]: CamelCase mapping in service functions (map snake_case DB)
+- [19-02]: Sparkles icon (amber-500) differentiates suggestions from Recents/Favorites
+- [19-02]: Usage badge positioned bottom-left (heart is top-right)
+- [19-02]: Suggested section placed after Favorites, before Categories
 
 ### Pending Todos
 
@@ -123,8 +126,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 19-01-PLAN.md (Ratings & Suggestions Infrastructure)
+Stopped at: Completed 19-02-PLAN.md (Suggestions UI & Usage Badges)
 Resume file: None
 
 ---
-*Updated: 2026-01-26 - Completed 19-01 (Ratings & Suggestions Infrastructure)*
+*Updated: 2026-01-26 - Completed 19-02 (Suggestions UI & Usage Badges)*
