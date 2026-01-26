@@ -24,6 +24,7 @@ import {
   toggleMarketplaceFavorite,
   checkFavoritedTemplates,
   applyCustomizationToScene,
+  getTemplateUsageCounts,
 } from '../services/marketplaceService';
 import {
   TemplateSidebar,
@@ -65,6 +66,7 @@ export default function TemplateMarketplacePage() {
   const [recentTemplates, setRecentTemplates] = useState([]);
   const [favoriteTemplates, setFavoriteTemplates] = useState([]);
   const [favoritedIds, setFavoritedIds] = useState(new Set());
+  const [usageCounts, setUsageCounts] = useState(new Map());
 
   // Filters from URL
   const categoryId = searchParams.get('category') || '';
@@ -167,6 +169,15 @@ export default function TemplateMarketplacePage() {
       checkFavoritedTemplates(templates.map(t => t.id))
         .then(setFavoritedIds)
         .catch(err => console.error('Failed to check favorites:', err));
+    }
+  }, [templates]);
+
+  // Fetch usage counts for grid templates
+  useEffect(() => {
+    if (templates.length > 0) {
+      getTemplateUsageCounts(templates.map(t => t.id))
+        .then(setUsageCounts)
+        .catch(err => console.error('Failed to load usage counts:', err));
     }
   }, [templates]);
 
@@ -410,6 +421,7 @@ export default function TemplateMarketplacePage() {
                   applyingId={applyingId}
                   favoriteIds={favoritedIds}
                   onToggleFavorite={handleToggleFavorite}
+                  usageCounts={usageCounts}
                 />
               )}
 
@@ -422,6 +434,7 @@ export default function TemplateMarketplacePage() {
                   applyingId={applyingId}
                   favoriteIds={favoritedIds}
                   onToggleFavorite={handleToggleFavorite}
+                  usageCounts={usageCounts}
                 />
               ) : (
                 /* Empty State */
