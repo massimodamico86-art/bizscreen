@@ -20,6 +20,7 @@ import { TemplateCard } from './TemplateGrid';
  * @param {string|null} props.applyingId - ID of template currently being applied
  * @param {Set} props.favoriteIds - Set of favorited template IDs
  * @param {Function} props.onToggleFavorite - Called when favorite icon clicked
+ * @param {Map} props.usageCounts - Map of template ID to usage count
  */
 export function FeaturedTemplatesRow({
   templates = [],
@@ -28,6 +29,7 @@ export function FeaturedTemplatesRow({
   applyingId = null,
   favoriteIds = null,
   onToggleFavorite,
+  usageCounts = null,
 }) {
   if (templates.length === 0) {
     return null;
@@ -46,6 +48,7 @@ export function FeaturedTemplatesRow({
               isApplying={applyingId === template.id}
               isFavorited={favoriteIds?.has(template.id) || false}
               onToggleFavorite={onToggleFavorite}
+              usageCount={usageCounts?.get(template.id) || 0}
             />
           </div>
         ))}
@@ -67,6 +70,7 @@ FeaturedTemplatesRow.propTypes = {
   applyingId: PropTypes.string,
   favoriteIds: PropTypes.instanceOf(Set),
   onToggleFavorite: PropTypes.func,
+  usageCounts: PropTypes.instanceOf(Map),
 };
 
 export default FeaturedTemplatesRow;
