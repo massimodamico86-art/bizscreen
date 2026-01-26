@@ -1495,6 +1495,65 @@ export function findEqualSpacing(block, otherBlocks, threshold = 0.005) {
 }
 
 // ============================================
+// SLIDE COPY OPERATIONS
+// ============================================
+
+/**
+ * Copy all slides from one scene to another
+ * Used for creating language variants with the same content
+ *
+ * @param {string} sourceSceneId - The scene to copy slides from
+ * @param {string} targetSceneId - The scene to copy slides to
+ * @returns {Promise<Array>} Array of created slides
+ */
+export async function copySlides(sourceSceneId, targetSceneId) {
+  logger.debug('Copying slides', { sourceSceneId, targetSceneId });
+
+  // 1. Fetch all slides from source scene (ordered by position)
+  const sourceSlides = await fetchSlidesForScene(sourceSceneId);
+
+  if (!sourceSlides || sourceSlides.length === 0) {
+    logger.debug('No slides to copy', { sourceSceneId });
+    return [];
+  }
+
+  // 2. Create copies for target scene
+  const createdSlides = [];
+
+  for (const slide of sourceSlides) {
+    const slideData = {
+      scene_id: targetSceneId,
+      position: slide.position,
+      title: slide.title,
+      kind: slide.kind,
+      design_json: slide.design_json,
+      duration_seconds: slide.duration_seconds,
+    };
+
+    const { data, error } = await supabase
+      .from('scene_slides')
+      .insert(slideData)
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Failed to copy slide', { error: error.message, slideId: slide.id });
+      throw error;
+    }
+
+    createdSlides.push(data);
+  }
+
+  logger.info('Slides copied', {
+    count: createdSlides.length,
+    sourceSceneId,
+    targetSceneId,
+  });
+
+  return createdSlides;
+}
+
+// ============================================
 // EXPORTS
 // ============================================
 
@@ -1504,6 +1563,7 @@ export default {
   updateSlide,
   deleteSlide,
   reorderSlides,
+  copySlides,
   getDefaultDesign,
   generateBlockId,
   createTextBlock,
