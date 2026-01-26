@@ -4,6 +4,7 @@
  * Browse and install scene templates from the marketplace.
  * Supports filtering by category, orientation, and search.
  * Features prominent search bar, persistent sidebar, featured templates row, and Quick Apply.
+ * Includes customization wizard for templates with customizable fields.
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -22,6 +23,7 @@ import {
   fetchRecentMarketplaceTemplates,
   toggleMarketplaceFavorite,
   checkFavoritedTemplates,
+  applyCustomizationToScene,
 } from '../services/marketplaceService';
 import {
   TemplateSidebar,
@@ -29,7 +31,21 @@ import {
   TemplateGrid,
   TemplatePreviewPanel,
   StarterPacksRow,
+  TemplateCustomizationWizard,
 } from '../components/templates';
+
+/**
+ * Check if a template has customizable fields
+ */
+function hasCustomizableFields(template) {
+  const fields = template?.metadata?.customizable_fields;
+  if (!fields) return false;
+  return (
+    fields.logo !== false ||
+    fields.color !== false ||
+    (fields.texts?.length > 0)
+  );
+}
 
 export default function TemplateMarketplacePage() {
   const navigate = useNavigate();
@@ -57,6 +73,13 @@ export default function TemplateMarketplacePage() {
 
   // Panel state (truthy check controls visibility)
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+
+  // Wizard state
+  const [wizardState, setWizardState] = useState({
+    open: false,
+    template: null,
+    sceneId: null,
+  });
 
   // Search input state (debounced)
   const [searchInput, setSearchInput] = useState(search);
@@ -162,24 +185,68 @@ export default function TemplateMarketplacePage() {
     setSelectedTemplate(template);
   };
 
-  // Handle Quick Apply - creates scene with auto-naming and navigates to editor
+  // Handle Quick Apply - creates scene with auto-naming
+  // Opens wizard if template has customizable fields, otherwise navigates to editor
   const handleQuickApply = async (template) => {
     setApplyingId(template.id);
     try {
       const sceneName = `${template.name} - ${format(new Date(), 'MMM d, yyyy')}`;
       const sceneId = await installTemplateAsScene(template.id, sceneName);
-      navigate(`/scene-editor/${sceneId}`);
-    } catch (error) {
-      console.error('Failed to apply template:', error);
+
+      // Check if template has customizable fields
+      if (hasCustomizableFields(template)) {
+        // Open wizard
+        setWizardState({
+          open: true,
+          template,
+          sceneId,
+        });
+        setApplyingId(null);
+      } else {
+        // No customization, go directly to editor
+        navigate(`/scene-editor/${sceneId}`);
+      }
+    } catch (err) {
+      console.error('Failed to apply template:', err);
       setApplyingId(null);
     }
   };
 
   // Handle apply success from preview panel
   const handleApplySuccess = async (sceneId) => {
-    setSelectedTemplate(null);
     // Refresh recents (will show on next visit)
     fetchRecentMarketplaceTemplates(5).then(setRecentTemplates);
+
+    // Check if template has customizable fields
+    if (selectedTemplate && hasCustomizableFields(selectedTemplate)) {
+      setWizardState({
+        open: true,
+        template: selectedTemplate,
+        sceneId,
+      });
+      setSelectedTemplate(null);
+    } else {
+      setSelectedTemplate(null);
+      navigate(`/scene-editor/${sceneId}`);
+    }
+  };
+
+  // Handle wizard complete - apply customizations and navigate
+  const handleWizardComplete = async (customization) => {
+    try {
+      await applyCustomizationToScene(wizardState.sceneId, customization);
+      setWizardState({ open: false, template: null, sceneId: null });
+      navigate(`/scene-editor/${wizardState.sceneId}`);
+    } catch (err) {
+      console.error('Failed to apply customization:', err);
+      throw err; // Let wizard handle error state
+    }
+  };
+
+  // Handle wizard skip - close wizard and navigate to editor
+  const handleWizardSkip = () => {
+    const sceneId = wizardState.sceneId;
+    setWizardState({ open: false, template: null, sceneId: null });
     navigate(`/scene-editor/${sceneId}`);
   };
 
@@ -202,8 +269,8 @@ export default function TemplateMarketplacePage() {
       const favorites = await fetchMarketplaceFavorites(10);
       setFavoriteTemplates(favorites);
       setFavoritedIds(new Set(favorites.map(f => f.id)));
-    } catch (error) {
-      console.error('Failed to toggle favorite:', error);
+    } catch (err) {
+      console.error('Failed to toggle favorite:', err);
       // Revert optimistic update
       setFavoritedIds((prev) => {
         const next = new Set(prev);
@@ -392,6 +459,18 @@ export default function TemplateMarketplacePage() {
             template={selectedTemplate}
             onClose={() => setSelectedTemplate(null)}
             onApply={handleApplySuccess}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Customization Wizard */}
+      <AnimatePresence>
+        {wizardState.open && wizardState.template && wizardState.sceneId && (
+          <TemplateCustomizationWizard
+            template={wizardState.template}
+            sceneId={wizardState.sceneId}
+            onComplete={handleWizardComplete}
+            onSkip={handleWizardSkip}
           />
         )}
       </AnimatePresence>
