@@ -37,6 +37,7 @@ import {
   ApprovalRequestModal,
   PreviewLinksModal,
 } from './components/CampaignEditorComponents';
+import { CampaignAnalyticsCard } from '../components/analytics/CampaignAnalyticsCard';
 
 const CampaignEditorPage = ({ showToast }) => {
   const { campaignId } = useParams();
@@ -88,6 +89,10 @@ const CampaignEditorPage = ({ showToast }) => {
     handleCreatePreviewLink,
     handleRevokePreviewLink,
     handleCopyLink,
+    analytics,
+    analyticsLoading,
+    analyticsDateRange,
+    handleAnalyticsDateRangeChange,
   } = useCampaignEditor(campaignId, { showToast });
 
   // Permissions
@@ -467,6 +472,16 @@ const CampaignEditorPage = ({ showToast }) => {
               </div>
             </div>
           </Card>
+
+          {/* Campaign Analytics Card */}
+          {!isNew && (
+            <CampaignAnalyticsCard
+              analytics={analytics}
+              dateRange={analyticsDateRange}
+              onDateRangeChange={handleAnalyticsDateRangeChange}
+              loading={analyticsLoading}
+            />
+          )}
 
           {/* Validation Card */}
           {!isNew && (

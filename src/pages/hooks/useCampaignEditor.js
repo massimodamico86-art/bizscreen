@@ -29,6 +29,7 @@ import {
   revokePreviewLink,
   formatPreviewLink
 } from '../../services/previewService.js';
+import { getSingleCampaignAnalytics } from '../../services/campaignAnalyticsService.js';
 
 const logger = createScopedLogger('useCampaignEditor');
 
@@ -93,6 +94,11 @@ export function useCampaignEditor(campaignId, { showToast }) {
   const [selectedExpiry, setSelectedExpiry] = useState('7_days');
   const [allowComments, setAllowComments] = useState(true);
   const [copiedLinkId, setCopiedLinkId] = useState(null);
+
+  // Analytics state
+  const [analytics, setAnalytics] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsDateRange, setAnalyticsDateRange] = useState('7d');
 
   // Load campaign data
   const loadCampaign = useCallback(async () => {
@@ -160,6 +166,34 @@ export function useCampaignEditor(campaignId, { showToast }) {
       fetchCurrentReview();
     }
   }, [campaign?.id, campaignId, isNew, fetchCurrentReview]);
+
+  // Load analytics for campaign
+  const loadAnalytics = useCallback(async (dateRange = analyticsDateRange) => {
+    if (isNew || !campaignId || campaignId === 'new') return;
+    try {
+      setAnalyticsLoading(true);
+      const data = await getSingleCampaignAnalytics(campaignId, dateRange);
+      setAnalytics(data);
+    } catch (error) {
+      logger.error('Failed to load analytics', { campaignId, dateRange, error });
+      setAnalytics(null);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }, [campaignId, isNew, analyticsDateRange]);
+
+  // Handle analytics date range change
+  const handleAnalyticsDateRangeChange = useCallback((dateRange) => {
+    setAnalyticsDateRange(dateRange);
+    loadAnalytics(dateRange);
+  }, [loadAnalytics]);
+
+  // Load analytics when campaign loads
+  useEffect(() => {
+    if (!isNew && campaignId && campaignId !== 'new' && !loading) {
+      loadAnalytics();
+    }
+  }, [isNew, campaignId, loading, loadAnalytics]);
 
   // Field change handler
   const handleChange = useCallback((field, value) => {
@@ -444,6 +478,12 @@ export function useCampaignEditor(campaignId, { showToast }) {
     allowComments,
     setAllowComments,
     copiedLinkId,
+
+    // Analytics state
+    analytics,
+    analyticsLoading,
+    analyticsDateRange,
+    handleAnalyticsDateRangeChange,
 
     // Actions
     handleChange,
