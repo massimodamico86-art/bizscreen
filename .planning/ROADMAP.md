@@ -121,12 +121,13 @@ Plans:
   2. User can favorite/bookmark templates and access them from favorites list
   3. User can apply starter packs (pre-configured scene+layout+schedule bundles)
   4. User can customize template with guided wizard (logo, colors, text replacement)
-**Plans**: TBD
+**Plans**: 4 plans (Wave 1: 18-01, 18-03 parallel; Wave 2: 18-02, 18-04 parallel)
 
 Plans:
-- [ ] 18-01: Recent and favorite templates
-- [ ] 18-02: Starter packs
-- [ ] 18-03: Template customization wizard
+- [ ] 18-01-PLAN.md - Favorites/history database and service layer with heart icon on TemplateCard
+- [ ] 18-02-PLAN.md - Sidebar sections for Recent and Favorite templates
+- [ ] 18-03-PLAN.md - Starter packs with inline expansion and multi-select apply
+- [ ] 18-04-PLAN.md - Template customization wizard with side-by-side form and preview
 
 ### Phase 19: Templates Intelligence
 **Goal**: Users get template suggestions, can rate templates, and view usage analytics
@@ -227,7 +228,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 | 15. Scheduling Campaigns | 4/4 | Complete | 2026-01-25 |
 | 16. Scheduling Polish | 3/3 | Complete | 2026-01-25 |
 | 17. Templates Core | 3/3 | Complete | 2026-01-25 |
-| 18. Templates Discovery | 0/3 | Not started | - |
+| 18. Templates Discovery | 0/4 | Planned | - |
 | 19. Templates Intelligence | 0/3 | Not started | - |
 | 20. Multi-Language Core | 0/3 | Not started | - |
 | 21. Multi-Language Advanced | 0/3 | Not started | - |
@@ -247,3 +248,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 16 complete: 2026-01-25*
 *Phase 17 planned: 2026-01-25*
 *Phase 17 complete: 2026-01-25*
+*Phase 18 planned: 2026-01-26*
