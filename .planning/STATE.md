@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 18 Complete (Templates Discovery)
+**Current focus:** v2 Templates & Platform Polish - Phase 19 In Progress (Templates Intelligence)
 
 ## Current Position
 
-Phase: 18 of 23 (Templates Discovery)
-Plan: 4 of 4 complete (18-01, 18-02, 18-03, 18-04 complete)
-Status: Phase complete
-Last activity: 2026-01-26 - Completed 18-04-PLAN.md (Customization Wizard)
+Phase: 19 of 23 (Templates Intelligence)
+Plan: 1 of 4 complete (19-01 complete)
+Status: In progress
+Last activity: 2026-01-26 - Completed 19-01-PLAN.md (Ratings & Suggestions Infrastructure)
 
-Progress: [██████████░] 61% (22/36 plans)
+Progress: [███████████░] 64% (23/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22 (v2)
+- Total plans completed: 23 (v2)
 - Average duration: 3.9min
-- Total execution time: 87min
+- Total execution time: 90min
 
 **By Phase:**
 
@@ -33,10 +33,11 @@ Progress: [██████████░] 61% (22/36 plans)
 | 16-scheduling-polish | 3 | 16min | 5min |
 | 17-templates-core | 3 | 7min | 2min |
 | 18-templates-discovery | 4 | 15min | 4min |
+| 19-templates-intelligence | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 18-03 (3min), 18-01 (5min), 18-02 (3min), 18-04 (4min)
-- Trend: Fast UI integration plans
+- Last 5 plans: 18-01 (5min), 18-02 (3min), 18-04 (4min), 19-01 (3min)
+- Trend: Fast infrastructure plans
 
 *Updated after each plan completion*
 
@@ -98,6 +99,9 @@ Recent decisions affecting current work:
 - [18-04]: Side-by-side layout: form 400px left, preview fills right
 - [18-04]: hasCustomizableFields checks metadata.customizable_fields
 - [18-04]: Design JSON walkers for applying color/text/logo customizations
+- [19-01]: Public SELECT on ratings table for aggregate display
+- [19-01]: Suggestions exclude already-used templates via history check
+- [19-01]: CamelCase mapping in service functions (map snake_case DB)
 
 ### Pending Todos
 
@@ -119,8 +123,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 18-04-PLAN.md (Customization Wizard) - Phase 18 Complete
+Stopped at: Completed 19-01-PLAN.md (Ratings & Suggestions Infrastructure)
 Resume file: None
 
 ---
-*Updated: 2026-01-26 - Completed 18-04 (Customization Wizard) - Phase 18 Complete*
+*Updated: 2026-01-26 - Completed 19-01 (Ratings & Suggestions Infrastructure)*
