@@ -806,3 +806,104 @@ function applyLogoToDesign(designJson, logoUrl) {
 
   return design;
 }
+
+// ============================================================================
+// RATINGS
+// ============================================================================
+
+/**
+ * Submit or update a template rating
+ * @param {string} templateId - Template UUID
+ * @param {number} rating - Rating 1-5
+ * @returns {Promise<{averageRating: number, totalRatings: number, userRating: number}>}
+ */
+export async function rateTemplate(templateId, rating) {
+  const { data, error } = await supabase.rpc('upsert_template_rating', {
+    p_template_id: templateId,
+    p_rating: rating,
+  });
+  if (error) throw error;
+  const row = data?.[0] || {};
+  return {
+    averageRating: row.average_rating || 0,
+    totalRatings: row.total_ratings || 0,
+    userRating: rating,
+  };
+}
+
+/**
+ * Get rating stats for a template (including user's rating)
+ * @param {string} templateId - Template UUID
+ * @returns {Promise<{averageRating: number, totalRatings: number, userRating: number|null}>}
+ */
+export async function getTemplateRatingStats(templateId) {
+  const { data, error } = await supabase.rpc('get_template_rating_stats', {
+    p_template_id: templateId,
+  });
+  if (error) throw error;
+  const row = data?.[0] || {};
+  return {
+    averageRating: row.average_rating || 0,
+    totalRatings: row.total_ratings || 0,
+    userRating: row.user_rating || null,
+  };
+}
+
+// ============================================================================
+// SUGGESTIONS
+// ============================================================================
+
+/**
+ * Fetch suggested templates for current user (industry-based)
+ * @param {number} [limit=6] - Max results
+ * @returns {Promise<Array>} Suggested templates with suggestion_reason
+ */
+export async function fetchSuggestedTemplates(limit = 6) {
+  const { data, error } = await supabase.rpc('get_suggested_templates', {
+    p_limit: limit,
+  });
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Fetch similar templates (same category, for post-apply)
+ * @param {string} categoryId - Category UUID
+ * @param {string} excludeTemplateId - Template to exclude
+ * @param {number} [limit=4] - Max results
+ * @returns {Promise<Array>} Similar templates
+ */
+export async function fetchSimilarTemplates(categoryId, excludeTemplateId, limit = 4) {
+  const { data, error } = await supabase
+    .from('template_library')
+    .select('id, name, thumbnail_url, category_id')
+    .eq('category_id', categoryId)
+    .neq('id', excludeTemplateId)
+    .eq('is_active', true)
+    .order('install_count', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
+// ============================================================================
+// USAGE ANALYTICS
+// ============================================================================
+
+/**
+ * Batch get usage counts for templates (personal analytics)
+ * @param {string[]} templateIds - Array of template UUIDs
+ * @returns {Promise<Map<string, number>>} Map of templateId -> usageCount
+ */
+export async function getTemplateUsageCounts(templateIds) {
+  if (!templateIds.length) return new Map();
+
+  const { data, error } = await supabase.rpc('get_template_usage_counts', {
+    p_template_ids: templateIds,
+  });
+  if (error) throw error;
+
+  const counts = new Map();
+  (data || []).forEach(row => counts.set(row.template_id, row.usage_count));
+  return counts;
+}
