@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 20 in progress
+**Current focus:** v2 Templates & Platform Polish - Phase 20 complete
 
 ## Current Position
 
 Phase: 20 of 23 (Multi-Language Core)
-Plan: 3 of 3 complete (20-01, 20-02, 20-03 complete)
+Plan: 4 of 4 complete (20-01, 20-02, 20-03, 20-04 complete)
 Status: Phase complete
-Last activity: 2026-01-26 - Completed 20-02-PLAN.md (Device Language & Language Badges)
+Last activity: 2026-01-26 - Completed 20-04-PLAN.md (Language Player Integration)
 
-Progress: [█████████████░] 81% (29/36 plans)
+Progress: [█████████████░] 83% (30/37 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 29 (v2)
+- Total plans completed: 30 (v2)
 - Average duration: 3.8min
-- Total execution time: 110min
+- Total execution time: 114min
 
 **By Phase:**
 
@@ -34,11 +34,11 @@ Progress: [█████████████░] 81% (29/36 plans)
 | 17-templates-core | 3 | 7min | 2min |
 | 18-templates-discovery | 4 | 15min | 4min |
 | 19-templates-intelligence | 4 | 12min | 3min |
-| 20-multi-language-core | 3 | 11min | 4min |
+| 20-multi-language-core | 4 | 15min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 19-04 (2min), 20-01 (4min), 20-02 (4min), 20-03 (3min)
-- Trend: Fast UI component plans
+- Last 5 plans: 20-01 (4min), 20-02 (4min), 20-03 (3min), 20-04 (4min)
+- Trend: Fast database/UI plans
 
 *Updated after each plan completion*
 
@@ -122,6 +122,9 @@ Recent decisions affecting current work:
 - [20-03]: Native names only in dropdown per CONTEXT.md
 - [20-03]: Navigation-based variant switching reloads editor with different scene
 - [20-03]: Grid tile selection for language creation modal
+- [20-04]: Emergency content bypasses language resolution (same for all devices)
+- [20-04]: Scene response includes languageCode for player verification
+- [20-04]: Legacy schedule entries don't use language resolution (direct content refs)
 
 ### Pending Todos
 
@@ -143,8 +146,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 20-02-PLAN.md (Device Language & Language Badges) - Phase 20 complete
+Stopped at: Completed 20-04-PLAN.md (Language Player Integration) - Phase 20 complete
 Resume file: None
 
 ---
-*Updated: 2026-01-26 - Completed 20-02 (Device Language & Language Badges) - Phase 20 complete*
+*Updated: 2026-01-26 - Completed 20-04 (Language Player Integration) - Phase 20 complete*
