@@ -11,6 +11,8 @@ export { TemplateSidebar } from './TemplateSidebar';
 export { TemplatePreviewPanel } from './TemplatePreviewPanel';
 export { StarterPacksRow } from './StarterPacksRow';
 export { StarterPackCard } from './StarterPackCard';
+export { SidebarRecentsSection } from './SidebarRecentsSection';
+export { SidebarFavoritesSection } from './SidebarFavoritesSection';
 
 // Preview components
 export { TemplatePreviewPopover, useTemplatePreview } from './TemplatePreviewPopover';
@@ -19,3 +21,6 @@ export { TemplateLivePreview, TemplateIframePreview } from './TemplateLivePrevie
 // Modal components
 export { TemplateCustomizeModal } from './TemplateCustomizeModal';
 export { SaveAsTemplateModal } from './SaveAsTemplateModal';
+
+// Wizard components
+export { TemplateCustomizationWizard } from './TemplateCustomizationWizard';
