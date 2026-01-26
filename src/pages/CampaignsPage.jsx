@@ -15,7 +15,9 @@ import {
   CheckCircle,
   AlertCircle,
   Megaphone,
-  Loader2
+  Loader2,
+  ChevronDown,
+  Copy
 } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 import { useTranslation } from '../i18n';
@@ -38,6 +40,8 @@ import {
 } from '../services/campaignService';
 import { canEditContent, canEditScreens } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
+import { TemplatePickerModal } from '../components/campaigns/TemplatePickerModal';
+import { createFromTemplate } from '../services/campaignTemplateService';
 
 const STATUS_CONFIG = {
   [CAMPAIGN_STATUS.DRAFT]: {
@@ -79,6 +83,10 @@ const CampaignsPage = ({ showToast }) => {
 
   // Menu state
   const [openMenuId, setOpenMenuId] = useState(null);
+
+  // Template picker state
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+  const [showNewDropdown, setShowNewDropdown] = useState(false);
 
   // Permissions
   const canEdit = canEditContent(user) && canEditScreens(user);
@@ -150,12 +158,29 @@ const CampaignsPage = ({ showToast }) => {
 
   // Close menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => setOpenMenuId(null);
-    if (openMenuId) {
+    const handleClickOutside = () => {
+      setOpenMenuId(null);
+      setShowNewDropdown(false);
+    };
+    if (openMenuId || showNewDropdown) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [openMenuId]);
+  }, [openMenuId, showNewDropdown]);
+
+  // Handle create from template
+  const handleCreateFromTemplate = async (templateId) => {
+    try {
+      const name = `New Campaign from Template`;
+      const campaign = await createFromTemplate(templateId, name);
+      showToast?.('Campaign created from template');
+      setShowTemplatePicker(false);
+      navigate(`/app/campaigns/${campaign.id}`);
+    } catch (error) {
+      logger.error('Error creating campaign from template:', error);
+      showToast?.('Error creating campaign: ' + error.message, 'error');
+    }
+  };
 
   const filteredCampaigns = campaigns.filter(c =>
     c.name?.toLowerCase().includes(search.toLowerCase())
@@ -181,9 +206,45 @@ const CampaignsPage = ({ showToast }) => {
         icon={<Megaphone className="w-5 h-5 text-orange-600" />}
         iconBackground="bg-orange-100"
         actions={canEdit && (
-          <Button onClick={() => navigate('/app/campaigns/new')} icon={<Plus size={18} />}>
-            {t('campaigns.newCampaign', 'New Campaign')}
-          </Button>
+          <div className="relative">
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowNewDropdown(!showNewDropdown);
+              }}
+              icon={<Plus size={18} />}
+            >
+              {t('campaigns.newCampaign', 'New Campaign')}
+              <ChevronDown size={16} className="ml-1" />
+            </Button>
+            {showNewDropdown && (
+              <div
+                className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-20 min-w-[200px]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => {
+                    setShowNewDropdown(false);
+                    navigate('/app/campaigns/new');
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  <Plus size={14} />
+                  {t('campaigns.blankCampaign', 'Blank Campaign')}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowNewDropdown(false);
+                    setShowTemplatePicker(true);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  <Copy size={14} />
+                  {t('campaigns.fromTemplate', 'From Template')}
+                </button>
+              </div>
+            )}
+          </div>
         )}
       />
 
@@ -422,6 +483,14 @@ const CampaignsPage = ({ showToast }) => {
           </Card>
         )}
       </PageContent>
+
+      {/* Template Picker Modal */}
+      {showTemplatePicker && (
+        <TemplatePickerModal
+          onSelect={handleCreateFromTemplate}
+          onClose={() => setShowTemplatePicker(false)}
+        />
+      )}
     </PageLayout>
   );
 };

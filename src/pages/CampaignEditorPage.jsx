@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -24,8 +25,12 @@ import {
   Link2,
   XCircle,
   FileEdit,
+  Copy,
+  Settings,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
-import { Button, Card, Badge } from '../design-system';
+import { Button, Card, Badge, Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter, Input } from '../design-system';
 import { CAMPAIGN_STATUS } from '../services/campaignService';
 import { canEditContent, canEditScreens } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
@@ -38,6 +43,10 @@ import {
   PreviewLinksModal,
 } from './components/CampaignEditorComponents';
 import { CampaignAnalyticsCard } from '../components/analytics/CampaignAnalyticsCard';
+import { SeasonalDatePicker } from '../components/campaigns/SeasonalDatePicker';
+import { RotationControls } from '../components/campaigns/RotationControls';
+import { FrequencyLimitControls } from '../components/campaigns/FrequencyLimitControls';
+import { saveAsTemplate, setSeasonalRecurrence } from '../services/campaignTemplateService';
 
 const CampaignEditorPage = ({ showToast }) => {
   const { campaignId } = useParams();
@@ -93,10 +102,54 @@ const CampaignEditorPage = ({ showToast }) => {
     analyticsLoading,
     analyticsDateRange,
     handleAnalyticsDateRangeChange,
+    rotationMode,
+    savingRotation,
+    expandedContentId,
+    handleRotationChange,
+    handleRotationModeChange,
+    handleFrequencyChange,
+    handleToggleContentSettings,
   } = useCampaignEditor(campaignId, { showToast });
 
   // Permissions
   const canEdit = canEditContent(user) && canEditScreens(user);
+
+  // Template modal state
+  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [templateDescription, setTemplateDescription] = useState('');
+  const [savingTemplate, setSavingTemplate] = useState(false);
+
+  // Handle save as template
+  const handleSaveAsTemplate = async () => {
+    if (!templateName.trim()) {
+      showToast?.('Template name is required', 'error');
+      return;
+    }
+    try {
+      setSavingTemplate(true);
+      await saveAsTemplate(campaignId, templateName.trim(), templateDescription.trim());
+      showToast?.('Template saved successfully');
+      setShowSaveTemplateModal(false);
+      setTemplateName('');
+      setTemplateDescription('');
+    } catch (error) {
+      showToast?.('Error saving template: ' + error.message, 'error');
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
+  // Handle seasonal recurrence change
+  const handleSeasonalChange = async (recurrenceRule) => {
+    try {
+      await setSeasonalRecurrence(campaignId, recurrenceRule);
+      handleChange('recurrence_rule', recurrenceRule);
+      showToast?.(recurrenceRule ? 'Seasonal recurrence saved' : 'Seasonal recurrence cleared');
+    } catch (error) {
+      showToast?.('Error saving recurrence: ' + error.message, 'error');
+    }
+  };
 
   // Get status badge config
   const getStatusBadge = () => {
@@ -185,6 +238,12 @@ const CampaignEditorPage = ({ showToast }) => {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {!isNew && canEdit && (
+            <Button variant="outline" onClick={() => setShowSaveTemplateModal(true)}>
+              <Copy size={18} />
+              Save as Template
+            </Button>
+          )}
           {!isNew && (
             <Button variant="outline" onClick={handleOpenPreviewModal}>
               <Link2 size={18} />
@@ -319,6 +378,17 @@ const CampaignEditorPage = ({ showToast }) => {
                   Higher priority campaigns override lower priority content
                 </p>
               </div>
+
+              {/* Seasonal Recurrence */}
+              {!isNew && (
+                <div className="pt-4 border-t border-gray-200">
+                  <SeasonalDatePicker
+                    value={campaign.recurrence_rule}
+                    onChange={handleSeasonalChange}
+                    disabled={!canEdit}
+                  />
+                </div>
+              )}
             </div>
           </Card>
 
@@ -400,31 +470,80 @@ const CampaignEditorPage = ({ showToast }) => {
                 <p className="text-sm">Add playlists or layouts to play</p>
               </div>
             ) : (
-              <div className="space-y-2">
-                {campaign.contents.map(content => (
-                  <div
-                    key={content.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      {content.content_type === 'playlist' && <ListMusic size={18} className="text-blue-600" />}
-                      {content.content_type === 'layout' && <Layout size={18} className="text-purple-600" />}
-                      {content.content_type === 'media' && <Image size={18} className="text-green-600" />}
-                      <div>
-                        <p className="font-medium text-gray-900">{content.content_name}</p>
-                        <p className="text-xs text-gray-500 capitalize">{content.content_type}</p>
+              <div className="space-y-4">
+                {/* Content list with expandable settings */}
+                <div className="space-y-2">
+                  {campaign.contents.map(content => (
+                    <div key={content.id} className="bg-gray-50 rounded-lg overflow-hidden">
+                      {/* Content row */}
+                      <div className="flex items-center justify-between p-3">
+                        <div className="flex items-center gap-3">
+                          {content.content_type === 'playlist' && <ListMusic size={18} className="text-blue-600" />}
+                          {content.content_type === 'layout' && <Layout size={18} className="text-purple-600" />}
+                          {content.content_type === 'media' && <Image size={18} className="text-green-600" />}
+                          <div>
+                            <p className="font-medium text-gray-900">{content.content_name}</p>
+                            <p className="text-xs text-gray-500 capitalize">{content.content_type}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {canEdit && (
+                            <button
+                              onClick={() => handleToggleContentSettings(content.id)}
+                              className="p-1.5 hover:bg-gray-200 rounded text-gray-500 hover:text-gray-700"
+                              title="Content settings"
+                            >
+                              <Settings size={16} />
+                            </button>
+                          )}
+                          {canEdit && (
+                            <button
+                              onClick={() => handleRemoveContent(content.id)}
+                              className="p-1.5 hover:bg-gray-200 rounded text-gray-400 hover:text-red-600"
+                              title="Remove content"
+                            >
+                              <X size={16} />
+                            </button>
+                          )}
+                        </div>
                       </div>
+
+                      {/* Expandable frequency settings */}
+                      {expandedContentId === content.id && (
+                        <div className="px-3 pb-3 pt-1 border-t border-gray-200 bg-white">
+                          <div className="flex items-center gap-2 mb-3 text-sm font-medium text-gray-700">
+                            <Settings size={14} />
+                            Frequency Limits
+                          </div>
+                          <FrequencyLimitControls
+                            content={content}
+                            onChange={(updated) => handleFrequencyChange(content.id, {
+                              max_plays_per_hour: updated.max_plays_per_hour,
+                              max_plays_per_day: updated.max_plays_per_day
+                            })}
+                            disabled={!canEdit}
+                          />
+                        </div>
+                      )}
                     </div>
-                    {canEdit && (
-                      <button
-                        onClick={() => handleRemoveContent(content.id)}
-                        className="p-1 hover:bg-gray-200 rounded text-gray-400 hover:text-red-600"
-                      >
-                        <X size={16} />
-                      </button>
+                  ))}
+                </div>
+
+                {/* Rotation controls - show when 2+ contents */}
+                {campaign.contents.length >= 2 && (
+                  <div className="pt-4 border-t border-gray-200">
+                    <h3 className="text-sm font-medium text-gray-700 mb-3">Content Rotation</h3>
+                    <RotationControls
+                      contents={campaign.contents}
+                      mode={rotationMode}
+                      onChange={handleRotationChange}
+                      onModeChange={handleRotationModeChange}
+                    />
+                    {savingRotation && (
+                      <p className="text-xs text-gray-500 mt-2">Saving rotation settings...</p>
                     )}
                   </div>
-                ))}
+                )}
               </div>
             )}
           </Card>
@@ -594,6 +713,61 @@ const CampaignEditorPage = ({ showToast }) => {
         handleRevokePreviewLink={handleRevokePreviewLink}
         handleCopyLink={handleCopyLink}
       />
+
+      {/* Save as Template Modal */}
+      <Modal open={showSaveTemplateModal} onClose={() => setShowSaveTemplateModal(false)} size="md">
+        <ModalHeader>
+          <ModalTitle>Save as Template</ModalTitle>
+        </ModalHeader>
+        <ModalContent>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Template Name *
+              </label>
+              <input
+                type="text"
+                value={templateName}
+                onChange={(e) => setTemplateName(e.target.value)}
+                placeholder="e.g., Holiday Promotion"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description (optional)
+              </label>
+              <textarea
+                value={templateDescription}
+                onChange={(e) => setTemplateDescription(e.target.value)}
+                placeholder="What is this template for?"
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              />
+            </div>
+            <div className="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
+              <p className="font-medium text-gray-700 mb-1">Template will include:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>Target types ({campaign.targets?.length || 0} target slot{campaign.targets?.length !== 1 ? 's' : ''})</li>
+                <li>Content types ({campaign.contents?.length || 0} content slot{campaign.contents?.length !== 1 ? 's' : ''})</li>
+                <li>Priority setting ({campaign.priority})</li>
+              </ul>
+              <p className="mt-2 text-xs text-gray-400">
+                Note: Specific targets and content are not saved - only the structure.
+              </p>
+            </div>
+          </div>
+        </ModalContent>
+        <ModalFooter>
+          <Button variant="outline" onClick={() => setShowSaveTemplateModal(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSaveAsTemplate} disabled={savingTemplate || !templateName.trim()}>
+            {savingTemplate ? 'Saving...' : 'Save Template'}
+          </Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 };
