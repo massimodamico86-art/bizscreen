@@ -155,12 +155,12 @@ Plans:
   3. System falls back to default language when translation is missing (no blank screens)
   4. User can switch between language versions when editing in CMS
   5. Content cards display language indicator badges showing available translations
-**Plans**: TBD
+**Plans**: 3 plans (Wave 1: 20-01, Wave 2: 20-02, 20-03 parallel)
 
 Plans:
-- [ ] 20-01: Translation schema and service
-- [ ] 20-02: Device language assignment
-- [ ] 20-03: CMS language editing
+- [ ] 20-01-PLAN.md - Language schema, RPC, and service (scene_language_groups, display_language, languageService)
+- [ ] 20-02-PLAN.md - Device language assignment and language badges (settings dropdown, LanguageBadges component)
+- [ ] 20-03-PLAN.md - CMS language editing (EditorLanguageSwitcher, AddLanguageModal, variant creation)
 
 ### Phase 21: Multi-Language Advanced
 **Goal**: Users have advanced multi-language features including group assignment, workflow tracking, and AI suggestions
@@ -254,3 +254,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 19 planned: 2026-01-26*
 *Phase 19 gap closure: 2026-01-26*
 *Phase 19 complete: 2026-01-26*
+*Phase 20 planned: 2026-01-26*
