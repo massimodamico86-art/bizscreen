@@ -11,6 +11,7 @@
 import PropTypes from 'prop-types';
 import { SidebarRecentsSection } from './SidebarRecentsSection';
 import { SidebarFavoritesSection } from './SidebarFavoritesSection';
+import { SidebarSuggestedSection } from './SidebarSuggestedSection';
 
 /**
  * TemplateSidebar component
@@ -55,6 +56,11 @@ export function TemplateSidebar({
         {/* Favorites Section */}
         <SidebarFavoritesSection
           templates={favoriteTemplates}
+          onTemplateClick={onSidebarTemplateClick}
+        />
+
+        {/* Suggested Section */}
+        <SidebarSuggestedSection
           onTemplateClick={onSidebarTemplateClick}
         />
 
