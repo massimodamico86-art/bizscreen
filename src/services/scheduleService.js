@@ -1068,3 +1068,122 @@ export async function bulkUnassignScheduleFromGroups(groupIds) {
 
   return { updated: data?.length || 0, groups: data };
 }
+
+// =====================================================
+// CAMPAIGN-ENTRY LINKING (US-148)
+// =====================================================
+
+/**
+ * Get all schedule entries for a campaign
+ * @param {string} campaignId - Campaign UUID
+ * @returns {Promise<Array>} Array of entries with schedule info
+ */
+export async function getEntriesForCampaign(campaignId) {
+  if (!campaignId) return [];
+
+  const { data, error } = await supabase
+    .from('schedule_entries')
+    .select(`
+      id,
+      schedule_id,
+      content_type,
+      content_id,
+      start_date,
+      end_date,
+      start_time,
+      end_time,
+      days_of_week,
+      priority,
+      is_active,
+      event_type,
+      campaign_id,
+      schedules(id, name)
+    `)
+    .eq('campaign_id', campaignId)
+    .order('start_time', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Assign a schedule entry to a campaign
+ * @param {string} entryId - Schedule entry UUID
+ * @param {string|null} campaignId - Campaign UUID (null to remove from campaign)
+ * @returns {Promise<Object>} Updated entry
+ */
+export async function assignEntryToCampaign(entryId, campaignId) {
+  if (!entryId) throw new Error('Entry ID is required');
+
+  const { data, error } = await supabase
+    .from('schedule_entries')
+    .update({ campaign_id: campaignId })
+    .eq('id', entryId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  logger.info('Assigned entry to campaign', { entryId, campaignId });
+  return data;
+}
+
+/**
+ * Bulk assign multiple schedule entries to a campaign
+ * @param {string[]} entryIds - Array of schedule entry UUIDs
+ * @param {string|null} campaignId - Campaign UUID (null to remove from campaign)
+ * @returns {Promise<Array>} Updated entries
+ */
+export async function bulkAssignEntriesToCampaign(entryIds, campaignId) {
+  if (!entryIds || entryIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from('schedule_entries')
+    .update({ campaign_id: campaignId })
+    .in('id', entryIds)
+    .select();
+
+  if (error) throw error;
+
+  logger.info('Bulk assigned entries to campaign', {
+    entryCount: entryIds.length,
+    campaignId
+  });
+  return data || [];
+}
+
+/**
+ * Get all campaigns with entry counts for picker dropdown
+ * @returns {Promise<Array>} Campaigns with entry_count
+ */
+export async function getCampaignsWithEntryCounts() {
+  // Use a subquery to get entry counts since Supabase doesn't support
+  // count aggregation on foreign tables directly
+  const { data: campaigns, error: campaignsError } = await supabase
+    .from('campaigns')
+    .select('id, name, status, start_at, end_at')
+    .order('name', { ascending: true });
+
+  if (campaignsError) throw campaignsError;
+  if (!campaigns || campaigns.length === 0) return [];
+
+  // Get entry counts for each campaign
+  const { data: entryCounts, error: countError } = await supabase
+    .from('schedule_entries')
+    .select('campaign_id')
+    .not('campaign_id', 'is', null);
+
+  if (countError) throw countError;
+
+  // Build count map
+  const countMap = {};
+  for (const entry of entryCounts || []) {
+    countMap[entry.campaign_id] = (countMap[entry.campaign_id] || 0) + 1;
+  }
+
+  // Merge counts into campaigns
+  return campaigns.map(campaign => ({
+    ...campaign,
+    entry_count: countMap[campaign.id] || 0
+  }));
+}
