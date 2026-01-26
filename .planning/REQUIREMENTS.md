@@ -54,11 +54,11 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 - [x] **SCHED-07**: User can apply dayparting presets (breakfast/lunch/dinner)
 
 **Differentiators:**
-- [ ] **SCHED-08**: User can view performance metrics grouped by campaign
-- [ ] **SCHED-09**: User can configure content rotation rules (percentage-based mix)
-- [ ] **SCHED-10**: User can set frequency limits (max N plays per hour/day)
-- [ ] **SCHED-11**: User can save campaign configuration as template for reuse
-- [ ] **SCHED-12**: User can create seasonal campaigns (auto-activate by date/holiday)
+- [x] **SCHED-08**: User can view performance metrics grouped by campaign
+- [x] **SCHED-09**: User can configure content rotation rules (percentage-based mix)
+- [x] **SCHED-10**: User can set frequency limits (max N plays per hour/day)
+- [x] **SCHED-11**: User can save campaign configuration as template for reuse
+- [x] **SCHED-12**: User can create seasonal campaigns (auto-activate by date/holiday)
 
 ### Mobile Responsive Admin
 
@@ -141,11 +141,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCHED-05 | Phase 15 | Complete |
 | SCHED-06 | Phase 15 | Complete |
 | SCHED-07 | Phase 15 | Complete |
-| SCHED-08 | Phase 16 | Pending |
-| SCHED-09 | Phase 16 | Pending |
-| SCHED-10 | Phase 16 | Pending |
-| SCHED-11 | Phase 16 | Pending |
-| SCHED-12 | Phase 16 | Pending |
+| SCHED-08 | Phase 16 | Complete |
+| SCHED-09 | Phase 16 | Complete |
+| SCHED-10 | Phase 16 | Complete |
+| SCHED-11 | Phase 16 | Complete |
+| SCHED-12 | Phase 16 | Complete |
 | TMPL-01 | Phase 17 | Pending |
 | TMPL-02 | Phase 17 | Pending |
 | TMPL-03 | Phase 17 | Pending |
