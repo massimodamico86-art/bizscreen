@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 16 Complete (Scheduling Polish)
+**Current focus:** v2 Templates & Platform Polish - Phase 17 In Progress (Templates Core)
 
 ## Current Position
 
-Phase: 16 of 23 (Scheduling Polish)
-Plan: 3 of 3 complete (16-01, 16-02, 16-03 complete)
-Status: Phase complete
-Last activity: 2026-01-25 - Completed Phase 16 (Scheduling Polish)
+Phase: 17 of 23 (Templates Core)
+Plan: 1 of 4 complete (17-01 complete)
+Status: In progress
+Last activity: 2026-01-25 - Completed 17-01-PLAN.md
 
-Progress: [█████████░] 42% (15/36 plans)
+Progress: [█████████░] 44% (16/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15 (v2)
-- Average duration: 4.3min
-- Total execution time: 68min
+- Total plans completed: 16 (v2)
+- Average duration: 4.2min
+- Total execution time: 70min
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [█████████░] 42% (15/36 plans)
 | 14-scheduling-core | 5 | 15min | 3min |
 | 15-scheduling-campaigns | 4 | 18min | 5min |
 | 16-scheduling-polish | 3 | 16min | 5min |
+| 17-templates-core | 1 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 15-04 (7min), 16-01 (4min), 16-02 (6min), 16-03 (6min)
-- Trend: Stable at ~5min/plan
+- Last 5 plans: 16-01 (4min), 16-02 (6min), 16-03 (6min), 17-01 (2min)
+- Trend: Fast UI component plans
 
 *Updated after each plan completion*
 
@@ -73,6 +74,8 @@ Recent decisions affecting current work:
 - [16-01]: Re-export DATE_RANGES from campaignAnalyticsService for consistent API
 - [16-03]: Templates store structure only (target types, content types), not specific IDs
 - [16-03]: Seasonal recurrence: yearly only with month/day/duration_days format
+- [17-01]: TemplateCard exported separately for reuse in FeaturedTemplatesRow
+- [17-01]: Orientation filter toggle behavior (clicking selected clears filter)
 
 ### Pending Todos
 
@@ -94,8 +97,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed Phase 16 (Scheduling Polish) - all 3 plans
+Stopped at: Completed 17-01-PLAN.md
 Resume file: None
 
 ---
-*Updated: 2026-01-25 - Completed Phase 16 (Scheduling Polish)*
+*Updated: 2026-01-25 - Completed 17-01-PLAN.md (Marketplace Components)*
