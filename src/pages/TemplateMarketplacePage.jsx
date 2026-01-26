@@ -2,25 +2,23 @@
  * Template Marketplace Page
  *
  * Browse and install scene templates from the marketplace.
- * Supports filtering by category, license tier, and search.
+ * Supports filtering by category, orientation, and search.
+ * Features prominent search bar, persistent sidebar, featured templates row, and Quick Apply.
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { format } from 'date-fns';
+import { Search } from 'lucide-react';
 import PageLayout from '../design-system/components/PageLayout';
 import {
   fetchMarketplaceTemplates,
+  fetchFeaturedTemplates,
   fetchCategories,
-  LICENSE_LABELS,
+  installTemplateAsScene,
 } from '../services/marketplaceService';
+import { TemplateSidebar, FeaturedTemplatesRow, TemplateGrid } from '../components/templates';
 import TemplatePreviewModal from '../components/TemplatePreviewModal';
-
-// License badge colors
-const LICENSE_COLORS = {
-  free: 'bg-green-100 text-green-800',
-  pro: 'bg-blue-100 text-blue-800',
-  enterprise: 'bg-purple-100 text-purple-800',
-};
 
 export default function TemplateMarketplacePage() {
   const navigate = useNavigate();
@@ -28,13 +26,15 @@ export default function TemplateMarketplacePage() {
 
   // State
   const [templates, setTemplates] = useState([]);
+  const [featuredTemplates, setFeaturedTemplates] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [applyingId, setApplyingId] = useState(null);
 
   // Filters from URL
   const categoryId = searchParams.get('category') || '';
-  const license = searchParams.get('license') || '';
+  const orientation = searchParams.get('orientation') || '';
   const search = searchParams.get('q') || '';
 
   // Modal state
@@ -44,6 +44,22 @@ export default function TemplateMarketplacePage() {
   // Search input state (debounced)
   const [searchInput, setSearchInput] = useState(search);
 
+  // Check if any filters are active
+  const hasActiveFilters = categoryId || orientation || search;
+
+  // Update URL params
+  const updateFilters = useCallback((updates) => {
+    const newParams = new URLSearchParams(searchParams);
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value) {
+        newParams.set(key, value);
+      } else {
+        newParams.delete(key);
+      }
+    });
+    setSearchParams(newParams);
+  }, [searchParams, setSearchParams]);
+
   // Load categories on mount
   useEffect(() => {
     fetchCategories()
@@ -51,16 +67,26 @@ export default function TemplateMarketplacePage() {
       .catch(err => console.error('Failed to load categories:', err));
   }, []);
 
+  // Load featured templates on mount
+  useEffect(() => {
+    fetchFeaturedTemplates(6)
+      .then(setFeaturedTemplates)
+      .catch(err => console.error('Failed to load featured templates:', err));
+  }, []);
+
   // Load templates when filters change
   const loadTemplates = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchMarketplaceTemplates({
+      let data = await fetchMarketplaceTemplates({
         categoryId: categoryId || null,
-        license: license || null,
         search: search || null,
       });
+      // Client-side orientation filter (RPC doesn't support orientation)
+      if (orientation) {
+        data = data.filter(t => t.metadata?.orientation === orientation);
+      }
       setTemplates(data);
     } catch (err) {
       console.error('Failed to load templates:', err);
@@ -68,7 +94,7 @@ export default function TemplateMarketplacePage() {
     } finally {
       setLoading(false);
     }
-  }, [categoryId, license, search]);
+  }, [categoryId, orientation, search]);
 
   useEffect(() => {
     loadTemplates();
@@ -82,31 +108,37 @@ export default function TemplateMarketplacePage() {
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, search, updateFilters]);
 
-  // Update URL params
-  const updateFilters = (updates) => {
-    const newParams = new URLSearchParams(searchParams);
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value) {
-        newParams.set(key, value);
-      } else {
-        newParams.delete(key);
-      }
-    });
-    setSearchParams(newParams);
-  };
-
-  // Handle template click
+  // Handle template click (open preview)
   const handleTemplateClick = (template) => {
     setSelectedTemplate(template);
     setPreviewOpen(true);
   };
 
-  // Handle install success
+  // Handle Quick Apply - creates scene with auto-naming and navigates to editor
+  const handleQuickApply = async (template) => {
+    setApplyingId(template.id);
+    try {
+      const sceneName = `${template.name} - ${format(new Date(), 'MMM d, yyyy')}`;
+      const sceneId = await installTemplateAsScene(template.id, sceneName);
+      navigate(`/scene-editor/${sceneId}`);
+    } catch (error) {
+      console.error('Failed to apply template:', error);
+      setApplyingId(null);
+    }
+  };
+
+  // Handle install success from preview modal
   const handleInstallSuccess = (sceneId) => {
     setPreviewOpen(false);
     navigate(`/scene-editor/${sceneId}`);
+  };
+
+  // Clear all filters
+  const handleClearFilters = () => {
+    setSearchInput('');
+    setSearchParams(new URLSearchParams());
   };
 
   return (
@@ -114,103 +146,43 @@ export default function TemplateMarketplacePage() {
       title="Template Marketplace"
       description="Browse and install professional scene templates"
     >
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Sidebar Filters */}
-        <aside className="lg:w-64 flex-shrink-0">
-          <div className="bg-white rounded-lg shadow p-4 space-y-6">
-            {/* Search */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Search
-              </label>
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search templates..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+      {/* Prominent Search Bar */}
+      <div className="mb-6">
+        <div className="relative w-full max-w-2xl mx-auto">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search templates..."
+            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+          />
+        </div>
+      </div>
 
-            {/* Categories */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category
-              </label>
-              <div className="space-y-1">
-                <button
-                  onClick={() => updateFilters({ category: null })}
-                  className={`w-full text-left px-3 py-2 rounded-md text-sm ${
-                    !categoryId
-                      ? 'bg-blue-50 text-blue-700 font-medium'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  All Categories
-                </button>
-                {categories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => updateFilters({ category: cat.id })}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm ${
-                      categoryId === cat.id
-                        ? 'bg-blue-50 text-blue-700 font-medium'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* License Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                License
-              </label>
-              <div className="space-y-1">
-                <button
-                  onClick={() => updateFilters({ license: null })}
-                  className={`w-full text-left px-3 py-2 rounded-md text-sm ${
-                    !license
-                      ? 'bg-blue-50 text-blue-700 font-medium'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  All Licenses
-                </button>
-                {Object.entries(LICENSE_LABELS).map(([key, label]) => (
-                  <button
-                    key={key}
-                    onClick={() => updateFilters({ license: key })}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm ${
-                      license === key
-                        ? 'bg-blue-50 text-blue-700 font-medium'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </aside>
+      {/* Main Layout: Sidebar + Content */}
+      <div className="flex gap-6">
+        {/* Sidebar */}
+        <TemplateSidebar
+          categories={categories}
+          selectedCategory={categoryId || null}
+          selectedOrientation={orientation || null}
+          onFilterChange={updateFilters}
+        />
 
         {/* Main Content */}
-        <main className="flex-1">
-          {/* Results Count */}
+        <main className="flex-1 min-w-0">
+          {/* Results Count & Clear Filters */}
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-gray-600">
               {loading ? 'Loading...' : `${templates.length} templates found`}
             </p>
-            {(categoryId || license || search) && (
+            {hasActiveFilters && (
               <button
-                onClick={() => setSearchParams(new URLSearchParams())}
+                onClick={handleClearFilters}
                 className="text-sm text-blue-600 hover:text-blue-800"
               >
-                Clear filters
+                Clear all filters
               </button>
             )}
           </div>
@@ -230,130 +202,64 @@ export default function TemplateMarketplacePage() {
 
           {/* Loading State */}
           {loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-lg shadow animate-pulse"
+                  className="bg-white rounded-lg border border-gray-200 animate-pulse"
                 >
                   <div className="aspect-video bg-gray-200 rounded-t-lg" />
-                  <div className="p-4 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-3/4" />
-                    <div className="h-3 bg-gray-200 rounded w-1/2" />
-                  </div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Template Grid */}
-          {!loading && templates.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {templates.map((template) => (
-                <button
-                  key={template.id}
-                  onClick={() => handleTemplateClick(template)}
-                  className="bg-white rounded-lg shadow hover:shadow-md transition-shadow text-left group"
-                >
-                  {/* Thumbnail */}
-                  <div className="aspect-video bg-gray-100 rounded-t-lg overflow-hidden relative">
-                    {template.thumbnail_url ? (
-                      <img
-                        src={template.thumbnail_url}
-                        alt={template.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <svg
-                          className="w-12 h-12"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                      </div>
-                    )}
-
-                    {/* Featured Badge */}
-                    {template.is_featured && (
-                      <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-xs font-medium px-2 py-0.5 rounded">
-                        Featured
-                      </span>
-                    )}
-
-                    {/* Access Lock */}
-                    {!template.can_access && (
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="bg-white text-gray-900 px-3 py-1.5 rounded-full text-sm font-medium">
-                          Upgrade to access
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-medium text-gray-900 truncate flex-1">
-                        {template.name}
-                      </h3>
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${
-                          LICENSE_COLORS[template.license] || LICENSE_COLORS.free
-                        }`}
-                      >
-                        {LICENSE_LABELS[template.license] || 'Free'}
-                      </span>
-                    </div>
-
-                    {template.description && (
-                      <p className="mt-1 text-sm text-gray-500 line-clamp-2">
-                        {template.description}
-                      </p>
-                    )}
-
-                    <div className="mt-3 flex items-center justify-between text-xs text-gray-400">
-                      <span>{template.category_name || 'General'}</span>
-                      <span>
-                        {template.slide_count} slide{template.slide_count !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Empty State */}
-          {!loading && templates.length === 0 && (
-            <div className="text-center py-12">
-              <svg
-                className="mx-auto h-12 w-12 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+          {/* Content when not loading */}
+          {!loading && (
+            <>
+              {/* Featured Templates Row (only when no filters active) */}
+              {!hasActiveFilters && featuredTemplates.length > 0 && (
+                <FeaturedTemplatesRow
+                  templates={featuredTemplates}
+                  onTemplateClick={handleTemplateClick}
+                  onQuickApply={handleQuickApply}
+                  applyingId={applyingId}
                 />
-              </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">
-                No templates found
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Try adjusting your filters or search query.
-              </p>
-            </div>
+              )}
+
+              {/* Template Grid */}
+              {templates.length > 0 ? (
+                <TemplateGrid
+                  templates={templates}
+                  onTemplateClick={handleTemplateClick}
+                  onQuickApply={handleQuickApply}
+                  applyingId={applyingId}
+                />
+              ) : (
+                /* Empty State */
+                <div className="text-center py-12">
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    />
+                  </svg>
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">
+                    No templates found
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Try adjusting your filters or search query.
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
