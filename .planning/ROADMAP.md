@@ -158,7 +158,7 @@ Plans:
 **Plans**: 3 plans (Wave 1: 20-01, Wave 2: 20-02, 20-03 parallel)
 
 Plans:
-- [ ] 20-01-PLAN.md - Language schema, RPC, and service (scene_language_groups, display_language, languageService)
+- [x] 20-01-PLAN.md - Language schema, RPC, and service (scene_language_groups, display_language, languageService)
 - [ ] 20-02-PLAN.md - Device language assignment and language badges (settings dropdown, LanguageBadges component)
 - [ ] 20-03-PLAN.md - CMS language editing (EditorLanguageSwitcher, AddLanguageModal, variant creation)
 
@@ -231,7 +231,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 | 17. Templates Core | 3/3 | Complete | 2026-01-25 |
 | 18. Templates Discovery | 4/4 | Complete | 2026-01-26 |
 | 19. Templates Intelligence | 4/4 | Complete | 2026-01-26 |
-| 20. Multi-Language Core | 0/3 | Not started | - |
+| 20. Multi-Language Core | 1/3 | In progress | - |
 | 21. Multi-Language Advanced | 0/3 | Not started | - |
 | 22. Platform Polish - Mobile & Dashboard | 0/3 | Not started | - |
 | 23. Platform Polish - Onboarding | 0/2 | Not started | - |

@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 
 ## Current Position
 
-Phase: 19 of 23 (Templates Intelligence)
-Plan: 4 of 4 complete (19-04 complete)
-Status: Phase complete
-Last activity: 2026-01-26 - Completed 19-04-PLAN.md (Usage Counts Wiring)
+Phase: 20 of 23 (Multi-Language Core)
+Plan: 1 of 3 complete (20-01 complete)
+Status: In progress
+Last activity: 2026-01-26 - Completed 20-01-PLAN.md (Language Schema Foundation)
 
-Progress: [████████████░] 72% (26/36 plans)
+Progress: [████████████░] 75% (27/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26 (v2)
+- Total plans completed: 27 (v2)
 - Average duration: 3.8min
-- Total execution time: 99min
+- Total execution time: 103min
 
 **By Phase:**
 
@@ -34,10 +34,11 @@ Progress: [████████████░] 72% (26/36 plans)
 | 17-templates-core | 3 | 7min | 2min |
 | 18-templates-discovery | 4 | 15min | 4min |
 | 19-templates-intelligence | 4 | 12min | 3min |
+| 20-multi-language-core | 1 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 19-01 (3min), 19-02 (3min), 19-03 (4min), 19-04 (2min)
-- Trend: Fast wiring and UI plans
+- Last 5 plans: 19-02 (3min), 19-03 (4min), 19-04 (2min), 20-01 (4min)
+- Trend: Fast schema and service layer plans
 
 *Updated after each plan completion*
 
@@ -110,6 +111,10 @@ Recent decisions affecting current work:
 - [19-03]: Similar templates row appears after Quick Apply success
 - [19-04]: Reuse same usageCounts Map for both FeaturedTemplatesRow and TemplateGrid
 - [19-04]: Fetch counts when templates array changes (single useEffect dependency)
+- [20-01]: Use separate scenes linked by group ID (not JSONB embedded)
+- [20-01]: Copy original content to new variant (not blank scene)
+- [20-01]: Server-side RPC for language resolution ensures consistent fallback
+- [20-01]: ON DELETE SET NULL for language_group_id (orphan scenes, don't cascade delete)
 
 ### Pending Todos
 
@@ -122,7 +127,7 @@ From research - critical pitfalls to address:
 - **Phase 14**: ~~DST transitions can cause schedule gaps/double-plays~~ RESOLVED (14-05: TZDate integration)
 - **Phase 17**: Template cloning must use correct tenant context (RLS)
 - **Phase 20**: Offline cache explosion with language variants
-- **Phase 20**: Missing translation fallback can cause blank screens
+- **Phase 20**: ~~Missing translation fallback can cause blank screens~~ RESOLVED (20-01: RPC with 3-level fallback)
 
 Test infrastructure note:
 - 18-19 pre-existing failing test files in services (unrelated to v2 work)
@@ -131,8 +136,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 19-04-PLAN.md (Usage Counts Wiring) - Phase 19 complete
+Stopped at: Completed 20-01-PLAN.md (Language Schema Foundation)
 Resume file: None
 
 ---
-*Updated: 2026-01-26 - Completed 19-04 (Usage Counts Wiring) - Phase 19 complete*
+*Updated: 2026-01-26 - Completed 20-01 (Language Schema Foundation)*
