@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 19 Complete, ready for Phase 20
+**Current focus:** v2 Templates & Platform Polish - Phase 20 in progress
 
 ## Current Position
 
 Phase: 20 of 23 (Multi-Language Core)
-Plan: 1 of 3 complete (20-01 complete)
+Plan: 2 of 3 complete (20-01, 20-03 complete)
 Status: In progress
-Last activity: 2026-01-26 - Completed 20-01-PLAN.md (Language Schema Foundation)
+Last activity: 2026-01-26 - Completed 20-03-PLAN.md (Editor Language Switching)
 
-Progress: [████████████░] 75% (27/36 plans)
+Progress: [█████████████░] 78% (28/36 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27 (v2)
+- Total plans completed: 28 (v2)
 - Average duration: 3.8min
-- Total execution time: 103min
+- Total execution time: 106min
 
 **By Phase:**
 
@@ -34,11 +34,11 @@ Progress: [████████████░] 75% (27/36 plans)
 | 17-templates-core | 3 | 7min | 2min |
 | 18-templates-discovery | 4 | 15min | 4min |
 | 19-templates-intelligence | 4 | 12min | 3min |
-| 20-multi-language-core | 1 | 4min | 4min |
+| 20-multi-language-core | 2 | 7min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 19-02 (3min), 19-03 (4min), 19-04 (2min), 20-01 (4min)
-- Trend: Fast schema and service layer plans
+- Last 5 plans: 19-03 (4min), 19-04 (2min), 20-01 (4min), 20-03 (3min)
+- Trend: Fast UI component plans
 
 *Updated after each plan completion*
 
@@ -115,6 +115,9 @@ Recent decisions affecting current work:
 - [20-01]: Copy original content to new variant (not blank scene)
 - [20-01]: Server-side RPC for language resolution ensures consistent fallback
 - [20-01]: ON DELETE SET NULL for language_group_id (orphan scenes, don't cascade delete)
+- [20-03]: Native names only in dropdown per CONTEXT.md
+- [20-03]: Navigation-based variant switching reloads editor with different scene
+- [20-03]: Grid tile selection for language creation modal
 
 ### Pending Todos
 
@@ -136,8 +139,8 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 20-01-PLAN.md (Language Schema Foundation)
+Stopped at: Completed 20-03-PLAN.md (Editor Language Switching)
 Resume file: None
 
 ---
-*Updated: 2026-01-26 - Completed 20-01 (Language Schema Foundation)*
+*Updated: 2026-01-26 - Completed 20-03 (Editor Language Switching)*
