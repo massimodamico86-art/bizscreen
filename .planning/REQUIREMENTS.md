@@ -49,9 +49,9 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 - [x] **SCHED-02**: User can set priority levels (higher priority overrides lower)
 - [x] **SCHED-03**: System warns when schedule entries conflict
 - [x] **SCHED-04**: User can view 7-day visual schedule preview
-- [ ] **SCHED-05**: User can group related schedule entries as a campaign
-- [ ] **SCHED-06**: User can push emergency content that overrides all schedules
-- [ ] **SCHED-07**: User can apply dayparting presets (breakfast/lunch/dinner)
+- [x] **SCHED-05**: User can group related schedule entries as a campaign
+- [x] **SCHED-06**: User can push emergency content that overrides all schedules
+- [x] **SCHED-07**: User can apply dayparting presets (breakfast/lunch/dinner)
 
 **Differentiators:**
 - [ ] **SCHED-08**: User can view performance metrics grouped by campaign
@@ -138,9 +138,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCHED-02 | Phase 14 | Pending |
 | SCHED-03 | Phase 14 | Pending |
 | SCHED-04 | Phase 14 | Pending |
-| SCHED-05 | Phase 15 | Pending |
-| SCHED-06 | Phase 15 | Pending |
-| SCHED-07 | Phase 15 | Pending |
+| SCHED-05 | Phase 15 | Complete |
+| SCHED-06 | Phase 15 | Complete |
+| SCHED-07 | Phase 15 | Complete |
 | SCHED-08 | Phase 16 | Pending |
 | SCHED-09 | Phase 16 | Pending |
 | SCHED-10 | Phase 16 | Pending |

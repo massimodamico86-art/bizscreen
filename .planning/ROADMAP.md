@@ -13,7 +13,7 @@ BizScreen v2 delivers three major feature sets (Templates Marketplace, Multi-Lan
 
 - [x] **Phase 13: Technical Foundation** - Player.jsx splitting and structured logging completion
 - [x] **Phase 14: Scheduling Core** - Date ranges, priorities, conflict detection, and week preview
-- [ ] **Phase 15: Scheduling Campaigns** - Campaign grouping, emergency override, and dayparting
+- [x] **Phase 15: Scheduling Campaigns** - Campaign grouping, emergency override, and dayparting
 - [ ] **Phase 16: Scheduling Polish** - Analytics, rotation rules, frequency limits, and templates
 - [ ] **Phase 17: Templates Core** - Category browsing, search, preview, and one-click apply
 - [ ] **Phase 18: Templates Discovery** - Recent, favorites, starter packs, and customization wizard
@@ -72,10 +72,10 @@ Plans:
 **Plans**: 4 plans (Wave 1: 15-01, 15-02, 15-03 parallel, Wave 2: 15-04)
 
 Plans:
-- [ ] 15-01-PLAN.md - Campaign-entry linking (FK, service, CampaignPicker)
-- [ ] 15-02-PLAN.md - Emergency override system (service, context, banner)
-- [ ] 15-03-PLAN.md - Dayparting presets (table, service, DaypartPicker)
-- [ ] 15-04-PLAN.md - Emergency push triggers and player resolution
+- [x] 15-01-PLAN.md - Campaign-entry linking (FK, service, CampaignPicker)
+- [x] 15-02-PLAN.md - Emergency override system (service, context, banner)
+- [x] 15-03-PLAN.md - Dayparting presets (table, service, DaypartPicker)
+- [x] 15-04-PLAN.md - Emergency push triggers and player resolution
 
 ### Phase 16: Scheduling Polish
 **Goal**: Users have advanced scheduling controls including analytics, rotation, limits, and reusable templates
@@ -224,7 +224,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 |-------|----------------|--------|-----------|
 | 13. Technical Foundation | 3/3 | Complete | 2026-01-24 |
 | 14. Scheduling Core | 5/5 | Complete | 2026-01-25 |
-| 15. Scheduling Campaigns | 0/4 | Planned | - |
+| 15. Scheduling Campaigns | 4/4 | Complete | 2026-01-25 |
 | 16. Scheduling Polish | 0/3 | Not started | - |
 | 17. Templates Core | 0/3 | Not started | - |
 | 18. Templates Discovery | 0/3 | Not started | - |
@@ -242,3 +242,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 14 planned: 2026-01-24*
 *Phase 14 gap closure: 2026-01-25*
 *Phase 15 planned: 2026-01-25*
+*Phase 15 complete: 2026-01-25*
