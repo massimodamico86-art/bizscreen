@@ -34,6 +34,8 @@ import { pushEmergencyContent, EMERGENCY_DURATIONS } from '../services/emergency
 import { useAuth } from '../contexts/AuthContext';
 import { formatDate } from '../utils/formatters';
 import { fetchScenesWithDeviceCounts } from '../services/sceneService';
+import { getAvailableLanguagesForScene } from '../services/languageService';
+import { LanguageBadges } from '../components/scenes/LanguageBadges';
 
 // Design system imports
 import {
@@ -71,7 +73,7 @@ function getBusinessTypeConfig(type) {
 }
 
 // Scene Card Component
-function SceneCard({ scene, onOpenScene, onPublish, onPushEmergency }) {
+function SceneCard({ scene, onOpenScene, onPublish, onPushEmergency, languages }) {
   const config = getBusinessTypeConfig(scene.business_type);
   const Icon = config.icon;
   const deviceCount = scene.deviceCount || 0;
@@ -84,9 +86,12 @@ function SceneCard({ scene, onOpenScene, onPublish, onPushEmergency }) {
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${config.color}`}>
             <Icon className="w-6 h-6" />
           </div>
-          <Badge variant={deviceCount > 0 ? 'success' : 'default'}>
-            {deviceCount > 0 ? `${deviceCount} screen${deviceCount !== 1 ? 's' : ''}` : 'Not published'}
-          </Badge>
+          <div className="flex flex-col items-end gap-1.5">
+            <Badge variant={deviceCount > 0 ? 'success' : 'default'}>
+              {deviceCount > 0 ? `${deviceCount} screen${deviceCount !== 1 ? 's' : ''}` : 'Not published'}
+            </Badge>
+            <LanguageBadges languages={languages} />
+          </div>
         </div>
 
         {/* Scene info */}
@@ -242,6 +247,7 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
   const [emergencyModalScene, setEmergencyModalScene] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [sceneLanguages, setSceneLanguages] = useState(new Map());
 
   // Get current page from URL, default to 1
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
@@ -257,9 +263,24 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
         page,
         pageSize: PAGE_SIZE
       });
-      setScenes(result.data || []);
+      const scenesData = result.data || [];
+      setScenes(scenesData);
       setTotalCount(result.totalCount || 0);
       setTotalPages(result.totalPages || 0);
+
+      // Fetch language data for each scene (batch fetch)
+      if (scenesData.length > 0) {
+        const languagePromises = scenesData.map(async (scene) => {
+          try {
+            const langs = await getAvailableLanguagesForScene(scene.id);
+            return [scene.id, langs];
+          } catch {
+            return [scene.id, ['en']]; // Default to English on error
+          }
+        });
+        const languageResults = await Promise.all(languagePromises);
+        setSceneLanguages(new Map(languageResults));
+      }
     } catch (err) {
       console.error('Error loading scenes:', err);
       setError('Failed to load scenes. Please try again.');
@@ -345,6 +366,7 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
                   onOpenScene={handleOpenScene}
                   onPublish={handlePublish}
                   onPushEmergency={setEmergencyModalScene}
+                  languages={sceneLanguages.get(scene.id) || []}
                 />
               ))}
             </Grid>
