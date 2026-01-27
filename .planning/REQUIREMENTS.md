@@ -34,13 +34,13 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 - [x] **LANG-03**: System falls back to default language when translation missing
 - [x] **LANG-04**: User can switch between language versions when editing in CMS
 - [x] **LANG-05**: System displays language indicator badge on content cards
-- [ ] **LANG-06**: User can view all content needing translation in bulk dashboard
+- [x] **LANG-06**: User can view all content needing translation in bulk dashboard
 
 **Differentiators:**
-- [ ] **LANG-07**: User can assign language to screen group (devices inherit)
-- [ ] **LANG-08**: System auto-assigns language based on device location
-- [ ] **LANG-09**: User can track translation status (draft/review/approved)
-- [ ] **LANG-10**: System suggests AI translations as starting point
+- [x] **LANG-07**: User can assign language to screen group (devices inherit)
+- [x] **LANG-08**: System auto-assigns language based on device location
+- [x] **LANG-09**: User can track translation status (draft/review/approved)
+- [x] **LANG-10**: System suggests AI translations as starting point
 
 ### Advanced Scheduling
 
@@ -86,7 +86,7 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 - [x] **TECH-01**: Player.jsx reduced to <1000 lines via component extraction *(1,265 lines achieved - 56% reduction accepted)*
 - [x] **TECH-02**: Remaining 38% of services migrated to structured logging
 - [x] **TECH-03**: Flaky useCampaignEditor test fixed
-- [ ] **TECH-04**: Critical path test coverage added for new features
+- [x] **TECH-04**: Critical path test coverage added for new features
 
 ## Future Requirements
 
@@ -164,12 +164,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LANG-03 | Phase 20 | Complete |
 | LANG-04 | Phase 20 | Complete |
 | LANG-05 | Phase 20 | Complete |
-| LANG-06 | Phase 21 | Pending |
-| LANG-07 | Phase 21 | Pending |
-| LANG-08 | Phase 21 | Pending |
-| LANG-09 | Phase 21 | Pending |
-| LANG-10 | Phase 21 | Pending |
-| TECH-04 | Phase 21 | Pending |
+| LANG-06 | Phase 21 | Complete |
+| LANG-07 | Phase 21 | Complete |
+| LANG-08 | Phase 21 | Complete |
+| LANG-09 | Phase 21 | Complete |
+| LANG-10 | Phase 21 | Complete |
+| TECH-04 | Phase 21 | Complete |
 | MOBIL-01 | Phase 22 | Pending |
 | MOBIL-02 | Phase 22 | Pending |
 | MOBIL-03 | Phase 22 | Pending |

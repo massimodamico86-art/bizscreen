@@ -180,7 +180,7 @@ Plans:
 - [x] 21-01-PLAN.md - Translation workflow schema and dashboard RPCs
 - [x] 21-02-PLAN.md - Group language assignment with device inheritance
 - [x] 21-03-PLAN.md - Translation dashboard UI and AI suggestions
-- [ ] 21-04-PLAN.md - [Gap Closure] Test coverage for Phase 21 features
+- [x] 21-04-PLAN.md - [Gap Closure] Test coverage for Phase 21 features
 
 ### Phase 22: Platform Polish - Mobile & Dashboard
 **Goal**: Admin UI works well on mobile devices and dashboard provides actionable overview
@@ -234,7 +234,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 | 18. Templates Discovery | 4/4 | Complete | 2026-01-26 |
 | 19. Templates Intelligence | 4/4 | Complete | 2026-01-26 |
 | 20. Multi-Language Core | 4/4 | Complete | 2026-01-26 |
-| 21. Multi-Language Advanced | 3/4 | In progress | - |
+| 21. Multi-Language Advanced | 4/4 | Complete | 2026-01-26 |
 | 22. Platform Polish - Mobile & Dashboard | 0/3 | Not started | - |
 | 23. Platform Polish - Onboarding | 0/2 | Not started | - |
 
@@ -259,3 +259,5 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 20 planned: 2026-01-26*
 *Phase 20 gap closure: 2026-01-26*
 *Phase 20 complete: 2026-01-26*
+*Phase 21 gap closure: 2026-01-26*
+*Phase 21 complete: 2026-01-26*
