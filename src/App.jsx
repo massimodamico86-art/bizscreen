@@ -560,6 +560,7 @@ function BizScreenAppInner() {
     'notification-settings': <Suspense fallback={<PageLoader />}><NotificationSettingsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'svg-templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'security': <Suspense fallback={<PageLoader />}><SecurityDashboardPage /></Suspense>,
+    'translations': <Suspense fallback={<PageLoader />}><TranslationDashboardPage showToast={showToast} /></Suspense>,
   };
 
   // Show Canva OAuth callback page
