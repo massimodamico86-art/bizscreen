@@ -362,6 +362,40 @@ export async function getGroupActiveScene(groupId) {
   return data?.active_scene || null;
 }
 
+/**
+ * Update group language settings
+ * Sets both display_language and location_code for a screen group.
+ * Devices in the group will inherit this language setting.
+ *
+ * @param {string} groupId - Screen group ID
+ * @param {Object} settings - Language settings object
+ * @param {string|null} settings.display_language - Language code (e.g., 'en', 'es') or null
+ * @param {string|null} settings.location_code - Country/region code (e.g., 'US', 'MX') or null
+ * @returns {Promise<Object>} Updated screen group
+ */
+export async function updateGroupLanguage(groupId, settings) {
+  logger.debug('Updating group language settings', { groupId, settings });
+
+  const { data, error } = await supabase
+    .from('screen_groups')
+    .update({
+      display_language: settings.display_language || null,
+      location_code: settings.location_code || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', groupId)
+    .select()
+    .single();
+
+  if (error) {
+    logger.error('Failed to update group language', { error: error.message, groupId });
+    throw error;
+  }
+
+  logger.info('Group language settings updated', { groupId, displayLanguage: settings.display_language });
+  return data;
+}
+
 export default {
   fetchScreenGroups,
   fetchScreenGroupsWithScenes,
@@ -378,5 +412,6 @@ export default {
   publishSceneToGroup,
   unpublishSceneFromGroup,
   publishSceneToMultipleGroups,
-  getGroupActiveScene
+  getGroupActiveScene,
+  updateGroupLanguage,
 };

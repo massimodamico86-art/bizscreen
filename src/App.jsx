@@ -93,6 +93,7 @@ const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 const TemplatesPage = lazy(() => import('./pages/TemplatesPage'));
 const ContentAssistantPage = lazy(() => import('./pages/ContentAssistantPage'));
 const ScreenGroupsPage = lazy(() => import('./pages/ScreenGroupsPage'));
+const ScreenGroupDetailPage = lazy(() => import('./pages/ScreenGroupDetailPage'));
 const CampaignsPage = lazy(() => import('./pages/CampaignsPage'));
 const CampaignEditorPage = lazy(() => import('./pages/CampaignEditorPage'));
 const ReviewInboxPage = lazy(() => import('./pages/ReviewInboxPage'));
@@ -133,6 +134,7 @@ const DesignEditorPage = lazy(() => import('./pages/DesignEditorPage'));
 const SvgTemplateGalleryPage = lazy(() => import('./pages/SvgTemplateGalleryPage'));
 const SvgEditorPage = lazy(() => import('./pages/SvgEditorPage'));
 const SecurityDashboardPage = lazy(() => import('./pages/SecurityDashboardPage'));
+const TranslationDashboardPage = lazy(() => import('./pages/TranslationDashboardPage'));
 
 // Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
 export default function BizScreenApp() {
@@ -996,6 +998,14 @@ function ClientUILayout({
               <Suspense fallback={<PageLoader />}>
                 <SceneDetailPage
                   sceneId={currentPage.replace('scene-detail-', '')}
+                  showToast={showToast}
+                  onNavigate={setCurrentPage}
+                />
+              </Suspense>
+            ) : currentPage.startsWith('screen-group-detail-') ? (
+              <Suspense fallback={<PageLoader />}>
+                <ScreenGroupDetailPage
+                  groupId={currentPage.replace('screen-group-detail-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
