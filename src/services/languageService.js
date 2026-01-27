@@ -14,6 +14,79 @@ import { createScopedLogger } from './loggingService';
 const logger = createScopedLogger('LanguageService');
 
 // ============================================
+// LOCATION TO LANGUAGE MAPPING
+// ============================================
+
+/**
+ * Maps country/region codes to primary language
+ * Used for auto-assigning language based on device location
+ */
+export const LOCATION_LANGUAGE_MAP = {
+  'US': 'en',
+  'GB': 'en',
+  'CA': 'en',
+  'AU': 'en',
+  'NZ': 'en',
+  'IE': 'en',
+  'ES': 'es',
+  'MX': 'es',
+  'AR': 'es',
+  'CO': 'es',
+  'CL': 'es',
+  'PE': 'es',
+  'FR': 'fr',
+  'BE': 'fr', // Belgium (French default)
+  'CH': 'de', // Switzerland (German default)
+  'DE': 'de',
+  'AT': 'de',
+  'IT': 'it',
+  'PT': 'pt',
+  'BR': 'pt',
+  'JP': 'ja',
+  'CN': 'zh',
+  'TW': 'zh',
+  'HK': 'zh',
+  'KR': 'ko',
+  'NL': 'nl',
+  'PL': 'pl',
+  'RU': 'ru',
+};
+
+/**
+ * Get language code for a location/country code
+ * @param {string} locationCode - Country/region code (e.g., 'US', 'ES', 'FR')
+ * @returns {string} Language code (defaults to 'en' if not mapped)
+ */
+export function getLanguageForLocation(locationCode) {
+  if (!locationCode) {
+    logger.debug('No location code provided, defaulting to en');
+    return 'en';
+  }
+
+  const upperCode = locationCode.toUpperCase();
+  const language = LOCATION_LANGUAGE_MAP[upperCode] || 'en';
+
+  logger.debug('Resolved language for location', { location: upperCode, language });
+  return language;
+}
+
+/**
+ * Get all available locations with their country names
+ * @returns {Array<{code: string, name: string}>} Array of location objects
+ */
+export function getAvailableLocations() {
+  // Use Intl.DisplayNames for localized country names
+  const displayNames = new Intl.DisplayNames(['en'], { type: 'region' });
+
+  return Object.keys(LOCATION_LANGUAGE_MAP)
+    .map(code => ({
+      code,
+      name: displayNames.of(code) || code,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// ============================================
 // LANGUAGE COLORS FOR UI BADGES
 // ============================================
 
@@ -471,6 +544,10 @@ export async function deleteLanguageVariant(variantSceneId) {
 // ============================================
 
 export default {
+  // Location mapping
+  LOCATION_LANGUAGE_MAP,
+  getLanguageForLocation,
+  getAvailableLocations,
   // Colors
   LANGUAGE_COLORS,
   getLanguageColor,
