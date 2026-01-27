@@ -174,12 +174,12 @@ Plans:
   4. User can track translation status (draft/review/approved) for each language
   5. System suggests AI translations as starting point for new languages
   6. New multi-language features have comprehensive test coverage
-**Plans**: TBD
+**Plans**: 3 plans (Wave 1: 21-01, Wave 2: 21-02, 21-03 parallel)
 
 Plans:
-- [ ] 21-01: Translation dashboard
-- [ ] 21-02: Group language assignment
-- [ ] 21-03: Translation workflow and AI suggestions
+- [ ] 21-01-PLAN.md - Translation workflow schema and dashboard RPCs
+- [ ] 21-02-PLAN.md - Group language assignment with device inheritance
+- [ ] 21-03-PLAN.md - Translation dashboard UI and AI suggestions
 
 ### Phase 22: Platform Polish - Mobile & Dashboard
 **Goal**: Admin UI works well on mobile devices and dashboard provides actionable overview
