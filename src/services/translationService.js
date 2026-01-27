@@ -139,6 +139,43 @@ export async function updateSceneStatus(sceneId, newStatus) {
 }
 
 // ============================================
+// AI TRANSLATION SUGGESTIONS
+// ============================================
+
+/**
+ * Get AI translation suggestions for a scene
+ * Calls the /api/translations/suggest endpoint to get Claude-generated translations
+ *
+ * @param {string} sourceSceneId - The scene ID to translate from
+ * @param {string} targetLanguage - The target language code (e.g., 'es', 'fr')
+ * @returns {Promise<Object>} Translation suggestions { sourceLanguage, targetLanguage, translations, originalTexts }
+ */
+export async function getAiTranslationSuggestion(sourceSceneId, targetLanguage) {
+  logger.debug('Requesting AI translation suggestion', { sourceSceneId, targetLanguage });
+
+  const response = await fetch('/api/translations/suggest', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sourceSceneId, targetLanguage }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    logger.error('AI translation suggestion failed', { error, sourceSceneId, targetLanguage });
+    throw new Error(error.error || 'Failed to get translation suggestion');
+  }
+
+  const result = await response.json();
+  logger.info('AI translation suggestion received', {
+    sourceSceneId,
+    targetLanguage,
+    textCount: result.translations?.texts?.length || 0,
+  });
+
+  return result;
+}
+
+// ============================================
 // STATUS CONSTANTS
 // ============================================
 
@@ -180,6 +217,8 @@ export default {
   bulkUpdateStatus,
   // Single scene
   updateSceneStatus,
+  // AI suggestions
+  getAiTranslationSuggestion,
   // Constants
   TRANSLATION_STATUSES,
   STATUS_LABELS,
