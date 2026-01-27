@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 20 complete
+**Current focus:** v2 Templates & Platform Polish - Phase 21 in progress
 
 ## Current Position
 
-Phase: 20 of 23 (Multi-Language Core)
-Plan: 4 of 4 complete (20-01, 20-02, 20-03, 20-04 complete)
-Status: Phase complete, verified ✓
-Last activity: 2026-01-26 - Completed 20-04-PLAN.md (Language Player Integration)
+Phase: 21 of 23 (Multi-Language Advanced)
+Plan: 1 of 4 complete (21-01 complete)
+Status: In progress
+Last activity: 2026-01-26 - Completed 21-01-PLAN.md (Translation Workflow Schema)
 
-Progress: [█████████████░] 83% (30/37 plans)
+Progress: [█████████████░] 84% (31/37 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 30 (v2)
+- Total plans completed: 31 (v2)
 - Average duration: 3.8min
-- Total execution time: 114min
+- Total execution time: 117min
 
 **By Phase:**
 
@@ -35,10 +35,11 @@ Progress: [█████████████░] 83% (30/37 plans)
 | 18-templates-discovery | 4 | 15min | 4min |
 | 19-templates-intelligence | 4 | 12min | 3min |
 | 20-multi-language-core | 4 | 15min | 4min |
+| 21-multi-language-advanced | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 20-01 (4min), 20-02 (4min), 20-03 (3min), 20-04 (4min)
-- Trend: Fast database/UI plans
+- Last 5 plans: 20-02 (4min), 20-03 (3min), 20-04 (4min), 21-01 (3min)
+- Trend: Fast database/service plans
 
 *Updated after each plan completion*
 
@@ -125,6 +126,9 @@ Recent decisions affecting current work:
 - [20-04]: Emergency content bypasses language resolution (same for all devices)
 - [20-04]: Scene response includes languageCode for player verification
 - [20-04]: Legacy schedule entries don't use language resolution (direct content refs)
+- [21-01]: Standalone scenes in dashboard with empty variants when no language filter
+- [21-01]: RPC status validation with RAISE EXCEPTION for invalid values
+- [21-01]: Location map covers 20+ countries with English fallback
 
 ### Pending Todos
 
@@ -146,9 +150,9 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Phase 20 complete, verified (Multi-Language Core)
+Stopped at: Completed 21-01-PLAN.md (Translation Workflow Schema)
 Resume file: None
-Next: Phase 21 (Multi-Language Advanced)
+Next: 21-02-PLAN.md (Translation Dashboard UI)
 
 ---
-*Updated: 2026-01-26 - Phase 20 complete with gap closure and verification*
+*Updated: 2026-01-26 - Phase 21 plan 01 complete*
