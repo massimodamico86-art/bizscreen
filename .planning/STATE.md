@@ -38,7 +38,7 @@ Progress: [██████████████░] 89% (33/37 plans)
 | 21-multi-language-advanced | 3 | 8min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 20-04 (4min), 21-01 (3min), 21-02 (TBD), 21-03 (4min)
+- Last 5 plans: 20-04 (4min), 21-01 (3min), 21-02 (4min), 21-03 (4min)
 - Trend: Fast UI component plans
 
 *Updated after each plan completion*
@@ -129,6 +129,9 @@ Recent decisions affecting current work:
 - [21-01]: Standalone scenes in dashboard with empty variants when no language filter
 - [21-01]: RPC status validation with RAISE EXCEPTION for invalid values
 - [21-01]: Location map covers 20+ countries with English fallback
+- [21-02]: Strict inheritance: devices in group use group's language unless device has explicit override
+- [21-02]: Location suggests language via getLanguageForLocation, user confirms with Apply button
+- [21-02]: ScreenGroupDetailPage created with Devices + Settings tabs pattern
 - [21-03]: Scene-centric dashboard with language pills per row
 - [21-03]: AI suggestion panel with copy functionality (not direct apply)
 
