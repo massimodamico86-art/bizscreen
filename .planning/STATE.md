@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 21 in progress
+**Current focus:** v2 Templates & Platform Polish - Phase 21 complete
 
 ## Current Position
 
 Phase: 21 of 23 (Multi-Language Advanced)
-Plan: 3 of 4 complete (21-03 complete)
-Status: In progress
-Last activity: 2026-01-27 - Completed 21-03-PLAN.md (Translation Dashboard UI)
+Plan: 4 of 4 complete (Phase 21 complete)
+Status: Phase complete
+Last activity: 2026-01-27 - Completed 21-04-PLAN.md (Gap Closure - Test Coverage)
 
-Progress: [██████████████░] 89% (33/37 plans)
+Progress: [███████████████░] 92% (34/37 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 33 (v2)
+- Total plans completed: 34 (v2)
 - Average duration: 3.7min
-- Total execution time: 125min
+- Total execution time: 128min
 
 **By Phase:**
 
@@ -35,11 +35,11 @@ Progress: [██████████████░] 89% (33/37 plans)
 | 18-templates-discovery | 4 | 15min | 4min |
 | 19-templates-intelligence | 4 | 12min | 3min |
 | 20-multi-language-core | 4 | 15min | 4min |
-| 21-multi-language-advanced | 3 | 8min | 3min |
+| 21-multi-language-advanced | 4 | 11min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 20-04 (4min), 21-01 (3min), 21-02 (4min), 21-03 (4min)
-- Trend: Fast UI component plans
+- Last 5 plans: 21-01 (3min), 21-02 (4min), 21-03 (4min), 21-04 (3min)
+- Trend: Fast test and UI component plans
 
 *Updated after each plan completion*
 
@@ -134,6 +134,9 @@ Recent decisions affecting current work:
 - [21-02]: ScreenGroupDetailPage created with Devices + Settings tabs pattern
 - [21-03]: Scene-centric dashboard with language pills per row
 - [21-03]: AI suggestion panel with copy functionality (not direct apply)
+- [21-04]: Follow async import pattern for service tests (consistent with existing patterns)
+- [21-04]: Pure function tests don't require supabase mocking
+- [21-04]: Component tests mock services at module level
 
 ### Pending Todos
 
@@ -155,9 +158,9 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed 21-03-PLAN.md (Translation Dashboard UI)
+Stopped at: Completed 21-04-PLAN.md (Gap Closure - Test Coverage)
 Resume file: None
-Next: 21-04-PLAN.md (Player Language Integration)
+Next: Phase 22 or project verification
 
 ---
-*Updated: 2026-01-27 - Phase 21 plan 03 complete*
+*Updated: 2026-01-27 - Phase 21 complete (4/4 plans)*
