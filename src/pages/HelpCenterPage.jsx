@@ -22,6 +22,7 @@ import {
   getHelpTopic,
   getTopicsByCategory,
 } from '../services/helpService';
+import { PageLayout, PageHeader } from '../design-system';
 
 const CATEGORY_ICONS = {
   getting_started: Rocket,
@@ -33,6 +34,11 @@ const CATEGORY_ICONS = {
   billing: CreditCard
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.onNavigate
+ */
 export default function HelpCenterPage({ onNavigate }) {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');

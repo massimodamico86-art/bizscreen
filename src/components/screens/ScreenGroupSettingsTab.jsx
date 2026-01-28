@@ -17,6 +17,7 @@ import {
   getLanguageDisplayInfo,
 } from '../../services/languageService';
 import { updateGroupLanguage } from '../../services/screenGroupService';
+import { Card, CardContent } from '../../design-system';
 
 /**
  * ScreenGroupSettingsTab component

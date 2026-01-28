@@ -11,9 +11,10 @@ import {
   Video,
   FileAudio,
   FileText,
+  AlertTriangle,
 } from 'lucide-react';
 
-
+import { Badge, Stack, Card } from '../../design-system';
 import { formatLastSeen } from '../../services/dashboardService';
 
 /**
