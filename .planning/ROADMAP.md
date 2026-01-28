@@ -134,7 +134,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 29-01-PLAN.md — Restore imports to Player.jsx and test files
+- [ ] 29-01-PLAN.md - Restore imports to Player.jsx and 9 test files
 
 ---
 
