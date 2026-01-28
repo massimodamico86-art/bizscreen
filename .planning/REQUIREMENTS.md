@@ -9,11 +9,11 @@ Requirements for v2.1 Tech Debt Cleanup milestone. Each maps to roadmap phases.
 
 ### Player.jsx Restructure
 
-- [ ] **PLAY-01**: Player.jsx reduced to under 1000 lines
-- [ ] **PLAY-02**: All widgets extracted to separate components (Clock, Date, Weather, QRCode)
-- [ ] **PLAY-03**: All custom hooks extracted (useStuckDetection, useKioskMode, usePlayerHeartbeat, usePlayerCommands, usePlayerContent)
-- [ ] **PLAY-04**: Scene and Layout renderers extracted (SceneRenderer, LayoutRenderer, ZoneRenderer)
-- [ ] **PLAY-05**: Clean directory structure established (player/pages/, player/components/, player/hooks/, player/context/)
+- [x] **PLAY-01**: Player.jsx reduced to under 1000 lines (actual: 23 lines)
+- [x] **PLAY-02**: All widgets extracted to separate components (Clock, Date, Weather, QRCode)
+- [x] **PLAY-03**: All custom hooks extracted (useStuckDetection, useKioskMode, usePlayerHeartbeat, usePlayerCommands, usePlayerContent)
+- [x] **PLAY-04**: Scene and Layout renderers extracted (SceneRenderer, LayoutRenderer, ZoneRenderer)
+- [x] **PLAY-05**: Clean directory structure established (player/pages/, player/components/, player/hooks/)
 
 ### Test Infrastructure
 
@@ -71,11 +71,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAY-01 | Phase 24 | Pending |
-| PLAY-02 | Phase 24 | Pending |
-| PLAY-03 | Phase 24 | Pending |
-| PLAY-04 | Phase 24 | Pending |
-| PLAY-05 | Phase 24 | Pending |
+| PLAY-01 | Phase 24 | Complete |
+| PLAY-02 | Phase 24 | Complete |
+| PLAY-03 | Phase 24 | Complete |
+| PLAY-04 | Phase 24 | Complete |
+| PLAY-05 | Phase 24 | Complete |
 | TEST-01 | Phase 25 | Pending |
 | TEST-02 | Phase 25 | Pending |
 | TEST-03 | Phase 25 | Pending |
