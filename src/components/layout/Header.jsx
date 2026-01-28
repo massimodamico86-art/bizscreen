@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-
+import { ChevronRight, AlertTriangle, LogOut } from 'lucide-react';
 
 import { useEmergencyOptional } from '../../contexts/EmergencyContext';
 import {
@@ -19,6 +19,10 @@ import { fetchMediaAssets } from '../../services/mediaService';
 
 /**
  * Emergency Push Modal - Content selection for emergency override
+ * @param root0
+ * @param root0.open
+ * @param root0.onClose
+ * @param root0.showToast
  */
 function EmergencyPushModal({ open, onClose, showToast }) {
   const [contentType, setContentType] = useState('scene');
@@ -205,6 +209,14 @@ function EmergencyPushModal({ open, onClose, showToast }) {
 
 /**
  * Header Component
+ * @param root0
+ * @param root0.currentPage
+ * @param root0.setCurrentPage
+ * @param root0.branding
+ * @param root0.user
+ * @param root0.userProfile
+ * @param root0.handleSignOut
+ * @param root0.showToast
  */
 export default function Header({
   currentPage,
