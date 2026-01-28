@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 
 ## Current Position
 
-Phase: 25 of 28 (Test Infrastructure) — Complete ✓
-Plan: 2 of 2 complete
-Status: Phase verified, ready for phase 26
-Last activity: 2026-01-28 — Phase 25 executed and verified
+Phase: 26 of 28 (Analytics Completion) — Complete ✓
+Plan: 1 of 1 complete
+Status: Phase complete, ready for phase 27
+Last activity: 2026-01-28 — Completed 26-01-PLAN.md
 
-Progress: [████░░░░░░] 40% (4/10 plans)
+Progress: [█████░░░░░] 50% (5/10 plans)
 
 ## Milestone History
 
@@ -32,7 +32,7 @@ Progress: [████░░░░░░] 40% (4/10 plans)
 
 **v2.1:**
 - Plans: 10 total across 5 phases
-- Completed: 4
+- Completed: 5
 
 ## Accumulated Context
 
@@ -56,6 +56,8 @@ v2.1 decisions:
 - Fixtures in src/__fixtures__/ for colocation pattern (25-02)
 - Factory functions return fresh objects to prevent test pollution (25-02)
 - TEST-PATTERNS.md at project root for discoverability (25-02)
+- VOLATILE for select_weighted_campaign_content due to random() (26-01)
+- Campaign priority: Emergency > Campaign > Device Scene (26-01)
 
 ### Pending Todos
 
@@ -66,16 +68,18 @@ None.
 Tech debt being addressed in v2.1:
 
 - ~~Player.jsx at 1,265 lines (265 over target)~~ RESOLVED: Now 23 lines
-- Template usage analytics not recorded for starter packs
-- Campaign rotation weights not enforced in player
+- ~~Template usage analytics not recorded for starter packs~~ VERIFIED: Already working via installTemplateAsScene chain
+- ~~Campaign rotation weights not enforced in player~~ RESOLVED: Migration 138 with weighted selection
 - ~~18-19 pre-existing failing test files in services~~ RESOLVED: 0 failing (73 files, 2071 tests pass)
+
+**Note:** Migration 105 has pre-existing issue (references non-existent `tenants` table). Should be addressed separately.
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 25 complete and verified
+Stopped at: Phase 26 complete
 Resume file: None
-Next: `/gsd:discuss-phase 26` to gather context for Analytics Completion
+Next: `/gsd:plan-phase 27` for Performance Optimization
 
 ---
-*Updated: 2026-01-28 — Phase 25 complete (2071 tests pass, TEST-PATTERNS.md, src/__fixtures__/, verified)*
+*Updated: 2026-01-28 — Phase 26 complete (weighted campaign selection, ANLY-01 verified, ANLY-02 implemented)*
