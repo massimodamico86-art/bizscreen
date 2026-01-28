@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 Tech Debt Cleanup
+**Current focus:** v2.1 Tech Debt Cleanup - COMPLETE
 
 ## Current Position
 
-Phase: 29 of 29 (Fix Auto-Removed Imports) - COMPLETE (partial)
-Plan: 1 of 1 in current phase - EXECUTED
-Status: Test file imports restored; source file imports need separate phase
-Last activity: 2026-01-28 - Executed 29-01 (import restoration)
+Phase: 29 of 29 (Fix Auto-Removed Imports) - COMPLETE
+Plan: 2 of 2 in current phase - EXECUTED
+Status: All import restoration complete; test suite passing with 2071 tests
+Last activity: 2026-01-28 - Executed 29-02 (source file import restoration)
 
-Progress: [██████████] 100% (10/10 plans)
+Progress: [██████████] 100% (11/11 plans)
 
 ## Milestone History
 
@@ -22,17 +22,17 @@ Progress: [██████████] 100% (10/10 plans)
 |-----------|--------|--------|---------|
 | v1 Production Release | 1-12 | Shipped | 2026-01-24 |
 | v2 Templates & Platform Polish | 13-23 | Shipped | 2026-01-27 |
-| v2.1 Tech Debt Cleanup | 24-29 | Complete (with blocker) | 2026-01-28 |
+| v2.1 Tech Debt Cleanup | 24-29 | Complete | 2026-01-28 |
 
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1):**
-- Total plans executed: 125 (75 + 40 + 10)
+- Total plans executed: 126 (75 + 40 + 11)
 - Total phases: 29
 
 **v2.1:**
-- Plans: 10 total across 6 phases
-- Completed: 10
+- Plans: 11 total across 6 phases
+- Completed: 11
 - Remaining: 0
 
 ## Accumulated Context
@@ -70,6 +70,9 @@ v2.1 decisions:
 - JSDoc only required for exported function declarations (28-02)
 - react/jsx-uses-vars rule fixes unused-imports JSX detection (28-02)
 - DashboardComponents test imports from DashboardSections.jsx not DashboardPage.jsx (29-01)
+- Named exports preferred for component imports (29-02)
+- Design-system barrel imports for unified UI component access (29-02)
+- Test mocks required for component dependencies in integration tests (29-02)
 
 ### Pending Todos
 
@@ -77,32 +80,23 @@ None.
 
 ### Blockers/Concerns
 
-v2.1 tech debt items status:
+v2.1 tech debt items status - ALL RESOLVED:
 
 - ~~Player.jsx at 1,265 lines (265 over target)~~ RESOLVED: Now 23 lines
 - ~~Template usage analytics not recorded for starter packs~~ VERIFIED: Already working via installTemplateAsScene chain
 - ~~Campaign rotation weights not enforced in player~~ RESOLVED: Migration 138 with weighted selection
-- ~~18-19 pre-existing failing test files in services~~ PARTIALLY RESOLVED: Test file imports restored
+- ~~18-19 pre-existing failing test files in services~~ RESOLVED: Test file and source file imports restored
 - ~~ESLint has 1,070 warnings~~ ADDRESSED: Pre-commit hooks enforce clean commits, gradual cleanup via warn rules
+- ~~Source file import blocker~~ RESOLVED: Phase 29-02 restored all missing imports
 
-**NEW BLOCKER - Source File Imports (from Phase 29-01):**
-79 test failures remain due to missing imports in SOURCE files (not test files):
-- src/pages/HelpCenterPage.jsx - Missing: PageLayout, PageHeader
-- src/pages/dashboard/DashboardSections.jsx - Missing: Badge, Stack, Card
-- src/components/screens/ScreenGroupSettingsTab.jsx - Missing: Card, CardContent
-- src/player/components/PairPage.jsx - Missing: PairingScreen
-- src/player/pages/ViewPage.jsx - Missing: AppRenderer
-
-These were also affected by ESLint auto-fix in Phase 28-01 but were not included in Phase 29-01 scope.
-
-**Note:** Migration 105 has pre-existing issue (references non-existent `tenants` table). Should be addressed separately.
+**Note:** Migration 105 has pre-existing issue (references non-existent `tenants` table). Should be addressed separately in future maintenance.
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 29-01-PLAN.md (test file imports restored)
+Stopped at: Completed 29-02-PLAN.md (source file import restoration)
 Resume file: None
-Next: New phase needed to restore source file imports (see Blockers)
+Next: v2.1 milestone complete. Ready for next milestone planning.
 
 ---
-*Updated: 2026-01-28 - Phase 29-01 executed; source file import issue identified as new blocker.*
+*Updated: 2026-01-28 - Phase 29-02 executed; v2.1 Tech Debt Cleanup milestone complete.*
