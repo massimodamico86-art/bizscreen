@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Button, Alert } from '../design-system';
 import { useTranslation } from '../i18n';
-import { Mail } from 'lucide-react';
 
 export const LoginPage = () => {
   const { t } = useTranslation();

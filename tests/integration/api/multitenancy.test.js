@@ -7,12 +7,11 @@
  * These tests validate RLS (Row Level Security) behavior by simulating
  * queries from different tenant contexts and verifying data isolation.
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   createTestScreen,
   createTestPlaylist,
   createTestMedia,
-  createTestUser,
   generateUUID
 } from '../../utils/factories';
 

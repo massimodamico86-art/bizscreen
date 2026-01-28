@@ -15,7 +15,7 @@
  * - Brand Kit
  */
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { fetchSvgTemplates } from '../../services/svgTemplateService';
 import { useLogger } from '../../hooks/useLogger.js';
 import {
@@ -25,9 +25,6 @@ import {
   Shapes,
   QrCode,
   Grid3X3,
-  Search,
-  ChevronLeft,
-  Loader2,
   Square,
   Circle,
   Triangle,
@@ -69,13 +66,8 @@ import {
   MessageSquare,
   Smartphone,
   Link2,
-  Hash,
-  AtSign,
   PhoneCall,
-  Store,
-  Plus,
   ImagePlus,
-  Tv,
   CloudSun,
   CalendarDays,
   Timer,

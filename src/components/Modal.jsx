@@ -3,12 +3,8 @@
  * Re-exports from design system with backwards-compatible prop mapping.
  * New code should import directly from '../design-system' instead.
  */
-import {
-  Modal as DSModal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent
-} from '../design-system';
+
+
 
 // Map legacy sizes to design system sizes
 const sizeMap = {

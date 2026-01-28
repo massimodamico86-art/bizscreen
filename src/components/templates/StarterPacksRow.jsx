@@ -8,7 +8,6 @@
  */
 
 import PropTypes from 'prop-types';
-import { StarterPackCard } from './StarterPackCard';
 
 /**
  * StarterPacksRow component

@@ -9,31 +9,18 @@
  */
 
 import { useAuth } from '../contexts/AuthContext';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-} from '../design-system/components/PageLayout';
-import { Alert } from '../design-system/components/Alert';
+
+
 import {
   Flag,
   FlaskConical,
   MessageSquare,
   Megaphone,
   Bug,
-  Loader2,
 } from 'lucide-react';
-import FeatureFlagsDebug from '../components/FeatureFlagsDebug';
 import { useFeatureFlags } from './hooks/useFeatureFlags.js';
-import {
-  FeatureFlagsTab,
-  ExperimentsTab,
-  FeedbackTab,
-  AnnouncementsTab,
-  FlagModal,
-  ExperimentModal,
-  AnnouncementModal,
-} from './components/FeatureFlagsComponents';
+
+
 
 const tabs = [
   { id: 'flags', label: 'Feature Flags', icon: Flag },

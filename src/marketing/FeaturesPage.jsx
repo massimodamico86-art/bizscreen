@@ -2,7 +2,6 @@
  * FeaturesPage - Public features overview page
  */
 
-import { Link } from 'react-router-dom';
 import {
   Monitor,
   Upload,
@@ -15,11 +14,8 @@ import {
   Shield,
   Zap,
   Cloud,
-  Globe,
-  ArrowRight,
-  CheckCircle
+  Globe
 } from 'lucide-react';
-import Seo from '../components/Seo';
 
 const features = [
   {

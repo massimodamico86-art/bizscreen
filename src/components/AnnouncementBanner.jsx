@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { X, ChevronRight, Megaphone, Sparkles, AlertTriangle, Wrench, Info } from 'lucide-react';
+import { Sparkles, AlertTriangle, Wrench, Info } from 'lucide-react';
 import { getPriorityAnnouncements, dismissAnnouncement } from '../services/feedbackService';
 import { useLogger } from '../hooks/useLogger.js';
 

@@ -8,27 +8,16 @@
  * - Ability to test feature toggling in dev mode
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useEffectiveFeatures, useFeatureContext } from '../hooks/useFeatureFlag';
-import { PLANS, Feature, FEATURE_METADATA, PlanSlug, getAllPlans } from '../config/plans';
+import { PLANS, FEATURE_METADATA, getAllPlans } from '../config/plans';
 import { getEffectiveFeatures } from '../config/featureFlags';
-import { Card, CardHeader, CardContent } from '../design-system/components/Card';
-import { Button } from '../design-system/components/Button';
-import { Alert } from '../design-system/components/Alert';
 import {
-  Bug,
-  Check,
-  X,
-  RefreshCw,
   Shield,
   Building2,
   CreditCard,
   Zap,
-  ChevronDown,
-  ChevronRight,
-  Copy,
-  Download,
   AlertTriangle,
 } from 'lucide-react';
 

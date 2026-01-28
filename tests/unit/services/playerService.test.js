@@ -3,15 +3,14 @@
  *
  * Tests for content resolution logic: Campaign → Schedule → Layout → Playlist
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   createTestScreen,
   createTestPlaylist,
   createTestPlaylistWithMedia,
   createTestLayout,
   createTestSchedule,
-  createTestCampaign,
-  createTestMedia
+  createTestCampaign
 } from '../../utils/factories';
 
 describe('playerService - Content Resolution', () => {

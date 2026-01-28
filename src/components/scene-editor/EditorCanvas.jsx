@@ -9,9 +9,8 @@
  * - Smart snap guides for alignment
  */
 
-import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import { Type, Image, Square, Clock, Move, CloudSun, QrCode, Calendar, Database } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Type, Image, Square, Clock, CloudSun, QrCode, Calendar } from 'lucide-react';
 import {
   calculateSnapPosition,
   findAlignmentGuides,

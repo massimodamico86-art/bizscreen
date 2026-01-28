@@ -9,24 +9,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft,
   Clock,
   CheckCircle,
   Eye,
   Calendar,
   BarChart2,
-  RefreshCw,
   Timer,
-  TrendingUp,
 } from 'lucide-react';
 import { useLogger } from '../hooks/useLogger.js';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-} from '../design-system';
+
+
 import {
   getContentMetrics,
   getSceneTimeline,

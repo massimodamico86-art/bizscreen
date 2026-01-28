@@ -5,7 +5,6 @@
  * Features: blur backgrounds, translucent cards, elegant design.
  */
 
-import { MapPin, Droplets, Wind, Eye, Gauge, Sunrise, Sunset } from 'lucide-react';
 
 export default function GlassTheme({ config, weatherData, loading, error, getWeatherEmoji }) {
   const current = weatherData?.current;

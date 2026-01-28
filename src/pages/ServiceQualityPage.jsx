@@ -1,22 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Activity,
-  AlertTriangle,
-  Bell,
-  BellOff,
-  CheckCircle2,
-  Clock,
-  Monitor,
-  RefreshCw,
-  Shield,
-  TrendingDown,
-  TrendingUp,
-  Wifi,
-  XCircle,
-  Zap,
-  BarChart2,
-  PieChart,
-  AlertCircle,
   ArrowUp,
   ArrowDown,
   Minus,
@@ -39,19 +22,8 @@ import {
 } from '../services/metricsService';
 
 // Design system imports
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Stack,
-  Grid,
-  Inline,
-} from '../design-system';
-import { Button } from '../design-system';
-import { Card, CardHeader, CardTitle, CardContent } from '../design-system';
-import { Badge } from '../design-system';
-import { Select } from '../design-system';
-import { Banner } from '../design-system';
+
+
 
 // --------------------------------------------------------------------------
 // Sub-components

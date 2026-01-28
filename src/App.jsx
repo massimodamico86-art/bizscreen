@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, lazy } from 'react';
 import {
   Home,
   LayoutDashboard,
@@ -9,64 +9,21 @@ import {
   Globe,
   Grid3X3,
   ListVideo,
-  Layout,
   Calendar,
   Monitor,
-  Settings,
-  LogOut,
-  ChevronDown,
-  ChevronRight,
-  Building2,
-  CreditCard,
-  Users,
-  Palette,
-  X,
-  UserCheck,
-  Activity,
-  MapPin,
-  UsersRound,
-  BarChart3,
   LayoutTemplate,
-  Wand2,
-  Zap,
-  Inbox,
-  Code,
-  Server,
-  Wrench,
-  HelpCircle,
-  Play,
-  Shield,
-  Briefcase,
-  Flag,
-  Gauge,
-  Layers,
-  Database,
-  Store,
-  Share2,
-  Bell,
-  Menu,
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
-import { BrandingProvider, useBranding } from './contexts/BrandingContext';
-import { stopImpersonation, isImpersonating as checkIsImpersonating } from './services/tenantService';
+import { useBranding } from './contexts/BrandingContext';
+import { stopImpersonation } from './services/tenantService';
 import { supabase } from './supabase';
-import Toast from './components/Toast';
 import { useLogger } from './hooks/useLogger.js';
-import { LoginPage } from './pages';
-import AnnouncementBanner from './components/AnnouncementBanner';
-import AnnouncementCenter from './components/AnnouncementCenter';
-import FeedbackWidget from './components/FeedbackWidget';
-import { NotificationBell } from './components/notifications';
-import AutoBuildOnboardingModal from './components/onboarding/AutoBuildOnboardingModal';
 import { fetchScenesForTenant } from './services/sceneService';
-import { EmergencyProvider, useEmergency } from './contexts/EmergencyContext';
-import { EmergencyBanner } from './components/campaigns';
-import { Header, MobileNav } from './components/layout';
+import { useEmergency } from './contexts/EmergencyContext';
 import { useBreakpoints } from './hooks/useMediaQuery';
 import { useTranslation } from './i18n';
 import { useFeatureFlags } from './hooks/useFeatureFlag';
 import { Feature } from './config/plans';
-import { FeatureGate, FeatureUpgradePrompt } from './components/FeatureGate';
 
 // Lazy load pages for better code splitting
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));

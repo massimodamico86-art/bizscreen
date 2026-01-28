@@ -8,7 +8,7 @@
  * - Delete playlist
  */
 import { test, expect } from '@playwright/test';
-import { loginAndPrepare, navigateToSection, waitForPageReady } from './helpers.js';
+import { loginAndPrepare, navigateToSection } from './helpers.js';
 
 test.describe('Playlists', () => {
   // Skip if client credentials not configured

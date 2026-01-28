@@ -3,8 +3,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Shield, ShieldCheck, ShieldOff, Copy, Check, Loader2, AlertCircle, Key } from 'lucide-react';
-import { Button, Card } from '../../design-system';
 import {
   getMfaStatus,
   enrollMfa,

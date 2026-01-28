@@ -14,21 +14,7 @@ import {
   Dumbbell,
   ShoppingBag,
   Building2,
-  Sparkles,
-  Package,
-  List,
-  Layout,
-  Check,
-  X,
-  Loader2,
-  ExternalLink,
-  ChevronRight,
-  ChevronLeft,
-  Info,
-  Search,
-  Heart,
   Star,
-  Clock,
 } from 'lucide-react';
 import {
   fetchTemplateCategories,
@@ -47,25 +33,10 @@ import { canEditContent } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
+
+
 import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Badge,
-  EmptyState,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-} from '../design-system';
-import {
-  TemplatePreviewPopover,
   useTemplatePreview,
-  TemplateLivePreview,
-  TemplateCustomizeModal,
 } from '../components/templates';
 
 // Icon mapping for categories

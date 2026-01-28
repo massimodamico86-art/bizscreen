@@ -13,7 +13,6 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, Plus, Clock, Loader2, X, Check } from 'lucide-react';
 import { getDaypartPresetsGrouped, createDaypartPreset } from '../../services/daypartService';
 import { useLogger } from '../../hooks/useLogger.js';
 

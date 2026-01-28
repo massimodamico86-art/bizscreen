@@ -4,7 +4,6 @@
  * Shows registration and connection status in a pill badge format.
  */
 
-import { Wifi, WifiOff } from 'lucide-react';
 
 /**
  * Status configuration for different player states

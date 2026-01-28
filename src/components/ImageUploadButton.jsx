@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { useCloudinaryUpload } from '../hooks/useCloudinaryUpload';
-import Button from './Button';
-import Toast from './Toast';
 
 /**
  * Reusable image upload button component using Cloudinary

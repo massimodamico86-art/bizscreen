@@ -3,23 +3,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabase';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
-import ErrorBoundary from '../components/ErrorBoundary';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  StatCard,
-  Button,
-  Badge,
-  Alert,
-  EmptyState,
-  Modal
-} from '../design-system';
-import { Users, Building2, UserCheck, ExternalLink, Plus, Upload, FileText, X, Download } from 'lucide-react';
+
+
 
 export default function AdminDashboardPage({ onNavigate }) {
   const { t } = useTranslation();

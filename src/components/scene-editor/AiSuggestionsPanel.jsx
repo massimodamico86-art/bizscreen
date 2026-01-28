@@ -11,19 +11,13 @@
 import { useState, useMemo } from 'react';
 import {
   Sparkles,
-  X,
-  ChevronRight,
-  Wand2,
-  Layout,
   Palette,
   Type,
   Image,
-  Loader2,
   Zap,
   Eye,
   Star,
 } from 'lucide-react';
-import { Button } from '../../design-system';
 import {
   getPresetsForBusinessType,
   suggestImprovements,

@@ -19,7 +19,6 @@
  */
 
 import { forwardRef } from 'react';
-import { Search, X } from 'lucide-react';
 
 export const SearchBar = forwardRef(function SearchBar(
   {

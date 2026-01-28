@@ -2,7 +2,7 @@
  * Feature Diagnostic Tests
  * Systematically tests each client dashboard feature to identify issues
  */
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { loginAndPrepare, waitForPageReady, navigateToSection, dismissAnyModals } from './helpers.js';
 
 const CLIENT_EMAIL = 'client@bizscreen.test';

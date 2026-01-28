@@ -3,8 +3,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { History, CheckCircle, XCircle, Smartphone, Monitor, Tablet, MapPin, Shield, Loader2, AlertCircle } from 'lucide-react';
-import { Button } from '../../design-system';
 import { getLoginHistory } from '../../services/sessionService';
 
 export default function LoginHistory({ showToast }) {

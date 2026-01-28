@@ -20,20 +20,9 @@ import {
   Square,
   MonitorPlay,
   Tv2,
-  FileText,
-  LayoutTemplate,
-  ChevronRight,
-  Check,
 } from 'lucide-react';
-import {
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalDescription,
-  ModalContent,
-  ModalFooter,
-} from './Modal';
-import { Button } from './Button';
+
+
 
 /**
  * Orientation presets

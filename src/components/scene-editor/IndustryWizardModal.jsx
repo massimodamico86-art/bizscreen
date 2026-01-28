@@ -10,11 +10,6 @@
 
 import { useState, useEffect } from 'react';
 import {
-  X,
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Loader2,
   Utensils,
   Scissors,
   Dumbbell,
@@ -45,12 +40,10 @@ import {
   Heart,
 } from 'lucide-react';
 
-import { Button } from '../../design-system';
 import {
   getAvailableWizards,
   buildWizardSlides,
   getDefaultBlueprint,
-  getWizardByKey,
 } from '../../services/industryWizardService';
 import { getBrandTheme } from '../../services/brandThemeService';
 import { useLogger } from '../../hooks/useLogger.js';

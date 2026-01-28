@@ -1,22 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Search,
-  Plus,
-  Calendar,
-  MoreVertical,
-  Trash2,
-  Edit,
-  Copy,
-  Clock,
-  Play,
-  Pause,
-  X,
-  AlertTriangle,
-  AlertCircle,
-  Zap,
-  CheckCircle,
-  RefreshCw
-} from 'lucide-react';
+
+
 import {
   fetchSchedules,
   createSchedule,
@@ -26,11 +10,9 @@ import {
 import { supabase } from '../supabase';
 import { formatDate } from '../utils/formatters';
 import { getEffectiveLimits, hasReachedLimit, formatLimitDisplay } from '../services/limitsService';
-import { Button, Card, Badge, EmptyState, Alert } from '../design-system';
 import { useTranslation } from '../i18n';
-import YodeckEmptyState from '../components/YodeckEmptyState';
 import { useLogger } from '../hooks/useLogger.js';
-import { ResponsiveTable, useResponsiveColumns } from '../components/tables';
+import { useResponsiveColumns } from '../components/tables';
 
 const SchedulesPage = ({ showToast, onNavigate }) => {
   const { t } = useTranslation();

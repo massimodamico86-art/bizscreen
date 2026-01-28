@@ -5,15 +5,11 @@
  */
 import { useState, useEffect } from 'react';
 import {
-  Clock,
   ListVideo,
   Layout,
   Zap,
   Film,
-  ChevronRight,
-  Loader2,
 } from 'lucide-react';
-import { Card, Badge, Button } from '../../design-system';
 import { fetchOpenReviews, REVIEW_STATUS } from '../../services/approvalService';
 import { canApproveContent } from '../../services/permissionsService';
 import { formatDistanceToNow } from 'date-fns';

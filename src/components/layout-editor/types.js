@@ -5,6 +5,11 @@
  * Uses JSDoc for type safety without TypeScript.
  */
 
+/* eslint-disable no-dupe-keys */
+// NOTE: Duplicate keys are intentional for deep merge pattern with spread operator.
+// The pattern: {...defaults, ...overrides, props: {...props, ...overrides?.props}}
+// ensures both shallow and deep properties are properly merged.
+
 /**
  * @typedef {'text' | 'image' | 'widget' | 'shape'} ElementType
  */

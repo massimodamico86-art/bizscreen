@@ -1,9 +1,4 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import Button from '../components/Button';
-import Card from '../components/Card';
-import Badge from '../components/Badge';
-import Modal from '../components/Modal';
 import { mockData } from '../data/mockData';
 
 const UsersPage = ({ showToast }) => {

@@ -3,13 +3,9 @@
  */
 
 import { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Mail, Lock, User, Building2, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
-import AuthLayout from './AuthLayout';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { signUp, isEmailConfirmationPending } from '../services/authService';
 import { validatePassword } from '../services/passwordService.js';
-import PasswordStrengthIndicator from '../components/security/PasswordStrengthIndicator.jsx';
-import Seo from '../components/Seo';
 
 export default function SignupPage() {
   const navigate = useNavigate();

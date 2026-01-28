@@ -7,17 +7,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  X,
-  Loader2,
-  Sparkles,
-  Copy,
-  Check,
-  AlertCircle,
-  ArrowRight,
-} from 'lucide-react';
-import { Button, Select } from '../../design-system';
+
+
 import { drawer } from '../../design-system/motion';
 import { getAiTranslationSuggestion } from '../../services/translationService';
 import { getSupportedLanguages, getLanguageDisplayInfo } from '../../services/languageService';

@@ -36,7 +36,6 @@ afterEach(() => {
 
 import {
   preloadImage,
-  preloadVideo,
   extractMediaUrls,
   preloadSlide,
   preloadScene,

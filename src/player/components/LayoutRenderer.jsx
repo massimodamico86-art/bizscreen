@@ -2,7 +2,6 @@
 // Multi-zone layout rendering
 // Extracted from Player.jsx for maintainability
 
-import { ZonePlayer } from './ZonePlayer';
 
 /**
  * Layout Renderer - Renders multi-zone layout

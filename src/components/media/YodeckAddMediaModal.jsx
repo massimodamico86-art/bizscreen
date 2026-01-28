@@ -6,7 +6,6 @@
  */
 import { useState } from 'react';
 import {
-  X,
   Upload,
   Image,
   Video,
@@ -23,11 +22,7 @@ import {
   Layers,
   Tv,
   CloudUpload,
-  Loader2,
-  Search,
-  ExternalLink,
 } from 'lucide-react';
-import { Button, Input } from '../../design-system';
 import {
   createYouTubeAsset,
   createVimeoAsset,

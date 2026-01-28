@@ -3,7 +3,6 @@
 // Extracted from Player.jsx for maintainability
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import WeatherWall from '../../components/WeatherWall';
 import { createScopedLogger } from '../../services/loggingService.js';
 
 // Module-level logger for app data fetching

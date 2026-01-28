@@ -8,16 +8,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalDescription,
-  ModalContent,
-  ModalFooter,
-} from '../../design-system';
-import { FormField, Input, Textarea, Select } from '../../design-system';
-import { Button } from '../../design-system';
+
+
 
 // Template categories matching SIDEBAR_CATEGORIES in LayoutsPage
 const TEMPLATE_CATEGORIES = [

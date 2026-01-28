@@ -13,28 +13,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as fabric from 'fabric';
-import LeftSidebar from './LeftSidebar';
-import TopToolbar from './TopToolbar';
-import LayersPanel from './LayersPanel';
-import CanvasControls from './CanvasControls';
-import EffectsPanel from './EffectsPanel';
-import AnimatePanel from './AnimatePanel';
-import PositionPanel from './PositionPanel';
-import ContextMenu from './ContextMenu';
-import FiltersPanel from './FiltersPanel';
 import { loadSvgContent, LOCAL_SVG_TEMPLATES } from '../../services/svgTemplateService';
-import {
-  Loader2,
-  AlertCircle,
-  ChevronLeft,
-  Save,
-  Download,
-  Eye,
-  EyeOff,
-  Palette,
-  X,
-  Layers,
-} from 'lucide-react';
+
+
 import QRCode from 'qrcode';
 import { useLogger } from '../../hooks/useLogger.js';
 

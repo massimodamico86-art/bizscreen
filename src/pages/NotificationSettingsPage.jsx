@@ -9,20 +9,13 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
 import {
   Bell,
-  Mail,
-  Smartphone,
   AlertTriangle,
   AlertCircle,
   Info,
   Monitor,
   Calendar,
   Database,
-  Share2,
-  Save,
-  ArrowLeft,
-  Clock,
 } from 'lucide-react';
-import { PageLayout } from '../design-system/components/PageLayout';
 import {
   getNotificationPreferences,
   saveNotificationPreferences,

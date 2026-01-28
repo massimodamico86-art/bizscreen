@@ -7,7 +7,6 @@
  * @module components/onboarding/WelcomeTourStep
  */
 
-import { motion } from 'framer-motion';
 
 /**
  * Animation variants for step content

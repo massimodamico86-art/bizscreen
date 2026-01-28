@@ -10,30 +10,8 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  ArrowLeft,
-  Save,
-  Play,
-  Pause,
-  Plus,
-  Tv,
-  Type,
-  Image,
-  Square,
-  Clock,
-  Sparkles,
-  Check,
-  Loader2,
-  Undo2,
-  Redo2,
-  Trash2,
-  Wand2,
-  Eye,
-  Edit3,
-  MonitorPlay,
-  X,
-  Database,
-} from 'lucide-react';
+
+
 import { useAuth } from '../contexts/AuthContext';
 import { fetchScene, saveSceneWithApproval } from '../services/sceneService';
 import { getApprovalStatusConfig, getOpenReviewForResource } from '../services/approvalService.js';
@@ -53,27 +31,13 @@ import {
   removeBlockFromDesign,
   normalizeSlide,
 } from '../services/sceneDesignService';
-import {
-  getPresetsForBusinessType,
-  getAiQuickActions,
-} from '../services/sceneAiService';
+
+
 import { getBrandTheme, getThemedBlockDefaults } from '../services/brandThemeService';
 
 // Components
-import EditorCanvas from '../components/scene-editor/EditorCanvas';
-import SlideStrip from '../components/scene-editor/SlideStrip';
-import PropertiesPanel from '../components/scene-editor/PropertiesPanel';
-import AiSuggestionsPanel from '../components/scene-editor/AiSuggestionsPanel';
-import IndustryWizardModal from '../components/scene-editor/IndustryWizardModal';
-import DataBoundWizardModal from '../components/scene-editor/DataBoundWizardModal';
-import LivePreviewWindow, { InlinePreview } from '../components/scene-editor/LivePreviewWindow';
 import { emitDesignChange } from '../services/deviceSyncService';
-import { ContentInlineMetrics } from '../components/analytics';
 
-import { Button } from '../design-system';
-import { Badge } from '../design-system';
-import EditorLanguageSwitcher from '../components/scene-editor/EditorLanguageSwitcher';
-import AddLanguageModal from '../components/scenes/AddLanguageModal';
 import { fetchLanguageVariants } from '../services/languageService';
 
 // Business type config

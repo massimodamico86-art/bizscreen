@@ -2,7 +2,7 @@
  * Debug test to check environment configuration
  * This is a manual debugging helper, not a production test
  */
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 
 // Skip in CI - this is a manual debug test that has no assertions
 test.skip(!!process.env.CI, 'Debug test skipped in CI');

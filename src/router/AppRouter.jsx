@@ -7,8 +7,7 @@
  * - Auth pages are in their own chunks
  */
 
-import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { lazy } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 // Marketing pages (lazy loaded)

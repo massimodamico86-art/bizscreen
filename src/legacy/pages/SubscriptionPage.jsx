@@ -1,8 +1,4 @@
 import { useState } from 'react';
-import { CreditCard, Download } from 'lucide-react';
-import Button from '../components/Button';
-import Card from '../components/Card';
-import Badge from '../components/Badge';
 
 const SubscriptionPage = ({ showToast }) => {
   const [currentPlan, setCurrentPlan] = useState('pro');

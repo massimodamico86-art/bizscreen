@@ -2,8 +2,6 @@
  * ActiveContentGrid Component
  * Shows thumbnail previews of content currently playing on screens.
  */
-import { Monitor, Wifi, WifiOff, Image } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '../../design-system';
 
 export function ActiveContentGrid({ screens = [], onNavigate, loading = false }) {
   if (loading) {

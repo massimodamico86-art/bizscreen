@@ -10,7 +10,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useLogger } from '../../hooks/useLogger.js';
-import { List, Layout, Sparkles, X, Loader2, Film } from 'lucide-react';
+import { List, Layout, Sparkles, Film } from 'lucide-react';
 import { supabase } from '../../supabase';
 
 const CONTENT_TYPES = [

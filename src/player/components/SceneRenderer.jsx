@@ -21,7 +21,6 @@ import {
   subscribeToDataSource,
 } from '../../services/dataSourceService';
 import { useLogger } from '../../hooks/useLogger.js';
-import { ClockWidget, DateWidget, WeatherWidget, QRCodeWidget } from './widgets';
 
 /**
  * Scene Block - Renders individual blocks in a scene slide

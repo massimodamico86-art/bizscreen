@@ -13,16 +13,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Monitor,
-  Plus,
-  Check,
-  Loader2,
-  AlertCircle,
-  ArrowRight,
-  Lock,
-  Tv2,
-} from 'lucide-react';
+
+
 import { useLogger } from '../hooks/useLogger';
 import {
   fetchScreens,
@@ -30,21 +22,8 @@ import {
   createAndPairScreen,
   getScreenByDeviceId,
 } from '../services/screenService';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Stack,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  Input,
-  Button,
-  Alert,
-  EmptyState,
-} from '../design-system';
+
+
 
 export default function PairDevicePage() {
   const { deviceId } = useParams();

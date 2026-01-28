@@ -7,8 +7,8 @@
  * - Pack templates: show collage of included content
  */
 
-import { useState, useEffect, useMemo } from 'react';
-import { Package, List, Layout, Image, Video, Play, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Package, List, Layout } from 'lucide-react';
 
 /**
  * Layout zone preview - shows the zone arrangement

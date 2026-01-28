@@ -7,20 +7,12 @@
  * @module components/ContextualHelpDrawer
  */
 import { useState, useEffect } from 'react';
-import {
-  X,
-  HelpCircle,
-  ChevronRight,
-  ExternalLink,
-  Lightbulb,
-  BookOpen,
-  Loader2
-} from 'lucide-react';
+
+
 import {
   getContextualHelp,
   getQuickTips,
-  getCategoryForPage,
-  HELP_CATEGORIES
+  getCategoryForPage
 } from '../services/helpService';
 import { useLogger } from '../hooks/useLogger.js';
 

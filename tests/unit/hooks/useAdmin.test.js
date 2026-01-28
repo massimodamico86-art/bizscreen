@@ -3,7 +3,7 @@
  * Phase 17: Tests for admin panel hooks
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { useAdminAccess } from '../../../src/hooks/useAdmin';
 
 // Mock the auth context

@@ -10,7 +10,6 @@
 import {
   generateBlockId,
   createTextBlock,
-  createImageBlock,
   createShapeBlock,
   createWidgetBlock,
   normalizeDesign,

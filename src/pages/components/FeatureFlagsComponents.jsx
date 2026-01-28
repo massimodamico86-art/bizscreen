@@ -7,31 +7,17 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Card, CardHeader, CardContent } from '../../design-system/components/Card';
-import { Button } from '../../design-system/components/Button';
+
+
 import {
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-} from '../../design-system/components/Modal';
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  ToggleLeft,
-  ToggleRight,
   Users,
   Building2,
   Percent,
   Globe,
   Play,
-  Pause,
   CheckCircle,
   Clock,
   AlertCircle,
-  Search,
 } from 'lucide-react';
 
 // ============================================

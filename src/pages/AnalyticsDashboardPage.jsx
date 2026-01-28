@@ -11,26 +11,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-  BarChart3,
-  Monitor,
-  Play,
-  Clock,
-  TrendingUp,
-  RefreshCw,
   Calendar,
   Layers,
   Grid3X3,
-  ArrowUpRight,
 } from 'lucide-react';
 import { useLogger } from '../hooks/useLogger.js';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Tabs,
-} from '../design-system';
+
+
 import {
   getContentAnalyticsSummary,
   getTopScenes,
@@ -40,7 +27,6 @@ import {
   formatHours,
   formatRelativeTime,
 } from '../services/contentAnalyticsService';
-import { ViewingHeatmap } from '../components/analytics/ViewingHeatmap';
 
 // Date range options (7d, 30d, 90d, 365d per plan)
 const DATE_RANGE_OPTIONS = [

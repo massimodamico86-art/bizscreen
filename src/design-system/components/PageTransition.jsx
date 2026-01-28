@@ -10,7 +10,6 @@
  * </PageTransition>
  */
 
-import { motion } from 'framer-motion';
 import { pageTransition } from '../motion';
 
 /**

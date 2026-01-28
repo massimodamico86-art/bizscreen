@@ -8,7 +8,6 @@
  * - Background preview
  */
 
-import { Type, Square, Clock } from 'lucide-react';
 
 export default function ThemePreviewCard({
   theme,

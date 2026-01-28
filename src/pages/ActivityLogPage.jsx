@@ -8,16 +8,10 @@
  * - Pagination
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../i18n';
 import {
   Activity,
-  RefreshCw,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  User,
   Monitor,
   ListVideo,
   Layout,
@@ -25,7 +19,6 @@ import {
   Image,
   Palette,
   Bell,
-  X,
 } from 'lucide-react';
 import {
   getActivityLog,
@@ -35,15 +28,8 @@ import {
   RESOURCE_TYPES,
 } from '../services/activityLogService';
 import { useBranding } from '../contexts/BrandingContext';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Alert,
-  EmptyState,
-} from '../design-system';
+
+
 
 const ITEMS_PER_PAGE = 25;
 

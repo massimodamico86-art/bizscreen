@@ -10,17 +10,8 @@
  * - Pan/grab mode
  */
 
-import {
-  Plus,
-  Minus,
-  Layers,
-  History,
-  Hand,
-  MousePointer,
-  Maximize,
-  RotateCcw,
-  RotateCw,
-} from 'lucide-react';
+
+
 
 export default function CanvasControls({
   zoom,

@@ -5,7 +5,6 @@
  * Shows emergency content name, time remaining, and stop button.
  */
 
-import { AlertTriangle, XCircle } from 'lucide-react';
 import { useEmergency } from '../../contexts/EmergencyContext';
 
 /**

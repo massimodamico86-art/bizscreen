@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Button, Alert } from '../design-system';
 import { useTranslation } from '../i18n';
-import { CheckCircle } from 'lucide-react';
 
 export const ResetPasswordPage = ({ onSuccess }) => {
   const { t } = useTranslation();

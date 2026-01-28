@@ -5,8 +5,6 @@
  * Supports: text, image, widget (clock, date, weather, qr, data)
  */
 
-import { Clock, Calendar, CloudSun, QrCode, Image, Database } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
 
 export default function LayoutElementRenderer({ element }) {
   const { type, props = {} } = element;

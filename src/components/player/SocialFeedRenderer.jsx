@@ -6,8 +6,7 @@
  * Supports offline mode using last-known cached content.
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Heart, MessageCircle, Share2, Star } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../supabase';
 import { loggingService } from '../../services/loggingService.js';
 

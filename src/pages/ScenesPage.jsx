@@ -10,11 +10,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Layers,
-  Plus,
-  Tv,
-  ArrowRight,
-  Loader2,
   Utensils,
   Scissors,
   Dumbbell,
@@ -25,34 +20,16 @@ import {
   Car,
   Coffee,
   Building2,
-  Sparkles,
-  ChevronLeft,
-  ChevronRight,
-  AlertTriangle,
 } from 'lucide-react';
 import { pushEmergencyContent, EMERGENCY_DURATIONS } from '../services/emergencyService';
 import { useAuth } from '../contexts/AuthContext';
-import { formatDate } from '../utils/formatters';
 import { fetchScenesWithDeviceCounts } from '../services/sceneService';
 import { getAvailableLanguagesForScene } from '../services/languageService';
-import { LanguageBadges } from '../components/scenes/LanguageBadges';
 
 // Design system imports
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Grid,
-  Inline,
-} from '../design-system';
-import { Button } from '../design-system';
-import { Card, CardContent } from '../design-system';
-import { Badge } from '../design-system';
-import { EmptyState } from '../design-system';
-import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../design-system';
-import { Stack, FormField } from '../design-system';
 
-import PublishSceneModal from '../components/scenes/PublishSceneModal';
+
+
 
 // Business type labels and icons
 const BUSINESS_TYPE_CONFIG = {

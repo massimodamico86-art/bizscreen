@@ -9,8 +9,6 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useLogger } from '../../hooks/useLogger.js';
-import { Monitor, Folder, Search, Loader2, CheckCircle2, X } from 'lucide-react';
 import { supabase } from '../../supabase';
 import {
   getAssignedDevicesAndGroups,
@@ -19,14 +17,8 @@ import {
   bulkAssignScheduleToGroups,
   bulkUnassignScheduleFromGroups
 } from '../../services/scheduleService';
-import {
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-  Button
-} from '../../design-system';
+
+
 
 export function AssignScreensModal({
   isOpen,

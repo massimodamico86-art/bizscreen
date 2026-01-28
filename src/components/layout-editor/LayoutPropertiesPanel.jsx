@@ -11,20 +11,10 @@ import {
   Image,
   Square,
   Clock,
-  Palette,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Bold,
-  Layers,
-  MapPin,
-  Link,
   Calendar,
   CloudSun,
   QrCode,
-  Edit3,
 } from 'lucide-react';
-import { Button } from '../../design-system';
 
 // Color presets
 const COLOR_PRESETS = [

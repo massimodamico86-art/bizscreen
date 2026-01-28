@@ -15,9 +15,6 @@
  */
 
 import { forwardRef, useState } from 'react';
-import { Plus, Loader2, LayoutTemplate, Sparkles } from 'lucide-react';
-import { Button } from './Button';
-import { Badge } from './Badge';
 
 export const TemplateCard = forwardRef(function TemplateCard(
   {

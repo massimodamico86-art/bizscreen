@@ -1,6 +1,5 @@
 // src/player/components/widgets/QRCodeWidget.jsx
 // QR Code widget component extracted from Player.jsx SceneWidgetRenderer
-import { QRCodeSVG } from 'qrcode.react';
 
 /**
  * QRPlaceholder - Decorative placeholder shown when no URL is provided

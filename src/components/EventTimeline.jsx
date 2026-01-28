@@ -13,8 +13,6 @@ import {
   XCircle,
   Info,
   Bug,
-  ChevronDown,
-  ChevronUp,
 } from 'lucide-react';
 import { useState } from 'react';
 import { SEVERITY_LEVELS, SYSTEM_SOURCES } from '../services/auditService';

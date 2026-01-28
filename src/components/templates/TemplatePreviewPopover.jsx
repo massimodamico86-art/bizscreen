@@ -7,8 +7,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Package, List, Layout, Tag } from 'lucide-react';
-import { Badge } from '../../design-system';
+import { Package, List, Layout } from 'lucide-react';
 
 // Badge colors for template types
 const getBadgeVariant = (type) => {

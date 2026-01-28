@@ -8,7 +8,6 @@
  */
 
 import PropTypes from 'prop-types';
-import { Heart, Layout, Loader2 } from 'lucide-react';
 
 /**
  * TemplateCard component

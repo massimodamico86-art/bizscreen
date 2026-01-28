@@ -9,7 +9,7 @@
  */
 
 import { forwardRef } from 'react';
-import { CheckCircle, AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
+import { CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
 
 export const Alert = forwardRef(function Alert(
   {

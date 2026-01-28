@@ -6,7 +6,6 @@
  */
 
 import { useMemo } from 'react';
-import { MapPin, Droplets, Wind, Eye, Gauge } from 'lucide-react';
 
 // Weather condition to background gradient mapping
 const WEATHER_GRADIENTS = {

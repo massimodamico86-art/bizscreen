@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import { Search } from 'lucide-react';
-import Card from '../components/Card';
-import Badge from '../components/Badge';
 import { mockData } from '../data/mockData';
 
 const FAQsPage = () => {

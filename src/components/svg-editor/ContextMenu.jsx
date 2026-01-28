@@ -16,7 +16,6 @@ import {
   ClipboardPaste,
   Trash2,
   Layers,
-  ChevronRight,
   ArrowUpToLine,
   ArrowDownToLine,
   ArrowUp,

@@ -8,37 +8,11 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  MapPin,
-  Plus,
-  Edit2,
-  Trash2,
-  Monitor,
-  Wifi,
-  WifiOff,
-  MoreVertical,
-  Building2,
-  Globe,
-  Clock,
-  Loader2,
-  AlertCircle,
-  X,
-} from 'lucide-react';
+
+
 import { useTranslation } from '../i18n';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-  Alert,
-  EmptyState
-} from '../design-system';
+
+
 import {
   fetchLocations,
   createLocation,

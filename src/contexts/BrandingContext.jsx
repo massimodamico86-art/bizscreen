@@ -8,7 +8,7 @@
  * - Handles refresh when branding is updated
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getBranding, brandingToCssVars, DEFAULT_BRANDING } from '../services/brandingService';
 import {
   getImpersonationStatus,

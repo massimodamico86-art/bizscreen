@@ -11,31 +11,16 @@ import {
   Image,
   Square,
   Clock,
-  Palette,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Bold,
-  Layers,
-  Play,
-  Sparkles,
   CloudSun,
   QrCode,
   Calendar,
-  MapPin,
-  Link,
-  Grid3X3,
-  Database,
-  ChevronDown,
-  X,
 } from 'lucide-react';
-import { Button } from '../../design-system';
 import {
   ANIMATION_TYPES,
   ANIMATION_DIRECTIONS,
   TRANSITION_TYPES,
 } from '../../services/sceneDesignService';
-import { fetchDataSources, getDataSource, FIELD_DATA_TYPES } from '../../services/dataSourceService';
+import { fetchDataSources, getDataSource } from '../../services/dataSourceService';
 import { getBindingDisplayText } from '../../services/dataBindingResolver';
 import { useLogger } from '../../hooks/useLogger.js';
 

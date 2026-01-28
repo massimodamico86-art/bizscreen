@@ -1,5 +1,3 @@
-import { Plus, X, Edit } from 'lucide-react';
-import ImageUploadButton from '../ImageUploadButton';
 
 export const CarouselMediaManager = ({ formData, setFormData, showToast }) => {
   return (

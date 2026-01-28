@@ -2,8 +2,6 @@
  * QuickActionsBar Component
  * Quick action buttons for dashboard header area.
  */
-import { Plus, Upload, BarChart3 } from 'lucide-react';
-import { Button } from '../../design-system';
 
 export function QuickActionsBar({ onNavigate }) {
   return (

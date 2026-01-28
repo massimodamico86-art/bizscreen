@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 
 // ============================================================================
 // GLOBAL MOCK SETUP (before any module imports)
@@ -77,7 +77,6 @@ vi.mock('../../../src/hooks/useLogger.js', () => ({
 import { useKioskMode } from '../../../src/player/hooks/useKioskMode.js';
 import { usePlayerPlayback } from '../../../src/player/hooks/usePlayerPlayback.js';
 import {
-  isFullscreen,
   enterFullscreen,
   exitFullscreen,
   validateKioskPassword,

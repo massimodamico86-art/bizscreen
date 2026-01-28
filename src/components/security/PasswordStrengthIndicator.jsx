@@ -3,8 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Check, X, AlertTriangle, Loader2 } from 'lucide-react';
-import { validatePassword, checkPasswordBreach, getStrengthColor } from '../../services/passwordService';
+import { validatePassword, checkPasswordBreach } from '../../services/passwordService';
 
 export default function PasswordStrengthIndicator({
   password,

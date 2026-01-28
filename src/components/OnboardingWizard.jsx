@@ -15,16 +15,8 @@ import {
   Upload,
   List,
   Monitor,
-  Link,
-  Check,
-  ChevronRight,
-  ChevronLeft,
-  X,
-  Loader2,
-  AlertCircle,
-  RefreshCw
+  Link
 } from 'lucide-react';
-import Button from './Button';
 import {
   ONBOARDING_STEPS,
   getOnboardingProgress,

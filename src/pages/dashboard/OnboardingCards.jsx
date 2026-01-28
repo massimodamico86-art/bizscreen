@@ -6,16 +6,6 @@
  * and display demo workspace results.
  */
 import {
-  Monitor,
-  ListVideo,
-  Layout,
-  Copy,
-  Loader2,
-  Sparkles,
-  Play,
-  CheckCircle,
-  Rocket,
-  Wand2,
   Utensils,
   Scissors,
   Dumbbell,
@@ -27,7 +17,6 @@ import {
   Car,
   Briefcase,
 } from 'lucide-react';
-import { Card, Button } from '../../design-system';
 import { getSupportedIndustries } from '../../services/industryWizardService';
 
 /**

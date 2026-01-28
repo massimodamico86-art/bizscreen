@@ -5,8 +5,6 @@
  * Shows template preview with target types, content types, and settings
  */
 import { useState, useEffect } from 'react';
-import { X, FileText, Check, Tag, Loader2, Layout, ListMusic, Target } from 'lucide-react';
-import { Button, Card, Badge, Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../../design-system';
 import { getTemplates } from '../../services/campaignTemplateService';
 import { useLogger } from '../../hooks/useLogger';
 

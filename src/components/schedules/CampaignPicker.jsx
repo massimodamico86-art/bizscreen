@@ -10,7 +10,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useLogger } from '../../hooks/useLogger.js';
-import { Folder, Loader2 } from 'lucide-react';
 import { getCampaignsWithEntryCounts } from '../../services/scheduleService';
 
 /**

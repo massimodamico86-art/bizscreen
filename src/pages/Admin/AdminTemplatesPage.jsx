@@ -7,7 +7,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useLogger } from '../../hooks/useLogger.js';
-import PageLayout from '../../design-system/components/PageLayout';
 import {
   fetchAdminTemplates,
   fetchCategories,
@@ -15,7 +14,6 @@ import {
   updateTemplate,
   LICENSE_LABELS,
 } from '../../services/marketplaceService';
-import BulkTemplateUpload from '../../components/Admin/BulkTemplateUpload';
 
 // License badge colors
 const LICENSE_COLORS = {

@@ -2,7 +2,7 @@
  * Google Sheets Service Unit Tests
  * Tests for Google Sheets data fetching and change detection
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   INTEGRATION_TYPES,
   SYNC_STATUS,

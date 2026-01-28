@@ -11,8 +11,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { motion } from 'framer-motion';
-import { X, Upload, Loader2, Image as ImageIcon, Palette, Type } from 'lucide-react';
 
 /**
  * Helper to approximate hue rotation from hex color (simplified visual hint)

@@ -3,7 +3,7 @@
  *
  * Tests for social media provider services and shared constants.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // Mock supabase before importing the services
 vi.mock('../../../src/supabase', () => ({

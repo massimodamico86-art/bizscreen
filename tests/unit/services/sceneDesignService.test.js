@@ -4,7 +4,7 @@
  * Tests for src/services/sceneDesignService.js
  * Verifies animation helpers, block creation, and design manipulation.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // Mock supabase
 vi.mock('../../../src/supabase', () => ({

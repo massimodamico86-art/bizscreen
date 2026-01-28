@@ -8,25 +8,12 @@
  * 3. Creating step - Shows progress and results
  */
 import {
-  ListVideo,
-  Grid3X3,
-  Loader2,
-  Sparkles,
-  X,
   Utensils,
   Scissors,
   Dumbbell,
   ShoppingBag,
   Building2,
-  ChevronRight,
-  Package,
-  LayoutTemplate,
-  CheckCircle,
-  Rocket,
-  AlertCircle,
-  RefreshCw,
 } from 'lucide-react';
-import { Modal, Stack, Button, Badge } from '../../design-system';
 
 /**
  * Business type options for onboarding.

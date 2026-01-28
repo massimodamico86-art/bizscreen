@@ -15,27 +15,8 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import {
-  Settings,
-  RotateCw,
-  FlipHorizontal,
-  FlipVertical,
-  Move,
-  Lock,
-  Unlock,
-  Layers,
-  Trash2,
-  Copy,
-  ChevronDown,
-  Crown,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  AlignStartVertical,
-  AlignCenterVertical,
-  AlignEndVertical,
-} from 'lucide-react';
-import { YODECK_COLORS } from '../../config/yodeckTheme';
+
+
 
 export default function FloatingElementToolbar({
   element,

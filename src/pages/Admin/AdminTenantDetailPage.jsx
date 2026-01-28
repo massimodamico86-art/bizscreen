@@ -5,27 +5,10 @@
 
 import { useState, useCallback } from 'react';
 import {
-  Building2,
-  ArrowLeft,
-  RefreshCw,
   Users,
   Monitor,
   CreditCard,
   LayoutDashboard,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Clock,
-  RotateCcw,
-  Ban,
-  Play,
-  Key,
-  UserX,
-  UserCheck,
-  Settings,
-  Zap,
-  TrendingUp,
-  Calendar,
 } from 'lucide-react';
 import { useTenantDetail } from '../../hooks/useAdmin';
 import { PLAN_OPTIONS, TENANT_STATUS_OPTIONS, QUOTA_FEATURE_NAMES } from '../../services/adminService';

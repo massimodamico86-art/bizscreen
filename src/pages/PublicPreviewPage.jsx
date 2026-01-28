@@ -12,24 +12,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  Play,
-  Pause,
-  SkipForward,
-  SkipBack,
-  Maximize2,
-  Minimize2,
-  MessageSquare,
-  Send,
-  Clock,
-  Image as ImageIcon,
-  Layout,
-  ListVideo,
-  Zap,
-  User,
-  AlertCircle,
-  Loader2,
-} from 'lucide-react';
+
+
 import { useTranslation } from '../i18n';
 
 // API base URL

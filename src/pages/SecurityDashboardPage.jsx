@@ -11,25 +11,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../i18n';
 import {
   Shield,
-  RefreshCw,
-  AlertTriangle,
-  User,
-  Clock,
-  Flag,
-  ChevronLeft,
-  ChevronRight,
-  Code,
-  FileWarning,
 } from 'lucide-react';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Alert,
-  EmptyState,
-} from '../design-system';
+
+
 import {
   getSanitizationEvents,
   getFlaggedUsers,

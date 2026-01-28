@@ -2,8 +2,6 @@
  * AuthLayout - Layout for auth pages with branding
  */
 
-import { Link } from 'react-router-dom';
-import { Monitor } from 'lucide-react';
 
 export default function AuthLayout({ children, title, subtitle }) {
   return (

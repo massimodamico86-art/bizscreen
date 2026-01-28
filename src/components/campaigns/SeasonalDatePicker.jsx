@@ -10,8 +10,6 @@
  * Shows preview of next activation date
  */
 import { useState, useEffect } from 'react';
-import { Calendar, Repeat, AlertCircle, Info } from 'lucide-react';
-import { Badge, Switch } from '../../design-system';
 import { calculateNextActivation, formatRecurrenceRule } from '../../services/campaignTemplateService';
 
 const MONTHS = [

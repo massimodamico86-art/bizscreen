@@ -6,8 +6,6 @@
  */
 
 import { useState } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '../../design-system';
 
 export default function AppDetailModal({ app, onClose, onUseApp }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

@@ -14,7 +14,7 @@
  * - The test user should have 'client' role
  */
 import { test, expect } from '@playwright/test';
-import { loginAndPrepare, waitForPageReady, dismissAnyModals } from './helpers.js';
+import { loginAndPrepare, waitForPageReady } from './helpers.js';
 
 test.describe('Client Dashboard', () => {
   // Skip all tests if credentials not configured

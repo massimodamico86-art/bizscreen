@@ -21,69 +21,27 @@
  */
 import { useState } from 'react';
 import {
-  Search,
-  Plus,
-  Filter,
   Grid3X3,
-  List,
   Image,
   Video,
   Music,
   FileText,
   Globe,
-  Folder,
-  Loader2,
-  AlertTriangle,
-  X,
-  ChevronRight,
-  ChevronLeft,
-  ChevronsLeft,
-  ChevronsRight,
-  Home,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 import { useMediaLibrary } from './hooks';
 import {
-  MediaDetailModal,
-  BulkActionBar,
-  StorageUsageInline,
-  DropZoneOverlay,
-  MediaPreviewPopover,
   useMediaPreview,
 } from '../components/media';
-import YodeckAddMediaModal from '../components/media/YodeckAddMediaModal';
 
 // Design system imports
-import {
-  PageLayout,
-  PageContent,
-  Stack,
-  Grid,
-  Inline,
-} from '../design-system';
-import { Button } from '../design-system';
-import { Card } from '../design-system';
-import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../design-system';
-import { Banner } from '../design-system';
-import { EmptyState } from '../design-system';
-import YodeckEmptyState from '../components/YodeckEmptyState';
+
+
 
 // Extracted sub-components
 import {
   MEDIA_TYPE_LABELS,
-  LimitWarningBanner,
-  MediaListRow,
-  MediaGridCard,
-  FolderGridCard,
-  FolderBreadcrumbs,
-  DeleteConfirmModal,
-  LimitReachedModal,
-  FolderCreateModal,
-  MoveToFolderModal,
-  AddToPlaylistModal,
-  SetToScreenModal,
-  EmergencyDurationModal,
 } from './components/MediaLibraryComponents';
 
 // Filter options for sidebar

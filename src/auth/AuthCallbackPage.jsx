@@ -4,8 +4,6 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import AuthLayout from './AuthLayout';
 import { supabase } from '../supabase';
 import { useLogger } from '../hooks/useLogger.js';
 

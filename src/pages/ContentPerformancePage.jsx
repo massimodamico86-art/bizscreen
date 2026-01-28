@@ -7,40 +7,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  BarChart3,
-  Monitor,
-  Play,
-  TrendingUp,
-  Wifi,
-  WifiOff,
-  Clock,
-  RefreshCw,
-  Filter,
-  X,
-  Tv,
-  Eye,
-  ExternalLink,
-  ChevronDown,
-  Activity,
-  Layers,
-} from 'lucide-react';
+
+
 import { useLogger } from '../hooks/useLogger.js';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Modal,
-} from '../design-system';
+
+
 import {
   fetchDashboardAnalytics,
   fetchSceneDetailAnalytics,
-  getDeviceUptimeSummary,
-  getTopScenes,
   DATE_RANGES,
-  formatDuration,
   formatHours,
   formatRelativeTime,
   getUptimeColor,

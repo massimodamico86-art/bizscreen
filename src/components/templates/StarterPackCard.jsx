@@ -10,8 +10,6 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Package, ChevronDown, Check, Loader2 } from 'lucide-react';
 
 /**
  * StarterPackCard component

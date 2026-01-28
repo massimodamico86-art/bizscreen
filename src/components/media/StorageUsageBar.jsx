@@ -6,8 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useLogger } from '../../hooks/useLogger.js';
-import { HardDrive, Image, Video, Music, FileText, Loader2, RefreshCw } from 'lucide-react';
+import { Image, Video, Music, FileText } from 'lucide-react';
 import { getStorageUsage, formatBytes } from '../../services/mediaService';
 
 // Default storage limit (5GB) - could be made configurable per plan

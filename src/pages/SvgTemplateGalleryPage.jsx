@@ -11,23 +11,8 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
-import {
-  Search,
-  Plus,
-  Folder,
-  Monitor,
-  Smartphone,
-  Loader2,
-  Trash2,
-  Edit,
-  ChevronRight,
-  ChevronDown,
-  ChevronLeft,
-  X,
-  FileType,
-  Home,
-  Square,
-} from 'lucide-react';
+
+
 import {
   fetchSvgTemplates,
   fetchUserSvgDesigns,

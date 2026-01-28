@@ -12,18 +12,8 @@
  */
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import {
-  Play,
-  Pause,
-  SkipForward,
-  SkipBack,
-  Maximize2,
-  Minimize2,
-  Grid,
-  Eye,
-  X,
-} from 'lucide-react';
-import { Button } from '../../design-system';
+
+
 import {
   getBlockAnimationStyles,
   getSlideTransitionStyles,

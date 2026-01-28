@@ -1,49 +1,24 @@
 import { useState, useEffect } from 'react';
 import {
-  Search,
   CheckCircle,
   XCircle,
   Clock,
-  MessageSquare,
   ListVideo,
   Layout,
   Zap,
-  Film,
-  Filter,
-  ChevronRight,
-  Send,
-  RefreshCw,
-  Calendar,
-  User,
-  X,
-  AlertCircle,
-  Loader2
+  Film
 } from 'lucide-react';
 import {
   fetchReviews,
   fetchReview,
   approveReview,
   rejectReview,
-  addReviewComment,
-  getApprovalStatusConfig,
-  REVIEW_STATUS
+  addReviewComment
 } from '../services/approvalService';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Badge,
-  EmptyState,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter
-} from '../design-system';
+
+
 
 // Status configuration
 const STATUS_CONFIG = {

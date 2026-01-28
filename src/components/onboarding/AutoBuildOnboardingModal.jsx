@@ -11,7 +11,6 @@
 
 import { useState } from 'react';
 import {
-  Sparkles,
   Utensils,
   Scissors,
   Dumbbell,
@@ -21,15 +20,7 @@ import {
   Building,
   Car,
   Coffee,
-  Building2,
-  ChevronRight,
-  ChevronLeft,
-  Loader2,
-  Check,
-  X,
-  Wand2,
-  Tv,
-  AlertCircle
+  Building2
 } from 'lucide-react';
 import { completeOnboarding, BUSINESS_TYPES } from '../../services/autoBuildService';
 import { useLogger } from '../../hooks/useLogger.js';

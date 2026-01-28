@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import Modal from './Modal';
-import Button from './Button';
 
 const DateRangeModal = ({ isOpen, onClose, onApply }) => {
   const [range, setRange] = useState('30');

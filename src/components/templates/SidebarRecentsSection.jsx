@@ -10,8 +10,6 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, ChevronDown, Layout } from 'lucide-react';
 
 /**
  * SidebarRecentsSection component

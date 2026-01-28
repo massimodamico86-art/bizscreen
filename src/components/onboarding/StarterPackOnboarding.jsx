@@ -10,15 +10,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Package, Loader2, Check, Sparkles } from 'lucide-react';
-import {
-  Modal,
-  ModalHeader,
-  ModalContent,
-  ModalFooter,
-} from '../../design-system';
-import { Button } from '../../design-system/components/Button';
-import { StarterPackCard } from '../templates/StarterPackCard';
+
+
 import { fetchStarterPacks, installTemplateAsScene } from '../../services/marketplaceService';
 import { markStarterPackApplied } from '../../services/onboardingService';
 

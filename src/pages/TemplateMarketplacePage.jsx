@@ -9,10 +9,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import { Search } from 'lucide-react';
-import PageLayout from '../design-system/components/PageLayout';
 import {
   fetchMarketplaceTemplates,
   fetchFeaturedTemplates,
@@ -26,14 +23,8 @@ import {
   applyCustomizationToScene,
   getTemplateUsageCounts,
 } from '../services/marketplaceService';
-import {
-  TemplateSidebar,
-  FeaturedTemplatesRow,
-  TemplateGrid,
-  TemplatePreviewPanel,
-  StarterPacksRow,
-  TemplateCustomizationWizard,
-} from '../components/templates';
+
+
 
 /**
  * Check if a template has customizable fields

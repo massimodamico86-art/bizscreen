@@ -9,9 +9,7 @@
  * group's language, no device-level override displayed here.
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Button, Select, FormField } from '../../design-system';
-import { Globe, MapPin, Save, Loader2, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import {
   getSupportedLanguages,
   getAvailableLocations,

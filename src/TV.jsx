@@ -4,7 +4,6 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { Layout1, Layout2, Layout3, Layout4 } from "./layouts";
 
-import ScaledStage from "./ScaledStage.jsx";
 import { getConfig } from "./getConfig.js";
 import { supabase } from "./supabase";
 import { useLogger } from "./hooks/useLogger.js";

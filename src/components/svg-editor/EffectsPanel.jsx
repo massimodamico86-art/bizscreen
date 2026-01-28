@@ -11,7 +11,6 @@
  */
 
 import { useState } from 'react';
-import { X, ChevronDown, ChevronUp } from 'lucide-react';
 import * as fabric from 'fabric';
 
 // Color presets matching OptiSigns

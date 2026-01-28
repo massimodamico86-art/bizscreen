@@ -9,8 +9,6 @@
  */
 
 import { useState } from 'react';
-import { Plus, Trash2, MoreVertical, GripVertical } from 'lucide-react';
-import { Button } from '../../design-system';
 
 export default function SlideStrip({
   slides,

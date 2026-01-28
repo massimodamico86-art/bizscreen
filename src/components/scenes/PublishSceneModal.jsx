@@ -6,26 +6,10 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  Tv,
-  Monitor,
-  Check,
-  Loader2,
-  Wifi,
-  WifiOff,
-  Clock,
-  Users,
-  Play,
-} from 'lucide-react';
-import {
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalDescription,
-  ModalContent,
-  ModalFooter,
-} from '../../design-system';
-import { Button } from '../../design-system';
+
+
+
+
 import { fetchDevicesForTenant, setSceneOnDevices } from '../../services/sceneService';
 import {
   fetchScreenGroupsWithScenes,

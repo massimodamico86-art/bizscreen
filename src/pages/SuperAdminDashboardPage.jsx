@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../supabase';
 import {
   getAllUsers,
   getAllAdmins,
@@ -11,7 +10,6 @@ import {
   createAdminUser,
   createClientUser
 } from '../services/adminService';
-import ErrorBoundary from '../components/ErrorBoundary';
 import {
   Shield,
   FileText,
@@ -22,11 +20,7 @@ import {
   Flag,
   Play,
   UserCheck,
-  ChevronRight,
   LayoutTemplate,
-  X,
-  Eye,
-  EyeOff,
 } from 'lucide-react';
 
 export default function SuperAdminDashboardPage({ onNavigate }) {

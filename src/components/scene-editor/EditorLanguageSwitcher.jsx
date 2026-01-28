@@ -5,7 +5,6 @@
  * Per CONTEXT.md: Dropdown (not tabs), shows native names only.
  */
 import { useState } from 'react';
-import { Globe, Plus, ChevronDown } from 'lucide-react';
 import { getLanguageDisplayInfo } from '../../services/languageService';
 import { SUPPORTED_LOCALES } from '../../i18n/i18nConfig';
 

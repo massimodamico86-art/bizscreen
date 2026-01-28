@@ -20,29 +20,8 @@
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  Search,
-  Plus,
-  Upload,
-  Database,
   Table2,
   FileSpreadsheet,
-  MoreVertical,
-  Trash2,
-  Edit,
-  ChevronRight,
-  ChevronDown,
-  GripVertical,
-  Loader2,
-  AlertTriangle,
-  Check,
-  X,
-  ArrowUp,
-  ArrowDown,
-  Link2,
-  Unlink,
-  RefreshCw,
-  ExternalLink,
-  Clock,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
@@ -51,7 +30,6 @@ import {
   fetchDataSources,
   getDataSource,
   createDataSource,
-  updateDataSource,
   deleteDataSource,
   createField,
   updateField,
@@ -74,20 +52,8 @@ import {
 } from '../services/googleSheetsService';
 
 // Design system imports
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Stack,
-  Inline,
-} from '../design-system';
-import { Button, IconButton } from '../design-system';
-import { Card, CardHeader, CardTitle, CardContent } from '../design-system';
-import { Badge } from '../design-system';
-import { FormField, Input, Select } from '../design-system';
-import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../design-system';
-import { Alert } from '../design-system';
-import { EmptyState } from '../design-system';
+
+
 
 // --------------------------------------------------------------------------
 // Sub-components

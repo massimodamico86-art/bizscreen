@@ -14,42 +14,14 @@ import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 import {
   Users,
-  Plus,
-  RefreshCw,
-  Play,
-  Pause,
-  Trash2,
-  Copy,
-  ExternalLink,
-  Clock,
-  AlertTriangle,
-  Check,
-  Loader2,
   Building2,
   Utensils,
   Scissors,
   Dumbbell,
-  ShoppingBag,
-  Link2,
-  Eye,
-  RotateCcw,
-  Settings
+  ShoppingBag
 } from 'lucide-react';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Alert,
-  EmptyState,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-  Badge
-} from '../design-system';
+
+
 import {
   listDemoTenants,
   createDemoTenant,

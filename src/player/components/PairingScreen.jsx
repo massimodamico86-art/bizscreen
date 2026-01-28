@@ -12,7 +12,6 @@
  */
 
 import { useState, useMemo } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
 
 const DEVICE_ID_KEY = 'player_device_id';
 

@@ -3,7 +3,6 @@
  * Re-exports from design system with backwards-compatible behavior.
  * New code should import directly from '../design-system' instead.
  */
-import { Card as DSCard } from '../design-system';
 
 /**
  * Legacy Card - wraps design system Card for backwards compatibility

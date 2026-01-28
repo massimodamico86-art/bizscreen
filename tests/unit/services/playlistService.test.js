@@ -2,7 +2,7 @@
  * Playlist Service Unit Tests
  * Phase 6: Tests for playlist service operations
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock supabase before importing the service
 vi.mock('../../../src/supabase', () => ({

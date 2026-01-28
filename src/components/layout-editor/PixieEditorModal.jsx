@@ -9,8 +9,6 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { X, Loader2, Upload } from 'lucide-react';
-import { Button } from '../../design-system';
 import {
   uploadBase64ToCloudinary,
   isCloudinaryConfigured,

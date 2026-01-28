@@ -141,14 +141,14 @@ export const YODECK_TYPOGRAPHY = {
   '3xl': '30px',
 
   // Font weights
-  normal: 400,
+  weightNormal: 400,
   medium: 500,
   semibold: 600,
   bold: 700,
 
   // Line heights
   tight: 1.25,
-  normal: 1.5,
+  lineNormal: 1.5,
   relaxed: 1.75,
 };
 

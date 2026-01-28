@@ -5,14 +5,10 @@
  * It exposes window.initPolotnoEditor() for initialization.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createStore } from 'polotno/model/store';
-import { Workspace } from 'polotno/canvas/workspace';
-import { SidePanel, DEFAULT_SECTIONS } from 'polotno/side-panel';
-import { Toolbar } from 'polotno/toolbar/toolbar';
-import { ZoomButtons } from 'polotno/toolbar/zoom-buttons';
-import { PolotnoContainer, SidePanelWrap, WorkspaceWrap } from 'polotno';
+import { DEFAULT_SECTIONS } from 'polotno/side-panel';
 
 // Import Polotno styles
 import 'polotno/blueprint.polotno.css';

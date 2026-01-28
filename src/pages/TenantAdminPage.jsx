@@ -17,47 +17,17 @@ import {
   reactivateTenant,
   resetTrial,
   expireTrial,
-  getStatusColor,
   getStatusText
 } from '../services/billingService';
-import ErrorBoundary from '../components/ErrorBoundary';
+
+
 import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Alert,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-  Input,
-  Select
-} from '../design-system';
-import {
-  Users,
-  AlertTriangle,
   CheckCircle,
-  XCircle,
   Clock,
-  RefreshCw,
-  Search,
-  Filter,
-  MoreVertical,
-  Pause,
-  Play,
-  RotateCcw,
   Ban,
-  Eye,
-  ChevronDown,
-  Loader2,
   Building2,
   CreditCard,
-  Calendar,
-  TrendingUp,
-  Activity
+  Calendar
 } from 'lucide-react';
 
 /**

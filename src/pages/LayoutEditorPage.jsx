@@ -1,31 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  ArrowLeft,
-  Plus,
-  Trash2,
-  Save,
-  X,
-  Grid3X3,
-  Move,
-  ListVideo,
-  Image,
-  Settings,
-  Search,
-  Send,
-  Link2,
-  Copy,
-  ExternalLink,
-  CheckCircle,
-  AlertCircle,
-  XCircle,
-  FileEdit,
-  Clock,
-  Calendar,
-  MessageSquare,
-  Check,
-  Loader2,
-  BookTemplate,
-} from 'lucide-react';
+
+
 import {
   fetchLayoutWithZones,
   updateLayout,
@@ -34,7 +9,6 @@ import {
   deleteLayoutZone
 } from '../services/layoutService';
 import { supabase } from '../supabase';
-import { Button, Card } from '../design-system';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 import {
@@ -52,7 +26,6 @@ import {
   getExpiryLabel,
 } from '../services/previewService';
 import { createTemplateFromLayout } from '../services/layoutTemplateService';
-import { SaveAsTemplateModal } from '../components/templates/SaveAsTemplateModal';
 
 const PRESET_LAYOUTS = [
   {

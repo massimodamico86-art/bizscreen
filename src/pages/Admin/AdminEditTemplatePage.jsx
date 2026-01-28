@@ -6,7 +6,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import PageLayout from '../../design-system/components/PageLayout';
 import {
   fetchTemplateDetail,
   fetchCategories,
@@ -15,7 +14,6 @@ import {
   addTemplateSlide,
   updateTemplateSlide,
   deleteTemplateSlide,
-  reorderTemplateSlides,
   fetchEnterpriseAccess,
   grantEnterpriseAccess,
   revokeEnterpriseAccess,

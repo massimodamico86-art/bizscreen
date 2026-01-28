@@ -4,8 +4,7 @@
  * Shows "Get free Players", "Purchase a Player", and "Connect your own" options.
  */
 
-import { Monitor, Smartphone, Tv, Settings, Tablet, ExternalLink } from 'lucide-react';
-import { Button } from '../../design-system';
+import { Monitor, Smartphone, Tv, Settings, Tablet } from 'lucide-react';
 
 /**
  * Device icon component for the Connect Your Own card

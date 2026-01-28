@@ -4,20 +4,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  FileText,
-  Search,
-  Filter,
-  RefreshCw,
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  Download,
-  AlertCircle,
-  X,
-} from 'lucide-react';
+
+
 import { useAuditLogs } from '../../hooks/useAuditLogs';
-import AuditLogTable from '../../components/AuditLogTable';
 
 export default function AdminAuditLogsPage({ tenantId, tenantName, onBack, showToast }) {
   const {

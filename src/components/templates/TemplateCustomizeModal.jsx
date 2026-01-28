@@ -8,16 +8,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Package, List, Layout, Sparkles, Loader2, AlertCircle } from 'lucide-react';
-import {
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-  Button,
-} from '../../design-system';
-import { TemplateLivePreview } from './TemplateLivePreview';
+import { Package, List, Layout } from 'lucide-react';
+
+
 
 const getTypeIcon = (type) => {
   switch (type) {

@@ -6,10 +6,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Settings, RefreshCw, ExternalLink } from 'lucide-react';
 import {
   PROVIDER_LABELS,
-  PROVIDER_COLORS,
   LAYOUT_LABELS,
   FILTER_MODE_LABELS,
 } from '../services/social';

@@ -2,49 +2,23 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 import {
-  CreditCard,
   Monitor,
   Image,
   ListVideo,
   Layout,
   Calendar,
-  Check,
-  ArrowRight,
-  Loader2,
-  AlertTriangle,
-  AlertCircle,
   Sparkles,
   Crown,
-  Zap,
-  ExternalLink,
-  RefreshCw,
-  CheckCircle,
-  X
+  Zap
 } from 'lucide-react';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  Button,
-  Alert,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter
-} from '../design-system';
+
+
 import {
   fetchPlans,
   getCurrentSubscription,
   formatPrice,
   getStatusInfo,
-  getTrialDaysRemaining,
   canUpgradeTo,
-  isDowngrade,
   formatLimitValue
 } from '../services/accountPlanService';
 import {

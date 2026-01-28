@@ -5,29 +5,12 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  BarChart3,
-  Monitor,
-  Clock,
-  Play,
-  ListVideo,
-  Image,
-  RefreshCw,
-  TrendingUp,
-  Wifi,
-  Settings,
-  Mail,
-} from 'lucide-react';
+
+
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Alert,
-} from '../design-system';
+
+
 import {
   getAnalyticsSummary,
   getScreenUptime,

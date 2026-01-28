@@ -2,7 +2,7 @@
  * Data Source Service Unit Tests
  * Tests for data source CRUD operations and CSV parsing
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   DATA_SOURCE_TYPES,
   FIELD_DATA_TYPES,

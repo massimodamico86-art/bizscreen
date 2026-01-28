@@ -13,7 +13,6 @@
 import { isProduction } from '../config/env';
 import { supabase } from '../supabase';
 import { redactObject, redactPII } from '../utils/pii.js';
-import { safeStringify } from '../utils/safeStringify.js';
 
 // Log levels
 const LOG_LEVELS = {

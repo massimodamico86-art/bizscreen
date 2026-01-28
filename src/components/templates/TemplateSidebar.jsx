@@ -9,9 +9,6 @@
  */
 
 import PropTypes from 'prop-types';
-import { SidebarRecentsSection } from './SidebarRecentsSection';
-import { SidebarFavoritesSection } from './SidebarFavoritesSection';
-import { SidebarSuggestedSection } from './SidebarSuggestedSection';
 
 /**
  * TemplateSidebar component

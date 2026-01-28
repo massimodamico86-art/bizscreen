@@ -7,8 +7,7 @@
  * @module components/YodeckEmptyState
  */
 
-import { Monitor, Calendar, Image, Film, Layout, FolderOpen, Tv } from 'lucide-react';
-import Button from '../design-system/components/Button';
+import { Monitor, Calendar, Image, Film, Layout, FolderOpen } from 'lucide-react';
 
 // SVG illustrations matching Yodeck's style
 const illustrations = {

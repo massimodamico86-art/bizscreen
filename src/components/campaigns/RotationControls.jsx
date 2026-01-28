@@ -7,7 +7,6 @@
 
 import { useState, useEffect } from 'react';
 import { Percent, Scale, Shuffle, ListOrdered } from 'lucide-react';
-import { Button, Badge } from '../../design-system';
 import { ROTATION_MODES, calculateEffectiveRotation } from '../../services/campaignService';
 
 // Mode configuration with icons and descriptions

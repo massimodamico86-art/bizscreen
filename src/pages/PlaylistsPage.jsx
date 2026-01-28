@@ -1,25 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Search,
-  Plus,
-  ListVideo,
-  Copy,
-  Trash2,
-  Clock,
-  AlertTriangle,
-  AlertCircle,
-  Zap,
-  CheckCircle,
-  LayoutTemplate,
-  Sparkles,
-  FileText,
-  Loader2,
-  ChevronRight,
-  RefreshCw,
-  HelpCircle,
-  Monitor,
-  X,
-} from 'lucide-react';
+
+
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
@@ -29,23 +10,10 @@ import { getPlaylistTemplates, applyTemplate } from '../services/templateService
 import { getPlaylistUsage, deletePlaylistSafely } from '../services/playlistService';
 
 // Design system imports
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Stack,
-  Grid,
-  Inline,
-} from '../design-system';
-import { Button } from '../design-system';
-import { Card, CardContent } from '../design-system';
-import { Badge } from '../design-system';
-import { FormField, Input, Textarea } from '../design-system';
-import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../design-system';
-import { Banner, Alert } from '../design-system';
-import { EmptyState } from '../design-system';
+
+
 import { useLogger } from '../hooks/useLogger.js';
-import { ResponsiveTable, useResponsiveColumns } from '../components/tables';
+import { useResponsiveColumns } from '../components/tables';
 
 // --------------------------------------------------------------------------
 // Sub-components

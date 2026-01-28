@@ -11,7 +11,7 @@
  * - Customizable content inputs
  */
 
-import { createSlide, getDefaultDesign, normalizeDesign } from './sceneDesignService';
+import { createSlide, normalizeDesign } from './sceneDesignService';
 import { getBrandTheme, getThemedBlockDefaults } from './brandThemeService';
 import { createScopedLogger } from './loggingService';
 

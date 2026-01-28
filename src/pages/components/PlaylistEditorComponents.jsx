@@ -5,23 +5,8 @@ import {
   FileText,
   Globe,
   Grid3X3,
-  X,
-  Wand2,
-  Sparkles,
-  Loader2,
-  Check,
-  Send,
-  Link2,
-  Copy,
-  ExternalLink,
-  Plus,
-  Minus,
-  GripVertical,
-  BookmarkPlus,
-  Trash2,
   Palette,
 } from 'lucide-react';
-import { Button, Card } from '../../design-system';
 import {
   formatPreviewLink,
   EXPIRY_PRESETS,

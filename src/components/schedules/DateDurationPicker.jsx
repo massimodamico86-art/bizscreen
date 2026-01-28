@@ -36,7 +36,6 @@ import {
   subMonths,
   addMonths as addMonthsFn
 } from 'date-fns';
-import { ChevronLeft, ChevronRight, Clock, Calendar } from 'lucide-react';
 
 // Duration presets per CONTEXT.md decisions
 const DURATION_PRESETS = [

@@ -3,7 +3,6 @@
  * Re-exports from design system with backwards-compatible prop mapping.
  * New code should import directly from '../design-system' instead.
  */
-import { StatCard as DSStatCard } from '../design-system';
 
 /**
  * Legacy StatCard - wraps design system StatCard for backwards compatibility

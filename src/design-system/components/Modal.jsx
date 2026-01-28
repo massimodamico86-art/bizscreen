@@ -22,8 +22,6 @@
 
 import { forwardRef, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
 import { modal as modalAnimation } from '../motion';
 
 /**

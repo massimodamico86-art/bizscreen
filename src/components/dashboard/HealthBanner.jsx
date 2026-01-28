@@ -2,7 +2,6 @@
  * HealthBanner Component
  * Shows critical alert banner at dashboard top when screens are offline.
  */
-import { AlertTriangle, ArrowRight, X } from 'lucide-react';
 import { useState } from 'react';
 
 export function HealthBanner({ alertSummary, onNavigate }) {

@@ -3,13 +3,9 @@
  */
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
-import AuthLayout from './AuthLayout';
+import { useNavigate } from 'react-router-dom';
 import { signIn } from '../services/authService';
 import { isMfaRequired } from '../services/mfaService';
-import { MfaVerification } from '../components/security';
-import Seo from '../components/Seo';
 
 export default function LoginPage() {
   const navigate = useNavigate();

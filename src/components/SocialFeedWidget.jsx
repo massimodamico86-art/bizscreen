@@ -7,10 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Heart, MessageCircle, Share2, Star, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
-  PROVIDER_LABELS,
-  PROVIDER_COLORS,
   LAYOUT_OPTIONS,
 } from '../services/social';
 import { getSocialFeedPosts, getCachedPosts } from '../services/socialFeedSyncService';

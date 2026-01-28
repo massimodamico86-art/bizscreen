@@ -3,18 +3,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  Download,
-  Trash2,
-  AlertTriangle,
-  Loader2,
-  Check,
-  Clock,
-  FileJson,
-  Shield,
-  X,
-} from 'lucide-react';
-import { Button, Card } from '../../design-system';
+
+
 import {
   requestDataExport,
   getLatestExportStatus,
@@ -25,7 +15,7 @@ import {
   getDeletionStatus,
   DELETION_REASONS,
 } from '../../services/gdprService';
-import { withdrawConsent, getConsentHistory } from '../../services/consentService';
+import { withdrawConsent } from '../../services/consentService';
 
 export default function DataPrivacySettings({ showToast, user }) {
   // Data Export State

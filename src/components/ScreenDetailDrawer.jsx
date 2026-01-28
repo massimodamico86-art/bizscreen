@@ -1,29 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  X,
-  Monitor,
-  Wifi,
-  WifiOff,
-  Clock,
-  Play,
-  Layout,
-  ListVideo,
-  Calendar,
-  Target,
-  ChevronRight,
-  AlertCircle,
-  CheckCircle,
-  TrendingUp,
-  ExternalLink,
-  RefreshCw,
-  Loader2,
-  ArrowRight,
-  MapPin,
-  Users,
-  Image
-} from 'lucide-react';
-import Button from './Button';
-import Badge from './Badge';
+
+
 import {
   getScreenDiagnostics,
   getResolutionPathInfo,

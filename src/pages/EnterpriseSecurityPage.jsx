@@ -14,30 +14,14 @@ import {
   Shield,
   Key,
   Users,
-  Download,
-  Copy,
-  Check,
-  AlertTriangle,
-  Info,
-  RefreshCw,
-  Eye,
-  EyeOff,
-  FileText,
   Database
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Alert,
-} from '../design-system';
-import { getSSOProvider, saveSSOProvider, toggleSSOEnabled, toggleSSOEnforcement, SSO_TYPES, SSO_DEFAULT_ROLES, validateOIDCIssuer } from '../services/ssoService';
+
+
+import { getSSOProvider, saveSSOProvider, toggleSSOEnabled, SSO_DEFAULT_ROLES, validateOIDCIssuer } from '../services/ssoService';
 import { downloadExport, getDataSummary, exportAsCSV, hasEnterpriseFeatures } from '../services/complianceService';
-import { supabase } from '../supabase';
 
 export default function EnterpriseSecurityPage({ showToast }) {
   const { userProfile } = useAuth();

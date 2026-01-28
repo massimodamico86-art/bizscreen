@@ -7,10 +7,8 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
 
 // Import named exports for testing
-import { DashboardErrorState, ScreenRow, StatsGrid } from '../../../src/pages/DashboardPage';
 
 // Mock the i18n hook
 vi.mock('../../../src/i18n', () => ({

@@ -12,12 +12,10 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { DndContext, useSensor, useSensors, PointerSensor, useDroppable, DragOverlay } from '@dnd-kit/core';
+import { useSensor, useSensors, PointerSensor, useDroppable } from '@dnd-kit/core';
 import { TZDate } from '@date-fns/tz';
 import { useLogger } from '../../hooks/useLogger.js';
-import { ChevronLeft, ChevronRight, Calendar, Loader2, Film } from 'lucide-react';
 import { getWeekPreview, formatTime, updateScheduleEntry } from '../../services/scheduleService';
-import { DraggableTimeBlock } from './DraggableTimeBlock';
 
 // Generate 30-minute time slots for 24 hours
 const TIME_SLOTS = Array.from({ length: 48 }, (_, i) => {

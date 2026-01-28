@@ -46,6 +46,16 @@ export function useEmergency() {
 }
 
 /**
+ * Safe hook to optionally access emergency state
+ * Returns null if used outside EmergencyProvider instead of throwing
+ * @returns {{isActive: boolean, contentId: string|null, contentType: string|null, contentName: string|null, startedAt: Date|null, durationMinutes: number|null, stopEmergency: function, stopping: boolean}|null}
+ */
+export function useEmergencyOptional() {
+  const context = useContext(EmergencyContext);
+  return context || null;
+}
+
+/**
  * Fetch content name based on content type and ID
  * @param {string} contentType - 'playlist', 'scene', or 'media'
  * @param {string} contentId - UUID of the content

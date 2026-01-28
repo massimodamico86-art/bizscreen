@@ -10,51 +10,16 @@
  * @see ScreensPage.jsx for main page component
  */
 import { useState, useEffect } from 'react';
-import {
-  Plus,
-  Monitor,
-  MoreVertical,
-  Trash2,
-  Edit,
-  RefreshCw,
-  Play,
-  Copy,
-  Loader2,
-  CheckCircle,
-  Info,
-  ExternalLink,
-  AlertTriangle,
-  Zap,
-  BarChart3,
-  Clock,
-  TrendingUp,
-  Image,
-  Power,
-  RotateCcw,
-  HardDrive,
-  Lock,
-  Unlock,
-  Eye,
-  Globe,
-} from 'lucide-react';
+
+
 import { SUPPORTED_LOCALES } from '../../i18n/i18nConfig';
 import { formatLimitDisplay } from '../../services/limitsService';
 import { formatDuration, getUptimeColor, DATE_RANGES } from '../../services/analyticsService';
-import YodeckEmptyState from '../../components/YodeckEmptyState';
-import { PlayerStatusBadge, getPlayerStatus } from '../../components/screens/PlayerStatusBadge';
+import { getPlayerStatus } from '../../components/screens/PlayerStatusBadge';
 
 // Design system imports
-import {
-  Stack,
-  Grid,
-  Inline,
-} from '../../design-system';
-import { Button } from '../../design-system';
-import { Card, CardHeader, CardTitle, CardContent } from '../../design-system';
-import { Badge } from '../../design-system';
-import { FormField, Input, Select, Switch } from '../../design-system';
-import { Modal, ModalHeader, ModalTitle, ModalDescription, ModalContent, ModalFooter } from '../../design-system';
-import { Alert, Banner } from '../../design-system';
+
+
 
 // --------------------------------------------------------------------------
 // Utility Components

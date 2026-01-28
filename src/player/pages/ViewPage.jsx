@@ -1,37 +1,20 @@
 // src/player/pages/ViewPage.jsx - Player View Page (extracted from Player.jsx)
 // Full-screen slideshow playback with offline support, kiosk mode, and stuck detection
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabase';
 import * as analytics from '../../services/playerAnalyticsService';
-import {
-  subscribeToSceneUpdates,
-  checkDeviceRefreshStatus,
-  clearDeviceRefreshFlag,
-} from '../../services/deviceSyncService';
+
+
 import {
   pollForCommand,
-  reportCommandResult,
-  updateDeviceStatus,
   initOfflineCache,
-  cacheContent,
-  getCachedContent,
-  clearCache,
-  generateContentHash,
-  getConnectionStatus,
-  onConnectionStatusChange,
-  setConnectionStatus as setPlayerConnectionStatus,
   calculateBackoff,
-  isFullscreen,
-  enterFullscreen,
-  exitFullscreen,
-  validateKioskPassword,
   cacheKioskPinHashes,
   COMMAND_POLL_INTERVAL,
   HEARTBEAT_INTERVAL
 } from '../../services/playerService';
-import { captureAndUploadScreenshot, cleanupOldScreenshots } from '../../services/screenshotService';
-import { registerServiceWorker, initOfflineService } from '../offlineService';
+import { initOfflineService } from '../offlineService';
 import {
   initTracking,
   stopTracking,
@@ -44,14 +27,9 @@ import {
 import {
   subscribeToDeviceCommands,
   subscribeToDeviceRefresh,
-  unsubscribeAll as unsubscribeAllRealtime,
 } from '../../services/realtimeService';
 import { useLogger } from '../../hooks/useLogger.js';
 import { createScopedLogger } from '../../services/loggingService.js';
-import { PinEntry } from '../components/PinEntry';
-import { SceneRenderer } from '../components/SceneRenderer';
-import { LayoutRenderer } from '../components/LayoutRenderer';
-import { AppRenderer } from '../components/AppRenderer';
 import {
   usePlayerContent,
   usePlayerHeartbeat,

@@ -27,7 +27,6 @@
  */
 
 import { forwardRef, useState } from 'react';
-import { ChevronDown, X } from 'lucide-react';
 
 /**
  * FilterChips - Horizontal filter buttons

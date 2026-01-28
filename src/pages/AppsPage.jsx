@@ -1,30 +1,16 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
-  Search,
-  Plus,
   Grid3X3,
   Clock,
   Globe,
   CloudSun,
   Rss,
   Table,
-  MoreVertical,
-  Trash2,
-  Edit,
-  X,
-  ChevronDown,
-  Loader2,
-  LinkIcon,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLogger } from '../hooks/useLogger.js';
-import { formatDate } from '../utils/formatters';
-import { Button, Card } from '../design-system';
 import { useTranslation } from '../i18n';
-import { AppCard, AppDetailModal } from '../components/apps';
-import WeatherWallConfigModal from '../components/apps/WeatherWallConfigModal';
 import {
-  APP_CATALOG,
   APP_CATEGORIES,
   FEATURED_APPS,
   INDUSTRY_POPULAR,

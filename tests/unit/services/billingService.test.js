@@ -1,14 +1,13 @@
 /**
  * Billing Service Unit Tests
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   mapSubscriptionToUiState,
   getStatusColor,
   getStatusText,
   formatTrialRemaining,
-  checkCheckoutResult,
-  clearCheckoutResult
+  checkCheckoutResult
 } from '../../../src/services/billingService';
 
 describe('billingService', () => {

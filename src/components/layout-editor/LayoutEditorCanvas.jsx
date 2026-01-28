@@ -13,8 +13,6 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Move } from 'lucide-react';
-import LayoutElementRenderer from './LayoutElementRenderer';
 import { SNAP_THRESHOLD } from './types';
 import { YODECK_GRID, YODECK_COLORS } from '../../config/yodeckTheme';
 

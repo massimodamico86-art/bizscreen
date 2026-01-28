@@ -15,27 +15,16 @@ import {
   Palette,
   Type,
   Check,
-  Loader2,
-  ArrowLeft,
-  ArrowRight,
-  Sparkles,
-  RefreshCw,
-  X,
-  Image as ImageIcon,
 } from 'lucide-react';
-import { Modal, Button } from '../../design-system';
 import {
   uploadLogo,
   createBrandTheme,
   FONT_PAIRINGS,
   DEFAULT_THEME,
 } from '../../services/brandThemeService';
-import { extractBrandIdentity, enhanceTheme } from '../../services/brandAiService';
-import ThemePreviewCard, {
-  ThemePreviewLarge,
-  ColorPaletteGrid,
-  FontPairingPreview,
-} from './ThemePreviewCard';
+import { extractBrandIdentity } from '../../services/brandAiService';
+
+
 import { useLogger } from '../../hooks/useLogger.js';
 
 const STEPS = [

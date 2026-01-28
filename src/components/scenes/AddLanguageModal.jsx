@@ -5,9 +5,6 @@
  * Per CONTEXT.md: User picks from fixed list of common languages.
  */
 import { useState } from 'react';
-import { Globe, Loader2 } from 'lucide-react';
-import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../../design-system';
-import { Button } from '../../design-system';
 import { SUPPORTED_LOCALES } from '../../i18n/i18nConfig';
 import { createLanguageVariant } from '../../services/languageService';
 

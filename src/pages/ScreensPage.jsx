@@ -24,53 +24,25 @@
  * @see ScreenDetailDrawer.jsx for detailed screen view
  */
 import { useState, useEffect } from 'react';
-import {
-  Search,
-  Plus,
-  RefreshCw,
-  Calendar,
-  Loader2,
-  MapPin,
-  Users,
-  Key,
-} from 'lucide-react';
+
+
 import { useTranslation } from '../i18n';
 import { isScreenOnline, setMasterKioskPin, getMasterPinStatus } from '../services/screenService';
 import { useLogger } from '../hooks/useLogger';
 import { hasReachedLimit } from '../services/limitsService';
 import ScreenDetailDrawer from '../components/ScreenDetailDrawer';
-import { ScreensFooterCards } from '../components/screens/ScreensFooterCards';
-import { InsertContentModal } from '../components/modals/InsertContentModal';
 import { useScreensData } from './hooks';
 
 // Extracted components
-import {
-  DemoPairingBanner,
-  LimitWarningBanner,
-  NoScreensState,
-  PromoCards,
-  ScreenRow,
-  AddScreenModal,
-  LimitReachedModal,
-  AnalyticsModal,
-  ScreensErrorState,
-  EditScreenModal,
-  KioskModeModal,
-} from './components/ScreensComponents';
+
+
 
 // Responsive table utilities
-import { ResponsiveTable, useResponsiveColumns } from '../components/tables';
+import { useResponsiveColumns } from '../components/tables';
 
 // Design system imports
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Stack,
-  Inline,
-} from '../design-system';
-import { Button } from '../design-system';
-import { Card } from '../design-system';
+
+
 
 // --------------------------------------------------------------------------
 // Main Component

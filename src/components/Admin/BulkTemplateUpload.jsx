@@ -6,7 +6,6 @@
  */
 
 import { useState, useCallback } from 'react';
-import { Upload, X, Check, Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import { autoTagSvg } from '../../services/autoTaggingService';
 import { createTemplate } from '../../services/marketplaceService';
 import { useLogger } from '../../hooks/useLogger.js';

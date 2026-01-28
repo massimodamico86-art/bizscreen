@@ -1,25 +1,12 @@
 import { useState } from 'react';
 import {
-  X,
   Monitor,
   Users,
   MapPin,
   Globe,
   ListMusic,
   Layout,
-  Check,
-  Loader2,
-  Send,
-  AlertCircle,
-  Plus,
-  Link2,
-  Copy,
-  ExternalLink,
-  Trash2,
-  Calendar,
-  MessageSquare,
 } from 'lucide-react';
-import { Button, Card } from '../../design-system';
 import { formatPreviewLink, EXPIRY_PRESETS, getExpiryLabel } from '../../services/previewService';
 
 /**

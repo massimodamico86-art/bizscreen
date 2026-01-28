@@ -7,7 +7,6 @@
  * @module components/DemoModeBanner
  */
 import { useState, useEffect } from 'react';
-import { AlertTriangle, X, Clock, RefreshCw } from 'lucide-react';
 import { checkIsDemoTenant } from '../services/demoService';
 import { useLogger } from '../hooks/useLogger.js';
 

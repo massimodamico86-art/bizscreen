@@ -7,8 +7,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Loader2, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { drawer } from '../../design-system/motion';
 import {
@@ -16,8 +14,6 @@ import {
   installTemplateAsScene,
   LICENSE_LABELS,
 } from '../../services/marketplaceService';
-import { TemplateRating } from './TemplateRating';
-import { SimilarTemplatesRow } from './SimilarTemplatesRow';
 
 // License badge colors
 const LICENSE_COLORS = {

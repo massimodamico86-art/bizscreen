@@ -41,9 +41,8 @@
  * @see .planning/ROADMAP.md Phase 1 success criteria
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
-import { render, screen, waitFor, act, cleanup } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
+import { render } from '@testing-library/react';
 
 // ============================================================================
 // GLOBAL MOCKS - Applied before module imports

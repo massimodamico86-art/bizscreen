@@ -6,7 +6,6 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Upload, Image, Video, Music, FileText, X } from 'lucide-react';
 
 // Supported file types
 const SUPPORTED_TYPES = {

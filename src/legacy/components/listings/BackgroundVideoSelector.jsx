@@ -1,7 +1,4 @@
 import { useState, useRef } from 'react';
-import { Plus } from 'lucide-react';
-import Modal from '../Modal';
-import Button from '../Button';
 export const BackgroundVideoSelector = ({ isOpen, onClose, currentVideo, onSelect }) => {
   const [selectedVideo, setSelectedVideo] = useState(currentVideo || '');
   const fileInputRef = useRef(null);

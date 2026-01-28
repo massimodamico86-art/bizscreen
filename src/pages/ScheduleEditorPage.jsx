@@ -1,21 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-  ArrowLeft,
-  Plus,
-  Trash2,
-  X,
-  Calendar,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  AlertCircle,
-  RefreshCw,
-  Power,
-  Monitor,
-  Info,
-  Users
-} from 'lucide-react';
+
+
 import {
   fetchScheduleWithEntriesResolved,
   updateSchedule,
@@ -25,24 +10,13 @@ import {
   checkEntryConflicts,
   updateScheduleFillerContent,
   clearScheduleFillerContent,
-  getAssignedDevicesAndGroups,
-  TARGET_TYPES
+  getAssignedDevicesAndGroups
 } from '../services/scheduleService';
 import { supabase } from '../supabase';
-import { Button, Card, Badge } from '../design-system';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 import {
-  FillerContentPicker,
-  ConflictWarning,
-  WeekPreview,
-  AssignScreensModal,
-  DateDurationPicker,
-  PriorityBadge,
-  PRIORITY_LEVELS,
-  DEFAULT_PRIORITY,
-  DaypartPicker,
-  CampaignPicker
+  DEFAULT_PRIORITY
 } from '../components/schedules';
 import { requiresApproval } from '../services/permissionsService.js';
 import { APPROVAL_STATUS, getApprovalStatusConfig } from '../services/approvalService.js';

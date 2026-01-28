@@ -3,7 +3,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createMockFetch } from '../../utils/mocks';
-import { createTestScreen, generateUUID } from '../../utils/factories';
+import { generateUUID } from '../../utils/factories';
 
 describe('Analytics API', () => {
   let originalFetch;

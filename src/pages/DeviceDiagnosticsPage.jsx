@@ -14,27 +14,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   Monitor,
-  RefreshCw,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Wifi,
-  WifiOff,
-  Camera,
-  Loader2,
-  Clock,
-  MapPin,
-  Layers,
-  Calendar,
-  X,
-  ZoomIn,
-  ExternalLink,
-  Image,
-  HardDrive,
-  CloudOff,
-  Database,
 } from 'lucide-react';
-import PageLayout from '../design-system/components/PageLayout';
 import {
   fetchDevicesWithScreenshots,
   requestDeviceScreenshot,

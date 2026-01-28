@@ -10,10 +10,8 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
 
 // Component under test
-import DashboardPage from '../../../src/pages/DashboardPage';
 
 // Mock the auth context
 const mockUser = { id: 'test-user-id', email: 'test@example.com' };

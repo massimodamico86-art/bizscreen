@@ -8,10 +8,9 @@
  * - Customizing templates from the gallery
  */
 
-import { useState, useEffect, lazy, Suspense, useMemo } from 'react';
+import { useState, useEffect, lazy, useMemo } from 'react';
 import { uploadMediaFromDataUrl, getMediaAsset, updateMediaAsset } from '../services/mediaService';
 import { fetchLayoutTemplates } from '../services/layoutTemplateService';
-import { Loader2 } from 'lucide-react';
 
 // UUID regex pattern
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

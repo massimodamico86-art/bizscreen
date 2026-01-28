@@ -5,9 +5,7 @@
  * Appears when one or more scenes are selected in the translation dashboard.
  */
 
-import React, { useState } from 'react';
-import { Button, Select } from '../../design-system';
-import { RefreshCw } from 'lucide-react';
+import { useState } from 'react';
 import { bulkUpdateStatus } from '../../services/translationService';
 
 const STATUS_OPTIONS = [

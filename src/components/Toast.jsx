@@ -1,4 +1,3 @@
-import { Check, X, AlertCircle, Info } from 'lucide-react';
 
 const Toast = ({ message, type = 'success', onClose }) => {
   const icons = {

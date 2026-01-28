@@ -6,9 +6,6 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, Trash2, ExternalLink, AlertCircle, CheckCircle, Clock } from 'lucide-react';
-import PageLayout from '../design-system/components/PageLayout';
-import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from '../services/tenantService';
 import {
   PROVIDER_LABELS,

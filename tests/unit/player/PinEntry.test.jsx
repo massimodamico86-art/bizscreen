@@ -8,8 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { PinEntry } from '../../../src/player/components/PinEntry';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 
 describe('PinEntry', () => {
   beforeEach(() => {

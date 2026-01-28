@@ -7,28 +7,16 @@
  */
 
 import { useState, useEffect } from 'react';
+
+
 import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Checkbox,
-  EmptyState,
-} from '../design-system';
-import {
-  Globe,
   Check,
   Clock,
   AlertCircle,
   Languages,
-  Sparkles,
 } from 'lucide-react';
 import { fetchTranslationDashboard } from '../services/translationService';
 import { getLanguageDisplayInfo, getLanguageColor } from '../services/languageService';
-import TranslationFilters from '../components/translations/TranslationFilters';
-import BulkActionsBar from '../components/translations/BulkActionsBar';
-import AiSuggestionPanel from '../components/translations/AiSuggestionPanel';
 import { useLogger } from '../hooks/useLogger';
 
 // Status configuration for styling

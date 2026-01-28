@@ -10,23 +10,6 @@
 
 import { useState } from 'react';
 import {
-  X,
-  AlignStartVertical,
-  AlignCenterVertical,
-  AlignEndVertical,
-  AlignStartHorizontal,
-  AlignCenterHorizontal,
-  AlignEndHorizontal,
-  FlipHorizontal,
-  FlipVertical,
-  Eye,
-  EyeOff,
-  Lock,
-  Unlock,
-  Trash2,
-  RotateCcw,
-  RotateCw,
-  GripVertical,
   Type,
   Image,
   Square,

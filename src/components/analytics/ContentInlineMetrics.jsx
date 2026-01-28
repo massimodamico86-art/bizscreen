@@ -7,9 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Clock, CheckCircle, Eye, Calendar, BarChart2, TrendingUp } from 'lucide-react';
-import { Card } from '../../design-system';
+import { Clock, CheckCircle, Eye, Calendar } from 'lucide-react';
 import {
   getContentMetrics,
   formatDuration,

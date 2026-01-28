@@ -3,7 +3,6 @@
  * Re-exports from design system with backwards-compatible prop mapping.
  * New code should import directly from '../design-system' instead.
  */
-import { Button as DSButton } from '../design-system';
 
 // Map legacy variants to design system variants
 const variantMap = {

@@ -10,8 +10,7 @@
  * - Playlist item rendering and transitions
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { render, waitFor, act } from '@testing-library/react';
 
 // Mock all external dependencies before importing Player
 vi.mock('../../../src/supabase', () => ({
@@ -141,7 +140,6 @@ vi.mock('qrcode.react', () => ({
 import { supabase } from '../../../src/supabase';
 
 // Import Player after mocks are set up
-import Player from '../../../src/Player';
 
 // Helper to create mock content
 function createMockContent(overrides = {}) {

@@ -6,9 +6,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { X, CloudSun, Upload, Info, MapPin, Maximize2 } from 'lucide-react';
-import { Button, Card } from '../../design-system';
-import WeatherWall from '../WeatherWall';
 
 // Language options
 const LANGUAGES = [

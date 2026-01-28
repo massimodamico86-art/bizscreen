@@ -3,9 +3,6 @@
  */
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
-import AuthLayout from './AuthLayout';
 import { requestPasswordReset } from '../services/authService';
 
 export default function ResetPasswordPage() {

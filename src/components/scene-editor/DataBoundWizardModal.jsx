@@ -12,21 +12,11 @@
 
 import { useState, useEffect } from 'react';
 import {
-  X,
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Loader2,
-  Database,
-  Table2,
   Grid3X3,
   List,
   LayoutGrid,
-  Plus,
-  AlertCircle,
 } from 'lucide-react';
 
-import { Button } from '../../design-system';
 import { fetchDataSources, getDataSource, FIELD_DATA_TYPES } from '../../services/dataSourceService';
 import { createSlide } from '../../services/sceneDesignService';
 import { getBrandTheme } from '../../services/brandThemeService';

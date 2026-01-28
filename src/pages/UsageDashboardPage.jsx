@@ -3,23 +3,15 @@
  * Phase 16: Displays usage analytics, quota status, and billing information
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   BarChart3,
-  TrendingUp,
   AlertTriangle,
   CheckCircle,
   XCircle,
-  ArrowUpRight,
-  RefreshCw,
-  Calendar,
-  Info,
 } from 'lucide-react';
 import {
   getUsageSummary,
-  getUsageStatus,
-  getUsageColor,
-  getUsageTextColor,
   formatQuotaDisplay,
   getDaysUntilReset,
 } from '../services/usageService';

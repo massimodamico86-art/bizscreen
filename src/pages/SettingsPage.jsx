@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, Eye, Globe, Shield, Activity, RotateCcw, AlertCircle, RefreshCw, Palette, Plus, Trash2, Loader2, Lock, Sparkles, LayoutTemplate, RotateCw } from 'lucide-react';
-import { Card, Button } from '../design-system';
+import { Bell, Eye, Shield, Activity, Palette, Lock, Sparkles } from 'lucide-react';
 import { getUserSettings, updateUserSettings, resetUserSettings } from '../services/userSettingsService';
 import { getActivityLog, formatActivity } from '../services/activityLogService';
 import { getAllBrandThemes, deleteBrandTheme, setActiveTheme } from '../services/brandThemeService';
@@ -9,12 +8,8 @@ import {
   getSelectedIndustry,
   resetWelcomeTour,
 } from '../services/onboardingService';
-import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from '../i18n';
-import { BrandImporterModal, ThemePreviewCard } from '../components/brand';
-import { TwoFactorSetup, SessionManagement, LoginHistory } from '../components/security';
-import { DataPrivacySettings } from '../components/compliance';
-import { IndustrySelectionModal, INDUSTRIES } from '../components/onboarding';
+import { INDUSTRIES } from '../components/onboarding';
 
 const SettingsPage = ({ showToast, setCurrentPage }) => {
   const { t } = useTranslation();

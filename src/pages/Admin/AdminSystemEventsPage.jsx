@@ -4,18 +4,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  Server,
-  Filter,
-  RefreshCw,
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  AlertCircle,
-  X,
-} from 'lucide-react';
+
+
 import { useSystemEvents } from '../../hooks/useAuditLogs';
-import EventTimeline from '../../components/EventTimeline';
 import { SEVERITY_LEVELS, SYSTEM_SOURCES } from '../../services/auditService';
 
 export default function AdminSystemEventsPage({ onBack, showToast }) {

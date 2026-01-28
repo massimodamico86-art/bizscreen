@@ -5,15 +5,10 @@
  * It reads URL parameters and initializes the editor.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createStore } from 'polotno/model/store';
-import { Workspace } from 'polotno/canvas/workspace';
-import { SidePanel, DEFAULT_SECTIONS } from 'polotno/side-panel';
-import { Toolbar } from 'polotno/toolbar/toolbar';
-import { ZoomButtons } from 'polotno/toolbar/zoom-buttons';
-import { PolotnoContainer, SidePanelWrap, WorkspaceWrap } from 'polotno';
-import { SectionTab } from 'polotno/side-panel';
+import { DEFAULT_SECTIONS } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 
 // Import Polotno's bundled Blueprint CSS

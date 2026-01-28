@@ -1,8 +1,5 @@
 
-import { Share2, Users, DollarSign, Target } from 'lucide-react';
-import Button from '../components/Button';
-import Card from '../components/Card';
-import StatCard from '../components/StatCard';
+import { Users, DollarSign, Target } from 'lucide-react';
 
 const ReferPage = ({ showToast }) => {
   const copyCode = () => {

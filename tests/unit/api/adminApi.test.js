@@ -2,7 +2,7 @@
  * Admin API Unit Tests
  * Phase 17: Tests for admin API endpoint structure and validation
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 // These tests verify the API endpoint structure and basic validation
 // They use mocks to avoid actual database calls

@@ -4,7 +4,6 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as analytics from '../../services/playerAnalyticsService';
-import { AppRenderer } from './AppRenderer';
 
 /**
  * Zone Player - Plays content in a single zone (used by LayoutRenderer)

@@ -9,7 +9,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Rating } from '@smastrom/react-rating';
 import { rateTemplate, getTemplateRatingStats } from '../../services/marketplaceService';
 
 // Debounce timeout for rating changes

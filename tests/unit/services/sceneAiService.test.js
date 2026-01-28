@@ -4,7 +4,7 @@
  * Tests for src/services/sceneAiService.js
  * Verifies AI polish functions, improvements, and presets.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // Mock dependencies
 vi.mock('../../../src/supabase', () => ({

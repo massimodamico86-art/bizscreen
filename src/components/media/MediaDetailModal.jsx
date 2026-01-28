@@ -14,33 +14,14 @@
 
 import { useState, useEffect } from 'react';
 import {
-  X,
-  Edit,
-  Trash2,
-  RefreshCw,
-  Copy,
-  Check,
-  ExternalLink,
   Image,
   Video,
   Music,
   FileText,
   Globe,
-  Download,
-  Plus,
-  AlertTriangle,
-  ChevronDown,
-  ChevronRight,
-  Clock,
   Info,
-  Folder,
-  Calendar,
   HardDrive,
-  Maximize2,
 } from 'lucide-react';
-import { Button } from '../../design-system';
-import { Modal, ModalContent } from '../../design-system';
-import { Badge } from '../../design-system';
 
 const MEDIA_TYPE_ICONS = {
   image: Image,

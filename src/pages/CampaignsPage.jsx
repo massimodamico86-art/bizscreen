@@ -1,36 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Search,
-  Plus,
-  MoreVertical,
-  Trash2,
-  Edit,
   Play,
   Pause,
-  Calendar,
-  Target,
   FileText,
   Clock,
   CheckCircle,
-  AlertCircle,
-  Megaphone,
-  Loader2,
-  ChevronDown,
-  Copy
+  Megaphone
 } from 'lucide-react';
-import { formatDate } from '../utils/formatters';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Badge,
-  EmptyState
-} from '../design-system';
+
+
 import {
   fetchCampaigns,
   deleteCampaign,
@@ -40,7 +21,6 @@ import {
 } from '../services/campaignService';
 import { canEditContent, canEditScreens } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
-import { TemplatePickerModal } from '../components/campaigns/TemplatePickerModal';
 import { createFromTemplate } from '../services/campaignTemplateService';
 
 const STATUS_CONFIG = {

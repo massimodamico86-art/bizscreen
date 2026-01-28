@@ -14,7 +14,6 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import { render, screen, waitFor, act, cleanup } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 // Global mock for localStorage that persists across all tests
 let localStorageData = {};
@@ -170,7 +169,6 @@ import { supabase } from '../../../src/supabase';
 import * as playerService from '../../../src/services/playerService';
 
 // Import Player after all mocks are set up
-import Player from '../../../src/Player.jsx';
 
 // ============================================================================
 // TEST DATA

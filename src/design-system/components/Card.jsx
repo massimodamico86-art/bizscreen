@@ -15,7 +15,7 @@
  * </Card>
  */
 
-import { forwardRef, createContext, useContext } from 'react';
+import { forwardRef, createContext } from 'react';
 
 // Context for card state
 const CardContext = createContext({ interactive: false });

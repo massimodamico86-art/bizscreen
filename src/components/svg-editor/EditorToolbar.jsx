@@ -11,9 +11,6 @@ import {
   Circle,
   Triangle,
   Image,
-  Undo2,
-  Redo2,
-  Hand,
   MousePointer,
 } from 'lucide-react';
 

@@ -9,9 +9,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Users, Shield, Loader2, CheckCircle, AlertCircle, ArrowRight, LogIn } from 'lucide-react';
-import AuthLayout from './AuthLayout';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { acceptInvite, getInviteDetails, getRoleDisplayName } from '../services/teamService';
 

@@ -12,7 +12,7 @@
  * where the widget would open.
  */
 import { test, expect } from '@playwright/test';
-import { loginAndPrepare, navigateToSection, waitForPageReady } from './helpers.js';
+import { loginAndPrepare, navigateToSection } from './helpers.js';
 
 test.describe('Media Library', () => {
   // Skip if client credentials not configured

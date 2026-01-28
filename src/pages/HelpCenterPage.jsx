@@ -4,9 +4,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../i18n';
 import {
-  Search,
-  ChevronRight,
-  ChevronLeft,
   Rocket,
   Monitor,
   ListVideo,
@@ -14,19 +11,10 @@ import {
   Zap,
   LayoutTemplate,
   CreditCard,
-  BookOpen,
-  ExternalLink,
-  Loader2,
-  ArrowLeft
+  BookOpen
 } from 'lucide-react';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  EmptyState
-} from '../design-system';
+
+
 import { sanitizeHTML } from '../security/sanitize.js';
 import {
   HELP_CATEGORIES,

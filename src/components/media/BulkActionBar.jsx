@@ -5,19 +5,8 @@
  * Provides bulk operations: delete, move, tag, download, add to playlist.
  */
 
-import { useState } from 'react';
-import {
-  Trash2,
-  FolderInput,
-  Tag,
-  Download,
-  ListPlus,
-  X,
-  CheckSquare,
-  Square,
-  Loader2,
-} from 'lucide-react';
-import { Button } from '../../design-system';
+
+
 
 export function BulkActionBar({
   selectedCount,

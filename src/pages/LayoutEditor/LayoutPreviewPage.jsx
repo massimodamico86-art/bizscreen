@@ -15,11 +15,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, Edit, Maximize, Minimize, Monitor } from 'lucide-react';
-import { LayoutEditorCanvas, LayoutElementRenderer } from '../../components/layout-editor';
 import { useLayout } from '../../hooks/useLayout';
-import { Loader2, AlertCircle } from 'lucide-react';
-import { Button } from '../../design-system';
 import { YODECK_COLORS } from '../../config/yodeckTheme';
 
 export default function LayoutPreviewPage({ layoutId, showToast, onNavigate }) {

@@ -11,24 +11,13 @@ import { useLogger } from '../hooks/useLogger.js';
 import {
   AlertTriangle,
   AlertCircle,
-  Info,
   Bell,
-  Check,
-  CheckCheck,
-  Filter,
-  RefreshCw,
   Monitor,
   Calendar,
   Database,
   Share2,
-  X,
-  ExternalLink,
-  ChevronDown,
-  Clock,
   Eye,
-  Settings,
 } from 'lucide-react';
-import { PageLayout } from '../design-system/components/PageLayout';
 import {
   getAlerts,
   getAlertSummary,
@@ -37,8 +26,6 @@ import {
   bulkAcknowledge,
   bulkResolve,
   ALERT_TYPES,
-  ALERT_SEVERITIES,
-  ALERT_STATUSES,
 } from '../services/alertEngineService';
 
 // Alert type labels

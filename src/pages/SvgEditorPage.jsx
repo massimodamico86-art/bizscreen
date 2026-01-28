@@ -9,12 +9,10 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { FabricSvgEditor } from '../components/svg-editor';
 import {
   loadUserSvgDesign,
   saveUserSvgDesign,
 } from '../services/svgTemplateService';
-import { Loader2 } from 'lucide-react';
 
 /**
  * Parse query params from route string

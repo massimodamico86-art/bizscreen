@@ -6,7 +6,6 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
 
 // Mock language service
 vi.mock('../../../src/services/languageService', () => ({
@@ -40,7 +39,6 @@ vi.mock('../../../src/services/screenGroupService', () => ({
 }));
 
 // Component under test
-import ScreenGroupSettingsTab from '../../../src/components/screens/ScreenGroupSettingsTab';
 
 // Test wrapper
 const renderComponent = (props = {}) => {

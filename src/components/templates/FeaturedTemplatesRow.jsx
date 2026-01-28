@@ -8,7 +8,6 @@
  */
 
 import PropTypes from 'prop-types';
-import { TemplateCard } from './TemplateGrid';
 
 /**
  * FeaturedTemplatesRow component

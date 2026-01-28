@@ -5,7 +5,6 @@
  * Supports both landscape (16:9) and portrait (9:16) TV orientations.
  */
 
-import { MapPin, Droplets, Wind, Eye, Gauge, ThermometerSun } from 'lucide-react';
 
 export default function ClassicTheme({ config, weatherData, loading, error, getWeatherEmoji }) {
   const current = weatherData?.current;

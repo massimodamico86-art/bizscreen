@@ -11,15 +11,11 @@
  * @module components/BillingBanner
  */
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
   Clock,
-  CreditCard,
   XCircle,
-  Lock,
-  ChevronRight,
-  X
+  Lock
 } from 'lucide-react';
 import { getTenantLifecycleStatus } from '../services/billingService';
 import { useLogger } from '../hooks/useLogger.js';

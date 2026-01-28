@@ -8,7 +8,7 @@
  * - Error states display correctly
  */
 import { test, expect } from '@playwright/test';
-import { loginAndPrepare, navigateToSection, waitForPageReady } from './helpers.js';
+import { loginAndPrepare, navigateToSection } from './helpers.js';
 
 test.describe('Screens Page', () => {
   test.describe('Authenticated User', () => {

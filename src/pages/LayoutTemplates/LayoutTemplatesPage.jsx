@@ -7,21 +7,9 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import {
-  Search,
-  LayoutGrid,
-  Sparkles,
-  Plus,
-  Loader2,
-  AlertCircle,
   Monitor,
   Smartphone,
   Square,
-  Star,
-  Edit,
-  Trash2,
-  ChevronDown,
-  RefreshCw,
-  ExternalLink,
   Tv,
   Play,
   FileImage,
@@ -29,11 +17,8 @@ import {
   Megaphone,
   Share2,
   BarChart3,
-  Palette,
-  Wand2,
   RectangleHorizontal,
 } from 'lucide-react';
-import { Button } from '../../design-system';
 import { useLayoutTemplates } from '../../hooks/useLayoutTemplates';
 import { fetchLayouts, deleteLayoutSafely } from '../../services/layoutService';
 import { CANVA_TEMPLATE_CATEGORIES, openCanvaTemplates } from '../../services/canvaService';

@@ -7,37 +7,13 @@
  */
 import { useState } from 'react';
 import {
-  Monitor,
-  ListVideo,
   Image,
   Video,
   FileAudio,
   FileText,
-  Grid3X3,
-  ArrowRight,
-  Wifi,
-  WifiOff,
-  Clock,
-  Loader2,
-  Sparkles,
-  AlertTriangle,
-  AlertCircle,
-  Info,
-  RefreshCw,
-  Activity,
-  Upload,
-  Edit,
-  PlusCircle,
-  Bell,
 } from 'lucide-react';
-import {
-  Grid,
-  Stack,
-  Card,
-  StatCard,
-  Button,
-  Badge,
-} from '../../design-system';
+
+
 import { formatLastSeen } from '../../services/dashboardService';
 
 /**

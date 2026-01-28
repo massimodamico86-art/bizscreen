@@ -3,8 +3,6 @@
  */
 
 import { useState } from 'react';
-import { Shield, Loader2, AlertCircle, Key } from 'lucide-react';
-import { Button } from '../../design-system';
 import { verifyMfaLogin, verifyRecoveryCode } from '../../services/mfaService';
 
 export default function MfaVerification({ onSuccess, onCancel }) {

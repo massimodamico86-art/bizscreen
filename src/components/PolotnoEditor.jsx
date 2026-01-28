@@ -6,7 +6,6 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Loader2 } from 'lucide-react';
 import { useLogger } from '../hooks/useLogger.js';
 
 export default function PolotnoEditor({

@@ -11,33 +11,13 @@
  * - ./dashboard/WelcomeModal.jsx - Welcome modal flow
  */
 import { useState, useEffect, useCallback } from 'react';
-import {
-  Monitor,
-  ListVideo,
-  Image,
-  Grid3X3,
-  Plus,
-  ArrowRight,
-  Loader2,
-  Sparkles,
-} from 'lucide-react';
+
+
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
-import ErrorBoundary from '../components/ErrorBoundary';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Grid,
-  Stack,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Button,
-  EmptyState,
-} from '../design-system';
+
+
 import {
   getDashboardStats,
   getTopScreens,
@@ -52,44 +32,24 @@ import {
   getSelectedIndustry,
 } from '../services/onboardingService';
 import { createDemoWorkspace } from '../services/demoContentService';
-import OnboardingWizard from '../components/OnboardingWizard';
 import { applyPack, getDefaultPackSlug } from '../services/templateService';
 
 // Extracted sub-components
-import {
-  DashboardErrorState,
-  StatsGrid,
-  ScreenRow,
-  QuickActionButton,
-  AlertsWidget,
-} from './dashboard/DashboardSections';
-import {
-  GettingStartedCard,
-  DemoResultCard,
-  GettingStartedTips,
-} from './dashboard/OnboardingCards';
-import { WelcomeModal } from './dashboard/WelcomeModal';
+
+
+
+
 
 // Yodeck-style welcome components
-import { WelcomeHero, WelcomeFeatureCards } from '../components/welcome';
 
 // New onboarding components (Phase 23)
-import {
-  WelcomeTour,
-  IndustrySelectionModal,
-  StarterPackOnboarding,
-  OnboardingBanner,
-} from '../components/onboarding';
+
+
 import { isBannerDismissed } from '../components/onboarding/OnboardingBanner';
 
 // Dashboard components
-import {
-  HealthBanner,
-  QuickActionsBar,
-  ActiveContentGrid,
-  TimelineActivity,
-  PendingApprovalsWidget,
-} from '../components/dashboard';
+
+
 import { useBreakpoints } from '../hooks/useMediaQuery';
 
 /** localStorage key for tracking welcome modal dismissal */

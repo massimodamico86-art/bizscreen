@@ -1,5 +1,3 @@
-import { X } from 'lucide-react';
-import Button from '../Button';
 
 export const BackgroundMediaManager = ({
   formData,

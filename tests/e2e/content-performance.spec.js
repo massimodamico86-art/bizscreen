@@ -5,7 +5,7 @@
  * Verifies dashboard components, filters, and data visualization.
  */
 import { test, expect } from '@playwright/test';
-import { loginAndPrepare, waitForPageReady, navigateToSection } from './helpers.js';
+import { loginAndPrepare } from './helpers.js';
 
 test.describe('Content Performance Dashboard', () => {
   // Skip if user credentials not configured

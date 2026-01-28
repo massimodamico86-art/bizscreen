@@ -8,8 +8,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Cookie, Settings, X, Check, ChevronDown, ChevronUp } from 'lucide-react';
-import { Button } from '../../design-system';
 import {
   CONSENT_CATEGORIES,
   hasConsentBeenGiven,

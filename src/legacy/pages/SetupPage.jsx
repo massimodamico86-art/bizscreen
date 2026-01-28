@@ -1,7 +1,4 @@
 
-import { Check } from 'lucide-react';
-import Button from '../components/Button';
-import Card from '../components/Card';
 
 const SetupPage = ({ showToast }) => {
   const steps = [

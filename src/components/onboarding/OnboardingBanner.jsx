@@ -9,8 +9,6 @@
  */
 
 import PropTypes from 'prop-types';
-import { Sparkles, X } from 'lucide-react';
-import { Button } from '../../design-system/components/Button';
 
 /**
  * Session storage key for tracking banner dismissal

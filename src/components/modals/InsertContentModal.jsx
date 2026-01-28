@@ -6,11 +6,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-  X,
-  Search,
-  Folder,
-  ChevronRight,
-  Home,
   Image,
   Video,
   FileText,
@@ -19,12 +14,7 @@ import {
   Grid3X3,
   Layout,
   ListVideo,
-  Play,
-  Clock,
-  Loader2,
-  Check,
 } from 'lucide-react';
-import { Modal, ModalContent, Button } from '../../design-system';
 import { fetchMediaAssets, fetchApps } from '../../services/mediaService';
 import { fetchPlaylists } from '../../services/playlistService';
 import { fetchLayouts } from '../../services/layoutService';

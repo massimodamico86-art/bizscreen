@@ -1,4 +1,4 @@
-import { generateMediaId, DEFAULT_UNIFIED_MEDIA_STATE } from '../types/media';
+import { generateMediaId } from '../types/media';
 
 /**
  * Migrate old media format to UnifiedMediaState

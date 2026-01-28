@@ -23,16 +23,9 @@ import {
   Car,
   Coffee,
   Building,
-  Check,
-  Loader2,
 } from 'lucide-react';
-import {
-  Modal,
-  ModalHeader,
-  ModalContent,
-  ModalFooter,
-} from '../../design-system';
-import { Button } from '../../design-system/components/Button';
+
+
 import { setSelectedIndustry } from '../../services/onboardingService';
 
 /**

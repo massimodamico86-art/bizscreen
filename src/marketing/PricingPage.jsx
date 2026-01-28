@@ -2,9 +2,7 @@
  * PricingPage - Public pricing page
  */
 
-import { Link } from 'react-router-dom';
-import { Check, Zap, Star, Building2 } from 'lucide-react';
-import Seo from '../components/Seo';
+import { Zap, Star, Building2 } from 'lucide-react';
 
 const plans = [
   {

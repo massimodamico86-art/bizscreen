@@ -9,13 +9,8 @@
 
 import { useState, useEffect } from 'react';
 import {
-  ArrowLeft,
-  Tv,
   Layout,
   ListVideo,
-  Edit,
-  ExternalLink,
-  Loader2,
   Utensils,
   Scissors,
   Dumbbell,
@@ -26,27 +21,14 @@ import {
   Car,
   Coffee,
   Building2,
-  Check,
-  Pencil,
-  X,
-  Palette,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchScene, updateScene, getDeviceCountByScene } from '../services/sceneService';
 
 // Design system imports
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Inline,
-  Stack,
-} from '../design-system';
-import { Button } from '../design-system';
-import { Card, CardContent } from '../design-system';
-import { Badge } from '../design-system';
 
-import PublishSceneModal from '../components/scenes/PublishSceneModal';
+
+
 
 // Business type config (same as ScenesPage)
 const BUSINESS_TYPE_CONFIG = {

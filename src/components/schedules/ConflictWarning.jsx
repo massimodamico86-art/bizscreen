@@ -8,7 +8,6 @@
  * - Provides resolution suggestions
  */
 
-import { AlertTriangle, Clock, Monitor, Calendar } from 'lucide-react';
 import { formatTime, formatDaysOfWeek } from '../../services/scheduleService';
 
 /**

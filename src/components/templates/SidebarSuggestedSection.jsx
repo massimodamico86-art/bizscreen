@@ -9,8 +9,6 @@
 
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Sparkles, Loader2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { fetchSuggestedTemplates } from '../../services/marketplaceService';
 
 export function SidebarSuggestedSection({ onTemplateClick = () => {} }) {

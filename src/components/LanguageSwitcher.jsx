@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { Globe, Check, Loader2 } from 'lucide-react';
+import { Globe, Loader2 } from 'lucide-react'; // eslint-disable-line unused-imports/no-unused-imports
 import { useI18n } from '../i18n';
 import { setUserPreferredLocale } from '../services/localeService';
 import { useLogger } from '../hooks/useLogger.js';
@@ -110,6 +110,7 @@ export function LanguageSwitcher({ showLabel = true, size = 'default' }) {
  * Compact language switcher for use in headers/footers
  */
 export function CompactLanguageSwitcher() {
+  const logger = useLogger('CompactLanguageSwitcher');
   const { locale, setLocale, supportedLocales } = useI18n();
   const [saving, setSaving] = useState(false);
 
@@ -125,7 +126,7 @@ export function CompactLanguageSwitcher() {
     } finally {
       setSaving(false);
     }
-  }, [locale, setLocale]);
+  }, [locale, setLocale, logger]);
 
   const currentLocale = supportedLocales.find(l => l.code === locale);
 

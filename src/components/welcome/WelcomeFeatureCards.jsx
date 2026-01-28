@@ -3,8 +3,6 @@
  * Yodeck-style feature cards for playlists, templates, and tutorial.
  */
 
-import { Play, MousePointer, ListVideo, Layout, ExternalLink } from 'lucide-react';
-import { Button } from '../../design-system';
 
 /**
  * WelcomeFeatureCards - Three feature cards for the welcome section

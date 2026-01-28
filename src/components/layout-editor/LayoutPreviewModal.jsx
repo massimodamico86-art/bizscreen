@@ -13,9 +13,6 @@
  */
 
 import { useEffect, useCallback } from 'react';
-import { X, ExternalLink, Maximize2 } from 'lucide-react';
-import LayoutEditorCanvas from './LayoutEditorCanvas';
-import { YODECK_COLORS } from '../../config/yodeckTheme';
 
 export default function LayoutPreviewModal({
   isOpen,

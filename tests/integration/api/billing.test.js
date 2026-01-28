@@ -3,7 +3,6 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createMockFetch } from '../../utils/mocks';
-import { createTestUser, createTestSubscriptionStatus } from '../../utils/factories';
 
 describe('Billing API', () => {
   let originalFetch;

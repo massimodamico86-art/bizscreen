@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Plus, X, Trash2, Wand2, Wifi } from 'lucide-react';
-import Button from '../Button';
 import { supabase } from '../../supabase';
 import { generateQRCode, generateWiFiQRCode, generateURLQRCode } from '../../services/qrcodeService';
 import { useLogger } from '../../hooks/useLogger.js';

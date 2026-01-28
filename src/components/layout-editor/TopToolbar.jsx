@@ -15,27 +15,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import {
-  ChevronLeft,
-  Palette,
-  Layers,
-  ZoomIn,
-  ZoomOut,
-  Undo,
-  Redo,
-  Eye,
-  Save,
-  ChevronDown,
   Monitor,
   Smartphone,
   Square,
-  Plus,
-  X,
-  ListVideo,
-  Calendar,
-  ArrowRight,
-  Check,
 } from 'lucide-react';
-import { Button } from '../../design-system';
 import { ZOOM_LEVELS } from './types';
 import { YODECK_COLORS, YODECK_ORIENTATIONS } from '../../config/yodeckTheme';
 

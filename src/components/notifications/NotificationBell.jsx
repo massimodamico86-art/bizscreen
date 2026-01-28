@@ -7,17 +7,12 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Bell,
   AlertTriangle,
   AlertCircle,
-  Info,
   Monitor,
   Calendar,
   Database,
   Share2,
-  Check,
-  X,
-  ExternalLink,
 } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import {

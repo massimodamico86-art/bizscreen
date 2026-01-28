@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Bell, X, ChevronRight, Sparkles, AlertTriangle, Wrench, Info, CheckCircle } from 'lucide-react';
+import { Sparkles, AlertTriangle, Wrench, Info, CheckCircle } from 'lucide-react';
 import { getActiveAnnouncements, dismissAnnouncement } from '../services/feedbackService';
 import { useLogger } from '../hooks/useLogger.js';
 

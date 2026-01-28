@@ -2,7 +2,7 @@
  * Screenshot Service Unit Tests
  * Phase: Device Diagnostics - tests for player screenshot capture service
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // Mock html2canvas
 vi.mock('html2canvas', () => ({

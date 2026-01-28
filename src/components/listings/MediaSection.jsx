@@ -1,7 +1,3 @@
-import { useState } from 'react';
-import { X, Plus, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
-import Button from '../Button';
-import ImageUploadButton from '../ImageUploadButton';
 import {
   generateMediaId,
   validateRotationInterval,

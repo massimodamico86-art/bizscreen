@@ -5,13 +5,12 @@
  * Replaces the Cloudinary upload widget with native file input
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { createScopedLogger } from '../services/loggingService.js';
 
 const logger = createScopedLogger('useS3Upload');
 import {
   uploadFileToS3,
-  uploadFilesToS3,
   getImageDimensions,
   getVideoDuration,
   validateFile,

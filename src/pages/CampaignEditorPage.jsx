@@ -1,51 +1,14 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  ArrowLeft,
-  Save,
-  Play,
-  Pause,
-  Trash2,
-  Plus,
-  X,
-  Target,
-  Monitor,
-  Users,
-  MapPin,
-  Globe,
-  Layout,
-  ListMusic,
-  Image,
-  Calendar,
-  Clock,
-  AlertCircle,
-  CheckCircle,
-  Info,
-  Send,
-  Link2,
-  XCircle,
-  FileEdit,
-  Copy,
-  Settings,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
-import { Button, Card, Badge, Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter, Input } from '../design-system';
+
+
 import { CAMPAIGN_STATUS } from '../services/campaignService';
 import { canEditContent, canEditScreens } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
 import { getApprovalStatusConfig } from '../services/approvalService';
 import { useCampaignEditor } from './hooks';
-import {
-  TargetPickerModal,
-  ContentPickerModal,
-  ApprovalRequestModal,
-  PreviewLinksModal,
-} from './components/CampaignEditorComponents';
-import { CampaignAnalyticsCard } from '../components/analytics/CampaignAnalyticsCard';
-import { SeasonalDatePicker } from '../components/campaigns/SeasonalDatePicker';
-import { RotationControls } from '../components/campaigns/RotationControls';
-import { FrequencyLimitControls } from '../components/campaigns/FrequencyLimitControls';
+
+
 import { saveAsTemplate, setSeasonalRecurrence } from '../services/campaignTemplateService';
 
 const CampaignEditorPage = ({ showToast }) => {

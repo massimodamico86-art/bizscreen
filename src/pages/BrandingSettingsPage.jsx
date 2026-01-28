@@ -9,20 +9,9 @@
  * - Preview changes
  */
 
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  Palette,
-  Upload,
-  RefreshCw,
-  Save,
-  X,
-  AlertCircle,
-  CheckCircle,
-  Eye,
-  RotateCcw,
-  Building2,
-  Image as ImageIcon,
-} from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+
+
 import {
   getBranding,
   updateBranding,

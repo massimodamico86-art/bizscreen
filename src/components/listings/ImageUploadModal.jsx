@@ -1,7 +1,4 @@
 import { useState, useRef } from 'react';
-import { Plus, X } from 'lucide-react';
-import Modal from '../Modal';
-import Button from '../Button';
 export const ImageUploadModal = ({ isOpen, onClose, onUpload, currentImage }) => {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState(currentImage || '');

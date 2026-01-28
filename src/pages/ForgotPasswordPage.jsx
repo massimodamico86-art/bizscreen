@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Button, Alert } from '../design-system';
 import { useTranslation } from '../i18n';
-import { ArrowLeft } from 'lucide-react';
 
 export const ForgotPasswordPage = ({ onBack }) => {
   const { t } = useTranslation();

@@ -2,7 +2,7 @@
  * Device Screenshot Service Unit Tests
  * Phase: Device Diagnostics - tests for screenshot service utilities
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   formatScreenshotAge,
   formatHeartbeatAge,

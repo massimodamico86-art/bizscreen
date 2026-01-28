@@ -5,7 +5,6 @@
  * Uses CSS animation for smooth shimmer effect.
  */
 
-import Card from './Card';
 
 // Base skeleton element with shimmer animation
 export function Skeleton({ className = '', children }) {

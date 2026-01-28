@@ -2,7 +2,7 @@
  * Audit Service Unit Tests
  * Phase 18: Tests for audit log service functions
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   EVENT_TYPE_LABELS,
   ENTITY_TYPE_LABELS,

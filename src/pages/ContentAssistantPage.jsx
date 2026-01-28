@@ -10,42 +10,22 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Sparkles,
-  Wand2,
   Building2,
   Utensils,
   Scissors,
   Dumbbell,
   ShoppingBag,
-  ArrowRight,
-  ArrowLeft,
-  Check,
-  X,
-  Loader2,
-  List,
-  Eye,
-  RefreshCw,
-  Plus,
-  ChevronRight,
-  Info,
-  Palette,
-  Users,
-  FileText,
-  Layout,
-  Edit3,
 } from 'lucide-react';
 import {
   generatePlan,
   generateSlides,
   materializePlaylist,
-  materializePlan,
   getBusinessContextFromProfile,
   rejectSuggestion,
   BUSINESS_TYPES,
 } from '../services/assistantService';
 import { canEditContent } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
-import { Card, Button, Badge, EmptyState } from '../design-system';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 

@@ -11,7 +11,7 @@
 
 import React from 'react';
 import * as Sentry from '@sentry/react';
-import { config, isProduction, isLocal } from '../config/env';
+import { config, isProduction } from '../config/env';
 import { createScopedLogger } from '../services/loggingService.js';
 
 const logger = createScopedLogger('errorTracking');

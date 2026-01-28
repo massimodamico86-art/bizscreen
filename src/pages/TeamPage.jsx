@@ -5,37 +5,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../i18n';
 import {
   Users,
-  UserPlus,
-  Mail,
   Shield,
   Crown,
   Edit3,
   Eye,
-  MoreVertical,
-  RefreshCw,
-  Trash2,
-  Check,
-  X,
-  Clock,
-  AlertCircle,
-  Loader2,
 } from 'lucide-react';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  CardHeader,
-  CardTitle,
-  Button,
-  Alert,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-  EmptyState,
-} from '../design-system';
+
+
 import { useAuth } from '../contexts/AuthContext';
 import {
   fetchTeamMembers,

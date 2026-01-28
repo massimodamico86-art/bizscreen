@@ -3,8 +3,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Monitor, Smartphone, Tablet, MapPin, Clock, LogOut, Loader2, AlertCircle, Shield } from 'lucide-react';
-import { Button, Card } from '../../design-system';
 import {
   getActiveSessions,
   revokeSession,

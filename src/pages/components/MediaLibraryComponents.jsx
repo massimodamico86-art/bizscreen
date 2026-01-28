@@ -18,42 +18,16 @@
 
 import { useRef, useState } from 'react';
 import {
-  Trash2,
-  Edit,
-  Copy,
   Image,
   Video,
   Music,
   FileText,
   Globe,
-  FolderPlus,
-  Folder,
-  FolderOpen,
-  CheckCircle,
-  Loader2,
-  AlertTriangle,
-  Zap,
-  MoreVertical,
-  Eye,
-  ChevronRight,
-  Home,
-  ListPlus,
-  Monitor,
-  GripVertical,
   Grid3X3,
-  Plus,
 } from 'lucide-react';
 import { pushEmergencyContent, EMERGENCY_DURATIONS } from '../../services/emergencyService';
-import {
-  Stack,
-  Inline,
-} from '../../design-system';
-import { Button } from '../../design-system';
-import { Card, CardContent } from '../../design-system';
-import { Badge } from '../../design-system';
-import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../../design-system';
-import { Banner, Alert } from '../../design-system';
-import { FormField, Input } from '../../design-system';
+
+
 import { formatLimitDisplay } from '../../services/limitsService';
 
 export const MEDIA_TYPE_ICONS = {

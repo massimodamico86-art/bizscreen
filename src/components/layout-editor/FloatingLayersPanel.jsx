@@ -13,12 +13,6 @@
 
 import { useState, useCallback } from 'react';
 import {
-  X,
-  GripVertical,
-  Eye,
-  EyeOff,
-  Lock,
-  Unlock,
   Image,
   Type,
   Square,
@@ -29,10 +23,6 @@ import {
   CloudSun,
   QrCode,
   Database,
-  ChevronUp,
-  ChevronDown,
-  Trash2,
-  Copy,
 } from 'lucide-react';
 import { YODECK_COLORS } from '../../config/yodeckTheme';
 

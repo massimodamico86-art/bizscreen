@@ -5,8 +5,6 @@
  * Shows play count, duration, unique screens, avg plays/screen, and peak hour.
  */
 
-import { BarChart3, Monitor, Clock, TrendingUp } from 'lucide-react';
-import { Card } from '../../design-system';
 import { formatHours } from '../../services/analyticsService';
 import { DATE_RANGES } from '../../services/campaignAnalyticsService';
 

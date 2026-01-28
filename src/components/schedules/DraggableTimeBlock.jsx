@@ -22,7 +22,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { PriorityBadge } from './PriorityBadge';
 
 /**
  * Convert time string (HH:mm) to minutes from midnight

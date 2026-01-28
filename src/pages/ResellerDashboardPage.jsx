@@ -11,53 +11,18 @@
  */
 import { useState, useEffect } from 'react';
 import {
-  Building2,
-  Monitor,
-  Key,
-  DollarSign,
-  Users,
-  Plus,
-  RefreshCw,
-  Eye,
-  Copy,
-  Check,
-  Download,
-  Settings,
-  TrendingUp,
-  Clock,
-  AlertTriangle,
-  X,
-  ChevronRight,
-  ExternalLink,
-  UserPlus,
-  CreditCard,
-  Palette
+  Building2
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  CardHeader,
-  CardTitle,
-  Button,
-  Badge,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-  EmptyState
-} from '../design-system';
+
+
 import {
   getMyResellerAccount,
   getPortfolioStats,
   listResellerTenants,
   getBrandVariants,
-  impersonateTenant,
-  RESELLER_STATUS
+  impersonateTenant
 } from '../services/resellerService';
 import {
   generateLicenses,

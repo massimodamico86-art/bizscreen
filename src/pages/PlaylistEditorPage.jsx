@@ -1,30 +1,9 @@
 import { useCallback } from 'react';
-import {
-  Plus,
-  Grid3X3,
-  Search,
-  Check,
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
-  Folder,
-  FolderOpen,
-  ChevronRight,
-  Home,
-  Send,
-} from 'lucide-react';
-import { Button } from '../design-system';
+
+
 import { usePlaylistEditor } from './hooks';
-import WeatherWall from '../components/WeatherWall';
-import {
-  PlaylistStripItem,
-  LibraryMediaItem,
-  AiSuggestModal,
-  ApprovalModal,
-  PreviewLinksModal,
-  SaveAsTemplateModal,
-} from './components/PlaylistEditorComponents';
+
+
 
 const FILTER_TABS = [
   { key: '', label: 'All' },

@@ -2,8 +2,7 @@
  * MarketingLayout - Public site layout with navbar and footer
  */
 
-import { Link, useLocation } from 'react-router-dom';
-import { Monitor, Menu, X } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { useTranslation } from '../i18n';
 

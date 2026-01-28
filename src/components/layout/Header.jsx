@@ -6,13 +6,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  ChevronRight,
-  LogOut,
-  AlertTriangle,
-  Loader2,
-} from 'lucide-react';
-import { useEmergency } from '../../contexts/EmergencyContext';
+
+
+import { useEmergencyOptional } from '../../contexts/EmergencyContext';
 import {
   pushEmergencyContent,
   EMERGENCY_DURATIONS,
@@ -20,10 +16,6 @@ import {
 import { fetchPlaylists } from '../../services/playlistService';
 import { fetchScenesForTenant } from '../../services/sceneService';
 import { fetchMediaAssets } from '../../services/mediaService';
-import { NotificationBell } from '../notifications';
-import AnnouncementCenter from '../AnnouncementCenter';
-import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../../design-system';
-import { Button } from '../../design-system';
 
 /**
  * Emergency Push Modal - Content selection for emergency override
@@ -225,14 +217,8 @@ export default function Header({
 }) {
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
 
-  // Try to use emergency context (may fail if outside provider)
-  let emergencyContext = null;
-  try {
-    emergencyContext = useEmergency();
-  } catch {
-    // Outside EmergencyProvider - that's okay
-  }
-
+  // Optionally access emergency context (returns null if outside provider)
+  const emergencyContext = useEmergencyOptional();
   const isEmergencyActive = emergencyContext?.isActive ?? false;
 
   // Get breadcrumb based on current page

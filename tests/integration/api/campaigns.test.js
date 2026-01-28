@@ -3,7 +3,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createMockFetch } from '../../utils/mocks';
-import { createTestCampaign, generateUUID } from '../../utils/factories';
+import { generateUUID } from '../../utils/factories';
 
 describe('Campaigns API', () => {
   let originalFetch;

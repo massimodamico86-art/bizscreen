@@ -1,8 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
-import Modal from '../Modal';
-import Button from '../Button';
-import ImageUploadButton from '../ImageUploadButton';
 export const BackgroundImageSelector = ({ isOpen, onClose, currentImage, onSelect }) => {
   const [selectedImage, setSelectedImage] = useState(currentImage || '');
 

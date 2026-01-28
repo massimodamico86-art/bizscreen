@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { useLogger } from '../hooks/useLogger.js';
 import { handleCanvaCallback } from '../services/canvaService';
 

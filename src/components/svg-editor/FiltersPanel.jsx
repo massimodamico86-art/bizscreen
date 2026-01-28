@@ -13,7 +13,6 @@
  */
 
 import { useState } from 'react';
-import { X, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import * as fabric from 'fabric';
 
 // Filter presets with preview thumbnails (using CSS filters for preview)

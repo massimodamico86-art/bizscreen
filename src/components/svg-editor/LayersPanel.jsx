@@ -11,13 +11,6 @@
  */
 
 import {
-  Eye,
-  EyeOff,
-  Lock,
-  Unlock,
-  ChevronUp,
-  ChevronDown,
-  X,
   Type,
   Image,
   Square,

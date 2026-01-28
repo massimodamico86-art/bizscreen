@@ -7,8 +7,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Image, Video, Music, FileText, Globe, Calendar, HardDrive, Maximize2, Clock } from 'lucide-react';
-import { Badge } from '../../design-system';
+import { Image, Video, Music, FileText, Globe } from 'lucide-react';
 
 const MEDIA_TYPE_ICONS = {
   image: Image,

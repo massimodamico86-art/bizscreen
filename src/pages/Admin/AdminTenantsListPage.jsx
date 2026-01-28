@@ -4,19 +4,8 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  Building2,
-  Search,
-  Filter,
-  RefreshCw,
-  ChevronLeft,
-  ChevronRight,
-  Users,
-  Monitor,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-} from 'lucide-react';
+
+
 import { useTenantList } from '../../hooks/useAdmin';
 import { PLAN_OPTIONS, TENANT_STATUS_OPTIONS } from '../../services/adminService';
 

@@ -6,19 +6,8 @@
  */
 
 import { useState } from 'react';
-import {
-  Trash2,
-  Copy,
-  ArrowUp,
-  ArrowDown,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Bold,
-  Italic,
-  Underline,
-  ChevronDown,
-} from 'lucide-react';
+
+
 
 export default function PropertiesPanel({
   selectedObject,

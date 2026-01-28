@@ -9,28 +9,12 @@
 
 import { useState, useEffect } from 'react';
 import {
-  ArrowLeft,
   Monitor,
   Settings,
-  Users,
-  MapPin,
-  Loader2,
-  Play,
-  Plus,
-  Check,
-  X,
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
-import {
-  PageLayout,
-  PageContent,
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Tabs,
-  EmptyState,
-} from '../design-system';
+
+
 import {
   getScreenGroup,
   getScreensInGroup,
@@ -38,7 +22,6 @@ import {
   assignScreensToGroup,
   removeScreensFromGroup,
 } from '../services/screenGroupService';
-import ScreenGroupSettingsTab from '../components/screens/ScreenGroupSettingsTab';
 
 /**
  * ScreenGroupDetailPage

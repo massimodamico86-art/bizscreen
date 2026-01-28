@@ -9,27 +9,9 @@
  * - View client plan & limits
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Users,
-  Plus,
-  Search,
-  MoreVertical,
-  Eye,
-  Edit2,
-  UserCheck,
-  CreditCard,
-  Monitor,
-  Image,
-  RefreshCw,
-  X,
-  AlertCircle,
-  CheckCircle,
-  Building2,
-  Mail,
-  User,
-  Lock,
-} from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+
+
 import {
   fetchClientsWithStats,
   createClient,

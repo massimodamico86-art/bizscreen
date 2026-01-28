@@ -6,15 +6,11 @@
 import { formatDistanceToNow } from 'date-fns';
 import {
   User,
-  Clock,
-  MapPin,
   Monitor,
   FileText,
   Settings,
   Shield,
   Activity,
-  ChevronDown,
-  ChevronUp,
 } from 'lucide-react';
 import { useState } from 'react';
 import { getEventTypeLabel, getEntityTypeLabel } from '../services/auditService';

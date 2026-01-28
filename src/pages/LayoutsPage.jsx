@@ -11,13 +11,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Search,
-  X,
-  ChevronDown,
-  ChevronRight,
-  Monitor,
-  Smartphone,
-  Sparkles,
   Clock,
   Star,
   TrendingUp,
@@ -32,10 +25,6 @@ import {
   Music,
   Shirt,
   LayoutGrid,
-  Plus,
-  Loader2,
-  Wand2,
-  ChevronLeft,
 } from 'lucide-react';
 import { getLayoutTemplates } from '../services/templateService';
 import { fetchLayouts } from '../services/layoutService';

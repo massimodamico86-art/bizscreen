@@ -1,38 +1,12 @@
 import { useState, useEffect } from 'react';
 import {
-  Search,
-  Plus,
-  MoreVertical,
-  Trash2,
-  Edit,
-  X,
-  Monitor,
-  Users,
-  MapPin,
-  Check,
-  ChevronRight,
-  Layers,
-  Play,
-  XCircle
+  Layers
 } from 'lucide-react';
-import { formatDate } from '../utils/formatters';
 import { useTranslation } from '../i18n';
-import {
-  PageLayout,
-  PageHeader,
-  PageContent,
-  Card,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalContent,
-  ModalFooter,
-  EmptyState
-} from '../design-system';
+
+
 import {
   fetchScreenGroupsWithScenes,
-  getScreenGroup,
   createScreenGroup,
   updateScreenGroup,
   deleteScreenGroup,

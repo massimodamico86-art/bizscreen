@@ -15,7 +15,6 @@
 import React from 'react';
 import { useFeatureFlag, useFeatureInfo, useFeatureContext } from '../hooks/useFeatureFlag';
 import { Feature, FEATURE_METADATA, PLANS } from '../config/plans';
-import { Lock, Sparkles, ArrowUpRight } from 'lucide-react';
 
 // ============================================================================
 // FEATURE GATE COMPONENT

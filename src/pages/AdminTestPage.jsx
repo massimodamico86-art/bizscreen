@@ -3,9 +3,6 @@ import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
 import {
   getAllUsers,
-  getAllAdmins,
-  getAllClients,
-  getUnassignedClients,
   assignClientToAdmin,
   unassignClient
 } from '../services/adminService';
