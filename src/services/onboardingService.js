@@ -322,10 +322,11 @@ export async function syncOnboardingProgress() {
  * @property {number} currentTourStep - Current step index (0-based)
  * @property {string|null} tourSkippedAt - When tour was skipped
  * @property {string|null} skippedAt - When onboarding was skipped
+ * @property {boolean} starterPackApplied - Whether starter pack was applied
  */
 
 /**
- * Get welcome tour progress
+ * Get welcome tour progress (extended with starter pack status)
  * @returns {Promise<WelcomeTourProgress>}
  */
 export async function getWelcomeTourProgress() {
@@ -337,16 +338,25 @@ export async function getWelcomeTourProgress() {
       completedWelcomeTour: false,
       currentTourStep: 0,
       tourSkippedAt: null,
-      skippedAt: null
+      skippedAt: null,
+      starterPackApplied: false
     };
   }
 
   const row = Array.isArray(data) ? data[0] : data;
+
+  // Also fetch starter pack status from onboarding_progress table
+  const { data: progressData } = await supabase
+    .from('onboarding_progress')
+    .select('starter_pack_applied')
+    .single();
+
   return {
     completedWelcomeTour: row?.completed_welcome_tour || false,
     currentTourStep: row?.current_tour_step || 0,
     tourSkippedAt: row?.tour_skipped_at || null,
-    skippedAt: row?.skipped_at || null
+    skippedAt: row?.skipped_at || null,
+    starterPackApplied: progressData?.starter_pack_applied || false
   };
 }
 
@@ -393,4 +403,71 @@ export async function skipWelcomeTour() {
 export async function shouldShowWelcomeTour() {
   const progress = await getWelcomeTourProgress();
   return !progress.completedWelcomeTour && !progress.tourSkippedAt && !progress.skippedAt;
+}
+
+// ============================================================================
+// INDUSTRY SELECTION FUNCTIONS (Phase 23-02)
+// ============================================================================
+
+/**
+ * Set user's selected industry
+ * @param {string} industry - Industry ID (e.g., 'restaurant', 'retail', 'salon')
+ * @returns {Promise<{success: boolean, industry?: string, error?: string}>}
+ */
+export async function setSelectedIndustry(industry) {
+  const { data, error } = await supabase.rpc('set_selected_industry', {
+    p_industry: industry
+  });
+
+  if (error) {
+    logger.error('Error setting industry:', { error });
+    return { success: false, error: error.message };
+  }
+
+  return data || { success: true, industry };
+}
+
+/**
+ * Get user's selected industry
+ * @returns {Promise<string|null>}
+ */
+export async function getSelectedIndustry() {
+  const { data, error } = await supabase.rpc('get_selected_industry');
+
+  if (error) {
+    logger.error('Error getting industry:', { error });
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Mark starter pack as applied during onboarding
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function markStarterPackApplied() {
+  const { data, error } = await supabase.rpc('mark_starter_pack_applied');
+
+  if (error) {
+    logger.error('Error marking starter pack applied:', { error });
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+/**
+ * Reset welcome tour to allow restart from Settings
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function resetWelcomeTour() {
+  const { data, error } = await supabase.rpc('reset_welcome_tour');
+
+  if (error) {
+    logger.error('Error resetting welcome tour:', { error });
+    return { success: false, error: error.message };
+  }
+
+  return data || { success: true };
 }
