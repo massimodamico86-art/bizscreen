@@ -1,16 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Bell, Eye, Globe, Shield, Activity, RotateCcw, AlertCircle, RefreshCw, Palette, Plus, Trash2, Loader2, Lock } from 'lucide-react';
+import { Bell, Eye, Globe, Shield, Activity, RotateCcw, AlertCircle, RefreshCw, Palette, Plus, Trash2, Loader2, Lock, Sparkles, LayoutTemplate, RotateCw } from 'lucide-react';
 import { Card, Button } from '../design-system';
 import { getUserSettings, updateUserSettings, resetUserSettings } from '../services/userSettingsService';
 import { getActivityLog, formatActivity } from '../services/activityLogService';
 import { getAllBrandThemes, deleteBrandTheme, setActiveTheme } from '../services/brandThemeService';
+import {
+  getWelcomeTourProgress,
+  getSelectedIndustry,
+  resetWelcomeTour,
+} from '../services/onboardingService';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from '../i18n';
 import { BrandImporterModal, ThemePreviewCard } from '../components/brand';
 import { TwoFactorSetup, SessionManagement, LoginHistory } from '../components/security';
 import { DataPrivacySettings } from '../components/compliance';
+import { IndustrySelectionModal, INDUSTRIES } from '../components/onboarding';
 
-const SettingsPage = ({ showToast }) => {
+const SettingsPage = ({ showToast, setCurrentPage }) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('notifications');
   const [settings, setSettings] = useState(null);
@@ -24,13 +30,20 @@ const SettingsPage = ({ showToast }) => {
   const [showBrandModal, setShowBrandModal] = useState(false);
   const [brandLoading, setBrandLoading] = useState(false);
 
+  // Onboarding settings state
+  const [onboardingSettings, setOnboardingSettings] = useState(null);
+  const [onboardingLoading, setOnboardingLoading] = useState(false);
+  const [restartingTour, setRestartingTour] = useState(false);
+  const [showIndustryModal, setShowIndustryModal] = useState(false);
+
   const tabs = [
     { id: 'notifications', label: t('settings.tabs.notifications', 'Notifications'), icon: Bell },
     { id: 'display', label: t('settings.tabs.display', 'Display'), icon: Eye },
     { id: 'branding', label: t('settings.tabs.branding', 'Branding'), icon: Palette },
     { id: 'security', label: t('settings.tabs.security', 'Security'), icon: Lock },
     { id: 'privacy', label: t('settings.tabs.privacy', 'Privacy'), icon: Shield },
-    { id: 'activity', label: t('settings.tabs.activity', 'Activity Log'), icon: Activity }
+    { id: 'activity', label: t('settings.tabs.activity', 'Activity Log'), icon: Activity },
+    { id: 'onboarding', label: t('settings.tabs.onboarding', 'Onboarding'), icon: Sparkles },
   ];
 
   useEffect(() => {
@@ -79,6 +92,48 @@ const SettingsPage = ({ showToast }) => {
       fetchBrandThemes();
     }
   }, [activeTab]);
+
+  // Fetch onboarding settings when onboarding tab is selected
+  const fetchOnboardingSettings = async () => {
+    try {
+      setOnboardingLoading(true);
+      const [tourProgress, industry] = await Promise.all([
+        getWelcomeTourProgress(),
+        getSelectedIndustry()
+      ]);
+      setOnboardingSettings({ ...tourProgress, industry });
+    } catch (error) {
+      console.error('Error loading onboarding settings:', error);
+    } finally {
+      setOnboardingLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'onboarding' && !onboardingSettings && !onboardingLoading) {
+      fetchOnboardingSettings();
+    }
+  }, [activeTab]);
+
+  const handleRestartTour = async () => {
+    setRestartingTour(true);
+    try {
+      await resetWelcomeTour();
+      showToast(t('settings.onboarding.tourReset', 'Welcome tour has been reset. Visit the dashboard to start.'));
+      // Navigate to dashboard to trigger tour
+      setCurrentPage?.('dashboard');
+    } catch (error) {
+      showToast('Error restarting tour: ' + error.message, 'error');
+    } finally {
+      setRestartingTour(false);
+    }
+  };
+
+  const handleIndustryChange = (industry) => {
+    setShowIndustryModal(false);
+    setOnboardingSettings(prev => prev ? { ...prev, industry } : null);
+    showToast(t('settings.onboarding.industryUpdated', 'Business type updated'));
+  };
 
   const handleSaveSettings = async (updates) => {
     try {
@@ -480,6 +535,99 @@ const SettingsPage = ({ showToast }) => {
         </div>
       )}
 
+      {/* Onboarding Tab */}
+      {activeTab === 'onboarding' && (
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold mb-6">{t('settings.onboarding.title', 'Onboarding Settings')}</h2>
+
+          {onboardingLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {/* Current Industry */}
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <LayoutTemplate size={20} className="text-indigo-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{t('settings.onboarding.businessType', 'Business Type')}</p>
+                    <p className="text-sm text-gray-500">
+                      {onboardingSettings?.industry
+                        ? INDUSTRIES.find(i => i.id === onboardingSettings.industry)?.label || onboardingSettings.industry
+                        : t('settings.onboarding.notSet', 'Not set')}
+                    </p>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => setShowIndustryModal(true)}>
+                  {t('common.change', 'Change')}
+                </Button>
+              </div>
+
+              {/* Restart Tour */}
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Sparkles size={20} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{t('settings.onboarding.welcomeTour', 'Welcome Tour')}</p>
+                    <p className="text-sm text-gray-500">
+                      {onboardingSettings?.completedWelcomeTour
+                        ? t('settings.onboarding.tourCompleted', 'Completed')
+                        : onboardingSettings?.tourSkippedAt
+                          ? t('settings.onboarding.tourSkipped', 'Skipped')
+                          : t('settings.onboarding.tourNotStarted', 'Not started')}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRestartTour}
+                  disabled={restartingTour}
+                >
+                  {restartingTour ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <>
+                      <RotateCw size={16} className="mr-1" />
+                      {t('settings.onboarding.restartTour', 'Restart Tour')}
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Starter Pack Status */}
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                    <LayoutTemplate size={20} className="text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{t('settings.onboarding.starterPack', 'Starter Pack')}</p>
+                    <p className="text-sm text-gray-500">
+                      {onboardingSettings?.starterPackApplied
+                        ? t('settings.onboarding.packApplied', 'Applied')
+                        : t('settings.onboarding.packNotApplied', 'Not applied')}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage?.('template-marketplace')}
+                >
+                  {t('settings.onboarding.browseTemplates', 'Browse Templates')}
+                </Button>
+              </div>
+            </div>
+          )}
+        </Card>
+      )}
+
       {/* Activity Log Tab */}
       {activeTab === 'activity' && (
         <Card className="p-6">
@@ -531,6 +679,16 @@ const SettingsPage = ({ showToast }) => {
           isOpen={showBrandModal}
           onClose={() => setShowBrandModal(false)}
           onThemeCreated={handleThemeCreated}
+        />
+      )}
+
+      {/* Industry Selection Modal */}
+      {showIndustryModal && (
+        <IndustrySelectionModal
+          isOpen={showIndustryModal}
+          onClose={() => setShowIndustryModal(false)}
+          onSelect={handleIndustryChange}
+          currentIndustry={onboardingSettings?.industry}
         />
       )}
     </div>
