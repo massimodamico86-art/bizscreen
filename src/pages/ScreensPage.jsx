@@ -58,6 +58,9 @@ import {
   KioskModeModal,
 } from './components/ScreensComponents';
 
+// Responsive table utilities
+import { ResponsiveTable, useResponsiveColumns } from '../components/tables';
+
 // Design system imports
 import {
   PageLayout,
@@ -77,6 +80,7 @@ const ScreensPage = ({ showToast }) => {
   const { t } = useTranslation();
   const logger = useLogger('ScreensPage');
   const [actionMenuId, setActionMenuId] = useState(null);
+  const { showSecondary, showTertiary } = useResponsiveColumns();
 
   // Master PIN modal state
   const [showMasterPinModal, setShowMasterPinModal] = useState(false);
@@ -352,7 +356,7 @@ const ScreensPage = ({ showToast }) => {
                 </div>
               )}
 
-              <div className="overflow-x-auto">
+              <ResponsiveTable>
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
@@ -366,10 +370,10 @@ const ScreensPage = ({ showToast }) => {
                       </th>
                       <th className="px-4 py-3 font-medium">Name</th>
                       <th className="px-4 py-3 font-medium">Player Status</th>
-                      <th className="px-4 py-3 font-medium">Player Type</th>
-                      <th className="px-4 py-3 font-medium">ID</th>
-                      <th className="px-4 py-3 font-medium">Screen Content</th>
-                      <th className="px-4 py-3 font-medium">Working Hours</th>
+                      {showSecondary && <th className="px-4 py-3 font-medium">Player Type</th>}
+                      {showTertiary && <th className="px-4 py-3 font-medium">ID</th>}
+                      {showSecondary && <th className="px-4 py-3 font-medium">Screen Content</th>}
+                      {showTertiary && <th className="px-4 py-3 font-medium">Working Hours</th>}
                       <th className="px-4 py-3 font-medium w-16"></th>
                     </tr>
                   </thead>
@@ -390,11 +394,13 @@ const ScreensPage = ({ showToast }) => {
                         commandingDevice={commandingDevice}
                         isSelected={selectedScreenIds.has(screen.id)}
                         onToggleSelection={toggleScreenSelection}
+                        showSecondary={showSecondary}
+                        showTertiary={showTertiary}
                       />
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </ResponsiveTable>
             </Card>
           )}
         </Stack>

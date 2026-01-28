@@ -261,6 +261,8 @@ export const ScreenRow = ({
   commandingDevice,
   isSelected = false,
   onToggleSelection,
+  showSecondary = true,
+  showTertiary = true,
 }) => {
   if (!screen) return null;
 
@@ -300,35 +302,43 @@ export const ScreenRow = ({
       <td className="px-4 py-4">
         <PlayerStatusBadge status={playerStatus} />
       </td>
-      <td className="px-4 py-4">
-        <div className="flex items-center justify-center">
-          {screen.device_info?.platform ? (
-            <span className="text-sm text-gray-600 capitalize">{screen.device_info.platform}</span>
-          ) : (
-            <Monitor size={18} className="text-gray-400" />
-          )}
-        </div>
-      </td>
-      <td className="px-4 py-4">
-        <span className="text-sm text-gray-600 font-mono">{screen.id?.slice(0, 8) || '-'}</span>
-      </td>
-      <td className="px-4 py-4">
-        <button
-          onClick={() => onOpenContentPicker?.(screen)}
-          className={`text-sm hover:underline ${
-            screen.assigned_playlist_id || screen.assigned_layout_id ? 'text-gray-900' : 'text-gray-400'
-          }`}
-        >
-          {getContentDisplay()}
-        </button>
-      </td>
-      <td className="px-4 py-4">
-        <span className="text-sm text-gray-600">
-          {screen.working_hours?.enabled
-            ? `${screen.working_hours.start || '09:00'} - ${screen.working_hours.end || '18:00'}`
-            : 'Global Working Hours'}
-        </span>
-      </td>
+      {showSecondary && (
+        <td className="px-4 py-4">
+          <div className="flex items-center justify-center">
+            {screen.device_info?.platform ? (
+              <span className="text-sm text-gray-600 capitalize">{screen.device_info.platform}</span>
+            ) : (
+              <Monitor size={18} className="text-gray-400" />
+            )}
+          </div>
+        </td>
+      )}
+      {showTertiary && (
+        <td className="px-4 py-4">
+          <span className="text-sm text-gray-600 font-mono">{screen.id?.slice(0, 8) || '-'}</span>
+        </td>
+      )}
+      {showSecondary && (
+        <td className="px-4 py-4">
+          <button
+            onClick={() => onOpenContentPicker?.(screen)}
+            className={`text-sm hover:underline ${
+              screen.assigned_playlist_id || screen.assigned_layout_id ? 'text-gray-900' : 'text-gray-400'
+            }`}
+          >
+            {getContentDisplay()}
+          </button>
+        </td>
+      )}
+      {showTertiary && (
+        <td className="px-4 py-4">
+          <span className="text-sm text-gray-600">
+            {screen.working_hours?.enabled
+              ? `${screen.working_hours.start || '09:00'} - ${screen.working_hours.end || '18:00'}`
+              : 'Global Working Hours'}
+          </span>
+        </td>
+      )}
       <td className="px-4 py-4">
         <div className="relative">
           <button
