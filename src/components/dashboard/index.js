@@ -4,4 +4,6 @@
  */
 export { HealthBanner } from './HealthBanner';
 export { QuickActionsBar } from './QuickActionsBar';
+export { ActiveContentGrid } from './ActiveContentGrid';
+export { TimelineActivity } from './TimelineActivity';
 export { PendingApprovalsWidget } from './PendingApprovalsWidget';
