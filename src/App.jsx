@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import {
   Home,
   LayoutDashboard,
@@ -14,7 +14,7 @@ import {
   LayoutTemplate,
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
-import { useBranding } from './contexts/BrandingContext';
+import { useBranding, BrandingProvider } from './contexts/BrandingContext';
 import { stopImpersonation } from './services/tenantService';
 import { supabase } from './supabase';
 import { useLogger } from './hooks/useLogger.js';
@@ -96,6 +96,9 @@ const SecurityDashboardPage = lazy(() => import('./pages/SecurityDashboardPage')
 const TranslationDashboardPage = lazy(() => import('./pages/TranslationDashboardPage'));
 
 // Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
+/**
+ *
+ */
 export default function BizScreenApp() {
   return (
     <BrandingProvider>
