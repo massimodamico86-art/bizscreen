@@ -4,7 +4,7 @@
 
 - [x] **v1 Production Release** - Phases 1-12 (shipped 2026-01-24)
 - [x] **v2 Templates & Platform Polish** - Phases 13-23 (shipped 2026-01-27)
-- [x] **v2.1 Tech Debt Cleanup** - Phases 24-28 (shipped 2026-01-28)
+- [ ] **v2.1 Tech Debt Cleanup** - Phases 24-29 (in progress)
 
 ## Overview
 
@@ -21,6 +21,7 @@ This milestone addresses accumulated technical debt from v1 and v2 development. 
 - [x] **Phase 26: Analytics Completion** - Close template usage and rotation weight gaps
 - [x] **Phase 27: Performance Optimization** - Analyze and optimize bundle size
 - [x] **Phase 28: Code Quality** - Enforce standards and improve documentation
+- [ ] **Phase 29: Fix Auto-Removed Imports** - Restore imports removed by ESLint auto-fix
 
 ## Phase Details
 
@@ -119,6 +120,24 @@ Plans:
 
 ---
 
+### Phase 29: Fix Auto-Removed Imports
+**Goal:** Restore imports removed by ESLint auto-fix to fix Player.jsx runtime and test suite
+**Depends on**: Phase 28 (caused by ESLint auto-fix in 28-01)
+**Requirements**: None (gap closure, not new requirements)
+**Gap Closure**: Closes integration gaps from v2.1-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. Player.jsx imports Routes, Route, Navigate from react-router-dom
+  2. Player.jsx imports PairPage from player/components and ViewPage from player/pages
+  3. /player and /player/view routes load without console errors
+  4. All 9 affected test files have restored imports
+  5. Test suite passes with 0 failures (2071+ tests passing)
+**Plans**: 1 plan
+
+Plans:
+- [ ] 29-01-PLAN.md — Restore imports to Player.jsx and test files
+
+---
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -128,9 +147,10 @@ Plans:
 | 26. Analytics Completion | v2.1 | 1/1 | Complete | 2026-01-28 |
 | 27. Performance Optimization | v2.1 | 2/2 | Complete | 2026-01-28 |
 | 28. Code Quality | v2.1 | 2/2 | Complete | 2026-01-28 |
+| 29. Fix Auto-Removed Imports | v2.1 | 0/1 | Pending | - |
 
-**Total v2.1:** 9/9 plans complete ✓
+**Total v2.1:** 9/10 plans complete
 
 ---
 *Roadmap created: 2026-01-27*
-*Last updated: 2026-01-28 — v2.1 Tech Debt Cleanup milestone complete*
+*Last updated: 2026-01-28 — Phase 29 added to close audit gaps*
