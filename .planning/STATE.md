@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 
 ## Current Position
 
-Phase: 24 of 28 (Player Restructure) — Complete ✓
-Plan: 2 of 2 complete
-Status: Phase verified, ready for phase 25
-Last activity: 2026-01-28 — Phase 24 executed and verified
+Phase: 25 of 28 (Test Infrastructure)
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-01-28 — Completed 25-01-PLAN.md (circular dependency fixes)
 
-Progress: [██░░░░░░░░] 20% (2/10 plans)
+Progress: [███░░░░░░░] 30% (3/10 plans)
 
 ## Milestone History
 
@@ -32,7 +32,7 @@ Progress: [██░░░░░░░░] 20% (2/10 plans)
 
 **v2.1:**
 - Plans: 10 total across 5 phases
-- Completed: 2
+- Completed: 3
 
 ## Accumulated Context
 
@@ -51,6 +51,8 @@ v2.1 decisions:
 - Detection-only hooks: notify via callbacks, let consumer handle actions (24-01)
 - Player pages in player/pages/ with barrel exports (24-02)
 - Player.jsx is routing-only, no business logic (24-02)
+- Global vi.mock in setup.js for circular dependency breaking (25-01)
+- Mock permissionsService to bypass DB calls in unit tests (25-01)
 
 ### Pending Todos
 
@@ -63,14 +65,14 @@ Tech debt being addressed in v2.1:
 - ~~Player.jsx at 1,265 lines (265 over target)~~ RESOLVED: Now 23 lines
 - Template usage analytics not recorded for starter packs
 - Campaign rotation weights not enforced in player
-- 18-19 pre-existing failing test files in services
+- ~~18-19 pre-existing failing test files in services~~ RESOLVED: 0 failing (73 files, 2071 tests pass)
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 24 complete and verified
+Stopped at: Completed 25-01-PLAN.md
 Resume file: None
-Next: `/gsd:discuss-phase 25` to gather context for Test Infrastructure
+Next: Execute 25-02-PLAN.md (DST schedule tests)
 
 ---
-*Updated: 2026-01-28 — Phase 24 complete (Player.jsx: 1265 -> 23 lines, verified)*
+*Updated: 2026-01-28 — Plan 25-01 complete (0 failing tests, circular dependency fixed)*
