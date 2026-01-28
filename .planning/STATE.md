@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: None — between milestones
 Plan: None
 Status: Ready for next milestone
-Last activity: 2026-01-28 — Completed quick task 001: Fix login error after credentials
+Last activity: 2026-01-28 — Completed quick task 002: Fix remaining login imports
 
 Progress: [——————————] 0% (ready for next milestone)
 
@@ -66,6 +66,7 @@ All v2.1 tech debt resolved. Minor items accepted:
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 001 | Fix login error after credentials | 2026-01-28 | 1ce2147 | [001-fix-login-error-after-credentials](./quick/001-fix-login-error-after-credentials/) |
+| 002 | Fix remaining login imports | 2026-01-28 | 29bcc3e | [002-fix-remaining-login-imports](./quick/002-fix-remaining-login-imports/) |
 
 ## Session Continuity
 
@@ -75,4 +76,4 @@ Resume file: None
 Next: Start next milestone with /gsd:new-milestone
 
 ---
-*Updated: 2026-01-28 — Quick task 001 completed*
+*Updated: 2026-01-28 — Quick task 002 completed*
