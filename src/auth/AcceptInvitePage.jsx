@@ -9,9 +9,11 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { Loader2, AlertCircle, CheckCircle, Users, LogIn, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { acceptInvite, getInviteDetails, getRoleDisplayName } from '../services/teamService';
+import AuthLayout from './AuthLayout';
 
 const ROLE_ICONS = {
   owner: '👑',
@@ -20,6 +22,9 @@ const ROLE_ICONS = {
   viewer: '👁️',
 };
 
+/**
+ *
+ */
 export default function AcceptInvitePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
