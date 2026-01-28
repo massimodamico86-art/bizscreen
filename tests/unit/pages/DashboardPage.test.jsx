@@ -106,7 +106,7 @@ vi.mock('../../../src/components/onboarding/OnboardingBanner', () => ({
 
 // Mock dashboard sub-components from pages/dashboard
 vi.mock('../../../src/pages/dashboard/WelcomeModal', () => ({
-  default: () => null,
+  WelcomeModal: () => null,
 }));
 
 vi.mock('../../../src/pages/dashboard/OnboardingCards', () => ({
