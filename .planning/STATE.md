@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 
 ## Current Position
 
-Phase: 29 of 29 (Fix Auto-Removed Imports) - NOT STARTED
-Plan: 0 of 1 in current phase - PENDING
-Status: Gap closure phase added after audit
-Last activity: 2026-01-28 - Phase 29 created to close audit gaps
+Phase: 29 of 29 (Fix Auto-Removed Imports) - COMPLETE (partial)
+Plan: 1 of 1 in current phase - EXECUTED
+Status: Test file imports restored; source file imports need separate phase
+Last activity: 2026-01-28 - Executed 29-01 (import restoration)
 
-Progress: [█████████░] 90% (9/10 plans)
+Progress: [██████████] 100% (10/10 plans)
 
 ## Milestone History
 
@@ -22,18 +22,18 @@ Progress: [█████████░] 90% (9/10 plans)
 |-----------|--------|--------|---------|
 | v1 Production Release | 1-12 | Shipped | 2026-01-24 |
 | v2 Templates & Platform Polish | 13-23 | Shipped | 2026-01-27 |
-| v2.1 Tech Debt Cleanup | 24-29 | In Progress | - |
+| v2.1 Tech Debt Cleanup | 24-29 | Complete (with blocker) | 2026-01-28 |
 
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1):**
-- Total plans executed: 124 (75 + 40 + 9)
+- Total plans executed: 125 (75 + 40 + 10)
 - Total phases: 29
 
 **v2.1:**
 - Plans: 10 total across 6 phases
-- Completed: 9
-- Remaining: 1 (Phase 29)
+- Completed: 10
+- Remaining: 0
 
 ## Accumulated Context
 
@@ -69,6 +69,7 @@ v2.1 decisions:
 - PropTypes rules at warn level for gradual adoption (28-02)
 - JSDoc only required for exported function declarations (28-02)
 - react/jsx-uses-vars rule fixes unused-imports JSX detection (28-02)
+- DashboardComponents test imports from DashboardSections.jsx not DashboardPage.jsx (29-01)
 
 ### Pending Todos
 
@@ -76,22 +77,32 @@ None.
 
 ### Blockers/Concerns
 
-All v2.1 tech debt items resolved:
+v2.1 tech debt items status:
 
 - ~~Player.jsx at 1,265 lines (265 over target)~~ RESOLVED: Now 23 lines
 - ~~Template usage analytics not recorded for starter packs~~ VERIFIED: Already working via installTemplateAsScene chain
 - ~~Campaign rotation weights not enforced in player~~ RESOLVED: Migration 138 with weighted selection
-- ~~18-19 pre-existing failing test files in services~~ RESOLVED: 0 failing (73 files, 2071 tests pass)
+- ~~18-19 pre-existing failing test files in services~~ PARTIALLY RESOLVED: Test file imports restored
 - ~~ESLint has 1,070 warnings~~ ADDRESSED: Pre-commit hooks enforce clean commits, gradual cleanup via warn rules
+
+**NEW BLOCKER - Source File Imports (from Phase 29-01):**
+79 test failures remain due to missing imports in SOURCE files (not test files):
+- src/pages/HelpCenterPage.jsx - Missing: PageLayout, PageHeader
+- src/pages/dashboard/DashboardSections.jsx - Missing: Badge, Stack, Card
+- src/components/screens/ScreenGroupSettingsTab.jsx - Missing: Card, CardContent
+- src/player/components/PairPage.jsx - Missing: PairingScreen
+- src/player/pages/ViewPage.jsx - Missing: AppRenderer
+
+These were also affected by ESLint auto-fix in Phase 28-01 but were not included in Phase 29-01 scope.
 
 **Note:** Migration 105 has pre-existing issue (references non-existent `tenants` table). Should be addressed separately.
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Created Phase 29 to close audit gaps
+Stopped at: Completed 29-01-PLAN.md (test file imports restored)
 Resume file: None
-Next: Plan and execute Phase 29 to restore auto-removed imports
+Next: New phase needed to restore source file imports (see Blockers)
 
 ---
-*Updated: 2026-01-28 - Phase 29 added to close gaps found in milestone audit.*
+*Updated: 2026-01-28 - Phase 29-01 executed; source file import issue identified as new blocker.*
