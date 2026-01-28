@@ -62,10 +62,10 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 
 ### Mobile Responsive Admin
 
-- [ ] **MOBIL-01**: Admin UI displays correctly on mobile devices (responsive layout)
-- [ ] **MOBIL-02**: Data tables adapt to mobile screen size (horizontal scroll or card view)
-- [ ] **MOBIL-03**: Navigation is touch-friendly on mobile devices
-- [ ] **MOBIL-04**: Critical actions accessible without horizontal scrolling
+- [x] **MOBIL-01**: Admin UI displays correctly on mobile devices (responsive layout)
+- [x] **MOBIL-02**: Data tables adapt to mobile screen size (horizontal scroll or card view)
+- [x] **MOBIL-03**: Navigation is touch-friendly on mobile devices
+- [x] **MOBIL-04**: Critical actions accessible without horizontal scrolling
 
 ### Onboarding
 
@@ -76,10 +76,10 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 
 ### Dashboard
 
-- [ ] **DASH-01**: Dashboard shows overview of active content across screens
-- [ ] **DASH-02**: Dashboard provides quick actions (add screen, create content, view analytics)
-- [ ] **DASH-03**: Dashboard displays health indicators (offline screens, errors, warnings)
-- [ ] **DASH-04**: Dashboard shows recent activity and notifications
+- [x] **DASH-01**: Dashboard shows overview of active content across screens
+- [x] **DASH-02**: Dashboard provides quick actions (add screen, create content, view analytics)
+- [x] **DASH-03**: Dashboard displays health indicators (offline screens, errors, warnings)
+- [x] **DASH-04**: Dashboard shows recent activity and notifications
 
 ### Technical Foundation
 
@@ -170,14 +170,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LANG-09 | Phase 21 | Complete |
 | LANG-10 | Phase 21 | Complete |
 | TECH-04 | Phase 21 | Complete |
-| MOBIL-01 | Phase 22 | Pending |
-| MOBIL-02 | Phase 22 | Pending |
-| MOBIL-03 | Phase 22 | Pending |
-| MOBIL-04 | Phase 22 | Pending |
-| DASH-01 | Phase 22 | Pending |
-| DASH-02 | Phase 22 | Pending |
-| DASH-03 | Phase 22 | Pending |
-| DASH-04 | Phase 22 | Pending |
+| MOBIL-01 | Phase 22 | Complete |
+| MOBIL-02 | Phase 22 | Complete |
+| MOBIL-03 | Phase 22 | Complete |
+| MOBIL-04 | Phase 22 | Complete |
+| DASH-01 | Phase 22 | Complete |
+| DASH-02 | Phase 22 | Complete |
+| DASH-03 | Phase 22 | Complete |
+| DASH-04 | Phase 22 | Complete |
 | ONBRD-01 | Phase 23 | Pending |
 | ONBRD-02 | Phase 23 | Pending |
 | ONBRD-03 | Phase 23 | Pending |
