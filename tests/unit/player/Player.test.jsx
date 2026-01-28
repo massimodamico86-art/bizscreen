@@ -43,6 +43,7 @@
 
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { render } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 // ============================================================================
 // GLOBAL MOCKS - Applied before module imports

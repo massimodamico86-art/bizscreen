@@ -14,6 +14,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, act, cleanup } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 // Test constants
 const TEST_SCREEN_ID = 'test-screen-123';
@@ -157,6 +158,7 @@ vi.mock('qrcode.react', () => ({
 }));
 
 // Import Player after mocks are set up
+import Player from '../../../src/Player';
 import { updateDeviceStatus, HEARTBEAT_INTERVAL } from '../../../src/services/playerService';
 import { checkDeviceRefreshStatus, clearDeviceRefreshFlag } from '../../../src/services/deviceSyncService';
 import { captureAndUploadScreenshot, cleanupOldScreenshots } from '../../../src/services/screenshotService';
