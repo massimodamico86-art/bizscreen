@@ -3,6 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Loader2, Shield, ShieldCheck, ShieldOff, AlertCircle, Key, Check, Copy } from 'lucide-react';
 import {
   getMfaStatus,
   enrollMfa,
@@ -11,7 +12,13 @@ import {
   generateRecoveryCodes,
 } from '../../services/mfaService';
 import { useLogger } from '../../hooks/useLogger.js';
+import { Button } from '../../design-system';
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function TwoFactorSetup({ showToast }) {
   const logger = useLogger('TwoFactorSetup');
   const [loading, setLoading] = useState(true);

@@ -3,8 +3,18 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Loader2, AlertTriangle, Check, X } from 'lucide-react';
 import { validatePassword, checkPasswordBreach } from '../../services/passwordService';
 
+/**
+ *
+ * @param root0
+ * @param root0.password
+ * @param root0.email
+ * @param root0.onValidationChange
+ * @param root0.checkBreaches
+ * @param root0.showRequirements
+ */
 export default function PasswordStrengthIndicator({
   password,
   email = '',

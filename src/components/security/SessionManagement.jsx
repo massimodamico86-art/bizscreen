@@ -3,13 +3,20 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Loader2, Shield, AlertCircle, Smartphone, Tablet, Monitor, Clock, MapPin, LogOut } from 'lucide-react';
 import {
   getActiveSessions,
   revokeSession,
   revokeAllOtherSessions,
   formatSession,
 } from '../../services/sessionService';
+import { Button } from '../../design-system';
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function SessionManagement({ showToast }) {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -3,8 +3,15 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Loader2, History, AlertCircle, CheckCircle, XCircle, Shield, Smartphone, Tablet, Monitor, MapPin } from 'lucide-react';
 import { getLoginHistory } from '../../services/sessionService';
+import { Button } from '../../design-system';
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function LoginHistory({ showToast }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
