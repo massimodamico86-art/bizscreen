@@ -64,11 +64,11 @@ Plans:
   2. loggingService and supabase imports work without circular dependency errors
   3. scheduleService, offlineService, and playerService have test coverage for critical paths
   4. TEST-PATTERNS.md exists with mock patterns and guidelines
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 25-01: Fix circular dependencies and bulk test failures
-- [ ] 25-02: Add critical path coverage and document patterns
+- [ ] 25-01-PLAN.md — Fix circular dependencies and bulk test failures
+- [ ] 25-02-PLAN.md — Create shared fixtures and document patterns
 
 ---
 
@@ -133,4 +133,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-27*
-*Last updated: 2026-01-27*
+*Last updated: 2026-01-28*
