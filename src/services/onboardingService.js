@@ -311,3 +311,86 @@ export async function syncOnboardingProgress() {
 
   return getOnboardingProgress();
 }
+
+// ============================================================================
+// WELCOME TOUR FUNCTIONS
+// ============================================================================
+
+/**
+ * @typedef {Object} WelcomeTourProgress
+ * @property {boolean} completedWelcomeTour - Whether tour is complete
+ * @property {number} currentTourStep - Current step index (0-based)
+ * @property {string|null} tourSkippedAt - When tour was skipped
+ * @property {string|null} skippedAt - When onboarding was skipped
+ */
+
+/**
+ * Get welcome tour progress
+ * @returns {Promise<WelcomeTourProgress>}
+ */
+export async function getWelcomeTourProgress() {
+  const { data, error } = await supabase.rpc('get_welcome_tour_progress');
+
+  if (error) {
+    logger.error('Error fetching welcome tour progress:', { error });
+    return {
+      completedWelcomeTour: false,
+      currentTourStep: 0,
+      tourSkippedAt: null,
+      skippedAt: null
+    };
+  }
+
+  const row = Array.isArray(data) ? data[0] : data;
+  return {
+    completedWelcomeTour: row?.completed_welcome_tour || false,
+    currentTourStep: row?.current_tour_step || 0,
+    tourSkippedAt: row?.tour_skipped_at || null,
+    skippedAt: row?.skipped_at || null
+  };
+}
+
+/**
+ * Update welcome tour step progress
+ * @param {number} step - Current step index (0-based)
+ * @param {boolean} completed - Whether tour is complete
+ * @returns {Promise<{success: boolean, step?: number, completed?: boolean, error?: string}>}
+ */
+export async function updateWelcomeTourStep(step, completed = false) {
+  const { data, error } = await supabase.rpc('update_welcome_tour_step', {
+    p_step: step,
+    p_completed: completed
+  });
+
+  if (error) {
+    logger.error('Error updating welcome tour step:', { error });
+    return { success: false, error: error.message };
+  }
+
+  return data || { success: true };
+}
+
+/**
+ * Skip welcome tour
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function skipWelcomeTour() {
+  const { data, error } = await supabase.rpc('skip_welcome_tour');
+
+  if (error) {
+    logger.error('Error skipping welcome tour:', { error });
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+/**
+ * Check if welcome tour should be shown
+ * Shows tour if: not completed, not tour-skipped, and not onboarding-skipped
+ * @returns {Promise<boolean>}
+ */
+export async function shouldShowWelcomeTour() {
+  const progress = await getWelcomeTourProgress();
+  return !progress.completedWelcomeTour && !progress.tourSkippedAt && !progress.skippedAt;
+}
