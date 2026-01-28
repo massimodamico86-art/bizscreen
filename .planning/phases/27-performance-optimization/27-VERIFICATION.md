@@ -57,3 +57,49 @@ This confirms that when Player imports from shared barrel exports (like services
 | Barrel exports tree-shaken | Dashboard components not in Player | PASS |
 | Unused exports removed | Test export verification | PASS |
 | Build succeeds | npm run build | PASS |
+
+## Player Route Analysis
+
+**Decision:** Already optimal
+
+**Rationale:**
+
+The Player chunk (280.82 KB raw / 68.88 KB gzip) contains only player-related code:
+
+**Core Components:**
+- `Player.jsx` - 23 lines of routing
+- `PairPage.jsx` - Device pairing (~410 lines)
+- `ViewPage.jsx` - TV playback engine (~1,203 lines)
+
+**Essential Services (all required for offline TV playback):**
+- `sceneDesignService` - Animation keyframes, block animations, slide transitions
+- `dataSourceService` - Real-time data source subscriptions
+- `dataBindingResolver` - Dynamic content binding
+- `mediaPreloader` - Asset preloading for smooth playback
+- `playerService` - Command polling, offline cache, heartbeat
+- `playbackTrackingService` - Scene tracking, analytics
+- `playerAnalyticsService` - Playback events
+- `realtimeService` - WebSocket subscriptions
+- `deviceSyncService` - Scene updates, refresh flags
+- `screenshotService` - Capture and upload
+- `offlineService` - Service worker registration
+
+**Widget Components:**
+- ClockWidget, DateWidget, WeatherWidget, QRCodeWidget
+
+**Why the size is justified:**
+1. Player route is a complete TV playback application
+2. Requires offline support (content must work without network)
+3. Requires real-time sync (commands, content updates)
+4. Requires analytics (playback tracking)
+5. Cannot lazy-load core player functionality (content must play immediately)
+6. No dashboard components found in Player chunk (verified via grep)
+
+**Measurements:**
+- Player chunk: 280.82 KB raw / 68.88 KB gzip (unchanged from baseline)
+- 27-BASELINE.md explicitly states: "The Player chunk size (68.88 KB gzip) is justified"
+
+**No optimization opportunities within scope:**
+- All services in Player chunk ARE needed by Player route
+- No dashboard code found
+- Further reduction would require architectural changes not recommended for v2.1
