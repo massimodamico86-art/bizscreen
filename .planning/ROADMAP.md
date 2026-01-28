@@ -94,11 +94,11 @@ Plans:
   1. Bundle analysis report exists with baseline metrics
   2. Major routes load their own chunks (dashboard, editor, player)
   3. Unused exports are not included in production bundles
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 27-01: Analyze bundle and establish baseline
-- [ ] 27-02: Implement code splitting and verify tree shaking
+- [ ] 27-01-PLAN.md — Analyze bundle and establish baseline
+- [ ] 27-02-PLAN.md — Implement code splitting and verify tree shaking
 
 ---
 
