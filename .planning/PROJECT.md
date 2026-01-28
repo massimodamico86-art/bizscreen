@@ -2,116 +2,55 @@
 
 ## What This Is
 
-BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day, and monitor device status remotely. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices.
+BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, and monitor device status remotely. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices.
 
 ## Core Value
 
-**Screens reliably display the right content at the right time, even when offline.** Everything else — the editor, the scheduling, the analytics — exists to ensure content reaches screens correctly and plays without interruption.
+**Screens reliably display the right content at the right time, even when offline.** Everything else — the editor, the scheduling, the templates, the translations — exists to ensure content reaches screens correctly and plays without interruption.
 
 ## Requirements
 
 ### Validated
 
-These capabilities shipped in v1 Production Release (2026-01-24):
+These capabilities shipped and are production-verified:
 
-**Pre-existing (validated before v1):**
-- ✓ User authentication with MFA support
-- ✓ Screen registration with OTP pairing codes
-- ✓ Remote device commands (reboot, reload, clear cache)
-- ✓ Screen heartbeat and online/offline status
-- ✓ Media upload with S3 presigned URLs
-- ✓ Media deletion with reference checking
-- ✓ Playlist CRUD with item reordering
-- ✓ Scene design with visual editor (Polotno)
-- ✓ Layout creation with zone management
-- ✓ Schedule creation with time/day rules
-- ✓ Filler content for empty schedule slots
-- ✓ Real-time content sync to devices
-- ✓ Offline content caching in player
-- ✓ Play count and uptime analytics
-- ✓ User invite and team management
-- ✓ Role-based access control (RLS)
-- ✓ Feature flags for plan-gated features
-- ✓ Login rate limiting (5 attempts → 15min lockout)
-- ✓ Activity audit logging
-- ✓ Server-side pagination on content lists
+**v1 Production Release (2026-01-24):**
+- ✓ User authentication with MFA support — v1
+- ✓ Screen registration with OTP pairing codes — v1
+- ✓ Remote device commands (reboot, reload, clear cache) — v1
+- ✓ Screen heartbeat and online/offline status — v1
+- ✓ Media upload with S3 presigned URLs — v1
+- ✓ Playlist CRUD with item reordering — v1
+- ✓ Scene design with visual editor (Polotno) — v1
+- ✓ Layout creation with zone management — v1
+- ✓ Schedule creation with time/day rules — v1
+- ✓ Real-time content sync to devices — v1
+- ✓ Offline content caching in player — v1
+- ✓ Play count and uptime analytics — v1
+- ✓ Role-based access control (RLS) — v1
+- ✓ Content approval workflow — v1
+- ✓ GDPR compliance (export, deletion) — v1
+- ✓ XSS prevention, password policies, rate limiting — v1
 
-**Testing Infrastructure (v1):**
-- ✓ Player characterization tests (offline, sync, heartbeat) — v1
-- ✓ Critical service unit tests (scheduleService, offlineService) — v1
-
-**Security Hardening (v1):**
-- ✓ XSS prevention with DOMPurify sanitization — v1
-- ✓ Password policy (8+ chars, complexity) — v1
-- ✓ Global API rate limiting — v1
-- ✓ Structured logging with PII redaction — v1
-
-**Critical Fixes (v1):**
-- ✓ Schedule conflict detection UI — v1
-- ✓ Save layout as template — v1
-- ✓ Timezone validation (IANA format) — v1
-- ✓ Storage quota enforcement — v1
-- ✓ Email notifications via Resend — v1
-
-**Player Reliability (v1):**
-- ✓ Exponential backoff with jitter — v1
-- ✓ Offline screenshot sync — v1
-- ✓ Kiosk password validation — v1
-- ✓ Error logging in catch blocks — v1
-
-**Refactoring (v1):**
-- ✓ Player custom hooks extracted — v1
-- ✓ MediaLibraryPage refactored — v1
-- ✓ ScreensPage refactored — v1
-- ✓ PlaylistEditorPage refactored — v1
-- ✓ CampaignEditorPage refactored — v1
-- ✓ FeatureFlagsPage refactored — v1
-
-**Device Experience (v1):**
-- ✓ QR code pairing — v1
-- ✓ Hidden kiosk exit (tap sequence + PIN) — v1
-- ✓ Offline PIN validation — v1
-
-**Analytics (v1):**
-- ✓ View duration tracking — v1
-- ✓ Completion rates — v1
-- ✓ Content performance dashboard — v1
-- ✓ Viewing heatmaps (7x24 grid) — v1
-
-**GDPR Compliance (v1):**
-- ✓ Data export (right to portability) — v1
-- ✓ Account deletion with cascade — v1
-- ✓ S3/Cloudinary media cleanup — v1
-
-**Content Approval (v1):**
-- ✓ Submit for approval — v1
-- ✓ Review queue — v1
-- ✓ Approve/reject with comments — v1
-- ✓ Publishing gate (block unapproved) — v1
-- ✓ Email notifications — v1
+**v2 Templates & Platform Polish (2026-01-27):**
+- ✓ Templates marketplace with browse, search, preview, one-click apply — v2
+- ✓ Favorites, recents, and starter packs — v2
+- ✓ Template customization wizard — v2
+- ✓ Template ratings and suggestions — v2
+- ✓ Language variants of scenes — v2
+- ✓ Device language assignment with fallback — v2
+- ✓ Translation dashboard and AI suggestions — v2
+- ✓ Campaigns with priority scheduling — v2
+- ✓ Emergency content override — v2
+- ✓ Dayparting presets — v2
+- ✓ Campaign analytics and templates — v2
+- ✓ Mobile responsive admin UI — v2
+- ✓ Dashboard redesign with health indicators — v2
+- ✓ Guided onboarding flow — v2
 
 ### Active
 
-**Current Milestone: v2 Templates & Platform Polish**
-
-**Goal:** Enable users to easily find and use pre-built content while improving the admin experience across all devices.
-
-**Target features:**
-
-*New capabilities:*
-- Templates marketplace (browse, import, customize pre-built scenes/layouts)
-- Multi-language content (same content in multiple languages, device selection)
-- Advanced scheduling (campaigns, date ranges, priority rules, content rotation)
-
-*Platform polish:*
-- Mobile responsive admin UI
-- Guided onboarding flow for new users
-- Dashboard redesign with better overview and quick actions
-
-*Technical foundation:*
-- Player.jsx component splitting
-- Structured logging completion (38% remaining)
-- Test coverage improvements (flaky test fix, critical path coverage)
+No active requirements. Ready for v3 planning.
 
 ### Out of Scope
 
@@ -121,22 +60,30 @@ These capabilities shipped in v1 Production Release (2026-01-24):
 - Multi-region data residency — single Supabase instance
 - Offline-first admin UI — admin requires connectivity
 - TypeScript migration — too disruptive; JavaScript works
+- RTL language support (Hebrew, Arabic) — requires complete UI/content mirroring
+- CJK languages — font/rendering complexity, special testing required
+- User template marketplace (buy/sell) — complex moderation/payment
+- AI-generated templates — unpredictable results
+- Conditional scheduling triggers — high complexity
+- Per-viewer personalization — privacy concerns
 
 ## Context
 
-**Current State (Post v1):**
+**Current State (Post v2):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- 165,290 lines of JavaScript/JSX across codebase
+- 178,160 lines of JavaScript/JSX across codebase
 - Player component supports web, Android, iOS, WebOS, Tizen
 - Multi-tenant with feature flags for plan differentiation
 - AWS S3 for media storage with CloudFront CDN
-- 12 database migrations added in v1
+- Templates marketplace with 13 template features
+- Multi-language content with 10 language features
+- Advanced scheduling with 12 scheduling features
+- Mobile responsive admin and guided onboarding
 
 **Technical Debt:**
-- Player.jsx at 2775 lines (hooks extracted, component splitting deferred)
-- 38% of services lack structured logging
-- MediaLibraryPage 9% over target (875 vs 800 lines)
-- 1 flaky test in useCampaignEditor
+- Player.jsx at 1,265 lines (265 over target, accepted)
+- Template usage analytics not recorded for starter packs
+- Campaign rotation weights not enforced in player
 
 **Codebase Mapping:**
 - `.planning/codebase/ARCHITECTURE.md` — system design
@@ -156,12 +103,15 @@ These capabilities shipped in v1 Production Release (2026-01-24):
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Stabilize before new features | Logic gaps pose production risk | ✓ Good — v1 stable |
-| Full refactoring approved | Large components block maintenance | ✓ Good — 70% reduction |
-| All 4 Phase 2 features included | User wants complete product | ✓ Good — all shipped |
-| Comprehensive scope | User selected all options | ✓ Good — v1 complete |
-| Hooks before component extraction | Proven pattern needed first | ✓ Good — pattern works |
-| Accept 9% deviation on MediaLibraryPage | 60% reduction still achieved | ✓ Acceptable |
-| Full jitter for retry backoff | Prevents thundering herd | ✓ Good — implemented |
+| Player.jsx hooks before component extraction | Proven pattern needed first | ✓ Good — pattern works |
+| Accept 1,265 lines Player.jsx | 56% reduction still achieved | ✓ Acceptable |
+| Build order: Scheduling > Templates > Multi-Language | Risk order (extends > enhances > new) | ✓ Good — smooth progression |
+| TZDate for schedule calculations | DST-safe handling required | ✓ Good — no DST bugs |
+| Separate scenes for language variants | Simpler than embedded JSONB | ✓ Good — clean model |
+| 3-level language fallback via RPC | Prevent blank screens | ✓ Good — no blank screens |
+| Emergency bypasses language resolution | Same content for all devices | ✓ Good — instant push works |
+| Starter packs via inline expansion | Better UX than separate page | ✓ Good — high engagement |
+| Modal wizard for customization | Single-screen form per research | ✓ Good — fast completion |
 
 ---
-*Last updated: 2026-01-24 after v2 milestone started*
+*Last updated: 2026-01-27 after v2 milestone*

@@ -1,3 +1,13 @@
+# Requirements Archive: v2 Templates & Platform Polish
+
+**Archived:** 2026-01-27
+**Status:** SHIPPED
+
+This is the archived requirements specification for v2.
+For current requirements, see `.planning/REQUIREMENTS.md` (created for next milestone).
+
+---
+
 # Requirements: BizScreen v2
 
 **Defined:** 2026-01-24
@@ -127,17 +137,18 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
+Which phases cover which requirements.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TECH-01 | Phase 13 | Pending |
-| TECH-02 | Phase 13 | Pending |
-| TECH-03 | Phase 13 | Pending |
-| SCHED-01 | Phase 14 | Pending |
-| SCHED-02 | Phase 14 | Pending |
-| SCHED-03 | Phase 14 | Pending |
-| SCHED-04 | Phase 14 | Pending |
+| TECH-01 | Phase 13 | Complete |
+| TECH-02 | Phase 13 | Complete |
+| TECH-03 | Phase 13 | Complete |
+| TECH-04 | Phase 21 | Complete |
+| SCHED-01 | Phase 14 | Complete |
+| SCHED-02 | Phase 14 | Complete |
+| SCHED-03 | Phase 14 | Complete |
+| SCHED-04 | Phase 14 | Complete |
 | SCHED-05 | Phase 15 | Complete |
 | SCHED-06 | Phase 15 | Complete |
 | SCHED-07 | Phase 15 | Complete |
@@ -146,16 +157,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCHED-10 | Phase 16 | Complete |
 | SCHED-11 | Phase 16 | Complete |
 | SCHED-12 | Phase 16 | Complete |
-| TMPL-01 | Phase 17 | Pending |
-| TMPL-02 | Phase 17 | Pending |
-| TMPL-03 | Phase 17 | Pending |
-| TMPL-04 | Phase 17 | Pending |
-| TMPL-05 | Phase 17 | Pending |
-| TMPL-06 | Phase 17 | Pending |
-| TMPL-07 | Phase 18 | Pending |
-| TMPL-08 | Phase 18 | Pending |
-| TMPL-09 | Phase 18 | Pending |
-| TMPL-10 | Phase 18 | Pending |
+| TMPL-01 | Phase 17 | Complete |
+| TMPL-02 | Phase 17 | Complete |
+| TMPL-03 | Phase 17 | Complete |
+| TMPL-04 | Phase 17 | Complete |
+| TMPL-05 | Phase 17 | Complete |
+| TMPL-06 | Phase 17 | Complete |
+| TMPL-07 | Phase 18 | Complete |
+| TMPL-08 | Phase 18 | Complete |
+| TMPL-09 | Phase 18 | Complete |
+| TMPL-10 | Phase 18 | Complete |
 | TMPL-11 | Phase 19 | Complete |
 | TMPL-12 | Phase 19 | Complete |
 | TMPL-13 | Phase 19 | Complete |
@@ -169,7 +180,6 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LANG-08 | Phase 21 | Complete |
 | LANG-09 | Phase 21 | Complete |
 | LANG-10 | Phase 21 | Complete |
-| TECH-04 | Phase 21 | Complete |
 | MOBIL-01 | Phase 22 | Complete |
 | MOBIL-02 | Phase 22 | Complete |
 | MOBIL-03 | Phase 22 | Complete |
@@ -185,9 +195,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 **Coverage:**
 - v2 requirements: 49 total
-- Mapped to phases: 49
-- Unmapped: 0
+- Shipped: 49/49 (100%)
+- Dropped: 0
 
 ---
-*Requirements defined: 2026-01-24*
-*Last updated: 2026-01-24 after roadmap creation*
+
+## Milestone Summary
+
+**Shipped:** 49 of 49 v2 requirements
+**Adjusted:**
+- TECH-01: Player.jsx reduced 56% (1,265 lines vs target <1000) - accepted as sufficient
+
+**Dropped:** None
+
+---
+
+*Archived: 2026-01-27 as part of v2 milestone completion*
