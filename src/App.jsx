@@ -44,6 +44,7 @@ import {
   Store,
   Share2,
   Bell,
+  Menu,
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { BrandingProvider, useBranding } from './contexts/BrandingContext';
@@ -60,7 +61,8 @@ import AutoBuildOnboardingModal from './components/onboarding/AutoBuildOnboardin
 import { fetchScenesForTenant } from './services/sceneService';
 import { EmergencyProvider, useEmergency } from './contexts/EmergencyContext';
 import { EmergencyBanner } from './components/campaigns';
-import { Header } from './components/layout';
+import { Header, MobileNav } from './components/layout';
+import { useBreakpoints } from './hooks/useMediaQuery';
 import { useTranslation } from './i18n';
 import { useFeatureFlags } from './hooks/useFeatureFlag';
 import { Feature } from './config/plans';
@@ -770,6 +772,8 @@ function ClientUILayout({
   PageLoader,
 }) {
   const { isActive: isEmergencyActive } = useEmergency();
+  const { isDesktop } = useBreakpoints();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Update emergency height based on active state
   useEffect(() => {
@@ -815,6 +819,8 @@ function ClientUILayout({
         </div>
       )}
 
+      {/* Desktop Sidebar - only show on lg+ */}
+      {isDesktop && (
       <aside
         className="bg-white border-r border-gray-200 flex flex-col"
         style={{ marginTop: topOffset, width: '211px' }}
@@ -938,8 +944,41 @@ function ClientUILayout({
           </button>
         </div>
       </aside>
+      )}
 
-      <main id="main-content" className="flex-1 flex flex-col overflow-hidden bg-[#f6f8fb]" style={{ marginTop: topOffset }}>
+      {/* Mobile Nav - slide-out overlay */}
+      <MobileNav
+        open={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+        navigation={navigation}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        mediaExpanded={mediaExpanded}
+        setMediaExpanded={setMediaExpanded}
+        branding={branding}
+        topOffset={topOffset}
+      />
+
+      <main id="main-content" className="flex-1 flex flex-col overflow-hidden bg-[#f6f8fb]" style={{ marginTop: isDesktop ? topOffset : 0 }}>
+        {/* Mobile Header Bar with Hamburger */}
+        {!isDesktop && (
+          <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200">
+            <button
+              onClick={() => setMobileNavOpen(true)}
+              className="p-2 -ml-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Open navigation"
+            >
+              <Menu size={24} />
+            </button>
+            {/* Logo for mobile */}
+            {branding?.logoUrl ? (
+              <img src={branding.logoUrl} alt="" className="h-6 object-contain" />
+            ) : (
+              <span className="font-semibold text-gray-900">{branding?.businessName}</span>
+            )}
+          </div>
+        )}
+
         {/* Top Header Bar with Emergency Push */}
         <Header
           currentPage={currentPage}
