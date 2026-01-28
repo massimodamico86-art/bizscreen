@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 
 ## Current Position
 
-Phase: 27 of 28 (Performance Optimization) — Complete
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-01-28 — Completed 27-02-PLAN.md
+Phase: 28 of 28 (Code Quality)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-01-28 — Completed 28-01-PLAN.md
 
-Progress: [███████░░░] 70% (7/10 plans)
+Progress: [████████░░] 80% (8/10 plans)
 
 ## Milestone History
 
@@ -27,12 +27,12 @@ Progress: [███████░░░] 70% (7/10 plans)
 ## Performance Metrics
 
 **Cumulative (v1 + v2):**
-- Total plans executed: 114 (75 + 39)
+- Total plans executed: 115 (75 + 40)
 - Total phases: 23
 
 **v2.1:**
 - Plans: 10 total across 5 phases
-- Completed: 7
+- Completed: 8
 
 ## Accumulated Context
 
@@ -62,6 +62,9 @@ v2.1 decisions:
 - vendor-motion preload (37 KB) deferred as optimization target (27-01)
 - sideEffects: ['*.css', '*.scss'] enables tree shaking (27-02)
 - Bundle warning threshold: chunks >200KB gzip need investigation (27-02)
+- Unused vars as warn, not error - allows gradual cleanup (28-01)
+- useEmergencyOptional hook pattern for safe context access outside provider (28-01)
+- Pre-commit hooks auto-fix unused imports before commit (28-01)
 
 ### Pending Todos
 
@@ -75,15 +78,16 @@ Tech debt being addressed in v2.1:
 - ~~Template usage analytics not recorded for starter packs~~ VERIFIED: Already working via installTemplateAsScene chain
 - ~~Campaign rotation weights not enforced in player~~ RESOLVED: Migration 138 with weighted selection
 - ~~18-19 pre-existing failing test files in services~~ RESOLVED: 0 failing (73 files, 2071 tests pass)
+- ESLint has 1,070 warnings (unused vars, console statements, undefined vars) - will address in 28-02
 
 **Note:** Migration 105 has pre-existing issue (references non-existent `tenants` table). Should be addressed separately.
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed Phase 27 (Performance Optimization)
+Stopped at: Completed 28-01-PLAN.md (ESLint enforcement)
 Resume file: None
-Next: `/gsd:discuss-phase 28` for Code Quality
+Next: 28-02-PLAN.md for remaining code quality cleanup
 
 ---
-*Updated: 2026-01-28 — Phase 27 complete (tree shaking enabled, bundle verified, PERF-01/02/03 satisfied)*
+*Updated: 2026-01-28 — ESLint enforcement with pre-commit hooks, 0 errors, 1,070 warnings for future cleanup*
