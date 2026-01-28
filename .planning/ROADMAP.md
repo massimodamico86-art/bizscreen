@@ -17,7 +17,7 @@ This milestone addresses accumulated technical debt from v1 and v2 development. 
 - v2.1 phases: 24-28
 
 - [x] **Phase 24: Player Restructure** - Extract 1265-line Player.jsx into modular components
-- [ ] **Phase 25: Test Infrastructure** - Fix failing tests and establish patterns
+- [x] **Phase 25: Test Infrastructure** - Fix failing tests and establish patterns
 - [ ] **Phase 26: Analytics Completion** - Close template usage and rotation weight gaps
 - [ ] **Phase 27: Performance Optimization** - Analyze and optimize bundle size
 - [ ] **Phase 28: Code Quality** - Enforce standards and improve documentation
@@ -67,8 +67,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 25-01-PLAN.md — Fix circular dependencies and bulk test failures
-- [ ] 25-02-PLAN.md — Create shared fixtures and document patterns
+- [x] 25-01-PLAN.md — Fix circular dependencies and bulk test failures
+- [x] 25-02-PLAN.md — Create shared fixtures and document patterns
 
 ---
 
@@ -124,12 +124,12 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 24. Player Restructure | v2.1 | 2/2 | Complete | 2026-01-27 |
-| 25. Test Infrastructure | v2.1 | 0/2 | Not started | - |
+| 25. Test Infrastructure | v2.1 | 2/2 | Complete | 2026-01-28 |
 | 26. Analytics Completion | v2.1 | 0/1 | Not started | - |
 | 27. Performance Optimization | v2.1 | 0/2 | Not started | - |
 | 28. Code Quality | v2.1 | 0/2 | Not started | - |
 
-**Total v2.1:** 2/9 plans complete
+**Total v2.1:** 4/9 plans complete
 
 ---
 *Roadmap created: 2026-01-27*

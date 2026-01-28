@@ -17,10 +17,10 @@ Requirements for v2.1 Tech Debt Cleanup milestone. Each maps to roadmap phases.
 
 ### Test Infrastructure
 
-- [ ] **TEST-01**: All 18-19 failing service test files fixed and passing
-- [ ] **TEST-02**: Circular dependency issues resolved (loggingService/supabase)
-- [ ] **TEST-03**: Critical path test coverage added (scheduleService, offlineService, playerService)
-- [ ] **TEST-04**: Test patterns and guidelines documented
+- [x] **TEST-01**: All 18-19 failing service test files fixed and passing
+- [x] **TEST-02**: Circular dependency issues resolved (loggingService/supabase)
+- [x] **TEST-03**: Critical path test coverage added (scheduleService, offlineService, playerService)
+- [x] **TEST-04**: Test patterns and guidelines documented
 
 ### Analytics Gaps
 
@@ -76,10 +76,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PLAY-03 | Phase 24 | Complete |
 | PLAY-04 | Phase 24 | Complete |
 | PLAY-05 | Phase 24 | Complete |
-| TEST-01 | Phase 25 | Pending |
-| TEST-02 | Phase 25 | Pending |
-| TEST-03 | Phase 25 | Pending |
-| TEST-04 | Phase 25 | Pending |
+| TEST-01 | Phase 25 | Complete |
+| TEST-02 | Phase 25 | Complete |
+| TEST-03 | Phase 25 | Complete |
+| TEST-04 | Phase 25 | Complete |
 | ANLY-01 | Phase 26 | Pending |
 | ANLY-02 | Phase 26 | Pending |
 | PERF-01 | Phase 27 | Pending |
@@ -97,4 +97,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-27*
-*Last updated: 2026-01-27 after roadmap creation*
+*Last updated: 2026-01-28 after phase 25 completion*
