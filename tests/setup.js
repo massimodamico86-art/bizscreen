@@ -7,6 +7,56 @@ import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 
+// CRITICAL: Mock loggingService globally to break circular dependency
+// loggingService imports supabase, supabase imports loggingService
+// This mock is hoisted and replaces the module before any imports can trigger the cycle
+vi.mock('../src/services/loggingService.js', () => ({
+  createScopedLogger: vi.fn(() => ({
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
+  })),
+  log: {
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
+  },
+  setLogContext: vi.fn(),
+  refreshCorrelationId: vi.fn(),
+  getCorrelationId: vi.fn(() => 'test-correlation-id'),
+  getSessionId: vi.fn(() => 'test-session-id'),
+  initLogging: vi.fn(),
+  logTiming: vi.fn((name, fn) => fn()),
+  default: {
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
+    setLogContext: vi.fn(),
+    createScopedLogger: vi.fn(() => ({
+      trace: vi.fn(),
+      debug: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      fatal: vi.fn(),
+    })),
+    logTiming: vi.fn((name, fn) => fn()),
+    initLogging: vi.fn(),
+    refreshCorrelationId: vi.fn(),
+    getCorrelationId: vi.fn(() => 'test-correlation-id'),
+    getSessionId: vi.fn(() => 'test-session-id'),
+  },
+}));
+
 // Extend Vitest's expect with Testing Library matchers
 expect.extend(matchers);
 
