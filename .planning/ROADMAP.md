@@ -211,11 +211,11 @@ Plans:
   2. New users can select starter pack during signup
   3. System suggests templates based on selected industry
   4. Onboarding can be skipped and accessed later from settings
-**Plans**: TBD
+**Plans**: 2 plans (Wave 1: 23-01, Wave 2: 23-02)
 
 Plans:
-- [ ] 23-01: Welcome tour
-- [ ] 23-02: Starter pack selection and industry suggestions
+- [ ] 23-01-PLAN.md - Welcome tour modal with 5-6 step feature walkthrough
+- [ ] 23-02-PLAN.md - Industry selection grid and starter pack onboarding flow
 
 ## Progress
 
@@ -262,3 +262,4 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 21 gap closure: 2026-01-26*
 *Phase 21 complete: 2026-01-26*
 *Phase 22 complete: 2026-01-27*
+*Phase 23 planned: 2026-01-27*
