@@ -36,6 +36,18 @@ export const CONTENT_TYPES = {
 
 /**
  * Rotation modes for campaign content
+ *
+ * DATABASE NOTE: The select_weighted_campaign_content() function is marked VOLATILE
+ * due to its use of random() for weighted selection. This means:
+ * - Results cannot be cached by Postgres
+ * - Each call may return different content
+ * - This is intentional for fair distribution across content items
+ *
+ * WEIGHT MODE ALGORITHM:
+ * Weighted random selection - higher weight = higher probability, but not guaranteed order.
+ * Example: Content A (weight 3) vs Content B (weight 1)
+ * - A has 75% chance of selection, B has 25%
+ * - This provides fair rotation while maintaining variety in playback
  */
 export const ROTATION_MODES = {
   WEIGHT: 'weight',
@@ -178,6 +190,12 @@ export async function getCampaign(id) {
 /**
  * Create a new campaign
  * @param {Object} data - Campaign data
+ * @param data.name
+ * @param data.description
+ * @param data.status
+ * @param data.startAt
+ * @param data.endAt
+ * @param data.priority
  * @returns {Promise<Object>} Created campaign
  */
 export async function createCampaign({
@@ -408,6 +426,8 @@ export async function getTargets(campaignId) {
  * @param {string} contentType - Content type (playlist, layout, media)
  * @param {string} contentId - Content ID
  * @param {Object} options - Additional options
+ * @param options.weight
+ * @param options.position
  * @returns {Promise<Object>} Created content
  */
 export async function addContent(campaignId, contentType, contentId, { weight = 1, position = 0 } = {}) {

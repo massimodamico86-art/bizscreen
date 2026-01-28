@@ -2,11 +2,20 @@
  * Offline Service for TV Player
  * Manages offline mode detection, content caching, and sync operations.
  *
+ * OFFLINE SYNC STRATEGY:
+ * IndexedDB stores content for offline playback. Three-phase sync approach:
+ * 1. PREFETCH - Download all playlist content immediately on screen pairing
+ * 2. BACKGROUND - Periodic sync every 5 minutes when online to catch updates
+ * 3. RECONNECT - Full sync when connection restored after offline period
+ *
+ * This ensures screens continue displaying content even without network,
+ * while staying up-to-date when connectivity is available.
+ *
  * Features:
- * - Detect online/offline status
- * - Cache scenes and media for offline playback
- * - Queue events for sync when online
- * - Validate content against server checksums
+ * - Detect online/offline status via heartbeat failures
+ * - Cache scenes and media to IndexedDB for offline playback
+ * - Queue events (heartbeats, playbacks) for sync when back online
+ * - Validate content against server checksums for change detection
  */
 
 import { supabase } from '../supabase';
@@ -106,6 +115,7 @@ export async function registerServiceWorker() {
 
 /**
  * Handle messages from service worker
+ * @param event
  */
 function handleServiceWorkerMessage(event) {
   const { type, payload } = event.data || {};
@@ -130,6 +140,8 @@ function handleServiceWorkerMessage(event) {
 
 /**
  * Send message to service worker
+ * @param type
+ * @param payload
  */
 export function postToServiceWorker(type, payload) {
   if (!serviceWorkerReady || !navigator.serviceWorker.controller) {
@@ -170,6 +182,7 @@ export function getOfflineMode() {
 
 /**
  * Set offline mode
+ * @param offline
  */
 export function setOfflineMode(offline) {
   const wasOffline = isOfflineMode;
@@ -183,6 +196,7 @@ export function setOfflineMode(offline) {
 
 /**
  * Add offline mode listener
+ * @param callback
  */
 export function addOfflineListener(callback) {
   offlineListeners.push(callback);
@@ -193,6 +207,7 @@ export function addOfflineListener(callback) {
 
 /**
  * Notify listeners of offline mode change
+ * @param offline
  */
 function notifyOfflineListeners(offline) {
   offlineListeners.forEach((callback) => {
@@ -465,6 +480,7 @@ export async function syncPendingEvents() {
 
 /**
  * Sync pending heartbeats
+ * @param heartbeats
  */
 async function syncHeartbeats(heartbeats) {
   // Heartbeats don't need to be synced individually
@@ -518,6 +534,7 @@ async function syncPendingScreenshots() {
 
 /**
  * Sync playback events
+ * @param playbacks
  */
 async function syncPlaybackEvents(playbacks) {
   if (playbacks.length === 0) return;

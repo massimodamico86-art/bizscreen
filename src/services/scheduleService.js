@@ -1,4 +1,12 @@
 // Schedule Service - CRUD operations for time-based content scheduling
+//
+// CONTENT RESOLUTION PRIORITY (highest to lowest):
+// 1. Emergency campaigns - Bypass all other content for urgent messages
+// 2. Active campaigns - Scheduled campaigns targeting the device/group
+// 3. Device scene - Default content assigned directly to the device
+//
+// This priority order ensures emergency alerts always reach screens immediately,
+// while campaigns can override default content during their scheduled windows.
 import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
 import { requiresApproval } from './permissionsService.js';
@@ -100,6 +108,9 @@ export async function fetchSchedules() {
 
 /**
  * Create a new schedule
+ * @param root0
+ * @param root0.name
+ * @param root0.description
  */
 export async function createSchedule({ name, description = null }) {
   const { data: { user } } = await supabase.auth.getUser();
@@ -132,6 +143,7 @@ export async function createSchedule({ name, description = null }) {
 
 /**
  * Delete a schedule and its entries (cascade should handle entries)
+ * @param id
  */
 export async function deleteSchedule(id) {
   // Get schedule info before deleting for logging
@@ -163,6 +175,7 @@ export async function deleteSchedule(id) {
 
 /**
  * Fetch a single schedule with all its entries
+ * @param id
  */
 export async function fetchScheduleWithEntries(id) {
   const { data, error } = await supabase
@@ -206,6 +219,7 @@ export async function fetchScheduleWithEntries(id) {
 
 /**
  * Fetch schedule with entries and resolved target info (playlist/layout/media/scene names)
+ * @param id
  */
 export async function fetchScheduleWithEntriesResolved(id) {
   const schedule = await fetchScheduleWithEntries(id);
@@ -277,6 +291,8 @@ export async function fetchScheduleWithEntriesResolved(id) {
 
 /**
  * Update a schedule's basic info
+ * @param id
+ * @param updates
  */
 export async function updateSchedule(id, updates) {
   const allowedFields = ['name', 'description'];
@@ -313,6 +329,8 @@ export async function updateSchedule(id, updates) {
 
 /**
  * Create a new schedule entry
+ * @param scheduleId
+ * @param entryData
  */
 export async function createScheduleEntry(scheduleId, entryData = {}) {
   // Validate content can be assigned (approval check for editors)
@@ -368,6 +386,8 @@ export async function createScheduleEntry(scheduleId, entryData = {}) {
 
 /**
  * Update a schedule entry
+ * @param entryId
+ * @param updates
  */
 export async function updateScheduleEntry(entryId, updates) {
   // Validate content can be assigned if content is being changed
@@ -420,6 +440,7 @@ export async function updateScheduleEntry(entryId, updates) {
 
 /**
  * Delete a schedule entry
+ * @param entryId
  */
 export async function deleteScheduleEntry(entryId) {
   const { error } = await supabase
@@ -433,6 +454,7 @@ export async function deleteScheduleEntry(entryId) {
 
 /**
  * Duplicate a schedule with all its entries
+ * @param id
  */
 export async function duplicateSchedule(id) {
   const original = await fetchScheduleWithEntries(id);
@@ -464,6 +486,7 @@ export async function duplicateSchedule(id) {
 
 /**
  * Format days of week for display
+ * @param daysArray
  */
 export function formatDaysOfWeek(daysArray) {
   if (!daysArray || daysArray.length === 0) return 'No days';
@@ -491,6 +514,7 @@ export function formatDaysOfWeek(daysArray) {
 
 /**
  * Format time for display (HH:mm to 12-hour format)
+ * @param time
  */
 export function formatTime(time) {
   if (!time) return '';
@@ -503,6 +527,8 @@ export function formatTime(time) {
 
 /**
  * Format time range for display
+ * @param startTime
+ * @param endTime
  */
 export function formatTimeRange(startTime, endTime) {
   if (!startTime && !endTime) return 'All day';
@@ -632,6 +658,10 @@ export async function getScenesForSchedule() {
 /**
  * Create a schedule with initial scene entries
  * @param {Object} scheduleData - Schedule data with entries
+ * @param scheduleData.name
+ * @param scheduleData.description
+ * @param scheduleData.timezone
+ * @param scheduleData.entries
  */
 export async function createScheduleWithEntries({ name, description, timezone = 'UTC', entries = [] }) {
   // Create the schedule
