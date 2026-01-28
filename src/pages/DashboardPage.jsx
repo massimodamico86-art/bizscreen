@@ -55,7 +55,6 @@ import {
   StatsGrid,
   ScreenRow,
   QuickActionButton,
-  RecentActivityWidget,
   AlertsWidget,
 } from './dashboard/DashboardSections';
 import {
@@ -68,8 +67,15 @@ import { WelcomeModal } from './dashboard/WelcomeModal';
 // Yodeck-style welcome components
 import { WelcomeHero, WelcomeFeatureCards } from '../components/welcome';
 
-// Approval workflow widget
-import { PendingApprovalsWidget } from '../components/dashboard/PendingApprovalsWidget';
+// Dashboard components
+import {
+  HealthBanner,
+  QuickActionsBar,
+  ActiveContentGrid,
+  TimelineActivity,
+  PendingApprovalsWidget,
+} from '../components/dashboard';
+import { useBreakpoints } from '../hooks/useMediaQuery';
 
 /** localStorage key for tracking welcome modal dismissal */
 const WELCOME_MODAL_KEY = 'bizscreen_welcome_modal_shown';
@@ -88,6 +94,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
   const { user } = useAuth();
   const { t } = useTranslation();
   const logger = useLogger('DashboardPage');
+  const { isMobile } = useBreakpoints();
   const [stats, setStats] = useState(null);
   const [screens, setScreens] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
@@ -300,10 +307,18 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
         <PageHeader
           title={t('dashboard.title', 'Dashboard')}
           description={t('dashboard.welcomeSubtitle', "Welcome back! Here's your digital signage overview")}
+          actions={
+            !isMobile && (
+              <QuickActionsBar onNavigate={setCurrentPage} />
+            )
+          }
         />
 
         <PageContent>
           <Stack gap="lg">
+            {/* Health Banner - critical alerts at top */}
+            <HealthBanner alertSummary={alertSummary} onNavigate={setCurrentPage} />
+
             {/* Yodeck-style Welcome Section - First Run */}
             {isFirstRun && !demoResult && (
               <>
@@ -361,6 +376,25 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
 
             {/* Pending Approvals Widget - only shows for approvers with pending items */}
             <PendingApprovalsWidget onNavigate={setCurrentPage} className="mb-0" />
+
+            {/* Active Content Grid - shows what's playing */}
+            <ActiveContentGrid
+              screens={screens}
+              onNavigate={setCurrentPage}
+              loading={loading}
+            />
+
+            {/* Mobile Quick Actions Card */}
+            {isMobile && (
+              <Card padding="default" className="lg:hidden">
+                <CardHeader>
+                  <CardTitle>{t('dashboard.quickActions', 'Quick Actions')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <QuickActionsBar onNavigate={setCurrentPage} />
+                </CardContent>
+              </Card>
+            )}
 
             {/* Two Column Layout - Responsive */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -445,12 +479,11 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
               </Card>
             </div>
 
-            {/* Second Row - Recent Activity & Alerts */}
+            {/* Second Row - Timeline Activity & Alerts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RecentActivityWidget
+              <TimelineActivity
                 activities={recentActivity}
-                setCurrentPage={setCurrentPage}
-                t={t}
+                onNavigate={setCurrentPage}
                 loading={activityLoading}
               />
               <AlertsWidget
