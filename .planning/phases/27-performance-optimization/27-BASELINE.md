@@ -105,3 +105,92 @@ The build produced 3 dynamic import warnings:
 3. `screenshotService.js` - static and dynamic import by player components
 
 These indicate potential tree-shaking issues where modules could be in separate chunks but are prevented due to mixed import patterns.
+
+## Optimization Opportunities
+
+### Player Route Analysis
+
+**Current state:** Player chunk is 280.82 KB raw / 68.88 KB gzip despite Player.jsx being only 23 lines of routing code.
+
+**Player chunk contents (imports traced):**
+
+From `Player.jsx`:
+- `PairPage` (player/components/PairPage.jsx) - ~410 lines
+- `ViewPage` (player/pages/ViewPage.jsx) - ~1203 lines
+
+From `ViewPage.jsx`:
+- `sceneDesignService` - 1,598 lines (ANIMATION_KEYFRAMES, block animations, slide transitions)
+- `dataSourceService` - 1,285 lines (data source management, real-time subscriptions)
+- `dataBindingResolver` - 397 lines (resolving bindings, prefetch)
+- `mediaPreloader` - 543 lines (preloading media assets)
+- `playerService` - 868 lines (command polling, offline cache, heartbeat)
+- `playbackTrackingService` - 722 lines (scene tracking, analytics)
+- `playerAnalyticsService` - 226 lines (playback events)
+- `realtimeService` - 332 lines (WebSocket subscriptions)
+- `deviceSyncService` - 398 lines (scene updates, refresh flags)
+- `screenshotService` - 259 lines (capture and upload)
+- `loggingService` - logging infrastructure
+- `offlineService` - service worker registration
+
+From `SceneRenderer.jsx`:
+- Widgets: ClockWidget, DateWidget, WeatherWidget, QRCodeWidget
+
+**Key finding:** The Player chunk bundles all player-related services and utilities because they're directly imported. This is correct behavior - these services ARE needed by the Player route.
+
+**Why 280KB is reasonable:**
+- Player route is a complete TV playback application
+- Requires offline support, real-time sync, analytics, scene rendering
+- Cannot lazy-load core player functionality (content must play immediately)
+- Services (2,800+ lines for player, 3,800+ lines for scene rendering) explain the size
+
+### Potential Optimizations
+
+**1. Defer vendor-motion preload (High Impact)**
+- Current: vendor-motion (37.17 KB gzip) is preloaded on initial page load
+- Issue: Not all routes need framer-motion immediately
+- Potential savings: 37 KB from initial load
+- Action: Review if motion preload is necessary for initial routes
+
+**2. sideEffects: false (Medium Impact)**
+- Current: Not configured in package.json
+- Impact: May allow better tree-shaking of barrel exports
+- Action: Add `"sideEffects": false` or specify sideEffectful files
+- Risk: Could break imports with side effects
+
+**3. Fix mixed import patterns (Low-Medium Impact)**
+- Current: 3 modules have static + dynamic imports causing them to stay in main chunk
+- Modules: experimentService, deviceScreenshotService, screenshotService
+- Action: Consolidate to either static OR dynamic imports
+
+**4. Index entry chunk reduction (Medium Impact)**
+- Current: 272.61 KB / 87.26 KB gzip
+- Contains: Shared utilities, contexts, router code
+- Action: Review if any code can be moved to route-specific chunks
+
+### Tree Shaking Candidates
+
+| Module | Current State | Recommendation |
+|--------|---------------|----------------|
+| player/components/index.js | Barrel export | Individual imports already used, OK |
+| player/hooks/index.js | Barrel export | Individual imports already used, OK |
+| services/* | Individual files | Most already split into chunks |
+
+### Preload Review
+
+| Asset | Size (gzip) | Currently | Recommendation |
+|-------|-------------|-----------|----------------|
+| vendor-motion | 37.17 KB | Preloaded | Consider deferring |
+| vendor-react | 15.56 KB | Preloaded | Keep (required everywhere) |
+| vendor-supabase | 41.89 KB | Preloaded | Keep (auth on load) |
+| vendor-icons | 18.83 KB | Preloaded | Keep (UI icons needed) |
+
+### Summary of Actionable Optimizations
+
+1. **PERF-02: Defer vendor-motion preload** - ~37 KB savings on initial load
+2. **PERF-03: Add sideEffects: false** - Potentially improve tree-shaking
+3. **PERF-04: Fix mixed import patterns** - Clean up build warnings
+
+**Note:** The Player chunk size (68.88 KB gzip) is justified by its functionality. Further reduction would require architectural changes like:
+- Splitting scene rendering into a separate lazy chunk (only if scene mode used)
+- Moving analytics to a deferred module
+- These are not recommended for v2.1 due to complexity vs benefit
