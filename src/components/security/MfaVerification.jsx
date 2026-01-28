@@ -3,8 +3,16 @@
  */
 
 import { useState } from 'react';
+import { Key, Shield, AlertCircle, Loader2 } from 'lucide-react';
 import { verifyMfaLogin, verifyRecoveryCode } from '../../services/mfaService';
+import { Button } from '../../design-system';
 
+/**
+ *
+ * @param root0
+ * @param root0.onSuccess
+ * @param root0.onCancel
+ */
 export default function MfaVerification({ onSuccess, onCancel }) {
   const [code, setCode] = useState('');
   const [verifying, setVerifying] = useState(false);
