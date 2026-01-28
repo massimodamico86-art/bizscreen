@@ -71,30 +71,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAY-01 | TBD | Pending |
-| PLAY-02 | TBD | Pending |
-| PLAY-03 | TBD | Pending |
-| PLAY-04 | TBD | Pending |
-| PLAY-05 | TBD | Pending |
-| TEST-01 | TBD | Pending |
-| TEST-02 | TBD | Pending |
-| TEST-03 | TBD | Pending |
-| TEST-04 | TBD | Pending |
-| ANLY-01 | TBD | Pending |
-| ANLY-02 | TBD | Pending |
-| PERF-01 | TBD | Pending |
-| PERF-02 | TBD | Pending |
-| PERF-03 | TBD | Pending |
-| QUAL-01 | TBD | Pending |
-| QUAL-02 | TBD | Pending |
-| QUAL-03 | TBD | Pending |
-| QUAL-04 | TBD | Pending |
+| PLAY-01 | Phase 24 | Pending |
+| PLAY-02 | Phase 24 | Pending |
+| PLAY-03 | Phase 24 | Pending |
+| PLAY-04 | Phase 24 | Pending |
+| PLAY-05 | Phase 24 | Pending |
+| TEST-01 | Phase 25 | Pending |
+| TEST-02 | Phase 25 | Pending |
+| TEST-03 | Phase 25 | Pending |
+| TEST-04 | Phase 25 | Pending |
+| ANLY-01 | Phase 26 | Pending |
+| ANLY-02 | Phase 26 | Pending |
+| PERF-01 | Phase 27 | Pending |
+| PERF-02 | Phase 27 | Pending |
+| PERF-03 | Phase 27 | Pending |
+| QUAL-01 | Phase 28 | Pending |
+| QUAL-02 | Phase 28 | Pending |
+| QUAL-03 | Phase 28 | Pending |
+| QUAL-04 | Phase 28 | Pending |
 
 **Coverage:**
 - v2.1 requirements: 18 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 18
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-27*
-*Last updated: 2026-01-27 after initial definition*
+*Last updated: 2026-01-27 after roadmap creation*
