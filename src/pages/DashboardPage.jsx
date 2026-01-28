@@ -59,7 +59,7 @@ import {
 
 // Extracted sub-components
 import { DashboardErrorState, StatsGrid, ScreenRow, QuickActionButton, AlertsWidget } from './dashboard/DashboardSections';
-import WelcomeModal from './dashboard/WelcomeModal';
+import { WelcomeModal } from './dashboard/WelcomeModal';
 import { DemoResultCard, GettingStartedTips } from './dashboard/OnboardingCards';
 import { WelcomeHero, WelcomeFeatureCards } from '../components/welcome';
 import { QuickActionsBar, HealthBanner, ActiveContentGrid, TimelineActivity, PendingApprovalsWidget } from '../components/dashboard';
