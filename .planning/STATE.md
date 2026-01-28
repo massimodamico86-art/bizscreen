@@ -83,7 +83,7 @@ Tech debt being addressed in v2.1:
 Last session: 2026-01-28
 Stopped at: Completed Phase 27 (Performance Optimization)
 Resume file: None
-Next: `/gsd:execute-phase 28` for Documentation Completion
+Next: `/gsd:discuss-phase 28` for Code Quality
 
 ---
 *Updated: 2026-01-28 — Phase 27 complete (tree shaking enabled, bundle verified, PERF-01/02/03 satisfied)*
