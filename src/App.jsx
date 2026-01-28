@@ -12,6 +12,11 @@ import {
   Calendar,
   Monitor,
   LayoutTemplate,
+  ChevronDown,
+  UserCheck,
+  X,
+  HelpCircle,
+  Menu,
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { useBranding, BrandingProvider } from './contexts/BrandingContext';
@@ -19,11 +24,20 @@ import { stopImpersonation } from './services/tenantService';
 import { supabase } from './supabase';
 import { useLogger } from './hooks/useLogger.js';
 import { fetchScenesForTenant } from './services/sceneService';
-import { useEmergency } from './contexts/EmergencyContext';
+import { useEmergency, EmergencyProvider } from './contexts/EmergencyContext';
 import { useBreakpoints } from './hooks/useMediaQuery';
 import { useTranslation } from './i18n';
 import { useFeatureFlags } from './hooks/useFeatureFlag';
 import { Feature } from './config/plans';
+import LoginPage from './auth/LoginPage';
+import EmergencyBanner from './components/EmergencyBanner';
+import AnnouncementBanner from './components/AnnouncementBanner';
+import Header from './components/Header';
+import MobileNav from './components/MobileNav';
+import Toast from './components/Toast';
+import FeedbackWidget from './components/FeedbackWidget';
+import AutoBuildOnboardingModal from './components/onboarding/AutoBuildOnboardingModal';
+import { FeatureGate, FeatureUpgradePrompt } from './components/FeatureGate';
 
 // Lazy load pages for better code splitting
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
