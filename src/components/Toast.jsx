@@ -1,3 +1,10 @@
+/**
+ * Toast Component
+ * Notification toast that appears at bottom-right of screen.
+ * Uses aria-live regions for accessibility.
+ */
+import PropTypes from 'prop-types';
+import { Check, AlertCircle, Info, X } from 'lucide-react';
 
 const Toast = ({ message, type = 'success', onClose }) => {
   const icons = {
@@ -36,6 +43,19 @@ const Toast = ({ message, type = 'success', onClose }) => {
       </button>
     </div>
   );
+};
+
+Toast.propTypes = {
+  /** Message to display in the toast */
+  message: PropTypes.string.isRequired,
+  /** Toast type - determines icon and color */
+  type: PropTypes.oneOf(['success', 'error', 'info']),
+  /** Handler called when toast is dismissed */
+  onClose: PropTypes.func.isRequired,
+};
+
+Toast.defaultProps = {
+  type: 'success',
 };
 
 export default Toast;

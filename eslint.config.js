@@ -3,6 +3,8 @@ import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import unusedImports from 'eslint-plugin-unused-imports';
+import react from 'eslint-plugin-react';
+import jsdoc from 'eslint-plugin-jsdoc';
 
 export default [
   // Ignore patterns
@@ -36,6 +38,13 @@ export default [
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       'unused-imports': unusedImports,
+      'react': react,
+      'jsdoc': jsdoc,
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -49,6 +58,7 @@ export default [
       }],
 
       // Unused imports - auto-fixable, error level (blocks commits)
+      // NOTE: unused-imports plugin has JSX detection issues, use with jsxFactory
       'no-unused-vars': 'off', // Disable base rule in favor of plugin
       'unused-imports/no-unused-imports': 'error',
       // Unused vars - warning level (visibility without blocking legacy code)
@@ -60,8 +70,13 @@ export default [
           varsIgnorePattern: '^_',
           args: 'after-used',
           argsIgnorePattern: '^_',
+          // Ignore variables used in JSX
+          ignoreRestSiblings: true,
         },
       ],
+      // JSX scope usage - ensures JSX elements are detected as uses
+      'react/jsx-uses-react': 'error',
+      'react/jsx-uses-vars': 'error',
 
       // Legacy code issues - warnings for visibility, not blocking
       // TODO: Fix these in dedicated cleanup tasks
@@ -73,6 +88,20 @@ export default [
       // Many components have undefined logger, result, etc.
       // TODO: Phase 28-02 should address these systematically
       'no-undef': 'warn',
+
+      // PropTypes enforcement - warn level for gradual adoption
+      // Components should have PropTypes for all props
+      'react/prop-types': 'warn',
+
+      // JSDoc enforcement - warn level for gradual adoption
+      // Exported functions should have JSDoc with @param and @returns
+      'jsdoc/require-jsdoc': ['warn', {
+        publicOnly: true,
+        require: { FunctionDeclaration: true },
+        contexts: ['ExportNamedDeclaration > FunctionDeclaration'],
+      }],
+      'jsdoc/require-param': 'warn',
+      'jsdoc/require-returns': 'warn',
     },
   },
 
@@ -90,6 +119,10 @@ export default [
     },
     rules: {
       'no-console': 'off',
+      'react/prop-types': 'off',
+      'jsdoc/require-jsdoc': 'off',
+      'jsdoc/require-param': 'off',
+      'jsdoc/require-returns': 'off',
     },
   },
 
@@ -103,6 +136,10 @@ export default [
     },
     rules: {
       'no-console': 'off',
+      'react/prop-types': 'off',
+      'jsdoc/require-jsdoc': 'off',
+      'jsdoc/require-param': 'off',
+      'jsdoc/require-returns': 'off',
     },
   },
 

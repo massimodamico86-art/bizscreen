@@ -13,6 +13,8 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
+import { Lock, Sparkles, ArrowUpRight } from 'lucide-react';
 import { useFeatureFlag, useFeatureInfo, useFeatureContext } from '../hooks/useFeatureFlag';
 import { Feature, FEATURE_METADATA, PLANS } from '../config/plans';
 
@@ -65,12 +67,40 @@ export function FeatureGate({
   return null;
 }
 
+FeatureGate.propTypes = {
+  /** Feature key from Feature enum to check */
+  feature: PropTypes.string.isRequired,
+  /** Content to render when feature is enabled */
+  children: PropTypes.node,
+  /** Content to render when feature is disabled */
+  fallback: PropTypes.node,
+  /** Show default upgrade prompt when disabled */
+  showUpgradePrompt: PropTypes.bool,
+  /** Custom message for upgrade prompt */
+  fallbackMessage: PropTypes.string,
+  /** Handler for upgrade button click */
+  onUpgradeClick: PropTypes.func,
+};
+
+FeatureGate.defaultProps = {
+  children: null,
+  fallback: null,
+  showUpgradePrompt: false,
+  fallbackMessage: undefined,
+  onUpgradeClick: undefined,
+};
+
 // ============================================================================
 // FEATURE UPGRADE PROMPT
 // ============================================================================
 
 /**
  * Upgrade prompt shown when a feature is not available
+ * @param root0
+ * @param root0.feature
+ * @param root0.message
+ * @param root0.onUpgradeClick
+ * @param root0.variant
  */
 export function FeatureUpgradePrompt({ feature, message, onUpgradeClick, variant = 'default' }) {
   const { upgradePath } = useFeatureInfo(feature);
@@ -127,12 +157,32 @@ export function FeatureUpgradePrompt({ feature, message, onUpgradeClick, variant
   );
 }
 
+FeatureUpgradePrompt.propTypes = {
+  /** Feature key to display info for */
+  feature: PropTypes.string.isRequired,
+  /** Custom message to display */
+  message: PropTypes.string,
+  /** Handler for upgrade button click */
+  onUpgradeClick: PropTypes.func,
+  /** Prompt display variant */
+  variant: PropTypes.oneOf(['default', 'inline', 'badge']),
+};
+
+FeatureUpgradePrompt.defaultProps = {
+  message: undefined,
+  onUpgradeClick: undefined,
+  variant: 'default',
+};
+
 // ============================================================================
 // FEATURE BADGE
 // ============================================================================
 
 /**
  * Badge showing required plan for a feature
+ * @param root0
+ * @param root0.feature
+ * @param root0.showWhenEnabled
  */
 export function FeatureBadge({ feature, showWhenEnabled = false }) {
   const isEnabled = useFeatureFlag(feature);
@@ -159,12 +209,27 @@ export function FeatureBadge({ feature, showWhenEnabled = false }) {
   );
 }
 
+FeatureBadge.propTypes = {
+  /** Feature key to check */
+  feature: PropTypes.string.isRequired,
+  /** Show badge even when feature is enabled */
+  showWhenEnabled: PropTypes.bool,
+};
+
+FeatureBadge.defaultProps = {
+  showWhenEnabled: false,
+};
+
 // ============================================================================
 // FEATURE LOCKED OVERLAY
 // ============================================================================
 
 /**
  * Overlay that covers content and shows upgrade prompt
+ * @param root0
+ * @param root0.feature
+ * @param root0.children
+ * @param root0.onUpgradeClick
  */
 export function FeatureLockedOverlay({ feature, children, onUpgradeClick }) {
   const isEnabled = useFeatureFlag(feature);
@@ -183,12 +248,28 @@ export function FeatureLockedOverlay({ feature, children, onUpgradeClick }) {
   );
 }
 
+FeatureLockedOverlay.propTypes = {
+  /** Feature key to check */
+  feature: PropTypes.string.isRequired,
+  /** Content to show (blurred when feature disabled) */
+  children: PropTypes.node.isRequired,
+  /** Handler for upgrade button click */
+  onUpgradeClick: PropTypes.func,
+};
+
+FeatureLockedOverlay.defaultProps = {
+  onUpgradeClick: undefined,
+};
+
 // ============================================================================
 // REQUIRE FEATURE WRAPPER
 // ============================================================================
 
 /**
  * Higher-order component that requires a feature to be enabled
+ * @param WrappedComponent
+ * @param featureKey
+ * @param FallbackComponent
  */
 export function withFeatureGate(WrappedComponent, featureKey, FallbackComponent = null) {
   return function FeatureGatedComponent(props) {
@@ -211,6 +292,9 @@ export function withFeatureGate(WrappedComponent, featureKey, FallbackComponent 
 
 /**
  * Display a list of features with their availability status
+ * @param root0
+ * @param root0.features
+ * @param root0.showAll
  */
 export function FeatureList({ features, showAll = false }) {
   const { plan } = useFeatureContext();
@@ -227,6 +311,18 @@ export function FeatureList({ features, showAll = false }) {
     </div>
   );
 }
+
+FeatureList.propTypes = {
+  /** Array of feature keys to display */
+  features: PropTypes.arrayOf(PropTypes.string),
+  /** Show all available features */
+  showAll: PropTypes.bool,
+};
+
+FeatureList.defaultProps = {
+  features: undefined,
+  showAll: false,
+};
 
 function FeatureListItem({ feature }) {
   const isEnabled = useFeatureFlag(feature);
@@ -245,12 +341,19 @@ function FeatureListItem({ feature }) {
   );
 }
 
+FeatureListItem.propTypes = {
+  /** Feature key to display */
+  feature: PropTypes.string.isRequired,
+};
+
 // ============================================================================
 // PLAN COMPARISON COMPONENT
 // ============================================================================
 
 /**
  * Shows features comparison across plans
+ * @param root0
+ * @param root0.highlightPlan
  */
 export function PlanFeaturesComparison({ highlightPlan }) {
   const plans = [PLANS.free, PLANS.starter, PLANS.pro, PLANS.enterprise];
@@ -309,6 +412,15 @@ export function PlanFeaturesComparison({ highlightPlan }) {
     </div>
   );
 }
+
+PlanFeaturesComparison.propTypes = {
+  /** Plan slug to highlight in the table */
+  highlightPlan: PropTypes.string,
+};
+
+PlanFeaturesComparison.defaultProps = {
+  highlightPlan: undefined,
+};
 
 // ============================================================================
 // EXPORTS

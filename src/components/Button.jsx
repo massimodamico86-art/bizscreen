@@ -3,6 +3,8 @@
  * Re-exports from design system with backwards-compatible prop mapping.
  * New code should import directly from '../design-system' instead.
  */
+import PropTypes from 'prop-types';
+import { Button as DSButton } from '../design-system';
 
 // Map legacy variants to design system variants
 const variantMap = {
@@ -52,6 +54,35 @@ const Button = ({
       {children}
     </DSButton>
   );
+};
+
+Button.propTypes = {
+  /** Button content - text, icon, or any React node */
+  children: PropTypes.node.isRequired,
+  /** Click handler function */
+  onClick: PropTypes.func,
+  /** Visual style variant */
+  variant: PropTypes.oneOf(['primary', 'outline', 'success', 'danger']),
+  /** Button size */
+  size: PropTypes.oneOf(['sm', 'md']),
+  /** Additional CSS classes */
+  className: PropTypes.string,
+  /** Whether button is disabled */
+  disabled: PropTypes.bool,
+  /** HTML button type */
+  type: PropTypes.oneOf(['button', 'submit', 'reset']),
+  /** Accessible label for screen readers */
+  ariaLabel: PropTypes.string,
+};
+
+Button.defaultProps = {
+  onClick: null,
+  variant: 'primary',
+  size: 'md',
+  className: '',
+  disabled: false,
+  type: 'button',
+  ariaLabel: undefined,
 };
 
 export default Button;

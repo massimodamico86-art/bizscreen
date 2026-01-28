@@ -4,9 +4,16 @@
  * Provides animated placeholder UI while content loads.
  * Uses CSS animation for smooth shimmer effect.
  */
-
+import PropTypes from 'prop-types';
+import { Card } from '../design-system';
 
 // Base skeleton element with shimmer animation
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.children
+ */
 export function Skeleton({ className = '', children }) {
   return (
     <div
@@ -18,22 +25,95 @@ export function Skeleton({ className = '', children }) {
   );
 }
 
+Skeleton.propTypes = {
+  /** Additional CSS classes for sizing/positioning */
+  className: PropTypes.string,
+  /** Optional children for nested skeletons */
+  children: PropTypes.node,
+};
+
+Skeleton.defaultProps = {
+  className: '',
+  children: null,
+};
+
 // Text line skeleton
+/**
+ *
+ * @param root0
+ * @param root0.width
+ * @param root0.height
+ * @param root0.className
+ */
 export function SkeletonText({ width = 'w-full', height = 'h-4', className = '' }) {
   return <Skeleton className={`${width} ${height} ${className}`} />;
 }
 
+SkeletonText.propTypes = {
+  /** Tailwind width class */
+  width: PropTypes.string,
+  /** Tailwind height class */
+  height: PropTypes.string,
+  /** Additional CSS classes */
+  className: PropTypes.string,
+};
+
+SkeletonText.defaultProps = {
+  width: 'w-full',
+  height: 'h-4',
+  className: '',
+};
+
 // Circle skeleton (avatars, icons)
+/**
+ *
+ * @param root0
+ * @param root0.size
+ * @param root0.className
+ */
 export function SkeletonCircle({ size = 'w-10 h-10', className = '' }) {
   return <Skeleton className={`${size} rounded-full ${className}`} />;
 }
 
+SkeletonCircle.propTypes = {
+  /** Tailwind size class (width and height) */
+  size: PropTypes.string,
+  /** Additional CSS classes */
+  className: PropTypes.string,
+};
+
+SkeletonCircle.defaultProps = {
+  size: 'w-10 h-10',
+  className: '',
+};
+
 // Image/media skeleton
+/**
+ *
+ * @param root0
+ * @param root0.aspectRatio
+ * @param root0.className
+ */
 export function SkeletonImage({ aspectRatio = 'aspect-video', className = '' }) {
   return <Skeleton className={`${aspectRatio} w-full ${className}`} />;
 }
 
+SkeletonImage.propTypes = {
+  /** Tailwind aspect ratio class */
+  aspectRatio: PropTypes.string,
+  /** Additional CSS classes */
+  className: PropTypes.string,
+};
+
+SkeletonImage.defaultProps = {
+  aspectRatio: 'aspect-video',
+  className: '',
+};
+
 // Stat card skeleton
+/**
+ *
+ */
 export function SkeletonStatCard() {
   return (
     <Card className="p-4 sm:p-6">
@@ -48,6 +128,11 @@ export function SkeletonStatCard() {
 }
 
 // Dashboard stats row skeleton
+/**
+ *
+ * @param root0
+ * @param root0.count
+ */
 export function SkeletonDashboardStats({ count = 4 }) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -58,7 +143,21 @@ export function SkeletonDashboardStats({ count = 4 }) {
   );
 }
 
+SkeletonDashboardStats.propTypes = {
+  /** Number of stat cards to show */
+  count: PropTypes.number,
+};
+
+SkeletonDashboardStats.defaultProps = {
+  count: 4,
+};
+
 // Table row skeleton
+/**
+ *
+ * @param root0
+ * @param root0.columns
+ */
 export function SkeletonTableRow({ columns = 4 }) {
   return (
     <tr>
@@ -71,7 +170,22 @@ export function SkeletonTableRow({ columns = 4 }) {
   );
 }
 
+SkeletonTableRow.propTypes = {
+  /** Number of columns in the row */
+  columns: PropTypes.number,
+};
+
+SkeletonTableRow.defaultProps = {
+  columns: 4,
+};
+
 // Table skeleton
+/**
+ *
+ * @param root0
+ * @param root0.rows
+ * @param root0.columns
+ */
 export function SkeletonTable({ rows = 5, columns = 4 }) {
   return (
     <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -95,7 +209,25 @@ export function SkeletonTable({ rows = 5, columns = 4 }) {
   );
 }
 
+SkeletonTable.propTypes = {
+  /** Number of rows to show */
+  rows: PropTypes.number,
+  /** Number of columns per row */
+  columns: PropTypes.number,
+};
+
+SkeletonTable.defaultProps = {
+  rows: 5,
+  columns: 4,
+};
+
 // List item skeleton
+/**
+ *
+ * @param root0
+ * @param root0.hasImage
+ * @param root0.hasActions
+ */
 export function SkeletonListItem({ hasImage = false, hasActions = true }) {
   return (
     <div className="flex items-center gap-4 p-4 border-b border-gray-100 last:border-b-0">
@@ -114,7 +246,26 @@ export function SkeletonListItem({ hasImage = false, hasActions = true }) {
   );
 }
 
+SkeletonListItem.propTypes = {
+  /** Show image placeholder */
+  hasImage: PropTypes.bool,
+  /** Show action button placeholders */
+  hasActions: PropTypes.bool,
+};
+
+SkeletonListItem.defaultProps = {
+  hasImage: false,
+  hasActions: true,
+};
+
 // List skeleton
+/**
+ *
+ * @param root0
+ * @param root0.count
+ * @param root0.hasImage
+ * @param root0.hasActions
+ */
 export function SkeletonList({ count = 5, hasImage = false, hasActions = true }) {
   return (
     <Card className="divide-y divide-gray-100">
@@ -125,7 +276,28 @@ export function SkeletonList({ count = 5, hasImage = false, hasActions = true })
   );
 }
 
+SkeletonList.propTypes = {
+  /** Number of list items to show */
+  count: PropTypes.number,
+  /** Show image placeholders */
+  hasImage: PropTypes.bool,
+  /** Show action button placeholders */
+  hasActions: PropTypes.bool,
+};
+
+SkeletonList.defaultProps = {
+  count: 5,
+  hasImage: false,
+  hasActions: true,
+};
+
 // Card grid skeleton (for media, screens, playlists)
+/**
+ *
+ * @param root0
+ * @param root0.count
+ * @param root0.columns
+ */
 export function SkeletonCardGrid({ count = 6, columns = 'grid-cols-2 md:grid-cols-3' }) {
   return (
     <div className={`grid ${columns} gap-4`}>
@@ -142,7 +314,22 @@ export function SkeletonCardGrid({ count = 6, columns = 'grid-cols-2 md:grid-col
   );
 }
 
+SkeletonCardGrid.propTypes = {
+  /** Number of cards to show */
+  count: PropTypes.number,
+  /** Tailwind grid column classes */
+  columns: PropTypes.string,
+};
+
+SkeletonCardGrid.defaultProps = {
+  count: 6,
+  columns: 'grid-cols-2 md:grid-cols-3',
+};
+
 // Screen card skeleton
+/**
+ *
+ */
 export function SkeletonScreenCard() {
   return (
     <Card className="overflow-hidden">
@@ -162,6 +349,11 @@ export function SkeletonScreenCard() {
 }
 
 // Screen grid skeleton
+/**
+ *
+ * @param root0
+ * @param root0.count
+ */
 export function SkeletonScreenGrid({ count = 6 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -172,7 +364,21 @@ export function SkeletonScreenGrid({ count = 6 }) {
   );
 }
 
+SkeletonScreenGrid.propTypes = {
+  /** Number of screen cards to show */
+  count: PropTypes.number,
+};
+
+SkeletonScreenGrid.defaultProps = {
+  count: 6,
+};
+
 // Form skeleton
+/**
+ *
+ * @param root0
+ * @param root0.fields
+ */
 export function SkeletonForm({ fields = 3 }) {
   return (
     <div className="space-y-4">
@@ -190,7 +396,21 @@ export function SkeletonForm({ fields = 3 }) {
   );
 }
 
+SkeletonForm.propTypes = {
+  /** Number of form fields to show */
+  fields: PropTypes.number,
+};
+
+SkeletonForm.defaultProps = {
+  fields: 3,
+};
+
 // Page header skeleton
+/**
+ *
+ * @param root0
+ * @param root0.hasActions
+ */
 export function SkeletonPageHeader({ hasActions = true }) {
   return (
     <div className="flex items-center justify-between mb-6">
@@ -207,7 +427,21 @@ export function SkeletonPageHeader({ hasActions = true }) {
   );
 }
 
+SkeletonPageHeader.propTypes = {
+  /** Show action button placeholders */
+  hasActions: PropTypes.bool,
+};
+
+SkeletonPageHeader.defaultProps = {
+  hasActions: true,
+};
+
 // Analytics chart skeleton
+/**
+ *
+ * @param root0
+ * @param root0.height
+ */
 export function SkeletonChart({ height = 'h-64' }) {
   return (
     <Card className="p-4">
@@ -223,7 +457,19 @@ export function SkeletonChart({ height = 'h-64' }) {
   );
 }
 
+SkeletonChart.propTypes = {
+  /** Tailwind height class for chart area */
+  height: PropTypes.string,
+};
+
+SkeletonChart.defaultProps = {
+  height: 'h-64',
+};
+
 // Sidebar skeleton
+/**
+ *
+ */
 export function SkeletonSidebar() {
   return (
     <div className="w-64 h-full bg-gray-50 p-4 space-y-2">
@@ -236,6 +482,9 @@ export function SkeletonSidebar() {
 }
 
 // Full page loading skeleton
+/**
+ *
+ */
 export function SkeletonPage() {
   return (
     <div className="p-6 space-y-6">
