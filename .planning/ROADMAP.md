@@ -111,11 +111,11 @@ Plans:
   2. Core components have PropTypes and JSDoc annotations
   3. README reflects current architecture and API patterns
   4. Complex business logic has inline comments explaining intent
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 28-01: Enforce ESLint and add type annotations
-- [ ] 28-02: Update documentation and add inline comments
+- [ ] 28-01-PLAN.md — ESLint enforcement with pre-commit hooks
+- [ ] 28-02-PLAN.md — PropTypes, JSDoc, README, and inline comments
 
 ---
 
