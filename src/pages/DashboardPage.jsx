@@ -44,7 +44,13 @@ import {
   getRecentActivity,
   getAlertSummary,
 } from '../services/dashboardService';
-import { checkIsFirstRun, needsOnboarding } from '../services/onboardingService';
+import {
+  checkIsFirstRun,
+  needsOnboarding,
+  shouldShowWelcomeTour,
+  getWelcomeTourProgress,
+  getSelectedIndustry,
+} from '../services/onboardingService';
 import { createDemoWorkspace } from '../services/demoContentService';
 import OnboardingWizard from '../components/OnboardingWizard';
 import { applyPack, getDefaultPackSlug } from '../services/templateService';
@@ -66,6 +72,15 @@ import { WelcomeModal } from './dashboard/WelcomeModal';
 
 // Yodeck-style welcome components
 import { WelcomeHero, WelcomeFeatureCards } from '../components/welcome';
+
+// New onboarding components (Phase 23)
+import {
+  WelcomeTour,
+  IndustrySelectionModal,
+  StarterPackOnboarding,
+  OnboardingBanner,
+} from '../components/onboarding';
+import { isBannerDismissed } from '../components/onboarding/OnboardingBanner';
 
 // Dashboard components
 import {
@@ -115,6 +130,13 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
   const [packResult, setPackResult] = useState(null);
   const [packError, setPackError] = useState(null);
 
+  // New onboarding flow state (Phase 23)
+  const [showWelcomeTour, setShowWelcomeTour] = useState(false);
+  const [showIndustryModal, setShowIndustryModal] = useState(false);
+  const [showStarterPackModal, setShowStarterPackModal] = useState(false);
+  const [selectedIndustry, setSelectedIndustry] = useState(null);
+  const [showOnboardingBanner, setShowOnboardingBanner] = useState(false);
+
   const fetchData = useCallback(async () => {
     if (!user) return;
 
@@ -135,6 +157,21 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
 
       if (firstRunData.isFirstRun && !localStorage.getItem(WELCOME_MODAL_KEY)) {
         setShowWelcomeModal(true);
+      }
+
+      // Check new welcome tour flow (Phase 23)
+      const shouldShowTour = await shouldShowWelcomeTour();
+      if (shouldShowTour) {
+        setShowWelcomeTour(true);
+      } else {
+        // Check if onboarding incomplete (tour done but no starter pack)
+        const progress = await getWelcomeTourProgress();
+        if (progress.completedWelcomeTour && !progress.starterPackApplied) {
+          // Show banner if not dismissed this session
+          if (!isBannerDismissed()) {
+            setShowOnboardingBanner(true);
+          }
+        }
       }
 
       // Fetch secondary data (recent activity, alerts) - don't block main load
@@ -242,6 +279,57 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
     setCurrentPage('templates');
   };
 
+  // =====================================================
+  // NEW ONBOARDING FLOW HANDLERS (Phase 23)
+  // =====================================================
+
+  /**
+   * After tour completes, show industry selection
+   */
+  const handleTourComplete = () => {
+    setShowWelcomeTour(false);
+    setShowIndustryModal(true);
+  };
+
+  /**
+   * After industry selected, show starter pack
+   */
+  const handleIndustrySelect = (industry) => {
+    setSelectedIndustry(industry);
+    setShowIndustryModal(false);
+    setShowStarterPackModal(true);
+  };
+
+  /**
+   * After pack applied or skipped
+   */
+  const handlePackComplete = () => {
+    setShowStarterPackModal(false);
+    // Refresh dashboard data
+    fetchData();
+  };
+
+  /**
+   * Resume onboarding from banner click
+   */
+  const handleResumeOnboarding = async () => {
+    const industry = await getSelectedIndustry();
+    setSelectedIndustry(industry);
+    if (industry) {
+      setShowStarterPackModal(true);
+    } else {
+      setShowIndustryModal(true);
+    }
+    setShowOnboardingBanner(false);
+  };
+
+  /**
+   * Dismiss onboarding banner
+   */
+  const handleDismissBanner = () => {
+    setShowOnboardingBanner(false);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -303,6 +391,37 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
         }}
       />
 
+      {/* New Onboarding Flow (Phase 23) */}
+      {showWelcomeTour && (
+        <WelcomeTour
+          isOpen={showWelcomeTour}
+          onClose={() => setShowWelcomeTour(false)}
+          onComplete={handleTourComplete}
+          onGetStarted={handleTourComplete}
+        />
+      )}
+
+      {showIndustryModal && (
+        <IndustrySelectionModal
+          isOpen={showIndustryModal}
+          onClose={() => {
+            setShowIndustryModal(false);
+            // Still show starter pack even if they skip industry
+            setShowStarterPackModal(true);
+          }}
+          onSelect={handleIndustrySelect}
+        />
+      )}
+
+      {showStarterPackModal && (
+        <StarterPackOnboarding
+          isOpen={showStarterPackModal}
+          onClose={() => setShowStarterPackModal(false)}
+          onComplete={handlePackComplete}
+          industry={selectedIndustry}
+        />
+      )}
+
       <PageLayout maxWidth="wide">
         <PageHeader
           title={t('dashboard.title', 'Dashboard')}
@@ -318,6 +437,14 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
           <Stack gap="lg">
             {/* Health Banner - critical alerts at top */}
             <HealthBanner alertSummary={alertSummary} onNavigate={setCurrentPage} />
+
+            {/* Onboarding Banner - shown when onboarding incomplete */}
+            {showOnboardingBanner && (
+              <OnboardingBanner
+                onResume={handleResumeOnboarding}
+                onDismiss={handleDismissBanner}
+              />
+            )}
 
             {/* Yodeck-style Welcome Section - First Run */}
             {isFirstRun && !demoResult && (
