@@ -3,10 +3,16 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { Lock, Eye, EyeOff, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { updatePassword, getSession } from '../services/authService';
 import { validatePassword } from '../services/passwordService.js';
+import AuthLayout from './AuthLayout';
+import PasswordStrengthIndicator from '../components/security/PasswordStrengthIndicator';
 
+/**
+ *
+ */
 export default function UpdatePasswordPage() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');

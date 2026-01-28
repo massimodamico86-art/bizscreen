@@ -3,8 +3,14 @@
  */
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Mail, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
 import { requestPasswordReset } from '../services/authService';
+import AuthLayout from './AuthLayout';
 
+/**
+ *
+ */
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
