@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 ## Current Position
 
 Phase: 24 of 28 (Player Restructure)
-Plan: 0 of 3 in current phase
-Status: Ready to plan
-Last activity: 2026-01-27 — Roadmap created for v2.1
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-28 — Completed 24-01-PLAN.md
 
-Progress: [░░░░░░░░░░] 0% (0/10 plans)
+Progress: [█░░░░░░░░░] 10% (1/10 plans)
 
 ## Milestone History
 
@@ -32,7 +32,7 @@ Progress: [░░░░░░░░░░] 0% (0/10 plans)
 
 **v2.1:**
 - Plans: 10 total across 5 phases
-- Completed: 0
+- Completed: 1
 
 ## Accumulated Context
 
@@ -45,6 +45,10 @@ Key v2 decisions carried forward:
 - Separate scenes for language variants (not embedded JSONB)
 - 3-level language fallback via RPC
 - Emergency bypasses language resolution
+
+v2.1 decisions:
+
+- Detection-only hooks: notify via callbacks, let consumer handle actions (24-01)
 
 ### Pending Todos
 
@@ -61,10 +65,10 @@ Tech debt being addressed in v2.1:
 
 ## Session Continuity
 
-Last session: 2026-01-27
-Stopped at: Roadmap created for v2.1
+Last session: 2026-01-28
+Stopped at: Completed 24-01-PLAN.md
 Resume file: None
-Next: `/gsd:plan-phase 24` to plan Player Restructure
+Next: Execute 24-02-PLAN.md to integrate useStuckDetection
 
 ---
-*Updated: 2026-01-27 — v2.1 roadmap created*
+*Updated: 2026-01-28 — Completed 24-01 useStuckDetection hook extraction*
