@@ -39,20 +39,19 @@ Both milestones shipped successfully.
 ---
 
 ### Phase 24: Player Restructure
-**Goal**: Player.jsx reduced to maintainable size with clean component architecture
+**Goal**: Player.jsx reduced to routing-only (~40 lines) with ViewPage extracted to player/pages/
 **Depends on**: Nothing (first phase of v2.1)
 **Requirements**: PLAY-01, PLAY-02, PLAY-03, PLAY-04, PLAY-05
 **Success Criteria** (what must be TRUE):
-  1. Player.jsx is under 1000 lines with clear single responsibility
+  1. Player.jsx is under 100 lines with routing-only responsibility
   2. Widget components (Clock, Date, Weather, QRCode) render correctly when imported from player/components/
   3. Custom hooks work independently and can be tested in isolation
   4. Scene/Layout/Zone renderers handle all existing layout types without regression
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 24-01: Extract widgets and establish directory structure
-- [ ] 24-02: Extract custom hooks
-- [ ] 24-03: Extract renderers and slim down Player.jsx
+- [ ] 24-01-PLAN.md — Extract useStuckDetection hook
+- [ ] 24-02-PLAN.md — Extract ViewPage and slim Player.jsx
 
 ---
 
@@ -124,13 +123,13 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 24. Player Restructure | v2.1 | 0/3 | Not started | - |
+| 24. Player Restructure | v2.1 | 0/2 | Planned | - |
 | 25. Test Infrastructure | v2.1 | 0/2 | Not started | - |
 | 26. Analytics Completion | v2.1 | 0/1 | Not started | - |
 | 27. Performance Optimization | v2.1 | 0/2 | Not started | - |
 | 28. Code Quality | v2.1 | 0/2 | Not started | - |
 
-**Total v2.1:** 0/10 plans complete
+**Total v2.1:** 0/9 plans complete
 
 ---
 *Roadmap created: 2026-01-27*
