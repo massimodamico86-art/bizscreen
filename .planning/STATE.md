@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: None — between milestones
 Plan: None
 Status: Ready for next milestone
-Last activity: 2026-01-28 — v2.1 milestone complete and archived
+Last activity: 2026-01-28 — Completed quick task 001: Fix login error after credentials
 
 Progress: [——————————] 0% (ready for next milestone)
 
@@ -61,6 +61,12 @@ All v2.1 tech debt resolved. Minor items accepted:
 - 7815 ESLint warnings (gradual cleanup)
 - Migration 105 pre-existing issue (separate fix)
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 001 | Fix login error after credentials | 2026-01-28 | 1ce2147 | [001-fix-login-error-after-credentials](./quick/001-fix-login-error-after-credentials/) |
+
 ## Session Continuity
 
 Last session: 2026-01-28
@@ -69,4 +75,4 @@ Resume file: None
 Next: Start next milestone with /gsd:new-milestone
 
 ---
-*Updated: 2026-01-28 — v2.1 Tech Debt Cleanup milestone archived*
+*Updated: 2026-01-28 — Quick task 001 completed*
