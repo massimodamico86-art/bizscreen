@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 ## Current Position
 
 Phase: 24 of 28 (Player Restructure)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-28 — Completed 24-01-PLAN.md
+Last activity: 2026-01-28 — Completed 24-02-PLAN.md
 
-Progress: [█░░░░░░░░░] 10% (1/10 plans)
+Progress: [██░░░░░░░░] 20% (2/10 plans)
 
 ## Milestone History
 
@@ -32,7 +32,7 @@ Progress: [█░░░░░░░░░] 10% (1/10 plans)
 
 **v2.1:**
 - Plans: 10 total across 5 phases
-- Completed: 1
+- Completed: 2
 
 ## Accumulated Context
 
@@ -49,6 +49,8 @@ Key v2 decisions carried forward:
 v2.1 decisions:
 
 - Detection-only hooks: notify via callbacks, let consumer handle actions (24-01)
+- Player pages in player/pages/ with barrel exports (24-02)
+- Player.jsx is routing-only, no business logic (24-02)
 
 ### Pending Todos
 
@@ -58,7 +60,7 @@ None.
 
 Tech debt being addressed in v2.1:
 
-- Player.jsx at 1,265 lines (265 over target)
+- ~~Player.jsx at 1,265 lines (265 over target)~~ RESOLVED: Now 23 lines
 - Template usage analytics not recorded for starter packs
 - Campaign rotation weights not enforced in player
 - 18-19 pre-existing failing test files in services
@@ -66,9 +68,9 @@ Tech debt being addressed in v2.1:
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 24-01-PLAN.md
+Stopped at: Completed 24-02-PLAN.md
 Resume file: None
-Next: Execute 24-02-PLAN.md to integrate useStuckDetection
+Next: Evaluate if 24-03 is needed (Player.jsx cleanup goals already achieved)
 
 ---
-*Updated: 2026-01-28 — Completed 24-01 useStuckDetection hook extraction*
+*Updated: 2026-01-28 — Completed 24-02 ViewPage extraction (Player.jsx: 1265 -> 23 lines)*
