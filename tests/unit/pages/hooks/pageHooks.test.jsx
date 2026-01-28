@@ -91,6 +91,7 @@ vi.mock('../../../../src/services/campaignService', () => ({
   addContent: vi.fn().mockResolvedValue({ id: '1' }),
   removeContent: vi.fn().mockResolvedValue(true),
   CAMPAIGN_STATUS: { DRAFT: 'draft', ACTIVE: 'active', PAUSED: 'paused' },
+  ROTATION_MODES: { WEIGHT: 'weight', PERCENTAGE: 'percentage', SEQUENCE: 'sequence', RANDOM: 'random' },
 }));
 
 vi.mock('../../../../src/services/screenGroupService', () => ({

@@ -192,13 +192,14 @@ describe('DashboardPage', () => {
         expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
       });
 
-      // Check screens overview header
-      expect(screen.getByText('Screens Overview')).toBeInTheDocument();
+      // Check screens overview header (may appear multiple times for responsive layouts)
+      const overviewHeaders = screen.getAllByText('Screens Overview');
+      expect(overviewHeaders.length).toBeGreaterThan(0);
 
-      // Check screen names are displayed
-      expect(screen.getByText('Test Screen 1')).toBeInTheDocument();
-      expect(screen.getByText('Test Screen 2')).toBeInTheDocument();
-      expect(screen.getByText('Test Screen 3')).toBeInTheDocument();
+      // Check screen names are displayed (may appear multiple times for responsive layouts)
+      expect(screen.getAllByText('Test Screen 1').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Test Screen 2').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Test Screen 3').length).toBeGreaterThan(0);
     });
 
     it('displays quick actions section', async () => {
@@ -208,14 +209,15 @@ describe('DashboardPage', () => {
         expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
       });
 
-      // Check quick actions header
-      expect(screen.getByText('Quick Actions')).toBeInTheDocument();
+      // Check quick actions header (may appear multiple times for responsive layouts)
+      const quickActionsHeaders = screen.getAllByText('Quick Actions');
+      expect(quickActionsHeaders.length).toBeGreaterThan(0);
 
-      // Check action buttons are present
-      expect(screen.getByText('Add Screen')).toBeInTheDocument();
-      expect(screen.getByText('Create Playlist')).toBeInTheDocument();
-      expect(screen.getByText('Upload Media')).toBeInTheDocument();
-      expect(screen.getByText('Create App')).toBeInTheDocument();
+      // Check action buttons are present (may appear multiple times for responsive layouts)
+      expect(screen.getAllByText('Add Screen').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Create Playlist').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Upload Media').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Create App').length).toBeGreaterThan(0);
     });
   });
 
@@ -441,8 +443,9 @@ describe('DashboardPage', () => {
         expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
       });
 
-      // Click on Add Screen quick action
-      const addScreenButton = screen.getByText('Add Screen').closest('button');
+      // Click on Add Screen quick action (may appear multiple times, click first one)
+      const addScreenButtons = screen.getAllByText('Add Screen');
+      const addScreenButton = addScreenButtons[0].closest('button');
       if (addScreenButton) {
         fireEvent.click(addScreenButton);
         expect(setCurrentPage).toHaveBeenCalledWith('screens');

@@ -27,6 +27,7 @@ import {
   Button,
   EmptyState
 } from '../design-system';
+import { sanitizeHTML } from '../security/sanitize.js';
 import {
   HELP_CATEGORIES,
   searchHelpTopics,
@@ -285,11 +286,11 @@ function TopicDetailView({ topic, onNavigate, onBack, t }) {
       } else if (trimmed.startsWith('- ') || trimmed.match(/^\d+\. /)) {
         inList = true;
         const text = trimmed.replace(/^-\s*/, '').replace(/^\d+\.\s*/, '');
-        const formatted = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        const formatted = sanitizeHTML(text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>'));
         listItems.push(<li key={index} className="text-gray-700" dangerouslySetInnerHTML={{ __html: formatted }} />);
       } else if (trimmed) {
         if (inList) { elements.push(<ul key={`list-${index}`} className="list-disc pl-6 mb-4 space-y-1">{listItems}</ul>); listItems = []; inList = false; }
-        const formatted = trimmed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        const formatted = sanitizeHTML(trimmed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>'));
         elements.push(<p key={index} className="text-gray-700 mb-3" dangerouslySetInnerHTML={{ __html: formatted }} />);
       }
     });

@@ -46,6 +46,21 @@ vi.mock('../../../src/services/activityLogService', () => ({
   },
 }));
 
+// Mock permissions service - return false so canAssignContent bypasses DB check
+vi.mock('../../../src/services/permissionsService.js', () => ({
+  requiresApproval: vi.fn().mockResolvedValue(false),
+}));
+
+// Mock approval service
+vi.mock('../../../src/services/approvalService.js', () => ({
+  APPROVAL_STATUS: {
+    PENDING: 'pending',
+    APPROVED: 'approved',
+    REJECTED: 'rejected',
+    DRAFT: 'draft',
+  },
+}));
+
 describe('scheduleService', () => {
   describe('DAYS_OF_WEEK constant', () => {
     it('contains all 7 days', () => {
@@ -982,12 +997,14 @@ describe('scheduleService - Extended Coverage', () => {
           })
         }));
 
-        // Mock playlist lookup
+        // Mock playlist lookup - need to chain .order() after .in()
         supabase.from.mockImplementation(() => ({
           select: vi.fn().mockReturnThis(),
-          in: vi.fn().mockResolvedValue({
-            data: [{ id: 'pl-1', name: 'Morning Playlist' }],
-            error: null
+          in: vi.fn().mockReturnValue({
+            order: vi.fn().mockResolvedValue({
+              data: [{ id: 'pl-1', name: 'Morning Playlist' }],
+              error: null
+            })
           })
         }));
 
