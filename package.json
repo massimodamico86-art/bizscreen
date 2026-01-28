@@ -27,7 +27,8 @@
     "load-test:playlist": "k6 run load-tests/playlist-resolution.js",
     "load-test:media": "node load-tests/media-library.js",
     "build:polotno": "cd scripts/polotno-build && npm run build",
-    "svg:convert": "node scripts/svg-to-polotno.cjs"
+    "svg:convert": "node scripts/svg-to-polotno.cjs",
+    "analyze": "npm run build && open perf-reports/bundle-stats.html"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.946.0",
