@@ -162,12 +162,19 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         log.error('Init error', { error: error.message });
         // On timeout or error, clear any stale session and allow login
+        // BUT only if no user has logged in successfully in the meantime
         if (error.message.includes('timed out')) {
-          log.warn('Auth timed out - clearing stale session');
-          try {
-            await supabase.auth.signOut();
-          } catch (e) {
-            // Ignore signOut errors
+          // Check current auth state before signing out
+          const { data: { session: currentSession } } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
+          if (!currentSession?.user) {
+            log.warn('Auth timed out - clearing stale session');
+            try {
+              await supabase.auth.signOut();
+            } catch (e) {
+              // Ignore signOut errors
+            }
+          } else {
+            log.debug('Auth timed out but user is already authenticated, skipping signOut');
           }
         }
       } finally {
