@@ -1,0 +1,100 @@
+# Requirements: BizScreen v2.1
+
+**Defined:** 2026-01-27
+**Core Value:** Reduce technical debt for long-term maintainability and performance
+
+## v2.1 Requirements
+
+Requirements for v2.1 Tech Debt Cleanup milestone. Each maps to roadmap phases.
+
+### Player.jsx Restructure
+
+- [ ] **PLAY-01**: Player.jsx reduced to under 1000 lines
+- [ ] **PLAY-02**: All widgets extracted to separate components (Clock, Date, Weather, QRCode)
+- [ ] **PLAY-03**: All custom hooks extracted (useStuckDetection, useKioskMode, usePlayerHeartbeat, usePlayerCommands, usePlayerContent)
+- [ ] **PLAY-04**: Scene and Layout renderers extracted (SceneRenderer, LayoutRenderer, ZoneRenderer)
+- [ ] **PLAY-05**: Clean directory structure established (player/pages/, player/components/, player/hooks/, player/context/)
+
+### Test Infrastructure
+
+- [ ] **TEST-01**: All 18-19 failing service test files fixed and passing
+- [ ] **TEST-02**: Circular dependency issues resolved (loggingService/supabase)
+- [ ] **TEST-03**: Critical path test coverage added (scheduleService, offlineService, playerService)
+- [ ] **TEST-04**: Test patterns and guidelines documented
+
+### Analytics Gaps
+
+- [ ] **ANLY-01**: Template usage recorded for starter pack applies (recordTemplateUsage in StarterPackOnboarding)
+- [ ] **ANLY-02**: Campaign rotation weights enforced in player content resolution (get_resolved_player_content)
+
+### Performance - Bundle Size
+
+- [ ] **PERF-01**: Bundle size analyzed and baseline established
+- [ ] **PERF-02**: Code splitting implemented for major routes
+- [ ] **PERF-03**: Tree shaking verified and optimized
+
+### Code Quality
+
+- [ ] **QUAL-01**: ESLint rules enforced across codebase
+- [ ] **QUAL-02**: PropTypes and JSDoc type annotations added to core components
+- [ ] **QUAL-03**: README and API documentation updated
+- [ ] **QUAL-04**: Inline comments added to complex business logic
+
+## Future Requirements
+
+Deferred to future milestones. Tracked but not in current roadmap.
+
+### Performance
+- **PERF-F01**: Lazy loading implementation
+- **PERF-F02**: Rendering performance optimization
+- **PERF-F03**: Image/media optimization
+
+### Testing
+- **TEST-F01**: E2E test suite
+- **TEST-F02**: Visual regression testing
+- **TEST-F03**: Performance testing automation
+
+## Out of Scope
+
+Explicitly excluded. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| TypeScript migration | Too disruptive for cleanup milestone |
+| Full E2E test suite | Scope creep — focus on unit tests first |
+| Major architectural changes | Cleanup only, not redesign |
+| New features | This is a tech debt milestone |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| PLAY-01 | TBD | Pending |
+| PLAY-02 | TBD | Pending |
+| PLAY-03 | TBD | Pending |
+| PLAY-04 | TBD | Pending |
+| PLAY-05 | TBD | Pending |
+| TEST-01 | TBD | Pending |
+| TEST-02 | TBD | Pending |
+| TEST-03 | TBD | Pending |
+| TEST-04 | TBD | Pending |
+| ANLY-01 | TBD | Pending |
+| ANLY-02 | TBD | Pending |
+| PERF-01 | TBD | Pending |
+| PERF-02 | TBD | Pending |
+| PERF-03 | TBD | Pending |
+| QUAL-01 | TBD | Pending |
+| QUAL-02 | TBD | Pending |
+| QUAL-03 | TBD | Pending |
+| QUAL-04 | TBD | Pending |
+
+**Coverage:**
+- v2.1 requirements: 18 total
+- Mapped to phases: 0 (pending roadmap)
+- Unmapped: 18
+
+---
+*Requirements defined: 2026-01-27*
+*Last updated: 2026-01-27 after initial definition*
