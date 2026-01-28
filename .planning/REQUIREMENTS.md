@@ -35,10 +35,10 @@ Requirements for v2.1 Tech Debt Cleanup milestone. Each maps to roadmap phases.
 
 ### Code Quality
 
-- [ ] **QUAL-01**: ESLint rules enforced across codebase
-- [ ] **QUAL-02**: PropTypes and JSDoc type annotations added to core components
-- [ ] **QUAL-03**: README and API documentation updated
-- [ ] **QUAL-04**: Inline comments added to complex business logic
+- [x] **QUAL-01**: ESLint rules enforced across codebase (pre-commit via Husky/lint-staged)
+- [x] **QUAL-02**: PropTypes and JSDoc type annotations added to core components
+- [x] **QUAL-03**: README and API documentation updated (225 lines)
+- [x] **QUAL-04**: Inline comments added to complex business logic
 
 ## Future Requirements
 
@@ -85,10 +85,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PERF-01 | Phase 27 | Complete |
 | PERF-02 | Phase 27 | Complete |
 | PERF-03 | Phase 27 | Complete |
-| QUAL-01 | Phase 28 | Pending |
-| QUAL-02 | Phase 28 | Pending |
-| QUAL-03 | Phase 28 | Pending |
-| QUAL-04 | Phase 28 | Pending |
+| QUAL-01 | Phase 28 | Complete |
+| QUAL-02 | Phase 28 | Complete |
+| QUAL-03 | Phase 28 | Complete |
+| QUAL-04 | Phase 28 | Complete |
 
 **Coverage:**
 - v2.1 requirements: 18 total
@@ -97,4 +97,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-27*
-*Last updated: 2026-01-28 after phase 27 completion*
+*Last updated: 2026-01-28 after phase 28 completion — all v2.1 requirements complete*
