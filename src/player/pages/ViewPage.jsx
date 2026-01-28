@@ -39,6 +39,7 @@ import {
   useTapSequence,
   useStuckDetection,
 } from '../hooks';
+import { AppRenderer } from '../components/AppRenderer';
 
 // Module-level logger for utility functions
 const retryLogger = createScopedLogger('Player:retry');
@@ -67,6 +68,8 @@ const RETRY_CONFIG = {
 /**
  * Retry a function with exponential backoff
  * Uses calculateBackoff from playerService for full jitter (0-100%)
+ * @param fn
+ * @param maxRetries
  */
 async function retryWithBackoff(fn, maxRetries = RETRY_CONFIG.maxRetries) {
   let lastError;

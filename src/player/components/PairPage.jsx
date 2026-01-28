@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabase';
 import { useLogger } from '../../hooks/useLogger.js';
+import { PairingScreen } from './PairingScreen';
 
 // Storage keys - shared with Player.jsx
 const STORAGE_KEYS = {
