@@ -48,18 +48,25 @@ These capabilities shipped and are production-verified:
 - ✓ Dashboard redesign with health indicators — v2
 - ✓ Guided onboarding flow — v2
 
+**v2.1 Tech Debt Cleanup (2026-01-28):**
+- ✓ Player.jsx restructured to 23 lines (98% reduction) — v2.1
+- ✓ ViewPage extracted to player/pages/ with hooks — v2.1
+- ✓ Test suite stabilized: 2071 tests, 0 failures — v2.1
+- ✓ Circular dependency resolved in test infrastructure — v2.1
+- ✓ TEST-PATTERNS.md with testing guidelines — v2.1
+- ✓ Weighted campaign rotation enforced — v2.1
+- ✓ Template usage tracking verified — v2.1
+- ✓ Bundle baseline and tree shaking enabled — v2.1
+- ✓ Code splitting verified per route — v2.1
+- ✓ Pre-commit hooks with ESLint enforcement — v2.1
+- ✓ PropTypes and JSDoc on core components/services — v2.1
+- ✓ README rewritten with architecture docs — v2.1
+
 ### Active
 
-**Current Milestone: v2.1 Tech Debt Cleanup**
+**Current Milestone:** None — ready for next milestone planning
 
-**Goal:** Reduce technical debt accumulated during v1/v2 feature development through code cleanup, test infrastructure improvements, and performance optimizations.
-
-**Target areas:**
-- Player.jsx reduction to under 1000 lines
-- Fix failing service tests (18-19 files)
-- Wire up analytics gaps (starter pack tracking, rotation weights)
-- Performance improvements (bundle size, load times, rendering)
-- Code quality improvements (linting, type safety, documentation)
+Use `/gsd:new-milestone` to start the next milestone.
 
 ### Out of Scope
 
@@ -78,21 +85,24 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (Post v2):**
+**Current State (Post v2.1):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- 178,160 lines of JavaScript/JSX across codebase
+- 310,940 lines of JavaScript/JSX across codebase
+- Player.jsx restructured to 23 lines (routing only)
+- ViewPage extracted to player/pages/ (1,203 lines)
+- Test suite: 2071 tests passing, 0 failures
 - Player component supports web, Android, iOS, WebOS, Tizen
 - Multi-tenant with feature flags for plan differentiation
 - AWS S3 for media storage with CloudFront CDN
-- Templates marketplace with 13 template features
-- Multi-language content with 10 language features
-- Advanced scheduling with 12 scheduling features
-- Mobile responsive admin and guided onboarding
+- Pre-commit hooks enforce ESLint on all commits
+- Bundle analysis via `npm run analyze`
 
-**Technical Debt:**
-- Player.jsx at 1,265 lines (265 over target, accepted)
-- Template usage analytics not recorded for starter packs
-- Campaign rotation weights not enforced in player
+**Technical Debt (Minor — Accepted):**
+- src/__fixtures__/ exists but not yet adopted in tests
+- 7815 ESLint warnings remain (gradual cleanup via warn rules)
+- PropTypes use basic types (acceptable for wrapper components)
+- useStuckDetection not unit tested (covered by integration tests)
+- Migration 105 references non-existent `tenants` table (pre-existing)
 
 **Codebase Mapping:**
 - `.planning/codebase/ARCHITECTURE.md` — system design
@@ -113,7 +123,7 @@ These capabilities shipped and are production-verified:
 |----------|-----------|---------|
 | Stabilize before new features | Logic gaps pose production risk | ✓ Good — v1 stable |
 | Player.jsx hooks before component extraction | Proven pattern needed first | ✓ Good — pattern works |
-| Accept 1,265 lines Player.jsx | 56% reduction still achieved | ✓ Acceptable |
+| Accept 1,265 lines Player.jsx | 56% reduction still achieved | ✓ Superseded — now 23 lines |
 | Build order: Scheduling > Templates > Multi-Language | Risk order (extends > enhances > new) | ✓ Good — smooth progression |
 | TZDate for schedule calculations | DST-safe handling required | ✓ Good — no DST bugs |
 | Separate scenes for language variants | Simpler than embedded JSONB | ✓ Good — clean model |
@@ -121,6 +131,11 @@ These capabilities shipped and are production-verified:
 | Emergency bypasses language resolution | Same content for all devices | ✓ Good — instant push works |
 | Starter packs via inline expansion | Better UX than separate page | ✓ Good — high engagement |
 | Modal wizard for customization | Single-screen form per research | ✓ Good — fast completion |
+| Player routing-only with ViewPage extraction | Clean separation of concerns | ✓ Good — 98% reduction |
+| Global vi.mock for circular dependency | Breaks loggingService/supabase cycle | ✓ Good — tests pass |
+| sideEffects for tree shaking | Explicit bundler hints | ✓ Good — verified working |
+| Pre-commit hooks via Husky/lint-staged | Enforce quality at commit time | ✓ Good — clean commits |
+| PropTypes at warn level | Gradual adoption without blocking | ✓ Good — coverage growing |
 
 ---
-*Last updated: 2026-01-27 after v2.1 milestone started*
+*Last updated: 2026-01-28 after v2.1 milestone complete*

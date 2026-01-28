@@ -1,5 +1,46 @@
 # Project Milestones: BizScreen
 
+## v2.1 Tech Debt Cleanup (Shipped: 2026-01-28)
+
+**Delivered:** Reduced technical debt from v1/v2 through Player.jsx restructuring, test infrastructure fixes, analytics gap closure, bundle optimization, and code quality enforcement.
+
+**Phases completed:** 24-29 (11 plans total)
+
+**Key accomplishments:**
+
+- Player.jsx restructured from 1,265 to 23 lines (98% reduction) via ViewPage extraction to player/pages/
+- Test suite stabilized: 2071 tests passing, circular dependency fixed, TEST-PATTERNS.md with patterns
+- Analytics gaps closed: Weighted campaign rotation and template usage tracking verified
+- Bundle optimized: Tree shaking enabled via sideEffects, code splitting verified per route
+- Code quality enforced: Pre-commit hooks with Husky/lint-staged, PropTypes, JSDoc, README rewrite
+- Import issues fixed: 40+ imports restored across 8 files after ESLint auto-fix
+
+**Stats:**
+
+- 380 files modified
+- 310,940 lines of JavaScript/JSX
+- 6 phases, 11 plans
+- ~17 hours from start to ship
+
+**Git range:** `1cf98cb` → `c324363`
+
+**Tech debt resolved:**
+
+- Player.jsx over 1000-line target → Now 23 lines
+- 18-19 failing test files → 0 failures (2071 tests pass)
+- Template usage not tracked for starter packs → Verified working
+- Campaign rotation weights not enforced → Migration 138 implemented
+
+**Tech debt remaining (accepted):**
+
+- src/__fixtures__/ not yet adopted in tests (infrastructure ready)
+- 7815 ESLint warnings (gradual cleanup via warn rules)
+- PropTypes use basic types (acceptable for wrapper components)
+
+**What's next:** v3 planning or maintenance
+
+---
+
 ## v2 Templates & Platform Polish (Shipped: 2026-01-27)
 
 **Delivered:** Complete templates marketplace, multi-language content support, advanced scheduling with campaigns, and platform polish including mobile responsive UI, dashboard redesign, and guided onboarding.

@@ -2,77 +2,53 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-27)
+See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 Tech Debt Cleanup - COMPLETE
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 29 of 29 (Fix Auto-Removed Imports) - COMPLETE
-Plan: 2 of 2 in current phase - VERIFIED
-Status: All import restoration complete; test suite passing with 2071 tests
-Last activity: 2026-01-28 - Executed 29-02 (source file import restoration)
+Phase: None — between milestones
+Plan: None
+Status: Ready for next milestone
+Last activity: 2026-01-28 — v2.1 milestone complete and archived
 
-Progress: [██████████] 100% (11/11 plans)
+Progress: [——————————] 0% (ready for next milestone)
 
 ## Milestone History
 
 | Milestone | Phases | Status | Shipped |
 |-----------|--------|--------|---------|
-| v1 Production Release | 1-12 | Shipped | 2026-01-24 |
-| v2 Templates & Platform Polish | 13-23 | Shipped | 2026-01-27 |
-| v2.1 Tech Debt Cleanup | 24-29 | Shipped | 2026-01-28 |
+| v1 Production Release | 1-12 | Archived | 2026-01-24 |
+| v2 Templates & Platform Polish | 13-23 | Archived | 2026-01-27 |
+| v2.1 Tech Debt Cleanup | 24-29 | Archived | 2026-01-28 |
 
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1):**
 - Total plans executed: 126 (75 + 40 + 11)
-- Total phases: 29
+- Total phases: 29 completed
+- Total codebase: 310,940 LOC JavaScript/JSX
 
-**v2.1:**
-- Plans: 11 total across 6 phases
-- Completed: 11
-- Remaining: 0
+**v2.1 Final:**
+- Phases: 6 (24-29)
+- Plans: 11 total
+- Commits: 58
+- Files modified: 380
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Key v2 decisions carried forward:
+Decisions logged in PROJECT.md Key Decisions table.
+All v2.1 decisions archived in milestones/v2.1-ROADMAP.md.
 
-- TZDate for schedule calculations (DST-safe)
-- Separate scenes for language variants (not embedded JSONB)
-- 3-level language fallback via RPC
-- Emergency bypasses language resolution
-
-v2.1 decisions:
-
-- Detection-only hooks: notify via callbacks, let consumer handle actions (24-01)
-- Player pages in player/pages/ with barrel exports (24-02)
-- Player.jsx is routing-only, no business logic (24-02)
-- Global vi.mock in setup.js for circular dependency breaking (25-01)
-- Mock permissionsService to bypass DB calls in unit tests (25-01)
-- Fixtures in src/__fixtures__/ for colocation pattern (25-02)
-- Factory functions return fresh objects to prevent test pollution (25-02)
-- TEST-PATTERNS.md at project root for discoverability (25-02)
-- VOLATILE for select_weighted_campaign_content due to random() (26-01)
-- Campaign priority: Emergency > Campaign > Device Scene (26-01)
-- Player chunk size (68.88 KB gzip) justified by offline/realtime/analytics (27-01)
-- vendor-motion preload (37 KB) deferred as optimization target (27-01)
-- sideEffects: ['*.css', '*.scss'] enables tree shaking (27-02)
-- Bundle warning threshold: chunks >200KB gzip need investigation (27-02)
-- ESLint ignores vendored code (yodeck-capture, _api-disabled, public) (28-01)
-- Pre-commit hook uses Husky + lint-staged for enforcement (28-01)
-- useEmergencyOptional hook pattern for conditional context usage (28-01)
-- PropTypes rules at warn level for gradual adoption (28-02)
-- JSDoc only required for exported function declarations (28-02)
-- react/jsx-uses-vars rule fixes unused-imports JSX detection (28-02)
-- DashboardComponents test imports from DashboardSections.jsx not DashboardPage.jsx (29-01)
-- Named exports preferred for component imports (29-02)
-- Design-system barrel imports for unified UI component access (29-02)
-- Test mocks required for component dependencies in integration tests (29-02)
+Key patterns established:
+- Player routing-only with ViewPage in player/pages/
+- Global vi.mock for circular dependency resolution
+- sideEffects for tree shaking
+- Pre-commit hooks via Husky/lint-staged
 
 ### Pending Todos
 
@@ -80,23 +56,17 @@ None.
 
 ### Blockers/Concerns
 
-v2.1 tech debt items status - ALL RESOLVED:
-
-- ~~Player.jsx at 1,265 lines (265 over target)~~ RESOLVED: Now 23 lines
-- ~~Template usage analytics not recorded for starter packs~~ VERIFIED: Already working via installTemplateAsScene chain
-- ~~Campaign rotation weights not enforced in player~~ RESOLVED: Migration 138 with weighted selection
-- ~~18-19 pre-existing failing test files in services~~ RESOLVED: Test file and source file imports restored
-- ~~ESLint has 1,070 warnings~~ ADDRESSED: Pre-commit hooks enforce clean commits, gradual cleanup via warn rules
-- ~~Source file import blocker~~ RESOLVED: Phase 29-02 restored all missing imports
-
-**Note:** Migration 105 has pre-existing issue (references non-existent `tenants` table). Should be addressed separately in future maintenance.
+All v2.1 tech debt resolved. Minor items accepted:
+- src/__fixtures__/ not yet adopted (infrastructure ready)
+- 7815 ESLint warnings (gradual cleanup)
+- Migration 105 pre-existing issue (separate fix)
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 29-02-PLAN.md (source file import restoration)
+Stopped at: v2.1 milestone archived
 Resume file: None
-Next: v2.1 milestone complete. Ready for next milestone planning.
+Next: Start next milestone with /gsd:new-milestone
 
 ---
-*Updated: 2026-01-28 - Phase 29-02 executed; v2.1 Tech Debt Cleanup milestone complete.*
+*Updated: 2026-01-28 — v2.1 Tech Debt Cleanup milestone archived*
