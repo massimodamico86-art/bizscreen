@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Users can easily find and use pre-built content while managing content across languages and complex schedules
-**Current focus:** v2 Templates & Platform Polish - Phase 22 complete
+**Current focus:** v2 Templates & Platform Polish - Phase 23 in progress
 
 ## Current Position
 
-Phase: 22 of 23 (Platform Polish - Mobile & Dashboard)
-Plan: 3 of 3 complete (Phase 22 complete)
-Status: Phase complete
-Last activity: 2026-01-27 - Completed 22-03-PLAN.md (Dashboard Widgets)
+Phase: 23 of 23 (Platform Polish - Onboarding)
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-01-27 - Completed 23-01-PLAN.md (Welcome Tour)
 
-Progress: [██████████████████░] 97% (37/39 plans)
+Progress: [██████████████████░] 97% (38/39 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 37 (v2)
+- Total plans completed: 38 (v2)
 - Average duration: 3.8min
-- Total execution time: 140min
+- Total execution time: 144min
 
 **By Phase:**
 
@@ -37,9 +37,10 @@ Progress: [██████████████████░] 97% (37/39
 | 20-multi-language-core | 4 | 15min | 4min |
 | 21-multi-language-advanced | 4 | 11min | 3min |
 | 22-platform-polish-mobile-dashboard | 3 | 12min | 4min |
+| 23-platform-polish-onboarding | 1 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 21-04 (3min), 22-01 (3min), 22-02 (4min), 22-03 (5min)
+- Last 5 plans: 22-01 (3min), 22-02 (4min), 22-03 (5min), 23-01 (4min)
 - Trend: Fast UI component plans
 
 *Updated after each plan completion*
@@ -148,6 +149,10 @@ Recent decisions affecting current work:
 - [22-03]: QuickActionsBar in header on desktop, separate card on mobile
 - [22-03]: ActiveContentGrid shows up to 8 screens with thumbnail grid
 - [22-03]: TimelineActivity replaces RecentActivityWidget with visual timeline
+- [23-01]: 6 tour steps: Welcome, Media Library, Playlists, Templates, Screens, Scheduling
+- [23-01]: Modal wizard format with progress dots, not tooltip-based tour
+- [23-01]: Extend existing onboarding_progress table (not separate tour table)
+- [23-01]: Progress persists non-blocking via fire-and-forget RPC calls
 
 ### Pending Todos
 
@@ -169,9 +174,9 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed Phase 22 (Platform Polish - Mobile & Dashboard)
+Stopped at: Completed 23-01-PLAN.md (Welcome Tour)
 Resume file: None
-Next: Phase 23 (Platform Polish - Onboarding)
+Next: 23-02-PLAN.md (Starter Pack Selection)
 
 ---
-*Updated: 2026-01-27 - Phase 22 complete (3/3 plans, verified)*
+*Updated: 2026-01-27 - Phase 23 plan 01 complete (Welcome Tour)*
