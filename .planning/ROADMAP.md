@@ -195,12 +195,12 @@ Plans:
   6. Dashboard provides quick actions (add screen, create content, view analytics)
   7. Dashboard displays health indicators (offline screens, errors, warnings)
   8. Dashboard shows recent activity and notifications
-**Plans**: TBD
+**Plans**: 3 plans (Wave 1: 22-01, 22-02 parallel; Wave 2: 22-03)
 
 Plans:
-- [ ] 22-01: Mobile responsive layout
-- [ ] 22-02: Mobile tables and navigation
-- [ ] 22-03: Dashboard redesign
+- [ ] 22-01-PLAN.md - Mobile navigation (hamburger menu, slide-out overlay, body scroll lock)
+- [ ] 22-02-PLAN.md - Responsive tables (overflow wrapper, column hiding, touch scroll)
+- [ ] 22-03-PLAN.md - Dashboard enhancement (health banner, active content grid, timeline activity, quick actions)
 
 ### Phase 23: Platform Polish - Onboarding
 **Goal**: New users have smooth onboarding with welcome tour, starter packs, and industry-specific suggestions
