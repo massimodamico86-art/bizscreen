@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Ready for v3 planning
+**Current focus:** v2.1 Tech Debt Cleanup
 
 ## Current Position
 
-Phase: None — between milestones
-Plan: None
-Status: v2 SHIPPED — Ready to plan v3
-Last activity: 2026-01-27 — v2 milestone complete
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-01-27 — Milestone v2.1 started
 
-Progress: Ready for next milestone
+Progress: Ready to define requirements
 
 ## Milestone History
 
@@ -22,14 +22,9 @@ Progress: Ready for next milestone
 |-----------|--------|--------|---------|
 | v1 Production Release | 1-12 | ✅ Shipped | 2026-01-24 |
 | v2 Templates & Platform Polish | 13-23 | ✅ Shipped | 2026-01-27 |
+| v2.1 Tech Debt Cleanup | 24-? | 🚧 In Progress | — |
 
 ## Performance Metrics
-
-**v2 Milestone:**
-- Total plans completed: 39
-- Total phases: 11
-- Total execution time: 149min
-- Average per plan: 3.8min
 
 **Cumulative (v1 + v2):**
 - Total plans executed: 114 (75 + 39)
@@ -49,25 +44,23 @@ Key v2 decisions carried forward:
 
 ### Pending Todos
 
-None — ready for v3 planning.
+None.
 
 ### Blockers/Concerns
 
-Tech debt from v2 (documented in MILESTONES.md):
+Tech debt to address in v2.1:
 
 - Player.jsx at 1,265 lines (265 over target, accepted)
 - Template usage analytics not recorded for starter packs
 - Campaign rotation weights not enforced in player
-
-Test infrastructure note:
-- 18-19 pre-existing failing test files in services (unrelated to v2 work)
+- 18-19 pre-existing failing test files in services
 
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: v2 milestone complete
+Stopped at: Milestone v2.1 initialization
 Resume file: None
-Next: `/gsd:new-milestone` for v3 planning
+Next: Define requirements, create roadmap
 
 ---
-*Updated: 2026-01-27 — v2 milestone archived, ready for v3*
+*Updated: 2026-01-27 — v2.1 milestone started*

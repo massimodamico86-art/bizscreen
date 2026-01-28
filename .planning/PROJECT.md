@@ -50,7 +50,16 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-No active requirements. Ready for v3 planning.
+**Current Milestone: v2.1 Tech Debt Cleanup**
+
+**Goal:** Reduce technical debt accumulated during v1/v2 feature development through code cleanup, test infrastructure improvements, and performance optimizations.
+
+**Target areas:**
+- Player.jsx reduction to under 1000 lines
+- Fix failing service tests (18-19 files)
+- Wire up analytics gaps (starter pack tracking, rotation weights)
+- Performance improvements (bundle size, load times, rendering)
+- Code quality improvements (linting, type safety, documentation)
 
 ### Out of Scope
 
@@ -114,4 +123,4 @@ No active requirements. Ready for v3 planning.
 | Modal wizard for customization | Single-screen form per research | ✓ Good — fast completion |
 
 ---
-*Last updated: 2026-01-27 after v2 milestone*
+*Last updated: 2026-01-27 after v2.1 milestone started*
