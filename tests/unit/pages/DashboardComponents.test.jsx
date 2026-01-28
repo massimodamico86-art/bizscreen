@@ -7,6 +7,8 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { DashboardErrorState, ScreenRow, StatsGrid } from '../../../src/pages/dashboard/DashboardSections';
 
 // Import named exports for testing
 

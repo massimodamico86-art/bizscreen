@@ -6,6 +6,8 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import ScreenGroupSettingsTab from '../../../src/components/screens/ScreenGroupSettingsTab';
 
 // Mock language service
 vi.mock('../../../src/services/languageService', () => ({
