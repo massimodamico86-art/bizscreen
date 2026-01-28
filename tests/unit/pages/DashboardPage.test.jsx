@@ -10,8 +10,10 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 
 // Component under test
+import DashboardPage from '../../../src/pages/DashboardPage';
 
 // Mock the auth context
 const mockUser = { id: 'test-user-id', email: 'test@example.com' };
@@ -43,6 +45,9 @@ vi.mock('../../../src/services/dashboardService', () => ({
 vi.mock('../../../src/services/onboardingService', () => ({
   checkIsFirstRun: vi.fn().mockResolvedValue({ isFirstRun: false }),
   needsOnboarding: vi.fn().mockResolvedValue(false),
+  shouldShowWelcomeTour: vi.fn().mockResolvedValue(false),
+  getWelcomeTourProgress: vi.fn().mockResolvedValue({ completedWelcomeTour: false, starterPackApplied: false }),
+  getSelectedIndustry: vi.fn().mockResolvedValue(null),
 }));
 
 // Mock demo content service
@@ -64,6 +69,49 @@ vi.mock('../../../src/components/ErrorBoundary', () => ({
 // Mock OnboardingWizard
 vi.mock('../../../src/components/OnboardingWizard', () => ({
   default: () => null,
+}));
+
+// Mock welcome components
+vi.mock('../../../src/components/welcome', () => ({
+  WelcomeHero: () => null,
+  WelcomeFeatureCards: () => null,
+}));
+
+// Mock dashboard components
+vi.mock('../../../src/components/dashboard', () => ({
+  QuickActionsBar: () => null,
+  HealthBanner: () => null,
+  ActiveContentGrid: () => null,
+  TimelineActivity: () => null,
+  PendingApprovalsWidget: () => null,
+}));
+
+// Mock onboarding components
+vi.mock('../../../src/components/onboarding/WelcomeTour', () => ({
+  WelcomeTour: () => null,
+}));
+
+vi.mock('../../../src/components/onboarding/IndustrySelectionModal', () => ({
+  IndustrySelectionModal: () => null,
+}));
+
+vi.mock('../../../src/components/onboarding/StarterPackOnboarding', () => ({
+  StarterPackOnboarding: () => null,
+}));
+
+vi.mock('../../../src/components/onboarding/OnboardingBanner', () => ({
+  OnboardingBanner: () => null,
+  isBannerDismissed: vi.fn().mockReturnValue(false),
+}));
+
+// Mock dashboard sub-components from pages/dashboard
+vi.mock('../../../src/pages/dashboard/WelcomeModal', () => ({
+  default: () => null,
+}));
+
+vi.mock('../../../src/pages/dashboard/OnboardingCards', () => ({
+  DemoResultCard: () => null,
+  GettingStartedTips: () => null,
 }));
 
 // Test data factories

@@ -12,9 +12,26 @@ import {
   FileAudio,
   FileText,
   AlertTriangle,
+  Loader2,
+  RefreshCw,
+  Monitor,
+  Wifi,
+  WifiOff,
+  ListVideo,
+  Grid3X3,
+  Sparkles,
+  Clock,
+  ArrowRight,
+  AlertCircle,
+  Info,
+  Bell,
+  PlusCircle,
+  Edit,
+  Upload,
+  Activity,
 } from 'lucide-react';
 
-import { Badge, Stack, Card } from '../../design-system';
+import { Badge, Stack, Card, Button, StatCard } from '../../design-system';
 import { formatLastSeen } from '../../services/dashboardService';
 
 /**

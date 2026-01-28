@@ -11,7 +11,16 @@
  * - ./dashboard/WelcomeModal.jsx - Welcome modal flow
  */
 import { useState, useEffect, useCallback } from 'react';
-
+import {
+  Loader2,
+  Sparkles,
+  ArrowRight,
+  Monitor,
+  Plus,
+  ListVideo,
+  Image,
+  Grid3X3,
+} from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
@@ -34,21 +43,37 @@ import {
 import { createDemoWorkspace } from '../services/demoContentService';
 import { applyPack, getDefaultPackSlug } from '../services/templateService';
 
+// Design system components
+import {
+  PageLayout,
+  PageHeader,
+  PageContent,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Stack,
+  Button,
+  EmptyState,
+} from '../design-system';
+
 // Extracted sub-components
-
-
-
+import { DashboardErrorState, StatsGrid, ScreenRow, QuickActionButton, AlertsWidget } from './dashboard/DashboardSections';
+import WelcomeModal from './dashboard/WelcomeModal';
+import { DemoResultCard, GettingStartedTips } from './dashboard/OnboardingCards';
+import { WelcomeHero, WelcomeFeatureCards } from '../components/welcome';
+import { QuickActionsBar, HealthBanner, ActiveContentGrid, TimelineActivity, PendingApprovalsWidget } from '../components/dashboard';
 
 
 // Yodeck-style welcome components
+import ErrorBoundary from '../components/ErrorBoundary';
+import OnboardingWizard from '../components/OnboardingWizard';
 
 // New onboarding components (Phase 23)
-
-
-import { isBannerDismissed } from '../components/onboarding/OnboardingBanner';
-
-// Dashboard components
-
+import { WelcomeTour } from '../components/onboarding/WelcomeTour';
+import { IndustrySelectionModal } from '../components/onboarding/IndustrySelectionModal';
+import { StarterPackOnboarding } from '../components/onboarding/StarterPackOnboarding';
+import { OnboardingBanner, isBannerDismissed } from '../components/onboarding/OnboardingBanner';
 
 import { useBreakpoints } from '../hooks/useMediaQuery';
 
@@ -253,6 +278,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
 
   /**
    * After industry selected, show starter pack
+   * @param industry
    */
   const handleIndustrySelect = (industry) => {
     setSelectedIndustry(industry);

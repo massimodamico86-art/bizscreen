@@ -11,7 +11,13 @@ import {
   Zap,
   LayoutTemplate,
   CreditCard,
-  BookOpen
+  BookOpen,
+  Search,
+  ChevronRight,
+  ChevronLeft,
+  ExternalLink,
+  ArrowLeft,
+  Loader2,
 } from 'lucide-react';
 
 
@@ -22,7 +28,7 @@ import {
   getHelpTopic,
   getTopicsByCategory,
 } from '../services/helpService';
-import { PageLayout, PageHeader } from '../design-system';
+import { PageLayout, PageHeader, PageContent, Button, Card, EmptyState } from '../design-system';
 
 const CATEGORY_ICONS = {
   getting_started: Rocket,

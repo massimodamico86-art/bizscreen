@@ -12,6 +12,7 @@
  */
 
 import { useState, useMemo } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 
 const DEVICE_ID_KEY = 'player_device_id';
 
@@ -35,6 +36,11 @@ function getDeviceId() {
   return deviceId;
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.onFallbackToOtp
+ */
 export function PairingScreen({ onFallbackToOtp }) {
   const [deviceId] = useState(() => getDeviceId());
 
