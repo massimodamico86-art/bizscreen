@@ -69,10 +69,10 @@ Requirements for v2 Templates & Platform Polish milestone. Each maps to roadmap 
 
 ### Onboarding
 
-- [ ] **ONBRD-01**: New users see welcome tour explaining key features
-- [ ] **ONBRD-02**: New users can select starter pack during signup
-- [ ] **ONBRD-03**: System suggests templates based on selected industry
-- [ ] **ONBRD-04**: Onboarding can be skipped and accessed later
+- [x] **ONBRD-01**: New users see welcome tour explaining key features
+- [x] **ONBRD-02**: New users can select starter pack during signup
+- [x] **ONBRD-03**: System suggests templates based on selected industry
+- [x] **ONBRD-04**: Onboarding can be skipped and accessed later
 
 ### Dashboard
 
@@ -178,10 +178,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DASH-02 | Phase 22 | Complete |
 | DASH-03 | Phase 22 | Complete |
 | DASH-04 | Phase 22 | Complete |
-| ONBRD-01 | Phase 23 | Pending |
-| ONBRD-02 | Phase 23 | Pending |
-| ONBRD-03 | Phase 23 | Pending |
-| ONBRD-04 | Phase 23 | Pending |
+| ONBRD-01 | Phase 23 | Complete |
+| ONBRD-02 | Phase 23 | Complete |
+| ONBRD-03 | Phase 23 | Complete |
+| ONBRD-04 | Phase 23 | Complete |
 
 **Coverage:**
 - v2 requirements: 49 total

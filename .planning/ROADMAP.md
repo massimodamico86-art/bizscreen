@@ -7,7 +7,7 @@ BizScreen v2 delivers three major feature sets (Templates Marketplace, Multi-Lan
 ## Milestones
 
 - v1.0 Production Release - Phases 1-12 (shipped 2026-01-24) - Archived to `.planning/milestones/`
-- v2.0 Templates & Platform Polish - Phases 13-23 (in progress)
+- v2.0 Templates & Platform Polish - Phases 13-23 (complete)
 
 ## Phases
 
@@ -19,9 +19,9 @@ BizScreen v2 delivers three major feature sets (Templates Marketplace, Multi-Lan
 - [x] **Phase 18: Templates Discovery** - Recent, favorites, starter packs, and customization wizard
 - [x] **Phase 19: Templates Intelligence** - Suggestions, ratings, and usage analytics
 - [x] **Phase 20: Multi-Language Core** - Language variants, device assignment, and fallback
-- [ ] **Phase 21: Multi-Language Advanced** - Group assignment, auto-assignment, workflow, and AI suggestions
+- [x] **Phase 21: Multi-Language Advanced** - Group assignment, auto-assignment, workflow, and AI suggestions
 - [x] **Phase 22: Platform Polish - Mobile & Dashboard** - Responsive admin and dashboard redesign
-- [ ] **Phase 23: Platform Polish - Onboarding** - Welcome tour, starter packs, and industry suggestions
+- [x] **Phase 23: Platform Polish - Onboarding** - Welcome tour, starter packs, and industry suggestions
 
 ## Phase Details
 
@@ -214,8 +214,8 @@ Plans:
 **Plans**: 2 plans (Wave 1: 23-01, Wave 2: 23-02)
 
 Plans:
-- [ ] 23-01-PLAN.md - Welcome tour modal with 5-6 step feature walkthrough
-- [ ] 23-02-PLAN.md - Industry selection grid and starter pack onboarding flow
+- [x] 23-01-PLAN.md - Welcome tour modal with 5-6 step feature walkthrough
+- [x] 23-02-PLAN.md - Industry selection grid and starter pack onboarding flow
 
 ## Progress
 
@@ -236,7 +236,7 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 | 20. Multi-Language Core | 4/4 | Complete | 2026-01-26 |
 | 21. Multi-Language Advanced | 4/4 | Complete | 2026-01-26 |
 | 22. Platform Polish - Mobile & Dashboard | 3/3 | Complete | 2026-01-27 |
-| 23. Platform Polish - Onboarding | 0/2 | Not started | - |
+| 23. Platform Polish - Onboarding | 2/2 | Complete | 2026-01-27 |
 
 ---
 *Roadmap created: 2026-01-24*
@@ -263,3 +263,5 @@ Note: Phases 14-16 (Scheduling), 17-19 (Templates), and 20-21 (Multi-Language) c
 *Phase 21 complete: 2026-01-26*
 *Phase 22 complete: 2026-01-27*
 *Phase 23 planned: 2026-01-27*
+*Phase 23 complete: 2026-01-27*
+*v2 milestone complete: 2026-01-27*
