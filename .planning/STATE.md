@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 22 of 23 (Platform Polish - Mobile & Dashboard)
-Plan: 1 of 4 complete
+Plan: 2 of 4 complete
 Status: In progress
-Last activity: 2026-01-27 - Completed 22-01-PLAN.md (Mobile Navigation)
+Last activity: 2026-01-27 - Completed 22-02-PLAN.md (Responsive Tables)
 
-Progress: [████████████████░] 95% (35/37 plans)
+Progress: [█████████████████░] 97% (36/37 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 35 (v2)
+- Total plans completed: 36 (v2)
 - Average duration: 3.7min
-- Total execution time: 131min
+- Total execution time: 135min
 
 **By Phase:**
 
@@ -36,10 +36,10 @@ Progress: [████████████████░] 95% (35/37 plans
 | 19-templates-intelligence | 4 | 12min | 3min |
 | 20-multi-language-core | 4 | 15min | 4min |
 | 21-multi-language-advanced | 4 | 11min | 3min |
-| 22-platform-polish-mobile-dashboard | 1 | 3min | 3min |
+| 22-platform-polish-mobile-dashboard | 2 | 7min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 21-02 (4min), 21-03 (4min), 21-04 (3min), 22-01 (3min)
+- Last 5 plans: 21-03 (4min), 21-04 (3min), 22-01 (3min), 22-02 (4min)
 - Trend: Fast UI component plans
 
 *Updated after each plan completion*
@@ -140,6 +140,10 @@ Recent decisions affecting current work:
 - [21-04]: Component tests mock services at module level
 - [22-01]: 280px slide-out panel width (wider than desktop 211px for touch targets)
 - [22-01]: Hamburger in mobile header bar, not in main Header
+- [22-02]: ResponsiveTable uses overflow-x-auto with WebkitOverflowScrolling touch for iOS
+- [22-02]: Essential columns (name, status) always visible; secondary hide on mobile
+- [22-02]: Tertiary columns (ID, working hours) only visible on desktop
+- [22-02]: Column visibility passed via props to row components for flexibility
 
 ### Pending Todos
 
@@ -161,9 +165,9 @@ Test infrastructure note:
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed 22-01-PLAN.md (Mobile Navigation)
+Stopped at: Completed 22-02-PLAN.md (Responsive Tables)
 Resume file: None
-Next: 22-02-PLAN.md (Dashboard Layout)
+Next: 22-03-PLAN.md (Dashboard Widgets)
 
 ---
-*Updated: 2026-01-27 - Phase 22 plan 01 complete (1/4 plans)*
+*Updated: 2026-01-27 - Phase 22 plan 02 complete (2/4 plans)*
