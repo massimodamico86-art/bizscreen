@@ -24,8 +24,8 @@ Requirements for v2.1 Tech Debt Cleanup milestone. Each maps to roadmap phases.
 
 ### Analytics Gaps
 
-- [ ] **ANLY-01**: Template usage recorded for starter pack applies (recordTemplateUsage in StarterPackOnboarding)
-- [ ] **ANLY-02**: Campaign rotation weights enforced in player content resolution (get_resolved_player_content)
+- [x] **ANLY-01**: Template usage recorded for starter pack applies (verified existing call chain works)
+- [x] **ANLY-02**: Campaign rotation weights enforced in player content resolution (select_weighted_campaign_content)
 
 ### Performance - Bundle Size
 
@@ -80,8 +80,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-02 | Phase 25 | Complete |
 | TEST-03 | Phase 25 | Complete |
 | TEST-04 | Phase 25 | Complete |
-| ANLY-01 | Phase 26 | Pending |
-| ANLY-02 | Phase 26 | Pending |
+| ANLY-01 | Phase 26 | Complete |
+| ANLY-02 | Phase 26 | Complete |
 | PERF-01 | Phase 27 | Pending |
 | PERF-02 | Phase 27 | Pending |
 | PERF-03 | Phase 27 | Pending |
@@ -97,4 +97,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-27*
-*Last updated: 2026-01-28 after phase 25 completion*
+*Last updated: 2026-01-28 after phase 26 completion*
