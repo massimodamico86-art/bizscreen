@@ -30,10 +30,12 @@ import { Button, Card, Badge, EmptyState, Alert } from '../design-system';
 import { useTranslation } from '../i18n';
 import YodeckEmptyState from '../components/YodeckEmptyState';
 import { useLogger } from '../hooks/useLogger.js';
+import { ResponsiveTable, useResponsiveColumns } from '../components/tables';
 
 const SchedulesPage = ({ showToast, onNavigate }) => {
   const { t } = useTranslation();
   const logger = useLogger('SchedulesPage');
+  const { showSecondary } = useResponsiveColumns();
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -249,7 +251,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
       ) : (
         /* Schedules List */
         <Card>
-          <div className="overflow-x-auto">
+          <ResponsiveTable>
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200 text-left text-sm text-gray-500">
@@ -258,8 +260,8 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
                   </th>
                   <th className="p-4 font-medium">NAME</th>
                   <th className="p-4 font-medium">STATUS</th>
-                  <th className="p-4 font-medium">ENTRIES</th>
-                  <th className="p-4 font-medium">MODIFIED</th>
+                  {showSecondary && <th className="p-4 font-medium">ENTRIES</th>}
+                  {showSecondary && <th className="p-4 font-medium">MODIFIED</th>}
                   <th className="p-4 font-medium w-20">ACTIONS</th>
                 </tr>
               </thead>
@@ -302,15 +304,19 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
                         </Badge>
                       </button>
                     </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2 text-gray-600 text-sm">
-                        <Clock size={14} />
-                        <span>{schedule.entry_count || 0} entries</span>
-                      </div>
-                    </td>
-                    <td className="p-4 text-gray-600 text-sm">
-                      {formatDate(schedule.updated_at)}
-                    </td>
+                    {showSecondary && (
+                      <td className="p-4">
+                        <div className="flex items-center gap-2 text-gray-600 text-sm">
+                          <Clock size={14} />
+                          <span>{schedule.entry_count || 0} entries</span>
+                        </div>
+                      </td>
+                    )}
+                    {showSecondary && (
+                      <td className="p-4 text-gray-600 text-sm">
+                        {formatDate(schedule.updated_at)}
+                      </td>
+                    )}
                     <td className="p-4" onClick={(e) => e.stopPropagation()}>
                       <div className="relative">
                         <button
@@ -379,7 +385,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
                 ))}
               </tbody>
             </table>
-          </div>
+          </ResponsiveTable>
         </Card>
       )}
 

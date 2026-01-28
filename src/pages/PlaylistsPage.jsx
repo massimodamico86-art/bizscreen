@@ -45,6 +45,7 @@ import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../de
 import { Banner, Alert } from '../design-system';
 import { EmptyState } from '../design-system';
 import { useLogger } from '../hooks/useLogger.js';
+import { ResponsiveTable, useResponsiveColumns } from '../components/tables';
 
 // --------------------------------------------------------------------------
 // Sub-components
@@ -76,7 +77,7 @@ const LimitWarningBanner = ({ limits, onUpgrade }) => {
 };
 
 // Playlist table row
-const PlaylistRow = ({ playlist, onNavigate, isSelected, onSelect }) => {
+const PlaylistRow = ({ playlist, onNavigate, isSelected, onSelect, showSecondary = true }) => {
   // Guard against null playlist
   if (!playlist) return null;
 
@@ -109,15 +110,19 @@ const PlaylistRow = ({ playlist, onNavigate, isSelected, onSelect }) => {
       <td className="p-4 text-gray-600 text-sm">
         {playlist.items?.[0]?.count || 0} items
       </td>
-      <td className="p-4 text-gray-600 text-sm">
-        <Inline gap="xs" align="center">
-          <Clock size={14} />
-          {playlist.default_duration}s default
-        </Inline>
-      </td>
-      <td className="p-4 text-gray-600 text-sm">
-        {formatDate(playlist.updated_at)}
-      </td>
+      {showSecondary && (
+        <td className="p-4 text-gray-600 text-sm">
+          <Inline gap="xs" align="center">
+            <Clock size={14} />
+            {playlist.default_duration}s default
+          </Inline>
+        </td>
+      )}
+      {showSecondary && (
+        <td className="p-4 text-gray-600 text-sm">
+          {formatDate(playlist.updated_at)}
+        </td>
+      )}
     </tr>
   );
 };
@@ -672,6 +677,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
   const { user } = useAuth();
   const { t } = useTranslation();
   const logger = useLogger('PlaylistsPage');
+  const { showSecondary } = useResponsiveColumns();
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -1209,7 +1215,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
               )}
 
               <Card variant="outlined">
-                <div className="overflow-x-auto">
+                <ResponsiveTable>
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-gray-200 text-left text-xs text-gray-500 uppercase tracking-wide">
@@ -1223,8 +1229,8 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
                         </th>
                         <th className="p-4 font-medium">Name</th>
                         <th className="p-4 font-medium">Items</th>
-                        <th className="p-4 font-medium">Duration</th>
-                        <th className="p-4 font-medium">Modified</th>
+                        {showSecondary && <th className="p-4 font-medium">Duration</th>}
+                        {showSecondary && <th className="p-4 font-medium">Modified</th>}
                       </tr>
                     </thead>
                     <tbody>
@@ -1235,11 +1241,12 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
                           onNavigate={onNavigate}
                           isSelected={selectedIds.has(playlist.id)}
                           onSelect={handleSelectOne}
+                          showSecondary={showSecondary}
                         />
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </ResponsiveTable>
               </Card>
             </>
           )}
