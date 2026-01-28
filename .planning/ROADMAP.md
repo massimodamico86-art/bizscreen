@@ -79,10 +79,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. StarterPackOnboarding records template_id when templates are applied
   2. get_resolved_player_content returns content weighted by campaign rotation settings
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 26-01: Implement template usage recording and rotation weight enforcement
+- [ ] 26-01-PLAN.md — Add weighted campaign content rotation and verify template tracking
 
 ---
 
