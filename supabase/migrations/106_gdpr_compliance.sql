@@ -46,7 +46,10 @@ CREATE POLICY "Anonymous can insert consent"
 -- DATA EXPORT REQUESTS
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS data_export_requests (
+-- Drop existing table if it's malformed (missing columns)
+DROP TABLE IF EXISTS data_export_requests CASCADE;
+
+CREATE TABLE data_export_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'failed', 'expired')),

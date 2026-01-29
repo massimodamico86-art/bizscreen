@@ -3,13 +3,14 @@
 -- Description: Stores critical application logs for monitoring and debugging
 
 -- Application Logs Table (for critical errors and important events)
+-- Note: tenant_id removed as this project uses profiles.owner_id for tenant identity
 CREATE TABLE IF NOT EXISTS application_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   level TEXT NOT NULL CHECK (level IN ('trace', 'debug', 'info', 'warn', 'error', 'fatal')),
   message TEXT NOT NULL,
   correlation_id TEXT,
   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  tenant_id UUID REFERENCES tenants(id) ON DELETE SET NULL,
+  tenant_id UUID, -- Nullable, no foreign key constraint (tenant tracking optional)
   url TEXT,
   error_name TEXT,
   error_message TEXT,
@@ -41,16 +42,13 @@ CREATE POLICY "Super admins can view all logs"
     )
   );
 
--- Admins can view their tenant's logs
-CREATE POLICY "Admins can view tenant logs"
+-- Admins can view their own logs
+CREATE POLICY "Users can view own logs"
   ON application_logs FOR SELECT
   TO authenticated
   USING (
-    tenant_id IN (
-      SELECT id FROM tenants
-      WHERE owner_id = auth.uid()
-    )
-    OR user_id = auth.uid()
+    user_id = auth.uid()
+    OR tenant_id::text = auth.uid()::text
   );
 
 -- Service role can insert logs

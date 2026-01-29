@@ -44,6 +44,11 @@ AS $$
 DECLARE
   v_user_id UUID := auth.uid();
 BEGIN
+  -- Return empty if not authenticated
+  IF v_user_id IS NULL THEN
+    RETURN;
+  END IF;
+
   -- Ensure row exists for the user
   INSERT INTO public.onboarding_progress (owner_id)
   VALUES (v_user_id)

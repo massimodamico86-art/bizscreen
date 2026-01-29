@@ -48,6 +48,17 @@ DECLARE
   v_starter_pack_applied BOOLEAN;
   v_screen_pairing_completed_at TIMESTAMPTZ;
 BEGIN
+  -- Return default state if not authenticated
+  IF v_user_id IS NULL THEN
+    RETURN jsonb_build_object(
+      'current_step', 'welcome_tour',
+      'can_resume', false,
+      'progress_percent', 0,
+      'is_complete', false,
+      'skipped_at', NULL
+    );
+  END IF;
+
   -- Ensure row exists for the user
   INSERT INTO public.onboarding_progress (owner_id)
   VALUES (v_user_id)
