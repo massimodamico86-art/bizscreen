@@ -75,6 +75,10 @@ import { IndustrySelectionModal } from '../components/onboarding/IndustrySelecti
 import { StarterPackOnboarding } from '../components/onboarding/StarterPackOnboarding';
 import { OnboardingBanner, isBannerDismissed } from '../components/onboarding/OnboardingBanner';
 
+// Unified onboarding controller (Phase 31)
+import { UnifiedOnboardingController } from '../components/onboarding/UnifiedOnboardingController';
+import { config } from '../config/env';
+
 import { useBreakpoints } from '../hooks/useMediaQuery';
 
 /** localStorage key for tracking welcome modal dismissal */
@@ -121,6 +125,9 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
   const [showStarterPackModal, setShowStarterPackModal] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [showOnboardingBanner, setShowOnboardingBanner] = useState(false);
+
+  // Unified onboarding state (Phase 31)
+  const [showUnifiedOnboarding, setShowUnifiedOnboarding] = useState(false);
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -190,6 +197,28 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
     loadData();
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
+  }, [fetchData]);
+
+  // Check for unified onboarding (feature flag - Phase 31)
+  useEffect(() => {
+    if (config().useUnifiedOnboarding && !loading) {
+      import('../services/onboardingService').then(({ getUnifiedOnboardingState }) => {
+        getUnifiedOnboardingState().then(state => {
+          if (state.canResume && !state.isComplete) {
+            setShowUnifiedOnboarding(true);
+          }
+        });
+      });
+    }
+  }, [loading]);
+
+  /**
+   * Handle unified onboarding completion
+   */
+  const handleUnifiedOnboardingComplete = useCallback(() => {
+    setShowUnifiedOnboarding(false);
+    // Refresh dashboard data
+    fetchData?.();
   }, [fetchData]);
 
   const handleCreateDemoWorkspace = async () => {
@@ -350,6 +379,11 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
 
   return (
     <ErrorBoundary>
+      {/* Unified Onboarding Controller (feature flagged - Phase 31) */}
+      {config().useUnifiedOnboarding && showUnifiedOnboarding && (
+        <UnifiedOnboardingController onComplete={handleUnifiedOnboardingComplete} />
+      )}
+
       {/* Welcome Modal */}
       <WelcomeModal
         open={showWelcomeModal}
@@ -377,8 +411,8 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
         }}
       />
 
-      {/* New Onboarding Flow (Phase 23) */}
-      {showWelcomeTour && (
+      {/* New Onboarding Flow (Phase 23) - disabled when unified onboarding is active */}
+      {!config().useUnifiedOnboarding && showWelcomeTour && (
         <WelcomeTour
           isOpen={showWelcomeTour}
           onClose={() => setShowWelcomeTour(false)}
@@ -387,7 +421,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
         />
       )}
 
-      {showIndustryModal && (
+      {!config().useUnifiedOnboarding && showIndustryModal && (
         <IndustrySelectionModal
           isOpen={showIndustryModal}
           onClose={() => {
@@ -399,7 +433,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
         />
       )}
 
-      {showStarterPackModal && (
+      {!config().useUnifiedOnboarding && showStarterPackModal && (
         <StarterPackOnboarding
           isOpen={showStarterPackModal}
           onClose={() => setShowStarterPackModal(false)}
