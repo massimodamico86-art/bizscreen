@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 31 - Unified Onboarding Controller
-Plan: 02 of 4 complete
+Plan: 03 of 4 complete
 Status: In progress
-Last activity: 2026-01-29 — Completed 31-02-PLAN.md (supporting onboarding UI components)
+Last activity: 2026-01-29 — Completed 31-03-PLAN.md (UnifiedOnboardingController orchestrator)
 
-Progress: [===-------] 25% (1/6 phases complete, 2/4 plans in Phase 31)
+Progress: [====------] 38% (1/6 phases complete, 3/4 plans in Phase 31)
 
 ## Milestone History
 
@@ -30,7 +30,7 @@ Progress: [===-------] 25% (1/6 phases complete, 2/4 plans in Phase 31)
 | Phase | Goal | Status |
 |-------|------|--------|
 | 30 - State Foundation | Single source of truth for progress | Complete (3/3) |
-| 31 - Unified Controller | State machine orchestrator | In Progress (2/4) |
+| 31 - Unified Controller | State machine orchestrator | In Progress (3/4) |
 | 32 - Screen Pairing | Pairing integrated into flow | Pending |
 | 33 - Success UX | Explicit completion celebration | Pending |
 | 34 - Cleanup | Remove dead code | Pending |
@@ -45,7 +45,7 @@ Progress: [===-------] 25% (1/6 phases complete, 2/4 plans in Phase 31)
 
 **v2.2 Current:**
 - Phases: 1/6 complete
-- Plans: 5 executed (3 in Phase 30, 2 in Phase 31)
+- Plans: 6 executed (3 in Phase 30, 3 in Phase 31)
 
 ## Accumulated Context
 
@@ -81,6 +81,12 @@ Phase 31-02 decisions:
 - Onboarding components use consistent API: isOpen, onComplete, onClose props
 - Skip links always show confirmation dialog before action
 
+Phase 31-03 decisions:
+- Controller provides backdrop and progress bar; step components handle own modal rendering
+- Industry selection stored locally in controller and passed to StarterPackOnboarding
+- Resume prompt shown for returning users not on welcome_tour step
+- STEP_COMPONENTS map and STEP_SEQUENCE array establish canonical step ordering
+
 ### Pending Todos
 
 None.
@@ -109,9 +115,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Completed 31-02-PLAN.md
+Stopped at: Completed 31-03-PLAN.md
 Resume file: None
-Next: Execute 31-03-PLAN.md (UnifiedOnboardingController component)
+Next: Execute 31-04-PLAN.md (Integration and wiring)
 
 ---
-*Updated: 2026-01-29 — Completed 31-02-PLAN.md*
+*Updated: 2026-01-29 — Completed 31-03-PLAN.md*
