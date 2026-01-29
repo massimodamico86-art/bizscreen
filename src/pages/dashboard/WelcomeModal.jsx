@@ -13,7 +13,21 @@ import {
   Dumbbell,
   ShoppingBag,
   Building2,
+  X,
+  Rocket,
+  Sparkles,
+  ChevronRight,
+  Package,
+  LayoutTemplate,
+  Loader2,
+  AlertCircle,
+  RefreshCw,
+  CheckCircle,
+  ListVideo,
+  Grid3X3,
 } from 'lucide-react';
+
+import { Modal, Stack, Button } from '../../design-system';
 
 /**
  * Business type options for onboarding.
