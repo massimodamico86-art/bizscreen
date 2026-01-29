@@ -2,6 +2,7 @@
  * Onboarding Components
  *
  * Components for user onboarding flows including:
+ * - Unified onboarding controller (state machine orchestrator)
  * - Welcome tour for new users
  * - Industry selection for template filtering
  * - Starter pack selection during onboarding
@@ -10,6 +11,7 @@
  * - Resume prompt for returning users
  * - Screen pairing step (placeholder for Phase 32)
  * - Skip link with confirmation dialog
+ * - Progress bar for visual feedback
  *
  * @module components/onboarding
  */
@@ -23,3 +25,5 @@ export { default as AutoBuildOnboardingModal } from './AutoBuildOnboardingModal'
 export { ResumePrompt } from './ResumePrompt';
 export { ScreenPairingStep } from './ScreenPairingStep';
 export { OnboardingSkipLink } from './OnboardingSkipLink';
+export { OnboardingProgressBar } from './OnboardingProgressBar';
+export { UnifiedOnboardingController } from './UnifiedOnboardingController';
