@@ -9,6 +9,8 @@
  */
 
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Clock, ChevronDown, Layout } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 /**

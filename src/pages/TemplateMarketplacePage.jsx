@@ -8,7 +8,9 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   fetchMarketplaceTemplates,
@@ -23,11 +25,19 @@ import {
   applyCustomizationToScene,
   getTemplateUsageCounts,
 } from '../services/marketplaceService';
+import { PageLayout } from '../design-system';
+import TemplateSidebar from '../components/templates/TemplateSidebar';
+import TemplateGrid from '../components/templates/TemplateGrid';
+import StarterPacksRow from '../components/templates/StarterPacksRow';
+import FeaturedTemplatesRow from '../components/templates/FeaturedTemplatesRow';
+import { TemplatePreviewPanel } from '../components/templates/TemplatePreviewPanel';
+import { TemplateCustomizationWizard } from '../components/templates/TemplateCustomizationWizard';
 
 
 
 /**
  * Check if a template has customizable fields
+ * @param template
  */
 function hasCustomizableFields(template) {
   const fields = template?.metadata?.customizable_fields;
@@ -39,6 +49,9 @@ function hasCustomizableFields(template) {
   );
 }
 
+/**
+ *
+ */
 export default function TemplateMarketplacePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();

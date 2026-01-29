@@ -9,6 +9,8 @@
  */
 
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Package, ChevronDown, Check, Loader2 } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 /**

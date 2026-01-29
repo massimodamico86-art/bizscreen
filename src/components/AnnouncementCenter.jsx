@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Sparkles, AlertTriangle, Wrench, Info, CheckCircle } from 'lucide-react';
+import { Bell, Sparkles, AlertTriangle, Wrench, Info, CheckCircle, X, ChevronRight } from 'lucide-react';
 import { getActiveAnnouncements, dismissAnnouncement } from '../services/feedbackService';
 import { useLogger } from '../hooks/useLogger.js';
 
@@ -44,6 +44,9 @@ const typeConfig = {
   },
 };
 
+/**
+ *
+ */
 export function AnnouncementCenter() {
   const logger = useLogger('AnnouncementCenter');
   const [announcements, setAnnouncements] = useState([]);

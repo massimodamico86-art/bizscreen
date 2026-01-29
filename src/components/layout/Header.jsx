@@ -6,7 +6,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { ChevronRight, AlertTriangle, LogOut } from 'lucide-react';
+import { ChevronRight, AlertTriangle, LogOut, Loader2 } from 'lucide-react';
+import { Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter, Button } from '../../design-system';
 
 import { useEmergencyOptional } from '../../contexts/EmergencyContext';
 import {
@@ -16,6 +17,8 @@ import {
 import { fetchPlaylists } from '../../services/playlistService';
 import { fetchScenesForTenant } from '../../services/sceneService';
 import { fetchMediaAssets } from '../../services/mediaService';
+import NotificationBell from '../notifications/NotificationBell';
+import AnnouncementCenter from '../AnnouncementCenter';
 
 /**
  * Emergency Push Modal - Content selection for emergency override

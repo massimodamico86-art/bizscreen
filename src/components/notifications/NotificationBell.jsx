@@ -9,10 +9,12 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   AlertTriangle,
   AlertCircle,
+  Bell,
   Monitor,
   Calendar,
   Database,
   Share2,
+  ExternalLink,
 } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import {
@@ -61,6 +63,11 @@ const SEVERITY_STYLES = {
   },
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.onNavigate
+ */
 export default function NotificationBell({ onNavigate }) {
   const logger = useLogger('NotificationBell');
   const { t } = useTranslation();

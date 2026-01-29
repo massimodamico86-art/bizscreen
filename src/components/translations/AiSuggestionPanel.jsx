@@ -7,12 +7,21 @@
  */
 
 import { useState, useEffect } from 'react';
-
-
+import { AnimatePresence, motion } from 'framer-motion';
+import { Sparkles, X, Loader2, AlertCircle, Copy, Check, ArrowRight } from 'lucide-react';
+import { Select, Button } from '../../design-system';
 import { drawer } from '../../design-system/motion';
 import { getAiTranslationSuggestion } from '../../services/translationService';
 import { getSupportedLanguages, getLanguageDisplayInfo } from '../../services/languageService';
 
+/**
+ *
+ * @param root0
+ * @param root0.scene
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.showToast
+ */
 export default function AiSuggestionPanel({ scene, isOpen, onClose, showToast }) {
   const [targetLanguage, setTargetLanguage] = useState('es');
   const [suggestions, setSuggestions] = useState(null);
@@ -338,6 +347,12 @@ export default function AiSuggestionPanel({ scene, isOpen, onClose, showToast })
 /**
  * Translation Item Component
  * Displays a single translation with original text and copy button.
+ * @param root0
+ * @param root0.label
+ * @param root0.original
+ * @param root0.translated
+ * @param root0.onCopy
+ * @param root0.copied
  */
 function TranslationItem({ label, original, translated, onCopy, copied }) {
   return (

@@ -10,11 +10,14 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { X, Upload, Palette, Type, Loader2, Image as ImageIcon } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 /**
  * Helper to approximate hue rotation from hex color (simplified visual hint)
  * In production, this would use proper color math for accurate preview
+ * @param hexColor
  */
 function getHueRotation(hexColor) {
   if (!hexColor || hexColor.length < 7) return 0;
@@ -29,6 +32,14 @@ function getHueRotation(hexColor) {
   }
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.template
+ * @param root0.sceneId
+ * @param root0.onComplete
+ * @param root0.onSkip
+ */
 export function TemplateCustomizationWizard({
   template,
   sceneId,

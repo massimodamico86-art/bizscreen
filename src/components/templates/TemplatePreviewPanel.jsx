@@ -7,13 +7,17 @@
  */
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { format } from 'date-fns';
+import { X, Loader2, AlertCircle } from 'lucide-react';
 import { drawer } from '../../design-system/motion';
 import {
   fetchTemplateDetail,
   installTemplateAsScene,
   LICENSE_LABELS,
 } from '../../services/marketplaceService';
+import TemplateRating from './TemplateRating';
+import SimilarTemplatesRow from './SimilarTemplatesRow';
 
 // License badge colors
 const LICENSE_COLORS = {
@@ -22,6 +26,13 @@ const LICENSE_COLORS = {
   enterprise: 'bg-purple-100 text-purple-800',
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.template
+ * @param root0.onClose
+ * @param root0.onApply
+ */
 export function TemplatePreviewPanel({ template, onClose, onApply }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
