@@ -21,7 +21,7 @@ This milestone creates a single UnifiedOnboardingController that wraps working c
 - Continues from v2.1 (Phase 29)
 - v2.2 phases: 30-35
 
-- [ ] **Phase 30: State Unification Foundation** - Single source of truth for onboarding progress
+- [x] **Phase 30: State Unification Foundation** - Single source of truth for onboarding progress (completed 2026-01-29)
 - [ ] **Phase 31: UnifiedOnboardingController** - State machine orchestrator with feature flag
 - [ ] **Phase 32: Screen Pairing Integration** - True activation metric achievable in onboarding
 - [ ] **Phase 33: Success and Completion UX** - Explicit completion celebration
@@ -60,9 +60,9 @@ All milestones shipped successfully.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 30-01-PLAN.md — Database migration with unified state columns and RPC functions
-- [ ] 30-02-PLAN.md — localStorage/sessionStorage audit for Phase 34 cleanup
-- [ ] 30-03-PLAN.md — Service layer extension with getUnifiedOnboardingState, advanceOnboardingStep, completeUnifiedOnboarding
+- [x] 30-01-PLAN.md — Database migration with unified state columns and RPC functions
+- [x] 30-02-PLAN.md — localStorage/sessionStorage audit for Phase 34 cleanup
+- [x] 30-03-PLAN.md — Service layer extension with getUnifiedOnboardingState, advanceOnboardingStep, completeUnifiedOnboarding
 
 ---
 
@@ -155,15 +155,15 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 30. State Foundation | v2.2 | 0/3 | Planned | — |
+| 30. State Foundation | v2.2 | 3/3 | ✓ Complete | 2026-01-29 |
 | 31. Unified Controller | v2.2 | 0/0 | Pending | — |
 | 32. Screen Pairing | v2.2 | 0/0 | Pending | — |
 | 33. Success UX | v2.2 | 0/0 | Pending | — |
 | 34. Cleanup | v2.2 | 0/0 | Pending | — |
 | 35. Polotno | v2.2 | 0/0 | Pending | — |
 
-**Total v2.2:** 0/6 phases complete
+**Total v2.2:** 1/6 phases complete
 
 ---
 *Roadmap created: 2026-01-28*
-*Last updated: 2026-01-28 — Phase 30 planned (3 plans in 2 waves)*
+*Last updated: 2026-01-29 — Phase 30 complete (3/3 plans, verified)*
