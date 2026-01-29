@@ -2,7 +2,16 @@
  * AuthLayout - Layout for auth pages with branding
  */
 
+import { Link } from 'react-router-dom';
+import { Monitor } from 'lucide-react';
 
+/**
+ *
+ * @param root0
+ * @param root0.children
+ * @param root0.title
+ * @param root0.subtitle
+ */
 export default function AuthLayout({ children, title, subtitle }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col">
