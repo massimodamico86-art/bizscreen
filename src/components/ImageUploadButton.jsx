@@ -1,5 +1,16 @@
 import { useState } from 'react';
+import { Button } from '../design-system';
 import { useCloudinaryUpload } from '../hooks/useCloudinaryUpload';
+
+// Simple toast component for feedback
+const Toast = ({ message, type, onClose }) => (
+  <div className={`fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>
+    <div className="flex items-center gap-2">
+      <span>{message}</span>
+      <button onClick={onClose} className="ml-2 hover:opacity-75">&times;</button>
+    </div>
+  </div>
+);
 
 /**
  * Reusable image upload button component using Cloudinary

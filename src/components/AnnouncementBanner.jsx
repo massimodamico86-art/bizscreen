@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Sparkles, AlertTriangle, Wrench, Info } from 'lucide-react';
+import { Sparkles, AlertTriangle, Wrench, Info, ChevronRight, X } from 'lucide-react';
 import { getPriorityAnnouncements, dismissAnnouncement } from '../services/feedbackService';
 import { useLogger } from '../hooks/useLogger.js';
 
@@ -33,6 +33,11 @@ const typeConfig = {
   },
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.onHeightChange
+ */
 export function AnnouncementBanner({ onHeightChange }) {
   const logger = useLogger('AnnouncementBanner');
   const [announcements, setAnnouncements] = useState([]);

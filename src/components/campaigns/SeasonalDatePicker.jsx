@@ -10,6 +10,8 @@
  * Shows preview of next activation date
  */
 import { useState, useEffect } from 'react';
+import { Repeat, Calendar, Info } from 'lucide-react';
+import { Switch, Badge } from '../../design-system';
 import { calculateNextActivation, formatRecurrenceRule } from '../../services/campaignTemplateService';
 
 const MONTHS = [
@@ -27,6 +29,13 @@ const MONTHS = [
   { value: 12, label: 'December', days: 31 }
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.value
+ * @param root0.onChange
+ * @param root0.disabled
+ */
 export function SeasonalDatePicker({ value, onChange, disabled = false }) {
   // value: {type: 'yearly', month, day, duration_days} or null
   const [enabled, setEnabled] = useState(!!value);

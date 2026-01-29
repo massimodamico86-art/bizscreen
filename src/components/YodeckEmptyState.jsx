@@ -8,6 +8,7 @@
  */
 
 import { Monitor, Calendar, Image, Film, Layout, FolderOpen } from 'lucide-react';
+import { Button } from '../design-system';
 
 // SVG illustrations matching Yodeck's style
 const illustrations = {
@@ -119,6 +120,21 @@ const iconMap = {
   folders: FolderOpen,
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.type
+ * @param root0.title
+ * @param root0.description
+ * @param root0.actionLabel
+ * @param root0.onAction
+ * @param root0.secondaryActionLabel
+ * @param root0.onSecondaryAction
+ * @param root0.showTourLink
+ * @param root0.tourLinkText
+ * @param root0.onTourClick
+ * @param root0.className
+ */
 export default function YodeckEmptyState({
   type = 'screens',
   title,

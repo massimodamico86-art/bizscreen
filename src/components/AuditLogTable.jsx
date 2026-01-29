@@ -11,12 +11,17 @@ import {
   Settings,
   Shield,
   Activity,
+  Clock,
+  MapPin,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { useState } from 'react';
 import { getEventTypeLabel, getEntityTypeLabel } from '../services/auditService';
 
 /**
  * Get icon for event type category
+ * @param eventType
  */
 function getEventIcon(eventType) {
   if (eventType?.startsWith('auth.')) return Shield;
@@ -29,6 +34,7 @@ function getEventIcon(eventType) {
 
 /**
  * Get color class for event type category
+ * @param eventType
  */
 function getEventColor(eventType) {
   if (eventType?.startsWith('auth.')) return 'text-blue-500 bg-blue-50';
@@ -41,6 +47,7 @@ function getEventColor(eventType) {
 
 /**
  * Format timestamp for display
+ * @param timestamp
  */
 function formatTimestamp(timestamp) {
   if (!timestamp) return 'Unknown';
@@ -53,6 +60,8 @@ function formatTimestamp(timestamp) {
 
 /**
  * Expandable row for metadata
+ * @param root0
+ * @param root0.metadata
  */
 function MetadataPanel({ metadata }) {
   if (!metadata || Object.keys(metadata).length === 0) {
@@ -70,6 +79,8 @@ function MetadataPanel({ metadata }) {
 
 /**
  * Single audit log row
+ * @param root0
+ * @param root0.log
  */
 function AuditLogRow({ log }) {
   const [expanded, setExpanded] = useState(false);
@@ -190,6 +201,10 @@ function AuditLogRow({ log }) {
 
 /**
  * Main AuditLogTable component
+ * @param root0
+ * @param root0.logs
+ * @param root0.loading
+ * @param root0.emptyMessage
  */
 export default function AuditLogTable({ logs = [], loading = false, emptyMessage = 'No audit logs found' }) {
   if (loading) {

@@ -5,6 +5,7 @@
  * Shows warning when limits are restrictive.
  */
 
+import { AlertTriangle } from 'lucide-react';
 import { isFrequencyLimitRestrictive } from '../../services/campaignService';
 
 /**

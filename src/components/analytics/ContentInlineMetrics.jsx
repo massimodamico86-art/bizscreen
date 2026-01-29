@@ -7,7 +7,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Clock, CheckCircle, Eye, Calendar } from 'lucide-react';
+import { Clock, CheckCircle, Eye, Calendar, BarChart2, TrendingUp } from 'lucide-react';
+import { Card } from '../../design-system';
 import {
   getContentMetrics,
   formatDuration,
@@ -16,6 +17,12 @@ import {
 
 /**
  * Single metric item display
+ * @param root0
+ * @param root0.icon
+ * @param root0.label
+ * @param root0.value
+ * @param root0.subValue
+ * @param root0.color
  */
 function MetricItem({ icon: Icon, label, value, subValue, color = 'blue' }) {
   const colorClasses = {
@@ -62,6 +69,15 @@ function MetricsSkeleton() {
   );
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.contentId
+ * @param root0.contentType
+ * @param root0.dateRange
+ * @param root0.showLink
+ * @param root0.className
+ */
 export function ContentInlineMetrics({
   contentId,
   contentType, // 'scene' | 'media' | 'playlist'

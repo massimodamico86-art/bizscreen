@@ -6,8 +6,20 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { Loader2 } from 'lucide-react';
 import { useLogger } from '../hooks/useLogger.js';
 
+/**
+ *
+ * @param root0
+ * @param root0.onSave
+ * @param root0.onClose
+ * @param root0.initialDesign
+ * @param root0.designName
+ * @param root0.width
+ * @param root0.height
+ * @param root0.templates
+ */
 export default function PolotnoEditor({
   onSave,
   onClose,

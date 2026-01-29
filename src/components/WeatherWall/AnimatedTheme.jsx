@@ -6,6 +6,7 @@
  */
 
 import { useMemo } from 'react';
+import { MapPin, Droplets, Wind, Eye, Gauge } from 'lucide-react';
 
 // Weather condition to background gradient mapping
 const WEATHER_GRADIENTS = {
@@ -47,6 +48,15 @@ const WEATHER_GRADIENTS = {
   },
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.config
+ * @param root0.weatherData
+ * @param root0.loading
+ * @param root0.error
+ * @param root0.getWeatherEmoji
+ */
 export default function AnimatedTheme({ config, weatherData, loading, error, getWeatherEmoji }) {
   const current = weatherData?.current;
   const forecast = weatherData?.forecast || [];

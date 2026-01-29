@@ -4,8 +4,17 @@
  * Modern glassmorphism weather display with frosted glass effects.
  * Features: blur backgrounds, translucent cards, elegant design.
  */
+import { MapPin, Droplets, Wind, Sunrise, Sunset, Eye, Gauge } from 'lucide-react';
 
-
+/**
+ *
+ * @param root0
+ * @param root0.config
+ * @param root0.weatherData
+ * @param root0.loading
+ * @param root0.error
+ * @param root0.getWeatherEmoji
+ */
 export default function GlassTheme({ config, weatherData, loading, error, getWeatherEmoji }) {
   const current = weatherData?.current;
   const forecast = weatherData?.forecast || [];

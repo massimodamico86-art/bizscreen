@@ -15,8 +15,15 @@ import {
   Upload,
   List,
   Monitor,
-  Link
+  Link,
+  X,
+  Loader2,
+  AlertCircle,
+  RefreshCw,
+  Check,
+  ChevronRight,
 } from 'lucide-react';
+import { Button } from '../design-system';
 import {
   ONBOARDING_STEPS,
   getOnboardingProgress,
@@ -42,6 +49,10 @@ const STEP_ICONS = {
 
 /**
  * OnboardingWizard - Main wizard component
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.onComplete
  */
 const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
   const logger = useLogger('OnboardingWizard');
@@ -357,6 +368,10 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
 
 /**
  * Step-specific content component
+ * @param root0
+ * @param root0.step
+ * @param root0.isComplete
+ * @param root0.onNavigate
  */
 const StepContent = ({ step, isComplete, onNavigate }) => {
   if (!step) return null;

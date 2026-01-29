@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { Percent, Scale, Shuffle, ListOrdered } from 'lucide-react';
+import { Button, Badge } from '../../design-system';
 import { ROTATION_MODES, calculateEffectiveRotation } from '../../services/campaignService';
 
 // Mode configuration with icons and descriptions
@@ -72,6 +73,7 @@ export function RotationControls({ contents = [], mode = ROTATION_MODES.WEIGHT, 
 
   /**
    * Validate that percentages sum to 100
+   * @param contentsToValidate
    */
   const validatePercentages = (contentsToValidate) => {
     const total = contentsToValidate.reduce((sum, c) => sum + (c.rotation_percentage ?? 0), 0);
@@ -85,6 +87,8 @@ export function RotationControls({ contents = [], mode = ROTATION_MODES.WEIGHT, 
 
   /**
    * Handle percentage input change
+   * @param contentId
+   * @param value
    */
   const handlePercentageChange = (contentId, value) => {
     const numValue = parseInt(value) || 0;
@@ -101,6 +105,8 @@ export function RotationControls({ contents = [], mode = ROTATION_MODES.WEIGHT, 
 
   /**
    * Handle weight input change
+   * @param contentId
+   * @param value
    */
   const handleWeightChange = (contentId, value) => {
     const numValue = Math.max(1, parseInt(value) || 1);
@@ -114,6 +120,7 @@ export function RotationControls({ contents = [], mode = ROTATION_MODES.WEIGHT, 
 
   /**
    * Handle mode change
+   * @param newMode
    */
   const handleModeChange = (newMode) => {
     setError(null);

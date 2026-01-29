@@ -7,6 +7,7 @@
  * @module components/DemoModeBanner
  */
 import { useState, useEffect } from 'react';
+import { AlertTriangle, Clock, X, RefreshCw } from 'lucide-react';
 import { checkIsDemoTenant } from '../services/demoService';
 import { useLogger } from '../hooks/useLogger.js';
 
@@ -111,6 +112,8 @@ export function useDemoMode() {
 
 /**
  * Protected asset wrapper - prevents deletion of core demo content
+ * @param root0
+ * @param root0.isProtected
  */
 export function DemoProtectedBadge({ isProtected }) {
   if (!isProtected) return null;

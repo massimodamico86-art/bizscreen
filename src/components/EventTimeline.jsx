@@ -13,12 +13,15 @@ import {
   XCircle,
   Info,
   Bug,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { useState } from 'react';
 import { SEVERITY_LEVELS, SYSTEM_SOURCES } from '../services/auditService';
 
 /**
  * Get icon for severity level
+ * @param severity
  */
 function getSeverityIcon(severity) {
   switch (severity) {
@@ -37,6 +40,7 @@ function getSeverityIcon(severity) {
 
 /**
  * Get color class for severity level
+ * @param severity
  */
 function getSeverityColor(severity) {
   const config = SEVERITY_LEVELS[severity];
@@ -52,6 +56,7 @@ function getSeverityColor(severity) {
 
 /**
  * Get icon for source
+ * @param source
  */
 function getSourceIcon(source) {
   switch (source) {
@@ -66,6 +71,7 @@ function getSourceIcon(source) {
 
 /**
  * Get color class for source
+ * @param source
  */
 function getSourceColor(source) {
   const config = SYSTEM_SOURCES[source];
@@ -81,6 +87,7 @@ function getSourceColor(source) {
 
 /**
  * Format timestamp for display
+ * @param timestamp
  */
 function formatTimestamp(timestamp) {
   if (!timestamp) return 'Unknown';
@@ -93,6 +100,7 @@ function formatTimestamp(timestamp) {
 
 /**
  * Format full timestamp for tooltip
+ * @param timestamp
  */
 function formatFullTimestamp(timestamp) {
   if (!timestamp) return '';
@@ -105,6 +113,8 @@ function formatFullTimestamp(timestamp) {
 
 /**
  * Details panel for event metadata
+ * @param root0
+ * @param root0.details
  */
 function DetailsPanel({ details }) {
   if (!details || Object.keys(details).length === 0) {
@@ -122,6 +132,9 @@ function DetailsPanel({ details }) {
 
 /**
  * Single event item in timeline
+ * @param root0
+ * @param root0.event
+ * @param root0.isLast
  */
 function EventItem({ event, isLast }) {
   const [expanded, setExpanded] = useState(false);
@@ -215,6 +228,10 @@ function EventItem({ event, isLast }) {
 
 /**
  * Main EventTimeline component
+ * @param root0
+ * @param root0.events
+ * @param root0.loading
+ * @param root0.emptyMessage
  */
 export default function EventTimeline({ events = [], loading = false, emptyMessage = 'No system events found' }) {
   if (loading) {

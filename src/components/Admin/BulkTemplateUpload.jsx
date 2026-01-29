@@ -6,6 +6,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { X, Upload, Loader2, Sparkles, Check, AlertCircle } from 'lucide-react';
 import { autoTagSvg } from '../../services/autoTaggingService';
 import { createTemplate } from '../../services/marketplaceService';
 import { useLogger } from '../../hooks/useLogger.js';
@@ -20,6 +21,12 @@ const STATUS = {
   ERROR: 'error',
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.onComplete
+ * @param root0.onCancel
+ */
 export default function BulkTemplateUpload({ onComplete, onCancel }) {
   const logger = useLogger('BulkTemplateUpload');
   const [files, setFiles] = useState([]);

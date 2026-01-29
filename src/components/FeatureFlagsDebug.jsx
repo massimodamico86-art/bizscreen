@@ -19,7 +19,16 @@ import {
   CreditCard,
   Zap,
   AlertTriangle,
+  Bug,
+  RefreshCw,
+  Copy,
+  Download,
+  ChevronDown,
+  ChevronRight,
+  Check,
+  X,
 } from 'lucide-react';
+import { Card, CardHeader, CardContent, Button, Alert } from '../design-system';
 
 const isDev = import.meta.env.DEV || import.meta.env.MODE === 'development';
 

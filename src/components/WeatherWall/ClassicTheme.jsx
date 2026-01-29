@@ -4,8 +4,17 @@
  * Clean, traditional weather display with customizable solid color backgrounds.
  * Supports both landscape (16:9) and portrait (9:16) TV orientations.
  */
+import { MapPin, ThermometerSun, Droplets, Wind, Eye, Gauge } from 'lucide-react';
 
-
+/**
+ *
+ * @param root0
+ * @param root0.config
+ * @param root0.weatherData
+ * @param root0.loading
+ * @param root0.error
+ * @param root0.getWeatherEmoji
+ */
 export default function ClassicTheme({ config, weatherData, loading, error, getWeatherEmoji }) {
   const current = weatherData?.current;
   const forecast = weatherData?.forecast || [];

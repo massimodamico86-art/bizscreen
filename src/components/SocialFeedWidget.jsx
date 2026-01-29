@@ -7,6 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, Heart, MessageCircle, Star } from 'lucide-react';
 import {
   LAYOUT_OPTIONS,
 } from '../services/social';
@@ -15,6 +16,19 @@ import { useLogger } from '../hooks/useLogger.js';
 
 /**
  * Main Social Feed Widget component
+ * @param root0
+ * @param root0.widgetId
+ * @param root0.accountId
+ * @param root0.provider
+ * @param root0.layout
+ * @param root0.maxItems
+ * @param root0.showCaption
+ * @param root0.showLikes
+ * @param root0.showDate
+ * @param root0.showAuthor
+ * @param root0.rotationSpeed
+ * @param root0.className
+ * @param root0.isPreview
  */
 export default function SocialFeedWidget({
   widgetId,
@@ -194,6 +208,17 @@ export default function SocialFeedWidget({
 
 /**
  * Carousel Layout - horizontal sliding carousel
+ * @param root0
+ * @param root0.posts
+ * @param root0.currentIndex
+ * @param root0.provider
+ * @param root0.showCaption
+ * @param root0.showLikes
+ * @param root0.showDate
+ * @param root0.showAuthor
+ * @param root0.onPrevious
+ * @param root0.onNext
+ * @param root0.className
  */
 function CarouselLayout({
   posts,
@@ -284,6 +309,12 @@ function CarouselLayout({
 
 /**
  * Grid Layout - fixed grid of posts
+ * @param root0
+ * @param root0.posts
+ * @param root0.provider
+ * @param root0.showCaption
+ * @param root0.showLikes
+ * @param root0.className
  */
 function GridLayout({ posts, provider, showCaption, showLikes, className }) {
   const gridCols = posts.length <= 4 ? 2 : 3;
@@ -335,6 +366,14 @@ function GridLayout({ posts, provider, showCaption, showLikes, className }) {
 
 /**
  * List Layout - vertical scrolling list
+ * @param root0
+ * @param root0.posts
+ * @param root0.provider
+ * @param root0.showCaption
+ * @param root0.showLikes
+ * @param root0.showDate
+ * @param root0.showAuthor
+ * @param root0.className
  */
 function ListLayout({
   posts,
@@ -390,6 +429,14 @@ function ListLayout({
 
 /**
  * Single Layout - single post display
+ * @param root0
+ * @param root0.post
+ * @param root0.provider
+ * @param root0.showCaption
+ * @param root0.showLikes
+ * @param root0.showDate
+ * @param root0.showAuthor
+ * @param root0.className
  */
 function SingleLayout({
   post,
@@ -489,6 +536,11 @@ function SingleLayout({
 
 /**
  * Masonry Layout - Pinterest-style masonry grid
+ * @param root0
+ * @param root0.posts
+ * @param root0.provider
+ * @param root0.showCaption
+ * @param root0.className
  */
 function MasonryLayout({ posts, provider, showCaption, className }) {
   // Simple 2-column masonry
@@ -526,6 +578,13 @@ function MasonryLayout({ posts, provider, showCaption, className }) {
 
 /**
  * Post Info component - displays author, caption, likes, date
+ * @param root0
+ * @param root0.post
+ * @param root0.provider
+ * @param root0.showCaption
+ * @param root0.showLikes
+ * @param root0.showDate
+ * @param root0.showAuthor
  */
 function PostInfo({ post, provider, showCaption, showLikes, showDate, showAuthor }) {
   return (

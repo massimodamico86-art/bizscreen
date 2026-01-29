@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Settings, RefreshCw, ExternalLink } from 'lucide-react';
 import {
   PROVIDER_LABELS,
   LAYOUT_LABELS,
@@ -18,6 +19,14 @@ import {
 } from '../services/socialFeedSyncService';
 import { useLogger } from '../hooks/useLogger.js';
 
+/**
+ *
+ * @param root0
+ * @param root0.widgetId
+ * @param root0.elementSettings
+ * @param root0.onSettingsChange
+ * @param root0.onNavigate
+ */
 export default function SocialFeedWidgetSettings({
   widgetId,
   elementSettings = {},

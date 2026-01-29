@@ -11,11 +11,14 @@
  * @module components/BillingBanner
  */
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
   Clock,
   XCircle,
-  Lock
+  Lock,
+  ChevronRight,
+  X
 } from 'lucide-react';
 import { getTenantLifecycleStatus } from '../services/billingService';
 import { useLogger } from '../hooks/useLogger.js';
@@ -52,6 +55,8 @@ const BANNER_STYLES = {
 
 /**
  * BillingBanner - Main component
+ * @param root0
+ * @param root0.className
  */
 const BillingBanner = ({ className = '' }) => {
   const logger = useLogger('BillingBanner');
@@ -134,6 +139,7 @@ const BillingBanner = ({ className = '' }) => {
 
 /**
  * Determine banner info based on status
+ * @param status
  */
 function getBannerInfo(status) {
   // Account suspended - highest priority
@@ -233,6 +239,8 @@ function getBannerInfo(status) {
 
 /**
  * Compact version for sidebar/header
+ * @param root0
+ * @param root0.className
  */
 export const BillingBannerCompact = ({ className = '' }) => {
   const [status, setStatus] = useState(null);

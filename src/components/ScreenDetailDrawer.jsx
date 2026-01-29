@@ -1,5 +1,27 @@
 import { useState, useEffect } from 'react';
-
+import {
+  Target,
+  Calendar,
+  Layout,
+  ListVideo,
+  AlertCircle,
+  Monitor,
+  Wifi,
+  WifiOff,
+  RefreshCw,
+  X,
+  Loader2,
+  MapPin,
+  Users,
+  Clock,
+  CheckCircle,
+  ArrowRight,
+  Play,
+  Image,
+  TrendingUp,
+  ExternalLink,
+} from 'lucide-react';
+import { Badge, Button } from '../design-system';
 
 import {
   getScreenDiagnostics,

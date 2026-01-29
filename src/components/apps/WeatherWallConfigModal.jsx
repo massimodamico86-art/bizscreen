@@ -6,6 +6,8 @@
  */
 
 import { useState, useEffect } from 'react';
+import { CloudSun, Maximize2, X } from 'lucide-react';
+import { Button } from '../../design-system';
 
 // Language options
 const LANGUAGES = [
@@ -45,6 +47,14 @@ const ORIENTATIONS = [
   { value: 'portrait', label: 'Portrait' },
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.app
+ * @param root0.onClose
+ * @param root0.onCreate
+ * @param root0.creating
+ */
 export default function WeatherWallConfigModal({ app, onClose, onCreate, creating }) {
   // App Settings
   const [name, setName] = useState('');

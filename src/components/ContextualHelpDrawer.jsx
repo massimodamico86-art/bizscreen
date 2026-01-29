@@ -7,7 +7,7 @@
  * @module components/ContextualHelpDrawer
  */
 import { useState, useEffect } from 'react';
-
+import { HelpCircle, X, Lightbulb, BookOpen, Loader2, ChevronRight, ExternalLink } from 'lucide-react';
 
 import {
   getContextualHelp,
@@ -18,6 +18,9 @@ import { useLogger } from '../hooks/useLogger.js';
 
 /**
  * Help button that triggers the drawer
+ * @param root0
+ * @param root0.pageId
+ * @param root0.onClick
  */
 export function HelpButton({ pageId, onClick }) {
   return (
@@ -34,6 +37,11 @@ export function HelpButton({ pageId, onClick }) {
 
 /**
  * ContextualHelpDrawer Component
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.pageId
+ * @param root0.onNavigate
  */
 export default function ContextualHelpDrawer({
   isOpen,
