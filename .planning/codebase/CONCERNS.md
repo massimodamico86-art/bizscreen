@@ -1,372 +1,295 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-01-22
+**Analysis Date:** 2026-01-29
 
 ## Tech Debt
 
-**Unimplemented Features:**
-- Issue: `createTemplateFromLayout()` in `src/services/layoutTemplateService.js` is a stub throwing "not yet implemented" error
-- Files: `src/services/layoutTemplateService.js` (line 235)
-- Impact: Users cannot convert layouts to reusable templates, blocking workflow efficiency
-- Fix approach: Implement steps 1-4 (fetch layout, create template, generate thumbnail using Puppeteer/screenshot service, return template)
+**Missing Import Crisis (Recently Resolved)**
+- Issue: Widespread pattern of missing imports for lucide-react icons and design-system components across 50+ files
+- Files: Multiple rounds of fixes documented in `.planning/debug/resolved/console-errors-v4.md` and `.planning/debug/resolved/comprehensive-import-fix.md`
+- Impact: Runtime errors, app crashes on initial load, failed E2E tests
+- Fix approach: Systematic scan completed, but vigilance needed to prevent regression. Consider adding ESLint rule to enforce import declarations for commonly used icons.
 
-**Deprecated Functions Not Removed:**
-- Issue: Dashboard service contains deprecated functions marked with @deprecated JSDoc but still exported
-- Files: `src/services/dashboardService.js` (lines 65, 246, 334)
-- Impact: Legacy code paths may be called; harder to track which functions are actually used
-- Fix approach: Migrate all callers to database functions, then remove deprecated exports
+**Large Service Files (Complexity)**
+- Issue: Several service files exceed 1000+ lines, indicating high complexity and maintenance burden
+- Files: `src/services/industryWizardService.js` (2797 lines), `src/services/sceneDesignService.js` (1598 lines), `src/services/alertEngineService.js` (1286 lines), `src/services/dataSourceService.js` (1285 lines), `src/services/mediaService.js` (1242 lines), `src/services/scheduleService.js` (1221 lines)
+- Impact: Difficult to test, high cognitive load for modifications, increased merge conflict risk
+- Fix approach: Extract logical submodules (e.g., split `industryWizardService.js` into per-industry modules, split `dataSourceService.js` into CRUD operations vs. sync logic)
 
-**Incomplete Error Recovery in AuthContext:**
-- Issue: Multiple catch blocks log errors but don't always provide user-facing feedback paths
-- Files: `src/contexts/AuthContext.jsx` (lines 113-120, 162-169)
-- Impact: Users may see blank screens on auth failures without clear error messaging
-- Fix approach: Ensure all error paths set meaningful error messages to state
+**Large Component Files (Complexity)**
+- Issue: Multiple components exceed 1000+ lines with complex state management
+- Files: `src/components/svg-editor/FabricSvgEditor.jsx` (2668 lines), `src/pages/PlaylistsPage.jsx` (1323 lines), `src/pages/DataSourcesPage.jsx` (1250 lines), `src/pages/AppsPage.jsx` (1195 lines), `src/pages/PlaylistEditorPage.jsx` (1188 via hook), `src/pages/LayoutEditorPage.jsx` (1152 lines), `src/pages/ScheduleEditorPage.jsx` (1138 lines), `src/App.jsx` (1115 lines)
+- Impact: Poor component reusability, difficult debugging, slow hot-reload during development
+- Fix approach: Extract subcomponents, move business logic to custom hooks, consider splitting into feature-based modules
 
-**TODO Comments in Production Code:**
-- Issue: Live analytics TODO in performance tracking service
-- Files: `src/legacy/utils/performance.js` (line 100)
-- Impact: Performance metrics aren't sent to analytics; monitoring blind spot
-- Fix approach: Implement analytics integration or remove TODO
+**Deprecated Service Methods**
+- Issue: Dashboard service has deprecated methods still in codebase
+- Files: `src/services/dashboardService.js` lines 69, 250, 338
+- Impact: Methods marked `@deprecated` with migration guidance to use database functions instead (get_dashboard_stats, get_device_health_issues, get_alert_summary)
+- Fix approach: Search codebase for usage of deprecated methods, migrate callers to new database functions, remove deprecated code
 
----
+**Legacy Code Directory**
+- Issue: Entire `src/legacy/` directory contains unused code kept for reference only
+- Files: `src/legacy/` containing pages, components, hooks, data, utils
+- Impact: Increases bundle size analysis noise, confuses new developers, potential for accidental imports
+- Fix approach: Safe to delete per `src/legacy/README.md`. Create archive branch if historical reference needed, then remove from main.
+
+**Excessive setTimeout/setInterval Usage**
+- Issue: 160 occurrences of setTimeout/setInterval across 110 files
+- Files: Throughout `src/player/`, `src/hooks/`, `src/services/`, `src/components/`
+- Impact: Risk of memory leaks, difficult to test, cleanup often missed in useEffect
+- Fix approach: Audit for missing cleanup functions, consider custom hooks (useTimeout, useInterval) with automatic cleanup
+
+**Console Statement Proliferation**
+- Issue: 150 console.log/warn/error calls across 46 files despite logging service
+- Files: Widespread in services, pages, components (see Grep results)
+- Impact: Inconsistent logging, debug statements leak to production (mitigated by terser drop_console in build)
+- Fix approach: Migrate all console.* calls to `loggingService` for consistent structured logging
+
+**Window/Document Direct Access in Services**
+- Issue: 127 occurrences of window./document. in service layer files
+- Files: 32 service files including `src/services/playerService.js`, `src/services/canvaService.js`, `src/services/tenantService.js`
+- Impact: Services not testable in Node.js environment, SSR incompatible, tight coupling to browser APIs
+- Fix approach: Abstract browser APIs behind adapters, inject window/document dependencies, or move logic to components
+
+**Heavy useEffect Dependencies**
+- Issue: 320 return null/return []/return {} patterns suggesting incomplete implementations
+- Files: Throughout codebase in services and components
+- Impact: Potential bugs from fallback returns, incomplete error handling
+- Fix approach: Review each occurrence for proper error handling and complete implementation
+
+**No Unit Tests in src/**
+- Issue: Zero unit test files found in src/ directory (only E2E tests exist in tests/e2e/)
+- Files: No `*.test.js` or `*.spec.js` files in src/
+- Impact: Regression risk when modifying services/utilities, difficult to refactor with confidence
+- Fix approach: Add Vitest unit tests for critical services (authService, alertEngineService, dataSourceService, scheduleService). Start with pure functions and gradually increase coverage.
 
 ## Known Bugs
 
-**Console Logging in Production:**
-- Symptoms: Excessive console.log/console.warn output in production affecting performance
-- Files: 197+ instances across codebase, particularly `src/services/alertEngineService.js` (lines 62, 67, 71)
-- Trigger: Any screen/player/app interaction logs to console
-- Workaround: Open DevTools to see log output; use log levels to filter
-- Fix: Implement proper logger with environment-aware output; replace console.* with logger.* throughout codebase
+**Skipped E2E Test Suites**
+- Symptoms: Multiple E2E test suites and individual tests marked with .skip
+- Files: `tests/e2e/admin.spec.js` (8 skipped tests), `tests/e2e/usage.spec.js` (2 entire describe blocks), `tests/e2e/industry-wizards.spec.js` (9 skipped tests)
+- Trigger: Tests skipped due to missing test credentials or implementation not complete
+- Workaround: Tests will run when proper environment variables set (TEST_SUPERADMIN_EMAIL, TEST_RESELLER_EMAIL) or features completed
+- Fix approach: Document required env vars in CI/CD setup, complete unfinished wizard features, review why admin tests require skip
 
-**Large Component Files with Multiple Concerns:**
-- Symptoms: Page components increasingly difficult to maintain and test
-- Files:
-  - `src/pages/MediaLibraryPage.jsx` (2537 lines)
-  - `src/pages/ScreensPage.jsx` (1929 lines)
-  - `src/pages/PlaylistEditorPage.jsx` (1915 lines)
-  - `src/pages/CampaignEditorPage.jsx` (1390 lines)
-  - `src/pages/FeatureFlagsPage.jsx` (1337 lines)
-- Trigger: Complex pages with multiple sub-features (search, filters, modals, dialogs)
-- Impact: Hard to locate bugs; slow rendering on complex interactions; difficult testing
-- Fix approach: Extract sub-components into dedicated files; move state management to custom hooks; consider container/presentational split
-
-**innerHTML Mutation in SVG Editor:**
-- Symptoms: Direct DOM manipulation bypasses React; potential race conditions
-- Files: `src/components/svg-editor/LeftSidebar.jsx` (line 744)
-- Trigger: User interaction with SVG alt text display
-- Impact: React state can become out of sync with DOM; potential XSS if content not properly sanitized
-- Fix: Use React state and refs instead of direct innerHTML
-
-**Dangerous HTML in Help Center:**
-- Symptoms: dangerouslySetInnerHTML used to render markdown with bold formatting
-- Files: `src/pages/HelpCenterPage.jsx` (lines 289, 293)
-- Trigger: Displaying help content with markdown formatting
-- Impact: If help content comes from user input, XSS vulnerability; unclear sanitization strategy
-- Workaround: Help content currently hardcoded (not user input)
-- Fix: Use proper markdown-to-JSX library (react-markdown) instead of dangerouslySetInnerHTML
-
----
+**Player Pairing UUID Generation**
+- Symptoms: Client-side UUID generation in pairing screen
+- Files: `src/player/components/PairingScreen.jsx` line 23 uses inline UUID generator
+- Trigger: Device pairing flow
+- Impact: Weak UUID implementation (not cryptographically secure), potential collision risk
+- Fix approach: Use uuid package (already in dependencies) instead of custom regex implementation
 
 ## Security Considerations
 
-**Environment Variable Exposure:**
-- Risk: AWS credentials and API keys are in vite.config.js and passed to browser
-- Files: `vite.config.js` (lines 19-23), browser requests to `/api/media/presign`
-- Current mitigation: Uses SECURITY DEFINER RPC functions, but server-side AWS credentials accessible via environment
-- Recommendations:
-  - Move all AWS operations to server-side only (Supabase Edge Functions or backend API)
-  - Never send AWS credentials to browser
-  - Use presigned URLs generated server-side only
+**Environment Variable Exposure**
+- Risk: Client-side environment variables exposed in browser bundle
+- Files: `src/supabase.js`, `src/config/env.js`, 30+ files accessing `import.meta.env.VITE_*`
+- Current mitigation: Supabase URL/anon key are intended to be public per Supabase architecture, RLS policies protect data
+- Recommendations: Audit that no secret keys (AWS, Stripe secret, Anthropic) are prefixed with VITE_. Document which env vars are safe to expose. Consider security audit of RLS policies.
 
-**XSS Vulnerability in Help Content:**
-- Risk: dangerouslySetInnerHTML with user-controlled markdown
-- Files: `src/pages/HelpCenterPage.jsx` (lines 289, 293)
-- Current mitigation: Content currently hardcoded (not dynamic), but pattern allows future vulnerabilities
-- Recommendations:
-  - Replace dangerouslySetInnerHTML with safe markdown library
-  - Validate all HTML content; use DOMPurify if necessary
-  - Avoid pattern of string replace for HTML generation
+**LocalStorage/SessionStorage Usage**
+- Risk: 113 occurrences of localStorage/sessionStorage access across 27 files
+- Files: Concentrated in `src/player/`, `src/services/sessionService.js`, `src/services/tenantService.js`, `src/TV.jsx`
+- Current mitigation: Supabase auth handles session persistence
+- Recommendations: Review for sensitive data storage (tokens, API keys). Ensure PII not stored in plain text. Consider encryption for sensitive player settings.
 
-**localStorage/sessionStorage Security:**
-- Risk: 148+ uses of browser storage for potentially sensitive data (auth tokens, cache, device configs)
-- Files: Multiple across src/ - particularly Player.jsx, playerService.js
-- Current mitigation: Checked for specific patterns; no obvious secrets stored
-- Recommendations:
-  - Audit all localStorage/sessionStorage usage for sensitive data
-  - Use only for non-sensitive client state (UI preferences, cache)
-  - Consider using secure cookie flags for sensitive data
+**No TypeScript Type Safety**
+- Risk: Zero TypeScript files in codebase (all .js/.jsx)
+- Files: 625 JavaScript files with no type checking
+- Impact: Runtime type errors not caught at build time, difficult API contracts
+- Recommendations: Gradual TypeScript migration starting with service layer, use JSDoc type annotations as interim solution
 
-**API Route Security in Development:**
-- Risk: `/api/media/presign` endpoint in vite.config.js available during dev; could leak credentials
-- Files: `vite.config.js` (lines 54-118)
-- Current mitigation: Only runs during vite dev server
-- Recommendations:
-  - Add request validation (rate limiting, origin checks)
-  - Add authentication check before presigned URL generation
-  - Log all presign requests for audit
+**CORS and S3 Upload Security**
+- Risk: Presigned URL generation in dev server exposes AWS credentials
+- Files: `vite.config.js` lines 17-24 reads AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from environment
+- Current mitigation: Only used in development, production should use serverless function
+- Recommendations: Document production deployment architecture. Ensure AWS credentials never exposed to client. Add validation that presigned URLs expire in 15 minutes.
 
----
+**Row Level Security (RLS)**
+- Risk: Database security entirely depends on RLS policies being correct
+- Files: 130 migration files in `supabase/migrations/`, RLS setup in `001_initial_schema.sql` and `002_fix_rls_and_roles.sql`
+- Current mitigation: RLS enabled on all tables
+- Recommendations: Regular security audits of RLS policies, automated testing of access controls, consider adding policy regression tests
 
 ## Performance Bottlenecks
 
-**Large Player.jsx Component:**
-- Problem: 3476-line component handling playlist playback, app rendering, offline sync, analytics
-- Files: `src/Player.jsx`
-- Cause: Multiple features (playlist playback, scene rendering, app hosting, offline mode, tracking) bundled together
-- Improvement path:
-  - Extract app rendering logic to separate PlayerAppHost component
-  - Extract offline sync to custom hook (useOfflineSync)
-  - Extract analytics to custom hook (usePlayerAnalytics)
-  - Extract scene/slide rendering to separate SceneRenderer component
+**Large Bundle Size**
+- Problem: Manual chunks configured but many large page components
+- Files: `vite.config.js` configures manual chunks, but pages like `src/App.jsx`, `src/components/svg-editor/FabricSvgEditor.jsx`, `src/services/industryWizardService.js` are still large
+- Cause: All pages lazy-loaded but individual page/component sizes still large
+- Improvement path: Further code-splitting within large pages, dynamic imports for heavy libraries (Fabric.js, Polotno), route-based chunking already in place
 
-**Excessive useEffect Dependencies:**
-- Problem: Multiple useEffect hooks in Player.jsx and page components with large dependency arrays; potential infinite loops
-- Files: `src/Player.jsx`, `src/pages/*.jsx`, `src/contexts/*.jsx`
-- Cause: Complex state relationships; unclear effect dependencies
-- Improvement path:
-  - Use React DevTools Profiler to identify unnecessary re-renders
-  - Consolidate related effects; use useCallback for stable function references
-  - Consider state management solution (Context + useReducer, Zustand, etc.)
+**Heavy Dependencies**
+- Problem: node_modules is 683MB
+- Files: `package.json` includes heavy packages: fabric (v6.9.0 → v7.1.0 available), polotno (v2.33.2), @sentry/react, framer-motion
+- Cause: Design editor features require Fabric.js and Polotno (large canvas libraries)
+- Improvement path: Consider lazy-loading Polotno only when editor opened, tree-shaking review, update to Fabric v7 which may have better tree-shaking
 
-**No Query Pagination on Supabase:**
-- Problem: Some services fetch all records without limit, then filter client-side
-- Files: Query patterns in multiple services, though recent commits show pagination implementation
-- Cause: Historical code; newer pagination work in progress (US-007 through US-011)
-- Impact: Large datasets load entire table into memory; network waste
-- Improvement path: Ensure all list queries use `.range()` with server-side pagination; complete ongoing pagination work
+**Outdated Dependencies (Security & Performance)**
+- Problem: 19+ outdated packages including major version jumps
+- Files: `package.json` shows AWS SDK (3.946.0 → 3.978.0), Supabase (2.80.0 → 2.93.3), Playwright (1.57.0 → 1.58.0), React hooks plugin (5.2.0 → 7.0.1), Fabric (6.9.0 → 7.1.0 major)
+- Cause: Dependencies not regularly updated
+- Improvement path: Regular dependency updates (monthly), test suite provides safety net, review Fabric v7 breaking changes before upgrade
 
-**Console Logging Overhead:**
-- Problem: 197+ console.log calls evaluated even when output not used
-- Files: Throughout src/, particularly service layers
-- Cause: Debug logging left in code; no environment-aware logger
-- Impact: Small but measurable CPU cost in production; polluted DevTools
-- Improvement path: Replace with structured logger that respects environment (dev/prod, log levels)
+**Offline Service Complexity**
+- Problem: IndexedDB caching with complex sync logic
+- Files: `src/player/offlineService.js`, `src/player/cacheService.js`
+- Cause: Three-phase sync (prefetch, background, reconnect) with blob-to-base64 conversions
+- Improvement path: Performance metrics tracked in `alertEngineService.js` (300ms slow threshold). Consider Web Workers for blob processing, monitor cache size growth.
 
-**Unoptimized Asset Loading:**
-- Problem: Vite chunk size warning limit set to 600KB; large pages hitting or near limit
-- Files: `vite.config.js` (line 145)
-- Cause: Complex UI components bundled without granular code splitting
-- Impact: Initial page load slow; LCP (Largest Contentful Paint) degraded
-- Improvement path:
-  - Add route-level code splitting with React.lazy()
-  - Split large pages (MediaLibraryPage, etc.) into smaller chunks
-  - Profile with Lighthouse to identify blocking resources
-
----
+**Timer-Based Polling**
+- Problem: Multiple services use setInterval for polling
+- Files: Player heartbeat (30s), data feed scheduler, alert engine, social feed sync
+- Cause: Real-time updates needed but implemented via polling
+- Improvement path: Already using Supabase realtime subscriptions in some areas (`src/services/realtimeService.js`). Migrate more features to realtime subscriptions to reduce polling load.
 
 ## Fragile Areas
 
-**Player Offline Mode and Sync:**
-- Files: `src/Player.jsx`, `src/services/playerService.js`, `src/services/mediaPreloader.js`, `src/player/offlineService.js`
-- Why fragile:
-  - Multiple cache layers (IndexedDB, memory, sessionStorage)
-  - Offline detection using polling + connection events (race conditions possible)
-  - Service worker registration may fail; no fallback
-  - Content hash validation could fail if media changes mid-sync
-- Safe modification:
-  - Add integration tests for offline/online transitions
-  - Test with throttled network and manual offline toggle
-  - Document cache invalidation strategy clearly
-  - Add telemetry to track cache hit/miss rates
+**Player Content Resolution**
+- Files: `src/player/hooks/usePlayerContent.js`, `src/player/pages/ViewPage.jsx` (1184 lines), `src/services/playerService.js`
+- Why fragile: Complex offline/online mode switching, retry logic with exponential backoff, cache invalidation
+- Safe modification: Always test with network throttling, verify offline mode works, check cache invalidation logic
+- Test coverage: E2E tests exist but no unit tests for retry/cache logic
 
-**Data Binding Resolution System:**
-- Files: `src/services/dataBindingResolver.js` (1535 lines), `src/services/dataSourceService.js` (1282 lines)
-- Why fragile:
-  - Complex recursive binding resolution across scenes
-  - Data source subscriptions may leak if not properly unsubscribed
-  - Circular dependencies between scenes not detected
-  - Error handling sparse; failed bindings silently fall back
-- Test coverage: Gaps in error scenarios and circular dependency handling
-- Safe modification:
-  - Add cycle detection before evaluating bindings
-  - Add exhaustive error handling; log binding failures
-  - Profile memory leaks on long-running player sessions
-  - Document binding resolution algorithm clearly
+**Authentication Flow**
+- Files: `src/contexts/AuthContext.jsx`, `src/services/authService.js`, `src/auth/AuthCallbackPage.jsx`, `src/supabase.js`
+- Why fragile: Recent fix history shows multiple import issues, PKCE flow configuration, session persistence
+- Safe modification: Always test login/logout/password-reset flows, verify session timeout doesn't log out active users (fixed in recent commit)
+- Test coverage: E2E auth tests exist (`tests/e2e/auth.spec.js`)
 
-**Schedule Engine:**
-- Files: `src/services/scheduleService.js` (970 lines)
-- Why fragile:
-  - Timezone handling complex; potential off-by-one on schedule boundaries
-  - No validation that schedule rules are mutually exclusive
-  - Edge case: daylight saving time transitions
-  - Filler content fallback not well tested
-- Test coverage: Missing DST transition tests; no validation of conflicting rules
-- Safe modification:
-  - Add extensive unit tests for timezone edge cases
-  - Add end-to-end tests with DST dates
-  - Validate schedule rules during creation (no overlaps)
-  - Add debug output showing resolved schedule
+**Campaign Scheduling System**
+- Files: `src/services/scheduleService.js` (1221 lines), `src/services/campaignService.js`, `src/pages/ScheduleEditorPage.jsx` (1138 lines)
+- Why fragile: Complex date/time logic, timezone handling, conflict detection, rotation modes
+- Safe modification: Extensive validation functions exist (throw errors on invalid state). Review validation before changing schedule logic.
+- Test coverage: Schedules E2E tests exist (`tests/e2e/schedules.spec.js`)
 
-**Scene Design Service:**
-- Files: `src/services/sceneDesignService.js` (1535 lines)
-- Why fragile:
-  - Animation keyframe generation with complex math for transforms
-  - No validation that element positions stay within bounds
-  - Performance metrics accumulated in memory (never cleared)
-  - Text overflow handling heuristics may fail on edge cases
-- Test coverage: Missing animation normalization edge case tests
-- Safe modification:
-  - Profile animation performance on low-end devices
-  - Add bounds checking during element transformation
-  - Implement circular buffer for performance metrics
-  - Add visual regression tests for animation output
+**Data Source Sync**
+- Files: `src/services/dataSourceService.js` (1285 lines), `src/services/dataFeedScheduler.js`, `src/pages/DataSourcesPage.jsx` (1250 lines)
+- Why fragile: Google Sheets integration, external API failures, sync timing, data transformation
+- Safe modification: Error handling exists but external API reliability varies. Always handle API errors gracefully.
+- Test coverage: No specific data source E2E tests found
 
-**Alert Engine System:**
-- Files: `src/services/alertEngineService.js` (1293 lines)
-- Why fragile:
-  - Rate limiting rules complex; coalescing logic error-prone
-  - Memory counters accumulate forever (potential leak)
-  - No circuit breaker if alert processing falls behind
-  - Error handling generic; hard to debug specific alert failures
-- Test coverage: Missing load tests for alert burst scenarios
-- Safe modification:
-  - Implement proper metrics collection (clear counters periodically)
-  - Add circuit breaker pattern for alert processing
-  - Log alert failures with full context (attempt count, reason)
-  - Load test with spike in alerts (US-009+)
+**SVG/Fabric Editor**
+- Files: `src/components/svg-editor/FabricSvgEditor.jsx` (2668 lines), `src/services/svgTemplateService.js`, `src/services/svgAnalyzerService.js`
+- Why fragile: Complex Fabric.js canvas state management, undo/redo history, JSON serialization, Google Fonts loading
+- Safe modification: Fabric.js version upgrade from v6 to v7 will likely break things. Test thoroughly with undo/redo, save/load, Google Fonts rendering.
+- Test coverage: SVG editor E2E tests needed
 
----
+**Onboarding Flow**
+- Files: `src/components/onboarding/` directory, `src/services/onboardingService.js`, `src/hooks/useUnifiedOnboarding.js`
+- Why fragile: Recent fix history shows repeated import issues, multiple onboarding modals (AutoBuild, IndustrySelection, StarterPack, WelcomeTour)
+- Safe modification: Verify all onboarding modals render without errors, test first-time user experience
+- Test coverage: Onboarding E2E tests exist (`tests/e2e/onboarding.spec.js`)
 
 ## Scaling Limits
 
-**Storage Usage Tracking:**
-- Current capacity: Basic usage tracking on media_assets table
-- Limit: No soft/hard limits enforced at application level; only plan limits
-- Scaling path:
-  - Implement real-time storage quota enforcement
-  - Add background job to recalculate storage (cleanup unused/orphaned assets)
-  - Consider implementing tiered storage (S3 Standard → Glacier)
-  - Add warning at 80%, blocking at 100%
+**Database Migrations (130 files)**
+- Current capacity: 130 migration files in `supabase/migrations/`
+- Limit: Supabase migration ordering and naming convention becomes unwieldy
+- Scaling path: Consider migration squashing after major versions, use numbered prefixes (001_, 002_) for better ordering
 
-**Player Command Polling:**
-- Current capacity: Polls every 10 seconds per device
-- Limit: Linear scaling with number of active screens; no batching
-- Scaling path:
-  - Consider WebSocket subscriptions instead of polling (Supabase real-time)
-  - Batch command checks (reduce to poll every 30-60 seconds)
-  - Implement command queue to avoid missed updates
+**IndexedDB Cache Storage**
+- Current capacity: Browser-dependent (typically 50MB-500MB per origin)
+- Limit: Player offline cache can hit quota for media-heavy playlists
+- Scaling path: Implement cache eviction policy (LRU), track cache size in `src/player/cacheService.js` (getCacheSize function exists), warn users when approaching quota
 
-**Media Preloading Cache:**
-- Current capacity: In-memory cache + IndexedDB (up to quota limit)
-- Limit: Unbounded growth; no eviction policy
-- Scaling path:
-  - Implement LRU eviction for in-memory cache
-  - Set IndexedDB quota limits; implement cleanup
-  - Profile memory usage on 1000-slide playlists
+**Service Worker Scope**
+- Current capacity: Single service worker registered at root scope
+- Limit: Player and admin app share same service worker
+- Scaling path: Consider separate service workers for /player/* and /admin/* routes, or app-shell architecture
 
-**Concurrent Editor Sessions:**
-- Current capacity: No session locking or conflict detection
-- Limit: Multiple users editing same resource → last write wins
-- Scaling path:
-  - Implement optimistic locking (version counters)
-  - Add session awareness; notify of conflicts
-  - Consider operational transform for real-time collab (future)
-
----
+**Event Queue for Offline Sync**
+- Current capacity: 100 events before forced sync (MAX_QUEUE_SIZE in `src/player/offlineService.js`)
+- Limit: Long offline periods or high-frequency events could exceed queue
+- Scaling path: Implement batch compression for similar events, increase queue size with performance testing
 
 ## Dependencies at Risk
 
-**Deprecated API Versions:**
-- Risk: Multiple API routes reference old versions; deprecation dates passing
-- Files: `src/services/apiVersionService.js`
-- Impact: Old versions will return deprecation warnings; clients may break
-- Migration plan:
-  - Audit all API consumers
-  - Set firm sunset dates for deprecated versions
-  - Provide migration guide to latest version
+**Fabric.js Major Version Available (v6 → v7)**
+- Risk: Breaking changes in v7.x release
+- Impact: SVG editor will require code changes (2668-line component depends on it)
+- Migration plan: Review v7 changelog, test editor functionality thoroughly, update FabricSvgEditor.jsx, allocate 2-3 days for testing
 
-**Polotno (SVG Editor) Bundle:**
-- Risk: Large library (added custom build in scripts/polotno-build)
-- Files: `vite.config.js` (line 148), `/scripts/polotno-build`
-- Impact: Significant bundle size; custom build may diverge from upstream
-- Migration plan:
-  - Monitor Polotno for security updates
-  - Test custom build regularly
-  - Consider alternative: Fabric.js (already used elsewhere), Konva.js
+**Polotno Editor (Proprietary Dependency)**
+- Risk: Proprietary library with potential licensing costs, limited to specific version
+- Impact: Layout editor core functionality depends on it
+- Migration plan: Evaluate alternatives (Fabric.js-only solution, open-source canvas editor). Document licensing terms.
 
-**Stripe Integration:**
-- Risk: Billing service integrated but incomplete (billing service checks TBD)
-- Files: `src/services/billingService.js`, dependency: `stripe@^20.0.0`
-- Impact: Charge/refund operations could fail silently
-- Migration plan:
-  - Implement comprehensive Stripe webhook validation
-  - Add idempotency checks (prevent double-charge)
-  - Test refund/charge flows in staging
+**React 19 (Recently Upgraded)**
+- Risk: Bleeding edge React version (19.1.1) - ecosystem may lag
+- Impact: Some libraries may not be compatible yet
+- Migration plan: Monitor for compatibility issues, consider downgrading to React 18 LTS if ecosystem compatibility problems arise
 
-**Supabase Real-time Subscriptions:**
-- Risk: Multiple subscriptions created; no unified cleanup strategy
-- Files: `src/services/realtimeService.js`, consumed by `src/Player.jsx` and many pages
-- Impact: Memory leaks if subscriptions not properly unsubscribed
-- Migration plan:
-  - Centralize subscription cleanup in useEffect return functions
-  - Add subscription lifecycle logging
-  - Profile for memory leaks on long sessions
-
----
+**React Router v7 (Recently Upgraded)**
+- Risk: Major version jump from v6 to v7 (7.9.5 in package.json)
+- Impact: Routing throughout app, lazy loading, navigation
+- Migration plan: Already migrated. Monitor for issues with lazy-loaded routes.
 
 ## Missing Critical Features
 
-**No Authentication Rate Limiting:**
-- Problem: Auth endpoints (login, signup, password reset) have no rate limiting
-- Blocks: Brute force protection
-- Implementation: Add rate limiting middleware at auth layer (Supabase RLS or edge function)
+**Production Error Tracking**
+- Problem: Sentry configured but may not be enabled in production
+- Blocks: Debugging production issues, identifying user-facing errors
+- Files: `src/utils/errorTracking.jsx`, `.env.example` has VITE_ERROR_TRACKING_ENABLED=false
+- Priority: High - Essential for production monitoring
 
-**No Audit Trail for Sensitive Operations:**
-- Problem: Delete operations, permission changes not logged
-- Blocks: Compliance audits; incident investigation
-- Implementation: Add trigger-based audit logging to Supabase; consider dedicated audit service
+**Production Analytics**
+- Problem: Web Vitals service exists but no clear analytics endpoint
+- Blocks: Understanding user experience, performance monitoring
+- Files: `src/services/webVitalsService.js`, `.env.example` has VITE_ANALYTICS_ENDPOINT commented
+- Priority: Medium - Important for performance optimization
 
-**No Graceful Degradation for Missing Features:**
-- Problem: Feature flags checked everywhere; errors if flag service down
-- Blocks: Reliable feature rollouts
-- Implementation: Add fallback values; cache feature flags locally
+**AI Auto-Tagging (Incomplete)**
+- Problem: Anthropic API key required for SVG template auto-tagging, falls back to rule-based
+- Blocks: High-quality template tagging and search
+- Files: `src/services/autoTaggingService.js`, `.env.example` ANTHROPIC_API_KEY
+- Priority: Low - Graceful degradation exists
 
-**No Canary Deployment Support:**
-- Problem: Feature flags exist but no A/B testing infrastructure
-- Blocks: Safe rollouts of new features
-- Implementation: Add user cohort targeting to feature flags
-
----
+**Email Notifications (Configuration Required)**
+- Problem: Resend API configured but requires domain verification for production
+- Blocks: Production alert notifications, user emails
+- Files: `src/services/notificationDispatcherService.js`, `.env.example` VITE_RESEND_API_KEY
+- Priority: High - Critical for alert system to function
 
 ## Test Coverage Gaps
 
-**Offline Synchronization:**
-- What's not tested: Transition from offline to online with pending changes; state consistency after reconnection
-- Files: `src/services/playerService.js`, `src/Player.jsx` (offline cache logic)
-- Risk: Users lose data or see stale content after connection restored
-- Priority: HIGH - Core user experience
+**No Unit Tests for Services**
+- What's not tested: Core business logic in 106 service files
+- Files: All files in `src/services/` lack corresponding `.test.js` files
+- Risk: Service refactoring breaks functionality without warning
+- Priority: High - Start with `authService.js`, `scheduleService.js`, `campaignService.js`
 
-**Schedule Edge Cases:**
-- What's not tested: Daylight saving time transitions; schedule boundaries at midnight; leap second handling
-- Files: `src/services/scheduleService.js`
-- Risk: Screens show wrong content during DST transition
-- Priority: HIGH - Time-critical feature
+**No Tests for Hooks**
+- What's not tested: Custom React hooks (useMediaLibrary, usePlaylistEditor, useCampaignEditor, etc.)
+- Files: `src/hooks/`, `src/pages/hooks/`
+- Risk: Hook logic bugs only caught in E2E tests
+- Priority: Medium - Testing-library/react-hooks can test in isolation
 
-**Large Paginated Lists:**
-- What's not tested: Pagination edge cases (empty pages, single item, offset > total)
-- Files: `src/pages/MediaLibraryPage.jsx`, `src/pages/PlaylistsPage.jsx`, `src/pages/TemplatesPage.jsx`, `src/pages/ScreensPage.jsx`, `src/pages/ScheduleEditorPage.jsx`
-- Risk: UI crashes on edge cases; confusing pagination state
-- Priority: MEDIUM - Affects multiple pages (ongoing US-007 to US-011)
+**Player Offline Mode Testing**
+- What's not tested: Offline sync, cache invalidation, reconnection logic
+- Files: `src/player/offlineService.js`, `src/player/cacheService.js`, `src/player/hooks/usePlayerContent.js`
+- Risk: Offline mode breaks unnoticed, cache corruption
+- Priority: High - Critical player functionality
 
-**Error Recovery in Services:**
-- What's not tested: Network failure recovery; partial response handling; timeout scenarios
-- Files: Multiple services using Supabase API
-- Risk: Services hang or return incomplete data on network issues
-- Priority: MEDIUM - Production reliability
+**SVG Editor Undo/Redo Testing**
+- What's not tested: Fabric.js history management, state serialization
+- Files: `src/components/svg-editor/FabricSvgEditor.jsx` lines 82-84 (history state)
+- Risk: Data loss from undo/redo bugs
+- Priority: Medium - Manual testing currently required
 
-**Data Binding with Circular References:**
-- What's not tested: Circular dependencies between data sources; recursive binding loops
-- Files: `src/services/dataBindingResolver.js`
-- Risk: Memory exhaustion; infinite loops; unresponsive player
-- Priority: MEDIUM - Advanced feature edge case
+**RLS Policy Testing**
+- What's not tested: Row Level Security policies enforce correct access control
+- Files: 130 migration files with RLS policies
+- Risk: Security breach from incorrect RLS policy
+- Priority: High - Automated RLS tests needed for tenant isolation
 
-**Concurrent Scene Updates:**
-- What's not tested: Multiple rapid updates to same scene from different tabs
-- Files: `src/services/sceneService.js`, `src/services/deviceSyncService.js`
-- Risk: Last-write-wins; data loss
-- Priority: LOW - Rare but catastrophic
+**Import Statement Regression**
+- What's not tested: Build-time verification that all imports are present
+- Files: Recent fixes show systematic missing imports across 50+ files
+- Risk: Future commits introduce similar missing import errors
+- Priority: Medium - Add ESLint plugin or custom lint rule to enforce imports
 
 ---
 
-*Concerns audit: 2026-01-22*
+*Concerns audit: 2026-01-29*

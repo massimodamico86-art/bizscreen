@@ -1,578 +1,354 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-01-22
+**Analysis Date:** 2026-01-29
 
 ## Test Framework
 
 **Runner:**
-- Vitest v4.0.14 - Fast unit and integration test runner
+- Vitest 4.0.14
 - Config: `vitest.config.js`
 
 **Assertion Library:**
-- Vitest built-in `expect()` with extended matchers
-- `@testing-library/jest-dom` matchers (DOM-specific assertions)
+- Vitest expect + Testing Library matchers (`@testing-library/jest-dom`)
 
 **Run Commands:**
 ```bash
-npm run test                    # Run all unit + integration tests (vitest run)
-npm run test:watch            # Watch mode for development
-npm run test:unit             # Unit tests only (tests/unit/**)
-npm run test:integration      # Integration tests only (tests/integration/**)
-npm run test:coverage         # Generate coverage report (v8 provider)
-npm run test:e2e              # Playwright E2E tests
-npm run test:e2e:ui           # E2E tests with Playwright UI
-npm run test:e2e:headed       # E2E tests in headed mode (browser visible)
-npm run test:all              # Unit tests + E2E tests
-npm run test:ci               # CI flow: unit tests + seed test user + E2E tests
+npm run test              # Run all unit/integration tests
+npm run test:watch        # Watch mode
+npm run test:coverage     # Generate coverage report
+npm run test:unit         # Unit tests only (tests/unit)
+npm run test:integration  # Integration tests only (tests/integration)
+npm run test:e2e          # E2E tests with Playwright
+npm run test:e2e:ui       # Playwright UI mode
+npm run test:e2e:headed   # Playwright headed mode
+npm run test:all          # Run all tests (unit + e2e)
+npm run test:ci           # CI pipeline (seeds test user, runs all)
 ```
 
 ## Test File Organization
 
-**Location Pattern:**
-- Unit tests: `tests/unit/**/*.test.js` or `tests/unit/**/*.spec.js`
-- Integration tests: `tests/integration/**/*.test.js`
-- E2E tests: `tests/e2e/**/*.spec.js`
-- Test utilities/factories: `tests/utils/factories.js`, `tests/utils/`
-- Test helpers: `tests/e2e/helpers.js` for E2E specific utilities
+**Location:**
+- Unit tests: `tests/unit/` (mirrors `src/` structure)
+- Integration tests: `tests/integration/api/` (API integration)
+- E2E tests: `tests/e2e/` (Playwright specs)
+- Test utilities: `tests/utils/`
+- Mocks: `tests/mocks/` (MSW handlers, mock services)
 
-**Mirror Structure:**
-- Test file mirrors source structure for clarity
-- Example: `src/services/mediaService.js` → `tests/unit/services/mediaService.test.js`
-- Example: `src/config/plans.js` → `tests/unit/config/plans.test.js`
+**Naming:**
+- Unit/Integration: `*.test.js` suffix (`authService.test.js`, `cacheService.test.js`)
+- E2E: `*.spec.js` suffix (`auth.spec.js`, `screens.spec.js`)
+- Component tests: `.test.jsx` for JSX (`Player.test.jsx`, `useTapSequence.test.jsx`)
 
-**Naming Convention:**
-- Unit/integration test files: `*.test.js` (e.g., `plans.test.js`)
-- E2E test files: `*.spec.js` (e.g., `dashboard.spec.js`)
-
-## Test Setup
-
-**Global Setup File:** `tests/setup.js`
-
-Runs before all tests:
-- Extends `expect` with `@testing-library/jest-dom` matchers
-- Cleans up React components after each test via `cleanup()`
-- Mocks environment variables:
-  - `VITE_SUPABASE_URL`
-  - `VITE_SUPABASE_ANON_KEY` (JWT format for validation)
-- Mocks browser APIs:
-  - `window.matchMedia()` - Media query API
-  - `ResizeObserver` - DOM resize monitoring
-  - `IntersectionObserver` - Element visibility detection
-  - `URL.createObjectURL()` and `URL.revokeObjectURL()` - Blob URLs
-
-**Test Environment:** `jsdom` (simulates browser DOM)
-
-**Global Test Settings:**
-```javascript
-// From vitest.config.js
-globals: true,           // Use global describe/it/expect without imports
-testTimeout: 10000,      // 10 second timeout per test
-reporters: ['verbose'],  // Detailed output
+**Structure:**
+```
+tests/
+├── e2e/                    # E2E Playwright tests
+│   ├── auth.spec.js
+│   ├── screens.spec.js
+│   └── helpers.js          # Shared E2E utilities
+├── integration/
+│   └── api/                # API integration tests
+│       ├── analytics.test.js
+│       └── screens.test.js
+├── unit/
+│   ├── services/           # Service tests
+│   │   ├── authService.test.js
+│   │   └── cacheService.test.js
+│   ├── hooks/              # Hook tests
+│   │   └── useAuditLogs.test.jsx
+│   ├── player/             # Player component tests
+│   │   └── Player.test.jsx
+│   └── config/             # Config tests
+│       └── featureFlags.test.js
+├── mocks/
+│   ├── loggingService.js   # Mock logging
+│   └── supabase.js         # Mock Supabase client
+├── setup.js                # Global test setup
+└── utils/                  # Test helpers
 ```
 
 ## Test Structure
 
 **Suite Organization:**
 ```javascript
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-
-describe('Plans Configuration', () => {
-  describe('PlanSlug', () => {
-    it('contains all expected plan slugs', () => {
-      // Test body
-    });
-
-    it('has 5 plan types', () => {
-      // Test body
-    });
-  });
-
-  describe('PLANS', () => {
-    // More tests
-  });
-});
-```
-
-**Pattern Observations:**
-- Nested `describe()` blocks for logical grouping
-- Descriptive test names as second argument: `it('contains all expected plan slugs', ...)`
-- Single assertion focus per test (or closely related assertions)
-- File header with phase/context: `Phase 14: Tests for centralized plan tier definitions`
-
-## Mocking
-
-**Framework:** Vitest's native `vi` module
-
-**Pattern 1: Module Mocking (Supabase)**
-```javascript
+/**
+ * Service Name Unit Tests
+ * Phase X: Description
+ */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock supabase at module level
+// Mock dependencies before imports
 vi.mock('../../../src/supabase', () => ({
   supabase: {
     auth: {
-      getUser: vi.fn().mockResolvedValue({
-        data: { user: { id: 'test-user-id' } },
-      }),
+      signUp: vi.fn(),
+      // ... other methods
     },
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockReturnThis(),
-      update: vi.fn().mockReturnThis(),
-      delete: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      in: vi.fn().mockReturnThis(),
-      ilike: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: {}, error: null }),
-    })),
-    rpc: vi.fn().mockResolvedValue({ data: {}, error: null }),
   },
 }));
 
-describe('mediaService', () => {
+describe('serviceName', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
+  describe('functionName', () => {
+    it('returns success on valid input', async () => {
+      // Arrange
+      const mockData = { id: 'test-123' };
+
+      // Act
+      const result = await functionName(mockData);
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(result.error).toBeNull();
+    });
+
+    it('returns error on invalid input', async () => {
+      // Arrange, Act, Assert
+      const result = await functionName(null);
+      expect(result.error).toBeDefined();
+    });
   });
 });
 ```
 
-**Pattern 2: Function Spying**
+**Patterns:**
+- Nested `describe` blocks for grouping related tests
+- `beforeEach` for setup/cleanup (clear mocks)
+- Arrange-Act-Assert pattern (not always explicit comments)
+- Async tests use `async/await` consistently
+- Clear test names: "returns X when Y", "shows error for invalid Z"
+
+**E2E Structure:**
 ```javascript
-// Spy on existing functions
-const logSpy = vi.spyOn(console, 'log');
-expect(logSpy).toHaveBeenCalledWith('expected message');
-logSpy.mockRestore();
+/**
+ * Feature E2E Tests
+ * Description
+ */
+import { test, expect } from '@playwright/test';
+import { loginAndPrepare, waitForPageReady } from './helpers.js';
+
+test.describe('Feature Area', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/path');
+  });
+
+  test('performs expected action', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: /text/i })).toBeVisible();
+    await page.getByPlaceholder(/email/i).fill('test@example.com');
+    await page.getByRole('button', { name: /submit/i }).click();
+    await expect(page).toHaveURL(/\/success/);
+  });
+});
 ```
 
-**Pattern 3: Mocking Return Values**
-```javascript
-// Chainable mock returns (for Supabase query builder)
-vi.fn(() => ({
-  select: vi.fn().mockReturnThis(),    // Returns self for chaining
-  eq: vi.fn().mockReturnThis(),        // Returns self for chaining
-  single: vi.fn().mockResolvedValue({ data: {}, error: null })  // Final call resolves
-}))
-```
+## Mocking
 
-**What to Mock:**
-- External APIs (Supabase)
-- Browser APIs mocked globally in `tests/setup.js`
-- Network requests (would use MSW - Mock Service Worker installed but not shown in active use)
-- Time-dependent functions (if using `vi.useFakeTimers()`)
-
-**What NOT to Mock:**
-- Pure functions/utilities (test the real implementation)
-- Business logic you're testing
-- Helper functions within same module
-- Standard library functions
-
-## Test Data & Factories
-
-**Location:** `tests/utils/factories.js`
+**Framework:** Vitest `vi.mock()` for unit tests, MSW not currently configured
 
 **Patterns:**
 ```javascript
-// Generate test data consistently
-export function createTestScreen(overrides = {}) {
-  return {
-    id: generateUUID(),
-    owner_id: generateUUID(),
-    name: 'Test Screen',
-    status: 'online',
-    device_id: generateUUID(),
-    api_key: generateAPIKey(),
-    last_seen_at: new Date().toISOString(),
-    paired_at: new Date().toISOString(),
-    ...overrides
-  };
-}
+// Module-level mock (hoisted)
+vi.mock('../../../src/supabase', () => ({
+  supabase: {
+    auth: {
+      signUp: vi.fn(),
+      signInWithPassword: vi.fn(),
+    },
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+}));
 
-export function generateUUID() {
-  // UUID v4 generation
-}
-
-export function generateOTPCode() {
-  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
-```
-
-**Usage in Tests:**
-```javascript
-it('creates test screen with defaults', () => {
-  const screen = createTestScreen();
-  expect(screen.status).toBe('online');
-  expect(screen.id).toBeDefined();
-});
-
-it('creates screen with custom values', () => {
-  const screen = createTestScreen({ name: 'Custom Name' });
-  expect(screen.name).toBe('Custom Name');
-  expect(screen.status).toBe('online');  // Default from factory
+// Setup mock return values in tests
+supabase.auth.signInWithPassword.mockResolvedValueOnce({
+  data: { user: mockUser },
+  error: null,
 });
 ```
 
-## Coverage Configuration
+**What to Mock:**
+- Supabase client (always mocked in unit tests)
+- `loggingService` (globally mocked in `tests/setup.js` to avoid circular dependencies)
+- Browser APIs: `window.matchMedia`, `ResizeObserver`, `IntersectionObserver` (in setup)
+- External services: S3, analytics, weather APIs
+- File operations: `URL.createObjectURL`, `URL.revokeObjectURL`
 
-**Provider:** v8
+**What NOT to Mock:**
+- Pure utility functions (test directly)
+- React hooks from `react` (use Testing Library)
+- Components under test (only mock dependencies)
 
-**Reporter Formats:** text, json, html
+## Fixtures and Factories
 
-**Output Directory:** `./coverage`
-
-**Current Thresholds:** All set to 0 (no enforcement)
+**Test Data:**
 ```javascript
+// Inline fixture pattern
+const mockUser = { id: 'user-123', email: 'test@example.com' };
+const mockSession = {
+  access_token: 'token123',
+  user: { id: 'user-123' }
+};
+
+// Mock Supabase client in tests/mocks/supabase.js
+export const mockSupabase = {
+  auth: {
+    signUp: vi.fn(),
+    // ...
+  },
+};
+```
+
+**Location:**
+- Inline fixtures: Defined in test files (common pattern)
+- Shared mocks: `tests/mocks/loggingService.js`, `tests/mocks/supabase.js`
+- E2E helpers: `tests/e2e/helpers.js` (`loginAndPrepare`, `dismissAnyModals`)
+
+## Coverage
+
+**Requirements:** No enforced thresholds (all set to 0 for CI to pass during test buildout)
+
+```javascript
+// vitest.config.js
 thresholds: {
   statements: 0,
   branches: 0,
   functions: 0,
   lines: 0
 }
+// TODO: Raise thresholds as more tests are added
 ```
-Note: Coverage thresholds are intentionally disabled while test suite is being built out.
 
 **View Coverage:**
 ```bash
 npm run test:coverage
-# Opens HTML report at ./coverage/index.html
+# Opens ./coverage/index.html
 ```
 
-## Unit Test Patterns
+**Coverage config:**
+- Provider: v8
+- Reports: text, json, html
+- Directory: `./coverage`
+- Includes: `src/**/*.{js,jsx}`
+- Excludes: `src/main.jsx`, `src/supabase.js`, `node_modules`, `tests`
 
-**Testing Constants:**
+## Test Types
+
+**Unit Tests:**
+- Scope: Services, utilities, hooks, config modules
+- Files: `tests/unit/services/`, `tests/unit/hooks/`, `tests/unit/config/`
+- Approach: Mock all dependencies, test in isolation
+- Examples:
+  - `tests/unit/services/authService.test.js` - Auth functions
+  - `tests/unit/services/cacheService.test.js` - Cache operations
+  - `tests/unit/hooks/useAuditLogs.test.js` - React hooks
+  - `tests/unit/config/featureFlags.test.js` - Config validation
+
+**Integration Tests:**
+- Scope: API interactions, multi-service workflows
+- Files: `tests/integration/api/`
+- Approach: Mock Supabase, test service interactions
+- Examples:
+  - `tests/integration/api/screens.test.js` - Screen CRUD
+  - `tests/integration/api/analytics.test.js` - Analytics aggregation
+  - `tests/integration/api/campaigns.test.js` - Campaign workflows
+
+**E2E Tests:**
+- Framework: Playwright 1.57.0
+- Config: `playwright.config.js`
+- Scope: Full user flows, UI interactions
+- Browser: Chromium (primary), Firefox/Webkit commented out
+- Approach: Real browser, real backend (dev/test environment)
+- Examples:
+  - `tests/e2e/auth.spec.js` - Login, signup, password reset
+  - `tests/e2e/screens.spec.js` - Screen management
+  - `tests/e2e/playlists.spec.js` - Playlist creation
+  - `tests/e2e/performance.spec.js` - Performance budgets
+- Retries: 2 on CI, 0 locally
+- Workers: 1 on CI, unlimited locally
+- Artifacts: Screenshots on failure, video on retry, trace on retry
+
+## Common Patterns
+
+**Async Testing:**
 ```javascript
-describe('MEDIA_TYPES constant', () => {
-  it('contains all required media types', () => {
-    expect(MEDIA_TYPES.IMAGE).toBe('image');
-    expect(MEDIA_TYPES.VIDEO).toBe('video');
+it('fetches data successfully', async () => {
+  supabase.from().select.mockResolvedValueOnce({
+    data: [{ id: 1 }],
+    error: null,
   });
 
-  it('has exactly 6 media types', () => {
-    expect(Object.keys(MEDIA_TYPES)).toHaveLength(6);
-  });
+  const result = await fetchData();
 
-  it('all values are lowercase strings', () => {
-    Object.values(MEDIA_TYPES).forEach(type => {
-      expect(typeof type).toBe('string');
-      expect(type).toBe(type.toLowerCase());
-    });
-  });
+  expect(result.data).toHaveLength(1);
 });
 ```
 
-**Testing Utility Functions:**
+**Error Testing:**
 ```javascript
-describe('validateMediaFile', () => {
-  it('accepts valid image file', () => {
-    const file = { name: 'test.jpg', size: 1024 * 1024, type: 'image/jpeg' };
-    const result = validateMediaFile(file);
-    expect(result.valid).toBe(true);
-    expect(result.errors).toHaveLength(0);
-    expect(result.mediaType).toBe(MEDIA_TYPES.IMAGE);
+it('handles error gracefully', async () => {
+  supabase.auth.signIn.mockResolvedValueOnce({
+    data: { user: null },
+    error: { message: 'Invalid credentials' },
   });
 
-  it('rejects oversized file', () => {
-    const file = { name: 'test.jpg', size: 200 * 1024 * 1024, type: 'image/jpeg' };
-    const result = validateMediaFile(file, 100);  // 100 MB limit
-    expect(result.valid).toBe(false);
-    expect(result.errors[0]).toContain('File size exceeds');
-  });
+  const result = await signIn('email', 'password');
 
-  it('rejects unsupported file type', () => {
-    const file = { name: 'test.exe', size: 1024, type: 'application/x-msdownload' };
-    const result = validateMediaFile(file);
-    expect(result.valid).toBe(false);
-    expect(result.errors[0]).toContain('Unsupported file type');
-  });
+  expect(result.user).toBeNull();
+  expect(result.error).toBe('Invalid credentials');
 });
 ```
 
-**Testing API/Service Functions:**
-```javascript
-describe('fetchPlaylists', () => {
-  it('returns playlists for current user', async () => {
-    const playlists = await fetchPlaylists();
-    expect(Array.isArray(playlists)).toBe(true);
-  });
-
-  it('filters by search term', async () => {
-    const playlists = await fetchPlaylists({ search: 'Morning' });
-    // Mock returns matching playlists
-    expect(playlists).toBeDefined();
-  });
-
-  it('throws error on database failure', async () => {
-    // Mock query to return error
-    await expect(fetchPlaylists()).rejects.toThrow();
-  });
-});
-```
-
-## Integration Test Patterns
-
-**File:** `tests/integration/api/screens.test.js`
-
-**Pattern: Simulating Complex Flows**
-```javascript
-class MockScreenPairingService {
-  constructor() {
-    this.pendingCodes = new Map();
-    this.screens = new Map();
-    this.RATE_LIMIT = 5;
-    this.OTP_EXPIRY_MS = 5 * 60 * 1000;
-  }
-
-  generatePairingCode(ownerId, screenName) {
-    const code = generateOTPCode();
-    const screenId = generateUUID();
-    this.pendingCodes.set(code, {
-      screenId,
-      ownerId,
-      screenName,
-      createdAt: Date.now()
-    });
-    return { code, screenId };
-  }
-
-  claimCode(code, deviceInfo, clientIp = '127.0.0.1') {
-    // Simulate rate limiting, expiry, validation
-    const pending = this.pendingCodes.get(code);
-    if (!pending) return { success: false, error: { code: 404 } };
-    if (Date.now() - pending.createdAt > this.OTP_EXPIRY_MS) {
-      return { success: false, error: { code: 404, message: 'expired' } };
-    }
-    // Create screen
-    return { success: true, screen: {...}, apiKey: '...' };
-  }
-}
-
-describe('Screen Pairing', () => {
-  let service;
-
-  beforeEach(() => {
-    service = new MockScreenPairingService();
-  });
-
-  it('generates and claims pairing code', () => {
-    const { code, screenId } = service.generatePairingCode('owner-id', 'My Screen');
-    expect(code).toBeDefined();
-    expect(code).toHaveLength(6);
-
-    const result = service.claimCode(code, { deviceId: 'device-1' });
-    expect(result.success).toBe(true);
-  });
-});
-```
-
-## E2E Test Patterns
-
-**Framework:** Playwright v1.57.0
-
-**File Pattern:** `tests/e2e/*.spec.js`
-
-**Common Helpers:**
-```javascript
-// From tests/e2e/helpers.js
-export async function loginAndPrepare(page, options = {}) {
-  const email = options.email || process.env.TEST_USER_EMAIL;
-  const password = options.password || process.env.TEST_USER_PASSWORD;
-
-  await page.goto('/auth/login');
-  await page.evaluate(() => {
-    localStorage.setItem('bizscreen_welcome_modal_shown', 'true');
-  });
-  await page.getByPlaceholder(/email/i).fill(email);
-  await page.getByPlaceholder(/password/i).fill(password);
-  await page.getByRole('button', { name: /sign in|log in/i }).click();
-  await page.waitForURL(/\/app/, { timeout: 15000 });
-}
-
-export async function dismissAnyModals(page) {
-  const closeButtonSelectors = [
-    '[aria-label="Close modal"]',
-    'button:has(svg.lucide-x)',
-    '[role="dialog"] button:has-text("Skip")',
-  ];
-  for (const selector of closeButtonSelectors) {
-    const button = page.locator(selector).first();
-    if (await button.isVisible({ timeout: 100 }).catch(() => false)) {
-      await button.click();
-      await page.waitForTimeout(300);
-      break;
-    }
-  }
-}
-```
-
-**Test Pattern:**
-```javascript
-import { test, expect } from '@playwright/test';
-import { loginAndPrepare, waitForPageReady, dismissAnyModals } from './helpers.js';
-
-test.describe('Client Dashboard', () => {
-  // Skip if test credentials not configured
-  test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
-
-  test('dashboard loads successfully after login', async ({ page }) => {
-    await loginAndPrepare(page, {
-      email: process.env.TEST_USER_EMAIL,
-      password: process.env.TEST_USER_PASSWORD,
-    });
-
-    await waitForPageReady(page);
-    await expect(page).toHaveURL(/\/app/);
-    await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
-  });
-
-  test('displays stat cards with proper labels', async ({ page }) => {
-    await loginAndPrepare(page, { ... });
-    await waitForPageReady(page);
-
-    const mainContent = page.locator('#main-content');
-    await expect(mainContent.getByText('Total Screens')).toBeVisible({ timeout: 5000 });
-    await expect(mainContent.getByText('Playlists')).toBeVisible({ timeout: 5000 });
-  });
-});
-```
-
-**Prerequisites for E2E:**
-- `TEST_USER_EMAIL` environment variable must be set
-- `TEST_USER_PASSWORD` environment variable must be set
-- Test user should have 'client' role
-- Application must be running (typically on `http://localhost:5173`)
-
-## React Component Testing
-
-**Framework:** React Testing Library (imported as part of `@testing-library/react`)
-
-**Typical Pattern:**
+**Component Testing (React):**
 ```javascript
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BulkActionBar } from '../../../src/components/media/BulkActionBar';
 
-describe('BulkActionBar', () => {
-  it('does not render when no items selected', () => {
-    render(
-      <BulkActionBar
-        selectedCount={0}
-        totalCount={10}
-        onSelectAll={() => {}}
-        onDeselectAll={() => {}}
-      />
-    );
-    expect(screen.queryByText('selected')).not.toBeInTheDocument();
-  });
-
-  it('displays count of selected items', () => {
-    render(
-      <BulkActionBar
-        selectedCount={3}
-        totalCount={10}
-        onSelectAll={() => {}}
-        onDeselectAll={() => {}}
-      />
-    );
-    expect(screen.getByText('3 selected')).toBeInTheDocument();
-  });
-
-  it('calls onSelectAll when select all button clicked', async () => {
-    const user = userEvent.setup();
-    const onSelectAll = vi.fn();
-    render(
-      <BulkActionBar
-        selectedCount={3}
-        totalCount={10}
-        onSelectAll={onSelectAll}
-        onDeselectAll={() => {}}
-      />
-    );
-    await user.click(screen.getByText(/select all/i));
-    expect(onSelectAll).toHaveBeenCalled();
-  });
+it('renders component with props', () => {
+  render(<Component prop="value" />);
+  expect(screen.getByText(/value/i)).toBeInTheDocument();
 });
 ```
 
-## Async Testing
-
-**Pattern: Testing Promise-returning Functions**
+**E2E Waiting Pattern:**
 ```javascript
-it('fetches user profile async', async () => {
-  const result = await fetchUserProfile('user-id', 'user@example.com');
-  expect(result).toHaveProperty('id');
-  expect(result).toHaveProperty('email');
-});
+// Wait for navigation
+await page.waitForURL(/\/app/, { timeout: 15000 });
 
-it('handles profile fetch errors', async () => {
-  // Mock error response
-  await expect(fetchUserProfile('invalid-id', 'user@example.com'))
-    .rejects
-    .toThrow();
-});
+// Wait for element
+await expect(page.getByRole('heading')).toBeVisible();
+
+// Wait for API (use waitForResponse if needed)
+await page.waitForTimeout(500); // Use sparingly
 ```
 
-**Pattern: Testing Hooks**
+**E2E Authentication Helper:**
 ```javascript
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { loginAndPrepare } from './helpers.js';
 
-it('fetches playlists on mount', async () => {
-  const { result } = renderHook(() => useMediaFolders());
-
-  await waitFor(() => {
-    expect(result.current.loading).toBe(false);
-  });
-
-  expect(result.current.folders).toBeDefined();
-});
-
-it('updates state on action', async () => {
-  const { result } = renderHook(() => useS3Upload({ onSuccess: vi.fn() }));
-
-  act(() => {
-    result.current.openFilePicker();
-  });
-
-  // Assertions on updated state
+test('authenticated flow', async ({ page }) => {
+  await loginAndPrepare(page);
+  // Test now has authenticated session
+  await page.goto('/app/screens');
+  await expect(page.getByRole('heading', { name: /screens/i })).toBeVisible();
 });
 ```
 
-## Error Testing
-
-**Pattern:**
-```javascript
-it('throws error when required parameter missing', async () => {
-  await expect(createPlaylist({ name: '' })).rejects.toThrow();
-});
-
-it('returns error object on validation failure', () => {
-  const result = validateMediaFile(null);
-  expect(result.valid).toBe(false);
-  expect(result.errors.length).toBeGreaterThan(0);
-});
-```
-
-## Test Execution in CI
-
-**CI Test Script:** `npm run test:ci`
-1. Runs unit/integration tests: `npm run test`
-2. Seeds test user: `node scripts/seed-ci-test-user.cjs`
-3. Runs E2E tests: `npm run test:e2e`
-
-**Alternative for Local Development:**
-```bash
-npm run test:ci:local  # Unit + E2E without seeding new user
-```
+**Global Setup (Vitest):**
+- File: `tests/setup.js`
+- Runs before each test file
+- Sets up Testing Library matchers
+- Mocks `loggingService` globally (breaks circular dependency)
+- Mocks browser APIs: `matchMedia`, `ResizeObserver`, `IntersectionObserver`, `URL.createObjectURL`
+- Stubs environment variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+- Cleanup: `afterEach(() => cleanup())` from Testing Library
 
 ---
 
-*Testing analysis: 2026-01-22*
+*Testing analysis: 2026-01-29*

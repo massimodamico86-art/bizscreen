@@ -1,244 +1,181 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-01-22
+**Analysis Date:** 2026-01-29
 
 ## Naming Patterns
 
 **Files:**
-- Page components: PascalCase ending in `Page.jsx` (e.g., `MediaLibraryPage.jsx`, `DashboardPage.jsx`)
-- React components: PascalCase ending in `.jsx` (e.g., `BulkActionBar.jsx`, `MediaDetailModal.jsx`)
-- Services: camelCase ending in `Service.js` (e.g., `mediaService.js`, `playlistService.js`, `s3UploadService.js`)
-- Hooks: camelCase starting with `use` prefix (e.g., `useS3Upload.jsx`, `useMediaFolders.js`, `useAuditLogs.js`)
-- Utilities: camelCase (e.g., `logger.js`, `seo.js`, `performance.js`)
-- Types/constants files: camelCase (e.g., `media.js`, `plans.js`, `featureFlags.js`)
-- Index files: `index.js` for barrel exports (`src/components/media/index.js`)
+- React components: PascalCase with `.jsx` extension (`MediaLibraryPage.jsx`, `FloatingLayersPanel.jsx`)
+- Services: camelCase with `.js` extension (`authService.js`, `loggingService.js`)
+- Test files: Same name as source with `.test.js` or `.spec.js` suffix
+  - Unit: `authService.test.js` in `tests/unit/services/`
+  - E2E: `auth.spec.js` in `tests/e2e/`
+- Utility files: camelCase (`.js` for plain JS, `.jsx` for JSX)
+- Config files: camelCase (`featureFlags.js`, `plans.js`)
 
 **Functions:**
-- camelCase for all function names
-- Service functions are typically verbs or verb phrases: `fetchPlaylists()`, `createPlaylist()`, `validateMediaFile()`
-- React hooks start with `use`: `useAuth()`, `useS3Upload()`, `useMediaFolders()`
-- Helper functions in service files: `getFileExtension()`, `getMediaTypeFromMime()`, `validateMediaFile()`
-- Private/internal functions: No special prefix (convention relies on module exports)
+- camelCase for all functions (`signUp`, `getCurrentUser`, `loginAndPrepare`)
+- Async functions always return Promise (`async function signUp()`)
+- Event handlers: `handle` prefix (`handlePanelDragStart`, `handleNavigateFolder`)
+- Boolean utilities: `is` or `should` prefix (`isEmailConfirmationPending`, `shouldLog`)
 
 **Variables:**
-- camelCase for variables and function parameters
-- State variables in React: `const [variable, setVariable] = useState()`
-- Constants: UPPERCASE_SNAKE_CASE (e.g., `MEDIA_TYPES`, `PLAN_ORDER`, `LOG_LEVELS`)
-- Boolean variables: Usually prefixed with `is`, `has`, or `can` (e.g., `isDeleting`, `hasError`, `canUpload`)
-- Collections/arrays: Plural names (e.g., `playlists`, `mediaAssets`, `errors`)
+- camelCase for variables (`sessionContext`, `logBuffer`, `emailInput`)
+- SCREAMING_SNAKE_CASE for constants (`LOG_LEVELS`, `ALLOWED_TYPES`, `MEDIA_TYPE_LABELS`)
+- React hooks: `use` prefix (`useAuth`, `useMediaLibrary`, `useLogger`)
 
-**Types/Interfaces:**
-- Object type keys: camelCase in JSDoc `@typedef` comments
-- TypeScript-like documentation with JSDoc blocks
-- No strict TypeScript enforcement (JS/JSX project)
+**Types:**
+- PascalCase for component names (`FloatingLayersPanel`, `MediaLibraryPage`)
+- PascalCase for context names (`AuthContext`, `BrandingContext`)
+- Constants objects use PascalCase keys for enums (`Feature`, `PlanSlug`)
 
 ## Code Style
 
 **Formatting:**
-- No ESLint configuration file found (no `.eslintrc.js` or config detected)
-- No Prettier configuration file detected
-- Manual formatting observed in codebase
-- Standard indentation: 2 spaces (observed in all files)
+- No Prettier config detected - manual formatting
+- Indentation: 2 spaces (observed in all files)
+- Semicolons: Used consistently
+- Quote style: Single quotes for strings, double quotes for JSX attributes
+- Line length: No enforced limit (some lines exceed 120 chars)
 
-**Comments:**
-- JSDoc-style comments for functions and modules with `@param`, `@returns`, `@throws`, `@example` tags
-- Example from `mediaService.js`:
+**Linting:**
+- Tool: ESLint 9 with flat config (`eslint.config.js`)
+- Config: `@eslint/js` recommended + React plugins
+- Key rules enforced:
+  - `unused-imports/no-unused-imports: error` (blocks commits)
+  - `unused-imports/no-unused-vars: warn` (visibility only)
+  - `no-console: warn` (allow `console.warn` and `console.error`)
+  - `react/prop-types: warn` (gradual adoption)
+  - `jsdoc/require-jsdoc: warn` (for exported functions)
+  - `no-undef: warn` (legacy migration mode)
+- Pre-commit hook: `lint-staged` runs `eslint --fix` on `*.{js,jsx}`
+- Test files: Relaxed rules (no-console off, prop-types off, jsdoc off)
+
+## Import Organization
+
+**Order:**
+1. External dependencies (React, router, third-party)
+2. Internal absolute imports (services, contexts, utils)
+3. Relative imports (local components, styles)
+4. Type/constant imports
+
+**Example:**
 ```javascript
-/**
- * Validate file type and size
- */
-export function validateMediaFile(file, maxSizeMB = 100) {
-  const errors = [];
-  // inline comment for clarity
-  if (file.size > maxBytes) {
-    errors.push(`File size exceeds ${maxSizeMB}MB limit`);
-  }
-}
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
+import { createScopedLogger } from './loggingService.js';
+import { useAuth } from '../contexts/AuthContext';
+import { PageLayout, Button } from '../design-system';
 ```
-- File headers with `@file`, `@description` in components
-- Inline comments for complex logic or non-obvious decisions
-- Phase/PR references in test file headers (e.g., `Phase 5: Tests for media library service operations`)
 
-**Imports:**
-- ES6 module syntax: `import ... from '...'`
-- Named imports grouped together
-- Default imports separate from named imports
-- Path pattern:
-  1. React and external packages first: `import { useState } from 'react'`
-  2. Internal services: `import { supabase } from '../supabase'`
-  3. Custom hooks: `import { useAuth } from '../contexts/AuthContext'`
-  4. Services: `import { fetchPlaylists } from '../services/playlistService'`
-  5. Components: `import { BulkActionBar } from '../components/media'`
-  6. Design system: `import { Button } from '../design-system'`
-  7. Utilities/config: `import { logger } from '../utils/logger'`
+**Path Aliases:**
+- No Vite aliases configured
+- All imports use relative paths (`../`, `../../`)
+- Services imported with `.js` extension explicitly
 
-**Export Patterns:**
-- Named exports for utilities and services: `export function validateMediaFile() {...}`
-- Named exports for hooks: `export function useAuth() {...}`
-- Default exports for page components and standalone components: `export default MediaLibraryPage`
-- Barrel exports in index files using named imports: `export { default as MediaDetailModal } from './MediaDetailModal'`
+**Import style:**
+- Named imports preferred: `import { supabase } from '../supabase'`
+- Default imports for components: `import FloatingLayersPanel from './FloatingLayersPanel'`
+- Barrel exports used in some directories (`src/design-system/index.js`, `src/pages/index.js`)
 
 ## Error Handling
 
-**Pattern:** Try-catch with error propagation
-- Services throw errors directly: `if (error) throw error;`
-- Errors caught at page/component level
-- Supabase errors passed through: `const { data, error } = await query; if (error) throw error;`
-
-**Example from `playlistService.js`:**
+**Patterns:**
+- Try-catch in async functions with error object return:
 ```javascript
-export async function fetchPlaylists({ search = '', limit = 100 } = {}) {
-  let query = supabase
-    .from('playlists')
-    .select(`*`)
-    .order('created_at', { ascending: false });
-
-  if (search) {
-    query = query.ilike('name', `%${search}%`);
-  }
-
-  const { data, error } = await query;
-  if (error) throw error;
-  return data || [];
+try {
+  const { data, error } = await supabase.auth.signUp(...);
+  if (error) return { user: null, error: error.message };
+  return { user: data.user, error: null };
+} catch (error) {
+  logger.error('Signup failed', { error });
+  return { user: null, error: error.message };
 }
 ```
 
-**Logger Pattern:**
-- Component-scoped logger via `createLogger(componentName)` in `src/utils/logger.js`
-- Usage: `const log = createLogger('AuthContext')`
-- Methods: `log.debug()`, `log.info()`, `log.warn()`, `log.error()`
-- Production error reporting: `logError(error, context)` sends to backend endpoint `/api/logs/browser`
-
-**Validation:**
-- Dedicated validation functions return result objects: `{ valid: boolean, errors: string[], mediaType?: string }`
-- Return early for invalid states
-- Field-level validation in form components
+- Supabase pattern: Destructure `{ data, error }` and check `error` first
+- Return shape: `{ success/data, error }` consistently across services
+- Logging before return on error paths using scoped logger
 
 ## Logging
 
-**Framework:** Console-based with custom `logger` utility
+**Framework:** Custom structured logging service (`loggingService.js`)
+
+**Logger creation:**
+```javascript
+import { createScopedLogger } from '../services/loggingService.js';
+const logger = createScopedLogger('AuthService');
+```
 
 **Patterns:**
-- Environment-aware: debug in development, warn/error in production
-- Structured logging with context objects: `logger.error('message', { contextKey: value })`
-- Component-scoped context: `createLogger('ComponentName')` prepends component name
-- Performance logging: `logPerformance(metricName, value, unit)`
-- Event logging: `logEvent(eventName, properties)`
-- Error reporting: `logError(error, context)` with optional `severe` flag
+- Services use scoped logger: `const logger = createScopedLogger('ServiceName')`
+- Components use hook: `const logger = useLogger('ComponentName')`
+- Levels: `trace`, `debug`, `info`, `warn`, `error`, `fatal`
+- Context enrichment: `logger.info('message', { contextObject })`
+- Avoid `console.*` (linting warns, except in tests/scripts)
+- Production: `minLevel: 'info'`, 10% sampling, batched remote logging
 
-**Levels:**
-- `debug()`: Development only, low-level diagnostics
-- `info()`: General information messages
-- `warn()`: Potential issues worth monitoring
-- `error()`: Errors requiring attention; production errors report to backend
+**When to log:**
+- Service operations: info level (`logger.info('User signed up', { userId })`)
+- Errors: error level with context (`logger.error('Failed to create profile', { error, userId })`)
+- Performance: Not in logging service (separate analytics)
 
-## Async/Await Patterns
+## Comments
 
-**Style:** Async functions with await for all async operations
-- No mixing promises and async/await
-- Error handling with try-catch blocks
-- Example from `AuthContext.jsx`:
+**When to Comment:**
+- File-level JSDoc headers describing purpose and features (observed in `MediaLibraryPage.jsx`, `FloatingLayersPanel.jsx`)
+- Complex logic explanation (not observed frequently - code is self-documenting)
+- TODOs for known issues (very few found)
+
+**JSDoc/TSDoc:**
+- Usage: Gradual adoption (eslint warns for missing JSDoc)
+- Required for exported functions:
 ```javascript
-const fetchUserProfile = useCallback(async (userId, userEmail) => {
-  try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, email, full_name, role')
-      .eq('id', userId)
-      .single();
-
-    if (error) {
-      log.error('Profile fetch error', { code: error.code });
-      return;
-    }
-    setUserProfile(data);
-  } catch (err) {
-    log.error('Unexpected error', { message: err.message });
-  }
-}, []);
+/**
+ * Sign up a new user
+ * @param {object} options
+ * @param {string} options.email
+ * @param {string} options.password
+ * @param {string} options.fullName
+ * @param {string} options.businessName
+ * @returns {Promise<{user: object|null, error: string|null}>}
+ */
+export async function signUp({ email, password, fullName, businessName }) {
 ```
+- Format: Multi-line with `@param`, `@returns`, `@module`, `@see`
 
-## React Patterns
+## Function Design
 
-**Component Structure:**
-- Functional components with hooks (no class components)
-- JSX components use `.jsx` extension
-- Props always destructured in function signature
-- Comments above component describe purpose and state
+**Size:**
+- Services: 20-80 lines per function (some larger for complex operations)
+- Components: Extract helpers into hooks (e.g., `useMediaLibrary`, `usePlaylistEditor`)
+- Largest files: ~2800 lines (`industryWizardService.js`)
 
-**Hooks:**
-- `useState()` for local state
-- `useCallback()` for memoized callbacks (passed as props or to event listeners)
-- `useEffect()` for side effects with dependency arrays
-- `useRef()` for DOM refs and callback stability
-- Custom hooks extracted to `src/hooks/` directory
+**Parameters:**
+- Destructured objects for 3+ params: `signUp({ email, password, fullName, businessName })`
+- Positional for 1-2 params: `createScopedLogger(scope)`
+- Options object pattern: `loginAndPrepare(page, options = {})`
 
-**Context Usage:**
-- Context created with `createContext({})`
-- Provider component exports both Provider and hook (e.g., `AuthProvider` and `useAuth()`)
-- Hook enforces Provider requirement: `if (!context) throw new Error('...')`
+**Return Values:**
+- Async: Always returns `Promise<{data/success, error}>` shape
+- Hooks: Return destructured state and handlers
+- Utilities: Direct values or null
 
-**Example from `AuthContext.jsx`:**
-```javascript
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-```
+## Module Design
 
-## Configuration
+**Exports:**
+- Named exports preferred: `export async function signUp()`
+- Default exports for React components: `export default FloatingLayersPanel`
+- No mixed default + named from same file (components vs utils)
 
-**Environment Variables:**
-- Prefixed with `VITE_` for frontend (Vite convention)
-- Loaded via `import.meta.env` in code
-- Example: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
-- AWS credentials stored in `.env` (not prefixed, used by vite.config.js)
-
-**Centralized Config:**
-- `src/config/env.js`: Environment helper functions
-- `src/config/plans.js`: Plan/feature definitions
-- `src/config/featureFlags.js`: Feature flags
-- `src/config/appCatalog.js`: App/template catalog
-- `src/config/yodeckTheme.js`: Theme/styling config
-
-## Service Layer
-
-**Pattern:** Data access layer returning promises
-- One service file per resource domain (mediaService, playlistService, screenService)
-- Functions perform Supabase queries or external API calls
-- All functions are `async` and use `await`
-- JSDoc `@typedef` for complex parameter/return types
-- Example structure:
-```javascript
-// Read
-export async function fetchMediaAssets(options) { ... }
-export async function getMediaAsset(id) { ... }
-
-// Create
-export async function createMediaAsset(data) { ... }
-
-// Update
-export async function updateMediaAsset(id, updates) { ... }
-
-// Delete
-export async function deleteMediaAsset(id) { ... }
-```
-
-## Utility Functions
-
-**Location:** `src/utils/` directory
-- `logger.js`: Logging infrastructure
-- `seo.js`: SEO/meta tag utilities
-- `performance.js`: Performance monitoring
-- Helper functions exported as named exports
-
-**Factories/Factories in Tests:**
-- Located in `tests/utils/factories.js`
-- Generate test data consistently: `createTestScreen()`, `generateUUID()`
+**Barrel Files:**
+- Usage: Common in organized directories
+  - `src/design-system/index.js` re-exports components
+  - `src/pages/index.js` re-exports page components
+  - `src/services/index.js` (exists but not verified)
+- Pattern: `export { ComponentName } from './ComponentName'`
 
 ---
 
-*Convention analysis: 2026-01-22*
+*Convention analysis: 2026-01-29*
