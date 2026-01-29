@@ -23,9 +23,11 @@ import {
   Car,
   Coffee,
   Building,
+  Check,
+  Loader2,
 } from 'lucide-react';
 
-
+import { Modal, ModalHeader, ModalContent, ModalFooter, Button } from '../../design-system';
 import { setSelectedIndustry } from '../../services/onboardingService';
 
 /**
@@ -73,6 +75,7 @@ export function IndustrySelectionModal({
 
   /**
    * Handle industry card click
+   * @param industryId
    */
   const handleCardClick = (industryId) => {
     setSelected(industryId);

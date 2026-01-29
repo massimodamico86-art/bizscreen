@@ -10,13 +10,16 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { Loader2, Check, Package, Sparkles } from 'lucide-react';
 
-
+import { Modal, ModalHeader, ModalContent, ModalFooter, Button } from '../../design-system';
+import { StarterPackCard } from '../templates/StarterPackCard';
 import { fetchStarterPacks, installTemplateAsScene } from '../../services/marketplaceService';
 import { markStarterPackApplied } from '../../services/onboardingService';
 
 /**
  * Get industry-specific subtitle
+ * @param industry
  */
 function getIndustrySubtitle(industry) {
   const labels = {
@@ -94,6 +97,8 @@ export function StarterPackOnboarding({
 
   /**
    * Apply selected templates from a pack
+   * @param pack
+   * @param selectedTemplates
    */
   const handleApplySelected = async (pack, selectedTemplates) => {
     if (selectedTemplates.length === 0) return;
