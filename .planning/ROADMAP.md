@@ -76,10 +76,13 @@ Plans:
   3. Existing component APIs preserved (WelcomeTour, IndustrySelectionModal, StarterPackOnboarding props unchanged)
   4. "Skip to dashboard" escape hatch available from any step (prevents stuck users)
   5. Step transitions animate smoothly via existing AnimatePresence
-**Plans**: 0 plans
+**Plans**: 4 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 31 to break down)
+- [ ] 31-01-PLAN.md — useUnifiedOnboarding hook and OnboardingProgressBar component
+- [ ] 31-02-PLAN.md — ResumePrompt, ScreenPairingStep placeholder, OnboardingSkipLink components
+- [ ] 31-03-PLAN.md — UnifiedOnboardingController orchestrator component
+- [ ] 31-04-PLAN.md — Feature flag integration in env.js and DashboardPage
 
 ---
 
@@ -156,7 +159,7 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 30. State Foundation | v2.2 | 3/3 | ✓ Complete | 2026-01-29 |
-| 31. Unified Controller | v2.2 | 0/0 | Pending | — |
+| 31. Unified Controller | v2.2 | 0/4 | Planned | — |
 | 32. Screen Pairing | v2.2 | 0/0 | Pending | — |
 | 33. Success UX | v2.2 | 0/0 | Pending | — |
 | 34. Cleanup | v2.2 | 0/0 | Pending | — |
@@ -166,4 +169,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-28*
-*Last updated: 2026-01-29 — Phase 30 complete (3/3 plans, verified)*
+*Last updated: 2026-01-29 — Phase 31 planned (4 plans in 3 waves)*
