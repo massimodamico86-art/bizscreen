@@ -778,3 +778,221 @@ Both are lightweight:
 **Translation Patterns:**
 - [JSON path manipulation with lodash](https://lodash.com/docs/#set) - set/get for nested paths
 - [i18next principles](https://www.i18next.com/principles/fallback) - Fallback patterns (applied to content)
+
+---
+
+## v2.2 Stack: Unified Onboarding Flow
+
+**Researched:** 2026-01-28
+**Focus:** Stack additions for polished onboarding UX
+
+### Executive Summary
+
+**Recommendation: ZERO NEW DEPENDENCIES REQUIRED**
+
+BizScreen already has robust infrastructure for onboarding UX. The existing stack (React 19, Framer Motion 12.23.24, custom Modal system, Tailwind) provides everything needed. The challenge is architectural unification, not missing libraries.
+
+**Key insight:** You have 4 separate onboarding components that each solve parts of the problem. The solution is consolidation and enhancement, not new libraries.
+
+---
+
+### Existing Infrastructure Analysis
+
+#### Already Have - Animations
+| Capability | Current Solution | Why Sufficient |
+|------------|------------------|----------------|
+| Step transitions | Framer Motion `AnimatePresence` | Already used in WelcomeTour, WelcomeTourStep |
+| Progress indicators | Custom CSS with Tailwind | Progress bars in OnboardingWizard, WelcomeTour |
+| Modal animations | Design system `Modal` with Framer Motion | Full animation suite in `motion.js` |
+
+#### Already Have - UI Components
+| Capability | Current Solution | Location |
+|------------|------------------|----------|
+| Modal system | `Modal`, `ModalHeader`, `ModalContent`, `ModalFooter` | `src/design-system/components/Modal.jsx` |
+| Buttons with loading | `Button` with `loading` prop | `src/design-system/components/Button.jsx` |
+| Step indicators | Custom dot navigation | `WelcomeTour.jsx` lines 223-243 |
+| Business type selection | Grid with icons | `WelcomeModal.jsx`, `AutoBuildOnboardingModal.jsx` |
+| Progress tracking | `onboardingService.js` | Full CRUD for step completion |
+
+#### Already Have - Onboarding Logic
+| Capability | Current Solution | Status |
+|------------|------------------|--------|
+| Progress persistence | Supabase RPC functions | `get_onboarding_progress`, `update_onboarding_step` |
+| Skip functionality | `skipOnboarding()`, `skipWelcomeTour()` | Working |
+| Step completion detection | `syncOnboardingProgress()` | Auto-detects from created resources |
+| Welcome tour state | `get_welcome_tour_progress` RPC | Tracks current step, completion |
+
+---
+
+### Why No Tour Library Needed
+
+Tour libraries (react-joyride, shepherd.js, driver.js) solve a different problem: **highlighting existing UI elements** and walking users through an existing interface.
+
+BizScreen's onboarding is fundamentally different:
+1. **Modal-based wizard flow** - Users are IN the onboarding, not touring an interface
+2. **Action-driven** - Each step requires user action (select template, pair screen)
+3. **Content creation** - Users create content during onboarding, not just learn the UI
+
+Tour libraries would add complexity without value. The existing modal + step indicator pattern is exactly right.
+
+---
+
+### Why No Stepper Library Needed
+
+Stepper libraries (react-step-wizard, react-form-stepper) would add:
+- Heavyweight dependencies
+- Opinionated styling that conflicts with Tailwind
+- Features you already have (progress, navigation, validation)
+
+Your existing step indicator pattern in WelcomeTour is cleaner and more customizable.
+
+---
+
+### v2.2 Required Additions
+
+**NONE** - Existing stack is sufficient.
+
+---
+
+### v2.2 Optional Enhancements (LOW PRIORITY)
+
+These are "nice to have" if time permits, not blockers.
+
+#### 1. Confetti for Completion Celebration
+
+| Library | Size | Purpose |
+|---------|------|---------|
+| `canvas-confetti` | ~2.4KB gzipped | Celebratory moment when user successfully pairs first screen |
+
+**Use case:** Final step of unified onboarding after screen verification.
+
+**Confidence:** MEDIUM (version from training data, needs npm verification)
+
+**Why optional:** The green checkmark success state already works. Confetti is polish, not functionality.
+
+#### 2. Lottie Animations for Loading States
+
+| Library | Size | Purpose |
+|---------|------|---------|
+| `lottie-react` | ~3KB + animation files | Custom BizScreen-branded loading animations |
+
+**Use case:** Replace the Loader2 spinner with custom animations during content creation and screen pairing.
+
+**Confidence:** MEDIUM (version from training data, needs npm verification)
+
+**Why optional:** The current Tailwind `animate-spin` on Loader2 icons is sufficient. Lottie is brand polish, not UX improvement.
+
+---
+
+### v2.2 Architecture Recommendations
+
+Instead of new dependencies, invest in these architectural changes:
+
+#### 1. Create UnifiedOnboardingFlow Component
+
+Consolidate these 4 components:
+- `WelcomeModal.jsx` (choice step, business type, creating step)
+- `WelcomeTour.jsx` (6-step feature tour)
+- `OnboardingWizard.jsx` (step-by-step wizard)
+- `AutoBuildOnboardingModal.jsx` (AI-powered auto-build)
+
+Into one coherent flow with configurable paths:
+- Quick Demo path
+- Business Starter Pack path
+- Manual creation path
+
+#### 2. Add Stepper Design System Component
+
+Create a reusable `Stepper` component in the design system:
+
+```jsx
+// Proposed: src/design-system/components/Stepper.jsx
+export function Stepper({
+  steps,
+  currentStep,
+  onStepClick,
+  variant = 'dots' // 'dots' | 'numbered' | 'progress'
+}) {
+  // Implementation...
+}
+```
+
+This extracts the step indicator pattern from WelcomeTour into a reusable component.
+
+#### 3. Screen Pairing UX Component
+
+Create a dedicated `ScreenPairingFlow` component that handles:
+- QR code display
+- OTP code entry
+- Realtime pairing status (via Supabase realtime)
+- Success confirmation with content preview
+
+This already exists in pieces; consolidate and polish.
+
+---
+
+### What NOT to Add for v2.2
+
+| Library | Why Skip |
+|---------|----------|
+| `react-joyride` | Solves UI tours, not wizard flows |
+| `shepherd.js` | Same - UI highlighting, not action-driven onboarding |
+| `driver.js` | Same - spotlight/highlight patterns, not modal wizards |
+| `react-step-wizard` | Already have equivalent patterns |
+| `formik` / `react-hook-form` | Onboarding has minimal form inputs |
+| `zod` / `yup` | No complex validation needed |
+| `framer-motion` | Already installed (v12.23.24) |
+
+---
+
+### v2.2 Installation Summary
+
+```bash
+# REQUIRED: Nothing
+# No new dependencies needed
+
+# OPTIONAL (if celebrating completion):
+npm install canvas-confetti
+
+# OPTIONAL (if custom loading animations):
+npm install lottie-react
+```
+
+**Total new dependencies: 0 (required) / 1-2 (optional polish)**
+
+---
+
+### v2.2 Focus Areas
+
+1. **Consolidate 4 onboarding components into 1 unified flow**
+2. **Extract `Stepper` component to design system**
+3. **Polish screen pairing UX with realtime feedback**
+4. **Add progress persistence across the unified flow**
+
+---
+
+### v2.2 Confidence Assessment
+
+| Finding | Confidence | Reason |
+|---------|------------|--------|
+| No tour library needed | HIGH | Analyzed existing code, understood the UX pattern |
+| No stepper library needed | HIGH | Existing patterns in WelcomeTour are sufficient |
+| Framer Motion sufficient | HIGH | Already in use, verified in package.json (v12.23.24) |
+| canvas-confetti version | MEDIUM | Training data, needs npm verification |
+| lottie-react version | MEDIUM | Training data, needs npm verification |
+
+---
+
+### v2.2 Sources
+
+- `/Users/massimodamico/bizscreen/package.json` - Current dependencies
+- `/Users/massimodamico/bizscreen/src/components/onboarding/WelcomeTour.jsx` - Existing tour implementation
+- `/Users/massimodamico/bizscreen/src/pages/dashboard/WelcomeModal.jsx` - Existing modal flow
+- `/Users/massimodamico/bizscreen/src/components/OnboardingWizard.jsx` - Existing wizard
+- `/Users/massimodamico/bizscreen/src/components/onboarding/AutoBuildOnboardingModal.jsx` - Auto-build flow
+- `/Users/massimodamico/bizscreen/src/services/onboardingService.js` - Progress tracking
+- `/Users/massimodamico/bizscreen/src/design-system/index.js` - Available components
+
+---
+
+*Stack research updated: 2026-01-28*
