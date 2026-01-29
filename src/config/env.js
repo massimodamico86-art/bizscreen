@@ -5,9 +5,9 @@
  * Distinguishes between local, staging, and production environments.
  */
 
-import { createScopedLogger } from '../services/loggingService.js';
-
-const logger = createScopedLogger('env');
+// Note: Cannot import loggingService here - circular dependency
+// (loggingService imports isProduction from this file)
+// Use console directly for env module logging
 
 // Environment types
 export const ENV_LOCAL = 'local';
@@ -109,6 +109,11 @@ const envSchema = {
       default: 'false',
       sensitive: false
     },
+    VITE_USE_UNIFIED_ONBOARDING: {
+      description: 'Enable unified onboarding controller (Phase 31)',
+      default: 'false',
+      sensitive: false
+    },
     VITE_ERROR_TRACKING_PROVIDER: {
       description: 'Error tracking provider (console, sentry)',
       default: 'console',
@@ -206,6 +211,7 @@ export function getConfig() {
 
     // Features
     enableAI: import.meta.env.VITE_ENABLE_AI === 'true',
+    useUnifiedOnboarding: import.meta.env.VITE_USE_UNIFIED_ONBOARDING === 'true',
 
     // Error tracking
     errorTrackingProvider: import.meta.env.VITE_ERROR_TRACKING_PROVIDER || 'console',
@@ -226,12 +232,12 @@ export function initializeEnv() {
   const config = getConfig();
 
   if (config.isLocal) {
-    logger.info('Environment initialized', {
+    console.info('[env] Environment initialized', {
       env: config.env,
       supabaseUrl: config.supabaseUrl
     });
     if (config.validation.warnings.length > 0) {
-      logger.warn('Configuration warnings', {
+      console.warn('[env] Configuration warnings', {
         warnings: config.validation.warnings
       });
     }
@@ -243,6 +249,9 @@ export function initializeEnv() {
 // Export singleton config instance
 let configInstance = null;
 
+/**
+ *
+ */
 export function config() {
   if (!configInstance) {
     configInstance = getConfig();
