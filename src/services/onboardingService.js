@@ -471,3 +471,90 @@ export async function resetWelcomeTour() {
 
   return data || { success: true };
 }
+
+// ============================================================================
+// UNIFIED ONBOARDING STATE (Phase 30 - v2.2)
+// ============================================================================
+
+/**
+ * @typedef {Object} UnifiedOnboardingState
+ * @property {string} currentStep - Current step in unified flow (welcome_tour, industry_selection, starter_pack, screen_pairing, complete)
+ * @property {boolean} canResume - Whether user can resume onboarding (not complete, not skipped)
+ * @property {number} progressPercent - Completion percentage (0-100)
+ * @property {boolean} isComplete - Whether onboarding is fully complete
+ * @property {string|null} skippedAt - When onboarding was skipped, if applicable
+ */
+
+/**
+ * Get unified onboarding state from database
+ * Single source of truth for onboarding position and progress
+ * @returns {Promise<UnifiedOnboardingState>}
+ */
+export async function getUnifiedOnboardingState() {
+  const { data, error } = await supabase.rpc('get_unified_onboarding_state');
+
+  if (error) {
+    logger.error('Error fetching unified onboarding state:', { error });
+    // Return safe defaults on error
+    return {
+      currentStep: 'welcome_tour',
+      canResume: true,
+      progressPercent: 0,
+      isComplete: false,
+      skippedAt: null
+    };
+  }
+
+  return {
+    currentStep: data?.current_step || 'welcome_tour',
+    canResume: data?.can_resume ?? true,
+    progressPercent: data?.progress_percent || 0,
+    isComplete: data?.is_complete || false,
+    skippedAt: data?.skipped_at || null
+  };
+}
+
+/**
+ * Advance to next step in unified onboarding flow
+ * @param {string} completedStep - Step that was just completed
+ * @returns {Promise<{success: boolean, currentStep?: string, nextStep?: string, isComplete?: boolean, error?: string}>}
+ */
+export async function advanceOnboardingStep(completedStep) {
+  // Validate step
+  const validSteps = ['welcome_tour', 'industry_selection', 'starter_pack', 'screen_pairing', 'complete'];
+  if (!validSteps.includes(completedStep)) {
+    logger.error('Invalid step for advanceOnboardingStep:', { completedStep });
+    return { success: false, error: `Invalid step: ${completedStep}` };
+  }
+
+  const { data, error } = await supabase.rpc('advance_onboarding_step', {
+    p_completed_step: completedStep
+  });
+
+  if (error) {
+    logger.error('Error advancing onboarding step:', { error, completedStep });
+    return { success: false, error: error.message };
+  }
+
+  return {
+    success: data?.success || false,
+    currentStep: data?.current_step,
+    nextStep: data?.next_step,
+    isComplete: data?.is_complete || false
+  };
+}
+
+/**
+ * Mark unified onboarding as complete
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function completeUnifiedOnboarding() {
+  const { data, error } = await supabase.rpc('complete_unified_onboarding');
+
+  if (error) {
+    logger.error('Error completing unified onboarding:', { error });
+    return { success: false, error: error.message };
+  }
+
+  return { success: data?.success || false };
+}
