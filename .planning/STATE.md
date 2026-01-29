@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 
 ## Current Position
 
-Phase: 30 - State Unification Foundation
-Plan: 03 of 3 complete
-Status: Phase complete
-Last activity: 2026-01-29 — Completed 30-03-PLAN.md (unified state JS API)
+Phase: 31 - Unified Onboarding Controller
+Plan: 01 of 4 complete
+Status: In progress
+Last activity: 2026-01-29 — Completed 31-01-PLAN.md (hook and progress bar foundation)
 
-Progress: [==--------] 17% (1/6 phases complete)
+Progress: [==--------] 21% (1/6 phases complete, 1/4 plans in Phase 31)
 
 ## Milestone History
 
@@ -30,7 +30,7 @@ Progress: [==--------] 17% (1/6 phases complete)
 | Phase | Goal | Status |
 |-------|------|--------|
 | 30 - State Foundation | Single source of truth for progress | Complete (3/3) |
-| 31 - Unified Controller | State machine orchestrator | Pending |
+| 31 - Unified Controller | State machine orchestrator | In Progress (1/4) |
 | 32 - Screen Pairing | Pairing integrated into flow | Pending |
 | 33 - Success UX | Explicit completion celebration | Pending |
 | 34 - Cleanup | Remove dead code | Pending |
@@ -45,7 +45,7 @@ Progress: [==--------] 17% (1/6 phases complete)
 
 **v2.2 Current:**
 - Phases: 1/6 complete
-- Plans: 3 executed in Phase 30
+- Plans: 4 executed (3 in Phase 30, 1 in Phase 31)
 
 ## Accumulated Context
 
@@ -70,6 +70,11 @@ Phase 30-02 localStorage decisions:
 Phase 30-03 JS API decisions:
 - Return safe defaults on RPC error (graceful degradation)
 - Validate step names client-side before RPC call (fail fast)
+
+Phase 31-01 decisions:
+- Use design-system/motion duration.slow (0.3s) for progress bar animation
+- Hook returns null state during loading (not defaults) for explicit loading detection
+- Visibility change listener for multi-tab sync
 
 ### Pending Todos
 
@@ -99,9 +104,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Phase 30 complete and verified
+Stopped at: Completed 31-01-PLAN.md
 Resume file: None
-Next: Plan Phase 31 with /gsd:discuss-phase 31
+Next: Execute 31-02-PLAN.md (UnifiedOnboardingController component)
 
 ---
-*Updated: 2026-01-29 — Phase 30 complete and verified*
+*Updated: 2026-01-29 — Completed 31-01-PLAN.md*
