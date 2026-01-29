@@ -2,8 +2,17 @@
  * TimelineActivity Component
  * Shows recent activity in timeline format with connecting line.
  */
+import { ListVideo, Video, Image, PlusCircle, Edit, Upload, Activity, Loader2 } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from '../../design-system';
 import { formatLastSeen } from '../../services/dashboardService';
 
+/**
+ *
+ * @param root0
+ * @param root0.activities
+ * @param root0.onNavigate
+ * @param root0.loading
+ */
 export function TimelineActivity({ activities = [], onNavigate, loading = false }) {
   const getActivityIcon = (activity) => {
     if (activity.type === 'playlist') return <ListVideo className="w-4 h-4 text-purple-600" />;

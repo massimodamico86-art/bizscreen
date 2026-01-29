@@ -2,7 +2,7 @@
  * WelcomeHero.jsx
  * Yodeck-style welcome hero section with greeting, add media prompt, and screen preview.
  */
-
+import { FileText, Plus, Music, Play, Image } from 'lucide-react';
 
 /**
  * WelcomeHero - Main hero section for the welcome/dashboard page

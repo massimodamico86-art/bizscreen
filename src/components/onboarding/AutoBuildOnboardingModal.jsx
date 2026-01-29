@@ -20,7 +20,16 @@ import {
   Building,
   Car,
   Coffee,
-  Building2
+  Building2,
+  X,
+  Check,
+  Sparkles,
+  ChevronRight,
+  ChevronLeft,
+  AlertCircle,
+  Wand2,
+  Loader2,
+  Tv
 } from 'lucide-react';
 import { completeOnboarding, BUSINESS_TYPES } from '../../services/autoBuildService';
 import { useLogger } from '../../hooks/useLogger.js';
@@ -55,6 +64,12 @@ const DEFAULT_COLORS = {
 
 /**
  * AutoBuildOnboardingModal - Main component
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.onComplete
+ * @param root0.user
+ * @param root0.userProfile
  */
 const AutoBuildOnboardingModal = ({
   isOpen,

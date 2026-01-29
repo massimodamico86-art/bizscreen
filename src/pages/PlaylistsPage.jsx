@@ -10,10 +10,54 @@ import { getPlaylistTemplates, applyTemplate } from '../services/templateService
 import { getPlaylistUsage, deletePlaylistSafely } from '../services/playlistService';
 
 // Design system imports
+import {
+  Alert,
+  Badge,
+  Banner,
+  Button,
+  Card,
+  CardContent,
+  FormField,
+  Grid,
+  Inline,
+  Input,
+  Modal,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
+  PageContent,
+  PageHeader,
+  PageLayout,
+  Stack,
+  Textarea,
+} from '../design-system';
 
+// lucide icons
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  Copy,
+  FileText,
+  HelpCircle,
+  LayoutTemplate,
+  ListVideo,
+  Loader2,
+  Monitor,
+  MousePointer,
+  Plus,
+  RefreshCw,
+  Search,
+  Sparkles,
+  Trash2,
+  Zap,
+} from 'lucide-react';
 
 import { useLogger } from '../hooks/useLogger.js';
-import { useResponsiveColumns } from '../components/tables';
+import { ResponsiveTable, useResponsiveColumns } from '../components/tables';
 
 // --------------------------------------------------------------------------
 // Sub-components

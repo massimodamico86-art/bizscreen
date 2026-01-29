@@ -14,6 +14,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
   Image,
@@ -21,9 +22,13 @@ import {
   LayoutTemplate,
   Monitor,
   Calendar,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
-
+import { Modal, ModalContent, ModalFooter, Button } from '../../design-system';
+import { WelcomeTourStep } from './WelcomeTourStep';
 import {
   getWelcomeTourProgress,
   updateWelcomeTourStep,

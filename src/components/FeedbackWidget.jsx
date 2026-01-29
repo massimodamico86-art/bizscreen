@@ -7,7 +7,7 @@
 
 import { useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Bug, Lightbulb, MessageCircle } from 'lucide-react';
+import { Bug, Lightbulb, MessageCircle, MessageSquarePlus, X, Check, ThumbsUp, ThumbsDown, Loader2, Send } from 'lucide-react';
 import { submitQuickFeedback, submitBugReport, submitFeatureRequest, FeedbackTypes } from '../services/feedbackService';
 import { useLogger } from '../hooks/useLogger.js';
 
@@ -38,6 +38,11 @@ const feedbackCategories = [
   },
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.position
+ */
 export function FeedbackWidget({ position = 'bottom-right' }) {
   const logger = useLogger('FeedbackWidget');
   const [isOpen, setIsOpen] = useState(false);

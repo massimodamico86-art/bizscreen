@@ -3,7 +3,14 @@
  * Shows critical alert banner at dashboard top when screens are offline.
  */
 import { useState } from 'react';
+import { AlertTriangle, ArrowRight, X } from 'lucide-react';
 
+/**
+ *
+ * @param root0
+ * @param root0.alertSummary
+ * @param root0.onNavigate
+ */
 export function HealthBanner({ alertSummary, onNavigate }) {
   const [dismissed, setDismissed] = useState(false);
 

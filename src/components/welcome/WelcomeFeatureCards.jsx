@@ -2,7 +2,8 @@
  * WelcomeFeatureCards.jsx
  * Yodeck-style feature cards for playlists, templates, and tutorial.
  */
-
+import { Play, Layout, ListVideo, MousePointer, ExternalLink } from 'lucide-react';
+import { Button } from '../../design-system';
 
 /**
  * WelcomeFeatureCards - Three feature cards for the welcome section

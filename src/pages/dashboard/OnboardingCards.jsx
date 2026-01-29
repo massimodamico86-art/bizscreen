@@ -16,7 +16,18 @@ import {
   Home,
   Car,
   Briefcase,
+  Rocket,
+  Loader2,
+  Sparkles,
+  CheckCircle,
+  Copy,
+  ListVideo,
+  Layout,
+  Monitor,
+  Play,
+  Wand2,
 } from 'lucide-react';
+import { Card, Button } from '../../design-system';
 import { getSupportedIndustries } from '../../services/industryWizardService';
 
 /**
