@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone
+**Current focus:** v2.2 Onboarding Polish
 
 ## Current Position
 
-Phase: None — between milestones
-Plan: None
-Status: Ready for next milestone
-Last activity: 2026-01-28 — Completed quick task 005: Fix WelcomeModal missing imports
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-01-28 — Milestone v2.2 started
 
-Progress: [——————————] 0% (ready for next milestone)
+Progress: [——————————] 0% (requirements phase)
 
 ## Milestone History
 

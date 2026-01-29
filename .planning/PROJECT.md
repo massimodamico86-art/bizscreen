@@ -64,9 +64,15 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-**Current Milestone:** None — ready for next milestone planning
+**Current Milestone:** v2.2 Onboarding Polish
 
-Use `/gsd:new-milestone` to start the next milestone.
+**Goal:** Unify and complete the onboarding experience so new users can create content (template or upload), pair their first screen, and start displaying content with minimal friction.
+
+**Target features:**
+- [ ] Unified onboarding flow (consolidate WelcomeModal, OnboardingWizard, WelcomeTour)
+- [ ] Guided screen pairing step integrated into onboarding
+- [ ] Media upload path as alternative to templates
+- [ ] Polotno editor verification and fixes
 
 ### Out of Scope
 
@@ -138,4 +144,4 @@ Use `/gsd:new-milestone` to start the next milestone.
 | PropTypes at warn level | Gradual adoption without blocking | ✓ Good — coverage growing |
 
 ---
-*Last updated: 2026-01-28 after v2.1 milestone complete*
+*Last updated: 2026-01-28 after v2.2 milestone started*
