@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-01-28 — Milestone v2.2 started
+Phase: 30 - State Unification Foundation
+Plan: 01 of 3 complete
+Status: In progress
+Last activity: 2026-01-29 — Completed 30-01-PLAN.md (unified onboarding state migration)
 
-Progress: [——————————] 0% (requirements phase)
+Progress: [==========] 17% (1/6 phases in progress)
 
 ## Milestone History
 
@@ -23,6 +23,18 @@ Progress: [——————————] 0% (requirements phase)
 | v1 Production Release | 1-12 | Archived | 2026-01-24 |
 | v2 Templates & Platform Polish | 13-23 | Archived | 2026-01-27 |
 | v2.1 Tech Debt Cleanup | 24-29 | Archived | 2026-01-28 |
+| v2.2 Onboarding Polish | 30-35 | Active | — |
+
+## v2.2 Phase Overview
+
+| Phase | Goal | Status |
+|-------|------|--------|
+| 30 - State Foundation | Single source of truth for progress | In Progress (1/3) |
+| 31 - Unified Controller | State machine orchestrator | Pending |
+| 32 - Screen Pairing | Pairing integrated into flow | Pending |
+| 33 - Success UX | Explicit completion celebration | Pending |
+| 34 - Cleanup | Remove dead code | Pending |
+| 35 - Polotno | Editor verification | Pending |
 
 ## Performance Metrics
 
@@ -31,11 +43,9 @@ Progress: [——————————] 0% (requirements phase)
 - Total phases: 29 completed
 - Total codebase: 310,940 LOC JavaScript/JSX
 
-**v2.1 Final:**
-- Phases: 6 (24-29)
-- Plans: 11 total
-- Commits: 58
-- Files modified: 380
+**v2.2 Current:**
+- Phases: 0/6 complete (Phase 30 in progress)
+- Plans: 1/3 complete in Phase 30
 
 ## Accumulated Context
 
@@ -49,6 +59,7 @@ Key patterns established:
 - Global vi.mock for circular dependency resolution
 - sideEffects for tree shaking
 - Pre-commit hooks via Husky/lint-staged
+- Unified onboarding step sequence: welcome_tour -> industry_selection -> starter_pack -> screen_pairing -> complete
 
 ### Pending Todos
 
@@ -61,6 +72,11 @@ All v2.1 tech debt resolved. Minor items accepted:
 - 7815 ESLint warnings (gradual cleanup)
 - Migration 105 pre-existing issue (separate fix)
 
+**v2.2 Known Risks:**
+- ESLint auto-fix may remove imports (run full build before commit)
+- OTP timeout during pairing step (make optional)
+- Breaking existing users mid-onboarding (feature flag)
+
 ### Quick Tasks Completed
 
 | # | Description | Date | Commit | Directory |
@@ -72,10 +88,10 @@ All v2.1 tech debt resolved. Minor items accepted:
 
 ## Session Continuity
 
-Last session: 2026-01-28
-Stopped at: v2.1 milestone archived
+Last session: 2026-01-29
+Stopped at: Completed 30-01-PLAN.md
 Resume file: None
-Next: Start next milestone with /gsd:new-milestone
+Next: Execute 30-02-PLAN.md
 
 ---
-*Updated: 2026-01-28 — Quick task 005 completed*
+*Updated: 2026-01-29 — Completed 30-01-PLAN.md*
