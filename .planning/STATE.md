@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 31 - Unified Onboarding Controller
-Plan: 01 of 4 complete
+Plan: 02 of 4 complete
 Status: In progress
-Last activity: 2026-01-29 — Completed 31-01-PLAN.md (hook and progress bar foundation)
+Last activity: 2026-01-29 — Completed 31-02-PLAN.md (supporting onboarding UI components)
 
-Progress: [==--------] 21% (1/6 phases complete, 1/4 plans in Phase 31)
+Progress: [===-------] 25% (1/6 phases complete, 2/4 plans in Phase 31)
 
 ## Milestone History
 
@@ -30,7 +30,7 @@ Progress: [==--------] 21% (1/6 phases complete, 1/4 plans in Phase 31)
 | Phase | Goal | Status |
 |-------|------|--------|
 | 30 - State Foundation | Single source of truth for progress | Complete (3/3) |
-| 31 - Unified Controller | State machine orchestrator | In Progress (1/4) |
+| 31 - Unified Controller | State machine orchestrator | In Progress (2/4) |
 | 32 - Screen Pairing | Pairing integrated into flow | Pending |
 | 33 - Success UX | Explicit completion celebration | Pending |
 | 34 - Cleanup | Remove dead code | Pending |
@@ -45,7 +45,7 @@ Progress: [==--------] 21% (1/6 phases complete, 1/4 plans in Phase 31)
 
 **v2.2 Current:**
 - Phases: 1/6 complete
-- Plans: 4 executed (3 in Phase 30, 1 in Phase 31)
+- Plans: 5 executed (3 in Phase 30, 2 in Phase 31)
 
 ## Accumulated Context
 
@@ -76,6 +76,11 @@ Phase 31-01 decisions:
 - Hook returns null state during loading (not defaults) for explicit loading detection
 - Visibility change listener for multi-tab sync
 
+Phase 31-02 decisions:
+- ScreenPairingStep auto-completes after 2s delay as placeholder for Phase 32
+- Onboarding components use consistent API: isOpen, onComplete, onClose props
+- Skip links always show confirmation dialog before action
+
 ### Pending Todos
 
 None.
@@ -104,9 +109,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Completed 31-01-PLAN.md
+Stopped at: Completed 31-02-PLAN.md
 Resume file: None
-Next: Execute 31-02-PLAN.md (UnifiedOnboardingController component)
+Next: Execute 31-03-PLAN.md (UnifiedOnboardingController component)
 
 ---
-*Updated: 2026-01-29 — Completed 31-01-PLAN.md*
+*Updated: 2026-01-29 — Completed 31-02-PLAN.md*
