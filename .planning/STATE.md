@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: None — between milestones
 Plan: None
 Status: Ready for next milestone
-Last activity: 2026-01-28 — Completed quick task 004: Fix WelcomeModal import
+Last activity: 2026-01-28 — Completed quick task 005: Fix WelcomeModal missing imports
 
 Progress: [——————————] 0% (ready for next milestone)
 
@@ -68,6 +68,7 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 001 | Fix login error after credentials | 2026-01-28 | 1ce2147 | [001-fix-login-error-after-credentials](./quick/001-fix-login-error-after-credentials/) |
 | 002 | Fix remaining login imports | 2026-01-28 | 29bcc3e | [002-fix-remaining-login-imports](./quick/002-fix-remaining-login-imports/) |
 | 004 | Fix WelcomeModal import | 2026-01-28 | 008efdd | [004-fix-welcomemodal-import](./quick/004-fix-welcomemodal-import/) |
+| 005 | Fix WelcomeModal missing imports | 2026-01-28 | 3bca7fb | — |
 
 ## Session Continuity
 
@@ -77,4 +78,4 @@ Resume file: None
 Next: Start next milestone with /gsd:new-milestone
 
 ---
-*Updated: 2026-01-28 — Quick task 004 completed*
+*Updated: 2026-01-28 — Quick task 005 completed*
