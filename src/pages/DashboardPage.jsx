@@ -204,7 +204,8 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
     if (config().useUnifiedOnboarding && !loading) {
       import('../services/onboardingService').then(({ getUnifiedOnboardingState }) => {
         getUnifiedOnboardingState().then(state => {
-          if (state.canResume && !state.isComplete) {
+          // Show unified onboarding if not complete (covers both first-run and resume cases)
+          if (!state.isComplete && !state.skippedAt) {
             setShowUnifiedOnboarding(true);
           }
         });
@@ -384,32 +385,36 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
         <UnifiedOnboardingController onComplete={handleUnifiedOnboardingComplete} />
       )}
 
-      {/* Welcome Modal */}
-      <WelcomeModal
-        open={showWelcomeModal}
-        step={welcomeStep}
-        onClose={dismissWelcomeModal}
-        onDemo={handleDemoFromModal}
-        onSelectType={handleSelectBusinessType}
-        onBrowseTemplates={handleBrowseTemplates}
-        onStepChange={setWelcomeStep}
-        applyingPack={applyingPack}
-        packResult={packResult}
-        packError={packError}
-        onRetryPack={handleRetryPack}
-        setCurrentPage={setCurrentPage}
-      />
+      {/* Welcome Modal - disabled when unified onboarding is active */}
+      {!config().useUnifiedOnboarding && (
+        <WelcomeModal
+          open={showWelcomeModal}
+          step={welcomeStep}
+          onClose={dismissWelcomeModal}
+          onDemo={handleDemoFromModal}
+          onSelectType={handleSelectBusinessType}
+          onBrowseTemplates={handleBrowseTemplates}
+          onStepChange={setWelcomeStep}
+          applyingPack={applyingPack}
+          packResult={packResult}
+          packError={packError}
+          onRetryPack={handleRetryPack}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
 
-      {/* Step-by-step Onboarding Wizard */}
-      <OnboardingWizard
-        isOpen={showOnboardingWizard}
-        onClose={() => setShowOnboardingWizard(false)}
-        onComplete={() => {
-          setShowOnboardingWizard(false);
-          setOnboardingNeeded(false);
-          fetchData();
-        }}
-      />
+      {/* Step-by-step Onboarding Wizard - disabled when unified onboarding is active */}
+      {!config().useUnifiedOnboarding && (
+        <OnboardingWizard
+          isOpen={showOnboardingWizard}
+          onClose={() => setShowOnboardingWizard(false)}
+          onComplete={() => {
+            setShowOnboardingWizard(false);
+            setOnboardingNeeded(false);
+            fetchData();
+          }}
+        />
+      )}
 
       {/* New Onboarding Flow (Phase 23) - disabled when unified onboarding is active */}
       {!config().useUnifiedOnboarding && showWelcomeTour && (
@@ -458,16 +463,16 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
             {/* Health Banner - critical alerts at top */}
             <HealthBanner alertSummary={alertSummary} onNavigate={setCurrentPage} />
 
-            {/* Onboarding Banner - shown when onboarding incomplete */}
-            {showOnboardingBanner && (
+            {/* Onboarding Banner - shown when onboarding incomplete, disabled when unified onboarding is active */}
+            {!config().useUnifiedOnboarding && showOnboardingBanner && (
               <OnboardingBanner
                 onResume={handleResumeOnboarding}
                 onDismiss={handleDismissBanner}
               />
             )}
 
-            {/* Yodeck-style Welcome Section - First Run */}
-            {isFirstRun && !demoResult && (
+            {/* Yodeck-style Welcome Section - First Run - disabled when unified onboarding is active */}
+            {!config().useUnifiedOnboarding && isFirstRun && !demoResult && (
               <>
                 <WelcomeHero
                   userName={user?.user_metadata?.full_name?.split(' ')[0] || 'there'}
@@ -481,8 +486,8 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
               </>
             )}
 
-            {/* Continue Setup - Show when onboarding incomplete but not first run */}
-            {onboardingNeeded && !isFirstRun && !demoResult && (
+            {/* Continue Setup - Show when onboarding incomplete but not first run - disabled when unified onboarding is active */}
+            {!config().useUnifiedOnboarding && onboardingNeeded && !isFirstRun && !demoResult && (
               <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
                 <div className="p-4 flex items-center gap-4">
                   <div className="p-2.5 bg-indigo-100 rounded-xl flex-shrink-0">
