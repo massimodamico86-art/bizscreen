@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 32 - Screen Pairing Integration
-Plan: 01 of 2 complete
-Status: In progress
-Last activity: 2026-01-31 — Completed 32-01-PLAN.md (Screen pairing step with OTP/QR)
+Plan: 02 of 2 complete
+Status: Phase complete
+Last activity: 2026-01-31 — Completed 32-02-PLAN.md (Dashboard reminder card)
 
-Progress: [=====-----] 53% (2/6 phases complete + 1/2 plans in Phase 32)
+Progress: [======----] 58% (3/6 phases complete)
 
 ## Milestone History
 
@@ -31,7 +31,7 @@ Progress: [=====-----] 53% (2/6 phases complete + 1/2 plans in Phase 32)
 |-------|------|--------|
 | 30 - State Foundation | Single source of truth for progress | Complete (3/3) |
 | 31 - Unified Controller | State machine orchestrator | Complete (4/4)* |
-| 32 - Screen Pairing | Pairing integrated into flow | In progress (1/2) |
+| 32 - Screen Pairing | Pairing integrated into flow | Complete (2/2) |
 | 33 - Success UX | Explicit completion celebration | Pending |
 | 34 - Cleanup | Remove dead code | Pending |
 | 35 - Polotno | Editor verification | Pending |
@@ -44,8 +44,8 @@ Progress: [=====-----] 53% (2/6 phases complete + 1/2 plans in Phase 32)
 - Total codebase: 310,940 LOC JavaScript/JSX
 
 **v2.2 Current:**
-- Phases: 2/6 complete
-- Plans: 8 executed (3 in Phase 30, 4 in Phase 31, 1 in Phase 32)
+- Phases: 3/6 complete
+- Plans: 9 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32)
 - Note: Phase 31 human verification skipped (deferred)
 
 ## Accumulated Context
@@ -96,6 +96,12 @@ Phase 32-01 decisions:
 - 2 second delay after pairing before auto-advancing to next step
 - Skip option always visible - orphan screens are acceptable
 
+Phase 32-02 decisions:
+- Reminder card queries onboarding_progress.screen_pairing_completed_at directly
+- localStorage dismissal with 7-day auto-reset (re-prompts inactive users)
+- Only shows when unified onboarding feature flag is enabled
+- Teal gradient styling distinguishes from OnboardingBanner (blue)
+
 ### Pending Todos
 
 None.
@@ -128,9 +134,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 32-01-PLAN.md (Screen pairing step)
+Stopped at: Completed 32-02-PLAN.md (Dashboard reminder card)
 Resume file: None
-Next: Execute 32-02-PLAN.md (Controller integration)
+Next: Phase 33 (Success UX) or Phase 34 (Cleanup)
 
 ---
-*Updated: 2026-01-31 — Completed 32-01-PLAN.md (ScreenPairingStep with QR/OTP/polling/confetti)*
+*Updated: 2026-01-31 — Completed Phase 32 (Screen Pairing Integration)*
