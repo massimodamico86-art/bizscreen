@@ -23,7 +23,7 @@ This milestone creates a single UnifiedOnboardingController that wraps working c
 
 - [x] **Phase 30: State Unification Foundation** - Single source of truth for onboarding progress (completed 2026-01-29)
 - [x] **Phase 31: UnifiedOnboardingController** - State machine orchestrator with feature flag (completed 2026-01-31)*
-- [ ] **Phase 32: Screen Pairing Integration** - True activation metric achievable in onboarding
+- [x] **Phase 32: Screen Pairing Integration** - True activation metric achievable in onboarding (completed 2026-01-31)
 - [ ] **Phase 33: Success and Completion UX** - Explicit completion celebration
 - [ ] **Phase 34: Cleanup and Deprecation** - Remove dead code after validation
 - [ ] **Phase 35: Polotno Editor Verification** - Template customization path hardened
@@ -99,8 +99,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 32-01-PLAN.md — Core ScreenPairingStep with OTP, QR code, polling, and confetti celebration
-- [ ] 32-02-PLAN.md — Dashboard skip reminder card for users who skipped pairing
+- [x] 32-01-PLAN.md — Core ScreenPairingStep with OTP, QR code, polling, and confetti celebration
+- [x] 32-02-PLAN.md — Dashboard skip reminder card for users who skipped pairing
 
 ---
 
@@ -161,15 +161,15 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 30. State Foundation | v2.2 | 3/3 | ✓ Complete | 2026-01-29 |
 | 31. Unified Controller | v2.2 | 4/4 | ✓ Complete* | 2026-01-31 |
-| 32. Screen Pairing | v2.2 | 0/2 | Planned | — |
+| 32. Screen Pairing | v2.2 | 2/2 | ✓ Complete | 2026-01-31 |
 | 33. Success UX | v2.2 | 0/0 | Pending | — |
 | 34. Cleanup | v2.2 | 0/0 | Pending | — |
 | 35. Polotno | v2.2 | 0/0 | Pending | — |
 
-**Total v2.2:** 2/6 phases complete
+**Total v2.2:** 3/6 phases complete
 
-*Phase 31 human verification deferred — recommend `/gsd:verify-work 31` before Phase 32
+*Phase 31 human verification deferred
 
 ---
 *Roadmap created: 2026-01-28*
-*Last updated: 2026-01-31 — Phase 32 planned (2 plans in 2 waves)*
+*Last updated: 2026-01-31 — Phase 32 complete (Screen Pairing Integration)*
