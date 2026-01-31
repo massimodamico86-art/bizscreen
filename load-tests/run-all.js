@@ -73,7 +73,7 @@ async function runAutocannonTest(test) {
     const proc = spawn('node', [scriptPath], { env, stdio: 'pipe' });
 
     let stdout = '';
-    let stderr = '';
+    let _stderr = '';
 
     proc.stdout.on('data', (data) => {
       stdout += data.toString();
@@ -81,7 +81,7 @@ async function runAutocannonTest(test) {
     });
 
     proc.stderr.on('data', (data) => {
-      stderr += data.toString();
+      _stderr += data.toString();
       if (!isJson) process.stderr.write(data);
     });
 
@@ -93,7 +93,7 @@ async function runAutocannonTest(test) {
       if (jsonMatch) {
         try {
           result = JSON.parse(jsonMatch[1].trim());
-        } catch (e) {
+        } catch {
           // Ignore parse errors
         }
       }
@@ -145,7 +145,7 @@ async function runK6Test(test) {
       });
 
       let stdout = '';
-      let stderr = '';
+      let _stderr = '';
 
       proc.stdout.on('data', (data) => {
         stdout += data.toString();
@@ -153,7 +153,7 @@ async function runK6Test(test) {
       });
 
       proc.stderr.on('data', (data) => {
-        stderr += data.toString();
+        _stderr += data.toString();
         if (!isJson) process.stderr.write(data);
       });
 
@@ -162,7 +162,7 @@ async function runK6Test(test) {
         let result = null;
         try {
           result = JSON.parse(stdout.trim());
-        } catch (e) {
+        } catch {
           // k6 might output non-JSON, ignore
         }
 

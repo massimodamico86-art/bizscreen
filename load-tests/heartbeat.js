@@ -48,6 +48,9 @@ const API_KEYS = Array.from({ length: 1000 }, (_, i) =>
   `biz_test_${String(i).padStart(6, '0')}`
 );
 
+/**
+ *
+ */
 export function setup() {
   console.log(`
 ╔════════════════════════════════════════════════════════════════╗
@@ -66,6 +69,10 @@ export function setup() {
   };
 }
 
+/**
+ *
+ * @param data
+ */
 export default function(data) {
   // Simulate a unique screen for each VU iteration
   const vuId = __VU;
@@ -78,7 +85,7 @@ export default function(data) {
   // In production, this would be: POST /api/screens/heartbeat
   const url = `${BASE_URL}/api/health`;
 
-  const payload = JSON.stringify({
+  const _payload = JSON.stringify({
     screen_id: screenId,
     timestamp: new Date().toISOString(),
     status: 'online',
@@ -128,6 +135,10 @@ export default function(data) {
   sleep(1);
 }
 
+/**
+ *
+ * @param data
+ */
 export function handleSummary(data) {
   const p95 = data.metrics.http_req_duration?.values['p(95)'] || 0;
   const p99 = data.metrics.http_req_duration?.values['p(99)'] || 0;

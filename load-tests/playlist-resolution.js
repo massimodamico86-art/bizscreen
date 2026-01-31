@@ -45,6 +45,9 @@ const SCREEN_IDS = Array.from({ length: 500 }, (_, i) =>
   `screen-${String(i).padStart(6, '0')}`
 );
 
+/**
+ *
+ */
 export function setup() {
   console.log(`
 ╔════════════════════════════════════════════════════════════════╗
@@ -60,6 +63,10 @@ export function setup() {
   return { screenIds: SCREEN_IDS };
 }
 
+/**
+ *
+ * @param data
+ */
 export default function(data) {
   // Simulate content resolution request
   const vuId = __VU;
@@ -71,7 +78,7 @@ export default function(data) {
   // In production, this would be: POST /api/content/resolve
   const url = `${BASE_URL}/api/health`;
 
-  const payload = JSON.stringify({
+  const _payload = JSON.stringify({
     screen_id: screenId,
     timestamp: new Date().toISOString(),
     context: {
@@ -135,6 +142,10 @@ function getCurrentTimeSlot() {
   return 'night';
 }
 
+/**
+ *
+ * @param data
+ */
 export function handleSummary(data) {
   const p95 = data.metrics.http_req_duration?.values['p(95)'] || 0;
   const p99 = data.metrics.http_req_duration?.values['p(99)'] || 0;

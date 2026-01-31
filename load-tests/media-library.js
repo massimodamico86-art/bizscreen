@@ -33,7 +33,7 @@ const SEARCH_QUERIES = [
 
 let queryIndex = 0;
 
-function getNextQuery() {
+function _getNextQuery() {
   const query = SEARCH_QUERIES[queryIndex % SEARCH_QUERIES.length];
   queryIndex++;
   return query;

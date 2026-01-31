@@ -26,7 +26,7 @@ const TEST_CREDENTIALS = [
 
 let credentialIndex = 0;
 
-function getNextCredentials() {
+function _getNextCredentials() {
   const creds = TEST_CREDENTIALS[credentialIndex % TEST_CREDENTIALS.length];
   credentialIndex++;
   return creds;
