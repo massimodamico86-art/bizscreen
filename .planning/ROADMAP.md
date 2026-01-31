@@ -22,7 +22,7 @@ This milestone creates a single UnifiedOnboardingController that wraps working c
 - v2.2 phases: 30-35
 
 - [x] **Phase 30: State Unification Foundation** - Single source of truth for onboarding progress (completed 2026-01-29)
-- [ ] **Phase 31: UnifiedOnboardingController** - State machine orchestrator with feature flag
+- [x] **Phase 31: UnifiedOnboardingController** - State machine orchestrator with feature flag (completed 2026-01-31)*
 - [ ] **Phase 32: Screen Pairing Integration** - True activation metric achievable in onboarding
 - [ ] **Phase 33: Success and Completion UX** - Explicit completion celebration
 - [ ] **Phase 34: Cleanup and Deprecation** - Remove dead code after validation
@@ -79,10 +79,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 31-01-PLAN.md — useUnifiedOnboarding hook and OnboardingProgressBar component
-- [ ] 31-02-PLAN.md — ResumePrompt, ScreenPairingStep placeholder, OnboardingSkipLink components
-- [ ] 31-03-PLAN.md — UnifiedOnboardingController orchestrator component
-- [ ] 31-04-PLAN.md — Feature flag integration in env.js and DashboardPage
+- [x] 31-01-PLAN.md — useUnifiedOnboarding hook and OnboardingProgressBar component
+- [x] 31-02-PLAN.md — ResumePrompt, ScreenPairingStep placeholder, OnboardingSkipLink components
+- [x] 31-03-PLAN.md — UnifiedOnboardingController orchestrator component
+- [x] 31-04-PLAN.md — Feature flag integration in env.js and DashboardPage (verification deferred)
 
 ---
 
@@ -159,14 +159,16 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 30. State Foundation | v2.2 | 3/3 | ✓ Complete | 2026-01-29 |
-| 31. Unified Controller | v2.2 | 0/4 | Planned | — |
+| 31. Unified Controller | v2.2 | 4/4 | ✓ Complete* | 2026-01-31 |
 | 32. Screen Pairing | v2.2 | 0/0 | Pending | — |
 | 33. Success UX | v2.2 | 0/0 | Pending | — |
 | 34. Cleanup | v2.2 | 0/0 | Pending | — |
 | 35. Polotno | v2.2 | 0/0 | Pending | — |
 
-**Total v2.2:** 1/6 phases complete
+**Total v2.2:** 2/6 phases complete
+
+*Phase 31 human verification deferred — recommend `/gsd:verify-work 31` before Phase 32
 
 ---
 *Roadmap created: 2026-01-28*
-*Last updated: 2026-01-29 — Phase 31 planned (4 plans in 3 waves)*
+*Last updated: 2026-01-31 — Phase 31 complete (4/4 plans, verification deferred)*
