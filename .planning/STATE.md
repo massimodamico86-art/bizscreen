@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 
 ## Current Position
 
-Phase: 31 - Unified Onboarding Controller
-Plan: 04 of 4 complete
-Status: Phase complete (verification deferred)
-Last activity: 2026-01-31 — Completed 31-04-PLAN.md (Integration and wiring)
+Phase: 32 - Screen Pairing Integration
+Plan: 01 of 2 complete
+Status: In progress
+Last activity: 2026-01-31 — Completed 32-01-PLAN.md (Screen pairing step with OTP/QR)
 
-Progress: [====------] 50% (2/6 phases complete, 4/4 plans in Phase 31)
+Progress: [=====-----] 53% (2/6 phases complete + 1/2 plans in Phase 32)
 
 ## Milestone History
 
@@ -31,7 +31,7 @@ Progress: [====------] 50% (2/6 phases complete, 4/4 plans in Phase 31)
 |-------|------|--------|
 | 30 - State Foundation | Single source of truth for progress | Complete (3/3) |
 | 31 - Unified Controller | State machine orchestrator | Complete (4/4)* |
-| 32 - Screen Pairing | Pairing integrated into flow | Pending |
+| 32 - Screen Pairing | Pairing integrated into flow | In progress (1/2) |
 | 33 - Success UX | Explicit completion celebration | Pending |
 | 34 - Cleanup | Remove dead code | Pending |
 | 35 - Polotno | Editor verification | Pending |
@@ -39,13 +39,13 @@ Progress: [====------] 50% (2/6 phases complete, 4/4 plans in Phase 31)
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1):**
-- Total plans executed: 126 (75 + 40 + 11)
+- Total plans executed: 127 (75 + 40 + 11 + 1)
 - Total phases: 29 completed
 - Total codebase: 310,940 LOC JavaScript/JSX
 
 **v2.2 Current:**
 - Phases: 2/6 complete
-- Plans: 7 executed (3 in Phase 30, 4 in Phase 31)
+- Plans: 8 executed (3 in Phase 30, 4 in Phase 31, 1 in Phase 32)
 - Note: Phase 31 human verification skipped (deferred)
 
 ## Accumulated Context
@@ -88,6 +88,14 @@ Phase 31-03 decisions:
 - Resume prompt shown for returning users not on welcome_tour step
 - STEP_COMPONENTS map and STEP_SEQUENCE array establish canonical step ordering
 
+Phase 32-01 decisions:
+- QR code is primary pairing method (180px prominent), OTP is fallback
+- Polling interval is 3 seconds (matching PairPage.jsx pattern)
+- Confetti zIndex 10001 to appear above modal overlay (10000)
+- OTP displayed as 'ABC 123' format with large monospace font
+- 2 second delay after pairing before auto-advancing to next step
+- Skip option always visible - orphan screens are acceptable
+
 ### Pending Todos
 
 None.
@@ -120,10 +128,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 31-04-PLAN.md (Phase 31 complete)
+Stopped at: Completed 32-01-PLAN.md (Screen pairing step)
 Resume file: None
-Next: Execute Phase 32 (Screen Pairing)
-Note: Phase 31 human verification skipped - recommend `/gsd:verify-work 31` before Phase 32
+Next: Execute 32-02-PLAN.md (Controller integration)
 
 ---
-*Updated: 2026-01-31 — Completed 31-04-PLAN.md (Integration and wiring, verification skipped)*
+*Updated: 2026-01-31 — Completed 32-01-PLAN.md (ScreenPairingStep with QR/OTP/polling/confetti)*
