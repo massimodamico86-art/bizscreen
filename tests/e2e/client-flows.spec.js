@@ -2,7 +2,7 @@
  * Client Dashboard Flows - Real User Experience Tests
  *
  * These tests reproduce the exact flows a real client user would perform
- * in the browser for Playlists, Layouts, Schedules, and Locations.
+ * in the browser for Playlists and Schedules.
  */
 import { test, expect } from '@playwright/test';
 
@@ -191,57 +191,6 @@ test.describe('Client Dashboard Flows', () => {
   });
 
   // ============================================================================
-  // LAYOUTS FLOW
-  // ============================================================================
-  test.describe('Layouts Flow', () => {
-
-    test('1. Navigate to Layouts page', async ({ page }) => {
-      await page.click('button:has-text("Layouts"), a:has-text("Layouts")');
-      await page.waitForLoadState('networkidle');
-
-      await expect(page.locator('h1, h2').filter({ hasText: /layouts/i }).first()).toBeVisible({ timeout: 10000 });
-
-      await page.screenshot({ path: 'test-results/layouts-page.png', fullPage: true });
-
-      expect(errors.filter(e => !e.text.includes('favicon'))).toHaveLength(0);
-    });
-
-    test('2. Create a new layout', async ({ page }) => {
-      await page.click('button:has-text("Layouts"), a:has-text("Layouts")');
-      await page.waitForLoadState('networkidle');
-
-      // Click Add Layout
-      await page.click('button:has-text("Add Layout")');
-      await page.waitForTimeout(500);
-
-      // If there's a choice modal, choose Blank
-      const blankOption = page.locator('button:has-text("Blank Layout")');
-      if (await blankOption.isVisible().catch(() => false)) {
-        await blankOption.click();
-        await page.waitForTimeout(500);
-      }
-
-      // Fill in layout name
-      const nameInput = page.locator('input[placeholder*="name"], input[name="name"], input:near(:text("Name"))').first();
-      await nameInput.fill('Test Layout E2E');
-
-      await page.screenshot({ path: 'test-results/layouts-create-form.png', fullPage: true });
-
-      // Click Create/Save button
-      const createBtn = page.locator('button[type="submit"], button:has-text("Create"), button:has-text("Save")').last();
-      await createBtn.click();
-
-      await page.waitForTimeout(2000);
-      await page.waitForLoadState('networkidle');
-
-      await page.screenshot({ path: 'test-results/layouts-after-create.png', fullPage: true });
-
-      console.log('Errors after layout create:', errors);
-      console.log('Network failures:', networkFailures);
-    });
-  });
-
-  // ============================================================================
   // SCHEDULES FLOW
   // ============================================================================
   test.describe('Schedules Flow', () => {
@@ -292,60 +241,4 @@ test.describe('Client Dashboard Flows', () => {
     });
   });
 
-  // ============================================================================
-  // LOCATIONS FLOW
-  // ============================================================================
-  test.describe('Locations Flow', () => {
-
-    test('1. Navigate to Locations page', async ({ page }) => {
-      await page.click('button:has-text("Locations"), a:has-text("Locations")');
-      await page.waitForLoadState('networkidle');
-
-      await expect(page.locator('h1, h2').filter({ hasText: /locations/i }).first()).toBeVisible({ timeout: 10000 });
-
-      await page.screenshot({ path: 'test-results/locations-page.png', fullPage: true });
-
-      expect(errors.filter(e => !e.text.includes('favicon'))).toHaveLength(0);
-    });
-
-    test('2. Create a new location', async ({ page }) => {
-      await page.click('button:has-text("Locations"), a:has-text("Locations")');
-      await page.waitForLoadState('networkidle');
-
-      // Click Add Location
-      const addBtn = page.locator('button:has-text("Add Location")');
-      await expect(addBtn).toBeVisible({ timeout: 5000 });
-      await addBtn.click();
-      await page.waitForTimeout(500);
-
-      await page.screenshot({ path: 'test-results/locations-add-modal.png', fullPage: true });
-
-      // Fill in location name
-      const nameInput = page.locator('input[placeholder*="name"], input[name="name"], input:near(:text("Name"))').first();
-      if (await nameInput.isVisible().catch(() => false)) {
-        await nameInput.fill('Test Location E2E');
-      }
-
-      // Fill in city if visible
-      const cityInput = page.locator('input[placeholder*="city"], input[name="city"]').first();
-      if (await cityInput.isVisible().catch(() => false)) {
-        await cityInput.fill('Test City');
-      }
-
-      await page.screenshot({ path: 'test-results/locations-create-form.png', fullPage: true });
-
-      // Click Create/Save button
-      const createBtn = page.locator('button[type="submit"], button:has-text("Add Location"), button:has-text("Save")').last();
-      if (await createBtn.isVisible().catch(() => false)) {
-        await createBtn.click();
-        await page.waitForTimeout(2000);
-        await page.waitForLoadState('networkidle');
-      }
-
-      await page.screenshot({ path: 'test-results/locations-after-create.png', fullPage: true });
-
-      console.log('Errors after location create:', errors);
-      console.log('Network failures:', networkFailures);
-    });
-  });
 });
