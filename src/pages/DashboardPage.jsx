@@ -62,7 +62,7 @@ import { DashboardErrorState, StatsGrid, ScreenRow, QuickActionButton, AlertsWid
 import { WelcomeModal } from './dashboard/WelcomeModal';
 import { DemoResultCard, GettingStartedTips } from './dashboard/OnboardingCards';
 import { WelcomeHero, WelcomeFeatureCards } from '../components/welcome';
-import { QuickActionsBar, HealthBanner, ActiveContentGrid, TimelineActivity, PendingApprovalsWidget } from '../components/dashboard';
+import { QuickActionsBar, HealthBanner, ActiveContentGrid, TimelineActivity, PendingApprovalsWidget, ScreenPairingReminderCard } from '../components/dashboard';
 
 
 // Yodeck-style welcome components
@@ -469,6 +469,11 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
                 onResume={handleResumeOnboarding}
                 onDismiss={handleDismissBanner}
               />
+            )}
+
+            {/* Screen Pairing Reminder - for users who skipped pairing during onboarding (Phase 32) */}
+            {config().useUnifiedOnboarding && (
+              <ScreenPairingReminderCard onNavigate={setCurrentPage} />
             )}
 
             {/* Yodeck-style Welcome Section - First Run - disabled when unified onboarding is active */}
