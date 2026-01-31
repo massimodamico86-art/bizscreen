@@ -48,6 +48,14 @@ vi.mock('../../../src/services/onboardingService', () => ({
   shouldShowWelcomeTour: vi.fn().mockResolvedValue(false),
   getWelcomeTourProgress: vi.fn().mockResolvedValue({ completedWelcomeTour: false, starterPackApplied: false }),
   getSelectedIndustry: vi.fn().mockResolvedValue(null),
+  // Add missing unified onboarding functions (Phase 30-31)
+  getUnifiedOnboardingState: vi.fn().mockResolvedValue({
+    currentStep: 'complete',
+    canResume: false,
+    progressPercent: 100,
+    isComplete: true,
+    skippedAt: null
+  }),
 }));
 
 // Mock demo content service
