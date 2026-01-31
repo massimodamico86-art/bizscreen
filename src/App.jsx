@@ -29,6 +29,7 @@ import { useBreakpoints } from './hooks/useMediaQuery';
 import { useTranslation } from './i18n';
 import { useFeatureFlags } from './hooks/useFeatureFlag';
 import { Feature } from './config/plans';
+import { config } from './config/env';
 import LoginPage from './auth/LoginPage';
 import EmergencyBanner from './components/campaigns/EmergencyBanner';
 import AnnouncementBanner from './components/AnnouncementBanner';
@@ -202,6 +203,9 @@ function BizScreenAppInner() {
   // Check if user should see AI autobuild onboarding
   useEffect(() => {
     const checkAutoBuildOnboarding = async () => {
+      // Skip when unified onboarding is enabled (Phase 31)
+      if (config().useUnifiedOnboarding) return;
+
       // Only check for client role users who haven't completed onboarding
       if (!authUserProfile?.id) return;
       if (authUserProfile.role !== 'client') return;

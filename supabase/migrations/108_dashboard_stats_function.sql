@@ -90,7 +90,7 @@ BEGIN
   one_week_ago := NOW() - INTERVAL '7 days';
 
   -- Get devices with issues (RLS filters automatically)
-  SELECT COALESCE(json_agg(issue ORDER BY severity_order, last_seen ASC NULLS FIRST), '[]'::JSON)
+  SELECT COALESCE(json_agg(issue ORDER BY severity_order, "lastSeen" ASC NULLS FIRST), '[]'::JSON)
   INTO result
   FROM (
     SELECT
