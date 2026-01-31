@@ -113,13 +113,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 005 | Fix WelcomeModal missing imports | 2026-01-28 | 3bca7fb | — |
 | 006 | Fix 3-layer onboarding overlap | 2026-01-31 | b853823 | [006-fix-3-layer-onboarding](./quick/006-fix-3-layer-onboarding/) |
 | 007 | Fix unused variable warnings in load-tests | 2026-01-31 | 9d42226 | [007-fix-unused-variable-warnings-in-load-tes](./quick/007-fix-unused-variable-warnings-in-load-tes/) |
+| 008 | Fix test mock errors (getUnifiedOnboardingState) | 2026-01-31 | 40bc784 | [008-fix-test-mock-errors](./quick/008-fix-test-mock-errors/) |
 
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed quick task 007
+Stopped at: Completed quick task 008
 Resume file: None
 Next: Execute 31-04-PLAN.md (Integration and wiring)
 
 ---
-*Updated: 2026-01-31 — Completed quick task 007 (fix unused variable warnings in load-tests)*
+*Updated: 2026-01-31 — Completed quick task 008 (fix test mock errors)*
