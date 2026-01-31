@@ -111,13 +111,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 002 | Fix remaining login imports | 2026-01-28 | 29bcc3e | [002-fix-remaining-login-imports](./quick/002-fix-remaining-login-imports/) |
 | 004 | Fix WelcomeModal import | 2026-01-28 | 008efdd | [004-fix-welcomemodal-import](./quick/004-fix-welcomemodal-import/) |
 | 005 | Fix WelcomeModal missing imports | 2026-01-28 | 3bca7fb | — |
+| 006 | Fix 3-layer onboarding overlap | 2026-01-31 | b853823 | [006-fix-3-layer-onboarding](./quick/006-fix-3-layer-onboarding/) |
 
 ## Session Continuity
 
-Last session: 2026-01-29
-Stopped at: Completed 31-03-PLAN.md
+Last session: 2026-01-31
+Stopped at: Completed quick task 006
 Resume file: None
 Next: Execute 31-04-PLAN.md (Integration and wiring)
 
 ---
-*Updated: 2026-01-29 — Completed 31-03-PLAN.md*
+*Updated: 2026-01-31 — Completed quick task 006 (fix 3-layer onboarding overlap)*
