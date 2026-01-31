@@ -7,3 +7,4 @@ export { QuickActionsBar } from './QuickActionsBar';
 export { ActiveContentGrid } from './ActiveContentGrid';
 export { TimelineActivity } from './TimelineActivity';
 export { PendingApprovalsWidget } from './PendingApprovalsWidget';
+export { ScreenPairingReminderCard } from './ScreenPairingReminderCard';
