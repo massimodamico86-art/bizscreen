@@ -96,10 +96,11 @@ Plans:
   3. Pairing confirmation polling detects when device connects (via `subscribeToDeviceRefresh`)
   4. "I'll connect a screen later" skip option always available
   5. Skip creates dashboard card prompting user to return and complete pairing
-**Plans**: 0 plans
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 32 to break down)
+- [ ] 32-01-PLAN.md — Core ScreenPairingStep with OTP, QR code, polling, and confetti celebration
+- [ ] 32-02-PLAN.md — Dashboard skip reminder card for users who skipped pairing
 
 ---
 
@@ -160,7 +161,7 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 30. State Foundation | v2.2 | 3/3 | ✓ Complete | 2026-01-29 |
 | 31. Unified Controller | v2.2 | 4/4 | ✓ Complete* | 2026-01-31 |
-| 32. Screen Pairing | v2.2 | 0/0 | Pending | — |
+| 32. Screen Pairing | v2.2 | 0/2 | Planned | — |
 | 33. Success UX | v2.2 | 0/0 | Pending | — |
 | 34. Cleanup | v2.2 | 0/0 | Pending | — |
 | 35. Polotno | v2.2 | 0/0 | Pending | — |
@@ -171,4 +172,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-28*
-*Last updated: 2026-01-31 — Phase 31 complete (4/4 plans, verification deferred)*
+*Last updated: 2026-01-31 — Phase 32 planned (2 plans in 2 waves)*
