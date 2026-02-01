@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 
 ## Current Position
 
-Phase: 33 - Success Completion UX
-Plan: 01 of 1 complete
-Status: Phase complete
-Last activity: 2026-02-01 — Completed 33-01-PLAN.md (Success step component)
+Phase: 34 - Cleanup and Deprecation
+Plan: 01 of 4 complete
+Status: In progress
+Last activity: 2026-02-01 — Completed 34-01-PLAN.md (Delete legacy onboarding components)
 
-Progress: [=======---] 67% (4/6 phases complete)
+Progress: [========--] 73% (11/15 plans complete in v2.2)
 
 ## Milestone History
 
@@ -33,7 +33,7 @@ Progress: [=======---] 67% (4/6 phases complete)
 | 31 - Unified Controller | State machine orchestrator | Complete (4/4)* |
 | 32 - Screen Pairing | Pairing integrated into flow | Complete (2/2) |
 | 33 - Success UX | Explicit completion celebration | Complete (1/1) |
-| 34 - Cleanup | Remove dead code | Pending |
+| 34 - Cleanup | Remove dead code | In Progress (1/4) |
 | 35 - Polotno | Editor verification | Pending |
 
 ## Performance Metrics
@@ -44,8 +44,8 @@ Progress: [=======---] 67% (4/6 phases complete)
 - Total codebase: 310,940 LOC JavaScript/JSX
 
 **v2.2 Current:**
-- Phases: 4/6 complete
-- Plans: 10 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33)
+- Phases: 4/6 complete (Phase 34 in progress)
+- Plans: 11 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33, 1 in Phase 34)
 - Note: Phase 31 human verification skipped (deferred)
 
 ## Accumulated Context
@@ -108,6 +108,10 @@ Phase 33-01 decisions:
 - Confetti fires immediately on isOpen without delay
 - completeUnifiedOnboarding called before any navigation/completion callback
 
+Phase 34-01 decisions:
+- Proceed with deletions despite pre-existing E2E test failures (infrastructure issues)
+- Storage key cleanup in DashboardPage.jsx deferred to Plan 02
+
 ### Pending Todos
 
 None.
@@ -140,9 +144,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 33-01-PLAN.md (Success step component)
+Stopped at: Completed 34-01-PLAN.md (Delete legacy onboarding components)
 Resume file: None
-Next: Phase 34 (Cleanup) or Phase 35 (Polotno)
+Next: 34-02-PLAN.md (Clean up DashboardPage and tests)
 
 ---
-*Updated: 2026-02-01 — Completed Phase 33 (Success Completion UX)*
+*Updated: 2026-02-01 — Completed 34-01 (Delete legacy components)*
