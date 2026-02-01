@@ -25,10 +25,22 @@ import {
   Music,
   Shirt,
   LayoutGrid,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Monitor,
+  Smartphone,
+  X,
+  Plus,
+  Sparkles,
+  Loader2,
 } from 'lucide-react';
 import { getLayoutTemplates } from '../services/templateService';
 import { fetchLayouts } from '../services/layoutService';
+import { uploadMediaFromDataUrl } from '../services/mediaService';
 import { useLogger } from '../hooks/useLogger.js';
+import EditorModal from '../components/EditorModal';
 
 /**
  * Sidebar categories matching OptiSigns
@@ -97,6 +109,9 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
     visualMode: true,
     industries: false,
   });
+
+  // Editor modal state - opens templates in modal instead of navigating
+  const [editorModal, setEditorModal] = useState({ isOpen: false, templateData: null });
 
   // Pagination state for user layouts
   const [layoutsPage, setLayoutsPage] = useState(parseInt(searchParams.get('page') || '1', 10));
@@ -229,7 +244,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
     [templates]
   );
 
-  // Handle template click - open directly in editor
+  // Handle template click - open in modal overlay instead of navigating
   const handleTemplateClick = (template) => {
     // Debug: log template data from database
     console.log('Template clicked:', {
@@ -259,9 +274,42 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
       height: templateHeight, // Use resolved height
     };
 
-    console.log('Template data being passed:', templateData);
-    onNavigate?.(`design-editor?template=${encodeURIComponent(JSON.stringify(templateData))}`);
+    console.log('Template data for modal:', templateData);
+    // Open in modal instead of navigating
+    setEditorModal({ isOpen: true, templateData });
   };
+
+  // Handle editor modal close
+  const handleEditorClose = useCallback(() => {
+    setEditorModal({ isOpen: false, templateData: null });
+  }, []);
+
+  // Handle save from editor modal
+  const handleEditorSave = useCallback(async ({ name, imageDataUrl, json, width, height }) => {
+    try {
+      // Upload design to media library
+      const mediaItem = await uploadMediaFromDataUrl(imageDataUrl, {
+        name: `${name}.png`,
+        type: 'image/png',
+        source: 'design_editor',
+        metadata: {
+          designJson: json,
+          width,
+          height,
+          createdWith: 'polotno',
+        },
+      });
+
+      showToast?.(`Design "${name}" saved to Media Library!`, 'success');
+
+      // Keep modal open per plan (Plan 03 will add post-save choice)
+      return mediaItem;
+    } catch (err) {
+      console.error('Failed to save design:', err);
+      showToast?.('Failed to save design: ' + err.message, 'error');
+      throw err;
+    }
+  }, [showToast]);
 
   // Handle search
   const handleSearch = (e) => {
@@ -910,6 +958,15 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
           )}
         </div>
       </div>
+
+      {/* Editor Modal - opens templates without page navigation */}
+      <EditorModal
+        isOpen={editorModal.isOpen}
+        onClose={handleEditorClose}
+        templateData={editorModal.templateData}
+        onSave={handleEditorSave}
+        showToast={showToast}
+      />
     </div>
   );
 };
