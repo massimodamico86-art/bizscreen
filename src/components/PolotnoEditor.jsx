@@ -10,19 +10,25 @@ import { Loader2 } from 'lucide-react';
 import { useLogger } from '../hooks/useLogger.js';
 
 /**
+ * PolotnoEditor component
  *
- * @param root0
- * @param root0.onSave
- * @param root0.onClose
- * @param root0.initialDesign
- * @param root0.designName
- * @param root0.width
- * @param root0.height
- * @param root0.templates
+ * @param {Object} props
+ * @param {Function} props.onSave - Callback when user saves design
+ * @param {Function} props.onClose - Callback when user closes editor
+ * @param {Function} props.onReady - Callback when editor is ready (for parent state tracking)
+ * @param {Function} props.onError - Callback when error occurs (for parent error handling)
+ * @param {Function} props.onRetry - Not used directly, but component re-mounts on key change
+ * @param {Object} props.initialDesign - Initial design data to load
+ * @param {string} props.designName - Name of the design
+ * @param {number} props.width - Canvas width
+ * @param {number} props.height - Canvas height
+ * @param {Array} props.templates - Templates to show in side panel
  */
 export default function PolotnoEditor({
   onSave,
   onClose,
+  onReady,
+  onError,
   initialDesign = null,
   designName = 'Untitled Design',
   width = 1920,
@@ -47,6 +53,9 @@ export default function PolotnoEditor({
     switch (type) {
       case 'ready':
         setIsLoading(false);
+        setError(null);
+        // Notify parent that editor is ready
+        onReady?.();
         // Load initial design if provided
         if (initialDesign) {
           if (initialDesign.type === 'template' && initialDesign.backgroundImage) {
@@ -93,6 +102,8 @@ export default function PolotnoEditor({
 
       case 'error':
         setError(data?.message || 'An error occurred');
+        // Notify parent of the error
+        onError?.({ type: 'iframe', message: data?.message || 'An error occurred' });
         break;
 
       case 'requestTemplates':
@@ -100,7 +111,7 @@ export default function PolotnoEditor({
         sendToIframe('setTemplates', { templates });
         break;
     }
-  }, [initialDesign, onSave, onClose, designName, templates]);
+  }, [initialDesign, onSave, onClose, onReady, onError, designName, templates]);
 
   // Send message to iframe
   const sendToIframe = useCallback((action, payload = {}) => {
@@ -118,16 +129,19 @@ export default function PolotnoEditor({
     return () => window.removeEventListener('message', handleMessage);
   }, [handleMessage]);
 
-  // Handle iframe load timeout
+  // Handle iframe load timeout (10 seconds per CONTEXT.md decision)
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (isLoading) {
-        setError('Editor took too long to load. Please refresh and try again.');
+        const errorMessage = 'Editor took too long to load. Please try again.';
+        setError(errorMessage);
+        // Notify parent of timeout error
+        onError?.({ type: 'timeout', message: errorMessage });
       }
-    }, 30000); // 30 second timeout for slow connections
+    }, 10000); // 10 second timeout per CONTEXT.md
 
     return () => clearTimeout(timeout);
-  }, [isLoading]);
+  }, [isLoading, onError]);
 
   // Export design (callable from parent)
   const exportDesign = useCallback(() => {
