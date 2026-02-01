@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 35 - Polotno Editor Verification
-Plan: 03 of 4 complete
-Status: In progress
-Last activity: 2026-02-01 — Completed 35-02-PLAN.md (Dirty state and confirmation dialog)
+Plan: 04 of 4 complete
+Status: Phase complete
+Last activity: 2026-02-01 - Completed 35-04-PLAN.md (Mobile warning and E2E tests)
 
-Progress: [=========-] 91% (5.75/6 phases complete)
+Progress: [==========] 100% (6/6 phases complete)
 
 ## Milestone History
 
@@ -23,7 +23,7 @@ Progress: [=========-] 91% (5.75/6 phases complete)
 | v1 Production Release | 1-12 | Archived | 2026-01-24 |
 | v2 Templates & Platform Polish | 13-23 | Archived | 2026-01-27 |
 | v2.1 Tech Debt Cleanup | 24-29 | Archived | 2026-01-28 |
-| v2.2 Onboarding Polish | 30-35 | Active | — |
+| v2.2 Onboarding Polish | 30-35 | Complete | 2026-02-01 |
 
 ## v2.2 Phase Overview
 
@@ -34,18 +34,18 @@ Progress: [=========-] 91% (5.75/6 phases complete)
 | 32 - Screen Pairing | Pairing integrated into flow | Complete (2/2) |
 | 33 - Success UX | Explicit completion celebration | Complete (1/1) |
 | 34 - Cleanup | Remove dead code | Complete (2/2) |
-| 35 - Polotno | Editor verification | In progress (3/4) |
+| 35 - Polotno | Editor verification | Complete (4/4) |
 
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1):**
-- Total plans executed: 127 (75 + 40 + 11 + 1)
-- Total phases: 29 completed
+- Total plans executed: 128 (75 + 40 + 11 + 1 + 1)
+- Total phases: 35 completed
 - Total codebase: 310,940 LOC JavaScript/JSX
 
 **v2.2 Current:**
-- Phases: 5.25/6 complete
-- Plans: 15 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33, 2 in Phase 34, 3 in Phase 35)
+- Phases: 6/6 complete
+- Plans: 16 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33, 2 in Phase 34, 4 in Phase 35)
 - Note: Phase 31 human verification skipped (deferred)
 
 ## Accumulated Context
@@ -135,6 +135,12 @@ Phase 35-03 decisions:
 - View Template navigates to media-images via hash routing
 - Dialog prevents close on overlay/escape (user must choose action)
 
+Phase 35-04 decisions:
+- Mobile warning shows on both mobile and tablet viewports (< 1024px)
+- Warning is dismissible - soft block allowing users to continue
+- E2E tests skip complex iframe interaction tests (marked as skip)
+- data-testid pattern: component-specific like 'template-card', 'editor-modal'
+
 ### Pending Todos
 
 None.
@@ -158,7 +164,7 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 001 | Fix login error after credentials | 2026-01-28 | 1ce2147 | [001-fix-login-error-after-credentials](./quick/001-fix-login-error-after-credentials/) |
 | 002 | Fix remaining login imports | 2026-01-28 | 29bcc3e | [002-fix-remaining-login-imports](./quick/002-fix-remaining-login-imports/) |
 | 004 | Fix WelcomeModal import | 2026-01-28 | 008efdd | [004-fix-welcomemodal-import](./quick/004-fix-welcomemodal-import/) |
-| 005 | Fix WelcomeModal missing imports | 2026-01-28 | 3bca7fb | — |
+| 005 | Fix WelcomeModal missing imports | 2026-01-28 | 3bca7fb | - |
 | 006 | Fix 3-layer onboarding overlap | 2026-01-31 | b853823 | [006-fix-3-layer-onboarding](./quick/006-fix-3-layer-onboarding/) |
 | 007 | Fix unused variable warnings in load-tests | 2026-01-31 | 9d42226 | [007-fix-unused-variable-warnings-in-load-tes](./quick/007-fix-unused-variable-warnings-in-load-tes/) |
 | 008 | Fix test mock errors (getUnifiedOnboardingState) | 2026-01-31 | 40bc784 | [008-fix-test-mock-errors](./quick/008-fix-test-mock-errors/) |
@@ -167,9 +173,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 35-02-PLAN.md (Dirty state and confirmation dialog)
+Stopped at: Completed 35-04-PLAN.md (Mobile warning and E2E tests)
 Resume file: None
-Next: 35-04-PLAN.md (Full E2E verification)
+Next: v2.2 milestone complete - ready for v2.3 planning or production release
 
 ---
-*Updated: 2026-02-01 — Completed 35-02-PLAN.md (Dirty state tracking with UnsavedChangesDialog)*
+*Updated: 2026-02-01 - Completed 35-04-PLAN.md (Mobile warning and E2E tests) - v2.2 Onboarding Polish milestone complete*
