@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 34 - Cleanup and Deprecation
-Plan: 01 of 4 complete
+Plan: 02 of 4 complete
 Status: In progress
-Last activity: 2026-02-01 — Completed 34-01-PLAN.md (Delete legacy onboarding components)
+Last activity: 2026-02-01 — Completed 34-02-PLAN.md (Clean up DashboardPage and tests)
 
-Progress: [========--] 73% (11/15 plans complete in v2.2)
+Progress: [=========-] 80% (12/15 plans complete in v2.2)
 
 ## Milestone History
 
@@ -33,7 +33,7 @@ Progress: [========--] 73% (11/15 plans complete in v2.2)
 | 31 - Unified Controller | State machine orchestrator | Complete (4/4)* |
 | 32 - Screen Pairing | Pairing integrated into flow | Complete (2/2) |
 | 33 - Success UX | Explicit completion celebration | Complete (1/1) |
-| 34 - Cleanup | Remove dead code | In Progress (1/4) |
+| 34 - Cleanup | Remove dead code | In Progress (2/4) |
 | 35 - Polotno | Editor verification | Pending |
 
 ## Performance Metrics
@@ -45,7 +45,7 @@ Progress: [========--] 73% (11/15 plans complete in v2.2)
 
 **v2.2 Current:**
 - Phases: 4/6 complete (Phase 34 in progress)
-- Plans: 11 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33, 1 in Phase 34)
+- Plans: 12 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33, 2 in Phase 34)
 - Note: Phase 31 human verification skipped (deferred)
 
 ## Accumulated Context
@@ -112,6 +112,11 @@ Phase 34-01 decisions:
 - Proceed with deletions despite pre-existing E2E test failures (infrastructure issues)
 - Storage key cleanup in DashboardPage.jsx deferred to Plan 02
 
+Phase 34-02 decisions:
+- Removed isFirstRun state since legacy first-run flows are deleted
+- Removed demoResult state and DemoResultCard since createDemoWorkspace only triggered from WelcomeModal
+- Removed all legacy code paths behind !config().useUnifiedOnboarding checks
+
 ### Pending Todos
 
 None.
@@ -144,9 +149,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 34-01-PLAN.md (Delete legacy onboarding components)
+Stopped at: Completed 34-02-PLAN.md (Clean up DashboardPage and tests)
 Resume file: None
-Next: 34-02-PLAN.md (Clean up DashboardPage and tests)
+Next: 34-03-PLAN.md or Phase 35 if 34-03/04 not needed
 
 ---
-*Updated: 2026-02-01 — Completed 34-01 (Delete legacy components)*
+*Updated: 2026-02-01 — Completed 34-02 (DashboardPage cleanup)*
