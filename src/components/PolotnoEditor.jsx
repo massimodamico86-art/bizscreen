@@ -17,6 +17,7 @@ import { useLogger } from '../hooks/useLogger.js';
  * @param {Function} props.onClose - Callback when user closes editor
  * @param {Function} props.onReady - Callback when editor is ready (for parent state tracking)
  * @param {Function} props.onError - Callback when error occurs (for parent error handling)
+ * @param {Function} props.onDirtyChange - Callback when dirty state changes (for unsaved changes tracking)
  * @param {Function} props.onRetry - Not used directly, but component re-mounts on key change
  * @param {Object} props.initialDesign - Initial design data to load
  * @param {string} props.designName - Name of the design
@@ -29,6 +30,7 @@ export default function PolotnoEditor({
   onClose,
   onReady,
   onError,
+  onDirtyChange,
   initialDesign = null,
   designName = 'Untitled Design',
   width = 1920,
@@ -86,6 +88,8 @@ export default function PolotnoEditor({
               width: data.width,
               height: data.height,
             });
+            // Clear dirty state on successful save
+            onDirtyChange?.(false);
           } catch (err) {
             logger.error('Save handler failed', { error: err, designName });
           }
@@ -110,8 +114,13 @@ export default function PolotnoEditor({
         // Send templates to the iframe
         sendToIframe('setTemplates', { templates });
         break;
+
+      case 'designChanged':
+        // Handle dirty state from iframe
+        onDirtyChange?.(data?.dirty ?? true);
+        break;
     }
-  }, [initialDesign, onSave, onClose, onReady, onError, designName, templates]);
+  }, [initialDesign, onSave, onClose, onReady, onError, onDirtyChange, designName, templates]);
 
   // Send message to iframe
   const sendToIframe = useCallback((action, payload = {}) => {

@@ -8,11 +8,12 @@
  * Per CONTEXT.md: "Editor opens in modal overlay (not full-page navigation)"
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Loader2, AlertCircle, RefreshCw, ExternalLink, HelpCircle } from 'lucide-react';
 import { Modal } from '../design-system/components/Modal';
 import PolotnoEditor from './PolotnoEditor';
 import PostSaveDialog from './PostSaveDialog';
+import UnsavedChangesDialog from './UnsavedChangesDialog';
 
 /**
  * EditorModal component
@@ -36,6 +37,12 @@ export default function EditorModal({
   const [retryKey, setRetryKey] = useState(0);
   const [showPostSaveDialog, setShowPostSaveDialog] = useState(false);
   const [savedDesignName, setSavedDesignName] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Ref to trigger save from UnsavedChangesDialog
+  const pendingSaveResolve = useRef(null);
 
   // Handle editor ready
   const handleEditorReady = useCallback(() => {
@@ -56,13 +63,30 @@ export default function EditorModal({
     setRetryKey((prev) => prev + 1);
   }, []);
 
-  // Handle close
-  const handleClose = useCallback(() => {
-    // Reset state when closing
+  // Handle close attempt - intercept if dirty
+  const handleCloseAttempt = useCallback(() => {
+    if (isDirty) {
+      // Show unsaved changes dialog
+      setShowUnsavedDialog(true);
+    } else {
+      // Close directly
+      handleActualClose();
+    }
+  }, [isDirty]);
+
+  // Actual close - reset all state
+  const handleActualClose = useCallback(() => {
     setIsLoading(true);
     setError(null);
+    setIsDirty(false);
+    setShowUnsavedDialog(false);
     onClose?.();
   }, [onClose]);
+
+  // Handle dirty state changes from editor
+  const handleDirtyChange = useCallback((dirty) => {
+    setIsDirty(dirty);
+  }, []);
 
   // Handle save from editor
   const handleEditorSave = useCallback(async (saveData) => {
@@ -83,20 +107,67 @@ export default function EditorModal({
     // Stay in editor - nothing else to do
   }, []);
 
+  // Handle "Cancel" from UnsavedChangesDialog - return to editor
+  const handleUnsavedCancel = useCallback(() => {
+    setShowUnsavedDialog(false);
+  }, []);
+
+  // Handle "Discard" from UnsavedChangesDialog - close without saving
+  const handleUnsavedDiscard = useCallback(() => {
+    setShowUnsavedDialog(false);
+    setIsDirty(false);
+    handleActualClose();
+  }, [handleActualClose]);
+
+  // Handle "Save" from UnsavedChangesDialog - save then close
+  const handleUnsavedSave = useCallback(async () => {
+    // Trigger save via the iframe - this is tricky since we need to call into the iframe
+    // The save button is in the iframe, so we need to use postMessage to trigger it
+    // For now, we'll close and warn the user to save first
+    // TODO: In a future iteration, we could send a 'triggerSave' message to the iframe
+    setIsSaving(true);
+    try {
+      // Send message to iframe to trigger save
+      const iframe = document.querySelector('iframe[title="Design Editor"]');
+      if (iframe?.contentWindow) {
+        iframe.contentWindow.postMessage(
+          { target: 'polotno-editor', action: 'triggerSave' },
+          '*'
+        );
+        // Wait for save confirmation (the save handler will clear dirty state)
+        // We'll use a timeout as a fallback
+        await new Promise((resolve) => {
+          pendingSaveResolve.current = resolve;
+          // Fallback timeout in case save doesn't complete
+          setTimeout(() => {
+            if (pendingSaveResolve.current) {
+              pendingSaveResolve.current();
+              pendingSaveResolve.current = null;
+            }
+          }, 5000);
+        });
+      }
+    } finally {
+      setIsSaving(false);
+      setShowUnsavedDialog(false);
+      // Don't auto-close after save - the PostSaveDialog will handle that
+    }
+  }, []);
+
   // Handle "View My Template" from PostSaveDialog
   const handleViewTemplate = useCallback(() => {
     setShowPostSaveDialog(false);
-    handleClose();
+    handleActualClose();
     // Navigate to media library where saved designs appear
     window.location.hash = '#/media-images';
-  }, [handleClose]);
+  }, [handleActualClose]);
 
   // Navigate to Design Studio (fallback)
   const handleOpenDesignStudio = useCallback(() => {
-    handleClose();
+    handleActualClose();
     // Navigate to layouts page (Design Studio)
     window.location.hash = '#/layouts';
-  }, [handleClose]);
+  }, [handleActualClose]);
 
   // Prepare initial design from template data
   const initialDesign = templateData ? {
@@ -110,7 +181,7 @@ export default function EditorModal({
   return (
     <Modal
       open={isOpen}
-      onClose={handleClose}
+      onClose={handleCloseAttempt}
       size="full"
       closeOnOverlay={false}
       closeOnEscape={false}
@@ -184,9 +255,10 @@ export default function EditorModal({
         <PolotnoEditor
           key={retryKey}
           onSave={handleEditorSave}
-          onClose={handleClose}
+          onClose={handleCloseAttempt}
           onReady={handleEditorReady}
           onError={handleEditorError}
+          onDirtyChange={handleDirtyChange}
           onRetry={handleRetry}
           initialDesign={initialDesign}
           designName={templateData?.name || 'Untitled Design'}
@@ -201,6 +273,15 @@ export default function EditorModal({
         onKeepEditing={handleKeepEditing}
         onViewTemplate={handleViewTemplate}
         savedDesignName={savedDesignName}
+      />
+
+      {/* Unsaved changes dialog */}
+      <UnsavedChangesDialog
+        open={showUnsavedDialog}
+        onSave={handleUnsavedSave}
+        onDiscard={handleUnsavedDiscard}
+        onCancel={handleUnsavedCancel}
+        loading={isSaving}
       />
     </Modal>
   );
