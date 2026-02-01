@@ -3,17 +3,15 @@
  * Main client dashboard displaying stats, screens overview, and quick actions.
  *
  * This is the primary view for authenticated client users after login.
- * It orchestrates data fetching, onboarding flows, and navigation.
+ * It orchestrates data fetching, unified onboarding flow, and navigation.
  *
  * Sub-components are extracted to:
  * - ./dashboard/DashboardSections.jsx - Core display components
  * - ./dashboard/OnboardingCards.jsx - First-run cards
- * - ./dashboard/WelcomeModal.jsx - Welcome modal flow
  */
 import { useState, useEffect, useCallback } from 'react';
 import {
   Loader2,
-  Sparkles,
   ArrowRight,
   Monitor,
   Plus,
@@ -26,22 +24,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 
-
 import {
   getDashboardStats,
   getTopScreens,
   getRecentActivity,
   getAlertSummary,
 } from '../services/dashboardService';
-import {
-  checkIsFirstRun,
-  needsOnboarding,
-  shouldShowWelcomeTour,
-  getWelcomeTourProgress,
-  getSelectedIndustry,
-} from '../services/onboardingService';
-import { createDemoWorkspace } from '../services/demoContentService';
-import { applyPack, getDefaultPackSlug } from '../services/templateService';
 
 // Design system components
 import {
@@ -59,30 +47,16 @@ import {
 
 // Extracted sub-components
 import { DashboardErrorState, StatsGrid, ScreenRow, QuickActionButton, AlertsWidget } from './dashboard/DashboardSections';
-import { WelcomeModal } from './dashboard/WelcomeModal';
-import { DemoResultCard, GettingStartedTips } from './dashboard/OnboardingCards';
-import { WelcomeHero, WelcomeFeatureCards } from '../components/welcome';
+import { GettingStartedTips } from './dashboard/OnboardingCards';
 import { QuickActionsBar, HealthBanner, ActiveContentGrid, TimelineActivity, PendingApprovalsWidget, ScreenPairingReminderCard } from '../components/dashboard';
 
-
-// Yodeck-style welcome components
 import ErrorBoundary from '../components/ErrorBoundary';
-import OnboardingWizard from '../components/OnboardingWizard';
-
-// New onboarding components (Phase 23)
-import { WelcomeTour } from '../components/onboarding/WelcomeTour';
-import { IndustrySelectionModal } from '../components/onboarding/IndustrySelectionModal';
-import { StarterPackOnboarding } from '../components/onboarding/StarterPackOnboarding';
-import { OnboardingBanner, isBannerDismissed } from '../components/onboarding/OnboardingBanner';
 
 // Unified onboarding controller (Phase 31)
 import { UnifiedOnboardingController } from '../components/onboarding/UnifiedOnboardingController';
 import { config } from '../config/env';
 
 import { useBreakpoints } from '../hooks/useMediaQuery';
-
-/** localStorage key for tracking welcome modal dismissal */
-const WELCOME_MODAL_KEY = 'bizscreen_welcome_modal_shown';
 
 /**
  * Main client dashboard page component.
@@ -99,6 +73,8 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
   const { t } = useTranslation();
   const logger = useLogger('DashboardPage');
   const { isMobile } = useBreakpoints();
+
+  // Core dashboard state
   const [stats, setStats] = useState(null);
   const [screens, setScreens] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
@@ -107,24 +83,6 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
   const [activityLoading, setActivityLoading] = useState(true);
   const [alertsLoading, setAlertsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isFirstRun, setIsFirstRun] = useState(false);
-  const [creatingDemo, setCreatingDemo] = useState(false);
-  const [demoResult, setDemoResult] = useState(null);
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
-  const [showOnboardingWizard, setShowOnboardingWizard] = useState(false);
-  const [onboardingNeeded, setOnboardingNeeded] = useState(false);
-  const [welcomeStep, setWelcomeStep] = useState('choice');
-  const [selectedBusinessType, setSelectedBusinessType] = useState(null);
-  const [applyingPack, setApplyingPack] = useState(false);
-  const [packResult, setPackResult] = useState(null);
-  const [packError, setPackError] = useState(null);
-
-  // New onboarding flow state (Phase 23)
-  const [showWelcomeTour, setShowWelcomeTour] = useState(false);
-  const [showIndustryModal, setShowIndustryModal] = useState(false);
-  const [showStarterPackModal, setShowStarterPackModal] = useState(false);
-  const [selectedIndustry, setSelectedIndustry] = useState(null);
-  const [showOnboardingBanner, setShowOnboardingBanner] = useState(false);
 
   // Unified onboarding state (Phase 31)
   const [showUnifiedOnboarding, setShowUnifiedOnboarding] = useState(false);
@@ -136,35 +94,12 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
       setError(null); // Clear any previous error
 
       // Fetch core data in parallel
-      const [statsData, screensData, firstRunData, onboardingStatus] = await Promise.all([
+      const [statsData, screensData] = await Promise.all([
         getDashboardStats(),
         getTopScreens(5),
-        checkIsFirstRun(),
-        needsOnboarding()
       ]);
       setStats(statsData);
       setScreens(screensData);
-      setIsFirstRun(firstRunData.isFirstRun);
-      setOnboardingNeeded(onboardingStatus);
-
-      if (firstRunData.isFirstRun && !localStorage.getItem(WELCOME_MODAL_KEY)) {
-        setShowWelcomeModal(true);
-      }
-
-      // Check new welcome tour flow (Phase 23)
-      const shouldShowTour = await shouldShowWelcomeTour();
-      if (shouldShowTour) {
-        setShowWelcomeTour(true);
-      } else {
-        // Check if onboarding incomplete (tour done but no starter pack)
-        const progress = await getWelcomeTourProgress();
-        if (progress.completedWelcomeTour && !progress.starterPackApplied) {
-          // Show banner if not dismissed this session
-          if (!isBannerDismissed()) {
-            setShowOnboardingBanner(true);
-          }
-        }
-      }
 
       // Fetch secondary data (recent activity, alerts) - don't block main load
       setActivityLoading(true);
@@ -222,130 +157,6 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
     fetchData?.();
   }, [fetchData]);
 
-  const handleCreateDemoWorkspace = async () => {
-    try {
-      setCreatingDemo(true);
-      const result = await createDemoWorkspace();
-      setDemoResult(result);
-
-      if (result.alreadyExisted) {
-        showToast?.('Demo workspace already exists. Showing your existing demo screen.');
-      } else {
-        showToast?.(`Demo workspace created! Pair your TV using code: ${result.otpCode}`);
-      }
-
-      await fetchData();
-      setIsFirstRun(false);
-    } catch (error) {
-      logger.error('Error creating demo workspace:', error);
-      showToast?.('Failed to create demo workspace: ' + error.message, 'error');
-    } finally {
-      setCreatingDemo(false);
-    }
-  };
-
-  const copyOtpCode = (code) => {
-    navigator.clipboard.writeText(code);
-    showToast?.('OTP code copied to clipboard');
-  };
-
-  const dismissWelcomeModal = () => {
-    localStorage.setItem(WELCOME_MODAL_KEY, 'true');
-    setShowWelcomeModal(false);
-  };
-
-  const handleDemoFromModal = async () => {
-    dismissWelcomeModal();
-    await handleCreateDemoWorkspace();
-  };
-
-  const handleSelectBusinessType = async (businessType) => {
-    setSelectedBusinessType(businessType);
-    setWelcomeStep('creating');
-    setApplyingPack(true);
-    setPackError(null);
-    setPackResult(null);
-
-    try {
-      const packSlug = getDefaultPackSlug(businessType);
-      const result = await applyPack(packSlug);
-      setPackResult(result);
-
-      showToast?.(`${businessType.charAt(0).toUpperCase() + businessType.slice(1)} starter pack applied!`, 'success');
-
-      await fetchData();
-      setIsFirstRun(false);
-    } catch (error) {
-      logger.error('Error applying pack:', error);
-      setPackError(error.message || 'Failed to apply starter pack');
-    } finally {
-      setApplyingPack(false);
-    }
-  };
-
-  const handleRetryPack = () => {
-    if (selectedBusinessType) {
-      handleSelectBusinessType(selectedBusinessType);
-    }
-  };
-
-  const handleBrowseTemplates = () => {
-    dismissWelcomeModal();
-    setCurrentPage('templates');
-  };
-
-  // =====================================================
-  // NEW ONBOARDING FLOW HANDLERS (Phase 23)
-  // =====================================================
-
-  /**
-   * After tour completes, show industry selection
-   */
-  const handleTourComplete = () => {
-    setShowWelcomeTour(false);
-    setShowIndustryModal(true);
-  };
-
-  /**
-   * After industry selected, show starter pack
-   * @param industry
-   */
-  const handleIndustrySelect = (industry) => {
-    setSelectedIndustry(industry);
-    setShowIndustryModal(false);
-    setShowStarterPackModal(true);
-  };
-
-  /**
-   * After pack applied or skipped
-   */
-  const handlePackComplete = () => {
-    setShowStarterPackModal(false);
-    // Refresh dashboard data
-    fetchData();
-  };
-
-  /**
-   * Resume onboarding from banner click
-   */
-  const handleResumeOnboarding = async () => {
-    const industry = await getSelectedIndustry();
-    setSelectedIndustry(industry);
-    if (industry) {
-      setShowStarterPackModal(true);
-    } else {
-      setShowIndustryModal(true);
-    }
-    setShowOnboardingBanner(false);
-  };
-
-  /**
-   * Dismiss onboarding banner
-   */
-  const handleDismissBanner = () => {
-    setShowOnboardingBanner(false);
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -380,71 +191,9 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
 
   return (
     <ErrorBoundary>
-      {/* Unified Onboarding Controller (feature flagged - Phase 31) */}
+      {/* Unified Onboarding Controller (Phase 31) */}
       {config().useUnifiedOnboarding && showUnifiedOnboarding && (
         <UnifiedOnboardingController onComplete={handleUnifiedOnboardingComplete} />
-      )}
-
-      {/* Welcome Modal - disabled when unified onboarding is active */}
-      {!config().useUnifiedOnboarding && (
-        <WelcomeModal
-          open={showWelcomeModal}
-          step={welcomeStep}
-          onClose={dismissWelcomeModal}
-          onDemo={handleDemoFromModal}
-          onSelectType={handleSelectBusinessType}
-          onBrowseTemplates={handleBrowseTemplates}
-          onStepChange={setWelcomeStep}
-          applyingPack={applyingPack}
-          packResult={packResult}
-          packError={packError}
-          onRetryPack={handleRetryPack}
-          setCurrentPage={setCurrentPage}
-        />
-      )}
-
-      {/* Step-by-step Onboarding Wizard - disabled when unified onboarding is active */}
-      {!config().useUnifiedOnboarding && (
-        <OnboardingWizard
-          isOpen={showOnboardingWizard}
-          onClose={() => setShowOnboardingWizard(false)}
-          onComplete={() => {
-            setShowOnboardingWizard(false);
-            setOnboardingNeeded(false);
-            fetchData();
-          }}
-        />
-      )}
-
-      {/* New Onboarding Flow (Phase 23) - disabled when unified onboarding is active */}
-      {!config().useUnifiedOnboarding && showWelcomeTour && (
-        <WelcomeTour
-          isOpen={showWelcomeTour}
-          onClose={() => setShowWelcomeTour(false)}
-          onComplete={handleTourComplete}
-          onGetStarted={handleTourComplete}
-        />
-      )}
-
-      {!config().useUnifiedOnboarding && showIndustryModal && (
-        <IndustrySelectionModal
-          isOpen={showIndustryModal}
-          onClose={() => {
-            setShowIndustryModal(false);
-            // Still show starter pack even if they skip industry
-            setShowStarterPackModal(true);
-          }}
-          onSelect={handleIndustrySelect}
-        />
-      )}
-
-      {!config().useUnifiedOnboarding && showStarterPackModal && (
-        <StarterPackOnboarding
-          isOpen={showStarterPackModal}
-          onClose={() => setShowStarterPackModal(false)}
-          onComplete={handlePackComplete}
-          industry={selectedIndustry}
-        />
       )}
 
       <PageLayout maxWidth="wide">
@@ -463,63 +212,9 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
             {/* Health Banner - critical alerts at top */}
             <HealthBanner alertSummary={alertSummary} onNavigate={setCurrentPage} />
 
-            {/* Onboarding Banner - shown when onboarding incomplete, disabled when unified onboarding is active */}
-            {!config().useUnifiedOnboarding && showOnboardingBanner && (
-              <OnboardingBanner
-                onResume={handleResumeOnboarding}
-                onDismiss={handleDismissBanner}
-              />
-            )}
-
             {/* Screen Pairing Reminder - for users who skipped pairing during onboarding (Phase 32) */}
             {config().useUnifiedOnboarding && (
               <ScreenPairingReminderCard onNavigate={setCurrentPage} />
-            )}
-
-            {/* Yodeck-style Welcome Section - First Run - disabled when unified onboarding is active */}
-            {!config().useUnifiedOnboarding && isFirstRun && !demoResult && (
-              <>
-                <WelcomeHero
-                  userName={user?.user_metadata?.full_name?.split(' ')[0] || 'there'}
-                  onAddMedia={() => setCurrentPage('media-all')}
-                />
-                <WelcomeFeatureCards
-                  onCreatePlaylist={() => setCurrentPage('playlists')}
-                  onBrowseTemplates={() => setCurrentPage('templates')}
-                  onWatchTutorial={() => window.open('https://bizscreen.io/tutorials', '_blank')}
-                />
-              </>
-            )}
-
-            {/* Continue Setup - Show when onboarding incomplete but not first run - disabled when unified onboarding is active */}
-            {!config().useUnifiedOnboarding && onboardingNeeded && !isFirstRun && !demoResult && (
-              <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
-                <div className="p-4 flex items-center gap-4">
-                  <div className="p-2.5 bg-indigo-100 rounded-xl flex-shrink-0">
-                    <Sparkles className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-900">Continue Your Setup</h3>
-                    <p className="text-sm text-gray-600">Complete the guided setup to get the most out of BizScreen.</p>
-                  </div>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => setShowOnboardingWizard(true)}
-                  >
-                    Continue Setup
-                  </Button>
-                </div>
-              </Card>
-            )}
-
-            {/* Demo Result Card */}
-            {demoResult && (
-              <DemoResultCard
-                result={demoResult}
-                onCopyCode={copyOtpCode}
-                setCurrentPage={setCurrentPage}
-              />
             )}
 
             {/* Stats Grid */}
@@ -527,8 +222,6 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
               stats={stats}
               setCurrentPage={setCurrentPage}
               t={t}
-              isFirstRun={isFirstRun}
-              demoResult={demoResult}
             />
 
             {/* Pending Approvals Widget - only shows for approvers with pending items */}
@@ -652,7 +345,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
             </div>
 
             {/* Getting Started Tips */}
-            {!isFirstRun && !demoResult && stats?.screens?.total === 0 && stats?.playlists?.total === 0 && (
+            {stats?.screens?.total === 0 && stats?.playlists?.total === 0 && (
               <GettingStartedTips />
             )}
           </Stack>
