@@ -9,7 +9,8 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
-import { Loader2, AlertCircle, RefreshCw, ExternalLink, HelpCircle } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, ExternalLink, HelpCircle, Monitor } from 'lucide-react';
+import { useBreakpoints } from '../hooks/useMediaQuery';
 import { Modal } from '../design-system/components/Modal';
 import PolotnoEditor from './PolotnoEditor';
 import PostSaveDialog from './PostSaveDialog';
@@ -40,6 +41,11 @@ export default function EditorModal({
   const [isDirty, setIsDirty] = useState(false);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [mobileDismissed, setMobileDismissed] = useState(false);
+
+  // Mobile detection for warning banner
+  const { isMobile, isTablet } = useBreakpoints();
+  const showMobileWarning = isMobile || isTablet;
 
   // Ref to trigger save from UnsavedChangesDialog
   const pendingSaveResolve = useRef(null);
@@ -187,10 +193,30 @@ export default function EditorModal({
       closeOnEscape={false}
       showCloseButton={!isLoading && !error}
       className="!max-h-screen !h-screen !rounded-none"
+      data-testid="editor-modal"
     >
+      {/* Mobile warning banner */}
+      {showMobileWarning && !mobileDismissed && (
+        <div
+          data-testid="mobile-warning"
+          className="absolute top-0 left-0 right-0 z-20 bg-amber-50 border-b border-amber-200 px-4 py-3 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2 text-amber-800 text-sm">
+            <Monitor className="w-4 h-4 flex-shrink-0" />
+            <span>Desktop recommended. For the best editing experience, we recommend using a desktop browser.</span>
+          </div>
+          <button
+            onClick={() => setMobileDismissed(true)}
+            className="text-amber-600 hover:text-amber-800 text-sm font-medium whitespace-nowrap ml-4"
+          >
+            Continue anyway
+          </button>
+        </div>
+      )}
+
       {/* Loading overlay */}
       {isLoading && !error && (
-        <div className="absolute inset-0 z-10 bg-gray-900 flex flex-col items-center justify-center">
+        <div data-testid="editor-loading" className="absolute inset-0 z-10 bg-gray-900 flex flex-col items-center justify-center">
           <Loader2 size={48} className="text-orange-500 animate-spin mb-4" />
           <p className="text-white text-lg font-medium mb-1">Loading design editor...</p>
           {templateData?.name && (
@@ -202,7 +228,7 @@ export default function EditorModal({
 
       {/* Error state */}
       {error && (
-        <div className="absolute inset-0 z-10 bg-gray-900 flex flex-col items-center justify-center p-8">
+        <div data-testid="editor-error" className="absolute inset-0 z-10 bg-gray-900 flex flex-col items-center justify-center p-8">
           <div className="max-w-md text-center">
             {/* Error icon */}
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
