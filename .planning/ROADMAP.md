@@ -124,17 +124,20 @@ Plans:
 ### Phase 34: Cleanup and Deprecation
 **Goal**: Remove dead code after new flow validated in production
 **Depends on**: Phases 30-33 (all new flow components working)
-**Requirements**: Delete OnboardingWizard, deprecate WelcomeModal, remove localStorage
+**Requirements**: Delete OnboardingWizard, OnboardingBanner, WelcomeModal; remove localStorage keys; simplify DashboardPage
 **Success Criteria** (what must be TRUE):
   1. OnboardingWizard.jsx deleted entirely (confirmed broken, never properly wired)
-  2. WelcomeModal.jsx marked deprecated with comment (functionality in unified flow)
-  3. localStorage key `bizscreen_welcome_modal_shown` removed from codebase
-  4. sessionStorage key `onboarding_banner_dismissed` consolidated
-  5. DashboardPage boolean state variables reduced (12+ to single controller render)
-**Plans**: 0 plans
+  2. OnboardingBanner.jsx deleted entirely (replaced by unified flow)
+  3. WelcomeModal.jsx deleted entirely (replaced by unified flow)
+  4. localStorage key `bizscreen_welcome_modal_shown` removed from codebase
+  5. sessionStorage key `onboarding_banner_dismissed` removed from codebase
+  6. DashboardPage state variables reduced (16 legacy variables removed)
+  7. All E2E tests pass after cleanup
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 34 to break down)
+- [ ] 34-01-PLAN.md — Establish E2E baseline and delete legacy components
+- [ ] 34-02-PLAN.md — Clean up DashboardPage and update tests
 
 ---
 
@@ -163,7 +166,7 @@ Plans:
 | 31. Unified Controller | v2.2 | 4/4 | ✓ Complete* | 2026-01-31 |
 | 32. Screen Pairing | v2.2 | 2/2 | ✓ Complete | 2026-01-31 |
 | 33. Success UX | v2.2 | 1/1 | ✓ Complete | 2026-01-31 |
-| 34. Cleanup | v2.2 | 0/0 | Pending | — |
+| 34. Cleanup | v2.2 | 0/2 | Planned | — |
 | 35. Polotno | v2.2 | 0/0 | Pending | — |
 
 **Total v2.2:** 4/6 phases complete
@@ -172,4 +175,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-28*
-*Last updated: 2026-01-31 — Phase 33 complete (SuccessStep with confetti)*
+*Last updated: 2026-01-31 — Phase 34 planned (2 plans in 2 waves)*
