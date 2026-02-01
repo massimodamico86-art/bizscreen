@@ -30,12 +30,6 @@ export async function loginAndPrepare(page, options = {}) {
   // Navigate to login page
   await page.goto('/auth/login');
 
-  // Set localStorage to skip the Welcome Modal before authentication
-  // This key is checked by DashboardPage to decide whether to show the Welcome Modal
-  await page.evaluate(() => {
-    localStorage.setItem('bizscreen_welcome_modal_shown', 'true');
-  });
-
   // Fill in credentials and submit
   await page.getByPlaceholder(/email/i).fill(email);
   await page.getByPlaceholder(/password/i).fill(password);

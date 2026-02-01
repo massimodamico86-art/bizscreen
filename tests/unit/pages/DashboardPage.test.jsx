@@ -41,14 +41,8 @@ vi.mock('../../../src/services/dashboardService', () => ({
   formatLastSeen: (lastSeen) => mockFormatLastSeen(lastSeen),
 }));
 
-// Mock onboarding service
+// Mock onboarding service - only unified onboarding functions needed (Phase 34 cleanup)
 vi.mock('../../../src/services/onboardingService', () => ({
-  checkIsFirstRun: vi.fn().mockResolvedValue({ isFirstRun: false }),
-  needsOnboarding: vi.fn().mockResolvedValue(false),
-  shouldShowWelcomeTour: vi.fn().mockResolvedValue(false),
-  getWelcomeTourProgress: vi.fn().mockResolvedValue({ completedWelcomeTour: false, starterPackApplied: false }),
-  getSelectedIndustry: vi.fn().mockResolvedValue(null),
-  // Add missing unified onboarding functions (Phase 30-31)
   getUnifiedOnboardingState: vi.fn().mockResolvedValue({
     currentStep: 'complete',
     canResume: false,
@@ -58,31 +52,9 @@ vi.mock('../../../src/services/onboardingService', () => ({
   }),
 }));
 
-// Mock demo content service
-vi.mock('../../../src/services/demoContentService', () => ({
-  createDemoWorkspace: vi.fn().mockResolvedValue({ otpCode: '123456' }),
-}));
-
-// Mock template service
-vi.mock('../../../src/services/templateService', () => ({
-  applyPack: vi.fn().mockResolvedValue({ playlists: [], layouts: [] }),
-  getDefaultPackSlug: vi.fn().mockReturnValue('generic'),
-}));
-
 // Mock ErrorBoundary to pass through children
 vi.mock('../../../src/components/ErrorBoundary', () => ({
   default: ({ children }) => children,
-}));
-
-// Mock OnboardingWizard
-vi.mock('../../../src/components/OnboardingWizard', () => ({
-  default: () => null,
-}));
-
-// Mock welcome components
-vi.mock('../../../src/components/welcome', () => ({
-  WelcomeHero: () => null,
-  WelcomeFeatureCards: () => null,
 }));
 
 // Mock dashboard components
@@ -92,33 +64,16 @@ vi.mock('../../../src/components/dashboard', () => ({
   ActiveContentGrid: () => null,
   TimelineActivity: () => null,
   PendingApprovalsWidget: () => null,
+  ScreenPairingReminderCard: () => null,
 }));
 
-// Mock onboarding components
-vi.mock('../../../src/components/onboarding/WelcomeTour', () => ({
-  WelcomeTour: () => null,
-}));
-
-vi.mock('../../../src/components/onboarding/IndustrySelectionModal', () => ({
-  IndustrySelectionModal: () => null,
-}));
-
-vi.mock('../../../src/components/onboarding/StarterPackOnboarding', () => ({
-  StarterPackOnboarding: () => null,
-}));
-
-vi.mock('../../../src/components/onboarding/OnboardingBanner', () => ({
-  OnboardingBanner: () => null,
-  isBannerDismissed: vi.fn().mockReturnValue(false),
+// Mock unified onboarding controller (Phase 31)
+vi.mock('../../../src/components/onboarding/UnifiedOnboardingController', () => ({
+  UnifiedOnboardingController: () => null,
 }));
 
 // Mock dashboard sub-components from pages/dashboard
-vi.mock('../../../src/pages/dashboard/WelcomeModal', () => ({
-  WelcomeModal: () => null,
-}));
-
 vi.mock('../../../src/pages/dashboard/OnboardingCards', () => ({
-  DemoResultCard: () => null,
   GettingStartedTips: () => null,
 }));
 
@@ -184,7 +139,7 @@ describe('DashboardPage', () => {
 
     // Mock localStorage
     vi.stubGlobal('localStorage', {
-      getItem: vi.fn().mockReturnValue('true'), // Skip welcome modal
+      getItem: vi.fn(),
       setItem: vi.fn(),
     });
   });
@@ -405,10 +360,6 @@ describe('DashboardPage', () => {
         media: { total: 0, images: 0, videos: 0, apps: 0 },
       });
       mockGetTopScreens.mockResolvedValue([]);
-
-      // Mock checkIsFirstRun to return false (not first run)
-      const { checkIsFirstRun } = await import('../../../src/services/onboardingService');
-      checkIsFirstRun.mockResolvedValue({ isFirstRun: false });
 
       renderDashboard();
 
