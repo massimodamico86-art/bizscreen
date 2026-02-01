@@ -21,11 +21,3 @@ export {
   GettingStartedTips,
 } from './OnboardingCards';
 
-// Welcome modal flow
-export {
-  WelcomeModal,
-  ChoiceStep,
-  BusinessTypeStep,
-  CreatingStep,
-  BUSINESS_TYPES,
-} from './WelcomeModal';

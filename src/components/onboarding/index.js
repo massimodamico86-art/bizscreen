@@ -6,7 +6,7 @@
  * - Welcome tour for new users
  * - Industry selection for template filtering
  * - Starter pack selection during onboarding
- * - Banner for incomplete onboarding
+ * - Screen pairing reminder card
  * - Auto-build onboarding for quick setup
  * - Resume prompt for returning users
  * - Screen pairing step (placeholder for Phase 32)
@@ -20,7 +20,6 @@ export { WelcomeTour, TOUR_STEPS } from './WelcomeTour';
 export { WelcomeTourStep } from './WelcomeTourStep';
 export { IndustrySelectionModal, INDUSTRIES } from './IndustrySelectionModal';
 export { StarterPackOnboarding } from './StarterPackOnboarding';
-export { OnboardingBanner } from './OnboardingBanner';
 export { default as AutoBuildOnboardingModal } from './AutoBuildOnboardingModal';
 export { ResumePrompt } from './ResumePrompt';
 export { ScreenPairingStep } from './ScreenPairingStep';
