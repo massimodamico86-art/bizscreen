@@ -24,6 +24,7 @@ export { OnboardingBanner } from './OnboardingBanner';
 export { default as AutoBuildOnboardingModal } from './AutoBuildOnboardingModal';
 export { ResumePrompt } from './ResumePrompt';
 export { ScreenPairingStep } from './ScreenPairingStep';
+export { SuccessStep } from './SuccessStep';
 export { OnboardingSkipLink } from './OnboardingSkipLink';
 export { OnboardingProgressBar } from './OnboardingProgressBar';
 export { UnifiedOnboardingController } from './UnifiedOnboardingController';

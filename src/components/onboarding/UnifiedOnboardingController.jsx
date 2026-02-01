@@ -24,6 +24,7 @@ import { WelcomeTour } from './WelcomeTour';
 import { IndustrySelectionModal } from './IndustrySelectionModal';
 import { StarterPackOnboarding } from './StarterPackOnboarding';
 import { ScreenPairingStep } from './ScreenPairingStep';
+import { SuccessStep } from './SuccessStep';
 import { fadeInScale } from '../../design-system/motion';
 import { Button } from '../../design-system';
 
@@ -33,6 +34,7 @@ const STEP_COMPONENTS = {
   industry_selection: IndustrySelectionModal,
   starter_pack: StarterPackOnboarding,
   screen_pairing: ScreenPairingStep,
+  complete: SuccessStep,
 };
 
 // Step sequence for progress and back navigation
@@ -218,6 +220,9 @@ export function UnifiedOnboardingController({ onComplete }) {
     componentProps.industry = selectedIndustry;
   } else if (state?.currentStep === 'screen_pairing') {
     componentProps.onComplete = handleStepComplete;
+  } else if (state?.currentStep === 'complete') {
+    componentProps.onComplete = handleStepComplete;
+    componentProps.screenPaired = state?.screenPairingCompletedAt != null;
   }
 
   return (
