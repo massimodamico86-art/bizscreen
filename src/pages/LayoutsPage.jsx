@@ -351,6 +351,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
 
     return (
       <div
+        data-testid="template-card"
         onClick={() => handleTemplateClick(template)}
         className={`
           ${sizeClasses[size]} flex-shrink-0 relative rounded-lg overflow-hidden
