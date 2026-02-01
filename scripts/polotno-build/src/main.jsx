@@ -23,6 +23,10 @@ function sendToParent(type, data) {
 let globalTemplates = [];
 let templatesUpdateCallback = null;
 
+// Track if design has been modified (for dirty state)
+let hasChanges = false;
+let changeTimeout = null;
+
 // Custom Templates Section for the side panel
 const TemplatesPanel = observer(({ store }) => {
   const [templates, setTemplates] = useState(globalTemplates);
@@ -202,6 +206,8 @@ function TopBar({ store, designName, canvasWidth, canvasHeight }) {
       const dataUrl = await store.toDataURL({ pixelRatio: 2 });
       const json = store.toJSON();
       sendToParent('save', { dataUrl, json, width: store.width, height: store.height });
+      // Reset dirty state after successful save
+      hasChanges = false;
     } catch (err) {
       console.error('Save error:', err);
     } finally {
@@ -305,6 +311,20 @@ function App() {
         newStore.addPage();
       }
 
+      // Debounced change notification to parent
+      const notifyChange = () => {
+        if (changeTimeout) clearTimeout(changeTimeout);
+        changeTimeout = setTimeout(() => {
+          if (!hasChanges) {
+            hasChanges = true;
+            sendToParent('designChanged', { dirty: true });
+          }
+        }, 500); // Debounce to avoid excessive messages
+      };
+
+      // Listen for any store changes to track dirty state
+      newStore.on('change', notifyChange);
+
       // Listen for parent messages
       const handleMessage = async (event) => {
         if (event.data?.target !== 'polotno-editor') return;
@@ -313,6 +333,8 @@ function App() {
         if (action === 'loadDesign' && payload?.json) {
           try {
             await newStore.loadJSON(payload.json);
+            // Reset dirty state after loading
+            hasChanges = false;
             sendToParent('designLoaded', { success: true });
           } catch (err) {
             sendToParent('designLoaded', { success: false, error: err.message });
@@ -338,6 +360,8 @@ function App() {
                 locked: false, // Allow resizing/moving
                 name: 'Template Background',
               });
+              // Reset dirty state after loading template
+              hasChanges = false;
               sendToParent('templateLoaded', {
                 success: true,
                 width: newStore.width,
