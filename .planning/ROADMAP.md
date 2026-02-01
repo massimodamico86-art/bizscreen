@@ -5,7 +5,7 @@
 - [x] **v1 Production Release** - Phases 1-12 (shipped 2026-01-24)
 - [x] **v2 Templates & Platform Polish** - Phases 13-23 (shipped 2026-01-27)
 - [x] **v2.1 Tech Debt Cleanup** - Phases 24-29 (shipped 2026-01-28)
-- [ ] **v2.2 Onboarding Polish** - Phases 30-35 (in progress)
+- [x] **v2.2 Onboarding Polish** - Phases 30-35 (shipped 2026-02-01)
 
 ## Overview
 
@@ -26,7 +26,7 @@ This milestone creates a single UnifiedOnboardingController that wraps working c
 - [x] **Phase 32: Screen Pairing Integration** - True activation metric achievable in onboarding (completed 2026-01-31)
 - [x] **Phase 33: Success and Completion UX** - Explicit completion celebration (completed 2026-01-31)
 - [x] **Phase 34: Cleanup and Deprecation** - Remove dead code after validation (completed 2026-02-01)
-- [ ] **Phase 35: Polotno Editor Verification** - Template customization path hardened
+- [x] **Phase 35: Polotno Editor Verification** - Template customization path hardened (completed 2026-02-01)
 
 ## Phase Details
 
@@ -154,10 +154,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 35-01-PLAN.md — Modal wrapper with loading/error states (10s timeout, retry, fallback)
-- [ ] 35-02-PLAN.md — Unsaved changes detection and three-button confirm dialog
-- [ ] 35-03-PLAN.md — Post-save user choice dialog (Keep Editing / View Template)
-- [ ] 35-04-PLAN.md — Mobile detection warning and E2E tests
+- [x] 35-01-PLAN.md — Modal wrapper with loading/error states (10s timeout, retry, fallback)
+- [x] 35-02-PLAN.md — Unsaved changes detection and three-button confirm dialog
+- [x] 35-03-PLAN.md — Post-save user choice dialog (Keep Editing / View Template)
+- [x] 35-04-PLAN.md — Mobile detection warning and E2E tests
 
 ---
 
@@ -170,12 +170,12 @@ Plans:
 | 32. Screen Pairing | v2.2 | 2/2 | ✓ Complete | 2026-01-31 |
 | 33. Success UX | v2.2 | 1/1 | ✓ Complete | 2026-01-31 |
 | 34. Cleanup | v2.2 | 2/2 | ✓ Complete | 2026-02-01 |
-| 35. Polotno | v2.2 | 0/0 | Pending | — |
+| 35. Polotno | v2.2 | 4/4 | ✓ Complete | 2026-02-01 |
 
-**Total v2.2:** 5/6 phases complete
+**Total v2.2:** 6/6 phases complete ✓
 
 *Phase 31 human verification deferred
 
 ---
 *Roadmap created: 2026-01-28*
-*Last updated: 2026-02-01 — Phase 34 complete (1367 lines removed)*
+*Last updated: 2026-02-01 — v2.2 milestone complete*
