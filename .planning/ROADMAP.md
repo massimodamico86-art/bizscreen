@@ -151,10 +151,13 @@ Plans:
   3. Fallback guidance offers "Edit later in Design Studio" if iframe communication fails
   4. Template preview loads correctly before opening editor
   5. Save operation persists changes and returns user to previous context
-**Plans**: 0 plans
+**Plans**: 4 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 35 to break down)
+- [ ] 35-01-PLAN.md — Modal wrapper with loading/error states (10s timeout, retry, fallback)
+- [ ] 35-02-PLAN.md — Unsaved changes detection and three-button confirm dialog
+- [ ] 35-03-PLAN.md — Post-save user choice dialog (Keep Editing / View Template)
+- [ ] 35-04-PLAN.md — Mobile detection warning and E2E tests
 
 ---
 
