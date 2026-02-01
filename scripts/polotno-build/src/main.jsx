@@ -388,6 +388,18 @@ function App() {
           if (templatesUpdateCallback) {
             templatesUpdateCallback(payload.templates);
           }
+        } else if (action === 'triggerSave') {
+          // Programmatic save triggered from parent (e.g., UnsavedChangesDialog)
+          try {
+            const dataUrl = await newStore.toDataURL({ pixelRatio: 2 });
+            const json = newStore.toJSON();
+            sendToParent('save', { dataUrl, json, width: newStore.width, height: newStore.height });
+            // Reset dirty state after successful save
+            hasChanges = false;
+          } catch (err) {
+            console.error('Trigger save error:', err);
+            sendToParent('saveError', { error: err.message });
+          }
         }
       };
 
