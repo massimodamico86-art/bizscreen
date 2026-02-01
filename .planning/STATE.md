@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 35 - Polotno Editor Verification
-Plan: 02 of 4 complete
+Plan: 03 of 4 complete
 Status: In progress
-Last activity: 2026-02-01 — Completed 35-03-PLAN.md (Post-save dialog)
+Last activity: 2026-02-01 — Completed 35-02-PLAN.md (Dirty state and confirmation dialog)
 
-Progress: [=========-] 88% (5.5/6 phases complete)
+Progress: [=========-] 91% (5.75/6 phases complete)
 
 ## Milestone History
 
@@ -34,7 +34,7 @@ Progress: [=========-] 88% (5.5/6 phases complete)
 | 32 - Screen Pairing | Pairing integrated into flow | Complete (2/2) |
 | 33 - Success UX | Explicit completion celebration | Complete (1/1) |
 | 34 - Cleanup | Remove dead code | Complete (2/2) |
-| 35 - Polotno | Editor verification | In progress (2/4) |
+| 35 - Polotno | Editor verification | In progress (3/4) |
 
 ## Performance Metrics
 
@@ -45,7 +45,7 @@ Progress: [=========-] 88% (5.5/6 phases complete)
 
 **v2.2 Current:**
 - Phases: 5.25/6 complete
-- Plans: 14 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33, 2 in Phase 34, 2 in Phase 35)
+- Plans: 15 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33, 2 in Phase 34, 3 in Phase 35)
 - Note: Phase 31 human verification skipped (deferred)
 
 ## Accumulated Context
@@ -123,6 +123,12 @@ Phase 35-01 decisions:
 - Error state has three options: Try Again, Open Design Studio, Contact Support
 - EditorModal pattern: parent handles loading/error states via onReady/onError callbacks
 
+Phase 35-02 decisions:
+- postMessage designChanged for dirty state tracking from iframe to parent
+- 500ms debounce on change notifications to avoid excessive messages
+- triggerSave action enables programmatic save from UnsavedChangesDialog
+- Cancel returns to editor, Discard closes without saving, Save saves then closes
+
 Phase 35-03 decisions:
 - PostSaveDialog renders inside EditorModal as child component
 - Keep Editing is primary button (most common action)
@@ -161,9 +167,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 35-03-PLAN.md (Post-save dialog)
+Stopped at: Completed 35-02-PLAN.md (Dirty state and confirmation dialog)
 Resume file: None
-Next: 35-04-PLAN.md (E2E verification)
+Next: 35-04-PLAN.md (Full E2E verification)
 
 ---
-*Updated: 2026-02-01 — Completed 35-03-PLAN.md (PostSaveDialog with Keep Editing / View Template choice)*
+*Updated: 2026-02-01 — Completed 35-02-PLAN.md (Dirty state tracking with UnsavedChangesDialog)*
