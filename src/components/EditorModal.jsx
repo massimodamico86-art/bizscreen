@@ -12,6 +12,7 @@ import { useState, useCallback } from 'react';
 import { Loader2, AlertCircle, RefreshCw, ExternalLink, HelpCircle } from 'lucide-react';
 import { Modal } from '../design-system/components/Modal';
 import PolotnoEditor from './PolotnoEditor';
+import PostSaveDialog from './PostSaveDialog';
 
 /**
  * EditorModal component
@@ -33,6 +34,8 @@ export default function EditorModal({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [retryKey, setRetryKey] = useState(0);
+  const [showPostSaveDialog, setShowPostSaveDialog] = useState(false);
+  const [savedDesignName, setSavedDesignName] = useState(null);
 
   // Handle editor ready
   const handleEditorReady = useCallback(() => {
@@ -65,11 +68,28 @@ export default function EditorModal({
   const handleEditorSave = useCallback(async (saveData) => {
     try {
       await onSave?.(saveData);
-      showToast?.('Design saved successfully!', 'success');
+      // Set the saved design name for the dialog
+      setSavedDesignName(saveData?.name || templateData?.name || null);
+      // Show post-save dialog instead of toast
+      setShowPostSaveDialog(true);
     } catch (err) {
       showToast?.('Failed to save design: ' + err.message, 'error');
     }
-  }, [onSave, showToast]);
+  }, [onSave, showToast, templateData?.name]);
+
+  // Handle "Keep Editing" from PostSaveDialog
+  const handleKeepEditing = useCallback(() => {
+    setShowPostSaveDialog(false);
+    // Stay in editor - nothing else to do
+  }, []);
+
+  // Handle "View My Template" from PostSaveDialog
+  const handleViewTemplate = useCallback(() => {
+    setShowPostSaveDialog(false);
+    handleClose();
+    // Navigate to media library where saved designs appear
+    window.location.hash = '#/media-images';
+  }, [handleClose]);
 
   // Navigate to Design Studio (fallback)
   const handleOpenDesignStudio = useCallback(() => {
@@ -174,6 +194,14 @@ export default function EditorModal({
           height={templateData?.height || 1080}
         />
       </div>
+
+      {/* Post-save dialog */}
+      <PostSaveDialog
+        open={showPostSaveDialog}
+        onKeepEditing={handleKeepEditing}
+        onViewTemplate={handleViewTemplate}
+        savedDesignName={savedDesignName}
+      />
     </Modal>
   );
 }
