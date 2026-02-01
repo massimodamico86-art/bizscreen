@@ -25,7 +25,7 @@ This milestone creates a single UnifiedOnboardingController that wraps working c
 - [x] **Phase 31: UnifiedOnboardingController** - State machine orchestrator with feature flag (completed 2026-01-31)*
 - [x] **Phase 32: Screen Pairing Integration** - True activation metric achievable in onboarding (completed 2026-01-31)
 - [x] **Phase 33: Success and Completion UX** - Explicit completion celebration (completed 2026-01-31)
-- [ ] **Phase 34: Cleanup and Deprecation** - Remove dead code after validation
+- [x] **Phase 34: Cleanup and Deprecation** - Remove dead code after validation (completed 2026-02-01)
 - [ ] **Phase 35: Polotno Editor Verification** - Template customization path hardened
 
 ## Phase Details
@@ -136,8 +136,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 34-01-PLAN.md — Establish E2E baseline and delete legacy components
-- [ ] 34-02-PLAN.md — Clean up DashboardPage and update tests
+- [x] 34-01-PLAN.md — Establish E2E baseline and delete legacy components
+- [x] 34-02-PLAN.md — Clean up DashboardPage and update tests
 
 ---
 
@@ -166,13 +166,13 @@ Plans:
 | 31. Unified Controller | v2.2 | 4/4 | ✓ Complete* | 2026-01-31 |
 | 32. Screen Pairing | v2.2 | 2/2 | ✓ Complete | 2026-01-31 |
 | 33. Success UX | v2.2 | 1/1 | ✓ Complete | 2026-01-31 |
-| 34. Cleanup | v2.2 | 0/2 | Planned | — |
+| 34. Cleanup | v2.2 | 2/2 | ✓ Complete | 2026-02-01 |
 | 35. Polotno | v2.2 | 0/0 | Pending | — |
 
-**Total v2.2:** 4/6 phases complete
+**Total v2.2:** 5/6 phases complete
 
 *Phase 31 human verification deferred
 
 ---
 *Roadmap created: 2026-01-28*
-*Last updated: 2026-01-31 — Phase 34 planned (2 plans in 2 waves)*
+*Last updated: 2026-02-01 — Phase 34 complete (1367 lines removed)*
