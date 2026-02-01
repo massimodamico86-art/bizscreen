@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 
 ## Current Position
 
-Phase: 34 - Cleanup and Deprecation
-Plan: 02 of 2 complete
-Status: Phase complete
-Last activity: 2026-02-01 — Completed Phase 34 (1367 lines of dead code removed)
+Phase: 35 - Polotno Editor Verification
+Plan: 01 of 4 complete
+Status: In progress
+Last activity: 2026-02-01 — Completed 35-01-PLAN.md (EditorModal wrapper)
 
-Progress: [========--] 83% (5/6 phases complete)
+Progress: [=========-] 85% (5.25/6 phases complete)
 
 ## Milestone History
 
@@ -34,7 +34,7 @@ Progress: [========--] 83% (5/6 phases complete)
 | 32 - Screen Pairing | Pairing integrated into flow | Complete (2/2) |
 | 33 - Success UX | Explicit completion celebration | Complete (1/1) |
 | 34 - Cleanup | Remove dead code | Complete (2/2) |
-| 35 - Polotno | Editor verification | Pending |
+| 35 - Polotno | Editor verification | In progress (1/4) |
 
 ## Performance Metrics
 
@@ -44,8 +44,8 @@ Progress: [========--] 83% (5/6 phases complete)
 - Total codebase: 310,940 LOC JavaScript/JSX
 
 **v2.2 Current:**
-- Phases: 5/6 complete
-- Plans: 12 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33, 2 in Phase 34)
+- Phases: 5.25/6 complete
+- Plans: 13 executed (3 in Phase 30, 4 in Phase 31, 2 in Phase 32, 1 in Phase 33, 2 in Phase 34, 1 in Phase 35)
 - Note: Phase 31 human verification skipped (deferred)
 
 ## Accumulated Context
@@ -117,6 +117,12 @@ Phase 34-02 decisions:
 - Removed demoResult state and DemoResultCard since createDemoWorkspace only triggered from WelcomeModal
 - Removed all legacy code paths behind !config().useUnifiedOnboarding checks
 
+Phase 35-01 decisions:
+- Modal uses closeOnOverlay=false and closeOnEscape=false to prevent accidental close
+- 10-second timeout (changed from 30s) per CONTEXT.md decision
+- Error state has three options: Try Again, Open Design Studio, Contact Support
+- EditorModal pattern: parent handles loading/error states via onReady/onError callbacks
+
 ### Pending Todos
 
 None.
@@ -149,9 +155,9 @@ All v2.1 tech debt resolved. Minor items accepted:
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed Phase 34 (Cleanup and Deprecation)
+Stopped at: Completed 35-01-PLAN.md (EditorModal wrapper)
 Resume file: None
-Next: Phase 35 (Polotno Editor Verification)
+Next: 35-02-PLAN.md (Dirty state and confirmation dialog)
 
 ---
-*Updated: 2026-02-01 — Completed Phase 34 (1367 lines of dead code removed)*
+*Updated: 2026-02-01 — Completed 35-01-PLAN.md (EditorModal wrapper with 10s timeout)*
