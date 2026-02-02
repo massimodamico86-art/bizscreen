@@ -184,13 +184,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 022 | Comprehensive client UI interaction tests | 2026-02-02 | 4c48a97 | [022-playwright-as-a-client-click-on-all-the](./quick/022-playwright-as-a-client-click-on-all-the/) |
 | 023 | Fix AppsPage, PlaylistsPage, TemplatesPage imports | 2026-02-02 | a5668ee | [023-fix-all-known-issues-medialibrarypage](./quick/023-fix-all-known-issues-medialibrarypage/) |
 | 024 | Verify client UI tests + fix template imports | 2026-02-02 | 6003e20 | [024-re-run-comprehensive-client-ui-tests-to](./quick/024-re-run-comprehensive-client-ui-tests-to/) |
+| 025 | Fix remaining fixme tests (Templates, Media, Dashboard) | 2026-02-02 | 587820e | [025-remaining-fixme-tests-3-templates-page-n](./quick/025-remaining-fixme-tests-3-templates-page-n/) |
 
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick task 024 (Verify client UI tests + fix template imports)
+Stopped at: Completed quick task 025 (Fix remaining fixme E2E tests)
 Resume file: None
-Next: Templates page needs server restart to verify import fixes; 13/16 E2E tests passing
+Next: All 16/16 client-interactions E2E tests passing; clean test suite ready
 
 ---
-*Updated: 2026-02-02 - Quick task 024 complete*
+*Updated: 2026-02-02 - Quick task 025 complete*
