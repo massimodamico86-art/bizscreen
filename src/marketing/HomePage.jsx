@@ -2,6 +2,7 @@
  * HomePage - Marketing landing page
  */
 
+import { Link } from 'react-router-dom';
 import {
   Monitor,
   Upload,
@@ -12,8 +13,12 @@ import {
   Dumbbell,
   Scissors,
   GraduationCap,
-  Hotel
+  Hotel,
+  ArrowRight,
+  Play,
+  CheckCircle
 } from 'lucide-react';
+import Seo from '../components/Seo';
 
 const useCases = [
   { icon: UtensilsCrossed, title: 'Restaurants', description: 'Digital menu boards and promotions' },
@@ -40,6 +45,9 @@ const features = [
   'No special hardware needed',
 ];
 
+/**
+ *
+ */
 export default function HomePage() {
   return (
     <div>
