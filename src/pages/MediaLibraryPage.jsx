@@ -27,6 +27,19 @@ import {
   Music,
   FileText,
   Globe,
+  Plus,
+  Filter,
+  List,
+  AlertTriangle,
+  Search,
+  X,
+  Folder,
+  Home,
+  ChevronRight,
+  ChevronLeft,
+  ChevronsLeft,
+  ChevronsRight,
+  Loader2,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
@@ -36,12 +49,49 @@ import {
 } from '../components/media';
 
 // Design system imports
+import {
+  PageLayout,
+  PageContent,
+  Stack,
+  Inline,
+  Grid,
+  Card,
+  Button,
+  Banner,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 
-
+// Media components
+import {
+  StorageUsageInline,
+  BulkActionBar,
+  DropZoneOverlay,
+  MediaPreviewPopover,
+  MediaDetailModal,
+} from '../components/media';
+import YodeckEmptyState from '../components/YodeckEmptyState';
+import YodeckAddMediaModal from '../components/media/YodeckAddMediaModal';
 
 // Extracted sub-components
 import {
   MEDIA_TYPE_LABELS,
+  LimitWarningBanner,
+  FolderBreadcrumbs,
+  MediaListRow,
+  FolderGridCard,
+  MediaGridCard,
+  DeleteConfirmModal,
+  LimitReachedModal,
+  FolderCreateModal,
+  MoveToFolderModal,
+  AddToPlaylistModal,
+  SetToScreenModal,
+  EmergencyDurationModal,
 } from './components/MediaLibraryComponents';
 
 // Filter options for sidebar
