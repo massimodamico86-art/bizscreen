@@ -176,13 +176,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 014 | Update admin.spec.js to use storage state auth | 2026-02-02 | 2c6f795 | [014-debug-admin-auth-issues](./quick/014-debug-admin-auth-issues/) |
 | 015 | Fix super admin dashboard crash (missing imports) | 2026-02-02 | 5b85057 | [015-fix-super-admin-dashboard-crash](./quick/015-fix-super-admin-dashboard-crash/) |
 | 016 | Verify admin tests (tasks 014/015 confirmation) | 2026-02-02 | - | [016-run-admin-tests-to-verify-fixes](./quick/016-run-admin-tests-to-verify-fixes/) |
+| 017 | Fix admin panel test selectors | 2026-02-02 | 191be28 | [017-fix-admin-panel-test-selectors](./quick/017-fix-admin-panel-test-selectors/) |
 
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick task 016 (Admin tests verification)
+Stopped at: Completed quick task 017 (Admin panel test selector fix)
 Resume file: None
-Next: Admin Panel tests need selector updates to match actual UI ("Tenant Management" vs "Admin Panel")
+Next: Remaining admin test failures are TenantManagement page crashes (infrastructure issue)
 
 ---
-*Updated: 2026-02-02 — Quick task 016 complete*
+*Updated: 2026-02-02 — Quick task 017 complete*
