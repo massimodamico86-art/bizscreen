@@ -169,13 +169,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 007 | Fix unused variable warnings in load-tests | 2026-01-31 | 9d42226 | [007-fix-unused-variable-warnings-in-load-tes](./quick/007-fix-unused-variable-warnings-in-load-tes/) |
 | 008 | Fix test mock errors (getUnifiedOnboardingState) | 2026-01-31 | 40bc784 | [008-fix-test-mock-errors](./quick/008-fix-test-mock-errors/) |
 | 009 | Update baseline-browser-mapping to v2.9.19 | 2026-01-31 | 95de1d6 | [009-update-baseline-browser-mapping](./quick/009-update-baseline-browser-mapping/) |
+| 010 | Make Playwright login easier with storage state | 2026-02-02 | ec7c25b | [010-make-playwright-login-easier](./quick/010-make-playwright-login-easier/) |
 
 ## Session Continuity
 
-Last session: 2026-02-01
-Stopped at: Completed v2.2 Onboarding Polish milestone
+Last session: 2026-02-02
+Stopped at: Completed quick task 010 (Playwright storage state)
 Resume file: None
 Next: `/gsd:audit-milestone` to verify requirements, cross-phase integration, and E2E flows
 
 ---
-*Updated: 2026-02-01 — Completed v2.2 milestone (16 plans across 6 phases)*
+*Updated: 2026-02-02 — Quick task 010 complete*
