@@ -53,6 +53,7 @@ import {
   Search,
   Sparkles,
   Trash2,
+  X,
   Zap,
 } from 'lucide-react';
 
