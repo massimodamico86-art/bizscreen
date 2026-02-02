@@ -26,3 +26,6 @@ dist-ssr
 
 # Performance reports (generated)
 perf-reports/
+
+# Playwright auth state (contains session data)
+playwright/.auth/
