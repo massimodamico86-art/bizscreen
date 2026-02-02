@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-02 - Completed quick task 020 (Fix HomePage missing imports)
+Last activity: 2026-02-02 - Completed quick task 021 (Client smoke test + FeaturesPage/PricingPage fix)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -180,13 +180,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 018 | Start the server | 2026-02-02 | - | [018-start-the-server](./quick/018-start-the-server/) |
 | 019 | Fix MarketingLayout missing imports | 2026-02-02 | d8ec9e5 | [019-fix-referenceerror-link-is-not-defined-i](./quick/019-fix-referenceerror-link-is-not-defined-i/) |
 | 020 | Fix HomePage missing imports | 2026-02-02 | 0fbced7 | [020-fix-referenceerror-seo-is-not-defined-i](./quick/020-fix-referenceerror-seo-is-not-defined-i/) |
+| 021 | Client smoke test (+ FeaturesPage/PricingPage fix) | 2026-02-02 | 360be47 | [021-do-a-smoke-test-as-a-client](./quick/021-do-a-smoke-test-as-a-client/) |
 
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick task 020 (Fix HomePage missing imports)
+Stopped at: Completed quick task 021 (Client smoke test)
 Resume file: None
-Next: Marketing pages may need additional import fixes
+Next: All marketing pages verified working via automated smoke test
 
 ---
-*Updated: 2026-02-02 — Quick task 020 complete*
+*Updated: 2026-02-02 - Quick task 021 complete*
