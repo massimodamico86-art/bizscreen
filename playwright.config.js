@@ -45,9 +45,20 @@ export default defineConfig({
 
   // Configure projects for browsers
   projects: [
+    // Setup project runs first to authenticate and save session
+    {
+      name: 'setup',
+      testMatch: /auth\.setup\.js/,
+    },
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
+      use: {
+        ...devices['Desktop Chrome'],
+        // Use saved auth state from setup project
+        storageState: 'playwright/.auth/user.json',
+      },
+      // Run setup project before chromium tests
+      dependencies: ['setup'],
     },
     // Uncomment for additional browsers
     // {
