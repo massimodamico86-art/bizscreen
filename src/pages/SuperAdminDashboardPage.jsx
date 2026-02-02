@@ -21,8 +21,18 @@ import {
   Play,
   UserCheck,
   LayoutTemplate,
+  ChevronRight,
+  X,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
+/**
+ *
+ * @param root0
+ * @param root0.onNavigate
+ */
 export default function SuperAdminDashboardPage({ onNavigate }) {
   const { userProfile } = useAuth();
   const [stats, setStats] = useState({
