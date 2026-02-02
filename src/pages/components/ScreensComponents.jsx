@@ -10,16 +10,51 @@
  * @see ScreensPage.jsx for main page component
  */
 import { useState, useEffect } from 'react';
-
-
+import {
+  Plus,
+  Monitor,
+  MoreVertical,
+  Trash2,
+  Edit,
+  RefreshCw,
+  Play,
+  Copy,
+  Loader2,
+  CheckCircle,
+  Info,
+  ExternalLink,
+  AlertTriangle,
+  Zap,
+  BarChart3,
+  Clock,
+  TrendingUp,
+  Image,
+  Power,
+  RotateCcw,
+  HardDrive,
+  Lock,
+  Unlock,
+  Eye,
+  Globe,
+} from 'lucide-react';
 import { SUPPORTED_LOCALES } from '../../i18n/i18nConfig';
 import { formatLimitDisplay } from '../../services/limitsService';
 import { formatDuration, getUptimeColor, DATE_RANGES } from '../../services/analyticsService';
-import { getPlayerStatus } from '../../components/screens/PlayerStatusBadge';
+import YodeckEmptyState from '../../components/YodeckEmptyState';
+import { PlayerStatusBadge, getPlayerStatus } from '../../components/screens/PlayerStatusBadge';
 
 // Design system imports
-
-
+import {
+  Stack,
+  Grid,
+  Inline,
+} from '../../design-system';
+import { Button } from '../../design-system';
+import { Card, CardHeader, CardTitle, CardContent } from '../../design-system';
+import { Badge } from '../../design-system';
+import { FormField, Input, Select, Switch } from '../../design-system';
+import { Modal, ModalHeader, ModalTitle, ModalDescription, ModalContent, ModalFooter } from '../../design-system';
+import { Alert, Banner } from '../../design-system';
 
 // --------------------------------------------------------------------------
 // Utility Components
@@ -28,6 +63,9 @@ import { getPlayerStatus } from '../../components/screens/PlayerStatusBadge';
 /**
  * Demo pairing hint banner
  * Shows pairing instructions for demo screens with OTP code
+ * @param root0
+ * @param root0.screen
+ * @param root0.onCopy
  */
 export const DemoPairingBanner = ({ screen, onCopy }) => {
   if (!screen?.otp_code) return null;
@@ -77,6 +115,9 @@ export const DemoPairingBanner = ({ screen, onCopy }) => {
 /**
  * Limit warning banner
  * Shows when screen limit is reached with upgrade prompt
+ * @param root0
+ * @param root0.limits
+ * @param root0.onUpgrade
  */
 export const LimitWarningBanner = ({ limits, onUpgrade }) => {
   if (!limits) return null;
@@ -105,6 +146,8 @@ export const LimitWarningBanner = ({ limits, onUpgrade }) => {
 /**
  * Empty state for no screens
  * Shows welcome message and add screen CTA
+ * @param root0
+ * @param root0.onAddScreen
  */
 export const NoScreensState = ({ onAddScreen }) => (
   <Card variant="outlined" className="p-6">
@@ -161,6 +204,10 @@ export const PromoCards = () => (
 /**
  * Screens Error State
  * Error UI with retry button
+ * @param root0
+ * @param root0.error
+ * @param root0.onRetry
+ * @param root0.t
  */
 export const ScreensErrorState = ({ error, onRetry, t }) => {
   const [retrying, setRetrying] = useState(false);
@@ -211,6 +258,22 @@ export const ScreensErrorState = ({ error, onRetry, t }) => {
 /**
  * Screen table row
  * Displays a single screen in the table with status, content, and actions
+ * @param root0
+ * @param root0.screen
+ * @param root0.actionMenuId
+ * @param root0.onActionMenuToggle
+ * @param root0.onEdit
+ * @param root0.onViewDetails
+ * @param root0.onViewAnalytics
+ * @param root0.onDeviceCommand
+ * @param root0.onOpenKiosk
+ * @param root0.onDelete
+ * @param root0.onOpenContentPicker
+ * @param root0.commandingDevice
+ * @param root0.isSelected
+ * @param root0.onToggleSelection
+ * @param root0.showSecondary
+ * @param root0.showTertiary
  */
 export const ScreenRow = ({
   screen,
@@ -334,6 +397,16 @@ export const ScreenRow = ({
 /**
  * Screen action menu dropdown
  * Context menu for screen actions (edit, analytics, device commands, delete)
+ * @param root0
+ * @param root0.screen
+ * @param root0.commandingDevice
+ * @param root0.onClose
+ * @param root0.onEdit
+ * @param root0.onViewDetails
+ * @param root0.onViewAnalytics
+ * @param root0.onDeviceCommand
+ * @param root0.onOpenKiosk
+ * @param root0.onDelete
  */
 export const ScreenActionMenu = ({
   screen,
@@ -439,6 +512,13 @@ export const ScreenActionMenu = ({
 /**
  * Add Screen Modal
  * Creates a new screen and shows pairing code
+ * @param root0
+ * @param root0.open
+ * @param root0.onClose
+ * @param root0.onSubmit
+ * @param root0.creating
+ * @param root0.createdScreen
+ * @param root0.showToast
  */
 export const AddScreenModal = ({ open, onClose, onSubmit, creating, createdScreen, showToast }) => {
   const [name, setName] = useState('');
@@ -553,6 +633,11 @@ export const AddScreenModal = ({ open, onClose, onSubmit, creating, createdScree
 /**
  * Limit Reached Modal
  * Shows when screen limit is reached with upgrade options
+ * @param root0
+ * @param root0.open
+ * @param root0.onClose
+ * @param root0.limits
+ * @param root0.screenCount
  */
 export const LimitReachedModal = ({ open, onClose, limits, screenCount }) => {
   if (!open) return null;
@@ -600,6 +685,13 @@ export const LimitReachedModal = ({ open, onClose, limits, screenCount }) => {
 /**
  * Analytics Modal
  * Shows screen playback analytics with uptime, playback time, and media stats
+ * @param root0
+ * @param root0.screen
+ * @param root0.data
+ * @param root0.loading
+ * @param root0.range
+ * @param root0.onRangeChange
+ * @param root0.onClose
  */
 export const AnalyticsModal = ({ screen, data, loading, range, onRangeChange, onClose }) => {
   if (!screen) return null;
@@ -731,6 +823,15 @@ export const AnalyticsModal = ({ screen, data, loading, range, onRangeChange, on
 /**
  * Edit Screen Modal
  * Edits screen name, location, group, and content assignment
+ * @param root0
+ * @param root0.screen
+ * @param root0.locations
+ * @param root0.screenGroups
+ * @param root0.playlists
+ * @param root0.layouts
+ * @param root0.onClose
+ * @param root0.onSubmit
+ * @param root0.saving
  */
 export const EditScreenModal = ({ screen, locations, screenGroups, playlists, layouts, onClose, onSubmit, saving }) => {
   const [name, setName] = useState(screen?.device_name || '');
@@ -869,6 +970,10 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
 /**
  * Kiosk Mode Modal
  * Configures kiosk mode settings with optional exit password
+ * @param root0
+ * @param root0.screen
+ * @param root0.onClose
+ * @param root0.onSubmit
  */
 export const KioskModeModal = ({ screen, onClose, onSubmit }) => {
   const [enabled, setEnabled] = useState(screen?.kiosk_mode_enabled || false);

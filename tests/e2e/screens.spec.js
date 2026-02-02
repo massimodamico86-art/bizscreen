@@ -107,42 +107,62 @@ test.describe('Screens Page', () => {
 });
 
 test.describe('TV Player Pairing Page', () => {
+  // Clear auth state - player page is public
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test('player page loads without authentication', async ({ page }) => {
     // Navigate directly to player (no login required)
     await page.goto('/player');
 
-    // Should show pairing UI
-    await expect(page.getByText(/connect your screen/i)).toBeVisible({ timeout: 10000 });
+    // Default view shows QR pairing screen
+    await expect(page.getByText(/pair this screen/i)).toBeVisible({ timeout: 10000 });
   });
 
-  test('player page shows OTP input field', async ({ page }) => {
+  test('player page shows QR code for pairing', async ({ page }) => {
     await page.goto('/player');
 
-    // Should have an input for OTP code
+    // Should show QR code pairing UI
+    await expect(page.getByText(/pair this screen/i)).toBeVisible({ timeout: 5000 });
+
+    // Should have instructions
+    await expect(page.getByText(/scan the qr code/i)).toBeVisible();
+
+    // Should have fallback to manual entry
+    await expect(page.getByRole('button', { name: /enter pairing code manually/i })).toBeVisible();
+  });
+
+  test('player page shows pairing instructions', async ({ page }) => {
+    await page.goto('/player');
+
+    // Should show "How to Pair" steps
+    await expect(page.getByText(/how to pair/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/open the bizscreen app/i)).toBeVisible();
+    await expect(page.getByText(/scan this qr code/i)).toBeVisible();
+  });
+
+  test('player page can switch to OTP entry mode', async ({ page }) => {
+    await page.goto('/player');
+
+    // Click to enter code manually
+    const manualButton = page.getByRole('button', { name: /enter pairing code manually/i });
+    await expect(manualButton).toBeVisible({ timeout: 5000 });
+    await manualButton.click();
+
+    // Should now show OTP input
     const otpInput = page.locator('input[placeholder="ABC123"]');
     await expect(otpInput).toBeVisible({ timeout: 5000 });
-  });
-
-  test('player page shows character count indicator', async ({ page }) => {
-    await page.goto('/player');
-
-    // Type some characters and verify visual indicator updates
-    const otpInput = page.locator('input[placeholder="ABC123"]');
-    await otpInput.fill('ABC');
-
-    // Should have dot indicators (6 dots total)
-    const dots = page.locator('div').filter({
-      has: page.locator('div[style*="border-radius: 50%"]')
-    });
-
-    // Verify the page renders correctly
     await expect(page.getByText(/connect your screen/i)).toBeVisible();
   });
 
-  test('player page Connect button is disabled until 6 characters entered', async ({ page }) => {
+  test('player page OTP mode - Connect button is disabled until 6 characters entered', async ({ page }) => {
     await page.goto('/player');
 
+    // Switch to OTP mode
+    await page.getByRole('button', { name: /enter pairing code manually/i }).click();
+
     const otpInput = page.locator('input[placeholder="ABC123"]');
+    await expect(otpInput).toBeVisible({ timeout: 5000 });
+
     const connectButton = page.getByRole('button', { name: /connect screen/i });
 
     // Button should be disabled with empty input
@@ -157,10 +177,14 @@ test.describe('TV Player Pairing Page', () => {
     await expect(connectButton).toBeEnabled({ timeout: 2000 });
   });
 
-  test('player page validates OTP format (uppercase only)', async ({ page }) => {
+  test('player page OTP mode - validates format (uppercase only)', async ({ page }) => {
     await page.goto('/player');
 
+    // Switch to OTP mode
+    await page.getByRole('button', { name: /enter pairing code manually/i }).click();
+
     const otpInput = page.locator('input[placeholder="ABC123"]');
+    await expect(otpInput).toBeVisible({ timeout: 5000 });
 
     // Type lowercase - should be converted to uppercase
     await otpInput.fill('abc123');
@@ -170,10 +194,15 @@ test.describe('TV Player Pairing Page', () => {
     expect(value).toBe('ABC123');
   });
 
-  test('player page shows error for invalid OTP', async ({ page }) => {
+  test('player page OTP mode - shows error for invalid code', async ({ page }) => {
     await page.goto('/player');
 
+    // Switch to OTP mode
+    await page.getByRole('button', { name: /enter pairing code manually/i }).click();
+
     const otpInput = page.locator('input[placeholder="ABC123"]');
+    await expect(otpInput).toBeVisible({ timeout: 5000 });
+
     const connectButton = page.getByRole('button', { name: /connect screen/i });
 
     // Enter a fake OTP and submit
@@ -185,25 +214,13 @@ test.describe('TV Player Pairing Page', () => {
     await expect(errorMessage).toBeVisible({ timeout: 10000 });
   });
 
-  test('player page has Need help section', async ({ page }) => {
-    await page.goto('/player');
-
-    // Should have "Need help?" toggle
-    const helpToggle = page.getByRole('button', { name: /need help/i });
-    await expect(helpToggle).toBeVisible({ timeout: 5000 });
-
-    // Click to expand
-    await helpToggle.click();
-
-    // Should show help content
-    const helpContent = page.getByText(/how to get your pairing code/i);
-    await expect(helpContent).toBeVisible({ timeout: 3000 });
-  });
-
   test('player page shows BizScreen branding', async ({ page }) => {
     await page.goto('/player');
 
-    // Should show BizScreen branding
+    // Switch to OTP mode to see branding
+    await page.getByRole('button', { name: /enter pairing code manually/i }).click();
+
+    // Should show BizScreen branding in OTP mode
     const branding = page.getByText(/powered by bizscreen/i);
     await expect(branding).toBeVisible({ timeout: 5000 });
   });

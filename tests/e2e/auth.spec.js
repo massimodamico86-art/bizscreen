@@ -10,6 +10,9 @@ import { loginAndPrepare, waitForPageReady } from './helpers.js';
 // LOGIN FLOW TESTS
 // =============================================================================
 test.describe('Login Flow', () => {
+  // Clear auth state - these tests require unauthenticated access
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/auth/login');
   });
@@ -102,6 +105,9 @@ test.describe('Login Flow', () => {
 // SIGNUP FLOW TESTS
 // =============================================================================
 test.describe('Signup Flow', () => {
+  // Clear auth state - these tests require unauthenticated access
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/auth/signup');
   });
@@ -121,13 +127,14 @@ test.describe('Signup Flow', () => {
   test('has create account submit button', async ({ page }) => {
     const submitButton = page.getByRole('button', { name: /create account/i });
     await expect(submitButton).toBeVisible();
-    await expect(submitButton).toBeEnabled();
+    // Button is disabled until form is filled (correct UX behavior)
+    await expect(submitButton).toBeDisabled();
   });
 
   test('password field has minimum length requirement', async ({ page }) => {
-    // The password input has minLength=6 attribute for browser validation
+    // The password input has minLength=8 attribute for browser validation
     const passwordInput = page.getByLabel(/password/i);
-    await expect(passwordInput).toHaveAttribute('minLength', '6');
+    await expect(passwordInput).toHaveAttribute('minLength', '8');
   });
 
   test('has terms and privacy policy links', async ({ page }) => {
@@ -170,6 +177,9 @@ test.describe('Signup Flow', () => {
 // PASSWORD RESET FLOW TESTS
 // =============================================================================
 test.describe('Password Reset Flow', () => {
+  // Clear auth state - these tests require unauthenticated access
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/auth/reset-password');
   });
@@ -315,10 +325,10 @@ test.describe('Logout Flow', () => {
 // PROTECTED ROUTE TESTS
 // =============================================================================
 test.describe('Protected Routes', () => {
-  test('unauthenticated access to /app redirects to login', async ({ page }) => {
-    // Clear any existing session
-    await page.context().clearCookies();
+  // Clear auth state - these tests require unauthenticated access
+  test.use({ storageState: { cookies: [], origins: [] } });
 
+  test('unauthenticated access to /app redirects to login', async ({ page }) => {
     // Try to access protected route
     await page.goto('/app');
 
@@ -327,7 +337,6 @@ test.describe('Protected Routes', () => {
   });
 
   test('unauthenticated access to /app/screens redirects', async ({ page }) => {
-    await page.context().clearCookies();
     await page.goto('/app/screens');
 
     // Should redirect to login or root
@@ -335,7 +344,6 @@ test.describe('Protected Routes', () => {
   });
 
   test('unauthenticated access to /app/media redirects', async ({ page }) => {
-    await page.context().clearCookies();
     await page.goto('/app/media');
 
     await expect(page).toHaveURL(/\/auth\/login|\/login|\//);
@@ -346,6 +354,9 @@ test.describe('Protected Routes', () => {
 // AUTH STATE UI TESTS
 // =============================================================================
 test.describe('Auth State UI', () => {
+  // Clear auth state - these tests require unauthenticated access
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test('login form is accessible', async ({ page }) => {
     await page.goto('/auth/login');
 
