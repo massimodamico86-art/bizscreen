@@ -7,12 +7,9 @@
 /**
  * Login and prepare the app for testing
  *
- * This function:
- * 1. Navigates to login page
- * 2. Sets localStorage to skip the Welcome Modal (first-run experience)
- * 3. Fills in credentials and submits
- * 4. Waits for redirect to /app
- * 5. Dismisses any modal dialogs that might appear
+ * This function handles both pre-authenticated state (from storage state) and fresh logins:
+ * 1. If already authenticated (storage state injected), just navigates to /app and dismisses modals
+ * 2. If not authenticated, performs full login flow
  *
  * @param {import('@playwright/test').Page} page - Playwright page object
  * @param {Object} options - Optional configuration
@@ -20,6 +17,28 @@
  * @param {string} options.password - Password override (defaults to TEST_USER_PASSWORD env var)
  */
 export async function loginAndPrepare(page, options = {}) {
+  // Check if already authenticated (storage state may have been injected)
+  const currentUrl = page.url();
+  if (currentUrl.includes('/app')) {
+    // Already on app route, just dismiss modals
+    await dismissAnyModals(page);
+    return;
+  }
+
+  // Navigate to app and see if we're authenticated
+  await page.goto('/app');
+  await page.waitForTimeout(1000);
+
+  // Check if we stayed on /app (authenticated) or got redirected to login
+  const afterNavUrl = page.url();
+  if (afterNavUrl.includes('/app') && !afterNavUrl.includes('/auth/')) {
+    // Already authenticated via storage state, just dismiss modals
+    await page.waitForTimeout(500);
+    await dismissAnyModals(page);
+    return;
+  }
+
+  // Not authenticated - perform full login flow
   const email = options.email || process.env.TEST_USER_EMAIL;
   const password = options.password || process.env.TEST_USER_PASSWORD;
 
@@ -27,8 +46,10 @@ export async function loginAndPrepare(page, options = {}) {
     throw new Error('Test credentials not configured. Set TEST_USER_EMAIL and TEST_USER_PASSWORD environment variables.');
   }
 
-  // Navigate to login page
-  await page.goto('/auth/login');
+  // Navigate to login page (may already be there from redirect)
+  if (!page.url().includes('/auth/login')) {
+    await page.goto('/auth/login');
+  }
 
   // Fill in credentials and submit
   await page.getByPlaceholder(/email/i).fill(email);
