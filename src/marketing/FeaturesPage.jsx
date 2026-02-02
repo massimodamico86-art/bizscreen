@@ -2,6 +2,7 @@
  * FeaturesPage - Public features overview page
  */
 
+import { Link } from 'react-router-dom';
 import {
   Monitor,
   Upload,
@@ -14,8 +15,11 @@ import {
   Shield,
   Zap,
   Cloud,
-  Globe
+  Globe,
+  CheckCircle,
+  ArrowRight
 } from 'lucide-react';
+import Seo from '../components/Seo';
 
 const features = [
   {
@@ -77,6 +81,9 @@ const compatibility = [
   { name: 'Raspberry Pi', description: 'Budget-friendly option' },
 ];
 
+/**
+ *
+ */
 export default function FeaturesPage() {
   return (
     <div>

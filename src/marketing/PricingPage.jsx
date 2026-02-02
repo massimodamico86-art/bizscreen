@@ -2,7 +2,9 @@
  * PricingPage - Public pricing page
  */
 
-import { Zap, Star, Building2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Zap, Star, Building2, Check } from 'lucide-react';
+import Seo from '../components/Seo';
 
 const plans = [
   {
@@ -88,6 +90,9 @@ const faqs = [
   },
 ];
 
+/**
+ *
+ */
 export default function PricingPage() {
   return (
     <div>
