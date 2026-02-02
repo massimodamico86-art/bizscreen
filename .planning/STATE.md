@@ -174,13 +174,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 012 | Add admin and superadmin Playwright credentials | 2026-02-02 | 78d060c | [012-add-admin-and-superadmin-playwright-cred](./quick/012-add-admin-and-superadmin-playwright-cred/) |
 | 013 | Fix MediaLibraryPage missing imports | 2026-02-02 | 9884ec4 | [013-fix-medialibrarypage-imports](./quick/013-fix-medialibrarypage-imports/) |
 | 014 | Update admin.spec.js to use storage state auth | 2026-02-02 | 2c6f795 | [014-debug-admin-auth-issues](./quick/014-debug-admin-auth-issues/) |
+| 015 | Fix super admin dashboard crash (missing imports) | 2026-02-02 | 5b85057 | [015-fix-super-admin-dashboard-crash](./quick/015-fix-super-admin-dashboard-crash/) |
 
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick task 014 (Admin auth refactoring)
+Stopped at: Completed quick task 015 (Super admin dashboard import fix)
 Resume file: None
-Next: Investigate super admin dashboard crash (separate issue from auth)
+Next: None - super admin dashboard now loads correctly
 
 ---
-*Updated: 2026-02-02 — Quick task 014 complete*
+*Updated: 2026-02-02 — Quick task 015 complete*
