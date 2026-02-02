@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-02 - Completed quick task 019 (Fix MarketingLayout missing imports)
+Last activity: 2026-02-02 - Completed quick task 020 (Fix HomePage missing imports)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -179,13 +179,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 017 | Fix admin panel test selectors | 2026-02-02 | 191be28 | [017-fix-admin-panel-test-selectors](./quick/017-fix-admin-panel-test-selectors/) |
 | 018 | Start the server | 2026-02-02 | - | [018-start-the-server](./quick/018-start-the-server/) |
 | 019 | Fix MarketingLayout missing imports | 2026-02-02 | d8ec9e5 | [019-fix-referenceerror-link-is-not-defined-i](./quick/019-fix-referenceerror-link-is-not-defined-i/) |
+| 020 | Fix HomePage missing imports | 2026-02-02 | 0fbced7 | [020-fix-referenceerror-seo-is-not-defined-i](./quick/020-fix-referenceerror-seo-is-not-defined-i/) |
 
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick task 019 (Fix MarketingLayout missing imports)
+Stopped at: Completed quick task 020 (Fix HomePage missing imports)
 Resume file: None
-Next: Remaining admin test failures are TenantManagement page crashes (infrastructure issue)
+Next: Marketing pages may need additional import fixes
 
 ---
-*Updated: 2026-02-02 — Quick task 019 complete*
+*Updated: 2026-02-02 — Quick task 020 complete*
