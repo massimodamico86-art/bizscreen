@@ -15,7 +15,35 @@ import {
   ShoppingBag,
   Building2,
   Star,
+  Search,
+  X,
+  Clock,
+  Package,
+  List,
+  Layout,
+  Heart,
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Check,
+  Info,
+  ExternalLink,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageHeader,
+  PageContent,
+  Card,
+  Badge,
+  Button,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 import {
   fetchTemplateCategories,
   fetchTemplates,
@@ -37,6 +65,9 @@ import { useLogger } from '../hooks/useLogger.js';
 
 import {
   useTemplatePreview,
+  TemplatePreviewPopover,
+  TemplateLivePreview,
+  TemplateCustomizeModal,
 } from '../components/templates';
 
 // Icon mapping for categories
