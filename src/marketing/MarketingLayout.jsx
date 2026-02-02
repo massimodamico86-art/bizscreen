@@ -2,10 +2,16 @@
  * MarketingLayout - Public site layout with navbar and footer
  */
 
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useState } from 'react';
+import { Monitor, Menu, X } from 'lucide-react';
 import { useTranslation } from '../i18n';
 
+/**
+ *
+ * @param root0
+ * @param root0.children
+ */
 export default function MarketingLayout({ children }) {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
