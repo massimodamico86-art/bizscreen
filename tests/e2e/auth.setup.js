@@ -4,37 +4,55 @@
  * This setup file runs once before all tests to authenticate and save the session.
  * Tests then use the saved storage state to skip the login process.
  *
+ * Creates three auth states:
+ * - client.json (default) - Standard tenant user
+ * - admin.json - Admin user with elevated permissions
+ * - superadmin.json - Super admin with full platform access
+ *
  * Usage: Configured in playwright.config.js as a setup project dependency.
  */
 import { test as setup } from '@playwright/test';
 
-const authFile = 'playwright/.auth/user.json';
+const authFiles = {
+  client: 'playwright/.auth/client.json',
+  admin: 'playwright/.auth/admin.json',
+  superadmin: 'playwright/.auth/superadmin.json',
+};
 
-setup('authenticate', async ({ page }) => {
+/**
+ * Authenticate a role and save the session to a storage state file.
+ *
+ * @param {import('@playwright/test').Page} page - Playwright page
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @param {string} authFile - Path to save the storage state
+ * @param {string} roleName - Role name for logging
+ */
+async function authenticateRole(page, email, password, authFile, roleName) {
   // Skip if no credentials configured
-  if (!process.env.TEST_USER_EMAIL || !process.env.TEST_USER_PASSWORD) {
-    console.log('Skipping auth setup - no test credentials (TEST_USER_EMAIL, TEST_USER_PASSWORD)');
+  if (!email || !password) {
+    console.log(`Skipping ${roleName} auth setup - no credentials configured`);
     return;
   }
 
-  console.log('Running auth setup - logging in to save session...');
+  console.log(`Running ${roleName} auth setup - logging in to save session...`);
 
   // Capture page errors for debugging (helps diagnose React/build issues)
   page.on('pageerror', (err) => {
-    console.error('Page error during auth setup:', err.message);
+    console.error(`Page error during ${roleName} auth setup:`, err.message);
   });
 
   // Navigate to login page and wait for network idle
   await page.goto('/auth/login', { waitUntil: 'networkidle' });
 
   // Wait for the form to be visible (React has mounted)
-  console.log('Waiting for login form to render...');
+  console.log(`${roleName}: Waiting for login form to render...`);
   await page.waitForSelector('input[type="email"], input[placeholder*="email" i]', { timeout: 15000 });
-  console.log('Login form found');
+  console.log(`${roleName}: Login form found`);
 
   // Fill in credentials
-  await page.getByPlaceholder(/email/i).fill(process.env.TEST_USER_EMAIL);
-  await page.getByPlaceholder(/password/i).fill(process.env.TEST_USER_PASSWORD);
+  await page.getByPlaceholder(/email/i).fill(email);
+  await page.getByPlaceholder(/password/i).fill(password);
 
   // Submit login form
   await page.getByRole('button', { name: /sign in|log in/i }).click();
@@ -66,8 +84,42 @@ setup('authenticate', async ({ page }) => {
     }
   }
 
-  console.log('Auth setup complete - saving session to', authFile);
+  console.log(`${roleName} auth setup complete - saving session to ${authFile}`);
 
   // Save storage state (cookies + localStorage)
   await page.context().storageState({ path: authFile });
+}
+
+// Client authentication (default role)
+// Supports both TEST_USER_* (legacy) and TEST_CLIENT_* (new) env vars
+setup('authenticate-client', async ({ page }) => {
+  await authenticateRole(
+    page,
+    process.env.TEST_USER_EMAIL || process.env.TEST_CLIENT_EMAIL,
+    process.env.TEST_USER_PASSWORD || process.env.TEST_CLIENT_PASSWORD,
+    authFiles.client,
+    'client'
+  );
+});
+
+// Admin authentication
+setup('authenticate-admin', async ({ page }) => {
+  await authenticateRole(
+    page,
+    process.env.TEST_ADMIN_EMAIL,
+    process.env.TEST_ADMIN_PASSWORD,
+    authFiles.admin,
+    'admin'
+  );
+});
+
+// Superadmin authentication
+setup('authenticate-superadmin', async ({ page }) => {
+  await authenticateRole(
+    page,
+    process.env.TEST_SUPERADMIN_EMAIL,
+    process.env.TEST_SUPERADMIN_PASSWORD,
+    authFiles.superadmin,
+    'superadmin'
+  );
 });
