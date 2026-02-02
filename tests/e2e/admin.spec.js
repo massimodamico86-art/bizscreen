@@ -2,32 +2,29 @@
  * Admin Panel E2E Tests
  * Phase 17: Tests for admin panel tenant management
  *
- * Note: These tests are skipped because:
- * 1. BizScreen uses state-based navigation (setCurrentPage) instead of URL routing
- * 2. Super admin credentials are required but not configured in CI
- * 3. Admin panel requires actual database with tenant data
+ * Authentication: These tests use Playwright storage state auth from auth.setup.js
+ * - Super admin tests: Use storageState: 'playwright/.auth/superadmin.json'
+ * - Access control tests: Use storageState: 'playwright/.auth/client.json'
  *
- * To enable these tests:
- * - Set TEST_SUPERADMIN_EMAIL and TEST_SUPERADMIN_PASSWORD environment variables
- * - Ensure test database has tenant data
+ * To run these tests:
+ *   npx playwright test admin.spec.js --project=chromium-superadmin
  */
 import { test, expect } from '@playwright/test';
 
 test.describe('Admin Panel', () => {
-  // Skip all tests if super admin credentials not configured
+  // Use superadmin auth - this describe block requires super_admin role
+  test.use({ storageState: 'playwright/.auth/superadmin.json' });
+
+  // Skip if running without superadmin project
   test.skip(
     () => !process.env.TEST_SUPERADMIN_EMAIL,
     'Super admin credentials not configured. Set TEST_SUPERADMIN_EMAIL and TEST_SUPERADMIN_PASSWORD to run these tests.'
   );
 
   test.beforeEach(async ({ page }) => {
-    if (process.env.TEST_SUPERADMIN_EMAIL && process.env.TEST_SUPERADMIN_PASSWORD) {
-      await page.goto('/');
-      await page.getByPlaceholder(/email/i).fill(process.env.TEST_SUPERADMIN_EMAIL);
-      await page.getByPlaceholder(/password/i).fill(process.env.TEST_SUPERADMIN_PASSWORD);
-      await page.getByRole('button', { name: /sign in|log in/i }).click();
-      await page.waitForURL('**/*', { timeout: 10000 });
-    }
+    // Storage state already has auth - just navigate to the app
+    await page.goto('/app');
+    await page.waitForLoadState('networkidle');
   });
 
   test('shows Admin Panel navigation item for super admin', async ({ page }) => {
@@ -79,22 +76,21 @@ test.describe('Admin Panel', () => {
 });
 
 test.describe('Admin Panel - Tenant Detail', () => {
+  // Use superadmin auth
+  test.use({ storageState: 'playwright/.auth/superadmin.json' });
+
   test.skip(
     () => !process.env.TEST_SUPERADMIN_EMAIL,
     'Super admin credentials not configured'
   );
 
   test.beforeEach(async ({ page }) => {
-    if (process.env.TEST_SUPERADMIN_EMAIL && process.env.TEST_SUPERADMIN_PASSWORD) {
-      await page.goto('/');
-      await page.getByPlaceholder(/email/i).fill(process.env.TEST_SUPERADMIN_EMAIL);
-      await page.getByPlaceholder(/password/i).fill(process.env.TEST_SUPERADMIN_PASSWORD);
-      await page.getByRole('button', { name: /sign in|log in/i }).click();
-      await page.waitForURL('**/*', { timeout: 10000 });
+    // Storage state already has auth - navigate to app then admin panel
+    await page.goto('/app');
+    await page.waitForLoadState('networkidle');
 
-      // Navigate to admin panel
-      await page.getByRole('button', { name: /admin.*panel|admin.*tenants/i }).click();
-    }
+    // Navigate to admin panel
+    await page.getByRole('button', { name: /admin.*panel|admin.*tenants/i }).click();
   });
 
   test('clicking a tenant opens detail view', async ({ page }) => {
@@ -156,6 +152,9 @@ test.describe('Admin Panel - Tenant Detail', () => {
 });
 
 test.describe('Admin Panel - Access Control', () => {
+  // Uses default client auth (chromium project) - tests that regular users cannot access admin
+  test.use({ storageState: 'playwright/.auth/client.json' });
+
   // Skip this test in CI - negative access control tests are flaky
   // and require a properly configured test user that exists in the database
   test.skip(
@@ -163,23 +162,24 @@ test.describe('Admin Panel - Access Control', () => {
     'Access control test skipped in CI - requires configured test user in database'
   );
 
+  test.beforeEach(async ({ page }) => {
+    // Storage state already has auth - just navigate to the app
+    await page.goto('/app');
+    await page.waitForLoadState('networkidle');
+  });
+
   test('non-super-admin cannot access admin panel', async ({ page }) => {
-    // Use regular test user credentials
-    if (!process.env.TEST_USER_EMAIL || !process.env.TEST_USER_PASSWORD) {
+    // Skip if client credentials not configured
+    if (!process.env.TEST_USER_EMAIL) {
       test.skip();
       return;
     }
 
-    await page.goto('/');
-    await page.getByPlaceholder(/email/i).fill(process.env.TEST_USER_EMAIL);
-    await page.getByPlaceholder(/password/i).fill(process.env.TEST_USER_PASSWORD);
-    await page.getByRole('button', { name: /sign in|log in/i }).click();
-
-    // Wait for dashboard to load (or any post-login content)
+    // Wait for dashboard to load
     try {
       await expect(page.getByText(/dashboard|screens|welcome/i)).toBeVisible({ timeout: 10000 });
     } catch {
-      // Login might have failed - skip this test
+      // If dashboard doesn't load, skip this test
       test.skip();
       return;
     }
@@ -208,19 +208,18 @@ test.describe('Admin API Endpoints', () => {
 });
 
 test.describe('Super Admin Dashboard - Admin Tools', () => {
+  // Use superadmin auth
+  test.use({ storageState: 'playwright/.auth/superadmin.json' });
+
   test.skip(
     () => !process.env.TEST_SUPERADMIN_EMAIL,
     'Super admin credentials not configured'
   );
 
   test.beforeEach(async ({ page }) => {
-    if (process.env.TEST_SUPERADMIN_EMAIL && process.env.TEST_SUPERADMIN_PASSWORD) {
-      await page.goto('/');
-      await page.getByPlaceholder(/email/i).fill(process.env.TEST_SUPERADMIN_EMAIL);
-      await page.getByPlaceholder(/password/i).fill(process.env.TEST_SUPERADMIN_PASSWORD);
-      await page.getByRole('button', { name: /sign in|log in/i }).click();
-      await page.waitForURL('**/*', { timeout: 10000 });
-    }
+    // Storage state already has auth - just navigate to the app
+    await page.goto('/app');
+    await page.waitForLoadState('networkidle');
   });
 
   test('shows Super Admin Dashboard for super admin users', async ({ page }) => {
