@@ -19,8 +19,7 @@
  * - The test user should have 'client' role
  * - Server running at configured baseURL
  *
- * Note: Some pages have known issues (marked with test.fixme) - these reveal real bugs
- * that need to be fixed in the application.
+ * All pages pass successfully - no known issues.
  */
 import { test, expect } from '@playwright/test';
 import { loginAndPrepare, waitForPageReady, dismissAnyModals } from './helpers.js';
@@ -139,9 +138,7 @@ test.describe('Client UI Interactions', () => {
       await navigateToSection(page, 'aside button:has-text("Playlists")', 'Playlists');
     });
 
-    // Note: Templates page requires server restart after import fixes (TemplateLivePreview,
-    // TemplateCustomizeModal, TemplatePreviewPopover). Import fixes committed but HMR not picking up.
-    test.fixme('can navigate to Templates page', async ({ page }) => {
+    test('can navigate to Templates page', async ({ page }) => {
       await navigateToSection(page, 'aside button:has-text("Templates")', 'Templates');
     });
 
@@ -236,10 +233,9 @@ test.describe('Client UI Interactions', () => {
     });
   });
 
-  // Tests for pages with known issues - marked as fixme
-  // These tests document bugs that need to be fixed
-  test.describe('Known Issues (fixme)', () => {
-    test.fixme('Media menu - All Media page loads', async ({ page }) => {
+  // Tests for previously problematic pages - now fixed
+  test.describe('Navigation Re-tests', () => {
+    test('Media menu - All Media page loads', async ({ page }) => {
       const mediaNav = page.locator('aside button:has-text("Media")').first();
       await mediaNav.click();
       await page.waitForTimeout(300);
@@ -251,7 +247,7 @@ test.describe('Client UI Interactions', () => {
       await expect(page.locator('body')).not.toContainText('Something Went Wrong');
     });
 
-    test.fixme('Dashboard re-navigation works', async ({ page }) => {
+    test('Dashboard re-navigation works', async ({ page }) => {
       // First go to another page
       await navigateToSection(page, 'aside button:has-text("Screens")', 'Screens');
 

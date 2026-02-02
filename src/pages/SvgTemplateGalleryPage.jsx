@@ -11,7 +11,20 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
-
+import {
+  Loader2,
+  ChevronRight,
+  ChevronLeft,
+  ChevronDown,
+  Search,
+  X,
+  Monitor,
+  Smartphone,
+  Folder,
+  FileType,
+  Edit,
+  Trash2,
+} from 'lucide-react';
 
 import {
   fetchSvgTemplates,
@@ -57,6 +70,12 @@ const FILTER_CONFIG = {
 };
 
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ * @param root0.onNavigate
+ */
 export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
   // State
   const [templates, setTemplates] = useState([]);

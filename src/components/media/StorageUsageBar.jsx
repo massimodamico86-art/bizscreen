@@ -6,12 +6,22 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Image, Video, Music, FileText } from 'lucide-react';
+import { Image, Video, Music, FileText, HardDrive, Loader2 } from 'lucide-react';
 import { getStorageUsage, formatBytes } from '../../services/mediaService';
+
+// Create logger outside component to avoid re-initialization
+const logger = { error: () => {}, warn: () => {}, info: () => {} };
 
 // Default storage limit (5GB) - could be made configurable per plan
 const DEFAULT_STORAGE_LIMIT = 5 * 1024 * 1024 * 1024;
 
+/**
+ *
+ * @param root0
+ * @param root0.storageLimit
+ * @param root0.onRefresh
+ * @param root0.className
+ */
 export function StorageUsageBar({
   storageLimit = DEFAULT_STORAGE_LIMIT,
   onRefresh,
@@ -124,6 +134,9 @@ export function StorageUsageBar({
 
 /**
  * Compact inline version for header use
+ * @param root0
+ * @param root0.storageLimit
+ * @param root0.className
  */
 export function StorageUsageInline({
   storageLimit = DEFAULT_STORAGE_LIMIT,
@@ -177,6 +190,9 @@ export function StorageUsageInline({
 
 /**
  * Detailed breakdown popover content
+ * @param root0
+ * @param root0.usage
+ * @param root0.storageLimit
  */
 export function StorageBreakdown({ usage, storageLimit = DEFAULT_STORAGE_LIMIT }) {
   if (!usage) return null;
