@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-02 - Completed quick task 023 (Fix AppsPage, PlaylistsPage, TemplatesPage imports)
+Last activity: 2026-02-02 - Completed quick task 024 (Verify client UI tests + fix template imports)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -183,13 +183,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 021 | Client smoke test (+ FeaturesPage/PricingPage fix) | 2026-02-02 | 360be47 | [021-do-a-smoke-test-as-a-client](./quick/021-do-a-smoke-test-as-a-client/) |
 | 022 | Comprehensive client UI interaction tests | 2026-02-02 | 4c48a97 | [022-playwright-as-a-client-click-on-all-the](./quick/022-playwright-as-a-client-click-on-all-the/) |
 | 023 | Fix AppsPage, PlaylistsPage, TemplatesPage imports | 2026-02-02 | a5668ee | [023-fix-all-known-issues-medialibrarypage](./quick/023-fix-all-known-issues-medialibrarypage/) |
+| 024 | Verify client UI tests + fix template imports | 2026-02-02 | 6003e20 | [024-re-run-comprehensive-client-ui-tests-to](./quick/024-re-run-comprehensive-client-ui-tests-to/) |
 
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick task 023 (Fix AppsPage, PlaylistsPage, TemplatesPage imports)
+Stopped at: Completed quick task 024 (Verify client UI tests + fix template imports)
 Resume file: None
-Next: All known import issues fixed; pages should render without console errors
+Next: Templates page needs server restart to verify import fixes; 13/16 E2E tests passing
 
 ---
-*Updated: 2026-02-02 - Quick task 023 complete*
+*Updated: 2026-02-02 - Quick task 024 complete*
