@@ -173,13 +173,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 011 | Configure Playwright test credentials | 2026-02-02 | 83ff203 | [011-configure-playwright-test-credentials](./quick/011-configure-playwright-test-credentials/) |
 | 012 | Add admin and superadmin Playwright credentials | 2026-02-02 | 78d060c | [012-add-admin-and-superadmin-playwright-cred](./quick/012-add-admin-and-superadmin-playwright-cred/) |
 | 013 | Fix MediaLibraryPage missing imports | 2026-02-02 | 9884ec4 | [013-fix-medialibrarypage-imports](./quick/013-fix-medialibrarypage-imports/) |
+| 014 | Update admin.spec.js to use storage state auth | 2026-02-02 | 2c6f795 | [014-debug-admin-auth-issues](./quick/014-debug-admin-auth-issues/) |
 
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick task 013 (MediaLibraryPage import fix)
+Stopped at: Completed quick task 014 (Admin auth refactoring)
 Resume file: None
-Next: `/gsd:audit-milestone` to verify requirements, cross-phase integration, and E2E flows
+Next: Investigate super admin dashboard crash (separate issue from auth)
 
 ---
-*Updated: 2026-02-02 — Quick task 013 complete*
+*Updated: 2026-02-02 — Quick task 014 complete*
