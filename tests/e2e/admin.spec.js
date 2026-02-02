@@ -29,46 +29,46 @@ test.describe('Admin Panel', () => {
 
   test('shows Admin Panel navigation item for super admin', async ({ page }) => {
     // Super admin dashboard should show admin tools
-    await expect(page.getByRole('button', { name: /admin.*panel|admin.*tenants/i })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('button', { name: /tenant management/i })).toBeVisible({ timeout: 5000 });
   });
 
   test('can navigate to Admin Panel page', async ({ page }) => {
-    await page.getByRole('button', { name: /admin.*panel|admin.*tenants/i }).click();
+    await page.getByRole('button', { name: /tenant management/i }).click();
 
     // Should show tenant management header
     await expect(page.getByText(/tenant.*management/i)).toBeVisible({ timeout: 5000 });
   });
 
   test('admin panel shows tenant list', async ({ page }) => {
-    await page.getByRole('button', { name: /admin.*panel|admin.*tenants/i }).click();
+    await page.getByRole('button', { name: /tenant management/i }).click();
 
     // Should have a table or list of tenants
     await expect(page.locator('table').or(page.getByRole('list'))).toBeVisible({ timeout: 5000 });
   });
 
   test('admin panel has search functionality', async ({ page }) => {
-    await page.getByRole('button', { name: /admin.*panel|admin.*tenants/i }).click();
+    await page.getByRole('button', { name: /tenant management/i }).click();
 
     // Should have search input
     await expect(page.getByPlaceholder(/search/i)).toBeVisible({ timeout: 5000 });
   });
 
   test('admin panel has plan filter', async ({ page }) => {
-    await page.getByRole('button', { name: /admin.*panel|admin.*tenants/i }).click();
+    await page.getByRole('button', { name: /tenant management/i }).click();
 
     // Should have plan filter dropdown
     await expect(page.getByRole('combobox').filter({ hasText: /all.*plans|plan/i })).toBeVisible({ timeout: 5000 });
   });
 
   test('admin panel has status filter', async ({ page }) => {
-    await page.getByRole('button', { name: /admin.*panel|admin.*tenants/i }).click();
+    await page.getByRole('button', { name: /tenant management/i }).click();
 
     // Should have status filter dropdown
     await expect(page.getByRole('combobox').filter({ hasText: /all.*status|status/i })).toBeVisible({ timeout: 5000 });
   });
 
   test('admin panel has refresh button', async ({ page }) => {
-    await page.getByRole('button', { name: /admin.*panel|admin.*tenants/i }).click();
+    await page.getByRole('button', { name: /tenant management/i }).click();
 
     // Should have refresh button
     await expect(page.getByRole('button', { name: /refresh/i })).toBeVisible({ timeout: 5000 });
@@ -90,7 +90,7 @@ test.describe('Admin Panel - Tenant Detail', () => {
     await page.waitForLoadState('networkidle');
 
     // Navigate to admin panel
-    await page.getByRole('button', { name: /admin.*panel|admin.*tenants/i }).click();
+    await page.getByRole('button', { name: /tenant management/i }).click();
   });
 
   test('clicking a tenant opens detail view', async ({ page }) => {
@@ -185,7 +185,7 @@ test.describe('Admin Panel - Access Control', () => {
     }
 
     // Admin Panel nav item should not be visible for regular users
-    const adminButton = page.getByRole('button', { name: /admin.*panel/i });
+    const adminButton = page.getByRole('button', { name: /tenant management/i });
     await expect(adminButton).not.toBeVisible({ timeout: 2000 });
   });
 });
