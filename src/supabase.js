@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
-import { createScopedLogger } from './services/loggingService.js';
 
-const logger = createScopedLogger('Supabase');
+// Note: We don't import logger here to avoid circular dependency
+// (loggingService -> supabase -> loggingService)
+// Use console.* for initialization logging instead
 
 // Required environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -18,8 +19,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
   if (!supabaseUrl) missingVars.push('VITE_SUPABASE_URL');
   if (!supabaseAnonKey) missingVars.push('VITE_SUPABASE_ANON_KEY');
 
-  logger.error('Missing required environment variables', { missingVars });
-  logger.error('Please check your .env file and ensure all required variables are set');
+  console.error('[Supabase] Missing required environment variables:', missingVars);
+  console.error('[Supabase] Please check your .env file and ensure all required variables are set');
 
   throw new Error(`Missing required environment variables: ${missingVars.join(', ')}. Check your .env file.`);
 }
@@ -28,12 +29,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
 // Allow http:// for local development (localhost/127.0.0.1), require https:// for production
 const isLocalUrl = supabaseUrl.includes('localhost') || supabaseUrl.includes('127.0.0.1');
 if (!supabaseUrl.startsWith('https://') && !isLocalUrl) {
-  logger.error('VITE_SUPABASE_URL must start with https:// (or http:// for local development)');
+  console.error('[Supabase] VITE_SUPABASE_URL must start with https:// (or http:// for local development)');
   throw new Error('Invalid VITE_SUPABASE_URL: must start with https:// (or http:// for local development)');
 }
 
 if (supabaseAnonKey.length < 20) {
-  logger.error('VITE_SUPABASE_ANON_KEY appears to be invalid (too short)');
+  console.error('[Supabase] VITE_SUPABASE_ANON_KEY appears to be invalid (too short)');
   throw new Error('Invalid VITE_SUPABASE_ANON_KEY: key appears to be malformed');
 }
 
@@ -43,17 +44,19 @@ if (!openWeatherApiKey) missingOptional.push('VITE_OPENWEATHER_API_KEY');
 if (!cloudinaryCloudName) missingOptional.push('VITE_CLOUDINARY_CLOUD_NAME');
 if (!cloudinaryUploadPreset) missingOptional.push('VITE_CLOUDINARY_UPLOAD_PRESET');
 
-if (missingOptional.length > 0) {
-  logger.warn('Optional environment variables not set', { missingOptional });
-  logger.warn('Some features may be disabled. See .env.example for setup instructions');
+if (missingOptional.length > 0 && import.meta.env.DEV) {
+  console.warn('[Supabase] Optional environment variables not set:', missingOptional);
+  console.warn('[Supabase] Some features may be disabled. See .env.example for setup instructions');
 }
 
-// Log successful configuration
-logger.info('Supabase configured', {
-  url: supabaseUrl,
-  hasKey: !!supabaseAnonKey,
-  keyLength: supabaseAnonKey?.length
-});
+// Log successful configuration in development
+if (import.meta.env.DEV) {
+  console.info('[Supabase] Configured:', {
+    url: supabaseUrl,
+    hasKey: !!supabaseAnonKey,
+    keyLength: supabaseAnonKey?.length
+  });
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

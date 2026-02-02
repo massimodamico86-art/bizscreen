@@ -19,8 +19,18 @@ setup('authenticate', async ({ page }) => {
 
   console.log('Running auth setup - logging in to save session...');
 
-  // Navigate to login page
-  await page.goto('/auth/login');
+  // Capture page errors for debugging (helps diagnose React/build issues)
+  page.on('pageerror', (err) => {
+    console.error('Page error during auth setup:', err.message);
+  });
+
+  // Navigate to login page and wait for network idle
+  await page.goto('/auth/login', { waitUntil: 'networkidle' });
+
+  // Wait for the form to be visible (React has mounted)
+  console.log('Waiting for login form to render...');
+  await page.waitForSelector('input[type="email"], input[placeholder*="email" i]', { timeout: 15000 });
+  console.log('Login form found');
 
   // Fill in credentials
   await page.getByPlaceholder(/email/i).fill(process.env.TEST_USER_EMAIL);
