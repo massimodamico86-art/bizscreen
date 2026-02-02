@@ -54,14 +54,33 @@ export default defineConfig({
       name: 'setup',
       testMatch: /auth\.setup\.js/,
     },
+    // Client role (default) - standard tenant user
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
         // Use saved auth state from setup project
-        storageState: 'playwright/.auth/user.json',
+        storageState: 'playwright/.auth/client.json',
       },
       // Run setup project before chromium tests
+      dependencies: ['setup'],
+    },
+    // Admin role - elevated permissions
+    {
+      name: 'chromium-admin',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/admin.json',
+      },
+      dependencies: ['setup'],
+    },
+    // Superadmin role - full platform access
+    {
+      name: 'chromium-superadmin',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/superadmin.json',
+      },
       dependencies: ['setup'],
     },
     // Uncomment for additional browsers
