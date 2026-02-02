@@ -6,7 +6,16 @@ import {
   CloudSun,
   Rss,
   Table,
+  Search,
+  MoreVertical,
+  Edit,
+  Trash2,
+  Loader2,
+  X,
+  Link as LinkIcon,
 } from 'lucide-react';
+import { Card, Button } from '../design-system';
+import { AppCard, AppDetailModal, WeatherWallConfigModal } from '../components/apps';
 import { useAuth } from '../contexts/AuthContext';
 import { useLogger } from '../hooks/useLogger.js';
 import { useTranslation } from '../i18n';
