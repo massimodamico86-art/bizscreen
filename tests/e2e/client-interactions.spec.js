@@ -131,6 +131,20 @@ test.describe('Client UI Interactions', () => {
   });
 
   test.describe('Working Navigation', () => {
+    test('can navigate to Apps page', async ({ page }) => {
+      await navigateToSection(page, 'aside button:has-text("Apps")', 'Apps');
+    });
+
+    test('can navigate to Playlists page', async ({ page }) => {
+      await navigateToSection(page, 'aside button:has-text("Playlists")', 'Playlists');
+    });
+
+    // Note: Templates page requires server restart after import fixes (TemplateLivePreview,
+    // TemplateCustomizeModal, TemplatePreviewPopover). Import fixes committed but HMR not picking up.
+    test.fixme('can navigate to Templates page', async ({ page }) => {
+      await navigateToSection(page, 'aside button:has-text("Templates")', 'Templates');
+    });
+
     test('can navigate to Schedules page', async ({ page }) => {
       await navigateToSection(page, 'aside button:has-text("Schedules")', 'Schedules');
     });
@@ -235,18 +249,6 @@ test.describe('Client UI Interactions', () => {
       await waitForPageReady(page);
 
       await expect(page.locator('body')).not.toContainText('Something Went Wrong');
-    });
-
-    test.fixme('Apps page loads', async ({ page }) => {
-      await navigateToSection(page, 'aside button:has-text("Apps")', 'Apps');
-    });
-
-    test.fixme('Playlists page loads', async ({ page }) => {
-      await navigateToSection(page, 'aside button:has-text("Playlists")', 'Playlists');
-    });
-
-    test.fixme('Templates page loads', async ({ page }) => {
-      await navigateToSection(page, 'aside button:has-text("Templates")', 'Templates');
     });
 
     test.fixme('Dashboard re-navigation works', async ({ page }) => {

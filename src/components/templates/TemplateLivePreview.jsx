@@ -8,10 +8,13 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Package, List, Layout } from 'lucide-react';
+import { Package, List, Layout, Image, Video, Play, Loader2 } from 'lucide-react';
 
 /**
  * Layout zone preview - shows the zone arrangement
+ * @param root0
+ * @param root0.template
+ * @param root0.className
  */
 function LayoutPreview({ template, className = '' }) {
   const meta = template.meta || {};
@@ -75,6 +78,9 @@ function LayoutPreview({ template, className = '' }) {
 
 /**
  * Playlist preview - shows thumbnail with playlist icon
+ * @param root0
+ * @param root0.template
+ * @param root0.className
  */
 function PlaylistPreview({ template, className = '' }) {
   const thumbnail = template.thumbnail || template.thumbnail_url;
@@ -126,6 +132,9 @@ function PlaylistPreview({ template, className = '' }) {
 
 /**
  * Pack preview - shows collage of included content
+ * @param root0
+ * @param root0.template
+ * @param root0.className
  */
 function PackPreview({ template, className = '' }) {
   const meta = template.meta || {};
@@ -183,6 +192,10 @@ function PackPreview({ template, className = '' }) {
 
 /**
  * Main TemplateLivePreview component
+ * @param root0
+ * @param root0.template
+ * @param root0.className
+ * @param root0.isLoading
  */
 export function TemplateLivePreview({ template, className = '', isLoading = false }) {
   const [loaded, setLoaded] = useState(false);
@@ -224,6 +237,9 @@ export function TemplateLivePreview({ template, className = '', isLoading = fals
 /**
  * Iframe-based live preview for actual content rendering
  * Use this for more accurate previews when template has preview_url
+ * @param root0
+ * @param root0.template
+ * @param root0.className
  */
 export function TemplateIframePreview({ template, className = '' }) {
   const [isLoading, setIsLoading] = useState(true);

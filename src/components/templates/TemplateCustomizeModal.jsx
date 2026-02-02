@@ -8,7 +8,16 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Package, List, Layout } from 'lucide-react';
+import { Package, List, Layout, AlertCircle, Loader2, Sparkles } from 'lucide-react';
+import {
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+  Button,
+} from '../../design-system';
+import { TemplateLivePreview } from './TemplateLivePreview';
 
 
 
@@ -34,6 +43,17 @@ const getTypeLabel = (type) => {
   }
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.template
+ * @param root0.onApply
+ * @param root0.isApplying
+ * @param root0.error
+ * @param root0.t
+ */
 export function TemplateCustomizeModal({
   isOpen,
   onClose,

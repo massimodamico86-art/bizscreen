@@ -229,7 +229,7 @@ const TemplatesPage = ({ showToast }) => {
       setTotalCount(result.totalCount || 0);
       setTotalPages(result.totalPages || 0);
     } catch (error) {
-      logger.error('Failed to load templates', { categoryId, searchQuery: debouncedSearch, error });
+      logger.error('Failed to load templates', { category: activeCategory, searchQuery: debouncedSearch, error });
       showToast?.('Error loading templates', 'error');
     } finally {
       setLoading(false);

@@ -7,7 +7,8 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Package, List, Layout } from 'lucide-react';
+import { Package, List, Layout, Tag } from 'lucide-react';
+import { Badge } from '../../design-system';
 
 // Badge colors for template types
 const getBadgeVariant = (type) => {
@@ -41,6 +42,15 @@ const getTypeLabel = (type) => {
   }
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.template
+ * @param root0.isVisible
+ * @param root0.anchorRect
+ * @param root0.onClose
+ * @param root0.livePreview
+ */
 export function TemplatePreviewPopover({
   template,
   isVisible,
@@ -176,6 +186,7 @@ export function TemplatePreviewPopover({
 
 /**
  * Hook to manage hover preview state with delay
+ * @param delay
  */
 export function useTemplatePreview(delay = 300) {
   const [isVisible, setIsVisible] = useState(false);
