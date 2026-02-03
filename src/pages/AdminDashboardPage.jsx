@@ -3,9 +3,40 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabase';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Alert,
+  StatCard,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  EmptyState,
+  Badge,
+  Button,
+  Modal,
+} from '../design-system';
+import {
+  Users,
+  Building2,
+  UserCheck,
+  ExternalLink,
+  Plus,
+  Upload,
+  FileText,
+  Download,
+} from 'lucide-react';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 
 
+/**
+ *
+ * @param root0
+ * @param root0.onNavigate
+ */
 export default function AdminDashboardPage({ onNavigate }) {
   const { t } = useTranslation();
   const logger = useLogger('AdminDashboardPage');
