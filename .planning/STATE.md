@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-03 - Completed quick task 032 (Skip scene E2E tests - feature not in navigation)
+Last activity: 2026-02-03 - Completed quick task 033 (Investigate E2E 406 errors - root cause identified)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -161,7 +161,12 @@ All v2.1 tech debt resolved. Minor items accepted:
 - 385 passed, ~454 failed, ~324 skipped (estimated after scene tests skip)
 - Scene tests (81) moved from failed to skipped - feature not in navigation
 - YodeckAddMediaModal.jsx "X is not defined" - FIXED in quick-030
-- Supabase 406 errors on subscriptions queries (RLS/schema issue) - primary cause of remaining failures
+
+**E2E 406 Error Root Cause (quick-033):**
+- **Primary:** superadmin/admin test users missing subscription records (migration 060 only seeds client/client2)
+- **Secondary:** clientService.js queries non-existent `plan_slug` column (should use `plan_id, plans(slug)`)
+- **Fixes needed:** 1) Update migration 060, 2) Fix clientService.js query
+- **Impact:** ~450 tests expected to pass after fixes
 
 ### Quick Tasks Completed
 
@@ -197,13 +202,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 030 | Fix YodeckAddMediaModal.jsx missing X import | 2026-02-03 | bbd5940 | [030-fix-yodeckaddmediamodal-import](./quick/030-fix-yodeckaddmediamodal-import/) |
 | 031 | Run all tests (unit: 2079 pass, E2E: 385/535/243) | 2026-02-03 | - | [031-run-all-tests-unit-and-e2e](./quick/031-run-all-tests-unit-and-e2e/) |
 | 032 | Skip scene E2E tests (feature not in navigation) | 2026-02-03 | 45ef950 | [032-fix-scene-e2e-test-failures](./quick/032-fix-scene-e2e-test-failures/) |
+| 033 | Investigate E2E 406 errors (root cause identified) | 2026-02-03 | - | [033-investigate-root-cause-of-e2e-test-failu](./quick/033-investigate-root-cause-of-e2e-test-failu/) |
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed quick task 032 (Skip scene E2E tests)
+Stopped at: Completed quick task 033 (Investigate E2E 406 errors)
 Resume file: None
-Next: None
+Next: Fix issues identified in quick-033 (seed data + clientService.js)
 
 ---
-*Updated: 2026-02-03 - Quick task 032 complete*
+*Updated: 2026-02-03 - Quick task 033 complete (investigation)*
