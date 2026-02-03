@@ -334,6 +334,30 @@ FROM public.plans WHERE slug = 'pro'
 ON CONFLICT (owner_id) DO UPDATE SET
   status = 'active';
 
+-- Superadmin subscription (Pro plan - full platform access for testing)
+INSERT INTO public.subscriptions (owner_id, plan_id, status, current_period_start, current_period_end)
+SELECT
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+  id,
+  'active',
+  NOW(),
+  NOW() + INTERVAL '365 days'
+FROM public.plans WHERE slug = 'pro'
+ON CONFLICT (owner_id) DO UPDATE SET
+  status = 'active';
+
+-- Admin subscription (Starter plan)
+INSERT INTO public.subscriptions (owner_id, plan_id, status, current_period_start, current_period_end)
+SELECT
+  'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+  id,
+  'active',
+  NOW(),
+  NOW() + INTERVAL '30 days'
+FROM public.plans WHERE slug = 'starter'
+ON CONFLICT (owner_id) DO UPDATE SET
+  status = 'active';
+
 -- ============================================================================
 -- E. USER SETTINGS
 -- Each user has settings (columns from migration 008)
