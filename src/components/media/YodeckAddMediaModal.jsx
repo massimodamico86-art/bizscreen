@@ -22,6 +22,7 @@ import {
   Layers,
   Tv,
   CloudUpload,
+  X,
 } from 'lucide-react';
 import {
   createYouTubeAsset,
