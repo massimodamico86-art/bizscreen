@@ -42,8 +42,8 @@ async function authenticateRole(page, email, password, authFile, roleName) {
     console.error(`Page error during ${roleName} auth setup:`, err.message);
   });
 
-  // Navigate to login page and wait for network idle
-  await page.goto('/auth/login', { waitUntil: 'networkidle' });
+  // Navigate to login page (don't use networkidle - Supabase realtime keeps connections open)
+  await page.goto('/auth/login', { waitUntil: 'domcontentloaded' });
 
   // Wait for the form to be visible (React has mounted)
   console.log(`${roleName}: Waiting for login form to render...`);
