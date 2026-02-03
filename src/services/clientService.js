@@ -125,7 +125,8 @@ export async function fetchClientsWithStats() {
       .from('subscriptions')
       .select(`
         owner_id,
-        plan_slug,
+        plan_id,
+        plans(slug),
         status,
         trial_ends_at,
         current_period_end,
@@ -136,7 +137,10 @@ export async function fetchClientsWithStats() {
     // Create subscription lookup
     const subLookup = {};
     (subscriptions || []).forEach((sub) => {
-      subLookup[sub.owner_id] = sub;
+      subLookup[sub.owner_id] = {
+        ...sub,
+        plan_slug: sub.plans?.slug || 'free'
+      };
     });
 
     // Fetch screen counts for each client
