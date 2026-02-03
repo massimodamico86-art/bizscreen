@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-03 - Completed quick task 030 (Fix YodeckAddMediaModal X import)
+Last activity: 2026-02-03 - Completed quick task 031 (Run all tests - unit: 2079 passed, E2E: 385/535/243)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -157,10 +157,11 @@ All v2.1 tech debt resolved. Minor items accepted:
 - OTP timeout during pairing step (make optional)
 - Breaking existing users mid-onboarding (feature flag)
 
-**E2E Test Baseline (quick-029):**
-- 340 passed, 433 failed, 260 skipped (out of 1203 tests)
+**E2E Test Baseline (quick-031):**
+- 385 passed, 535 failed, 243 skipped (out of 1203 tests)
+- Improvement from quick-029: +45 passed tests
 - YodeckAddMediaModal.jsx "X is not defined" - FIXED in quick-030
-- Supabase 406 errors on subscriptions queries (RLS/schema issue)
+- Supabase 406 errors on subscriptions queries (RLS/schema issue) - primary cause of failures
 
 ### Quick Tasks Completed
 
@@ -194,13 +195,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 027 | Fix AdminDashboardPage.jsx missing imports | 2026-02-03 | 7706a9c | [027-fix-admindashboardpage-jsx-missing-pagel](./quick/027-fix-admindashboardpage-jsx-missing-pagel/) |
 | 029 | Run E2E tests (baseline verification) | 2026-02-03 | - | [029-run-e2e-tests](./quick/029-run-e2e-tests/) |
 | 030 | Fix YodeckAddMediaModal.jsx missing X import | 2026-02-03 | bbd5940 | [030-fix-yodeckaddmediamodal-import](./quick/030-fix-yodeckaddmediamodal-import/) |
+| 031 | Run all tests (unit: 2079 pass, E2E: 385/535/243) | 2026-02-03 | - | [031-run-all-tests-unit-and-e2e](./quick/031-run-all-tests-unit-and-e2e/) |
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed quick task 030 (Fix YodeckAddMediaModal X import)
+Stopped at: Completed quick task 031 (Run all tests)
 Resume file: None
-Next: None - import fix complete
+Next: None - test run complete
 
 ---
-*Updated: 2026-02-03 - Quick task 030 complete*
+*Updated: 2026-02-03 - Quick task 031 complete*
