@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-03 - Completed quick task 027 (Fix AdminDashboardPage.jsx missing imports)
+Last activity: 2026-02-03 - Completed quick task 029 (Run E2E tests)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -157,6 +157,11 @@ All v2.1 tech debt resolved. Minor items accepted:
 - OTP timeout during pairing step (make optional)
 - Breaking existing users mid-onboarding (feature flag)
 
+**E2E Test Baseline (quick-029):**
+- 340 passed, 433 failed, 260 skipped (out of 1203 tests)
+- New issue found: YodeckAddMediaModal.jsx "X is not defined" at line 2334
+- Supabase 406 errors on subscriptions queries (RLS/schema issue)
+
 ### Quick Tasks Completed
 
 | # | Description | Date | Commit | Directory |
@@ -187,13 +192,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 025 | Fix remaining fixme tests (Templates, Media, Dashboard) | 2026-02-02 | 587820e | [025-remaining-fixme-tests-3-templates-page-n](./quick/025-remaining-fixme-tests-3-templates-page-n/) |
 | 026 | Run all tests (unit and E2E) | 2026-02-03 | - | [026-run-all-tests-unit-and-e2e](./quick/026-run-all-tests-unit-and-e2e/) |
 | 027 | Fix AdminDashboardPage.jsx missing imports | 2026-02-03 | 7706a9c | [027-fix-admindashboardpage-jsx-missing-pagel](./quick/027-fix-admindashboardpage-jsx-missing-pagel/) |
+| 029 | Run E2E tests (baseline verification) | 2026-02-03 | - | [029-run-e2e-tests](./quick/029-run-e2e-tests/) |
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed quick task 027 (Fix AdminDashboardPage.jsx missing imports)
+Stopped at: Completed quick task 029 (Run E2E tests - baseline verification)
 Resume file: None
-Next: TBD
+Next: Fix YodeckAddMediaModal.jsx missing import (discovered during E2E run)
 
 ---
-*Updated: 2026-02-03 - Quick task 027 complete*
+*Updated: 2026-02-03 - Quick task 029 complete*
