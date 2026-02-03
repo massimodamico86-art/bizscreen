@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-03 - Completed quick task 034 (Fix E2E 406 errors - seed data + clientService.js)
+Last activity: 2026-02-03 - Quick task 035 BLOCKED (Supabase infrastructure issue)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -203,13 +203,20 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 032 | Skip scene E2E tests (feature not in navigation) | 2026-02-03 | 45ef950 | [032-fix-scene-e2e-test-failures](./quick/032-fix-scene-e2e-test-failures/) |
 | 033 | Investigate E2E 406 errors (root cause identified) | 2026-02-03 | - | [033-investigate-root-cause-of-e2e-test-failu](./quick/033-investigate-root-cause-of-e2e-test-failu/) |
 | 034 | Fix E2E 406 errors (seed data + clientService.js) | 2026-02-03 | ec38d0f, 2541165 | [034-fix-e2e-406-errors](./quick/034-fix-e2e-406-errors/) |
+| 035 | Verify 406 fix - BLOCKED (Supabase unresponsive) | 2026-02-03 | aa5c2c1 | [035-run-e2e-tests-to-verify-406-fix](./quick/035-run-e2e-tests-to-verify-406-fix/) |
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed quick task 034 (Fix E2E 406 errors)
+Stopped at: Quick task 035 BLOCKED - Supabase infrastructure unresponsive
 Resume file: None
-Next: Run full E2E test suite to verify improvement (quick-035)
+Next: Restart Docker/Supabase, then re-run quick-035 to verify 406 fix
+
+**Infrastructure Issue (2026-02-03):**
+- Supabase auth endpoint not responding (curl timeout exit 28)
+- `npx supabase stop` hangs indefinitely
+- Docker commands (`docker ps`) also hanging
+- **To fix:** Restart Docker Desktop, then `npx supabase db reset && npx supabase start`
 
 ---
-*Updated: 2026-02-03 - Quick task 034 complete (406 fix)*
+*Updated: 2026-02-03 - Quick task 035 blocked (infrastructure issue)*
