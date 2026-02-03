@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-03 - Completed quick task 033 (Investigate E2E 406 errors - root cause identified)
+Last activity: 2026-02-03 - Completed quick task 034 (Fix E2E 406 errors - seed data + clientService.js)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -162,11 +162,10 @@ All v2.1 tech debt resolved. Minor items accepted:
 - Scene tests (81) moved from failed to skipped - feature not in navigation
 - YodeckAddMediaModal.jsx "X is not defined" - FIXED in quick-030
 
-**E2E 406 Error Root Cause (quick-033):**
-- **Primary:** superadmin/admin test users missing subscription records (migration 060 only seeds client/client2)
-- **Secondary:** clientService.js queries non-existent `plan_slug` column (should use `plan_id, plans(slug)`)
-- **Fixes needed:** 1) Update migration 060, 2) Fix clientService.js query
-- **Impact:** ~450 tests expected to pass after fixes
+**E2E 406 Error (quick-033/034):**
+- **Root cause identified in quick-033:** superadmin/admin test users missing subscriptions + clientService.js schema mismatch
+- **FIXED in quick-034:** Migration 060 now seeds all 4 test users, clientService.js uses plans(slug) pattern
+- **Remaining:** Migration 119 has pre-existing bug (td.name vs td.device_name) - separate fix needed
 
 ### Quick Tasks Completed
 
@@ -203,13 +202,14 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 031 | Run all tests (unit: 2079 pass, E2E: 385/535/243) | 2026-02-03 | - | [031-run-all-tests-unit-and-e2e](./quick/031-run-all-tests-unit-and-e2e/) |
 | 032 | Skip scene E2E tests (feature not in navigation) | 2026-02-03 | 45ef950 | [032-fix-scene-e2e-test-failures](./quick/032-fix-scene-e2e-test-failures/) |
 | 033 | Investigate E2E 406 errors (root cause identified) | 2026-02-03 | - | [033-investigate-root-cause-of-e2e-test-failu](./quick/033-investigate-root-cause-of-e2e-test-failu/) |
+| 034 | Fix E2E 406 errors (seed data + clientService.js) | 2026-02-03 | ec38d0f, 2541165 | [034-fix-e2e-406-errors](./quick/034-fix-e2e-406-errors/) |
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed quick task 033 (Investigate E2E 406 errors)
+Stopped at: Completed quick task 034 (Fix E2E 406 errors)
 Resume file: None
-Next: Fix issues identified in quick-033 (seed data + clientService.js)
+Next: Run full E2E test suite to verify improvement (quick-035)
 
 ---
-*Updated: 2026-02-03 - Quick task 033 complete (investigation)*
+*Updated: 2026-02-03 - Quick task 034 complete (406 fix)*
