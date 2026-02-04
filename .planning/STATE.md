@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-04 - Quick task 037 completed (E2E tests verified, 406 fix confirmed)
+Last activity: 2026-02-04 - Quick task 039 completed (E2E test run: 382/460/321)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -157,10 +157,11 @@ All v2.1 tech debt resolved. Minor items accepted:
 - OTP timeout during pairing step (make optional)
 - Breaking existing users mid-onboarding (feature flag)
 
-**E2E Test Baseline (quick-037):**
-- 380 passed, 462 failed, 321 skipped, 40 did not run (duration: 36.7m)
+**E2E Test Baseline (quick-039):**
+- 382 passed, 460 failed, 321 skipped, 40 did not run (duration: 36.9m)
 - Scene tests (81) skipped - feature not in navigation
-- No HTTP 406 errors found - fix confirmed working
+- No HTTP 406 errors found - fix confirmed stable
+- +2 passing tests vs quick-037 (382 vs 380)
 
 **E2E 406 Error (quick-033/034) - RESOLVED:**
 - **Root cause identified in quick-033:** superadmin/admin test users missing subscriptions + clientService.js schema mismatch
@@ -207,20 +208,22 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 035 | Verify 406 fix - BLOCKED (Supabase unresponsive) | 2026-02-03 | aa5c2c1 | [035-run-e2e-tests-to-verify-406-fix](./quick/035-run-e2e-tests-to-verify-406-fix/) |
 | 036 | Verify 406 fix - BLOCKED (Docker unresponsive) | 2026-02-04 | - | [036-verify-406-fix](./quick/036-verify-406-fix/) |
 | 037 | E2E tests verify 406 fix (380 pass, 462 fail, 321 skip) | 2026-02-04 | 130daac | [037-re-run-e2e-tests-to-verify-406-fix](./quick/037-re-run-e2e-tests-to-verify-406-fix/) |
+| 038 | E2E tests baseline (379 pass, 463 fail, 321 skip) | 2026-02-04 | - | [038-run-e2e-tests](./quick/038-run-e2e-tests/) |
+| 039 | E2E tests baseline (382 pass, 460 fail, 321 skip) | 2026-02-04 | - | [039-run-e2e-tests](./quick/039-run-e2e-tests/) |
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Quick task 037 completed - E2E tests verified 406 fix
+Stopped at: Quick task 039 completed - E2E test baseline
 Resume file: None
-Next: None pending - 406 fix verified, infrastructure stable
+Next: None pending - infrastructure stable, baseline tracked
 
-**Quick-037 Results (2026-02-04):**
-- Infrastructure: Docker and Supabase healthy after manual restart
-- Database: Reset applied, all migrations run, test users have subscriptions
-- E2E Tests: 380 passed, 462 failed, 321 skipped (36.7m duration)
-- 406 Fix: VERIFIED - no HTTP 406 errors in test output
-- Remaining failures: mostly timeout-related (30s limit on slow pages)
+**Quick-039 Results (2026-02-04):**
+- Infrastructure: Docker and Supabase healthy
+- E2E Tests: 382 passed, 460 failed, 321 skipped (36.9m duration)
+- Delta vs quick-037: +2 passing, -2 failing (stable)
+- No HTTP 406 errors - fix confirmed stable
+- Most failures: timeout-related (30s limit on slow pages)
 
 ---
-*Updated: 2026-02-04 - Quick task 037 complete (E2E 406 fix verified)*
+*Updated: 2026-02-04 - Quick task 039 complete (E2E baseline: 382/460/321)*
