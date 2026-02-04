@@ -195,11 +195,11 @@ AS $$
       (SELECT jsonb_agg(
         jsonb_build_object(
           'id', td.id,
-          'name', td.name,
+          'name', td.device_name,
           'deviceId', td.device_id,
           'isPaired', td.is_paired,
           'isOnline', td.is_online,
-          'lastSeenAt', td.last_seen_at,
+          'lastSeenAt', td.last_seen,
           'model', td.model,
           'osVersion', td.os_version,
           'appVersion', td.app_version,
@@ -218,9 +218,9 @@ AS $$
       (SELECT jsonb_agg(
         jsonb_build_object(
           'id', qr.id,
-          'name', qr.name,
-          'type', qr.type,
-          'details', qr.details,
+          'name', qr.qr_name,
+          'type', qr.qr_type,
+          'details', qr.qr_details,
           'displayOrder', qr.display_order,
           'qrImageUrl', qr.qr_image_url,
           'createdAt', qr.created_at
