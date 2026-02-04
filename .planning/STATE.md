@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-03 - Quick task 035 BLOCKED (Supabase infrastructure issue)
+Last activity: 2026-02-04 - Quick task 036 BLOCKED (Docker Desktop unresponsive)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -204,19 +204,29 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 033 | Investigate E2E 406 errors (root cause identified) | 2026-02-03 | - | [033-investigate-root-cause-of-e2e-test-failu](./quick/033-investigate-root-cause-of-e2e-test-failu/) |
 | 034 | Fix E2E 406 errors (seed data + clientService.js) | 2026-02-03 | ec38d0f, 2541165 | [034-fix-e2e-406-errors](./quick/034-fix-e2e-406-errors/) |
 | 035 | Verify 406 fix - BLOCKED (Supabase unresponsive) | 2026-02-03 | aa5c2c1 | [035-run-e2e-tests-to-verify-406-fix](./quick/035-run-e2e-tests-to-verify-406-fix/) |
+| 036 | Verify 406 fix - BLOCKED (Docker unresponsive) | 2026-02-04 | - | [036-verify-406-fix](./quick/036-verify-406-fix/) |
 
 ## Session Continuity
 
-Last session: 2026-02-03
-Stopped at: Quick task 035 BLOCKED - Supabase infrastructure unresponsive
+Last session: 2026-02-04
+Stopped at: Quick task 036 BLOCKED - Docker Desktop unresponsive
 Resume file: None
-Next: Restart Docker/Supabase, then re-run quick-035 to verify 406 fix
+Next: Restart Docker Desktop manually, then re-run quick task 036 to verify 406 fix
 
-**Infrastructure Issue (2026-02-03):**
-- Supabase auth endpoint not responding (curl timeout exit 28)
-- `npx supabase stop` hangs indefinitely
-- Docker commands (`docker ps`) also hanging
-- **To fix:** Restart Docker Desktop, then `npx supabase db reset && npx supabase start`
+**Infrastructure Issue (2026-02-04):**
+- PostgREST returning PGRST002: "Could not query the database for the schema cache"
+- Login page shows "Database error querying schema" error
+- Docker Desktop processes exist but daemon not responding to CLI commands
+- All `docker` commands hang indefinitely with no output
+- `npx supabase stop --no-backup` hangs
+- **Root cause:** Docker Desktop corrupted/hung state
+
+**To fix:**
+1. Manually restart Docker Desktop (menu bar > Restart, or kill via Activity Monitor)
+2. Wait for Docker daemon to become responsive: `docker ps`
+3. Reset Supabase: `npx supabase db reset && npx supabase start`
+4. Verify REST API: `curl http://127.0.0.1:54321/rest/v1/plans?select=slug -H "apikey: ..."`
+5. Re-run E2E tests: `npx playwright test`
 
 ---
-*Updated: 2026-02-03 - Quick task 035 blocked (infrastructure issue)*
+*Updated: 2026-02-04 - Quick task 036 blocked (Docker Desktop unresponsive)*
