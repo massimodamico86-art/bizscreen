@@ -209,7 +209,7 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 036 | Verify 406 fix - BLOCKED (Docker unresponsive) | 2026-02-04 | - | [036-verify-406-fix](./quick/036-verify-406-fix/) |
 | 037 | E2E tests verify 406 fix (380 pass, 462 fail, 321 skip) | 2026-02-04 | 130daac | [037-re-run-e2e-tests-to-verify-406-fix](./quick/037-re-run-e2e-tests-to-verify-406-fix/) |
 | 038 | E2E tests baseline (379 pass, 463 fail, 321 skip) | 2026-02-04 | - | [038-run-e2e-tests](./quick/038-run-e2e-tests/) |
-| 039 | E2E tests baseline (382 pass, 460 fail, 321 skip) | 2026-02-04 | - | [039-run-e2e-tests](./quick/039-run-e2e-tests/) |
+| 039 | E2E tests baseline (382 pass, 460 fail, 321 skip) | 2026-02-04 | 47db309 | [039-run-e2e-tests](./quick/039-run-e2e-tests/) |
 
 ## Session Continuity
 
