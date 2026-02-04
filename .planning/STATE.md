@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 35 - Polotno Editor Verification
 Plan: 04 of 4 complete
 Status: Phase complete
-Last activity: 2026-02-04 - Quick task 036 BLOCKED (Docker Desktop unresponsive)
+Last activity: 2026-02-04 - Quick task 037 completed (E2E tests verified, 406 fix confirmed)
 
 Progress: [==========] 100% (6/6 phases complete)
 
@@ -157,14 +157,15 @@ All v2.1 tech debt resolved. Minor items accepted:
 - OTP timeout during pairing step (make optional)
 - Breaking existing users mid-onboarding (feature flag)
 
-**E2E Test Baseline (quick-032):**
-- 385 passed, ~454 failed, ~324 skipped (estimated after scene tests skip)
-- Scene tests (81) moved from failed to skipped - feature not in navigation
-- YodeckAddMediaModal.jsx "X is not defined" - FIXED in quick-030
+**E2E Test Baseline (quick-037):**
+- 380 passed, 462 failed, 321 skipped, 40 did not run (duration: 36.7m)
+- Scene tests (81) skipped - feature not in navigation
+- No HTTP 406 errors found - fix confirmed working
 
-**E2E 406 Error (quick-033/034):**
+**E2E 406 Error (quick-033/034) - RESOLVED:**
 - **Root cause identified in quick-033:** superadmin/admin test users missing subscriptions + clientService.js schema mismatch
 - **FIXED in quick-034:** Migration 060 now seeds all 4 test users, clientService.js uses plans(slug) pattern
+- **VERIFIED in quick-037:** No 406 errors in E2E output, all test users have subscriptions
 - **Remaining:** Migration 119 has pre-existing bug (td.name vs td.device_name) - separate fix needed
 
 ### Quick Tasks Completed
@@ -205,28 +206,21 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 034 | Fix E2E 406 errors (seed data + clientService.js) | 2026-02-03 | ec38d0f, 2541165 | [034-fix-e2e-406-errors](./quick/034-fix-e2e-406-errors/) |
 | 035 | Verify 406 fix - BLOCKED (Supabase unresponsive) | 2026-02-03 | aa5c2c1 | [035-run-e2e-tests-to-verify-406-fix](./quick/035-run-e2e-tests-to-verify-406-fix/) |
 | 036 | Verify 406 fix - BLOCKED (Docker unresponsive) | 2026-02-04 | - | [036-verify-406-fix](./quick/036-verify-406-fix/) |
+| 037 | E2E tests verify 406 fix (380 pass, 462 fail, 321 skip) | 2026-02-04 | - | [037-re-run-e2e-tests-to-verify-406-fix](./quick/037-re-run-e2e-tests-to-verify-406-fix/) |
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Quick task 036 BLOCKED - Docker Desktop unresponsive
+Stopped at: Quick task 037 completed - E2E tests verified 406 fix
 Resume file: None
-Next: Restart Docker Desktop manually, then re-run quick task 036 to verify 406 fix
+Next: None pending - 406 fix verified, infrastructure stable
 
-**Infrastructure Issue (2026-02-04):**
-- PostgREST returning PGRST002: "Could not query the database for the schema cache"
-- Login page shows "Database error querying schema" error
-- Docker Desktop processes exist but daemon not responding to CLI commands
-- All `docker` commands hang indefinitely with no output
-- `npx supabase stop --no-backup` hangs
-- **Root cause:** Docker Desktop corrupted/hung state
-
-**To fix:**
-1. Manually restart Docker Desktop (menu bar > Restart, or kill via Activity Monitor)
-2. Wait for Docker daemon to become responsive: `docker ps`
-3. Reset Supabase: `npx supabase db reset && npx supabase start`
-4. Verify REST API: `curl http://127.0.0.1:54321/rest/v1/plans?select=slug -H "apikey: ..."`
-5. Re-run E2E tests: `npx playwright test`
+**Quick-037 Results (2026-02-04):**
+- Infrastructure: Docker and Supabase healthy after manual restart
+- Database: Reset applied, all migrations run, test users have subscriptions
+- E2E Tests: 380 passed, 462 failed, 321 skipped (36.7m duration)
+- 406 Fix: VERIFIED - no HTTP 406 errors in test output
+- Remaining failures: mostly timeout-related (30s limit on slow pages)
 
 ---
-*Updated: 2026-02-04 - Quick task 036 blocked (Docker Desktop unresponsive)*
+*Updated: 2026-02-04 - Quick task 037 complete (E2E 406 fix verified)*
