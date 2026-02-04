@@ -206,7 +206,7 @@ All v2.1 tech debt resolved. Minor items accepted:
 | 034 | Fix E2E 406 errors (seed data + clientService.js) | 2026-02-03 | ec38d0f, 2541165 | [034-fix-e2e-406-errors](./quick/034-fix-e2e-406-errors/) |
 | 035 | Verify 406 fix - BLOCKED (Supabase unresponsive) | 2026-02-03 | aa5c2c1 | [035-run-e2e-tests-to-verify-406-fix](./quick/035-run-e2e-tests-to-verify-406-fix/) |
 | 036 | Verify 406 fix - BLOCKED (Docker unresponsive) | 2026-02-04 | - | [036-verify-406-fix](./quick/036-verify-406-fix/) |
-| 037 | E2E tests verify 406 fix (380 pass, 462 fail, 321 skip) | 2026-02-04 | - | [037-re-run-e2e-tests-to-verify-406-fix](./quick/037-re-run-e2e-tests-to-verify-406-fix/) |
+| 037 | E2E tests verify 406 fix (380 pass, 462 fail, 321 skip) | 2026-02-04 | 130daac | [037-re-run-e2e-tests-to-verify-406-fix](./quick/037-re-run-e2e-tests-to-verify-406-fix/) |
 
 ## Session Continuity
 
