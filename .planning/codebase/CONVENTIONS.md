@@ -1,181 +1,277 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-01-29
+**Analysis Date:** 2026-02-05
 
 ## Naming Patterns
 
 **Files:**
-- React components: PascalCase with `.jsx` extension (`MediaLibraryPage.jsx`, `FloatingLayersPanel.jsx`)
-- Services: camelCase with `.js` extension (`authService.js`, `loggingService.js`)
-- Test files: Same name as source with `.test.js` or `.spec.js` suffix
-  - Unit: `authService.test.js` in `tests/unit/services/`
-  - E2E: `auth.spec.js` in `tests/e2e/`
-- Utility files: camelCase (`.js` for plain JS, `.jsx` for JSX)
-- Config files: camelCase (`featureFlags.js`, `plans.js`)
+- React components: PascalCase with `.jsx` extension (`DashboardPage.jsx`, `AuthContext.jsx`)
+- Services: camelCase with `.js` extension (`mediaService.js`, `sceneDesignService.js`)
+- Test files: Match source name with `.test.js` or `.spec.js` suffix
+  - Unit tests: `*.test.js` or `*.test.jsx` in `tests/unit/`
+  - E2E tests: `*.spec.js` in `tests/e2e/`
+- Utilities: camelCase with `.js` extension (`formatters.js`, `errorMessages.js`)
 
 **Functions:**
-- camelCase for all functions (`signUp`, `getCurrentUser`, `loginAndPrepare`)
-- Async functions always return Promise (`async function signUp()`)
-- Event handlers: `handle` prefix (`handlePanelDragStart`, `handleNavigateFolder`)
-- Boolean utilities: `is` or `should` prefix (`isEmailConfirmationPending`, `shouldLog`)
+- Use camelCase for all functions (`fetchUserProfile`, `loginAndPrepare`, `getMediaTypeFromMime`)
+- Exported functions start with verb (`get`, `fetch`, `create`, `update`, `delete`, `validate`)
+- Boolean predicates start with `is`, `has`, `should` (seen in helper functions)
+- Event handlers prefixed with `handle` or `on` (`onClick`, `handleSubmit`)
 
 **Variables:**
-- camelCase for variables (`sessionContext`, `logBuffer`, `emailInput`)
-- SCREAMING_SNAKE_CASE for constants (`LOG_LEVELS`, `ALLOWED_TYPES`, `MEDIA_TYPE_LABELS`)
-- React hooks: `use` prefix (`useAuth`, `useMediaLibrary`, `useLogger`)
+- Use camelCase for local variables (`userProfile`, `retryCount`, `authStatus`)
+- Use UPPER_SNAKE_CASE for constants (`MEDIA_TYPES`, `AUTH_STATUS`, `ANIMATION_TYPES`)
+- React state variables: descriptive names (`[loading, setLoading]`, `[user, setUser]`)
 
 **Types:**
-- PascalCase for component names (`FloatingLayersPanel`, `MediaLibraryPage`)
-- PascalCase for context names (`AuthContext`, `BrandingContext`)
-- Constants objects use PascalCase keys for enums (`Feature`, `PlanSlug`)
+- Constants objects use UPPER_SNAKE_CASE keys: `MEDIA_TYPES.IMAGE`, `AUTH_STATUS.LOADING`
+- Enum-like objects documented at module level
+- React Context names: PascalCase with "Context" suffix (`AuthContext`, `BrandingContext`)
 
 ## Code Style
 
 **Formatting:**
-- No Prettier config detected - manual formatting
-- Indentation: 2 spaces (observed in all files)
-- Semicolons: Used consistently
-- Quote style: Single quotes for strings, double quotes for JSX attributes
-- Line length: No enforced limit (some lines exceed 120 chars)
+- No Prettier config detected - relies on ESLint auto-fix
+- 2-space indentation (observed in all files)
+- Single quotes for strings (not enforced, mixed usage observed)
+- Semicolons used consistently
+- Trailing commas in multi-line arrays/objects
 
 **Linting:**
-- Tool: ESLint 9 with flat config (`eslint.config.js`)
-- Config: `@eslint/js` recommended + React plugins
-- Key rules enforced:
-  - `unused-imports/no-unused-imports: error` (blocks commits)
-  - `unused-imports/no-unused-vars: warn` (visibility only)
-  - `no-console: warn` (allow `console.warn` and `console.error`)
-  - `react/prop-types: warn` (gradual adoption)
-  - `jsdoc/require-jsdoc: warn` (for exported functions)
-  - `no-undef: warn` (legacy migration mode)
-- Pre-commit hook: `lint-staged` runs `eslint --fix` on `*.{js,jsx}`
-- Test files: Relaxed rules (no-console off, prop-types off, jsdoc off)
+- ESLint via `eslint.config.js` (flat config format)
+- Config: `@eslint/js` recommended rules + React plugins
+- Plugins: `react-hooks`, `react-refresh`, `unused-imports`, `react`, `jsdoc`
+- Run: `npm run lint`
+- Pre-commit: `lint-staged` auto-fixes JS/JSX files
 
 ## Import Organization
 
 **Order:**
-1. External dependencies (React, router, third-party)
-2. Internal absolute imports (services, contexts, utils)
-3. Relative imports (local components, styles)
-4. Type/constant imports
+1. React and React-related imports
+2. External dependencies (libraries)
+3. Internal contexts and hooks
+4. Services and utilities
+5. Components (design system, then local)
+6. Config and constants
 
-**Example:**
+**Pattern from `DashboardPage.jsx`:**
 ```javascript
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../supabase';
-import { createScopedLogger } from './loggingService.js';
-import { useAuth } from '../contexts/AuthContext';
-import { PageLayout, Button } from '../design-system';
+import { useState, useEffect, useCallback } from 'react';
+import { Loader2, ArrowRight, Monitor } from 'lucide-react'; // External icons
+
+import { useAuth } from '../contexts/AuthContext';           // Contexts/hooks
+import { useTranslation } from '../i18n';
+
+import { getDashboardStats } from '../services/dashboardService'; // Services
+
+import { PageLayout, PageHeader, Card } from '../design-system'; // Design system
+import { DashboardErrorState } from './dashboard/DashboardSections'; // Local components
+
+import ErrorBoundary from '../components/ErrorBoundary';     // Global components
+import { config } from '../config/env';                       // Config
 ```
 
 **Path Aliases:**
-- No Vite aliases configured
-- All imports use relative paths (`../`, `../../`)
-- Services imported with `.js` extension explicitly
-
-**Import style:**
-- Named imports preferred: `import { supabase } from '../supabase'`
-- Default imports for components: `import FloatingLayersPanel from './FloatingLayersPanel'`
-- Barrel exports used in some directories (`src/design-system/index.js`, `src/pages/index.js`)
+- Not detected - uses relative imports (`../`, `../../`)
+- Services: `../services/serviceName`
+- Components: `../components/ComponentName`
+- Design system: `../design-system`
 
 ## Error Handling
 
 **Patterns:**
-- Try-catch in async functions with error object return:
+- Services throw errors, components catch and display
+- Async/await with try-catch blocks in services
+- Supabase error checking: `if (error) throw error;`
+- Error boundaries wrap page components: `<ErrorBoundary>`
+
+**Service pattern from `sceneDesignService.js`:**
 ```javascript
-try {
-  const { data, error } = await supabase.auth.signUp(...);
-  if (error) return { user: null, error: error.message };
-  return { user: data.user, error: null };
-} catch (error) {
-  logger.error('Signup failed', { error });
-  return { user: null, error: error.message };
+export async function fetchSlidesForScene(sceneId) {
+  const { data, error } = await supabase
+    .from('scene_slides')
+    .select('*')
+    .eq('scene_id', sceneId)
+    .order('position', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
 }
 ```
 
-- Supabase pattern: Destructure `{ data, error }` and check `error` first
-- Return shape: `{ success/data, error }` consistently across services
-- Logging before return on error paths using scoped logger
+**Component pattern:**
+```javascript
+try {
+  const result = await someService();
+  setData(result);
+} catch (error) {
+  logger.error('Operation failed', { error });
+  showToast('Error message', 'error');
+}
+```
 
 ## Logging
 
-**Framework:** Custom structured logging service (`loggingService.js`)
-
-**Logger creation:**
-```javascript
-import { createScopedLogger } from '../services/loggingService.js';
-const logger = createScopedLogger('AuthService');
-```
+**Framework:** Custom `loggingService.js`
 
 **Patterns:**
-- Services use scoped logger: `const logger = createScopedLogger('ServiceName')`
-- Components use hook: `const logger = useLogger('ComponentName')`
-- Levels: `trace`, `debug`, `info`, `warn`, `error`, `fatal`
-- Context enrichment: `logger.info('message', { contextObject })`
-- Avoid `console.*` (linting warns, except in tests/scripts)
-- Production: `minLevel: 'info'`, 10% sampling, batched remote logging
+- Create scoped logger at module level: `const logger = createScopedLogger('ModuleName');`
+- Use semantic log levels: `logger.debug()`, `logger.info()`, `logger.warn()`, `logger.error()`
+- Pass context objects: `logger.debug('Fetching profile', { userId, attempt });`
+- Alternative: `const logger = useLogger('ComponentName');` for React components
 
-**When to log:**
-- Service operations: info level (`logger.info('User signed up', { userId })`)
-- Errors: error level with context (`logger.error('Failed to create profile', { error, userId })`)
-- Performance: Not in logging service (separate analytics)
+**Example from `mediaService.js`:**
+```javascript
+import { createScopedLogger } from './loggingService';
+const logger = createScopedLogger('MediaService');
+
+logger.debug('Fetching media', { type, page });
+```
+
+**Console rule:** Warn level in ESLint (legacy migration phase)
+- `console.log()` shows warning - should use `loggingService`
+- `console.warn()` and `console.error()` allowed
+- Goal: Migrate all console usage to `loggingService`
 
 ## Comments
 
 **When to Comment:**
-- File-level JSDoc headers describing purpose and features (observed in `MediaLibraryPage.jsx`, `FloatingLayersPanel.jsx`)
-- Complex logic explanation (not observed frequently - code is self-documenting)
-- TODOs for known issues (very few found)
+- File headers: Purpose, module description, and usage context
+- Complex business logic: Explain "why" not "what"
+- Function documentation: JSDoc for exported functions
+- TODO comments: Mark technical debt and future work
 
-**JSDoc/TSDoc:**
-- Usage: Gradual adoption (eslint warns for missing JSDoc)
-- Required for exported functions:
+**JSDoc:**
+- Warn level in ESLint (gradual adoption)
+- Required for exported functions from services
+- Format: `@param`, `@returns`, `@throws`, `@example`
+
+**Example from `sceneDesignService.js`:**
 ```javascript
 /**
- * Sign up a new user
- * @param {object} options
- * @param {string} options.email
- * @param {string} options.password
- * @param {string} options.fullName
- * @param {string} options.businessName
- * @returns {Promise<{user: object|null, error: string|null}>}
+ * Fetch all slides for a scene ordered by position
+ * @param {string} sceneId - The scene ID
+ * @returns {Promise<Array>} List of slides with design data
  */
-export async function signUp({ email, password, fullName, businessName }) {
+export async function fetchSlidesForScene(sceneId) {
+  // ...
+}
 ```
-- Format: Multi-line with `@param`, `@returns`, `@module`, `@see`
+
+**Example from `AuthContext.jsx`:**
+```javascript
+/**
+ * Fetch user profile from Supabase including role information
+ *
+ * This function handles profile fetching with built-in error handling and retry logic.
+ * It supports skipping unnecessary fetches if the profile is already loaded.
+ *
+ * @param {string} userId - The UUID of the user to fetch profile for
+ * @param {string} userEmail - The user's email address (used for logging)
+ * @param {boolean} [skipIfExists=false] - If true, skip fetch if profile already exists in state
+ * @param {number} [retryCount=0] - Current retry attempt number (used for logging)
+ *
+ * @returns {Promise<void>} Updates userProfile state
+ *
+ * @example
+ * await fetchUserProfile(user.id, user.email);
+ */
+```
 
 ## Function Design
 
-**Size:**
-- Services: 20-80 lines per function (some larger for complex operations)
-- Components: Extract helpers into hooks (e.g., `useMediaLibrary`, `usePlaylistEditor`)
-- Largest files: ~2800 lines (`industryWizardService.js`)
+**Size:** Functions kept focused and single-purpose
 
 **Parameters:**
-- Destructured objects for 3+ params: `signUp({ email, password, fullName, businessName })`
-- Positional for 1-2 params: `createScopedLogger(scope)`
-- Options object pattern: `loginAndPrepare(page, options = {})`
+- Services: Named parameters via destructuring for options
+- Components: Props destructured in function signature
+- Default values provided inline: `{ type = null, search = '', page = 1 } = {}`
+
+**Example from `mediaService.js`:**
+```javascript
+export async function fetchMediaAssets({
+  type = null,
+  search = '',
+  page = 1,
+  pageSize = 50,
+  folderId = undefined
+} = {}) {
+  // ...
+}
+```
 
 **Return Values:**
-- Async: Always returns `Promise<{data/success, error}>` shape
-- Hooks: Return destructured state and handlers
-- Utilities: Direct values or null
+- Services return data directly or throw errors
+- Avoid returning `{ success, data, error }` wrappers
+- Async functions always return Promises
+- Use `null` for "not found" states, empty arrays/objects for empty collections
 
 ## Module Design
 
 **Exports:**
-- Named exports preferred: `export async function signUp()`
-- Default exports for React components: `export default FloatingLayersPanel`
-- No mixed default + named from same file (components vs utils)
+- Named exports preferred: `export function fetchData() {}`
+- Default exports for React components: `export default ComponentName;`
+- Constants exported as named exports: `export const MEDIA_TYPES = {...};`
 
 **Barrel Files:**
-- Usage: Common in organized directories
-  - `src/design-system/index.js` re-exports components
-  - `src/pages/index.js` re-exports page components
-  - `src/services/index.js` (exists but not verified)
-- Pattern: `export { ComponentName } from './ComponentName'`
+- Design system uses barrel exports: `../design-system` exports multiple components
+- Not widely used elsewhere - direct imports preferred
+
+**PropTypes:**
+- React components use PropTypes (gradual adoption, warn level)
+- Format: PropTypes with JSDoc comments
+- Default props via `Component.defaultProps` or inline defaults
+
+**Example from `Button.jsx`:**
+```javascript
+Button.propTypes = {
+  /** Button content - text, icon, or any React node */
+  children: PropTypes.node.isRequired,
+  /** Click handler function */
+  onClick: PropTypes.func,
+  /** Visual style variant */
+  variant: PropTypes.oneOf(['primary', 'outline', 'success', 'danger']),
+};
+
+Button.defaultProps = {
+  onClick: null,
+  variant: 'primary',
+};
+```
+
+## React Patterns
+
+**Hooks:**
+- Custom hooks prefixed with `use`: `useAuth()`, `useLogger()`, `useBreakpoints()`
+- Hooks extracted to `src/hooks/` directory
+- Context hooks check for provider: `if (!context) throw new Error(...)`
+
+**State Management:**
+- React Context for global state (`AuthContext`, `BrandingContext`)
+- `useState` for local component state
+- `useCallback` for memoized callbacks in contexts
+
+**Component Structure:**
+1. Imports
+2. PropTypes/defaultProps (if component uses them)
+3. Component function
+4. PropTypes definition (after component)
+5. Default export
+
+**Legacy Wrappers:**
+- Components in `src/components/` wrap design system for backwards compatibility
+- Comments indicate "Legacy wrapper" and suggest importing from design system
+- Map old prop names to new design system props
+
+**Example from `Badge.jsx`:**
+```javascript
+/**
+ * Badge Component - Legacy wrapper
+ * Re-exports from design system with backwards-compatible prop mapping.
+ * New code should import directly from '../design-system' instead.
+ */
+```
 
 ---
 
-*Convention analysis: 2026-01-29*
+*Convention analysis: 2026-02-05*
