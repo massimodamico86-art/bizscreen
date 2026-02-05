@@ -1,5 +1,39 @@
 # Project Milestones: BizScreen
 
+## v2.2 Onboarding Polish (Shipped: 2026-02-05)
+
+**Delivered:** Unified onboarding experience with 5-step flow (welcome → industry → starter pack → screen pairing → success), screen pairing integration with QR/OTP, legacy code cleanup, and Polotno editor hardening.
+
+**Phases completed:** 30-35 (16 plans total)
+
+**Key accomplishments:**
+
+- Unified onboarding flow with database state machine, RPC functions, and UnifiedOnboardingController orchestrator
+- Screen pairing integrated into onboarding: QR code (primary), OTP (fallback), live polling, confetti celebration
+- SuccessStep with completion celebration, conditional messaging for paired vs skipped users, and navigation CTAs
+- Legacy cleanup: deleted OnboardingWizard, OnboardingBanner, WelcomeModal (1,005 lines removed)
+- DashboardPage reduced 46% (668→361 lines), 16 legacy state variables eliminated
+- Polotno editor hardened: EditorModal with 10s timeout, UnsavedChangesDialog, PostSaveDialog, mobile warning
+
+**Stats:**
+
+- 32 files created/modified
+- 315,480 lines of JavaScript/JSX
+- 6 phases, 16 plans
+- 7 days from start to ship
+
+**Git range:** `329720f` → `9da3eea`
+
+**Tech debt accepted:**
+
+- Phase 31: Human verification deferred (flow works, manual testing recommended before production)
+- Phase 33: Screenshot proof from device not implemented (infeasible - requires 30+ second delay)
+- RPC missing screen_pairing_completed_at field (cosmetic impact only)
+
+**What's next:** v2.3 or v3.0 planning
+
+---
+
 ## v2.1 Tech Debt Cleanup (Shipped: 2026-01-28)
 
 **Delivered:** Reduced technical debt from v1/v2 through Player.jsx restructuring, test infrastructure fixes, analytics gap closure, bundle optimization, and code quality enforcement.

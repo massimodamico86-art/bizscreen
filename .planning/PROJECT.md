@@ -62,17 +62,21 @@ These capabilities shipped and are production-verified:
 - ✓ PropTypes and JSDoc on core components/services — v2.1
 - ✓ README rewritten with architecture docs — v2.1
 
+**v2.2 Onboarding Polish (2026-02-05):**
+- ✓ Unified onboarding flow with 5-step state machine — v2.2
+- ✓ Screen pairing integrated into onboarding (QR/OTP/polling) — v2.2
+- ✓ SuccessStep with completion celebration and CTAs — v2.2
+- ✓ Legacy code cleanup (1,005 lines removed) — v2.2
+- ✓ DashboardPage reduced 46% (16 state variables eliminated) — v2.2
+- ✓ Polotno editor hardened (modal wrapper, 10s timeout, dialogs) — v2.2
+
 ### Active
 
-**Current Milestone:** v2.2 Onboarding Polish
+**Current Milestone:** Planning next milestone
 
-**Goal:** Unify and complete the onboarding experience so new users can create content (template or upload), pair their first screen, and start displaying content with minimal friction.
-
-**Target features:**
-- [ ] Unified onboarding flow (consolidate WelcomeModal, OnboardingWizard, WelcomeTour)
-- [ ] Guided screen pairing step integrated into onboarding
-- [ ] Media upload path as alternative to templates
-- [ ] Polotno editor verification and fixes
+**Options:**
+- v2.3: Production hardening (E2E test stability, performance, monitoring)
+- v3.0: Major feature work (RTL languages, advanced integrations)
 
 ### Out of Scope
 
@@ -91,23 +95,22 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (Post v2.1):**
+**Current State (Post v2.2):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- 310,940 lines of JavaScript/JSX across codebase
-- Player.jsx restructured to 23 lines (routing only)
-- ViewPage extracted to player/pages/ (1,203 lines)
-- Test suite: 2071 tests passing, 0 failures
+- 315,480 lines of JavaScript/JSX across codebase
+- Unified onboarding flow with feature flag `VITE_USE_UNIFIED_ONBOARDING`
+- Test suite: 2079 unit tests, 382 E2E tests passing
 - Player component supports web, Android, iOS, WebOS, Tizen
 - Multi-tenant with feature flags for plan differentiation
 - AWS S3 for media storage with CloudFront CDN
 - Pre-commit hooks enforce ESLint on all commits
-- Bundle analysis via `npm run analyze`
+- EditorModal pattern for Polotno editor isolation
 
 **Technical Debt (Minor — Accepted):**
 - src/__fixtures__/ exists but not yet adopted in tests
-- 7815 ESLint warnings remain (gradual cleanup via warn rules)
-- PropTypes use basic types (acceptable for wrapper components)
-- useStuckDetection not unit tested (covered by integration tests)
+- 7807 ESLint warnings remain (gradual cleanup via warn rules)
+- Phase 31 human verification deferred (unified onboarding flow)
+- E2E test stability: 460 failing tests (mostly timeout-related)
 - Migration 105 references non-existent `tenants` table (pre-existing)
 
 **Codebase Mapping:**
@@ -142,6 +145,11 @@ These capabilities shipped and are production-verified:
 | sideEffects for tree shaking | Explicit bundler hints | ✓ Good — verified working |
 | Pre-commit hooks via Husky/lint-staged | Enforce quality at commit time | ✓ Good — clean commits |
 | PropTypes at warn level | Gradual adoption without blocking | ✓ Good — coverage growing |
+| Unified step sequence for onboarding | Single state machine prevents fragmentation | ✓ Good — 5 overlapping flows consolidated |
+| Feature flag for onboarding rollout | Safe A/B testing and instant rollback | ✓ Good — legacy flow preserved |
+| QR code primary pairing method | Faster than manual OTP entry | ✓ Good — 180px prominent |
+| Screenshot proof deferred | 30+ second device polling infeasible | ✓ Accepted — text confirmation adequate |
+| Modal-based editor isolation | Prevent navigation during editing | ✓ Good — 10s timeout with fallback |
 
 ---
-*Last updated: 2026-01-28 after v2.2 milestone started*
+*Last updated: 2026-02-05 after v2.2 milestone complete*
