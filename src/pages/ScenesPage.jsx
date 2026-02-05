@@ -20,13 +20,30 @@ import {
   Car,
   Coffee,
   Building2,
+  AlertTriangle,
+  Loader2,
+  ChevronRight,
 } from 'lucide-react';
 import { pushEmergencyContent, EMERGENCY_DURATIONS } from '../services/emergencyService';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchScenesWithDeviceCounts } from '../services/sceneService';
 import { getAvailableLanguagesForScene } from '../services/languageService';
-
-// Design system imports
+import {
+  Card,
+  CardContent,
+  PageLayout,
+  PageHeader,
+  PageContent,
+  Button,
+  Badge,
+  Stack,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 
 
 
@@ -214,6 +231,13 @@ function SceneEmergencyModal({ scene, onClose, onShowToast }) {
 
 const PAGE_SIZE = 12; // Good for grid display
 
+/**
+ *
+ * @param root0
+ * @param root0.onNavigate
+ * @param root0.onShowToast
+ * @param root0.onShowAutoBuild
+ */
 export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild }) {
   const { userProfile } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();

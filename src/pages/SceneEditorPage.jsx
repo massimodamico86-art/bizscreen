@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-
+import { Loader2 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { fetchScene, saveSceneWithApproval } from '../services/sceneService';
@@ -54,6 +54,13 @@ const BUSINESS_TYPE_LABELS = {
   other: 'Business',
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.sceneId
+ * @param root0.onNavigate
+ * @param root0.onShowToast
+ */
 export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
   const { userProfile } = useAuth();
 

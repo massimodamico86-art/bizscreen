@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, lazy, useMemo } from 'react';
+import { Loader2 } from 'lucide-react';
 import { uploadMediaFromDataUrl, getMediaAsset, updateMediaAsset } from '../services/mediaService';
 import { fetchLayoutTemplates } from '../services/layoutTemplateService';
 
@@ -59,6 +60,14 @@ function parseQueryParams(routeString) {
   };
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.designId
+ * @param root0.routeString
+ * @param root0.showToast
+ * @param root0.onNavigate
+ */
 export default function DesignEditorPage({
   designId = 'new',
   routeString = '',

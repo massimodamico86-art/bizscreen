@@ -18,7 +18,8 @@ import {
   Utensils,
   Scissors,
   Dumbbell,
-  ShoppingBag
+  ShoppingBag,
+  Loader2,
 } from 'lucide-react';
 
 
@@ -46,6 +47,8 @@ const BUSINESS_ICONS = {
 
 /**
  * DemoToolsPage Component
+ * @param root0
+ * @param root0.showToast
  */
 export default function DemoToolsPage({ showToast }) {
   const { t } = useTranslation();
@@ -386,6 +389,11 @@ export default function DemoToolsPage({ showToast }) {
 
 /**
  * Create Demo Tenant Modal
+ * @param root0
+ * @param root0.onClose
+ * @param root0.onCreate
+ * @param root0.loading
+ * @param root0.t
  */
 function CreateDemoModal({ onClose, onCreate, loading, t }) {
   const [businessType, setBusinessType] = useState('other');
@@ -473,6 +481,11 @@ function CreateDemoModal({ onClose, onCreate, loading, t }) {
 
 /**
  * Demo Links Modal
+ * @param root0
+ * @param root0.tenant
+ * @param root0.onClose
+ * @param root0.onCopy
+ * @param root0.t
  */
 function DemoLinksModal({ tenant, onClose, onCopy, t }) {
   const links = [
@@ -545,6 +558,11 @@ function DemoLinksModal({ tenant, onClose, onCopy, t }) {
 
 /**
  * Demo Settings Modal
+ * @param root0
+ * @param root0.tenant
+ * @param root0.onClose
+ * @param root0.onSave
+ * @param root0.t
  */
 function DemoSettingsModal({ tenant, onClose, onSave, t }) {
   const [resetInterval, setResetInterval] = useState(

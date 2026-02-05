@@ -27,7 +27,8 @@ import {
   Ban,
   Building2,
   CreditCard,
-  Calendar
+  Calendar,
+  Loader2,
 } from 'lucide-react';
 
 /**
@@ -44,6 +45,8 @@ const STATUS_BADGES = {
 
 /**
  * TenantAdminPage Component
+ * @param root0
+ * @param root0.showToast
  */
 export default function TenantAdminPage({ showToast }) {
   const { t } = useTranslation();
@@ -486,6 +489,12 @@ export default function TenantAdminPage({ showToast }) {
 
 /**
  * Tenant Stat Card Component (local to avoid conflict with design-system StatCard)
+ * @param root0
+ * @param root0.label
+ * @param root0.value
+ * @param root0.icon
+ * @param root0.color
+ * @param root0.onClick
  */
 function TenantStatCard({ label, value, icon: Icon, color, onClick }) {
   const colors = {
@@ -519,6 +528,17 @@ function TenantStatCard({ label, value, icon: Icon, color, onClick }) {
 
 /**
  * Tenant Row Component
+ * @param root0
+ * @param root0.tenant
+ * @param root0.showActionsMenu
+ * @param root0.setShowActionsMenu
+ * @param root0.actionLoading
+ * @param root0.onSuspend
+ * @param root0.onReactivate
+ * @param root0.onResetTrial
+ * @param root0.onExpireTrial
+ * @param root0.onViewDetails
+ * @param root0.t
  */
 function TenantRow({
   tenant,
@@ -698,6 +718,13 @@ function TenantRow({
 
 /**
  * Confirm Modal Component
+ * @param root0
+ * @param root0.type
+ * @param root0.tenant
+ * @param root0.onConfirm
+ * @param root0.onCancel
+ * @param root0.loading
+ * @param root0.t
  */
 function ConfirmModal({ type, tenant, onConfirm, onCancel, loading, t }) {
   const [reason, setReason] = useState('');
@@ -782,6 +809,10 @@ function ConfirmModal({ type, tenant, onConfirm, onCancel, loading, t }) {
 
 /**
  * Tenant Details Drawer
+ * @param root0
+ * @param root0.tenant
+ * @param root0.onClose
+ * @param root0.t
  */
 function TenantDetailsDrawer({ tenant, onClose, t }) {
   return (

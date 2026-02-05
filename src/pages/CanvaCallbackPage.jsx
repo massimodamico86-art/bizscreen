@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { useLogger } from '../hooks/useLogger.js';
 import { handleCanvaCallback } from '../services/canvaService';
 
 /**
  * Canva OAuth Callback Page
  * Handles the redirect from Canva after user authorization
+ * @param root0
+ * @param root0.onNavigate
+ * @param root0.showToast
  */
 const CanvaCallbackPage = ({ onNavigate, showToast }) => {
   const logger = useLogger('CanvaCallbackPage');

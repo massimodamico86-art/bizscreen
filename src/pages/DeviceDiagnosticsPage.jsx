@@ -14,6 +14,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   Monitor,
+  Loader2,
 } from 'lucide-react';
 import {
   fetchDevicesWithScreenshots,
@@ -558,6 +559,11 @@ function DeviceDetailModal({ device, onClose, onRequestScreenshot, isRefreshing,
 }
 
 // Main page component
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function DeviceDiagnosticsPage({ showToast }) {
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);

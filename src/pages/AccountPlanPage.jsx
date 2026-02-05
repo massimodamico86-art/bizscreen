@@ -9,7 +9,8 @@ import {
   Calendar,
   Sparkles,
   Crown,
-  Zap
+  Zap,
+  Loader2,
 } from 'lucide-react';
 
 

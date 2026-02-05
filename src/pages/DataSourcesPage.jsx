@@ -22,10 +22,45 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Table2,
   FileSpreadsheet,
+  MoreVertical,
+  GripVertical,
+  ArrowUp,
+  ArrowDown,
+  RefreshCw,
+  AlertTriangle,
+  Check,
+  Pencil as Edit,
+  Trash2,
+  Plus,
+  X,
+  Loader2,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  PageLayout,
+  PageHeader,
+  PageContent,
+  Button,
+  IconButton,
+  Badge,
+  Stack,
+  Inline,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+  Input,
+  Select,
+  Alert,
+} from '../design-system';
 import {
   fetchDataSources,
   getDataSource,
@@ -285,6 +320,9 @@ const RowEditor = ({ row, fields, onUpdate, onDelete }) => {
 // Main Component
 // --------------------------------------------------------------------------
 
+/**
+ *
+ */
 export default function DataSourcesPage() {
   const { user } = useAuth();
   const { t } = useTranslation();

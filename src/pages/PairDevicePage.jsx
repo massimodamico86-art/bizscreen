@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
+import { Loader2 } from 'lucide-react';
 
 import { useLogger } from '../hooks/useLogger';
 import {
@@ -25,6 +25,9 @@ import {
 
 
 
+/**
+ *
+ */
 export default function PairDevicePage() {
   const { deviceId } = useParams();
   const navigate = useNavigate();

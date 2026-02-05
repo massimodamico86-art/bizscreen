@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import {
   Monitor,
   Settings,
+  Loader2,
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
 
@@ -270,6 +271,18 @@ export default function ScreenGroupDetailPage({ groupId, onNavigate, showToast }
 
 /**
  * Devices Tab Content - Screen assignment UI
+ * @param root0
+ * @param root0.assignedScreens
+ * @param root0.availableScreens
+ * @param root0.loadingScreens
+ * @param root0.selectedToAdd
+ * @param root0.selectedToRemove
+ * @param root0.toggleAddSelection
+ * @param root0.toggleRemoveSelection
+ * @param root0.handleAddScreens
+ * @param root0.handleRemoveScreens
+ * @param root0.saving
+ * @param root0.t
  */
 function DevicesTabContent({
   assignedScreens,
@@ -390,6 +403,12 @@ function DevicesTabContent({
 
 /**
  * Screen Item - Individual screen row in the lists
+ * @param root0
+ * @param root0.screen
+ * @param root0.selected
+ * @param root0.onToggle
+ * @param root0.showGroupBadge
+ * @param root0.t
  */
 function ScreenItem({ screen, selected, onToggle, showGroupBadge = false, t }) {
   return (

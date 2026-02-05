@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, Eye, Shield, Activity, Palette, Lock, Sparkles } from 'lucide-react';
+import { Bell, Eye, Shield, Activity, Palette, Lock, Sparkles, Loader2 } from 'lucide-react';
 import { getUserSettings, updateUserSettings, resetUserSettings } from '../services/userSettingsService';
 import { getActivityLog, formatActivity } from '../services/activityLogService';
 import { getAllBrandThemes, deleteBrandTheme, setActiveTheme } from '../services/brandThemeService';

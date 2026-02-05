@@ -6,7 +6,8 @@ import {
   ListVideo,
   Layout,
   Zap,
-  Film
+  Film,
+  Loader2,
 } from 'lucide-react';
 import {
   fetchReviews,

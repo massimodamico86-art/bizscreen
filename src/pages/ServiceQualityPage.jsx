@@ -3,6 +3,16 @@ import {
   ArrowUp,
   ArrowDown,
   Minus,
+  Shield,
+  Bell,
+  BellOff,
+  XCircle,
+  AlertTriangle,
+  AlertCircle,
+  CheckCircle2,
+  Wifi,
+  Activity,
+  Monitor,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
@@ -20,8 +30,20 @@ import {
   getTenantNetworkSummary,
   getErrorBreakdown,
 } from '../services/metricsService';
-
-// Design system imports
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  PageLayout,
+  PageHeader,
+  PageContent,
+  Button,
+  Badge,
+  Stack,
+  Inline,
+  Banner,
+} from '../design-system';
 
 
 
@@ -590,6 +612,9 @@ function SlaBreakdownCard({ breakdown }) {
 // Main Component
 // --------------------------------------------------------------------------
 
+/**
+ *
+ */
 export default function ServiceQualityPage() {
   const { user, profile } = useAuth();
   const { t } = useTranslation();

@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-
+import { Loader2 } from 'lucide-react';
 
 import { useTranslation } from '../i18n';
 
@@ -674,6 +674,9 @@ function CommentsSection({ token, allowComments }) {
 // MAIN PUBLIC PREVIEW PAGE
 // ============================================================================
 
+/**
+ *
+ */
 export default function PublicPreviewPage() {
   const { token } = useParams();
   const { t } = useTranslation();

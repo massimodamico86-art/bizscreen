@@ -21,11 +21,23 @@ import {
   Car,
   Coffee,
   Building2,
+  ArrowLeft,
+  ExternalLink,
+  Loader2,
+  Check,
+  X,
+  Pencil,
+  Edit,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchScene, updateScene, getDeviceCountByScene } from '../services/sceneService';
-
-// Design system imports
+import {
+  Card,
+  CardContent,
+  PageLayout,
+  Button,
+  Badge,
+} from '../design-system';
 
 
 
@@ -68,6 +80,13 @@ function InfoCard({ title, subtitle, icon: Icon, iconBg, onEdit }) {
   );
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.sceneId
+ * @param root0.onNavigate
+ * @param root0.onShowToast
+ */
 export default function SceneDetailPage({ sceneId, onNavigate, onShowToast }) {
   const { userProfile } = useAuth();
   const [scene, setScene] = useState(null);

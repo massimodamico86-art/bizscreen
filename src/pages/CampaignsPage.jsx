@@ -6,7 +6,8 @@ import {
   FileText,
   Clock,
   CheckCircle,
-  Megaphone
+  Megaphone,
+  Loader2,
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';

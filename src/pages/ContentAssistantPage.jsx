@@ -15,6 +15,7 @@ import {
   Scissors,
   Dumbbell,
   ShoppingBag,
+  Loader2,
 } from 'lucide-react';
 import {
   generatePlan,

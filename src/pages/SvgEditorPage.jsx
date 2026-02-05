@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
+import { Loader2 } from 'lucide-react';
 import {
   loadUserSvgDesign,
   saveUserSvgDesign,
@@ -16,6 +17,7 @@ import {
 
 /**
  * Parse query params from route string
+ * @param routeString
  */
 function parseQueryParams(routeString) {
   if (routeString && routeString.includes('?')) {
@@ -29,6 +31,13 @@ function parseQueryParams(routeString) {
   return {};
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.routeString
+ * @param root0.showToast
+ * @param root0.onNavigate
+ */
 export default function SvgEditorPage({
   routeString = '',
   showToast,

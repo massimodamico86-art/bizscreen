@@ -17,6 +17,7 @@ import {
   MessageSquare,
   Megaphone,
   Bug,
+  Loader2,
 } from 'lucide-react';
 import { useFeatureFlags } from './hooks/useFeatureFlags.js';
 
@@ -30,6 +31,9 @@ const tabs = [
   { id: 'debug', label: 'Debug', icon: Bug },
 ];
 
+/**
+ *
+ */
 export default function FeatureFlagsPage() {
   const { userProfile } = useAuth();
   const {
