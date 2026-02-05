@@ -14,8 +14,24 @@ import {
   Shield,
   Key,
   Users,
-  Database
+  Database,
+  RefreshCw,
+  Eye,
+  EyeOff,
+  Copy,
+  Check,
+  Info,
+  AlertTriangle,
+  Download,
+  FileText,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Alert,
+} from '../design-system';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 
@@ -23,6 +39,11 @@ import { useTranslation } from '../i18n';
 import { getSSOProvider, saveSSOProvider, toggleSSOEnabled, SSO_DEFAULT_ROLES, validateOIDCIssuer } from '../services/ssoService';
 import { downloadExport, getDataSummary, exportAsCSV, hasEnterpriseFeatures } from '../services/complianceService';
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function EnterpriseSecurityPage({ showToast }) {
   const { userProfile } = useAuth();
   const { t } = useTranslation();

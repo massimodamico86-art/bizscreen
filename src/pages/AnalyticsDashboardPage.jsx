@@ -14,7 +14,23 @@ import {
   Calendar,
   Layers,
   Grid3X3,
+  BarChart3,
+  RefreshCw,
+  Clock,
+  Monitor,
+  TrendingUp,
+  Play,
+  ArrowUpRight,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Card,
+  Tabs,
+} from '../design-system';
+import ViewingHeatmap from '../components/analytics/ViewingHeatmap';
 import { useLogger } from '../hooks/useLogger.js';
 
 
@@ -43,6 +59,11 @@ const TABS = [
   { id: 'patterns', label: 'Patterns', icon: Calendar },
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function AnalyticsDashboardPage({ showToast }) {
   const logger = useLogger('AnalyticsDashboardPage');
 
@@ -190,6 +211,9 @@ export default function AnalyticsDashboardPage({ showToast }) {
 
 /**
  * Overview Tab - Summary metrics and top content
+ * @param root0
+ * @param root0.summary
+ * @param root0.topScenes
  */
 function OverviewTab({ summary, topScenes }) {
   // Calculate total view hours from summary
@@ -340,6 +364,8 @@ function OverviewTab({ summary, topScenes }) {
 
 /**
  * Content Tab - Performance list sorted by total view time (ANA-03)
+ * @param root0
+ * @param root0.contentList
  */
 function ContentTab({ contentList }) {
   // Sort controls
@@ -463,6 +489,8 @@ function ContentTab({ contentList }) {
 
 /**
  * Patterns Tab - Viewing heatmap (ANA-04)
+ * @param root0
+ * @param root0.heatmapData
  */
 function PatternsTab({ heatmapData }) {
   const [metric, setMetric] = useState('view_count');
@@ -540,6 +568,9 @@ function PatternsTab({ heatmapData }) {
 
 /**
  * Insight Card - Shows peak or quiet hours
+ * @param root0
+ * @param root0.heatmapData
+ * @param root0.type
  */
 function InsightCard({ heatmapData, type }) {
   const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

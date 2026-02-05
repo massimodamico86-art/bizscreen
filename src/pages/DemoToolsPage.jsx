@@ -20,7 +20,33 @@ import {
   Dumbbell,
   ShoppingBag,
   Loader2,
+  RefreshCw,
+  Plus,
+  Clock,
+  RotateCcw,
+  AlertTriangle,
+  Play,
+  Link2,
+  Settings,
+  Check,
+  Copy,
+  ExternalLink,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Card,
+  Badge,
+  Alert,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 
 
 import {

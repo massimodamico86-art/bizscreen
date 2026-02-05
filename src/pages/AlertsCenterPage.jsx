@@ -17,7 +17,17 @@ import {
   Database,
   Share2,
   Eye,
+  Settings,
+  RefreshCw,
+  Filter,
+  Check,
+  X,
+  ExternalLink,
+  CheckCheck,
 } from 'lucide-react';
+import {
+  PageLayout,
+} from '../design-system';
 import {
   getAlerts,
   getAlertSummary,
@@ -90,6 +100,12 @@ const STATUS_STYLES = {
   resolved: { badge: 'bg-green-100 text-green-800', label: 'Resolved' },
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ * @param root0.onNavigate
+ */
 export default function AlertsCenterPage({ showToast, onNavigate }) {
   const { t } = useTranslation();
   const logger = useLogger('AlertsCenterPage');

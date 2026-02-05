@@ -14,6 +14,7 @@ import {
   loadUserSvgDesign,
   saveUserSvgDesign,
 } from '../services/svgTemplateService';
+import { FabricSvgEditor } from '../components/svg-editor/index.js';
 
 /**
  * Parse query params from route string

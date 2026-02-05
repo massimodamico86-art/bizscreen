@@ -1,9 +1,33 @@
 import { useState, useEffect } from 'react';
 import {
-  Layers
+  Layers,
+  Plus,
+  Search,
+  Users,
+  MapPin,
+  Monitor,
+  Play,
+  XCircle,
+  MoreVertical,
+  Edit,
+  Trash2,
+  Check,
+  ChevronRight,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  Button,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 import { useTranslation } from '../i18n';
-
 
 import {
   fetchScreenGroupsWithScenes,

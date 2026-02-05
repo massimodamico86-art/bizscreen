@@ -1,11 +1,42 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
-
-
+import {
+  RefreshCw,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  Clock,
+  Database,
+  CreditCard,
+  Mail,
+  Cloud,
+  Cpu,
+  Server,
+  Monitor,
+  Wifi,
+  WifiOff,
+  Activity,
+  Gauge,
+  Zap,
+  HardDrive,
+  BarChart2,
+  TrendingUp,
+} from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  Button,
+  Alert,
+} from '../design-system';
 
 import { supabase } from '../supabase';
 import { getDataCacheStats } from '../hooks/useDataCache';
 
+/**
+ *
+ */
 export default function StatusPage() {
   const { t } = useTranslation();
   const [appHealth, setAppHealth] = useState(null);

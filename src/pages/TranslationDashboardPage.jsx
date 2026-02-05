@@ -8,13 +8,26 @@
 
 import { useState, useEffect } from 'react';
 
-
 import {
   Check,
   Clock,
   AlertCircle,
   Languages,
+  Globe,
+  Sparkles,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  Button,
+  EmptyState,
+  Checkbox,
+} from '../design-system';
+import TranslationFilters from '../components/TranslationFilters';
+import BulkActionsBar from '../components/BulkActionsBar';
+import AiSuggestionPanel from '../components/AiSuggestionPanel';
 import { fetchTranslationDashboard } from '../services/translationService';
 import { getLanguageDisplayInfo, getLanguageColor } from '../services/languageService';
 import { useLogger } from '../hooks/useLogger';
@@ -26,6 +39,11 @@ const STATUS_CONFIG = {
   approved: { label: 'Approved', icon: Check, color: 'text-green-600 bg-green-50' },
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function TranslationDashboardPage({ showToast }) {
   const logger = useLogger('TranslationDashboardPage');
   const [scenes, setScenes] = useState([]);

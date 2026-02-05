@@ -12,9 +12,25 @@ import {
   Monitor,
   Settings,
   Loader2,
+  ArrowLeft,
+  Users,
+  MapPin,
+  Play,
+  Check,
+  Plus,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  Card,
+  CardContent,
+  Button,
+  Badge,
+  EmptyState,
+  Tabs,
+} from '../design-system';
+import ScreenGroupSettingsTab from '../components/ScreenGroupSettingsTab';
 import { useTranslation } from '../i18n';
-
 
 import {
   getScreenGroup,

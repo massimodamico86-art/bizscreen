@@ -6,6 +6,14 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import {
+  RefreshCw,
+  Trash2,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+} from 'lucide-react';
+import { PageLayout } from '../design-system';
 import { getEffectiveOwnerId } from '../services/tenantService';
 import {
   PROVIDER_LABELS,
@@ -52,6 +60,11 @@ const ProviderIcon = ({ provider, className = 'w-6 h-6' }) => {
   return icons[provider] || null;
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function SocialAccountsPage({ showToast }) {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);

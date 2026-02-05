@@ -1,6 +1,36 @@
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
-
+import {
+  Loader2,
+  Key,
+  Webhook,
+  Plus,
+  Info,
+  ExternalLink,
+  Clock,
+  Shield,
+  Trash2,
+  Globe,
+  Power,
+  Eye,
+  EyeOff,
+  Copy,
+  CheckCircle,
+} from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Card,
+  Badge,
+  Alert,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 import { useTranslation } from '../i18n';
 
 

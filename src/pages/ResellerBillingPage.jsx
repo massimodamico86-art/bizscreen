@@ -10,11 +10,32 @@
  */
 import { useState, useEffect } from 'react';
 import {
-  DollarSign
+  DollarSign,
+  TrendingUp,
+  Clock,
+  CheckCircle,
+  XCircle,
+  ChevronLeft,
+  Download,
+  BarChart3,
+  ArrowUpRight,
+  ArrowDownRight,
+  Info,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  EmptyState,
+  Alert,
+} from '../design-system';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
-
 
 import {
   getMyResellerAccount,
@@ -22,6 +43,12 @@ import {
   getCommissionEvents
 } from '../services/resellerService';
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ * @param root0.onNavigate
+ */
 export default function ResellerBillingPage({ showToast, onNavigate }) {
   const { userProfile } = useAuth();
   const { t } = useTranslation();

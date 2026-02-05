@@ -15,7 +15,11 @@ import {
   Monitor,
   Calendar,
   Database,
+  ArrowLeft,
+  Save,
+  Mail,
 } from 'lucide-react';
+import { PageLayout } from '../design-system';
 import {
   getNotificationPreferences,
   saveNotificationPreferences,
@@ -90,6 +94,12 @@ const TIMEZONES = [
   { value: 'Australia/Sydney', label: 'Sydney (AEST)' },
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ * @param root0.onNavigate
+ */
 export default function NotificationSettingsPage({ showToast, onNavigate }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);

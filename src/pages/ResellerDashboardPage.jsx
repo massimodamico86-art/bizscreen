@@ -11,11 +11,41 @@
  */
 import { useState, useEffect } from 'react';
 import {
-  Building2
+  Building2,
+  Monitor,
+  Key,
+  DollarSign,
+  TrendingUp,
+  CreditCard,
+  UserPlus,
+  Users,
+  Eye,
+  Download,
+  Plus,
+  Copy,
+  Check,
+  Clock,
+  AlertTriangle,
+  ExternalLink,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
-
 
 import {
   getMyResellerAccount,
@@ -34,6 +64,12 @@ import {
   exportLicensesCSV
 } from '../services/licenseService';
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ * @param root0.onNavigate
+ */
 export default function ResellerDashboardPage({ showToast, onNavigate }) {
   const { userProfile } = useAuth();
   const { t } = useTranslation();

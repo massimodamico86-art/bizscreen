@@ -10,8 +10,31 @@ import {
   Edit3,
   Eye,
   Loader2,
+  UserPlus,
+  MoreVertical,
+  X,
+  Clock,
+  Mail,
+  RefreshCw,
+  Trash2,
+  Check,
+  AlertCircle,
 } from 'lucide-react';
-
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  CardHeader,
+  CardTitle,
+  Button,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 
 import { useAuth } from '../contexts/AuthContext';
 import {

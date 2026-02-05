@@ -11,8 +11,30 @@ import {
   Crown,
   Zap,
   Loader2,
+  Check,
+  AlertCircle,
+  AlertTriangle,
+  RefreshCw,
+  ArrowRight,
+  ExternalLink,
+  CreditCard,
 } from 'lucide-react';
-
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Modal,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  Alert,
+} from '../design-system';
 
 import {
   fetchPlans,

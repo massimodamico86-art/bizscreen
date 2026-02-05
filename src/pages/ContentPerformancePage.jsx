@@ -7,8 +7,29 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-
+import {
+  BarChart3,
+  RefreshCw,
+  Filter,
+  X,
+  Monitor,
+  TrendingUp,
+  Play,
+  Layers,
+  Activity,
+  Wifi,
+  WifiOff,
+  Tv,
+  ExternalLink,
+} from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Card,
+  Modal,
+} from '../design-system';
 import { useLogger } from '../hooks/useLogger.js';
 
 
@@ -24,6 +45,11 @@ import {
 import { fetchScreenGroups } from '../services/screenGroupService';
 import { fetchScenesForTenant } from '../services/sceneService';
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function ContentPerformancePage({ showToast }) {
   const logger = useLogger('ContentPerformancePage');
   const navigate = useNavigate();

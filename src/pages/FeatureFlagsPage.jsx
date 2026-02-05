@@ -9,8 +9,6 @@
  */
 
 import { useAuth } from '../contexts/AuthContext';
-
-
 import {
   Flag,
   FlaskConical,
@@ -19,6 +17,20 @@ import {
   Bug,
   Loader2,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Alert,
+} from '../design-system';
+import FeatureFlagsTab from '../components/feature-flags/FeatureFlagsTab';
+import ExperimentsTab from '../components/feature-flags/ExperimentsTab';
+import FeedbackTab from '../components/feature-flags/FeedbackTab';
+import AnnouncementsTab from '../components/feature-flags/AnnouncementsTab';
+import FeatureFlagsDebug from '../components/feature-flags/FeatureFlagsDebug';
+import FlagModal from '../components/feature-flags/FlagModal';
+import ExperimentModal from '../components/feature-flags/ExperimentModal';
+import AnnouncementModal from '../components/feature-flags/AnnouncementModal';
 import { useFeatureFlags } from './hooks/useFeatureFlags.js';
 
 

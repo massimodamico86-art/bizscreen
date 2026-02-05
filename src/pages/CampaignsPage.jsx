@@ -8,7 +8,26 @@ import {
   CheckCircle,
   Megaphone,
   Loader2,
+  Plus,
+  ChevronDown,
+  Copy,
+  Search,
+  Calendar,
+  Target,
+  MoreVertical,
+  Edit,
+  Trash2,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Card,
+  Badge,
+  EmptyState,
+} from '../design-system';
+import TemplatePickerModal from '../components/campaigns/TemplatePickerModal';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 

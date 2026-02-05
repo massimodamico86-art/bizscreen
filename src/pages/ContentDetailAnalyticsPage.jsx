@@ -15,7 +15,17 @@ import {
   Calendar,
   BarChart2,
   Timer,
+  RefreshCw,
+  ArrowLeft,
+  TrendingUp,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Card,
+} from '../design-system';
 import { useLogger } from '../hooks/useLogger.js';
 
 
@@ -29,6 +39,12 @@ import {
 
 /**
  * Primary metric card with large display
+ * @param root0
+ * @param root0.icon
+ * @param root0.label
+ * @param root0.value
+ * @param root0.subValue
+ * @param root0.colorClass
  */
 function PrimaryMetric({ icon: Icon, label, value, subValue, colorClass = 'bg-blue-100 text-blue-600' }) {
   return (
@@ -49,6 +65,10 @@ function PrimaryMetric({ icon: Icon, label, value, subValue, colorClass = 'bg-bl
 
 /**
  * Secondary metric display
+ * @param root0
+ * @param root0.icon
+ * @param root0.label
+ * @param root0.value
  */
 function SecondaryMetric({ icon: Icon, label, value }) {
   return (
@@ -64,6 +84,8 @@ function SecondaryMetric({ icon: Icon, label, value }) {
 
 /**
  * Simple bar chart for timeline visualization
+ * @param root0
+ * @param root0.data
  */
 function TimelineChart({ data }) {
   if (!data || data.length === 0) {
@@ -140,6 +162,11 @@ function PageSkeleton() {
   );
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function ContentDetailAnalyticsPage({ showToast }) {
   const { contentType, contentId } = useParams();
   const navigate = useNavigate();

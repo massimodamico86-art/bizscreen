@@ -13,7 +13,28 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import {
+  Loader2,
+  Check,
+  Monitor,
+  Plus,
+  ArrowRight,
+  Lock,
+  Tv2,
+  AlertCircle,
+} from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  CardContent,
+  Button,
+  Stack,
+  Alert,
+  EmptyState,
+  Input,
+} from '../design-system';
 
 import { useLogger } from '../hooks/useLogger';
 import {

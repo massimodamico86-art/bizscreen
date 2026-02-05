@@ -11,8 +11,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../i18n';
 import {
   Shield,
+  RefreshCw,
+  FileWarning,
+  Flag,
+  AlertTriangle,
+  User,
+  Code,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
-
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  Button,
+  Alert,
+  EmptyState,
+} from '../design-system';
 
 import {
   getSanitizationEvents,
@@ -23,6 +40,9 @@ import {
 const ITEMS_PER_PAGE = 25;
 const FLAGGED_THRESHOLD = 5;
 
+/**
+ *
+ */
 export default function SecurityDashboardPage() {
   const { t } = useTranslation();
   const [events, setEvents] = useState([]);

@@ -5,8 +5,26 @@
  */
 
 import { useState, useEffect } from 'react';
-
-
+import {
+  BarChart3,
+  RefreshCw,
+  Mail,
+  Settings,
+  Monitor,
+  TrendingUp,
+  Play,
+  ListVideo,
+  Wifi,
+  Clock,
+  Image,
+} from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Card,
+} from '../design-system';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 
@@ -29,6 +47,11 @@ import {
   updateReportSubscription,
 } from '../services/reportSettingsService';
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ */
 export default function AnalyticsPage({ showToast }) {
   const { t } = useTranslation();
   const logger = useLogger('AnalyticsPage');

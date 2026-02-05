@@ -20,7 +20,6 @@ import {
   getStatusText
 } from '../services/billingService';
 
-
 import {
   CheckCircle,
   Clock,
@@ -29,7 +28,31 @@ import {
   CreditCard,
   Calendar,
   Loader2,
+  AlertTriangle,
+  RefreshCw,
+  Search,
+  Filter,
+  MoreVertical,
+  Eye,
+  Pause,
+  Play,
+  RotateCcw,
+  XCircle,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  Button,
+  Alert,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 /**
  * Status badge colors

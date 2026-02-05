@@ -19,7 +19,23 @@ import {
   Image,
   Palette,
   Bell,
+  RefreshCw,
+  Filter,
+  X,
+  Clock,
+  User,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Card,
+  Alert,
+  EmptyState,
+} from '../design-system';
 import {
   getActivityLog,
   getActivityLogCount,
@@ -51,6 +67,9 @@ const RESOURCE_TYPE_OPTIONS = [
   { value: RESOURCE_TYPES.ALERT_RULE, labelKey: 'alerts.title', label: 'Alerts', icon: Bell },
 ];
 
+/**
+ *
+ */
 export default function ActivityLogPage() {
   const { t } = useTranslation();
   const { branding, isImpersonating, impersonatedClient } = useBranding();

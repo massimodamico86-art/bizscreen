@@ -8,8 +8,35 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Loader2 } from 'lucide-react';
-
+import {
+  Loader2,
+  MapPin,
+  Plus,
+  Monitor,
+  Wifi,
+  WifiOff,
+  Building2,
+  Clock,
+  MoreVertical,
+  Edit2,
+  Trash2,
+  Globe,
+  AlertCircle,
+} from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Button,
+  Card,
+  Alert,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 import { useTranslation } from '../i18n';
 
 

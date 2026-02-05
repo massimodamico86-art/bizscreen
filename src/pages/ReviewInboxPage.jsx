@@ -8,7 +8,28 @@ import {
   Zap,
   Film,
   Loader2,
+  MessageSquare,
+  RefreshCw,
+  Search,
+  Filter,
+  ChevronRight,
+  X,
+  Send,
 } from 'lucide-react';
+import {
+  PageLayout,
+  PageContent,
+  PageHeader,
+  Card,
+  Button,
+  Badge,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+} from '../design-system';
 import {
   fetchReviews,
   fetchReview,
