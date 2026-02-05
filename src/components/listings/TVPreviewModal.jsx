@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Modal } from '../../design-system';
 import { Layout1, Layout2, Layout3, Layout4 } from '../../layouts';
+import { ScaledStage } from '../tv-layouts/ScaledStage';
 import { getWeather } from '../../services/weatherService';
 import { useMediaPlayback } from '../../hooks/useMediaPlayback';
 import { DEFAULT_UNIFIED_MEDIA_STATE } from '../../types/media';

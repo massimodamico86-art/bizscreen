@@ -12,6 +12,7 @@
 
 import { useState } from 'react';
 import * as fabric from 'fabric';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 
 // Color presets matching OptiSigns
 const COLOR_PRESETS = [
@@ -33,6 +34,14 @@ const GRADIENT_PRESETS = [
   ['#A8EDEA', '#FED6E3'],
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.selectedObject
+ * @param root0.onUpdate
+ * @param root0.onClose
+ * @param root0.usedColors
+ */
 export default function EffectsPanel({
   selectedObject,
   onUpdate,

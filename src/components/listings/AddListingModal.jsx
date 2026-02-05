@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { X } from 'lucide-react';
+import { Button } from '../../design-system';
+import { SimpleModal } from '../../design-system';
 
 export const AddListingModal = ({ onClose, onAdd, showToast }) => {
   const [formData, setFormData] = useState({

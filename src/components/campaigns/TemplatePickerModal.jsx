@@ -5,9 +5,24 @@
  * Shows template preview with target types, content types, and settings
  */
 import { useState, useEffect } from 'react';
+import {
+  FileText,
+  Target,
+  ListMusic,
+  Check,
+  Tag,
+  Loader2,
+} from 'lucide-react';
+import { Button, Badge, Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../../design-system';
 import { getTemplates } from '../../services/campaignTemplateService';
 import { useLogger } from '../../hooks/useLogger';
 
+/**
+ *
+ * @param root0
+ * @param root0.onSelect
+ * @param root0.onClose
+ */
 export function TemplatePickerModal({ onSelect, onClose }) {
   const logger = useLogger('TemplatePickerModal');
   const [templates, setTemplates] = useState([]);

@@ -5,9 +5,27 @@
  * Per CONTEXT.md: User picks from fixed list of common languages.
  */
 import { useState } from 'react';
+import { Loader2, Globe } from 'lucide-react';
 import { SUPPORTED_LOCALES } from '../../i18n/i18nConfig';
 import { createLanguageVariant } from '../../services/languageService';
+import {
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+  Button,
+} from '../../design-system';
 
+/**
+ *
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.sceneId
+ * @param root0.existingLanguages
+ * @param root0.onVariantCreated
+ */
 export function AddLanguageModal({
   isOpen,
   onClose,

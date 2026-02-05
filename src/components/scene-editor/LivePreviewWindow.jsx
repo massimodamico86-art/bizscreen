@@ -12,7 +12,18 @@
  */
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-
+import {
+  Eye,
+  Grid,
+  Minimize2,
+  Maximize2,
+  X,
+  SkipBack,
+  SkipForward,
+  Pause,
+  Play,
+} from 'lucide-react';
+import { Button } from '../../design-system';
 
 import {
   getBlockAnimationStyles,
@@ -23,6 +34,13 @@ import { preloadSlide } from '../../services/mediaPreloader';
 
 /**
  * Main LivePreviewWindow component
+ * @param root0
+ * @param root0.slides
+ * @param root0.activeSlideIndex
+ * @param root0.onClose
+ * @param root0.brandTheme
+ * @param root0.showSafeZone
+ * @param root0.autoPlay
  */
 export default function LivePreviewWindow({
   slides,
@@ -262,6 +280,10 @@ export default function LivePreviewWindow({
 
 /**
  * PreviewRenderer - Renders the slide content with animations
+ * @param root0
+ * @param root0.design
+ * @param root0.slideIndex
+ * @param root0.showSafeZone
  */
 function PreviewRenderer({ design, slideIndex, showSafeZone }) {
   // Background style
@@ -333,6 +355,8 @@ function PreviewRenderer({ design, slideIndex, showSafeZone }) {
 
 /**
  * PreviewBlock - Renders individual blocks with animations
+ * @param root0
+ * @param root0.block
  */
 function PreviewBlock({ block }) {
   const { type, x = 0, y = 0, width = 0.5, height = 0.2, layer = 1, props = {}, widgetType, animation } = block;
@@ -428,6 +452,9 @@ function PreviewBlock({ block }) {
 
 /**
  * PreviewWidget - Renders widget blocks (clock, date, etc.)
+ * @param root0
+ * @param root0.widgetType
+ * @param root0.props
  */
 function PreviewWidget({ widgetType, props = {} }) {
   const [time, setTime] = useState(new Date());
@@ -571,6 +598,9 @@ function SafeZoneOverlay() {
 
 /**
  * Inline Preview - Smaller version for side-by-side editing
+ * @param root0
+ * @param root0.design
+ * @param root0.className
  */
 export function InlinePreview({ design, className = '' }) {
   if (!design) return null;

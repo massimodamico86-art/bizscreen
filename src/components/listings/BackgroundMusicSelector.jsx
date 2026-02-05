@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Check } from 'lucide-react';
+import { Button, Modal } from '../../design-system';
 export const BackgroundMusicSelector = ({ isOpen, onClose, currentMusic, onSelect }) => {
   const [selectedMusic, setSelectedMusic] = useState(currentMusic || '');
   

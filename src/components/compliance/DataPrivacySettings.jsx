@@ -3,7 +3,18 @@
  */
 
 import { useState, useEffect } from 'react';
-
+import {
+  Download,
+  Loader2,
+  Check,
+  Clock,
+  FileJson,
+  Shield,
+  Trash2,
+  AlertTriangle,
+  X,
+} from 'lucide-react';
+import { Button, Card } from '../../design-system';
 
 import {
   requestDataExport,
@@ -17,6 +28,12 @@ import {
 } from '../../services/gdprService';
 import { withdrawConsent } from '../../services/consentService';
 
+/**
+ *
+ * @param root0
+ * @param root0.showToast
+ * @param root0.user
+ */
 export default function DataPrivacySettings({ showToast, user }) {
   // Data Export State
   const [exportStatus, setExportStatus] = useState(null);

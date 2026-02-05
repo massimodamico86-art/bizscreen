@@ -14,6 +14,7 @@
 
 import { useState } from 'react';
 import * as fabric from 'fabric';
+import { ChevronUp, ChevronDown, RotateCcw } from 'lucide-react';
 
 // Filter presets with preview thumbnails (using CSS filters for preview)
 const FILTER_PRESETS = [
@@ -31,6 +32,14 @@ const FILTER_PRESETS = [
   { id: 'dramatic', name: 'Dramatic', cssFilter: 'contrast(150%) saturate(80%)' },
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.selectedObject
+ * @param root0.canvas
+ * @param root0.onClose
+ * @param root0.onUpdate
+ */
 export default function FiltersPanel({
   selectedObject,
   canvas,

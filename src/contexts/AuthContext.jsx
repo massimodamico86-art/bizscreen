@@ -16,10 +16,27 @@ export const useAuth = () => {
   return context;
 };
 
+// Auth status for handling timeout/retry states
+// 'loading' - initial state, checking session
+// 'authenticated' - user is logged in
+// 'unauthenticated' - no user session
+// 'retrying' - timeout occurred, retrying with backoff
+// 'error' - auth check failed after all retries
+const AUTH_STATUS = {
+  LOADING: 'loading',
+  AUTHENTICATED: 'authenticated',
+  UNAUTHENTICATED: 'unauthenticated',
+  RETRYING: 'retrying',
+  ERROR: 'error',
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authStatus, setAuthStatus] = useState(AUTH_STATUS.LOADING);
+  const [retryCount, setRetryCount] = useState(0);
+  const [lastError, setLastError] = useState(null);
 
   /**
    * Fetch user profile from Supabase including role information
@@ -124,6 +141,13 @@ export const AuthProvider = ({ children }) => {
     log.debug('Initializing auth');
 
     let mounted = true;
+    let retryTimeoutId = null;
+
+    // Configuration for exponential backoff retry
+    const INITIAL_TIMEOUT_MS = 10000; // 10 seconds for first attempt
+    const MAX_RETRIES = 3;
+    const BACKOFF_BASE_MS = 2000; // 2 seconds
+    const BACKOFF_MAX_MS = 30000; // 30 seconds max wait
 
     // Helper to add timeout to async operations
     const withTimeout = (promise, timeoutMs, operation) => {
@@ -135,52 +159,100 @@ export const AuthProvider = ({ children }) => {
       ]);
     };
 
-    // Initialize auth state
-    const initAuth = async () => {
+    // Calculate backoff delay with jitter
+    const getBackoffDelay = (attempt) => {
+      const baseDelay = BACKOFF_BASE_MS * Math.pow(2, attempt);
+      const jitter = Math.random() * 1000; // Add 0-1s of jitter
+      return Math.min(baseDelay + jitter, BACKOFF_MAX_MS);
+    };
+
+    // Initialize auth state with retry support
+    const initAuth = async (attempt = 0) => {
+      if (!mounted) return;
+
       try {
+        // Update status based on attempt
+        if (attempt > 0) {
+          setAuthStatus(AUTH_STATUS.RETRYING);
+          setRetryCount(attempt);
+          log.debug('Retrying auth init', { attempt, maxRetries: MAX_RETRIES });
+        } else {
+          setAuthStatus(AUTH_STATUS.LOADING);
+        }
+
         // Get initial session with timeout
-        log.debug('Getting session...');
+        log.debug('Getting session...', { attempt });
         const { data: { session }, error } = await withTimeout(
           supabase.auth.getSession(),
-          10000,
+          INITIAL_TIMEOUT_MS,
           'getSession'
         );
 
         if (error) {
-          log.error('Session error', { error: error.message });
-        } else {
-          log.debug('Session retrieved', { hasSession: !!session });
+          log.error('Session error', { error: error.message, attempt });
+          throw error;
         }
+
+        log.debug('Session retrieved', { hasSession: !!session, attempt });
 
         if (!mounted) return;
 
         setUser(session?.user ?? null);
+        setAuthStatus(session?.user ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED);
+        setRetryCount(0);
+        setLastError(null);
 
         if (session?.user) {
           await fetchUserProfile(session.user.id, session.user.email);
         }
-      } catch (error) {
-        log.error('Init error', { error: error.message });
-        // On timeout or error, clear any stale session and allow login
-        // BUT only if no user has logged in successfully in the meantime
-        if (error.message.includes('timed out')) {
-          // Check current auth state before signing out
-          const { data: { session: currentSession } } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
-          if (!currentSession?.user) {
-            log.warn('Auth timed out - clearing stale session');
-            try {
-              await supabase.auth.signOut();
-            } catch (e) {
-              // Ignore signOut errors
-            }
-          } else {
-            log.debug('Auth timed out but user is already authenticated, skipping signOut');
-          }
-        }
-      } finally {
+
+        // Success - clear loading state
         if (mounted) {
           setLoading(false);
         }
+      } catch (error) {
+        if (!mounted) return;
+
+        const isTimeout = error.message.includes('timed out');
+
+        if (isTimeout && attempt < MAX_RETRIES) {
+          // Timeout with retries remaining - schedule retry with exponential backoff
+          const delay = getBackoffDelay(attempt);
+          log.warn('Auth timeout, scheduling retry', {
+            attempt,
+            nextAttempt: attempt + 1,
+            delayMs: Math.round(delay),
+          });
+
+          setAuthStatus(AUTH_STATUS.RETRYING);
+          setRetryCount(attempt + 1);
+          setLastError(`Connection timeout. Retrying in ${Math.round(delay / 1000)}s...`);
+
+          // Schedule retry - DO NOT sign out, just retry
+          retryTimeoutId = setTimeout(() => {
+            if (mounted) {
+              initAuth(attempt + 1);
+            }
+          }, delay);
+
+          return; // Don't set loading=false yet, we're retrying
+        }
+
+        // All retries exhausted OR non-timeout error
+        if (isTimeout) {
+          log.error('Auth init failed after all retries', { attempts: attempt + 1 });
+          setAuthStatus(AUTH_STATUS.ERROR);
+          setLastError('Unable to connect to authentication service. Please check your network and try again.');
+        } else {
+          log.error('Auth init error', { error: error.message });
+          setAuthStatus(AUTH_STATUS.ERROR);
+          setLastError(error.message);
+        }
+
+        // DO NOT sign out on timeout/error - let user retry manually or wait for network recovery
+        // Just set user to null and let them see the login page
+        setUser(null);
+        setLoading(false);
       }
     };
 
@@ -204,9 +276,42 @@ export const AuthProvider = ({ children }) => {
 
     return () => {
       mounted = false;
+      if (retryTimeoutId) {
+        clearTimeout(retryTimeoutId);
+      }
       subscription.unsubscribe();
     };
   }, [fetchUserProfile]); // Add fetchUserProfile to dependencies
+
+  // Manual retry function for user-initiated retry
+  const retryAuth = useCallback(async () => {
+    setLoading(true);
+    setAuthStatus(AUTH_STATUS.LOADING);
+    setRetryCount(0);
+    setLastError(null);
+
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error) {
+        throw error;
+      }
+
+      setUser(session?.user ?? null);
+      setAuthStatus(session?.user ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED);
+
+      if (session?.user) {
+        await fetchUserProfile(session.user.id, session.user.email);
+      }
+    } catch (error) {
+      log.error('Manual retry failed', { error: error.message });
+      setAuthStatus(AUTH_STATUS.ERROR);
+      setLastError(error.message);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchUserProfile]);
 
   const signUp = async (email, password, fullName) => {
     const { data, error } = await supabase.auth.signUp({
@@ -307,9 +412,18 @@ export const AuthProvider = ({ children }) => {
     user,
     userProfile,
     loading,
+    // New auth status and retry state
+    authStatus,
+    retryCount,
+    lastError,
+    retryAuth,
+    isRetrying: authStatus === AUTH_STATUS.RETRYING,
+    hasAuthError: authStatus === AUTH_STATUS.ERROR,
+    // Role helpers
     isSuperAdmin,
     isAdmin,
     isClient,
+    // Auth actions
     signUp,
     signIn,
     signOut,

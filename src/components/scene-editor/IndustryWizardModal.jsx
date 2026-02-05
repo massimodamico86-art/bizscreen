@@ -38,7 +38,13 @@ import {
   Megaphone,
   CheckCircle,
   Heart,
+  Check,
+  X,
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
 } from 'lucide-react';
+import { Button } from '../../design-system';
 
 import {
   getAvailableWizards,
@@ -97,6 +103,16 @@ const INDUSTRY_CONFIG = {
   other: { label: 'Business', icon: Briefcase, color: '#6B7280' },
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.sceneId
+ * @param root0.industry
+ * @param root0.onSlideCreated
+ * @param root0.onShowToast
+ */
 export default function IndustryWizardModal({
   isOpen,
   onClose,

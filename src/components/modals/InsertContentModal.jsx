@@ -14,7 +14,17 @@ import {
   Grid3X3,
   Layout,
   ListVideo,
+  X,
+  Search,
+  Home,
+  ChevronRight,
+  Folder,
+  Play,
+  Check,
+  Clock,
+  Loader2,
 } from 'lucide-react';
+import { Button, Modal } from '../../design-system';
 import { fetchMediaAssets, fetchApps } from '../../services/mediaService';
 import { fetchPlaylists } from '../../services/playlistService';
 import { fetchLayouts } from '../../services/layoutService';
@@ -33,6 +43,7 @@ const TABS = [
 
 /**
  * Get icon for media type
+ * @param type
  */
 function getMediaTypeIcon(type) {
   switch (type) {
@@ -53,6 +64,11 @@ function getMediaTypeIcon(type) {
 
 /**
  * Content item card component
+ * @param root0
+ * @param root0.item
+ * @param root0.type
+ * @param root0.isSelected
+ * @param root0.onSelect
  */
 function ContentItem({ item, type, isSelected, onSelect }) {
   const isVideo = type === 'media' && item.media_type === 'video';
@@ -124,6 +140,9 @@ function ContentItem({ item, type, isSelected, onSelect }) {
 
 /**
  * Folder item component
+ * @param root0
+ * @param root0.folder
+ * @param root0.onNavigate
  */
 function FolderItem({ folder, onNavigate }) {
   return (
@@ -144,6 +163,9 @@ function FolderItem({ folder, onNavigate }) {
 
 /**
  * Preview pane component
+ * @param root0
+ * @param root0.item
+ * @param root0.type
  */
 function PreviewPane({ item, type }) {
   if (!item) {
@@ -200,6 +222,7 @@ function PreviewPane({ item, type }) {
 
 /**
  * Format duration in seconds to mm:ss
+ * @param seconds
  */
 function formatDuration(seconds) {
   if (!seconds) return '';

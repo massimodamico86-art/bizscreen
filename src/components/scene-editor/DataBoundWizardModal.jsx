@@ -15,7 +15,16 @@ import {
   Grid3X3,
   List,
   LayoutGrid,
+  Database,
+  Check,
+  Loader2,
+  AlertCircle,
+  Table2,
+  X,
+  ArrowLeft,
+  ArrowRight,
 } from 'lucide-react';
+import { Button } from '../../design-system';
 
 import { fetchDataSources, getDataSource, FIELD_DATA_TYPES } from '../../services/dataSourceService';
 import { createSlide } from '../../services/sceneDesignService';
@@ -56,6 +65,15 @@ const FIELD_TYPE_ICONS = {
   [FIELD_DATA_TYPES.DATE]: '📅',
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.sceneId
+ * @param root0.onSlideCreated
+ * @param root0.onShowToast
+ */
 export default function DataBoundWizardModal({
   isOpen,
   onClose,

@@ -1,4 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
+import {
+  Smartphone,
+  Monitor,
+  Wifi,
+  WifiOff,
+  QrCode,
+  RefreshCw,
+  Copy,
+  Clock,
+  Plus,
+  Trash2,
+} from 'lucide-react';
+import { Button } from '../../design-system';
 import { supabase } from '../../supabase';
 import { generateQRCode } from '../../services/qrcodeService';
 import { useLogger } from '../../hooks/useLogger.js';

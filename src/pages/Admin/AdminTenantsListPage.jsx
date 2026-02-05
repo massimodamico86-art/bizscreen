@@ -4,11 +4,28 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-
+import {
+  Building2,
+  RefreshCw,
+  Search,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Users,
+  Monitor,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 
 import { useTenantList } from '../../hooks/useAdmin';
 import { PLAN_OPTIONS, TENANT_STATUS_OPTIONS } from '../../services/adminService';
 
+/**
+ *
+ * @param root0
+ * @param root0.onNavigate
+ * @param root0.showToast
+ */
 export default function AdminTenantsListPage({ onNavigate, showToast }) {
   const {
     tenants,

@@ -8,6 +8,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Image, Video, Music, FileText, Globe } from 'lucide-react';
+import { Badge } from '../../design-system';
 
 const MEDIA_TYPE_ICONS = {
   image: Image,
@@ -36,6 +37,14 @@ const getBadgeVariant = (type) => {
   return variants[type] || 'gray';
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.asset
+ * @param root0.isVisible
+ * @param root0.anchorRect
+ * @param root0.onClose
+ */
 export function MediaPreviewPopover({
   asset,
   isVisible,
@@ -214,6 +223,7 @@ export function MediaPreviewPopover({
 
 /**
  * Hook to manage hover preview state with delay
+ * @param delay
  */
 export function useMediaPreview(delay = 300) {
   const [isVisible, setIsVisible] = useState(false);

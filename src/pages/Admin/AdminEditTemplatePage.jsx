@@ -22,6 +22,7 @@ import {
 } from '../../services/marketplaceService';
 import { autoTagSvg, autoTagSvgFromUrl } from '../../services/autoTaggingService';
 import { useLogger } from '../../hooks/useLogger.js';
+import { PageLayout } from '../../design-system/components/PageLayout.jsx';
 
 // Industry options
 const INDUSTRIES = [
@@ -35,6 +36,12 @@ const INDUSTRIES = [
   { value: 'events', label: 'Events' },
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.templateId
+ * @param root0.onNavigate
+ */
 export default function AdminEditTemplatePage({ templateId, onNavigate }) {
   const isNew = templateId === 'new';
   const logger = useLogger('AdminEditTemplatePage');

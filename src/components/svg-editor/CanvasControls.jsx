@@ -10,9 +10,24 @@
  * - Pan/grab mode
  */
 
+import { Plus, Minus, RotateCcw, RotateCw, Layers, Hand, MousePointer } from 'lucide-react';
 
-
-
+/**
+ *
+ * @param root0
+ * @param root0.zoom
+ * @param root0.onZoomIn
+ * @param root0.onZoomOut
+ * @param root0.onZoomReset
+ * @param root0.onToggleLayers
+ * @param root0.showLayers
+ * @param root0.onUndo
+ * @param root0.onRedo
+ * @param root0.canUndo
+ * @param root0.canRedo
+ * @param root0.isPanMode
+ * @param root0.onTogglePan
+ */
 export default function CanvasControls({
   zoom,
   onZoomIn,

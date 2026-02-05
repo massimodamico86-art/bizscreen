@@ -13,11 +13,33 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as fabric from 'fabric';
+import {
+  Loader2,
+  ChevronLeft,
+  Palette,
+  X,
+  Layers,
+  Eye,
+  EyeOff,
+  Download,
+  Save,
+  AlertCircle,
+} from 'lucide-react';
 import { loadSvgContent, LOCAL_SVG_TEMPLATES } from '../../services/svgTemplateService';
-
 
 import QRCode from 'qrcode';
 import { useLogger } from '../../hooks/useLogger.js';
+
+// Local svg-editor components
+import TopToolbar from './TopToolbar.jsx';
+import LeftSidebar from './LeftSidebar.jsx';
+import EffectsPanel from './EffectsPanel.jsx';
+import FiltersPanel from './FiltersPanel.jsx';
+import AnimatePanel from './AnimatePanel.jsx';
+import PositionPanel from './PositionPanel.jsx';
+import CanvasControls from './CanvasControls.jsx';
+import LayersPanel from './LayersPanel.jsx';
+import ContextMenu from './ContextMenu.jsx';
 
 // Google Fonts to load
 const GOOGLE_FONTS = [
@@ -45,6 +67,20 @@ export const COLOR_PRESETS = [
   '#F4511E', '#6D4C41', '#546E7A', '#E98813', '#EEAB37',
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.svgUrl
+ * @param root0.templateId
+ * @param root0.templateName
+ * @param root0.initialJson
+ * @param root0.designId
+ * @param root0.canvasWidth
+ * @param root0.canvasHeight
+ * @param root0.onSave
+ * @param root0.onClose
+ * @param root0.showToast
+ */
 export default function FabricSvgEditor({
   svgUrl,
   templateId,

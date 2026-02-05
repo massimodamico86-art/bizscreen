@@ -6,9 +6,26 @@
  */
 
 import { useState, useEffect } from 'react';
-
-
-
+import {
+  Monitor,
+  Users,
+  Loader2,
+  Check,
+  Tv,
+  Wifi,
+  WifiOff,
+  Clock,
+  Play,
+} from 'lucide-react';
+import {
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalDescription,
+  ModalContent,
+  ModalFooter,
+  Button,
+} from '../../design-system';
 
 import { fetchDevicesForTenant, setSceneOnDevices } from '../../services/sceneService';
 import {
@@ -41,6 +58,15 @@ function isDeviceOnline(device) {
   return (now - lastSeen) < 5 * 60 * 1000;
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.scene
+ * @param root0.tenantId
+ * @param root0.onSuccess
+ */
 export default function PublishSceneModal({
   isOpen,
   onClose,

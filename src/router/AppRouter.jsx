@@ -10,6 +10,7 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import AuthRetryBanner from '../components/AuthRetryBanner';
 
 // Marketing pages (lazy loaded)
 const MarketingLayout = lazy(() => import('../marketing/MarketingLayout'));
@@ -90,7 +91,11 @@ function MarketingPage({ children }) {
  */
 export default function AppRouter() {
   return (
-    <Routes>
+    <>
+      {/* Auth retry/error banner - shows when auth is having issues */}
+      <AuthRetryBanner />
+
+      <Routes>
       {/* Marketing Routes (logged out) - all lazy loaded */}
       <Route
         path="/"
@@ -218,5 +223,6 @@ export default function AppRouter() {
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   );
 }

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Button, Modal } from '../../design-system';
+import ImageUploadButton from '../media/ImageUploadButton';
 export const BackgroundImageSelector = ({ isOpen, onClose, currentImage, onSelect }) => {
   const [selectedImage, setSelectedImage] = useState(currentImage || '');
 

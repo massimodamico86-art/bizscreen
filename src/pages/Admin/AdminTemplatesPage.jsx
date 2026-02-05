@@ -14,6 +14,8 @@ import {
   updateTemplate,
   LICENSE_LABELS,
 } from '../../services/marketplaceService';
+import { PageLayout } from '../../design-system/components/PageLayout.jsx';
+import BulkTemplateUpload from '../../components/Admin/BulkTemplateUpload.jsx';
 
 // License badge colors
 const LICENSE_COLORS = {
@@ -22,6 +24,11 @@ const LICENSE_COLORS = {
   enterprise: 'bg-purple-100 text-purple-800',
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.onNavigate
+ */
 export default function AdminTemplatesPage({ onNavigate }) {
   const logger = useLogger('AdminTemplatesPage');
 

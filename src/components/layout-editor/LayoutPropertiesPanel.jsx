@@ -14,7 +14,16 @@ import {
   Calendar,
   CloudSun,
   QrCode,
+  Bold,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Edit3,
+  MapPin,
+  Link,
+  Layers,
 } from 'lucide-react';
+import { Button } from '../../design-system';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -23,6 +32,13 @@ const COLOR_PRESETS = [
   '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e',
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.element
+ * @param root0.onElementUpdate
+ * @param root0.onEditImage
+ */
 export default function LayoutPropertiesPanel({
   element,
   onElementUpdate,

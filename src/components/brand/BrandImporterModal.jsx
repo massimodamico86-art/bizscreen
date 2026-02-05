@@ -15,7 +15,13 @@ import {
   Palette,
   Type,
   Check,
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  Sparkles,
+  Image as ImageIcon,
 } from 'lucide-react';
+import { Button, Modal } from '../../design-system';
 import {
   uploadLogo,
   createBrandTheme,
@@ -34,6 +40,13 @@ const STEPS = [
   { id: 'preview', title: 'Preview & Save', icon: Check },
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.onThemeCreated
+ */
 export default function BrandImporterModal({ isOpen, onClose, onThemeCreated }) {
   const logger = useLogger('BrandImporterModal');
   // Step management

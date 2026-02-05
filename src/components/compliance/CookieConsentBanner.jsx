@@ -9,6 +9,15 @@
 
 import { useState, useEffect } from 'react';
 import {
+  Cookie,
+  Check,
+  X,
+  Settings,
+  ChevronUp,
+  ChevronDown,
+} from 'lucide-react';
+import { Button } from '../../design-system';
+import {
   CONSENT_CATEGORIES,
   hasConsentBeenGiven,
   getConsentPreferences,
@@ -17,6 +26,11 @@ import {
   rejectAllCookies,
 } from '../../services/consentService';
 
+/**
+ *
+ * @param root0
+ * @param root0.userId
+ */
 export default function CookieConsentBanner({ userId = null }) {
   const [visible, setVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);

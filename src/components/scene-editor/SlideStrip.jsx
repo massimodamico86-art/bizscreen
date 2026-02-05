@@ -9,7 +9,18 @@
  */
 
 import { useState } from 'react';
+import { Plus, MoreVertical, Trash2 } from 'lucide-react';
+import { Button } from '../../design-system';
 
+/**
+ *
+ * @param root0
+ * @param root0.slides
+ * @param root0.activeIndex
+ * @param root0.onSelect
+ * @param root0.onAdd
+ * @param root0.onDelete
+ */
 export default function SlideStrip({
   slides,
   activeIndex,

@@ -21,7 +21,19 @@ import {
   Globe,
   Info,
   HardDrive,
+  ChevronDown,
+  X,
+  Plus,
+  Edit,
+  ExternalLink,
+  Download,
+  AlertTriangle,
+  Trash2,
+  Copy,
+  Check,
+  RefreshCw,
 } from 'lucide-react';
+import { Button, Badge, Modal, ModalContent } from '../../design-system';
 
 const MEDIA_TYPE_ICONS = {
   image: Image,
@@ -41,6 +53,7 @@ const MEDIA_TYPE_LABELS = {
 
 /**
  * Format file size for display
+ * @param bytes
  */
 function formatFileSize(bytes) {
   if (!bytes) return 'Unknown';
@@ -51,6 +64,7 @@ function formatFileSize(bytes) {
 
 /**
  * Format date for display
+ * @param dateString
  */
 function formatDate(dateString) {
   if (!dateString) return 'Unknown';
@@ -65,6 +79,11 @@ function formatDate(dateString) {
 
 /**
  * Collapsible Section Component - Clean accordion style
+ * @param root0
+ * @param root0.title
+ * @param root0.defaultOpen
+ * @param root0.children
+ * @param root0.icon
  */
 function CollapsibleSection({ title, defaultOpen = true, children, icon: Icon }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -93,6 +112,11 @@ function CollapsibleSection({ title, defaultOpen = true, children, icon: Icon })
 
 /**
  * Form Input Component - Consistent styling
+ * @param root0
+ * @param root0.label
+ * @param root0.hint
+ * @param root0.children
+ * @param root0.className
  */
 function FormInput({ label, hint, children, className = '' }) {
   return (
@@ -106,6 +130,16 @@ function FormInput({ label, hint, children, className = '' }) {
 
 /**
  * MediaDetailModal component
+ * @param root0
+ * @param root0.open
+ * @param root0.onClose
+ * @param root0.asset
+ * @param root0.onUpdate
+ * @param root0.onDelete
+ * @param root0.onReplace
+ * @param root0.onEditInPixie
+ * @param root0.isGlobal
+ * @param root0.showToast
  */
 export default function MediaDetailModal({
   open,

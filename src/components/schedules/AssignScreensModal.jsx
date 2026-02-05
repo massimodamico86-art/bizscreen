@@ -9,6 +9,14 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  Monitor,
+  Search,
+  X,
+  Folder,
+  Loader2,
+  CheckCircle2,
+} from 'lucide-react';
 import { supabase } from '../../supabase';
 import {
   getAssignedDevicesAndGroups,
@@ -17,9 +25,25 @@ import {
   bulkAssignScheduleToGroups,
   bulkUnassignScheduleFromGroups
 } from '../../services/scheduleService';
+import {
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
+  Button,
+} from '../../design-system';
+import { useLogger } from '../../hooks/useLogger.js';
 
-
-
+/**
+ *
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.scheduleId
+ * @param root0.scheduleName
+ * @param root0.onAssigned
+ */
 export function AssignScreensModal({
   isOpen,
   onClose,
@@ -27,6 +51,7 @@ export function AssignScreensModal({
   scheduleName = 'Schedule',
   onAssigned = null
 }) {
+  const logger = useLogger('AssignScreensModal');
   const [allDevices, setAllDevices] = useState([]);
   const [allGroups, setAllGroups] = useState([]);
   const [selectedDeviceIds, setSelectedDeviceIds] = useState(new Set());

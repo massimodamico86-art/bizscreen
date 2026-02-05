@@ -8,6 +8,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { ChevronUp, ChevronDown, Play, Plus, Trash2 } from 'lucide-react';
 
 // Animation presets
 const PAGE_ANIMATIONS = [
@@ -173,6 +174,13 @@ const runAnimation = (obj, animationId, canvas, onComplete) => {
   }
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.selectedObject
+ * @param root0.canvas
+ * @param root0.onClose
+ */
 export default function AnimatePanel({
   selectedObject,
   canvas,

@@ -6,9 +6,20 @@
  */
 
 import { useState } from 'react';
+import { AlignLeft, AlignCenter, AlignRight, Bold, Italic, Underline, Trash2 } from 'lucide-react';
 
-
-
+/**
+ *
+ * @param root0
+ * @param root0.selectedObject
+ * @param root0.onUpdate
+ * @param root0.onDelete
+ * @param root0.onDuplicate
+ * @param root0.onBringToFront
+ * @param root0.onSendToBack
+ * @param root0.fonts
+ * @param root0.colorPresets
+ */
 export default function PropertiesPanel({
   selectedObject,
   onUpdate,

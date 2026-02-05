@@ -17,7 +17,13 @@ import {
   Zap,
   Eye,
   Star,
+  X,
+  Loader2,
+  Layout,
+  ChevronRight,
+  Wand2,
 } from 'lucide-react';
+import { Button } from '../../design-system';
 import {
   getPresetsForBusinessType,
   suggestImprovements,
@@ -30,6 +36,16 @@ import {
 } from '../../services/sceneAiService';
 import { useLogger } from '../../hooks/useLogger.js';
 
+/**
+ *
+ * @param root0
+ * @param root0.businessType
+ * @param root0.currentSlide
+ * @param root0.onApplyPreset
+ * @param root0.onPolishSlide
+ * @param root0.brandTheme
+ * @param root0.onClose
+ */
 export default function AiSuggestionsPanel({
   businessType,
   currentSlide,

@@ -9,6 +9,8 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { X, Loader2, Upload } from 'lucide-react';
+import { Button } from '../../design-system';
 import {
   uploadBase64ToCloudinary,
   isCloudinaryConfigured,
@@ -19,6 +21,16 @@ import { useLogger } from '../../hooks/useLogger.js';
 const PIXIE_CDN_URL = 'https://unpkg.com/@nicholask/pixie@latest/dist/pixie.umd.js';
 const PIXIE_CSS_URL = 'https://unpkg.com/@nicholask/pixie@latest/dist/pixie.css';
 
+/**
+ *
+ * @param root0
+ * @param root0.isOpen
+ * @param root0.onClose
+ * @param root0.imageUrl
+ * @param root0.onSave
+ * @param root0.uploadToCloudinary
+ * @param root0.showToast
+ */
 export default function PixieEditorModal({
   isOpen,
   onClose,
@@ -255,6 +267,12 @@ export default function PixieEditorModal({
 /**
  * Alternative: Simple fallback image editor
  * Used when Pixie fails to load
+ * @param root0
+ * @param root0.imageUrl
+ * @param root0.onSave
+ * @param root0.onClose
+ * @param root0.uploadToCloudinary
+ * @param root0.showToast
  */
 export function SimpleImageEditor({
   imageUrl,

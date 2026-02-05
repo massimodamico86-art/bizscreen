@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { Button, Modal } from '../../design-system';
 export const ImageUploadModal = ({ isOpen, onClose, onUpload, currentImage }) => {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState(currentImage || '');

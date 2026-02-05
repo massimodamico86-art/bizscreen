@@ -14,7 +14,16 @@ import {
   CloudSun,
   QrCode,
   Calendar,
+  ChevronDown,
+  Layers,
+  Database,
+  Link,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Bold,
 } from 'lucide-react';
+import { Button } from '../../design-system';
 import {
   ANIMATION_TYPES,
   ANIMATION_DIRECTIONS,
@@ -31,6 +40,16 @@ const COLOR_PRESETS = [
   '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e',
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.block
+ * @param root0.design
+ * @param root0.onBlockUpdate
+ * @param root0.onDesignUpdate
+ * @param root0.smartGuidesEnabled
+ * @param root0.onSmartGuidesChange
+ */
 export default function PropertiesPanel({
   block,
   design,

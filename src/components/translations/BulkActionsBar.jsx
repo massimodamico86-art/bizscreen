@@ -6,7 +6,9 @@
  */
 
 import { useState } from 'react';
+import { RefreshCw } from 'lucide-react';
 import { bulkUpdateStatus } from '../../services/translationService';
+import { Button, Select } from '../../design-system';
 
 const STATUS_OPTIONS = [
   { value: 'draft', label: 'Set to Draft' },
@@ -14,6 +16,13 @@ const STATUS_OPTIONS = [
   { value: 'approved', label: 'Set to Approved' },
 ];
 
+/**
+ *
+ * @param root0
+ * @param root0.selectedIds
+ * @param root0.onComplete
+ * @param root0.showToast
+ */
 export default function BulkActionsBar({ selectedIds, onComplete, showToast }) {
   const [updating, setUpdating] = useState(false);
   const [targetStatus, setTargetStatus] = useState('review');
