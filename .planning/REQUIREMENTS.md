@@ -58,26 +58,26 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TEST-01 | — | Pending |
-| TEST-02 | — | Pending |
-| TEST-03 | — | Pending |
-| TEST-04 | — | Pending |
-| TEST-05 | — | Pending |
-| MON-01 | — | Pending |
-| MON-02 | — | Pending |
-| MON-03 | — | Pending |
-| MON-04 | — | Pending |
-| MON-05 | — | Pending |
-| FLAG-01 | — | Pending |
-| FLAG-02 | — | Pending |
-| FLAG-03 | — | Pending |
-| FLAG-04 | — | Pending |
+| TEST-01 | Phase 38 | Pending |
+| TEST-02 | Phase 37 | Pending |
+| TEST-03 | Phase 37 | Pending |
+| TEST-04 | Phase 36 | Pending |
+| TEST-05 | Phase 36 | Pending |
+| MON-01 | Phase 39 | Pending |
+| MON-02 | Phase 39 | Pending |
+| MON-03 | Phase 39 | Pending |
+| MON-04 | Phase 40 | Pending |
+| MON-05 | Phase 40 | Pending |
+| FLAG-01 | Phase 41 | Pending |
+| FLAG-02 | Phase 41 | Pending |
+| FLAG-03 | Phase 41 | Pending |
+| FLAG-04 | Phase 41 | Pending |
 
 **Coverage:**
 - v2.3 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14 (pending roadmap creation)
+- Mapped to phases: 14
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-07*
-*Last updated: 2026-02-07 after initial definition*
+*Last updated: 2026-02-07 — traceability updated with phase mappings*

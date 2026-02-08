@@ -2,28 +2,30 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-05)
+See: .planning/PROJECT.md (updated 2026-02-07)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone (v2.3 or v3.0)
+**Current focus:** Phase 36 - E2E Test Infrastructure
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-07 — Milestone v2.3 started
+Phase: 36 of 41 (E2E Test Infrastructure)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-02-07 — v2.3 roadmap created
 
-Progress: Defining requirements for v2.3 Production Hardening
+Progress: [####################..........] 35/41 phases (v2.3 starting)
 
-## Milestone History
+## Milestone: v2.3 Production Hardening
 
-| Milestone | Phases | Status | Shipped |
-|-----------|--------|--------|---------|
-| v1 Production Release | 1-12 | Archived | 2026-01-24 |
-| v2 Templates & Platform Polish | 13-23 | Archived | 2026-01-27 |
-| v2.1 Tech Debt Cleanup | 24-29 | Archived | 2026-01-28 |
-| v2.2 Onboarding Polish | 30-35 | Archived | 2026-02-05 |
+| Phase | Goal | Status |
+|-------|------|--------|
+| 36 | E2E Test Infrastructure | Ready to plan |
+| 37 | E2E Test Stabilization | Not started |
+| 38 | E2E Test Coverage Gate | Not started |
+| 39 | Error Monitoring Setup | Not started |
+| 40 | Error Monitoring Production | Not started |
+| 41 | Feature Flag Cleanup | Not started |
 
 ## Performance Metrics
 
@@ -37,42 +39,37 @@ Progress: Defining requirements for v2.3 Production Hardening
 
 ### Key Patterns
 
-All milestone decisions logged in PROJECT.md Key Decisions table.
-Phase details archived in milestones/ directory.
-
 Core patterns from v2.2:
-- Unified onboarding step sequence: welcome_tour → industry_selection → starter_pack → screen_pairing → complete
+- Unified onboarding step sequence: welcome_tour -> industry_selection -> starter_pack -> screen_pairing -> complete
 - Feature flag pattern for safe rollout (VITE_USE_UNIFIED_ONBOARDING)
 - Modal-based editor isolation with callback props (onReady, onError)
-- QR code primary, OTP fallback for screen pairing
-- Polling pattern for pairing detection (3s interval)
 
-### Tech Debt Remaining
+### Tech Debt (v2.3 Targets)
 
-Minor items (accepted):
-- Phase 31 human verification deferred (unified onboarding flow)
-- E2E test stability: 460 failing tests (mostly timeout-related)
-- 7807 ESLint warnings remain (gradual cleanup)
-- Migration 105 pre-existing issue (separate fix)
+E2E test stability issues:
+- 460 tests failing (mostly timeout-related)
+- 382 tests passing
+- 321 tests skipped
+- Target: 90%+ pass rate
 
-### Test Baseline
+Feature flag cleanup pending:
+- OnboardingWizard component (confirmed broken)
+- WelcomeModal legacy code
+- VITE_USE_UNIFIED_ONBOARDING flag
+- Obsolete localStorage keys
 
-**Unit Tests (Vitest):**
-- 2079 passed, 0 failed
-- 73 test files
-- Duration: 6.9s
+No error monitoring currently in place.
 
-**E2E Tests (Playwright):**
-- 382 passed, 460 failed, 321 skipped
-- No HTTP 406 errors
-- Most failures: timeout-related (30s limit)
+### Blockers/Concerns
+
+None yet for v2.3.
 
 ## Session Continuity
 
 Last session: 2026-02-07
-Stopped at: Defining v2.3 requirements
+Stopped at: Roadmap created for v2.3
 Resume file: None
-Next: Complete requirements, create roadmap
+Next: `/gsd:plan-phase 36` to plan E2E Test Infrastructure
 
 ---
-*Updated: 2026-02-07 - v2.3 milestone started*
+*Updated: 2026-02-07 — v2.3 roadmap created*
