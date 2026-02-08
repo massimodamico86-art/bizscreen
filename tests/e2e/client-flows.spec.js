@@ -52,22 +52,34 @@ test.describe('Client Dashboard Flows', () => {
       }
     });
 
-    // Login as client user
-    await page.goto('/auth/login');
-    await page.waitForLoadState('networkidle');
+    // Navigate to app - uses pre-authenticated storage state from setup project
+    await page.goto('/app');
+    await page.waitForLoadState('domcontentloaded');
 
-    // Skip welcome modal if shown
-    await page.evaluate(() => {
-      localStorage.setItem('bizscreen_welcome_modal_dismissed', 'true');
-      localStorage.setItem('bizscreen_onboarding_completed', 'true');
-    });
+    // Wait for auth to resolve - either sidebar (authenticated) or login form (need to login)
+    const sidebar = page.locator('aside').first();
+    const loginForm = page.locator('input[type="email"]');
 
-    await page.fill('input[type="email"]', CLIENT_EMAIL);
-    await page.fill('input[type="password"]', CLIENT_PASSWORD);
-    await page.click('button[type="submit"]');
+    const authResolved = await Promise.race([
+      sidebar.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'authenticated'),
+      loginForm.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'need-login'),
+    ]).catch(() => 'unknown');
 
-    // Wait for dashboard to load
-    await page.waitForURL(/\/(app|dashboard)?/, { timeout: 15000 });
+    if (authResolved === 'need-login' || authResolved === 'unknown') {
+      // Not authenticated - perform login
+      await page.evaluate(() => {
+        localStorage.setItem('bizscreen_welcome_modal_dismissed', 'true');
+        localStorage.setItem('bizscreen_onboarding_completed', 'true');
+      });
+
+      await page.fill('input[type="email"]', CLIENT_EMAIL);
+      await page.fill('input[type="password"]', CLIENT_PASSWORD);
+      await page.click('button[type="submit"]');
+
+      // Wait for dashboard to load
+      await page.waitForURL(/\/app/, { timeout: 15000 });
+    }
+
     await page.waitForLoadState('networkidle');
   });
 

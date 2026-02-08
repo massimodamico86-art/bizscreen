@@ -29,11 +29,19 @@ export async function loginAndPrepare(page, options = {}) {
   await page.goto('/app');
   await page.waitForLoadState('domcontentloaded');
 
-  // Check if we stayed on /app (authenticated) or got redirected to login
-  const afterNavUrl = page.url();
-  if (afterNavUrl.includes('/app') && !afterNavUrl.includes('/auth/')) {
+  // Wait for auth to resolve - either app renders sidebar (authenticated) or we get redirected to login
+  // This handles the case where the page shows /app URL briefly before auth redirect kicks in
+  const sidebar = page.locator('aside').first();
+  const loginForm = page.getByPlaceholder(/email/i);
+
+  // Race between sidebar appearing (authenticated) or login form appearing (need to login)
+  const authResolved = await Promise.race([
+    sidebar.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'authenticated'),
+    loginForm.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'need-login'),
+  ]).catch(() => 'unknown');
+
+  if (authResolved === 'authenticated') {
     // Already authenticated via storage state, just dismiss modals
-    await page.waitForLoadState('domcontentloaded');
     await dismissAnyModals(page);
     return;
   }
@@ -51,8 +59,12 @@ export async function loginAndPrepare(page, options = {}) {
     await page.goto('/auth/login');
   }
 
+  // Wait for login form to be fully rendered
+  const emailField = page.getByPlaceholder(/email/i);
+  await emailField.waitFor({ state: 'visible', timeout: 10000 });
+
   // Fill in credentials and submit
-  await page.getByPlaceholder(/email/i).fill(email);
+  await emailField.fill(email);
   await page.getByPlaceholder(/password/i).fill(password);
   await page.getByRole('button', { name: /sign in|log in/i }).click();
 
