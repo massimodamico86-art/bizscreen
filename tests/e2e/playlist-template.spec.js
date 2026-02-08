@@ -82,7 +82,8 @@ test.describe('Playlist Template Flow', () => {
     await expect(addButton).toBeVisible({ timeout: 5000 });
     await addButton.click();
 
-    await page.waitForTimeout(1000);
+    // Wait for modal to appear
+    await page.waitForLoadState('domcontentloaded');
     await page.screenshot({ path: 'test-results/playlist-add-modal.png', fullPage: true });
 
     // Should NOT have user_preferences error at this point
@@ -98,13 +99,11 @@ test.describe('Playlist Template Flow', () => {
     // Click Add Playlist
     const addButton = page.locator('button').filter({ hasText: /add playlist/i }).first();
     await addButton.click();
-    await page.waitForTimeout(500);
 
     // Click "Start from Template" button specifically
     const templateButton = page.locator('button:has-text("Start from Template")');
     await expect(templateButton).toBeVisible({ timeout: 5000 });
     await templateButton.click();
-    await page.waitForTimeout(2000);
     await page.waitForLoadState('networkidle');
     await page.screenshot({ path: 'test-results/playlist-template-options.png', fullPage: true });
 
@@ -123,7 +122,6 @@ test.describe('Playlist Template Flow', () => {
 
     if (await playlistRow.isVisible({ timeout: 5000 }).catch(() => false)) {
       await playlistRow.click();
-      await page.waitForTimeout(2000);
       await page.waitForLoadState('networkidle');
 
       await page.screenshot({ path: 'test-results/playlist-detail.png', fullPage: true });

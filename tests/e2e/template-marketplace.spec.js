@@ -20,7 +20,6 @@ import { loginAndPrepare, waitForPageReady, dismissAnyModals } from './helpers.j
 async function navigateToMarketplace(page) {
   const marketplaceButton = page.getByRole('button', { name: /marketplace/i }).first();
   await marketplaceButton.click();
-  await page.waitForTimeout(500);
   await waitForPageReady(page);
 }
 
@@ -85,7 +84,6 @@ test.describe('Template Marketplace - Client User', () => {
     // Type in search input
     const searchInput = page.getByPlaceholder(/search.*template/i);
     await searchInput.fill('retail');
-    await page.waitForTimeout(500);
 
     // Page should update (we can't verify results without seeded data)
     await expect(searchInput).toHaveValue('retail');
@@ -106,8 +104,8 @@ test.describe('Template Marketplace - Client User', () => {
   test('clicking template opens preview modal', async ({ page }) => {
     await navigateToMarketplace(page);
 
-    // Wait for potential templates to load
-    await page.waitForTimeout(1000);
+    // Wait for page content to be ready
+    await page.waitForLoadState('domcontentloaded');
 
     // If templates exist, click one
     const templateCard = page.locator('[class*="border"]').filter({ hasText: /template/i }).first();
@@ -138,7 +136,8 @@ test.describe('Template Preview Modal', () => {
   });
 
   test('preview modal can be closed with X button', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    // Wait for page content to be ready
+    await page.waitForLoadState('domcontentloaded');
 
     // Try to open a template preview
     const templateCard = page.locator('[class*="cursor-pointer"]').first();
@@ -155,14 +154,16 @@ test.describe('Template Preview Modal', () => {
           // Try clicking outside
           await page.mouse.click(10, 10);
         }
-        await page.waitForTimeout(500);
+        // Wait for modal to close
+        await modal.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
       }
     }
     // Test passes regardless - validates UI flow
   });
 
   test('preview modal can be closed with Escape key', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    // Wait for page content to be ready
+    await page.waitForLoadState('domcontentloaded');
 
     // Try to open a template preview
     const templateCard = page.locator('[class*="cursor-pointer"]').first();
@@ -173,7 +174,6 @@ test.describe('Template Preview Modal', () => {
       if (await modal.isVisible({ timeout: 2000 }).catch(() => false)) {
         // Press Escape
         await page.keyboard.press('Escape');
-        await page.waitForTimeout(500);
 
         // Modal should be hidden
         await expect(modal).toBeHidden({ timeout: 2000 });
@@ -306,7 +306,9 @@ test.describe('Template Picker Modal', () => {
     // Navigate to scenes
     const scenesButton = page.getByRole('button', { name: /scenes/i }).first();
     await scenesButton.click();
-    await page.waitForTimeout(500);
+
+    // Wait for page content to load
+    await page.waitForLoadState('domcontentloaded');
 
     // Look for a "new from template" or similar option
     const newButton = page.getByRole('button', { name: /new.*scene|create|add/i }).first();
@@ -334,7 +336,8 @@ test.describe('License-Based Access Control', () => {
   });
 
   test('marketplace shows license badges on templates', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    // Wait for page content to be ready
+    await page.waitForLoadState('domcontentloaded');
 
     // If templates exist, they should have license badges
     const freeBadge = page.locator('text=Free');
@@ -352,13 +355,13 @@ test.describe('License-Based Access Control', () => {
   });
 
   test('pro templates show upgrade prompt if on free plan', async ({ page }) => {
-    await page.waitForTimeout(1000);
+    // Wait for page content to be ready
+    await page.waitForLoadState('domcontentloaded');
 
     // Filter to show pro templates
     const proFilterButton = page.getByRole('button', { name: /^pro$/i }).first();
     if (await proFilterButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await proFilterButton.click();
-      await page.waitForTimeout(500);
 
       // Click on a pro template
       const templateCard = page.locator('[class*="cursor-pointer"]').first();

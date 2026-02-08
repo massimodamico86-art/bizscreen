@@ -96,7 +96,7 @@ test.describe('Template Packs', () => {
     const starterPacksTab = page.locator('button, a').filter({ hasText: /starter packs/i }).first();
     if (await starterPacksTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await starterPacksTab.click();
-      await page.waitForTimeout(500);
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Verify all 5 packs are visible
@@ -123,7 +123,7 @@ test.describe('Template Packs', () => {
     const starterPacksTab = page.locator('button, a').filter({ hasText: /starter packs/i }).first();
     if (await starterPacksTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await starterPacksTab.click();
-      await page.waitForTimeout(500);
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Find Quick Start Pack card
@@ -135,7 +135,6 @@ test.describe('Template Packs', () => {
 
       if (await useButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await useButton.click();
-        await page.waitForTimeout(3000);
         await page.waitForLoadState('networkidle');
 
         await page.screenshot({ path: 'test-results/quick-start-pack-result.png', fullPage: true });
@@ -168,7 +167,7 @@ test.describe('Template Packs', () => {
     const starterPacksTab = page.locator('button, a').filter({ hasText: /starter packs/i }).first();
     if (await starterPacksTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await starterPacksTab.click();
-      await page.waitForTimeout(500);
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Find Restaurant Pack card
@@ -179,7 +178,6 @@ test.describe('Template Packs', () => {
 
       if (await useButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await useButton.click();
-        await page.waitForTimeout(3000);
         await page.waitForLoadState('networkidle');
 
         await page.screenshot({ path: 'test-results/restaurant-pack-result.png', fullPage: true });
@@ -199,7 +197,7 @@ test.describe('Template Packs', () => {
     const starterPacksTab = page.locator('button, a').filter({ hasText: /starter packs/i }).first();
     if (await starterPacksTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await starterPacksTab.click();
-      await page.waitForTimeout(500);
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Use Quick Start Pack
@@ -208,21 +206,19 @@ test.describe('Template Packs', () => {
       const useButton = quickStartCard.locator('button').filter({ hasText: /use|apply|start/i }).first();
       if (await useButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await useButton.click();
-        await page.waitForTimeout(3000);
+        await page.waitForLoadState('networkidle');
       }
     }
 
     // Navigate to Playlists
     await page.click('button:has-text("Playlists"), a:has-text("Playlists")');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
 
     // Look for created playlist (Welcome & Info or similar)
     const playlistRow = page.locator('tr').filter({ hasText: /welcome|menu|info/i }).first();
 
     if (await playlistRow.isVisible({ timeout: 5000 }).catch(() => false)) {
       await playlistRow.click();
-      await page.waitForTimeout(2000);
       await page.waitForLoadState('networkidle');
 
       await page.screenshot({ path: 'test-results/pack-playlist-opened.png', fullPage: true });
@@ -246,7 +242,7 @@ test.describe('Template Packs', () => {
     const starterPacksTab = page.locator('button, a').filter({ hasText: /starter packs/i }).first();
     if (await starterPacksTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await starterPacksTab.click();
-      await page.waitForTimeout(500);
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Use Salon Pack for variety
@@ -255,21 +251,19 @@ test.describe('Template Packs', () => {
       const useButton = salonCard.locator('button').filter({ hasText: /use|apply|start/i }).first();
       if (await useButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await useButton.click();
-        await page.waitForTimeout(3000);
+        await page.waitForLoadState('networkidle');
       }
     }
 
     // Navigate to Layouts
     await page.click('button:has-text("Layouts"), a:has-text("Layouts")');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
 
     // Look for created layout
     const layoutRow = page.locator('tr').filter({ hasText: /salon|display|lobby/i }).first();
 
     if (await layoutRow.isVisible({ timeout: 5000 }).catch(() => false)) {
       await layoutRow.click();
-      await page.waitForTimeout(2000);
       await page.waitForLoadState('networkidle');
 
       await page.screenshot({ path: 'test-results/pack-layout-opened.png', fullPage: true });
