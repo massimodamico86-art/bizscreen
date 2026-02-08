@@ -2,8 +2,17 @@
  * Authentication E2E Tests
  *
  * Sprint 3: Comprehensive auth testing for login, signup, password reset, and session management.
+ *
+ * ISOLATION PATTERNS USED:
+ * - Unauthenticated tests use test.use({ storageState: { cookies: [], origins: [] } })
+ *   at the describe block level to clear auth state
+ * - Authenticated tests (Session Persistence, Logout Flow) use default storage state
+ *   from project config
+ *
+ * Alternative: For individual tests needing fresh context, use the freshPage fixture:
+ *   test('my test', async ({ freshPage }) => { ... });
  */
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/index.js';
 import { loginAndPrepare, waitForPageReady } from './helpers.js';
 
 // =============================================================================
