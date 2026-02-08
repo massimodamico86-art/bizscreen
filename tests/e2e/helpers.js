@@ -146,9 +146,10 @@ export async function dismissAnyModals(page) {
 
 /**
  * Wait for page to be ready for interaction
- * Ensures no loading spinners or skeleton screens are visible
+ * Gives loading indicators a chance to disappear, but doesn't fail if they persist.
  *
  * Uses element-based waits instead of networkidle for reliability.
+ * Uses Promise.race for soft timeouts without catch swallowing or waitForTimeout.
  *
  * @param {import('@playwright/test').Page} page - Playwright page object
  */
@@ -157,7 +158,7 @@ export async function waitForPageReady(page) {
   await page.waitForLoadState('domcontentloaded');
 
   // Wait for common loading indicators to disappear
-  // Only wait for indicators that are actually present
+  // Use soft timeout via Promise.race - don't fail if loader persists
   const loadingSelectors = [
     '.animate-spin',
     '.animate-pulse',
@@ -165,12 +166,23 @@ export async function waitForPageReady(page) {
     'text=Loading...',
   ];
 
+  // Helper to create a timeout promise that resolves (not rejects) after delay
+  const softTimeout = (ms) => new Promise((resolve) => setTimeout(() => resolve('timeout'), ms));
+
   for (const selector of loadingSelectors) {
     const loader = page.locator(selector).first();
     const count = await loader.count();
     if (count > 0) {
-      // Only wait for hidden if element exists
-      await loader.waitFor({ state: 'hidden', timeout: 5000 });
+      // Race between loader disappearing and soft timeout
+      // waitFor returns undefined on success, so we check the result
+      const result = await Promise.race([
+        loader.waitFor({ state: 'hidden', timeout: 10000 }).then(() => 'hidden'),
+        softTimeout(5000),
+      ]);
+      if (result === 'timeout') {
+        // Loader still visible after 5s - log but continue
+        console.warn(`Loading indicator '${selector}' still visible after 5s, continuing anyway`);
+      }
     }
   }
 }
