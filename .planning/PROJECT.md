@@ -72,11 +72,15 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-**Current Milestone:** Planning next milestone
+**Current Milestone: v2.3 Production Hardening**
 
-**Options:**
-- v2.3: Production hardening (E2E test stability, performance, monitoring)
-- v3.0: Major feature work (RTL languages, advanced integrations)
+**Goal:** Stabilize the platform for reliable production operation with trustworthy tests, error visibility, and clean feature flags.
+
+**Target features:**
+- E2E test stability (460 failing → 90%+ pass rate)
+- Error monitoring and alerting (Sentry or equivalent)
+- Feature flag cleanup (remove legacy onboarding code)
+- Performance optimization (if needed, otherwise defer)
 
 ### Out of Scope
 
