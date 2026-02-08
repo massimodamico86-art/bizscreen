@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-07)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 36 - E2E Test Infrastructure
+**Current focus:** Phase 37 - E2E Test Stabilization
 
 ## Current Position
 
-Phase: 36 of 41 (E2E Test Infrastructure)
-Plan: 2 of 2 in current phase (PHASE COMPLETE)
-Status: Phase 36 complete
-Last activity: 2026-02-08 - Completed 36-02-PLAN.md
+Phase: 37 of 41 (E2E Test Stabilization)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-08 - Completed 37-01-PLAN.md
 
-Progress: [#####################.........] 36/41 phases (v2.3 in progress)
+Progress: [#####################.........] 37/41 phases (v2.3 in progress)
 
 ## Milestone: v2.3 Production Hardening
 
 | Phase | Goal | Status |
 |-------|------|--------|
 | 36 | E2E Test Infrastructure | Complete |
-| 37 | E2E Test Stabilization | Not started |
+| 37 | E2E Test Stabilization | In progress (1/4 plans) |
 | 38 | E2E Test Coverage Gate | Not started |
 | 39 | Error Monitoring Setup | Not started |
 | 40 | Error Monitoring Production | Not started |
@@ -30,7 +30,7 @@ Progress: [#####################.........] 36/41 phases (v2.3 in progress)
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1 + v2.2 + v2.3):**
-- Total plans executed: 144 (75 + 39 + 11 + 16 + 3)
+- Total plans executed: 145 (75 + 39 + 11 + 16 + 4)
 - Total phases: 36 completed
 - Total codebase: 315,480 LOC JavaScript/JSX
 - Test suite: 2079 unit tests, 382 E2E tests passing
@@ -38,6 +38,12 @@ Progress: [#####################.........] 36/41 phases (v2.3 in progress)
 ## Accumulated Context
 
 ### Key Patterns
+
+Core patterns from v2.3 (Phase 37):
+- Promise.race soft timeout for loading indicators that may persist
+- count() + isVisible() pattern instead of isVisible().catch(() => false)
+- element.or() composition for multi-element visibility checks
+- Avoid waitForTimeout - use element-based waits with soft timeouts
 
 Core patterns from v2.3 (Phase 36):
 - Custom Playwright fixtures via base.extend() for test isolation
@@ -56,12 +62,10 @@ Core patterns from v2.2:
 ### Tech Debt (v2.3 Targets)
 
 E2E test stability issues:
-- 460 tests failing (mostly timeout-related)
-- 382 tests passing
-- 321 tests skipped
 - Target: 90%+ pass rate
-- **Infrastructure now in place:** Custom fixtures, proper timeouts, auto-waiting patterns
-- **Isolation verified:** Auth tests (35 passed), dashboard tests (10 passed), cross-file isolation works
+- **Category 1 (Auth) stabilized:** 99/99 tests passing (5 consecutive runs)
+- **Categories 2-4:** Not yet stabilized
+- Tracking document: .planning/phases/37-e2e-test-stabilization/SKIPPED-TESTS.md
 
 Feature flag cleanup pending:
 - OnboardingWizard component (confirmed broken)
@@ -78,9 +82,9 @@ None for v2.3.
 ## Session Continuity
 
 Last session: 2026-02-08
-Stopped at: Completed Phase 36 (E2E Test Infrastructure)
+Stopped at: Completed 37-01-PLAN.md (Core Auth Test Stabilization)
 Resume file: None
-Next: Begin Phase 37 (E2E Test Stabilization)
+Next: 37-02-PLAN.md (Core CRUD Test Stabilization)
 
 ---
-*Updated: 2026-02-08 - Completed Phase 36 (E2E Test Infrastructure) - Plans 36-01 and 36-02*
+*Updated: 2026-02-08 - Completed 37-01-PLAN.md (Core Auth Test Stabilization)*
