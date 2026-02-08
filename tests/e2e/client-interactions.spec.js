@@ -208,7 +208,10 @@ test.describe('Client UI Interactions', () => {
 
       if (isVisible) {
         await addScreenBtn.click();
-        await page.waitForTimeout(500);
+
+        // Wait for any modal to appear
+        const dialog = page.locator('[role="dialog"]').first();
+        await dialog.waitFor({ state: 'visible', timeout: 2000 }).catch(() => {});
 
         // Should not crash after clicking
         await expect(page.locator('body')).not.toContainText('Something Went Wrong');
@@ -226,7 +229,11 @@ test.describe('Client UI Interactions', () => {
 
       if (isVisible) {
         await addBtn.click();
-        await page.waitForTimeout(500);
+
+        // Wait for any modal to appear
+        const dialog = page.locator('[role="dialog"]').first();
+        await dialog.waitFor({ state: 'visible', timeout: 2000 }).catch(() => {});
+
         await expect(page.locator('body')).not.toContainText('Something Went Wrong');
         await dismissAnyModals(page);
       }
@@ -238,9 +245,10 @@ test.describe('Client UI Interactions', () => {
     test('Media menu - All Media page loads', async ({ page }) => {
       const mediaNav = page.locator('aside button:has-text("Media")').first();
       await mediaNav.click();
-      await page.waitForTimeout(300);
 
+      // Wait for submenu to appear
       const allMediaNav = page.locator('button:has-text("All Media")').first();
+      await allMediaNav.waitFor({ state: 'visible', timeout: 5000 });
       await allMediaNav.click();
       await waitForPageReady(page);
 
@@ -268,7 +276,8 @@ test.describe('Client UI Interactions', () => {
       for (const pageInfo of pages) {
         try {
           await navigateToSection(page, pageInfo.selector, pageInfo.name);
-          await page.waitForTimeout(500);
+          // Wait for content to load
+          await page.waitForLoadState('domcontentloaded');
         } catch (e) {
           // Log but continue - we want to check all pages
           console.log(`Warning: ${pageInfo.name} navigation issue: ${e.message}`);

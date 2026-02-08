@@ -125,12 +125,12 @@ test.describe('Client Dashboard Flows', () => {
       await expect(addButton).toBeVisible({ timeout: 5000 });
       await addButton.click();
 
-      // Wait for modal
-      await page.waitForTimeout(500);
+      // Wait for modal to appear
+      const modal = page.locator('[role="dialog"], .fixed.inset-0, div:has(> h2:has-text("New Playlist")), div:has(> h2:has-text("Create Playlist"))');
+      await modal.first().waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
       // Check if modal opened - look for modal content
-      const modal = page.locator('[role="dialog"], .fixed.inset-0, div:has(> h2:has-text("New Playlist")), div:has(> h2:has-text("Create Playlist"))');
-      const modalVisible = await modal.isVisible().catch(() => false);
+      const modalVisible = await modal.first().isVisible();
 
       await page.screenshot({ path: 'test-results/playlists-add-modal.png', fullPage: true });
 
@@ -149,13 +149,18 @@ test.describe('Client Dashboard Flows', () => {
 
       // Click Add Playlist
       await page.click('button:has-text("Add Playlist")');
-      await page.waitForTimeout(500);
+
+      // Wait for modal to appear
+      const dialog = page.locator('[role="dialog"]').first();
+      await dialog.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
       // If there's a choice modal (Blank vs Template), choose Blank
       const blankOption = page.locator('button:has-text("Blank Playlist")');
-      if (await blankOption.isVisible().catch(() => false)) {
+      const blankCount = await blankOption.count();
+      if (blankCount > 0 && (await blankOption.isVisible())) {
         await blankOption.click();
-        await page.waitForTimeout(500);
+        // Wait for next form/modal to appear
+        await page.waitForLoadState('domcontentloaded');
       }
 
       // Fill in playlist name
@@ -175,7 +180,6 @@ test.describe('Client Dashboard Flows', () => {
       await createBtn.click();
 
       // Wait for navigation or success
-      await page.waitForTimeout(2000);
       await page.waitForLoadState('networkidle');
 
       await page.screenshot({ path: 'test-results/playlists-after-create.png', fullPage: true });
@@ -214,7 +218,10 @@ test.describe('Client Dashboard Flows', () => {
       const addBtn = page.locator('button:has-text("Add Schedule")').first();
       await expect(addBtn).toBeVisible({ timeout: 5000 });
       await addBtn.click();
-      await page.waitForTimeout(500);
+
+      // Wait for modal to appear
+      const dialog = page.locator('[role="dialog"]').first();
+      await dialog.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
       await page.screenshot({ path: 'test-results/schedules-add-modal.png', fullPage: true });
 
@@ -228,9 +235,9 @@ test.describe('Client Dashboard Flows', () => {
 
       // Click Create/Save button
       const createBtn = page.locator('button[type="submit"], button:has-text("Create"), button:has-text("Save")').last();
-      if (await createBtn.isVisible().catch(() => false)) {
+      const createBtnCount = await createBtn.count();
+      if (createBtnCount > 0 && (await createBtn.isVisible())) {
         await createBtn.click();
-        await page.waitForTimeout(2000);
         await page.waitForLoadState('networkidle');
       }
 

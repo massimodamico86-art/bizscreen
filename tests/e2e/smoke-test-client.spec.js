@@ -127,29 +127,38 @@ async function tryOpenModals(page) {
   for (const selector of modalTriggerSelectors) {
     try {
       const button = page.locator(selector).first();
-      if (await button.isVisible({ timeout: 500 }).catch(() => false)) {
-        const isDisabled = await button.isDisabled().catch(() => true);
+      const buttonCount = await button.count();
+      if (buttonCount > 0 && (await button.isVisible())) {
+        const isDisabled = await button.isDisabled();
         if (!isDisabled) {
           console.log(`[MODAL] Clicking trigger: ${selector}`);
           await button.click();
-          await page.waitForTimeout(500);
+
+          // Wait for modal to appear using element-based wait
+          const dialog = page.locator('[role="dialog"], [data-radix-dialog-content]').first();
+          const dialogAppeared = await dialog
+            .waitFor({ state: 'visible', timeout: 2000 })
+            .then(() => true)
+            .catch(() => false);
 
           // Check if a modal opened using improved detection
-          if (await isAnyModalOpen()) {
+          if (dialogAppeared || (await isAnyModalOpen())) {
             console.log('[MODAL] Modal opened successfully');
-            await page.waitForTimeout(300);
             // Close the modal
             await closeModal(page);
 
-            // Verify modal is closed before continuing
-            await page.waitForTimeout(300);
+            // Verify modal is closed using element wait
             if (await isAnyModalOpen()) {
               console.warn('[MODAL] Modal still open after close attempt, forcing close');
               // Force close by pressing Escape multiple times
               for (let i = 0; i < 5; i++) {
                 await page.keyboard.press('Escape');
-                await page.waitForTimeout(200);
-                if (!(await isAnyModalOpen())) break;
+                // Wait for dialog to close
+                const closed = await dialog
+                  .waitFor({ state: 'hidden', timeout: 500 })
+                  .then(() => true)
+                  .catch(() => false);
+                if (closed || !(await isAnyModalOpen())) break;
               }
             }
           }
@@ -160,7 +169,9 @@ async function tryOpenModals(page) {
       // Try to close any open modal before continuing
       try {
         await page.keyboard.press('Escape');
-        await page.waitForTimeout(300);
+        // Wait for any dialog to close
+        const dialog = page.locator('[role="dialog"]').first();
+        await dialog.waitFor({ state: 'hidden', timeout: 1000 }).catch(() => {});
       } catch {
         // Ignore
       }
@@ -209,17 +220,26 @@ async function closeModal(page) {
     'button svg.w-5.h-5', // Common size for close icons
   ];
 
+  // Get reference to dialog for waiting
+  const dialog = page.locator('[role="dialog"], [data-radix-dialog-content]').first();
+
   // Try each close selector
   for (const selector of closeSelectors) {
     try {
       const closeButton = page.locator(selector).first();
-      if (await closeButton.isVisible({ timeout: 300 }).catch(() => false)) {
+      const buttonCount = await closeButton.count();
+      if (buttonCount > 0 && (await closeButton.isVisible())) {
         console.log(`[MODAL] Closing with: ${selector}`);
         await closeButton.click({ force: true }); // Force click in case of overlay issues
-        await page.waitForTimeout(500);
+
+        // Wait for modal to close
+        const closed = await dialog
+          .waitFor({ state: 'hidden', timeout: 2000 })
+          .then(() => true)
+          .catch(() => false);
 
         // Verify modal is closed
-        if (!(await isModalOpen())) {
+        if (closed || !(await isModalOpen())) {
           console.log('[MODAL] Successfully closed');
           return;
         }
@@ -234,8 +254,12 @@ async function closeModal(page) {
   console.log('[MODAL] Trying Escape key fallback');
   for (let i = 0; i < 3; i++) {
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(300);
-    if (!(await isModalOpen())) {
+    // Wait for dialog to close
+    const closed = await dialog
+      .waitFor({ state: 'hidden', timeout: 1000 })
+      .then(() => true)
+      .catch(() => false);
+    if (closed || !(await isModalOpen())) {
       console.log('[MODAL] Closed via Escape key');
       return;
     }
@@ -245,10 +269,12 @@ async function closeModal(page) {
   try {
     // Find the backdrop element and click near the edge
     const backdrop = page.locator('.fixed.inset-0').first();
-    if (await backdrop.isVisible({ timeout: 300 }).catch(() => false)) {
+    const backdropCount = await backdrop.count();
+    if (backdropCount > 0 && (await backdrop.isVisible())) {
       console.log('[MODAL] Clicking backdrop to close');
       await backdrop.click({ position: { x: 5, y: 5 }, force: true });
-      await page.waitForTimeout(500);
+      // Wait for dialog to close
+      await dialog.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
     }
   } catch {
     // Ignore
@@ -281,7 +307,8 @@ async function tryClickPrimaryButtons(page) {
 
       for (let i = 0; i < Math.min(count, 2); i++) {
         const button = buttons.nth(i);
-        if (await button.isVisible({ timeout: 300 }).catch(() => false)) {
+        const buttonVisible = await button.isVisible();
+        if (buttonVisible) {
           const buttonText = (await button.textContent()) || '';
           const buttonTextLower = buttonText.toLowerCase();
 
@@ -289,17 +316,19 @@ async function tryClickPrimaryButtons(page) {
             continue;
           }
 
-          const isDisabled = await button.isDisabled().catch(() => true);
+          const isDisabled = await button.isDisabled();
           if (isDisabled) continue;
 
           console.log(`[BUTTON] Clicking: "${buttonText.trim()}"`);
           await button.click();
-          await page.waitForTimeout(500);
+
+          // Wait for page to stabilize after click
+          await page.waitForLoadState('domcontentloaded');
 
           const currentUrl = page.url();
           if (!currentUrl.includes('/app')) {
             await page.goBack().catch(() => {});
-            await page.waitForTimeout(300);
+            await page.waitForLoadState('domcontentloaded');
           }
         }
       }
@@ -320,7 +349,10 @@ test.describe('Client Smoke Test', () => {
       // Navigate to home page
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(1000); // Allow React to hydrate
+
+      // Wait for page content to load (React hydration)
+      const main = page.locator('main, #main-content, [role="main"]').first();
+      await expect(main).toBeVisible({ timeout: 10000 });
 
       // Verify page loaded (not blank)
       await expect(page.locator('body')).not.toContainText('Something Went Wrong');
@@ -331,10 +363,6 @@ test.describe('Client Smoke Test', () => {
       // Verify navigation is present
       await expect(page.getByRole('link', { name: /features/i }).first()).toBeVisible();
       await expect(page.getByRole('link', { name: /pricing/i }).first()).toBeVisible();
-
-      // Verify main content area loaded
-      const main = page.locator('main, #main-content, [role="main"]').first();
-      await expect(main).toBeVisible({ timeout: 5000 });
 
       // Check for critical JS errors (filter benign ones)
       const criticalErrors = errors.consoleErrors.filter(
@@ -355,15 +383,14 @@ test.describe('Client Smoke Test', () => {
 
       await page.goto('/features');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
-
-      // Verify page loaded
-      await expect(page.locator('body')).not.toContainText('Something Went Wrong');
-      await expect(page).toHaveTitle(/Features.*BizScreen/);
 
       // Verify some content is visible
       const main = page.locator('main, #main-content, [role="main"]').first();
       await expect(main).toBeVisible({ timeout: 5000 });
+
+      // Verify page loaded
+      await expect(page.locator('body')).not.toContainText('Something Went Wrong');
+      await expect(page).toHaveTitle(/Features.*BizScreen/);
 
       // CRITICAL: Fail on ReferenceErrors
       assertNoErrors(errors, 'Features page');
@@ -374,15 +401,14 @@ test.describe('Client Smoke Test', () => {
 
       await page.goto('/pricing');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
-
-      // Verify page loaded
-      await expect(page.locator('body')).not.toContainText('Something Went Wrong');
-      await expect(page).toHaveTitle(/Pricing.*BizScreen/);
 
       // Verify some content is visible
       const main = page.locator('main, #main-content, [role="main"]').first();
       await expect(main).toBeVisible({ timeout: 5000 });
+
+      // Verify page loaded
+      await expect(page.locator('body')).not.toContainText('Something Went Wrong');
+      await expect(page).toHaveTitle(/Pricing.*BizScreen/);
 
       // CRITICAL: Fail on ReferenceErrors
       assertNoErrors(errors, 'Pricing page');
@@ -481,17 +507,13 @@ test.describe('Client Smoke Test', () => {
 
       // Wait for page to be ready
       await waitForPageReady(page);
-      await page.waitForTimeout(1000);
+
+      // Wait for content to load
+      const contentIndicator = page.locator('aside, main, h1, [role="navigation"]').first();
+      await expect(contentIndicator).toBeVisible({ timeout: 15000 });
 
       // Verify no error boundary
       await expect(page.locator('body')).not.toContainText('Something Went Wrong');
-
-      // Verify content is visible (different layouts for different roles)
-      // Client: has sidebar (aside) and main content area
-      // Admin/SuperAdmin: has dashboard with h1, buttons, etc.
-      // Note: If auth times out and is retrying, wait longer for it to resolve
-      const contentIndicator = page.locator('aside, main, h1, [role="navigation"]').first();
-      await expect(contentIndicator).toBeVisible({ timeout: 15000 });
 
       // Verify page has meaningful content
       const hasContent = await page.evaluate(() => document.body.innerText.length > 100);
@@ -547,9 +569,10 @@ test.describe('Client Smoke Test', () => {
           console.log(`\n[CRAWL] Navigating to: ${target.name}`);
           const navButton = page.locator(target.selector).first();
 
-          if (await navButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+          const navButtonCount = await navButton.count();
+          if (navButtonCount > 0 && (await navButton.isVisible())) {
             await navButton.click();
-            await page.waitForTimeout(1000);
+            await page.waitForLoadState('domcontentloaded');
             await waitForPageReady(page);
 
             const currentUrl = page.url();
