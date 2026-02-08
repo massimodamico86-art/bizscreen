@@ -1,8 +1,52 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /**
- * Custom Playwright Test Fixtures
+ * E2E Test Fixtures
  *
- * Extends base Playwright test with custom fixtures for test isolation.
+ * Custom Playwright fixtures for test isolation.
+ *
+ * USAGE PATTERNS:
+ *
+ * 1. For authenticated tests (most common):
+ *    ```javascript
+ *    import { test, expect } from './fixtures/index.js';
+ *
+ *    test('my authenticated test', async ({ page }) => {
+ *      // page already has auth from storage state (project config)
+ *    });
+ *    ```
+ *
+ * 2. For unauthenticated tests (login flows, public pages):
+ *    ```javascript
+ *    import { test, expect } from './fixtures/index.js';
+ *
+ *    test.describe('Login Flow', () => {
+ *      test.use({ storageState: { cookies: [], origins: [] } });
+ *
+ *      test('shows login page', async ({ page }) => {
+ *        // page has clean state, no auth
+ *      });
+ *    });
+ *    ```
+ *
+ * 3. For single tests needing fresh context:
+ *    ```javascript
+ *    import { test, expect } from './fixtures/index.js';
+ *
+ *    test('isolated test', async ({ freshPage }) => {
+ *      // freshPage is a completely new context
+ *    });
+ *    ```
+ *
+ * 4. For tests needing explicit login:
+ *    ```javascript
+ *    import { test, expect } from './fixtures/index.js';
+ *
+ *    test('with manual login', async ({ authenticatedPage }) => {
+ *      // authenticatedPage already called loginAndPrepare()
+ *    });
+ *    ```
+ *
+ * FIXTURES PROVIDED:
  * - authenticatedPage: Uses existing storage state and prepares the page
  * - freshPage: Creates a completely clean browser context (no cookies/storage)
  *
