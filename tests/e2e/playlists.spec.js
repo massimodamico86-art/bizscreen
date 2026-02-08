@@ -58,8 +58,12 @@ test.describe('Playlists', () => {
     await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
     // Wait for modal - could be choice modal or limit modal
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+
     const blankPlaylistOption = page.getByText(/blank playlist/i);
-    if (await blankPlaylistOption.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const blankCount = await blankPlaylistOption.count();
+    if (blankCount > 0 && await blankPlaylistOption.isVisible()) {
       // Click on Blank Playlist option
       await blankPlaylistOption.click();
 
@@ -81,8 +85,12 @@ test.describe('Playlists', () => {
     await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
     // Wait for modal - could be choice modal or limit modal
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+
     const blankPlaylistOption = page.getByText(/blank playlist/i);
-    if (await blankPlaylistOption.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const blankCount = await blankPlaylistOption.count();
+    if (blankCount > 0 && await blankPlaylistOption.isVisible()) {
       await blankPlaylistOption.click();
 
       // Fill in playlist name
@@ -91,8 +99,9 @@ test.describe('Playlists', () => {
       // Click Create Playlist button
       await page.getByRole('button', { name: /create playlist/i }).click();
 
-      // Wait for navigation or success
-      await page.waitForTimeout(2000);
+      // Wait for create dialog to close (indicates creation complete)
+      const createDialog = page.locator('[role="dialog"]');
+      await createDialog.waitFor({ state: 'hidden', timeout: 10000 });
 
       // Navigate back to playlists to verify it was created
       await navigateToSection(page, 'playlists');
@@ -111,8 +120,12 @@ test.describe('Playlists', () => {
     await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
     // Wait for modal - could be choice modal or limit modal
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+
     const blankPlaylistOption = page.getByText(/blank playlist/i);
-    if (await blankPlaylistOption.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const blankCount = await blankPlaylistOption.count();
+    if (blankCount > 0 && await blankPlaylistOption.isVisible()) {
       await blankPlaylistOption.click();
 
       // Should show create playlist form
@@ -122,7 +135,7 @@ test.describe('Playlists', () => {
       await page.getByRole('button', { name: /cancel/i }).click();
 
       // Modal should close
-      await expect(page.getByPlaceholder(/enter playlist name/i)).not.toBeVisible({ timeout: 3000 });
+      await dialog.waitFor({ state: 'hidden', timeout: 3000 });
     }
     // If limit modal appears, test passes - UI is working correctly
   });
@@ -135,8 +148,12 @@ test.describe('Playlists', () => {
     await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
     // Wait for modal - could be choice modal or limit modal
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+
     const templateOption = page.getByText(/start from template/i);
-    if (await templateOption.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const templateCount = await templateOption.count();
+    if (templateCount > 0 && await templateOption.isVisible()) {
       // Click on Template option
       await templateOption.click();
 
@@ -166,8 +183,12 @@ test.describe('Playlists', () => {
       await header.locator('button:has-text("Add Playlist"), button:has-text("New Playlist"), button:has-text("Create")').first().click();
 
       // Wait for modal - could be choice modal or limit modal
+      const dialog = page.locator('[role="dialog"]');
+      await expect(dialog).toBeVisible({ timeout: 5000 });
+
       const blankPlaylistOption = page.getByText(/blank playlist/i);
-      if (!await blankPlaylistOption.isVisible({ timeout: 3000 }).catch(() => false)) {
+      const blankCount = await blankPlaylistOption.count();
+      if (blankCount === 0 || !await blankPlaylistOption.isVisible()) {
         // Limit reached - cannot test deletion without creating first
         return;
       }
@@ -176,8 +197,11 @@ test.describe('Playlists', () => {
       await page.getByPlaceholder(/enter playlist name/i).fill(playlistName);
       await page.getByRole('button', { name: /create playlist/i }).click();
 
-      // Wait and navigate back to playlists
-      await page.waitForTimeout(2000);
+      // Wait for create dialog to close (indicates creation complete)
+      const createDialog = page.locator('[role="dialog"]');
+      await createDialog.waitFor({ state: 'hidden', timeout: 10000 });
+
+      // Navigate back to playlists
       await navigateToSection(page, 'playlists');
 
       // Verify playlist exists
@@ -199,8 +223,9 @@ test.describe('Playlists', () => {
       await expect(deleteButton).toBeVisible({ timeout: 3000 });
       await deleteButton.click();
 
-      // Wait for deletion
-      await page.waitForTimeout(1000);
+      // Wait for delete confirmation dialog to close
+      const deleteDialog = page.locator('[role="dialog"]');
+      await deleteDialog.waitFor({ state: 'hidden', timeout: 10000 });
 
       // Playlist should no longer be visible
       await expect(page.getByText(playlistName)).not.toBeVisible({ timeout: 5000 });

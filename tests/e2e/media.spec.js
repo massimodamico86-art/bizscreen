@@ -60,9 +60,14 @@ test.describe('Media Library', () => {
     // Click Add Media button in bottom action bar
     await page.locator('button:has-text("Add Media")').click();
 
+    // Wait for modal to appear
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+
     // Should have both tabs (if not hitting limit)
     const uploadText = page.getByText(/upload files/i);
-    if (await uploadText.isVisible({ timeout: 2000 }).catch(() => false)) {
+    const uploadCount = await uploadText.count();
+    if (uploadCount > 0 && await uploadText.isVisible()) {
       await expect(page.getByText(/web page url/i)).toBeVisible();
     }
     // If limit modal appears, test passes since UI is working
@@ -74,9 +79,14 @@ test.describe('Media Library', () => {
     // Click Add Media button in bottom action bar
     await page.locator('button:has-text("Add Media")').click();
 
+    // Wait for modal to appear
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+
     // If upload modal appears, test the tab switching
     const uploadText = page.getByText(/upload files/i);
-    if (await uploadText.isVisible({ timeout: 2000 }).catch(() => false)) {
+    const uploadCount = await uploadText.count();
+    if (uploadCount > 0 && await uploadText.isVisible()) {
       // Click on Web Page URL tab
       await page.getByText(/web page url/i).click();
 
@@ -143,9 +153,14 @@ test.describe('Media Library', () => {
     // Click Add Media button in bottom action bar
     await page.locator('button:has-text("Add Media")').click();
 
+    // Wait for modal to appear
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+
     // If upload modal appears, test the web page form
     const uploadText = page.getByText(/upload files/i);
-    if (await uploadText.isVisible({ timeout: 2000 }).catch(() => false)) {
+    const uploadCount = await uploadText.count();
+    if (uploadCount > 0 && await uploadText.isVisible()) {
       // Switch to Web Page tab
       await page.getByText(/web page url/i).click();
 
@@ -169,13 +184,15 @@ test.describe('Media Library', () => {
     // Look for view toggle buttons
     // The buttons use Grid3X3 and List icons - look for the button container
     const viewToggle = page.locator('.flex.border.rounded-lg');
-    if (await viewToggle.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const toggleCount = await viewToggle.count();
+    if (toggleCount > 0 && await viewToggle.isVisible()) {
       // Click the list button (second button)
       const buttons = viewToggle.locator('button');
       const buttonCount = await buttons.count();
       if (buttonCount >= 2) {
         await buttons.nth(1).click(); // List view
-        await page.waitForTimeout(500);
+        // Wait for list view to be active (button state changes)
+        await expect(buttons.nth(1)).toHaveAttribute('data-state', 'on', { timeout: 2000 }).catch(() => {});
         await buttons.nth(0).click(); // Grid view
       }
     }
@@ -187,11 +204,7 @@ test.describe('Media Library', () => {
     // In actual failure scenarios, the error banner would appear
     await navigateToSection(page, 'media');
 
-    // Wait for page to load
-    await page.waitForTimeout(1000);
-
-    // The error banner (if present) would show with retry button
-    // Since we can't easily force an error, we just verify normal load works
+    // Wait for page content to load - heading indicates page is ready
     const mainContent = page.locator('main');
     await expect(mainContent.getByRole('heading', { name: /all media/i })).toBeVisible({ timeout: 5000 });
   });
