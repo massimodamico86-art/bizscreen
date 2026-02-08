@@ -27,13 +27,13 @@ export async function loginAndPrepare(page, options = {}) {
 
   // Navigate to app and see if we're authenticated
   await page.goto('/app');
-  await page.waitForTimeout(1000);
+  await page.waitForLoadState('domcontentloaded');
 
   // Check if we stayed on /app (authenticated) or got redirected to login
   const afterNavUrl = page.url();
   if (afterNavUrl.includes('/app') && !afterNavUrl.includes('/auth/')) {
     // Already authenticated via storage state, just dismiss modals
-    await page.waitForTimeout(500);
+    await page.waitForLoadState('domcontentloaded');
     await dismissAnyModals(page);
     return;
   }
@@ -59,8 +59,8 @@ export async function loginAndPrepare(page, options = {}) {
   // Wait for redirect to app
   await page.waitForURL(/\/app/, { timeout: 15000 });
 
-  // Give the page a moment to render any modals
-  await page.waitForTimeout(500);
+  // Wait for the page to be ready before checking for modals
+  await page.waitForLoadState('domcontentloaded');
 
   // Dismiss any modal dialogs that might have appeared
   await dismissAnyModals(page);
@@ -93,8 +93,8 @@ export async function dismissAnyModals(page) {
     const closeButton = page.locator(selector).first();
     if (await closeButton.isVisible({ timeout: 100 }).catch(() => false)) {
       await closeButton.click();
-      // Wait for modal animation to complete
-      await page.waitForTimeout(300);
+      // Wait for modal to close
+      await page.locator('[role="dialog"]').waitFor({ state: 'hidden', timeout: 1000 }).catch(() => {});
       // Check if there are more modals
       break;
     }
@@ -105,7 +105,7 @@ export async function dismissAnyModals(page) {
   if (await backdrop.isVisible({ timeout: 100 }).catch(() => false)) {
     // Click outside the modal content area
     await backdrop.click({ position: { x: 10, y: 10 }, force: true }).catch(() => {});
-    await page.waitForTimeout(300);
+    await page.locator('[role="dialog"]').waitFor({ state: 'hidden', timeout: 1000 }).catch(() => {});
   }
 
   // Verify no blocking modals remain
@@ -153,12 +153,12 @@ export async function navigateToSection(page, section) {
     // First expand the Media menu
     const mediaButton = page.locator('button:has-text("Media")').first();
     await mediaButton.click();
-    await page.waitForTimeout(300);
+    // Wait for submenu to appear
+    const allMediaButton = page.locator('button:has-text("All Media")').first();
+    await allMediaButton.waitFor({ state: 'visible', timeout: 5000 });
 
     // Then click on "All Media" sub-item
-    const allMediaButton = page.locator('button:has-text("All Media")').first();
     await allMediaButton.click();
-    await page.waitForTimeout(500);
     await waitForPageReady(page);
     return;
   }
@@ -181,8 +181,7 @@ export async function navigateToSection(page, section) {
   const navButton = page.getByRole('button', { name: pattern }).first();
   await navButton.click();
 
-  // Wait for the page to load
-  await page.waitForTimeout(500);
+  // Wait for the page to be ready
   await waitForPageReady(page);
 }
 
