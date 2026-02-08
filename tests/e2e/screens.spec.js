@@ -26,15 +26,12 @@ test.describe('Screens Page', () => {
     test('shows screen count in header description', async ({ page }) => {
       await navigateToSection(page, 'screens');
 
-      // Header should show screen count and online/offline status
+      // Header should show screen count - either with online/offline status or "0 screens"
       const headerDescription = page.locator('header').locator('text=/\\d+ screens?.*online.*offline/i');
-      const hasDescription = await headerDescription.isVisible({ timeout: 5000 }).catch(() => false);
-
-      // Alternative: might show "0 screens" for empty state
       const zeroScreens = page.locator('header').locator('text=/0 screens/i');
-      const hasZeroScreens = await zeroScreens.isVisible({ timeout: 2000 }).catch(() => false);
 
-      expect(hasDescription || hasZeroScreens).toBeTruthy();
+      // Use element.or() to wait for either condition
+      await expect(headerDescription.or(zeroScreens)).toBeVisible({ timeout: 5000 });
     });
 
     test('Add Screen button is visible and clickable', async ({ page }) => {
@@ -51,36 +48,40 @@ test.describe('Screens Page', () => {
 
     test('displays empty state when no screens exist', async ({ page }) => {
       await navigateToSection(page, 'screens');
-      await page.waitForTimeout(1500);
 
-      // Check if screens table exists or empty state is shown
+      // Wait for either table or empty state to appear - one must be present
       const screensTable = page.locator('table');
-      const hasTable = await screensTable.isVisible({ timeout: 2000 }).catch(() => false);
+      const emptyMessage = page.getByText(/you don't have any screens/i);
 
-      if (!hasTable) {
-        // Should show empty state with "You don't have any Screens" message
-        const emptyMessage = page.getByText(/you don't have any screens/i);
-        const hasEmptyState = await emptyMessage.isVisible({ timeout: 3000 }).catch(() => false);
-        expect(hasEmptyState).toBeTruthy();
-      }
-      // Either table or empty state should be present - test passes
+      // Use element.or() to wait for either condition
+      await expect(screensTable.or(emptyMessage)).toBeVisible({ timeout: 5000 });
+
+      // Verify at least one is present
+      const tableCount = await screensTable.count();
+      const emptyCount = await emptyMessage.count();
+      expect(tableCount > 0 || emptyCount > 0).toBeTruthy();
     });
 
     test('screens table has correct columns', async ({ page }) => {
       await navigateToSection(page, 'screens');
-      await page.waitForTimeout(1500);
 
+      // Wait for page content to settle
       const table = page.locator('table');
-      if (await table.isVisible({ timeout: 2000 }).catch(() => false)) {
+      const emptyMessage = page.getByText(/you don't have any screens/i);
+      await expect(table.or(emptyMessage)).toBeVisible({ timeout: 5000 });
+
+      // Only check columns if table exists
+      const tableCount = await table.count();
+      if (tableCount > 0 && await table.isVisible()) {
         // Check for expected column headers
         const expectedHeaders = ['Screen', 'Location', 'Status', 'Pairing Code', 'Last Seen'];
 
         for (const header of expectedHeaders) {
           const headerCell = page.locator(`th:has-text("${header}")`);
-          const isVisible = await headerCell.isVisible({ timeout: 2000 }).catch(() => false);
+          const headerCount = await headerCell.count();
           // At least some headers should be visible
-          if (isVisible) {
-            expect(isVisible).toBeTruthy();
+          if (headerCount > 0 && await headerCell.isVisible()) {
+            expect(true).toBeTruthy();
             break;
           }
         }
@@ -90,16 +91,19 @@ test.describe('Screens Page', () => {
 
     test('refresh button reloads screen data', async ({ page }) => {
       await navigateToSection(page, 'screens');
-      await page.waitForTimeout(1000);
+
+      // Wait for page to be ready - either table or empty state
+      const table = page.locator('table');
+      const emptyMessage = page.getByText(/you don't have any screens/i);
+      await expect(table.or(emptyMessage)).toBeVisible({ timeout: 5000 });
 
       // Look for refresh button
       const refreshButton = page.locator('button:has-text("Refresh")');
-      if (await refreshButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+      const refreshCount = await refreshButton.count();
+      if (refreshCount > 0 && await refreshButton.isVisible()) {
         await refreshButton.click();
-        // Should trigger a reload - wait for any loading indicator to clear
-        await page.waitForTimeout(1000);
-        // Page should still show screens title
-        await expect(page.locator('h1:has-text("Screens")')).toBeVisible();
+        // Wait for screens title to confirm page is still functional after refresh
+        await expect(page.locator('h1:has-text("Screens")')).toBeVisible({ timeout: 5000 });
       }
       // Test passes - refresh button may not be visible if no screens exist
     });
@@ -234,11 +238,9 @@ test.describe('Screen Error Handling', () => {
   test('handles network errors gracefully on screens page', async ({ page }) => {
     // First navigate normally
     await navigateToSection(page, 'screens');
-    await page.waitForTimeout(1000);
 
-    // Verify page loaded - either shows screens or empty state
-    const hasScreensTitle = await page.locator('h1:has-text("Screens")').isVisible({ timeout: 5000 });
-    expect(hasScreensTitle).toBeTruthy();
+    // Verify page loaded - screens title should be visible
+    await expect(page.locator('h1:has-text("Screens")')).toBeVisible({ timeout: 5000 });
   });
 
   test('Add Screen modal can be closed', async ({ page }) => {
@@ -252,19 +254,14 @@ test.describe('Screen Error Handling', () => {
     const dialog = page.locator('[role="dialog"]');
     await expect(dialog).toBeVisible({ timeout: 3000 });
 
-    // Close via Cancel button or X button
+    // Close via Cancel button or X button - use element.or() for either
     const cancelButton = page.getByRole('button', { name: /cancel/i });
-    if (await cancelButton.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await cancelButton.click();
-    } else {
-      // Try X button
-      const closeButton = page.locator('[aria-label="Close"]').first();
-      if (await closeButton.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await closeButton.click();
-      }
-    }
+    const closeButton = page.locator('[aria-label="Close"]').first();
+    const closeControl = cancelButton.or(closeButton);
+    await expect(closeControl).toBeVisible({ timeout: 3000 });
+    await closeControl.click();
 
     // Modal should be closed
-    await expect(dialog).toBeHidden({ timeout: 3000 });
+    await dialog.waitFor({ state: 'hidden', timeout: 3000 });
   });
 });

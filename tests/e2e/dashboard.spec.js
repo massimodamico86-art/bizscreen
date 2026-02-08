@@ -87,9 +87,8 @@ test.describe('Client Dashboard', () => {
 
       // Clicking should not cause an error (navigation is handled by setCurrentPage)
       await playlistsCard.click();
-      await page.waitForTimeout(300);
 
-      // Page should still be functional (no crash)
+      // Page should still be functional (no crash) - main remains visible during navigation
       await expect(page.locator('main')).toBeVisible();
     });
   });
@@ -138,11 +137,13 @@ test.describe('Client Dashboard', () => {
       await expect(addScreenButton).toBeVisible();
       await addScreenButton.click();
 
-      // Wait for navigation
-      await page.waitForTimeout(500);
+      // Should navigate away from dashboard (screens page) or open modal
+      // Wait for either: screens page heading appears, or a dialog appears
+      const screensHeading = page.getByRole('heading', { name: /screens/i });
+      const dialog = page.locator('[role="dialog"]');
+      await expect(screensHeading.or(dialog)).toBeVisible({ timeout: 5000 });
 
-      // Should navigate away from dashboard (screens page)
-      // The sidebar should update or the content should change
+      // Main content should still be visible
       await expect(page.locator('main')).toBeVisible();
     });
   });
@@ -178,8 +179,9 @@ test.describe('Client Dashboard', () => {
 
       await waitForPageReady(page);
 
-      // Wait extra time for any async operations
-      await page.waitForTimeout(2000);
+      // Wait for dashboard stats to load (indicates async operations complete)
+      const mainContent = page.locator('#main-content');
+      await expect(mainContent.getByText('Total Screens', { exact: true })).toBeVisible({ timeout: 10000 });
 
       // Should have no critical JS errors
       expect(jsErrors).toHaveLength(0);
