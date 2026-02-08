@@ -202,8 +202,9 @@ test.describe('Password Reset Flow', () => {
     const emailByLabel = page.getByLabel(/email/i);
     const emailByType = page.locator('input[type="email"]');
 
-    // Either selector should work
-    const emailInput = await emailByLabel.isVisible().catch(() => false) ? emailByLabel : emailByType;
+    // Either selector should work - check count first, then visibility
+    const labelCount = await emailByLabel.count();
+    const emailInput = labelCount > 0 && (await emailByLabel.isVisible()) ? emailByLabel : emailByType;
     await expect(emailInput).toBeVisible();
     await expect(emailInput).toBeEnabled();
   });
@@ -235,15 +236,13 @@ test.describe('Password Reset Flow', () => {
     const submitButton = page.getByRole('button', { name: /send.*reset.*link/i });
     await submitButton.click();
 
-    // Form should respond - either success page or still on same page with loading/error
-    // We just verify the form submission works, not the email delivery
-    await page.waitForTimeout(1000);
+    // Wait for form response - either success page loads or we stay on same page
+    // Use element-based wait: wait for either success heading OR loading to complete
+    const successHeading = page.getByRole('heading', { name: /check your email/i });
+    const resetHeading = page.getByRole('heading', { name: /reset.*password/i });
 
-    // The page should have changed state (either success heading or still same page)
-    const hasSuccessHeading = await page.getByRole('heading', { name: /check your email/i }).isVisible().catch(() => false);
-    const hasResetHeading = await page.getByRole('heading', { name: /reset.*password/i }).isVisible().catch(() => false);
-
-    expect(hasSuccessHeading || hasResetHeading).toBeTruthy();
+    // Wait for page to settle - one of these headings should be visible
+    await expect(successHeading.or(resetHeading)).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -310,18 +309,28 @@ test.describe('Logout Flow', () => {
     const logoutLink = page.getByRole('link', { name: /log ?out|sign ?out/i });
     const logoutText = page.getByText(/log ?out|sign ?out/i);
 
-    // Check if any logout option is visible
-    const hasLogout = await logoutButton.isVisible().catch(() => false) ||
-      await logoutLink.isVisible().catch(() => false) ||
-      await logoutText.isVisible().catch(() => false);
+    // Check if any logout option is visible using proper patterns
+    const buttonCount = await logoutButton.count();
+    const linkCount = await logoutLink.count();
+    const textCount = await logoutText.count();
+
+    const hasLogout = (buttonCount > 0 && await logoutButton.first().isVisible()) ||
+      (linkCount > 0 && await logoutLink.first().isVisible()) ||
+      (textCount > 0 && await logoutText.first().isVisible());
 
     // If not immediately visible, try opening user menu
     if (!hasLogout) {
       // Try clicking on user avatar or settings
       const userMenu = page.locator('[aria-label*="user"], [aria-label*="profile"], [aria-label*="account"]').first();
-      if (await userMenu.isVisible().catch(() => false)) {
+      const menuCount = await userMenu.count();
+      if (menuCount > 0 && await userMenu.isVisible()) {
         await userMenu.click();
-        await page.waitForTimeout(300);
+        // Wait for menu to appear using element-based wait
+        const menu = page.locator('[role="menu"]');
+        const menuExists = await menu.count();
+        if (menuExists > 0) {
+          await menu.waitFor({ state: 'visible', timeout: 1000 });
+        }
       }
     }
 
