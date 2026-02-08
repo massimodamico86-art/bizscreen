@@ -25,9 +25,22 @@ Note: The following tests were already skipped in the test file with documented 
 
 These are intentional skips, not stabilization-related skips.
 
-### Category 2: Core CRUD Operations
+### Category 2: Dashboard & Basic Pages
 
-_Not yet stabilized_
+**Status:** Stabilized
+
+All Category 2 tests pass 5 consecutive runs. No tests were skipped during stabilization.
+
+**Files stabilized:**
+- `dashboard.spec.js` - 3 waitForTimeout calls removed
+- `screens.spec.js` - 5 waitForTimeout calls removed
+- `playlists.spec.js` - 3 waitForTimeout calls removed
+- `media.spec.js` - 2 waitForTimeout calls removed
+
+**Test count:** 63-68 tests per run (varies based on auth project availability)
+
+Note: The following tests are skipped in the test file with documented reasons:
+- `Media Library > can upload a media file` - Cloudinary widget is external service that cannot be automated in E2E
 
 ### Category 3: Advanced Features
 
@@ -45,4 +58,4 @@ _Not yet stabilized_
 
 ---
 *Created: 2026-02-08*
-*Last updated: 2026-02-08*
+*Last updated: 2026-02-08 - Category 2 stabilized*
