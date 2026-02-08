@@ -47,16 +47,19 @@ test.describe('Brand Theme Management', () => {
       const brandingTab = page.getByRole('tab', { name: /branding/i });
       await brandingTab.click();
 
-      // Wait for content to load
-      await page.waitForTimeout(1000);
-
       // Should show empty state or theme list
       const emptyState = page.getByText(/no brand themes yet|import brand/i);
       const themeList = page.locator('[data-testid="theme-card"]');
 
+      // Wait for either empty state or theme list to be visible
+      await Promise.race([
+        emptyState.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+        themeList.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+      ]);
+
       // Either empty state or theme list should be visible
-      const hasEmptyState = await emptyState.first().isVisible({ timeout: 3000 }).catch(() => false);
-      const hasThemes = await themeList.first().isVisible({ timeout: 3000 }).catch(() => false);
+      const hasEmptyState = await emptyState.first().isVisible();
+      const hasThemes = await themeList.first().isVisible();
 
       expect(hasEmptyState || hasThemes).toBeTruthy();
     });
@@ -107,7 +110,8 @@ test.describe('Brand Theme Management', () => {
       const importButton = page.getByRole('button', { name: /import brand/i });
       await importButton.first().click();
 
-      await page.waitForTimeout(500);
+      // Wait for modal to appear
+      await page.getByRole('dialog').waitFor({ state: 'visible', timeout: 5000 });
     });
 
     test('shows step indicator in modal', async ({ page }) => {
@@ -215,8 +219,13 @@ test.describe('Brand Theme Service Integration', () => {
     const brandingTab = page.getByRole('tab', { name: /branding/i });
     await brandingTab.click();
 
-    // Wait for theme data to load
-    await page.waitForTimeout(1000);
+    // Wait for theme content to load (empty state or theme list)
+    const emptyState = page.getByText(/no brand themes yet|import brand/i);
+    const themeList = page.locator('[data-testid="theme-card"]');
+    await Promise.race([
+      emptyState.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+      themeList.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+    ]);
 
     // Get current state
     const pageContent = await page.content();
@@ -230,8 +239,15 @@ test.describe('Brand Theme Service Integration', () => {
     const brandingTabReload = page.getByRole('tab', { name: /branding/i });
     await brandingTabReload.click();
 
+    // Wait for theme content to load again
+    const emptyStateReload = page.getByText(/no brand themes yet|import brand/i);
+    const themeListReload = page.locator('[data-testid="theme-card"]');
+    await Promise.race([
+      emptyStateReload.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+      themeListReload.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+    ]);
+
     // Should still have same state (either themes or empty state)
-    await page.waitForTimeout(1000);
     const reloadContent = await page.content();
     expect(reloadContent.includes('theme') || reloadContent.includes('brand')).toBeTruthy();
   });

@@ -67,8 +67,8 @@ test.describe('Schedules', () => {
       // Click Create Schedule button
       await page.getByRole('button', { name: /create schedule/i }).click();
 
-      // Wait for either navigation to editor or success
-      await page.waitForTimeout(2000);
+      // Wait for modal to close (schedule created successfully)
+      await nameInput.waitFor({ state: 'hidden', timeout: 5000 });
 
       // Navigate back to schedules to verify it was created
       await navigateToSection(page, 'schedules');
@@ -117,11 +117,15 @@ test.describe('Schedules', () => {
     test('shows correct table columns', async ({ page }) => {
       await navigateToSection(page, 'schedules');
 
-      // Wait for page to load
-      await page.waitForTimeout(1500);
+      // Wait for either table or empty state to appear
+      const table = page.locator('table');
+      const emptyState = page.getByText(/no schedules|create your first/i);
+      await Promise.race([
+        table.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+        emptyState.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+      ]);
 
       // Check if table exists (may show empty state instead)
-      const table = page.locator('table');
       if (await table.isVisible({ timeout: 2000 }).catch(() => false)) {
         // Check for expected column headers
         const expectedHeaders = ['NAME', 'STATUS', 'ENTRIES', 'MODIFIED', 'ACTIONS'];
@@ -140,7 +144,14 @@ test.describe('Schedules', () => {
 
     test('can toggle schedule active status', async ({ page }) => {
       await navigateToSection(page, 'schedules');
-      await page.waitForTimeout(1500);
+
+      // Wait for schedule list to render
+      const table = page.locator('table');
+      const emptyState = page.getByText(/no schedules|create your first/i);
+      await Promise.race([
+        table.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+        emptyState.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+      ]);
 
       // Check if there are any schedules with a status badge
       const statusBadge = page.locator('text=/active|paused/i');
@@ -148,8 +159,13 @@ test.describe('Schedules', () => {
         // Click on the status badge to toggle
         await statusBadge.first().click();
 
-        // Should trigger a status change (toast or badge update)
-        await page.waitForTimeout(500);
+        // Wait for status change to process (check for toast or badge update)
+        // Either toast appears or badge text changes
+        const toast = page.locator('[role="alert"], .toast, [data-toast]');
+        await Promise.race([
+          toast.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {}),
+          page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {}),
+        ]);
         // Test passes if no error
       }
       // If no schedules, test passes
@@ -176,8 +192,8 @@ test.describe('Schedules', () => {
       await nameInput.fill(scheduleName);
       await page.getByRole('button', { name: /create schedule/i }).click();
 
-      // Wait and navigate back to schedules
-      await page.waitForTimeout(2000);
+      // Wait for modal to close (schedule created)
+      await nameInput.waitFor({ state: 'hidden', timeout: 5000 });
       await navigateToSection(page, 'schedules');
 
       // Verify schedule exists
@@ -193,8 +209,8 @@ test.describe('Schedules', () => {
       // Click Delete button in the dropdown (not the schedule name)
       await page.getByRole('button', { name: 'Delete' }).click();
 
-      // Wait for deletion to process
-      await page.waitForTimeout(2000);
+      // Wait for schedule row to disappear (deletion confirmed)
+      await scheduleRow.waitFor({ state: 'hidden', timeout: 5000 });
 
       // Schedule should no longer be visible
       await expect(page.getByText(scheduleName)).not.toBeVisible({ timeout: 5000 });
