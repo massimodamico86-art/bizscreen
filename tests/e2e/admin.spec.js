@@ -270,7 +270,9 @@ test.describe('Super Admin Dashboard - Admin Tools', () => {
     const tenantMgmtLink = page.getByRole('button', { name: /tenant management/i });
     if (await tenantMgmtLink.isVisible({ timeout: 3000 }).catch(() => false)) {
       await tenantMgmtLink.click();
-      await page.waitForTimeout(500);
+
+      // Wait for tenant management content to appear
+      await expect(page.getByText(/tenant.*management/i)).toBeVisible({ timeout: 5000 });
 
       // Should show Back to Dashboard button in sidebar
       await expect(page.getByRole('button', { name: /back to dashboard/i })).toBeVisible({ timeout: 5000 });
@@ -282,7 +284,9 @@ test.describe('Super Admin Dashboard - Admin Tools', () => {
     const tenantMgmtLink = page.getByRole('button', { name: /tenant management/i });
     if (await tenantMgmtLink.isVisible({ timeout: 3000 }).catch(() => false)) {
       await tenantMgmtLink.click();
-      await page.waitForTimeout(500);
+
+      // Wait for tenant management content to appear
+      await expect(page.getByText(/tenant.*management/i)).toBeVisible({ timeout: 5000 });
 
       // Click Back to Dashboard
       const backButton = page.getByRole('button', { name: /back to dashboard/i });

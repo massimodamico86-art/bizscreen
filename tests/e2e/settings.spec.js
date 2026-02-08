@@ -94,7 +94,10 @@ test.describe('Settings Page', () => {
 
       // Click to toggle
       await toggle.click();
-      await page.waitForTimeout(500);
+
+      // Wait for the toggle state to change by polling the attribute
+      const expectedState = initialState === 'true' ? 'false' : 'true';
+      await expect(toggle).toHaveAttribute('aria-checked', expectedState, { timeout: 3000 });
 
       // State should change
       const newState = await toggle.getAttribute('aria-checked');
