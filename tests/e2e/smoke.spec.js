@@ -137,32 +137,40 @@ async function tryOpenModals(page) {
   for (const selector of modalTriggerSelectors) {
     try {
       const button = page.locator(selector).first();
-      if (await button.isVisible({ timeout: 500 }).catch(() => false)) {
+      const buttonCount = await button.count();
+      if (buttonCount > 0 && (await button.isVisible())) {
         // Check if button is enabled
-        const isDisabled = await button.isDisabled().catch(() => true);
+        const isDisabled = await button.isDisabled();
         if (!isDisabled) {
           console.log(`[MODAL] Clicking trigger: ${selector}`);
           await button.click();
-          await page.waitForTimeout(500);
+
+          // Wait for modal to appear using element-based wait
+          const dialog = page.locator('[role="dialog"], [data-radix-dialog-content]').first();
+          const dialogAppeared = await dialog
+            .waitFor({ state: 'visible', timeout: 2000 })
+            .then(() => true)
+            .catch(() => false);
 
           // Check if a modal opened using our improved detection
-          if (await isAnyModalOpen()) {
+          if (dialogAppeared || (await isAnyModalOpen())) {
             console.log('[MODAL] Modal opened successfully');
-            // Let any errors register
-            await page.waitForTimeout(300);
 
             // Close the modal
             await closeModal(page);
 
-            // Verify modal is closed before continuing
-            await page.waitForTimeout(300);
+            // Verify modal is closed using element wait
             if (await isAnyModalOpen()) {
               console.warn('[MODAL] Modal still open after close attempt, forcing close');
               // Force close by pressing Escape multiple times
               for (let i = 0; i < 5; i++) {
                 await page.keyboard.press('Escape');
-                await page.waitForTimeout(200);
-                if (!(await isAnyModalOpen())) break;
+                // Wait for dialog to close
+                const closed = await dialog
+                  .waitFor({ state: 'hidden', timeout: 500 })
+                  .then(() => true)
+                  .catch(() => false);
+                if (closed || !(await isAnyModalOpen())) break;
               }
             }
           }
@@ -173,7 +181,9 @@ async function tryOpenModals(page) {
       // Try to close any open modal before continuing
       try {
         await page.keyboard.press('Escape');
-        await page.waitForTimeout(300);
+        // Wait for any dialog to close
+        const dialog = page.locator('[role="dialog"]').first();
+        await dialog.waitFor({ state: 'hidden', timeout: 1000 }).catch(() => {});
       } catch {
         // Ignore
       }
@@ -222,17 +232,26 @@ async function closeModal(page) {
     'button svg.w-5.h-5', // Common size for close icons
   ];
 
+  // Get reference to dialog for waiting
+  const dialog = page.locator('[role="dialog"], [data-radix-dialog-content]').first();
+
   // Try each close selector
   for (const selector of closeSelectors) {
     try {
       const closeButton = page.locator(selector).first();
-      if (await closeButton.isVisible({ timeout: 300 }).catch(() => false)) {
+      const buttonCount = await closeButton.count();
+      if (buttonCount > 0 && (await closeButton.isVisible())) {
         console.log(`[MODAL] Closing with: ${selector}`);
         await closeButton.click({ force: true }); // Force click in case of overlay issues
-        await page.waitForTimeout(500);
+
+        // Wait for modal to close
+        const closed = await dialog
+          .waitFor({ state: 'hidden', timeout: 2000 })
+          .then(() => true)
+          .catch(() => false);
 
         // Verify modal is closed
-        if (!(await isModalOpen())) {
+        if (closed || !(await isModalOpen())) {
           console.log('[MODAL] Successfully closed');
           return;
         }
@@ -247,8 +266,12 @@ async function closeModal(page) {
   console.log('[MODAL] Trying Escape key fallback');
   for (let i = 0; i < 3; i++) {
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(300);
-    if (!(await isModalOpen())) {
+    // Wait for dialog to close
+    const closed = await dialog
+      .waitFor({ state: 'hidden', timeout: 1000 })
+      .then(() => true)
+      .catch(() => false);
+    if (closed || !(await isModalOpen())) {
       console.log('[MODAL] Closed via Escape key');
       return;
     }
@@ -258,10 +281,12 @@ async function closeModal(page) {
   try {
     // Find the backdrop element and click near the edge
     const backdrop = page.locator('.fixed.inset-0').first();
-    if (await backdrop.isVisible({ timeout: 300 }).catch(() => false)) {
+    const backdropCount = await backdrop.count();
+    if (backdropCount > 0 && (await backdrop.isVisible())) {
       console.log('[MODAL] Clicking backdrop to close');
       await backdrop.click({ position: { x: 5, y: 5 }, force: true });
-      await page.waitForTimeout(500);
+      // Wait for dialog to close
+      await dialog.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
     }
   } catch {
     // Ignore
@@ -302,7 +327,8 @@ async function tryClickPrimaryButtons(page) {
       for (let i = 0; i < Math.min(count, 2); i++) {
         // Limit to 2 buttons per selector
         const button = buttons.nth(i);
-        if (await button.isVisible({ timeout: 300 }).catch(() => false)) {
+        const buttonVisible = await button.isVisible();
+        if (buttonVisible) {
           const buttonText = (await button.textContent()) || '';
           const buttonTextLower = buttonText.toLowerCase();
 
@@ -312,18 +338,20 @@ async function tryClickPrimaryButtons(page) {
           }
 
           // Skip if disabled
-          const isDisabled = await button.isDisabled().catch(() => true);
+          const isDisabled = await button.isDisabled();
           if (isDisabled) continue;
 
           console.log(`[BUTTON] Clicking: "${buttonText.trim()}" (${selector})`);
           await button.click();
-          await page.waitForTimeout(500);
+
+          // Wait for page to stabilize after click
+          await page.waitForLoadState('domcontentloaded');
 
           // Let any errors register, then go back if we navigated
           const currentUrl = page.url();
           if (!currentUrl.includes('/app')) {
             await page.goBack().catch(() => {});
-            await page.waitForTimeout(300);
+            await page.waitForLoadState('domcontentloaded');
           }
         }
       }
@@ -347,8 +375,8 @@ test.describe('Production Smoke Tests', () => {
       // Navigate to login page
       await page.goto('/auth/login');
 
-      // Wait for page to stabilize
-      await page.waitForTimeout(1000);
+      // Wait for page to load completely
+      await page.waitForLoadState('domcontentloaded');
 
       // Verify page loaded (no error boundary triggered)
       await expect(page.locator('body')).not.toContainText('Something Went Wrong');
@@ -480,9 +508,10 @@ test.describe('Production Smoke Tests', () => {
       const navItem = page
         .locator('button:has-text("Media"), button:has-text("Screens"), button:has-text("Tenant Management")')
         .first();
-      if (await navItem.isVisible({ timeout: 2000 }).catch(() => false)) {
+      const navItemCount = await navItem.count();
+      if (navItemCount > 0 && (await navItem.isVisible())) {
         await navItem.click();
-        await page.waitForTimeout(1000);
+        await page.waitForLoadState('domcontentloaded');
 
         // Verify page changed - look for any content container
         const contentArea = page.locator('main, [class*="Dashboard"], h1, h2');
@@ -505,7 +534,10 @@ test.describe('Production Smoke Tests', () => {
 
       // Wait for dashboard to fully load
       await waitForPageReady(page);
-      await page.waitForTimeout(1000);
+
+      // Wait for main content to be visible (ensures page is stable)
+      const mainContent = page.locator('main, [class*="Dashboard"], h1');
+      await expect(mainContent.first()).toBeVisible({ timeout: 10000 });
 
       // Should have no critical JS errors
       const criticalErrors = errors.consoleErrors.filter(
@@ -558,9 +590,10 @@ test.describe('Production Smoke Tests', () => {
           console.log(`\n[CRAWL] Navigating to: ${target.name}`);
           const navButton = page.locator(target.selector).first();
 
-          if (await navButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+          const navButtonCount = await navButton.count();
+          if (navButtonCount > 0 && (await navButton.isVisible())) {
             await navButton.click();
-            await page.waitForTimeout(1000);
+            await page.waitForLoadState('domcontentloaded');
             await waitForPageReady(page);
 
             const currentUrl = page.url();
