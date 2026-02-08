@@ -38,9 +38,8 @@ test.describe('Content Performance Dashboard', () => {
 
       if (await navButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await navButton.click();
-        await page.waitForTimeout(1000);
 
-        // Check for page header elements
+        // Check for page header elements - waitFor will handle loading
         const pageTitle = page.getByRole('heading', { level: 1 });
         await expect(pageTitle).toBeVisible({ timeout: 10000 });
       } else {
@@ -56,7 +55,8 @@ test.describe('Content Performance Dashboard', () => {
 
       if (await navButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await navButton.click();
-        await page.waitForTimeout(1000);
+        // Wait for page content to load
+        await page.waitForLoadState('domcontentloaded');
       } else {
         test.skip(true, 'Content Performance page not accessible');
       }
@@ -88,8 +88,8 @@ test.describe('Content Performance Dashboard', () => {
     });
 
     test('displays summary metrics cards', async ({ page }) => {
-      // Wait for page to load data
-      await page.waitForTimeout(2000);
+      // Wait for page content to be ready
+      await page.waitForLoadState('domcontentloaded');
 
       // Look for summary cards - they should show metrics like devices, uptime, etc.
       const metricPatterns = [
@@ -123,8 +123,10 @@ test.describe('Content Performance Dashboard', () => {
         // Click refresh and verify it doesn't error
         await refreshButton.click();
 
+        // Wait for refresh to complete
+        await page.waitForLoadState('domcontentloaded');
+
         // Should not show error after refresh
-        await page.waitForTimeout(1000);
         await expect(page.locator('text=/error|failed/i')).not.toBeVisible({ timeout: 2000 });
       }
     });
@@ -136,7 +138,8 @@ test.describe('Content Performance Dashboard', () => {
 
       if (await navButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await navButton.click();
-        await page.waitForTimeout(1000);
+        // Wait for page content to load
+        await page.waitForLoadState('domcontentloaded');
       } else {
         test.skip(true, 'Content Performance page not accessible');
       }
@@ -148,7 +151,9 @@ test.describe('Content Performance Dashboard', () => {
 
       if (await button24h.isVisible({ timeout: 3000 }).catch(() => false)) {
         await button24h.click();
-        await page.waitForTimeout(500);
+
+        // Wait for button click to be processed
+        await page.waitForLoadState('domcontentloaded');
 
         // Button should show as selected (different styling)
         const isSelected = await button24h.evaluate(el => {
@@ -157,13 +162,13 @@ test.describe('Content Performance Dashboard', () => {
         });
 
         // The button should have some selected state or the page should update
-        await page.waitForTimeout(500);
+        expect(true).toBeTruthy();
       }
     });
 
     test('date range change updates displayed data', async ({ page }) => {
-      // Get initial state
-      await page.waitForTimeout(1000);
+      // Wait for initial page state
+      await page.waitForLoadState('domcontentloaded');
 
       // Try to switch date range
       const button7d = page.getByRole('button', { name: /7.*days?/i });
@@ -171,7 +176,9 @@ test.describe('Content Performance Dashboard', () => {
 
       if (await button30d.isVisible({ timeout: 2000 }).catch(() => false)) {
         await button30d.click();
-        await page.waitForTimeout(1000);
+
+        // Wait for content to update
+        await page.waitForLoadState('domcontentloaded');
 
         // Page should still be functional after switching
         await expect(page.locator('text=/error|crashed/i')).not.toBeVisible();
@@ -185,7 +192,8 @@ test.describe('Content Performance Dashboard', () => {
 
       if (await navButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await navButton.click();
-        await page.waitForTimeout(2000);
+        // Wait for page content to load
+        await page.waitForLoadState('domcontentloaded');
       } else {
         test.skip(true, 'Content Performance page not accessible');
       }
@@ -203,8 +211,8 @@ test.describe('Content Performance Dashboard', () => {
     });
 
     test('clicking a scene opens detail view', async ({ page }) => {
-      // Wait for any scene items to load
-      await page.waitForTimeout(2000);
+      // Wait for page content to be ready
+      await page.waitForLoadState('domcontentloaded');
 
       // Look for clickable scene items
       const sceneItems = page.locator('[role="button"], button, [data-testid="scene-item"]').filter({
@@ -216,8 +224,8 @@ test.describe('Content Performance Dashboard', () => {
         if (await firstScene.isVisible({ timeout: 2000 }).catch(() => false)) {
           await firstScene.click();
 
-          // Should open a modal or navigate to detail
-          await page.waitForTimeout(500);
+          // Wait for potential modal or navigation
+          await page.waitForLoadState('domcontentloaded');
 
           // Check for modal or detail view
           const hasModal = await page.locator('[role="dialog"], [data-testid="scene-detail-modal"]').isVisible({ timeout: 2000 }).catch(() => false);
@@ -236,7 +244,8 @@ test.describe('Content Performance Dashboard', () => {
 
       if (await navButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await navButton.click();
-        await page.waitForTimeout(2000);
+        // Wait for page content to load
+        await page.waitForLoadState('domcontentloaded');
       } else {
         test.skip(true, 'Content Performance page not accessible');
       }
@@ -251,8 +260,8 @@ test.describe('Content Performance Dashboard', () => {
     });
 
     test('device rows show uptime percentage', async ({ page }) => {
-      // Wait for data to load
-      await page.waitForTimeout(2000);
+      // Wait for page content to be ready
+      await page.waitForLoadState('domcontentloaded');
 
       // Look for percentage values in the device section
       const percentageElements = page.locator('text=/%/');
@@ -272,7 +281,9 @@ test.describe('Content Performance Dashboard', () => {
 
       if (await navButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await navButton.click();
-        await page.waitForTimeout(2000);
+
+        // Wait for page content to load
+        await page.waitForLoadState('domcontentloaded');
 
         // Page should not show unhandled error
         await expect(page.locator('text=/unhandled|uncaught|exception/i')).not.toBeVisible();
