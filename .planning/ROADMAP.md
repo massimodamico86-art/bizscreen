@@ -24,8 +24,8 @@
 **Plans**: 2 plans
 
 Plans:
-- [ ] 36-01-PLAN.md — Create custom fixtures, configure timeouts, update helpers
-- [ ] 36-02-PLAN.md — Verify test isolation with sample runs
+- [x] 36-01-PLAN.md — Create custom fixtures, configure timeouts, update helpers
+- [x] 36-02-PLAN.md — Verify test isolation with sample runs
 
 ### Phase 37: E2E Test Stabilization
 **Goal**: Timeout and flaky test failures are eliminated
@@ -102,7 +102,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 36. E2E Test Infrastructure | 0/2 | Planned | - |
+| 36. E2E Test Infrastructure | 2/2 | Complete | 2026-02-08 |
 | 37. E2E Test Stabilization | 0/TBD | Not started | - |
 | 38. E2E Test Coverage Gate | 0/TBD | Not started | - |
 | 39. Error Monitoring Setup | 0/TBD | Not started | - |
@@ -143,5 +143,5 @@ All milestones shipped successfully.
 **Total:** 35 phases complete, 141 plans executed | 6 phases planned for v2.3
 
 ---
-*Last updated: 2026-02-07 — Phase 36 planned*
-*Next: `/gsd:execute-phase 36` to execute E2E Test Infrastructure*
+*Last updated: 2026-02-08 — Phase 36 complete*
+*Next: `/gsd:plan-phase 37` to plan E2E Test Stabilization*
