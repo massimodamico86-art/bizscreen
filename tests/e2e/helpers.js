@@ -72,9 +72,14 @@ export async function loginAndPrepare(page, options = {}) {
  * Looks for common modal close buttons and clicks them if found.
  * This handles the Welcome Modal, OnboardingWizard, and any other dialogs.
  *
+ * Uses proper Playwright auto-waiting patterns instead of catch swallowing.
+ *
  * @param {import('@playwright/test').Page} page - Playwright page object
  */
 export async function dismissAnyModals(page) {
+  // Import expect for auto-waiting assertions
+  const { expect } = await import('@playwright/test');
+
   // Try to find and click modal close buttons
   // The design-system Modal has a close button with aria-label="Close modal"
   // The Welcome Modal has an X button in the header
@@ -89,29 +94,52 @@ export async function dismissAnyModals(page) {
     '[role="dialog"] button:has-text("Maybe Later")',
   ];
 
+  const dialog = page.locator('[role="dialog"]').first();
+
+  // Check if any modal is visible
+  // isVisible() returns false for non-existent elements, no catch needed
+  const dialogCount = await dialog.count();
+  if (dialogCount === 0) {
+    // No dialog element present, nothing to dismiss
+    return;
+  }
+
+  const hasModal = await dialog.isVisible();
+  if (!hasModal) {
+    // Dialog element exists but is not visible
+    return;
+  }
+
+  // Try each close button selector
   for (const selector of closeButtonSelectors) {
     const closeButton = page.locator(selector).first();
-    if (await closeButton.isVisible({ timeout: 100 }).catch(() => false)) {
-      await closeButton.click();
-      // Wait for modal to close
-      await page.locator('[role="dialog"]').waitFor({ state: 'hidden', timeout: 1000 }).catch(() => {});
-      // Check if there are more modals
-      break;
+    const buttonCount = await closeButton.count();
+    if (buttonCount > 0) {
+      const isButtonVisible = await closeButton.isVisible();
+      if (isButtonVisible) {
+        await closeButton.click();
+        // Wait for modal to close using proper auto-waiting
+        await dialog.waitFor({ state: 'hidden', timeout: 2000 });
+        return;
+      }
     }
   }
 
-  // Also try clicking on the modal backdrop to close
+  // If no close button found, try clicking on the modal backdrop
   const backdrop = page.locator('[role="dialog"] > div[aria-hidden="true"]').first();
-  if (await backdrop.isVisible({ timeout: 100 }).catch(() => false)) {
-    // Click outside the modal content area
-    await backdrop.click({ position: { x: 10, y: 10 }, force: true }).catch(() => {});
-    await page.locator('[role="dialog"]').waitFor({ state: 'hidden', timeout: 1000 }).catch(() => {});
+  const backdropCount = await backdrop.count();
+  if (backdropCount > 0) {
+    const isBackdropVisible = await backdrop.isVisible();
+    if (isBackdropVisible) {
+      await backdrop.click({ position: { x: 10, y: 10 }, force: true });
+      await dialog.waitFor({ state: 'hidden', timeout: 2000 });
+      return;
+    }
   }
 
-  // Verify no blocking modals remain
-  const dialog = page.locator('[role="dialog"]').first();
-  if (await dialog.isVisible({ timeout: 100 }).catch(() => false)) {
-    // Log warning but continue - some modals might be expected
+  // If modal still visible after all attempts, log warning
+  const stillVisible = await dialog.isVisible();
+  if (stillVisible) {
     console.warn('Modal still visible after dismiss attempt');
   }
 }
@@ -120,13 +148,16 @@ export async function dismissAnyModals(page) {
  * Wait for page to be ready for interaction
  * Ensures no loading spinners or skeleton screens are visible
  *
+ * Uses element-based waits instead of networkidle for reliability.
+ *
  * @param {import('@playwright/test').Page} page - Playwright page object
  */
 export async function waitForPageReady(page) {
-  // Wait for any loading indicators to disappear
-  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+  // Wait for DOM to be ready first
+  await page.waitForLoadState('domcontentloaded');
 
   // Wait for common loading indicators to disappear
+  // Only wait for indicators that are actually present
   const loadingSelectors = [
     '.animate-spin',
     '.animate-pulse',
@@ -135,7 +166,12 @@ export async function waitForPageReady(page) {
   ];
 
   for (const selector of loadingSelectors) {
-    await page.locator(selector).waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    const loader = page.locator(selector).first();
+    const count = await loader.count();
+    if (count > 0) {
+      // Only wait for hidden if element exists
+      await loader.waitFor({ state: 'hidden', timeout: 5000 });
+    }
   }
 }
 
