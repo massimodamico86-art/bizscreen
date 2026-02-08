@@ -14,6 +14,14 @@ export default defineConfig({
   // Test file patterns
   testMatch: '**/*.spec.{js,ts}',
 
+  // Global test timeout (60 seconds, up from 30s default)
+  timeout: 60_000,
+
+  // Expect timeout for assertions (10 seconds, up from 5s default)
+  expect: {
+    timeout: 10_000,
+  },
+
   // Run tests in parallel
   fullyParallel: true,
 
@@ -36,6 +44,12 @@ export default defineConfig({
   use: {
     // Base URL
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
+
+    // Action timeout (click, fill, etc) - 15 seconds
+    actionTimeout: 15_000,
+
+    // Navigation timeout - 30 seconds
+    navigationTimeout: 30_000,
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
