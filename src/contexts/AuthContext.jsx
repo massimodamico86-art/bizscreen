@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { supabase } from '../supabase';
 import { createScopedLogger } from '../services/loggingService.js';
 import { startTrial } from '../services/billingService';
+import { setObservabilityUser } from '../utils/observability';
 
 const log = createScopedLogger('AuthContext');
 
@@ -204,6 +205,13 @@ export const AuthProvider = ({ children }) => {
 
         if (session?.user) {
           await fetchUserProfile(session.user.id, session.user.email);
+          // Set user context for error monitoring (session data only;
+          // full role/tenant context is set in onAuthStateChange after profile loads)
+          setObservabilityUser({
+            id: session.user.id,
+            email: session.user.email,
+            full_name: session.user.user_metadata?.full_name,
+          });
         }
 
         // Success - clear loading state
@@ -269,8 +277,15 @@ export const AuthProvider = ({ children }) => {
         // Skip re-fetching if profile already loaded (unless SIGNED_IN event)
         const skipIfExists = _event !== 'SIGNED_IN';
         await fetchUserProfile(session.user.id, session.user.email, skipIfExists);
+        // Set user context for error monitoring with available profile data
+        setObservabilityUser({
+          id: session.user.id,
+          email: session.user.email,
+          full_name: session.user.user_metadata?.full_name,
+        });
       } else {
         setUserProfile(null);
+        setObservabilityUser(null);
       }
     });
 
@@ -358,6 +373,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
+    setObservabilityUser(null);
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };

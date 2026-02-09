@@ -3,7 +3,7 @@
  * Provides consistent, user-friendly error messages across the application
  */
 
-import { captureError } from '../services/errorTrackingService';
+import { captureException as captureError } from '../utils/errorTracking.jsx';
 import { createScopedLogger } from '../services/loggingService.js';
 
 const logger = createScopedLogger('errorMessages');
