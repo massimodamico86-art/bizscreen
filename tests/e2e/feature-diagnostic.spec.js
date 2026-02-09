@@ -41,7 +41,7 @@ test.describe('Feature Diagnostics', () => {
 
     // Navigate to Media Library
     await navigateToSection(page, 'media');
-    await page.waitForTimeout(1000);
+    await waitForPageReady(page);
 
     console.log('=== MEDIA LIBRARY ===');
 
@@ -54,10 +54,12 @@ test.describe('Feature Diagnostics', () => {
     if (await addButton.isVisible({ timeout: 3000 }).catch(() => false)) {
       console.log('Add Media button found, clicking...');
       await addButton.click();
-      await page.waitForTimeout(1000);
+      // Wait for modal to appear
+      const modalLocator = page.locator('[role="dialog"]');
+      await modalLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
       // Check what modal/UI appears
-      const modalVisible = await page.locator('[role="dialog"]').isVisible().catch(() => false);
+      const modalVisible = await modalLocator.isVisible();
       console.log('Modal appeared:', modalVisible);
 
       if (modalVisible) {
@@ -84,7 +86,7 @@ test.describe('Feature Diagnostics', () => {
     const errors = setupErrorCollection(page);
 
     await navigateToSection(page, 'playlists');
-    await page.waitForTimeout(1000);
+    await waitForPageReady(page);
 
     console.log('=== PLAYLISTS ===');
 
@@ -100,9 +102,11 @@ test.describe('Feature Diagnostics', () => {
     if (await createButton.isVisible({ timeout: 3000 }).catch(() => false)) {
       console.log('Create button found, clicking...');
       await createButton.click();
-      await page.waitForTimeout(1000);
+      // Wait for modal to appear
+      const modalLocator = page.locator('[role="dialog"]');
+      await modalLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
-      const modalVisible = await page.locator('[role="dialog"]').isVisible().catch(() => false);
+      const modalVisible = await modalLocator.isVisible();
       console.log('Modal appeared:', modalVisible);
     } else {
       console.log('Create button NOT visible');
@@ -119,7 +123,7 @@ test.describe('Feature Diagnostics', () => {
     const errors = setupErrorCollection(page);
 
     await navigateToSection(page, 'layouts');
-    await page.waitForTimeout(1000);
+    await waitForPageReady(page);
 
     console.log('=== LAYOUTS ===');
 
@@ -140,7 +144,7 @@ test.describe('Feature Diagnostics', () => {
     const errors = setupErrorCollection(page);
 
     await navigateToSection(page, 'schedules');
-    await page.waitForTimeout(1000);
+    await waitForPageReady(page);
 
     console.log('=== SCHEDULES ===');
 
@@ -169,7 +173,7 @@ test.describe('Feature Diagnostics', () => {
     const errors = setupErrorCollection(page);
 
     await navigateToSection(page, 'screens');
-    await page.waitForTimeout(1000);
+    await waitForPageReady(page);
 
     console.log('=== SCREENS ===');
 
@@ -209,9 +213,11 @@ test.describe('Feature Diagnostics', () => {
     if (await addScreenBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       console.log('Add Screen button found, clicking...');
       await addScreenBtn.click();
-      await page.waitForTimeout(1000);
+      // Wait for modal to appear
+      const modalLocator = page.locator('[role="dialog"]');
+      await modalLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
-      const modalVisible = await page.locator('[role="dialog"]').isVisible().catch(() => false);
+      const modalVisible = await modalLocator.isVisible();
       console.log('Modal appeared:', modalVisible);
 
       if (modalVisible) {

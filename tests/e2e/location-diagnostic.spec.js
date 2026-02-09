@@ -39,7 +39,15 @@ test('Diagnose Locations page error', async ({ page }) => {
 
   // Navigate to Locations
   await page.click('button:has-text("Locations"), a:has-text("Locations")');
-  await page.waitForTimeout(5000);
+  // Wait for page content to load instead of arbitrary timeout
+  await page.waitForLoadState('domcontentloaded');
+  // Wait for either locations heading or error message to appear
+  const locationsHeading = page.locator('h1:has-text("Locations"), h2:has-text("Locations")').first();
+  const errorMessage = page.locator('text=Something Went Wrong').first();
+  await Promise.race([
+    locationsHeading.waitFor({ state: 'visible', timeout: 10000 }),
+    errorMessage.waitFor({ state: 'visible', timeout: 10000 }),
+  ]).catch(() => {});
   await page.waitForLoadState('networkidle');
 
   // Log all messages
