@@ -23,13 +23,11 @@ import { useBranding, BrandingProvider } from './contexts/BrandingContext';
 import { stopImpersonation } from './services/tenantService';
 import { supabase } from './supabase';
 import { useLogger } from './hooks/useLogger.js';
-import { fetchScenesForTenant } from './services/sceneService';
 import { useEmergency, EmergencyProvider } from './contexts/EmergencyContext';
 import { useBreakpoints } from './hooks/useMediaQuery';
 import { useTranslation } from './i18n';
 import { useFeatureFlags } from './hooks/useFeatureFlag';
 import { Feature } from './config/plans';
-import { config } from './config/env';
 import LoginPage from './auth/LoginPage';
 import EmergencyBanner from './components/campaigns/EmergencyBanner';
 import AnnouncementBanner from './components/AnnouncementBanner';
@@ -37,7 +35,6 @@ import Header from './components/layout/Header';
 import MobileNav from './components/layout/MobileNav';
 import Toast from './components/Toast';
 import FeedbackWidget from './components/FeedbackWidget';
-import AutoBuildOnboardingModal from './components/onboarding/AutoBuildOnboardingModal';
 import { FeatureGate, FeatureUpgradePrompt } from './components/FeatureGate';
 
 // Lazy load pages for better code splitting
@@ -154,8 +151,6 @@ function BizScreenAppInner() {
   const [announcementHeight, setAnnouncementHeight] = useState(0);
   // Track emergency banner height (40px when active, 0 when not)
   const [emergencyHeight, setEmergencyHeight] = useState(0);
-  // AI Autobuild onboarding modal
-  const [showAutoBuildModal, setShowAutoBuildModal] = useState(false);
 
   // Refs to hold current values for real-time handlers (avoids stale closures)
   const listingsRef = useRef(listings);
@@ -199,31 +194,6 @@ function BizScreenAppInner() {
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
-
-  // Check if user should see AI autobuild onboarding
-  useEffect(() => {
-    const checkAutoBuildOnboarding = async () => {
-      // Skip when unified onboarding is enabled (Phase 31)
-      if (config().useUnifiedOnboarding) return;
-
-      // Only check for client role users who haven't completed onboarding
-      if (!authUserProfile?.id) return;
-      if (authUserProfile.role !== 'client') return;
-      if (authUserProfile.has_completed_onboarding) return;
-
-      try {
-        // Check if user has any scenes
-        const { totalCount } = await fetchScenesForTenant(authUserProfile.id, { page: 1, pageSize: 1 });
-        if (totalCount === 0) {
-          setShowAutoBuildModal(true);
-        }
-      } catch (err) {
-        logger.error('Error checking autobuild onboarding', { error: err });
-      }
-    };
-
-    checkAutoBuildOnboarding();
-  }, [authUserProfile?.id, authUserProfile?.role, authUserProfile?.has_completed_onboarding]);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -712,8 +682,6 @@ function BizScreenAppInner() {
         showToast={showToast}
         t={t}
         handleSignOut={handleSignOut}
-        showAutoBuildModal={showAutoBuildModal}
-        setShowAutoBuildModal={setShowAutoBuildModal}
         PageLoader={PageLoader}
       />
     </EmergencyProvider>
@@ -745,8 +713,6 @@ function ClientUILayout({
   showToast,
   t,
   handleSignOut,
-  showAutoBuildModal,
-  setShowAutoBuildModal,
   PageLoader,
 }) {
   const { isActive: isEmergencyActive } = useEmergency();
@@ -1103,17 +1069,6 @@ function ClientUILayout({
         />
       )}
 
-      {/* AI Autobuild Onboarding Modal */}
-      <AutoBuildOnboardingModal
-        isOpen={showAutoBuildModal}
-        onClose={() => setShowAutoBuildModal(false)}
-        onComplete={() => {
-          setShowAutoBuildModal(false);
-          showToast('Your TV scene has been created!');
-        }}
-        user={user}
-        userProfile={authUserProfile}
-      />
     </div>
   );
 }
