@@ -71,7 +71,8 @@ const providers = {
         Sentry.init({
           dsn,
           environment: config().env || 'development',
-          release: import.meta.env.VITE_APP_VERSION || '1.0.0',
+          // release is auto-injected by @sentry/vite-plugin at build time.
+          // Do NOT set it manually -- a mismatch breaks source map resolution.
 
           // Performance Monitoring
           tracesSampleRate: isProduction() ? 0.1 : 1.0,

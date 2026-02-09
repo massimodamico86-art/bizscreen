@@ -25,9 +25,9 @@ import {
   EmptyState,
   Checkbox,
 } from '../design-system';
-import TranslationFilters from '../components/TranslationFilters';
-import BulkActionsBar from '../components/BulkActionsBar';
-import AiSuggestionPanel from '../components/AiSuggestionPanel';
+import TranslationFilters from '../components/translations/TranslationFilters';
+import BulkActionsBar from '../components/translations/BulkActionsBar';
+import AiSuggestionPanel from '../components/translations/AiSuggestionPanel';
 import { fetchTranslationDashboard } from '../services/translationService';
 import { getLanguageDisplayInfo, getLanguageColor } from '../services/languageService';
 import { useLogger } from '../hooks/useLogger';

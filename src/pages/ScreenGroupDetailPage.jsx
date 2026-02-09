@@ -29,7 +29,7 @@ import {
   EmptyState,
   Tabs,
 } from '../design-system';
-import ScreenGroupSettingsTab from '../components/ScreenGroupSettingsTab';
+import ScreenGroupSettingsTab from '../components/screens/ScreenGroupSettingsTab';
 import { useTranslation } from '../i18n';
 
 import {

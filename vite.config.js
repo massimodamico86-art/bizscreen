@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { sentryVitePlugin } from '@sentry/vite-plugin'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { v4 as uuidv4 } from 'uuid'
@@ -139,8 +140,21 @@ export default defineConfig({
       brotliSize: true,
       template: 'treemap', // or 'sunburst', 'network'
     }),
+    // Sentry source map upload - must be last so all transforms complete first.
+    // Gracefully skips upload when SENTRY_AUTH_TOKEN is not set (e.g., local dev).
+    sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      sourcemaps: {
+        filesToDeleteAfterUpload: ['./dist/**/*.map'],
+      },
+    }),
   ],
   build: {
+    // Generate source maps but do NOT add //# sourceMappingURL comments to bundles.
+    // "hidden" prevents public exposure while allowing Sentry to resolve stack traces.
+    sourcemap: 'hidden',
     // Use terser for console removal (esbuild doesn't support drop_console)
     minify: 'terser',
     terserOptions: {
