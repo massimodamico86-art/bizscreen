@@ -73,10 +73,11 @@ Plans:
   2. Frontend errors include user ID, current route, and relevant state
   3. API errors include request method, path, and response status
   4. Errors are visible in Sentry dashboard within 60 seconds of occurrence
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 39-01: TBD
+- [ ] 39-01-PLAN.md — Wire Sentry into app lifecycle, React Router v7 tracing, user context, cleanup dead code
+- [ ] 39-02-PLAN.md — Verify Sentry DSN configuration and end-to-end error pipeline
 
 ### Phase 40: Error Monitoring Production
 **Goal**: Critical errors trigger immediate notifications with readable stack traces
@@ -114,7 +115,7 @@ Plans:
 | 36. E2E Test Infrastructure | 2/2 | Complete | 2026-02-08 |
 | 37. E2E Test Stabilization | 9/9 | Complete | 2026-02-08 |
 | 38. E2E Test Coverage Gate | 0/2 | Planned | - |
-| 39. Error Monitoring Setup | 0/TBD | Not started | - |
+| 39. Error Monitoring Setup | 0/2 | Planned | - |
 | 40. Error Monitoring Production | 0/TBD | Not started | - |
 | 41. Feature Flag Cleanup | 0/TBD | Not started | - |
 
@@ -147,10 +148,10 @@ All milestones shipped successfully.
 | v2 Templates & Platform | 13-23 | 39 | Complete | 2026-01-27 |
 | v2.1 Tech Debt Cleanup | 24-29 | 11 | Complete | 2026-01-28 |
 | v2.2 Onboarding Polish | 30-35 | 16 | Complete | 2026-02-05 |
-| v2.3 Production Hardening | 36-41 | 11+ | In Progress | - |
+| v2.3 Production Hardening | 36-41 | 13+ | In Progress | - |
 
-**Total:** 37 phases complete, 153 plans executed | 6 phases planned for v2.3
+**Total:** 37 phases complete, 155 plans executed | 6 phases planned for v2.3
 
 ---
-*Last updated: 2026-02-08 — Phase 38 plans created (2 plans in 2 waves)*
-*Next: `/gsd:execute-phase 38` to build gate and achieve 90%+ pass rate*
+*Last updated: 2026-02-09 — Phase 39 plans created (2 plans in 2 waves)*
+*Next: `/gsd:execute-phase 39` to wire Sentry error monitoring into app lifecycle*
