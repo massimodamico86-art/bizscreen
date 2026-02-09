@@ -4,9 +4,15 @@
  * Verifies that marketing and auth pages have proper SEO metadata.
  * Tests meta tags, Open Graph, Twitter Cards, and robots directives.
  */
+/* eslint-disable no-empty-pattern */
 import { test, expect } from '@playwright/test';
 
 test.describe('SEO Meta Tags', () => {
+  // Only run on chromium (client) project - public pages don't need multi-project testing
+  test.beforeEach(async ({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+  });
+
   test.describe('Marketing Pages', () => {
     test('home page has correct meta tags', async ({ page }) => {
       await page.goto('/');

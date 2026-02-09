@@ -4,6 +4,7 @@
  * These tests reproduce the exact flows a real client user would perform
  * in the browser for Playlists and Schedules.
  */
+/* eslint-disable no-empty-pattern */
 import { test, expect } from '@playwright/test';
 
 const CLIENT_EMAIL = process.env.TEST_USER_EMAIL || 'client@bizscreen.test';
@@ -14,6 +15,11 @@ const errors = [];
 const networkFailures = [];
 
 test.describe('Client Dashboard Flows', () => {
+  // Only run on chromium (client) project - admin/superadmin have different dashboard
+  test.beforeEach(async ({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+  });
+
   test.describe.configure({ mode: 'serial' });
 
   test.beforeEach(async ({ page }) => {

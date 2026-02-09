@@ -7,10 +7,16 @@
  * - Player/pairing page is accessible
  * - Error states display correctly
  */
+/* eslint-disable no-empty-pattern */
 import { test, expect } from '@playwright/test';
 import { loginAndPrepare, navigateToSection } from './helpers.js';
 
 test.describe('Screens Page', () => {
+  // Only run on chromium (client) project - admin/superadmin have different dashboard
+  test.beforeEach(async ({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+  });
+
   test.describe('Authenticated User', () => {
     test.beforeEach(async ({ page }) => {
       await loginAndPrepare(page);
@@ -113,6 +119,11 @@ test.describe('Screens Page', () => {
 test.describe('TV Player Pairing Page', () => {
   // Clear auth state - player page is public
   test.use({ storageState: { cookies: [], origins: [] } });
+
+  // Only run on chromium project to avoid duplicate failures across projects
+  test.beforeEach(async ({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Public page test - run only on chromium project');
+  });
 
   test('player page loads without authentication', async ({ page }) => {
     // Navigate directly to player (no login required)
@@ -231,7 +242,9 @@ test.describe('TV Player Pairing Page', () => {
 });
 
 test.describe('Screen Error Handling', () => {
-  test.beforeEach(async ({ page }) => {
+  // Only run on chromium (client) project
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
     await loginAndPrepare(page);
   });
 
@@ -254,10 +267,12 @@ test.describe('Screen Error Handling', () => {
     const dialog = page.locator('[role="dialog"]');
     await expect(dialog).toBeVisible({ timeout: 3000 });
 
-    // Close via Cancel button or X button - use element.or() for either
+    // Close via Cancel button, X button, Close modal, or Done button
     const cancelButton = page.getByRole('button', { name: /cancel/i });
     const closeButton = page.locator('[aria-label="Close"]').first();
-    const closeControl = cancelButton.or(closeButton);
+    const closeModalButton = page.locator('[aria-label="Close modal"]').first();
+    const doneButton = page.getByRole('button', { name: /done/i });
+    const closeControl = cancelButton.or(closeButton).or(closeModalButton).or(doneButton);
     await expect(closeControl).toBeVisible({ timeout: 3000 });
     await closeControl.click();
 

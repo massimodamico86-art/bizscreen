@@ -89,10 +89,12 @@ async function navigateToSection(page, selector, name) {
 }
 
 test.describe('Client UI Interactions', () => {
+  // Only run on chromium (client) project - admin/superadmin have different dashboard
   // Skip all tests if credentials not configured
   test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
     // Reset console errors
     consoleErrors = [];
 

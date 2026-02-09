@@ -197,7 +197,9 @@ test.describe.skip('Alert Notification Flow', () => {
 
 // Unit-style tests that can run without database
 test.describe('Alert UI Components', () => {
-  test.beforeEach(async ({ page }) => {
+  // Only run on chromium-admin project
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium-admin', 'Admin-only test');
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 

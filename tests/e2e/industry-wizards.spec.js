@@ -13,10 +13,12 @@ import { test, expect } from '@playwright/test';
 import { loginAndPrepare } from './helpers.js';
 
 test.describe('Industry Wizards', () => {
+  // Only run on chromium (client) project
   // Skip if user credentials not configured
   test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
     await loginAndPrepare(page, {
       email: process.env.TEST_USER_EMAIL,
       password: process.env.TEST_USER_PASSWORD,

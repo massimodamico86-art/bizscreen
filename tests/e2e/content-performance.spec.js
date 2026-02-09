@@ -8,10 +8,12 @@ import { test, expect } from '@playwright/test';
 import { loginAndPrepare } from './helpers.js';
 
 test.describe('Content Performance Dashboard', () => {
+  // Only run on chromium (client) project - admin/superadmin have different dashboard
   // Skip if user credentials not configured
   test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
     await loginAndPrepare(page);
   });
 

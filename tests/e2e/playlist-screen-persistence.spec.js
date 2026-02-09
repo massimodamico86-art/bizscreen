@@ -8,6 +8,7 @@ import { test, expect } from '@playwright/test';
 import { loginAndPrepare, navigateToSection, generateTestName } from './helpers.js';
 
 test.describe('Playlist-Screen Assignment Persistence', () => {
+  // Only run on chromium (client) project - requires client credentials
   // Skip if client credentials not configured
   test.skip(() => !process.env.TEST_CLIENT_EMAIL, 'Client test credentials not configured');
 
@@ -15,7 +16,8 @@ test.describe('Playlist-Screen Assignment Persistence', () => {
   let consoleErrors = [];
   let apiErrors = [];
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
     // Reset error arrays
     consoleErrors = [];
     apiErrors = [];

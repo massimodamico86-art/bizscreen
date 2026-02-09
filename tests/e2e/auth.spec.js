@@ -12,6 +12,7 @@
  * Alternative: For individual tests needing fresh context, use the freshPage fixture:
  *   test('my test', async ({ freshPage }) => { ... });
  */
+/* eslint-disable no-empty-pattern */
 import { test, expect } from './fixtures/index.js';
 import { loginAndPrepare, waitForPageReady } from './helpers.js';
 
@@ -250,6 +251,11 @@ test.describe('Password Reset Flow', () => {
 // SESSION PERSISTENCE TESTS (require test credentials)
 // =============================================================================
 test.describe('Session Persistence', () => {
+  // Only run on chromium (client) project - loginAndPrepare uses client credentials
+  test.beforeEach(async ({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+  });
+
   test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test('successful login redirects to app', async ({ page }) => {
@@ -297,6 +303,11 @@ test.describe('Session Persistence', () => {
 // LOGOUT FLOW TESTS (require test credentials)
 // =============================================================================
 test.describe('Logout Flow', () => {
+  // Only run on chromium (client) project - loginAndPrepare uses client credentials
+  test.beforeEach(async ({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+  });
+
   test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test('can find logout option in UI', async ({ page }) => {

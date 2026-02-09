@@ -10,6 +10,7 @@
  *
  * This test verifies recent import fixes (quick tasks 019, 020) work correctly.
  */
+/* eslint-disable no-empty-pattern */
 import { test, expect } from '@playwright/test';
 import { loginAndPrepare, waitForPageReady } from './helpers.js';
 
@@ -493,6 +494,11 @@ test.describe('Client Smoke Test', () => {
   });
 
   test.describe('Dashboard (Pre-authenticated)', () => {
+    // Only run on chromium (client) project
+    test.beforeEach(async ({}, testInfo) => {
+      test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+    });
+
     // This uses the default storage state (client.json) from setup
     test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
@@ -535,6 +541,11 @@ test.describe('Client Smoke Test', () => {
   });
 
   test.describe('Page Crawl with Modal and Button Interactions', () => {
+    // Only run on chromium (client) project
+    test.beforeEach(async ({}, testInfo) => {
+      test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+    });
+
     // Skip if credentials not configured
     test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 

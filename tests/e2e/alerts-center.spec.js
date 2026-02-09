@@ -10,7 +10,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Alerts Center', () => {
-  test.beforeEach(async ({ page }) => {
+  // Only run on chromium-admin project - requires admin context
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium-admin', 'Admin-only test');
     // Login as client user
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -288,7 +290,8 @@ test.describe('Alerts Center', () => {
 });
 
 test.describe('Notification Preferences', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium-admin', 'Admin-only test');
     // Login as client user
     await page.goto('/');
     await page.waitForLoadState('networkidle');

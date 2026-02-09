@@ -13,6 +13,7 @@
  *
  * Skip if TEST_USER_EMAIL is not configured.
  */
+/* eslint-disable no-empty-pattern */
 import { test, expect } from '@playwright/test';
 import { loginAndPrepare, waitForPageReady } from './helpers.js';
 
@@ -418,7 +419,13 @@ test.describe('Production Smoke Tests', () => {
     // These tests need fresh context to test actual login
     test.use({ storageState: { cookies: [], origins: [] } });
 
-    test('can complete login successfully', async ({ page }) => {
+    // Only run login test on client project since it uses client credentials
+    test('can complete login successfully', async ({ page }, testInfo) => {
+      // Skip this test on admin/superadmin projects - login creds are for client
+      if (testInfo.project.name !== 'chromium') {
+        test.skip();
+        return;
+      }
       const errors = setupErrorCapture(page);
 
       await loginAndPrepare(page, {
@@ -463,6 +470,11 @@ test.describe('Production Smoke Tests', () => {
   });
 
   test.describe('Core Pages Load', () => {
+    // Only run on chromium (client) project
+    test.beforeEach(async ({}, testInfo) => {
+      test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+    });
+
     test('dashboard loads after login', async ({ page }) => {
       const errors = setupErrorCapture(page);
 
@@ -524,6 +536,11 @@ test.describe('Production Smoke Tests', () => {
   });
 
   test.describe('Error Handling', () => {
+    // Only run on chromium (client) project
+    test.beforeEach(async ({}, testInfo) => {
+      test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+    });
+
     test('no JavaScript errors in console on dashboard', async ({ page }) => {
       const errors = setupErrorCapture(page);
 
@@ -554,6 +571,11 @@ test.describe('Production Smoke Tests', () => {
   });
 
   test.describe('Page Crawl with Modal and Button Interactions', () => {
+    // Only run on chromium (client) project
+    test.beforeEach(async ({}, testInfo) => {
+      test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
+    });
+
     // Increase timeout for crawl test
     test.setTimeout(120000);
 

@@ -6,10 +6,12 @@ import { test, expect } from '@playwright/test';
 import { loginAndPrepare, waitForPageReady } from './helpers.js';
 
 test.describe('Settings Page', () => {
+  // Only run on chromium (client) project - admin/superadmin have different dashboard
   // Skip if user credentials not configured
   test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
     // Login with standard test credentials
     await loginAndPrepare(page);
   });
@@ -138,10 +140,12 @@ test.describe('Settings Page', () => {
 });
 
 test.describe('Account/Plan Page', () => {
+  // Only run on chromium (client) project
   // Skip if user credentials not configured
   test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
     await loginAndPrepare(page);
   });
 
