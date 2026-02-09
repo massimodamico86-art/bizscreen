@@ -8,10 +8,10 @@
  */
 import { test, expect } from '@playwright/test';
 
-const CLIENT_EMAIL = process.env.TEST_USER_EMAIL || 'client@bizscreen.test';
-const CLIENT_PASSWORD = process.env.TEST_USER_PASSWORD || 'TestClient123!';
-
 test.describe('Template Packs', () => {
+  // Use storage state for client authentication
+  test.use({ storageState: 'playwright/.auth/client.json' });
+
   const consoleErrors = [];
   const networkErrors = [];
 
@@ -38,18 +38,16 @@ test.describe('Template Packs', () => {
       }
     });
 
-    // Login
-    await page.goto('/auth/login');
-    await page.waitForLoadState('networkidle');
-    await page.evaluate(() => {
-      localStorage.setItem('bizscreen_welcome_modal_dismissed', 'true');
-      localStorage.setItem('bizscreen_onboarding_completed', 'true');
-    });
-    await page.fill('input[type="email"]', CLIENT_EMAIL);
-    await page.fill('input[type="password"]', CLIENT_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\/(app|dashboard)?/, { timeout: 15000 });
-    await page.waitForLoadState('networkidle');
+    // Navigate to app (already authenticated via storage state)
+    await page.goto('/app');
+    await page.waitForLoadState('domcontentloaded');
+
+    // Dismiss any modals that appear
+    const dialog = page.locator('[role="dialog"]');
+    if (await dialog.count() > 0 && await dialog.isVisible()) {
+      await page.keyboard.press('Escape');
+      await dialog.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
+    }
   });
 
   test.afterEach(async ({ page }, testInfo) => {
