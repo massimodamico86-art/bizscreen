@@ -58,10 +58,11 @@ Plans:
   2. Remaining failures are documented with known root causes
   3. Test results are reproducible across CI runs
   4. No regressions introduced to previously passing tests
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 38-01: TBD
+- [ ] 38-01-PLAN.md — Build gate script, add JSON reporter, update CI workflow
+- [ ] 38-02-PLAN.md — Triage failures, fix or skip, create coverage report
 
 ### Phase 39: Error Monitoring Setup
 **Goal**: Production errors are captured with full context
@@ -112,7 +113,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 36. E2E Test Infrastructure | 2/2 | Complete | 2026-02-08 |
 | 37. E2E Test Stabilization | 9/9 | Complete | 2026-02-08 |
-| 38. E2E Test Coverage Gate | 0/TBD | Not started | - |
+| 38. E2E Test Coverage Gate | 0/2 | Planned | - |
 | 39. Error Monitoring Setup | 0/TBD | Not started | - |
 | 40. Error Monitoring Production | 0/TBD | Not started | - |
 | 41. Feature Flag Cleanup | 0/TBD | Not started | - |
@@ -148,8 +149,8 @@ All milestones shipped successfully.
 | v2.2 Onboarding Polish | 30-35 | 16 | Complete | 2026-02-05 |
 | v2.3 Production Hardening | 36-41 | 11+ | In Progress | - |
 
-**Total:** 36 phases complete, 143 plans executed | 6 phases planned for v2.3
+**Total:** 37 phases complete, 153 plans executed | 6 phases planned for v2.3
 
 ---
-*Last updated: 2026-02-08 — Phase 37 gap closure plan added (37-09)*
-*Next: `/gsd:execute-phase 37` to complete gap closure*
+*Last updated: 2026-02-08 — Phase 38 plans created (2 plans in 2 waves)*
+*Next: `/gsd:execute-phase 38` to build gate and achieve 90%+ pass rate*
