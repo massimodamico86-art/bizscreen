@@ -6,7 +6,7 @@
 - [x] **v2 Templates & Platform Polish** - Phases 13-23 (shipped 2026-01-27)
 - [x] **v2.1 Tech Debt Cleanup** - Phases 24-29 (shipped 2026-01-28)
 - [x] **v2.2 Onboarding Polish** - Phases 30-35 (shipped 2026-02-05)
-- [ ] **v2.3 Production Hardening** - Phases 36-41 (in progress)
+- [x] **v2.3 Production Hardening** - Phases 36-41 (shipped 2026-02-09)
 
 ## v2.3 Production Hardening
 
@@ -107,7 +107,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 41-01-PLAN.md — Remove VITE_USE_UNIFIED_ONBOARDING flag and dead AutoBuild code
+- [x] 41-01-PLAN.md — Remove VITE_USE_UNIFIED_ONBOARDING flag and dead AutoBuild code
 
 ## Progress
 
@@ -118,7 +118,7 @@ Plans:
 | 38. E2E Test Coverage Gate | 0/2 | Planned | - |
 | 39. Error Monitoring Setup | 2/2 | Complete | 2026-02-09 |
 | 40. Error Monitoring Production | 2/2 | Complete | 2026-02-09 |
-| 41. Feature Flag Cleanup | 0/1 | Planned | - |
+| 41. Feature Flag Cleanup | 1/1 | Complete | 2026-02-09 |
 
 ## Phase History
 
@@ -149,10 +149,10 @@ All milestones shipped successfully.
 | v2 Templates & Platform | 13-23 | 39 | Complete | 2026-01-27 |
 | v2.1 Tech Debt Cleanup | 24-29 | 11 | Complete | 2026-01-28 |
 | v2.2 Onboarding Polish | 30-35 | 16 | Complete | 2026-02-05 |
-| v2.3 Production Hardening | 36-41 | 16 | In Progress | - |
+| v2.3 Production Hardening | 36-41 | 18 | Complete | 2026-02-09 |
 
-**Total:** 40 phases complete, 159 plans executed | 6 phases planned for v2.3
+**Total:** 41 phases complete, 160 plans executed | 5 milestones shipped
 
 ---
-*Last updated: 2026-02-09 — Phase 41 planned (feature flag cleanup)*
-*Next: `/gsd:execute-phase 41` to execute feature flag cleanup*
+*Last updated: 2026-02-09 — v2.3 Production Hardening milestone complete*
+*Next: `/gsd:complete-milestone` to archive v2.3*
