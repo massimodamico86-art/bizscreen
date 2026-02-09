@@ -73,6 +73,7 @@ export function refreshCorrelationId() {
 
 /**
  * Set user context for logging
+ * @param context
  */
 export function setLogContext(context) {
   sessionContext = { ...sessionContext, ...context };
@@ -80,6 +81,7 @@ export function setLogContext(context) {
 
 /**
  * Check if should log at given level
+ * @param level
  */
 function shouldLog(level) {
   return LOG_LEVELS[level] >= LOG_LEVELS[CONFIG.minLevel];
@@ -87,6 +89,7 @@ function shouldLog(level) {
 
 /**
  * Check if should sample this log (for high-volume logs)
+ * @param level
  */
 function shouldSample(level) {
   // Always log warnings and above
@@ -97,6 +100,9 @@ function shouldSample(level) {
 
 /**
  * Create a structured log entry
+ * @param level
+ * @param message
+ * @param data
  */
 function createLogEntry(level, message, data = {}) {
   const { error, ...rest } = data;
@@ -135,6 +141,7 @@ function createLogEntry(level, message, data = {}) {
 
 /**
  * Format log for console output
+ * @param entry
  */
 function formatForConsole(entry) {
   const levelColors = {
@@ -168,6 +175,7 @@ function formatForConsole(entry) {
 
 /**
  * Add log to buffer and potentially flush
+ * @param entry
  */
 function bufferLog(entry) {
   logBuffer.push(entry);
@@ -231,6 +239,7 @@ async function flushLogs() {
 
 /**
  * Store critical logs in database
+ * @param logs
  */
 async function storeCriticalLogs(logs) {
   try {
@@ -240,7 +249,6 @@ async function storeCriticalLogs(logs) {
         message: log.message,
         correlation_id: log.correlationId,
         user_id: log.userId,
-        tenant_id: log.tenantId,
         url: log.url,
         error_name: log.error?.name,
         error_message: log.error?.message,
@@ -315,6 +323,7 @@ export const log = {
 
 /**
  * Create a scoped logger for a specific component/service
+ * @param scope
  */
 export function createScopedLogger(scope) {
   return {
@@ -329,6 +338,8 @@ export function createScopedLogger(scope) {
 
 /**
  * Time an async operation and log performance
+ * @param name
+ * @param fn
  */
 export async function logTiming(name, fn) {
   const start = performance.now();
