@@ -12,7 +12,7 @@
  * it requires actual database setup with templates.
  */
 import { test, expect } from '@playwright/test';
-import { loginAndPrepare, waitForPageReady, dismissAnyModals } from './helpers.js';
+import { waitForPageReady, dismissAnyModals } from './helpers.js';
 
 /**
  * Navigate to marketplace section
@@ -29,14 +29,15 @@ async function navigateToMarketplace(page) {
 // ============================================================================
 
 test.describe('Template Marketplace - Client User', () => {
-  // Skip if client credentials not configured
+  // Use storage state for client authentication
+  test.use({ storageState: 'playwright/.auth/client.json' });
+
+  // Skip if client credentials not configured (needed for storage state generation)
   test.skip(() => !process.env.TEST_CLIENT_EMAIL, 'Client test credentials not configured');
 
   test.beforeEach(async ({ page }) => {
-    await loginAndPrepare(page, {
-      email: process.env.TEST_CLIENT_EMAIL,
-      password: process.env.TEST_CLIENT_PASSWORD
-    });
+    await page.goto('/app');
+    await dismissAnyModals(page);
   });
 
   test('can navigate to template marketplace', async ({ page }) => {
@@ -126,13 +127,14 @@ test.describe('Template Marketplace - Client User', () => {
 // ============================================================================
 
 test.describe('Template Preview Modal', () => {
+  // Use storage state for client authentication
+  test.use({ storageState: 'playwright/.auth/client.json' });
+
   test.skip(() => !process.env.TEST_CLIENT_EMAIL, 'Client test credentials not configured');
 
   test.beforeEach(async ({ page }) => {
-    await loginAndPrepare(page, {
-      email: process.env.TEST_CLIENT_EMAIL,
-      password: process.env.TEST_CLIENT_PASSWORD
-    });
+    await page.goto('/app');
+    await dismissAnyModals(page);
     await navigateToMarketplace(page);
   });
 
@@ -292,13 +294,14 @@ test.describe('Admin Template Management', () => {
 // ============================================================================
 
 test.describe('Template Picker Modal', () => {
+  // Use storage state for client authentication
+  test.use({ storageState: 'playwright/.auth/client.json' });
+
   test.skip(() => !process.env.TEST_CLIENT_EMAIL, 'Client test credentials not configured');
 
   test.beforeEach(async ({ page }) => {
-    await loginAndPrepare(page, {
-      email: process.env.TEST_CLIENT_EMAIL,
-      password: process.env.TEST_CLIENT_PASSWORD
-    });
+    await page.goto('/app');
+    await dismissAnyModals(page);
   });
 
   test('template picker is accessible from scenes', async ({ page }) => {
@@ -324,13 +327,14 @@ test.describe('Template Picker Modal', () => {
 // ============================================================================
 
 test.describe('License-Based Access Control', () => {
+  // Use storage state for client authentication
+  test.use({ storageState: 'playwright/.auth/client.json' });
+
   test.skip(() => !process.env.TEST_CLIENT_EMAIL, 'Client test credentials not configured');
 
   test.beforeEach(async ({ page }) => {
-    await loginAndPrepare(page, {
-      email: process.env.TEST_CLIENT_EMAIL,
-      password: process.env.TEST_CLIENT_PASSWORD
-    });
+    await page.goto('/app');
+    await dismissAnyModals(page);
     await navigateToMarketplace(page);
   });
 
