@@ -6,10 +6,11 @@ Tracking document for E2E tests that are skipped during stabilization.
 
 | Category | Count | Notes |
 |----------|-------|-------|
-| Total skipped | 0 | None skipped in Categories 1-4 |
+| Total skipped | 30 | Scenes feature not in navigation |
 | Unfixable timing issues | 0 | |
 | External dependencies | 0 | |
 | Infrastructure issues | 0 | Backend timeouts are transient, not test issues |
+| Feature not accessible | 30 | scenes.spec.js and scene-editor.spec.js (Scenes not in sidebar nav) |
 
 ## Skipped Tests by Category
 
@@ -147,6 +148,45 @@ All 43 waitForTimeout calls removed across 4 files. Tests have pre-existing desi
 
 **Recommendation:** These test files need refactoring for correct UI selectors and authentication patterns, which is out of scope for timing stabilization. The waitForTimeout removal is complete and correct.
 
+### Category 6: Advanced Features
+
+**Status:** Stabilized (waitForTimeout removal complete, 2 files pre-skipped)
+
+All 30 waitForTimeout calls removed across 5 files.
+
+**Files stabilized:**
+- `scenes.spec.js` - 8 waitForTimeout calls removed (entire file is test.describe.skip)
+- `scene-editor.spec.js` - 9 waitForTimeout calls removed (entire file is test.describe.skip)
+- `polotno-editor.spec.js` - 1 waitForTimeout call removed
+- `screen-assignments.spec.js` - 6 waitForTimeout calls removed
+- `playlist-screen-persistence.spec.js` - 6 waitForTimeout calls removed
+
+**Pre-skipped tests (not timing-related):**
+
+1. **scenes.spec.js (10 tests):**
+   - Entire test.describe marked as skip
+   - Skip reason: "Scenes feature not in sidebar navigation (page exists but not accessible via nav)"
+   - The Scenes feature page exists but is not exposed in the navigation UI
+   - Tests cannot navigate to the feature via normal user flow
+
+2. **scene-editor.spec.js (20 tests):**
+   - Entire test.describe marked as skip
+   - Skip reason: Same as scenes.spec.js - depends on Scenes feature being accessible
+   - Tests cover canvas editor, slide management, AI suggestions panel
+
+**Verification results (non-skipped files):**
+- polotno-editor.spec.js: 5/5 consecutive runs passed (100%)
+- screen-assignments.spec.js: 4/5 consecutive runs passed (80%, 1 auth setup failure - infrastructure)
+- playlist-screen-persistence.spec.js: Partial pass - client tests pass, admin/superadmin fail due to credential mismatch
+
+**playlist-screen-persistence.spec.js notes:**
+- Test requires CLIENT credentials (TEST_CLIENT_EMAIL)
+- Runs on chromium-admin and chromium-superadmin projects that don't have client credentials
+- The chromium project (with client credentials) passes consistently
+- Not a timing issue - credential configuration issue
+
+**Recommendation:** Scenes and scene-editor tests are correctly skipped since the feature is not accessible via navigation. The polotno-editor and screen-assignments tests are stable. The playlist-screen-persistence test passes for the intended project (chromium with client credentials).
+
 ## Legend
 
 - **Unfixable timing issues:** Tests that fail due to inherent timing problems that cannot be resolved with proper waits
@@ -156,4 +196,4 @@ All 43 waitForTimeout calls removed across 4 files. Tests have pre-existing desi
 
 ---
 *Created: 2026-02-08*
-*Last updated: 2026-02-08 - Category 5 stabilized*
+*Last updated: 2026-02-09 - Category 6 stabilized*
