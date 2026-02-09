@@ -91,8 +91,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 40-01-PLAN.md — Install @sentry/vite-plugin, configure source map uploads, fix release alignment
-- [ ] 40-02-PLAN.md — Configure Sentry alerts in dashboard, verify end-to-end pipeline
+- [x] 40-01-PLAN.md — Install @sentry/vite-plugin, configure source map uploads, fix release alignment
+- [x] 40-02-PLAN.md — Configure Sentry alerts in dashboard, verify end-to-end pipeline
 
 ### Phase 41: Feature Flag Cleanup
 **Goal**: Legacy onboarding code is removed and unified flow is the only path
@@ -117,7 +117,7 @@ Plans:
 | 37. E2E Test Stabilization | 9/9 | Complete | 2026-02-08 |
 | 38. E2E Test Coverage Gate | 0/2 | Planned | - |
 | 39. Error Monitoring Setup | 2/2 | Complete | 2026-02-09 |
-| 40. Error Monitoring Production | 0/2 | Planned | - |
+| 40. Error Monitoring Production | 2/2 | Complete | 2026-02-09 |
 | 41. Feature Flag Cleanup | 0/TBD | Not started | - |
 
 ## Phase History
@@ -151,8 +151,8 @@ All milestones shipped successfully.
 | v2.2 Onboarding Polish | 30-35 | 16 | Complete | 2026-02-05 |
 | v2.3 Production Hardening | 36-41 | 15+ | In Progress | - |
 
-**Total:** 37 phases complete, 155 plans executed | 6 phases planned for v2.3
+**Total:** 38 phases complete, 157 plans executed | 6 phases planned for v2.3
 
 ---
-*Last updated: 2026-02-09 — Phase 40 planned (2 plans: source map pipeline + alerting configuration)*
-*Next: `/gsd:execute-phase 40` to execute production error monitoring*
+*Last updated: 2026-02-09 — Phase 40 complete (source map pipeline + GitHub secrets configured, alerting deferred)*
+*Next: `/gsd:plan-phase 41` to plan feature flag cleanup*
