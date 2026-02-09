@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-07)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 38 - E2E Test Coverage Gate
+**Current focus:** Phase 39 - Error Monitoring Setup
 
 ## Current Position
 
-Phase: 38 of 41 (E2E Test Coverage Gate)
-Plan: 2 of 2 in current phase (test triage complete, checkpoint pending)
-Status: Checkpoint pending (Task 3: human-verify)
-Last activity: 2026-02-09 - Completed 38-02-PLAN.md Tasks 1-2 (E2E Test Coverage Gate Triage)
+Phase: 39 of 41 (Error Monitoring Setup)
+Plan: 1 of 2 in current phase (Sentry wiring complete)
+Status: In progress
+Last activity: 2026-02-09 - Completed 39-01-PLAN.md (Error Monitoring Wiring)
 
-Progress: [######################........] 38/41 phases (v2.3 in progress)
+Progress: [#######################.......] 39/41 phases (v2.3 in progress)
 
 ## Milestone: v2.3 Production Hardening
 
@@ -23,7 +23,7 @@ Progress: [######################........] 38/41 phases (v2.3 in progress)
 | 36 | E2E Test Infrastructure | Complete |
 | 37 | E2E Test Stabilization | Verified ✓ |
 | 38 | E2E Test Coverage Gate | Plan 02 checkpoint pending |
-| 39 | Error Monitoring Setup | Not started |
+| 39 | Error Monitoring Setup | Plan 01 complete |
 | 40 | Error Monitoring Production | Not started |
 | 41 | Feature Flag Cleanup | Not started |
 
@@ -90,7 +90,7 @@ Feature flag cleanup pending:
 - VITE_USE_UNIFIED_ONBOARDING flag
 - Obsolete localStorage keys
 
-No error monitoring currently in place.
+Error monitoring: Sentry SDK wired into app lifecycle (39-01). Needs DSN configuration and production setup (39-02, Phase 40).
 
 Core patterns from v2.3 (Phase 38):
 - Best-of-3 pass rate gating: run Playwright up to 3 times, pass if any run >= 90%
@@ -103,6 +103,14 @@ Core patterns from v2.3 (Phase 38):
 - test.fixme for individual tests pending selector updates (preserves test code)
 - storageState auth replacing manual login in test beforeEach
 - element.or() composition for resilient close button selectors (cancelButton.or(closeButton).or(closeModalButton))
+
+### Key Decisions (Phase 39-01)
+
+- Used Proxy-based Supabase client instrumentation (wrapping .from() and .rpc()) for automatic Sentry breadcrumbs and error capture
+- Set sendDefaultPii:false for GDPR compliance in Sentry v10
+- Converted errorTrackingService.js to re-export shim rather than updating all consumers
+- Set sampleRate:1.0 (capture ALL errors) since error volume is expected to be low
+- Only proxied .from() and .rpc() on Supabase client -- auth/storage left untouched
 
 ### Key Decisions (Phase 38-02)
 
@@ -119,9 +127,9 @@ None for v2.3.
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed 38-02-PLAN.md Tasks 1-2 (checkpoint:human-verify pending)
+Stopped at: Completed 39-01-PLAN.md (Error Monitoring Wiring)
 Resume file: None
-Next: 38-02-PLAN.md Task 3 (human-verify checkpoint - verify gate results)
+Next: 39-02-PLAN.md (Error Monitoring Production Configuration)
 
 ---
-*Updated: 2026-02-09 - Completed 38-02-PLAN.md Tasks 1-2 (92.7% E2E pass rate, gate passes)*
+*Updated: 2026-02-09 - Completed 39-01-PLAN.md (Sentry wired with React 19 hooks, Router v7 tracing, Supabase interception)*
