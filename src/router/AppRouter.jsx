@@ -8,7 +8,8 @@
  */
 
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
+import { SentryRoutes } from '../utils/errorTracking.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import AuthRetryBanner from '../components/AuthRetryBanner';
 
@@ -95,7 +96,7 @@ export default function AppRouter() {
       {/* Auth retry/error banner - shows when auth is having issues */}
       <AuthRetryBanner />
 
-      <Routes>
+      <SentryRoutes>
       {/* Marketing Routes (logged out) - all lazy loaded */}
       <Route
         path="/"
@@ -222,7 +223,7 @@ export default function AppRouter() {
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    </SentryRoutes>
     </>
   );
 }

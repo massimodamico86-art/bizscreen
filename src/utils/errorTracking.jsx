@@ -11,6 +11,13 @@
 
 import React from 'react';
 import * as Sentry from '@sentry/react';
+import {
+  Routes,
+  useLocation,
+  useNavigationType,
+  createRoutesFromChildren,
+  matchRoutes,
+} from 'react-router-dom';
 import { config, isProduction } from '../config/env';
 import { createScopedLogger } from '../services/loggingService.js';
 
@@ -73,6 +80,15 @@ const providers = {
           replaysSessionSampleRate: isProduction() ? 0.1 : 0,
           replaysOnErrorSampleRate: isProduction() ? 1.0 : 0,
 
+          // Capture ALL errors (not sampled)
+          sampleRate: 1.0,
+
+          // GDPR compliance - don't infer PII from requests
+          sendDefaultPii: false,
+
+          // Breadcrumb depth for debugging context
+          maxBreadcrumbs: 50,
+
           // Filter out non-actionable errors
           ignoreErrors: [
             // Network errors
@@ -88,6 +104,20 @@ const providers = {
             'The operation was aborted',
             // Resize observer
             'ResizeObserver loop',
+            'ResizeObserver loop completed with undelivered notifications',
+            // Cancelled requests
+            'TypeError: cancelled',
+            'TypeError: Cancelled',
+            // Cross-origin script errors
+            'Script error.',
+          ],
+
+          // Deny URLs from browser extensions
+          denyUrls: [
+            /extensions\//i,
+            /^chrome:\/\//i,
+            /^moz-extension:\/\//i,
+            /^safari-extension:\/\//i,
           ],
 
           // Don't send in development unless explicitly enabled
@@ -125,7 +155,13 @@ const providers = {
 
           // Integrations
           integrations: [
-            Sentry.browserTracingIntegration(),
+            Sentry.reactRouterV7BrowserTracingIntegration({
+              useEffect: React.useEffect,
+              useLocation,
+              useNavigationType,
+              createRoutesFromChildren,
+              matchRoutes,
+            }),
             Sentry.replayIntegration({
               maskAllText: true,
               blockAllMedia: true,
@@ -269,6 +305,8 @@ function getProvider() {
 
 /**
  * Capture an exception/error
+ * @param error
+ * @param context
  */
 export function captureException(error, context = {}) {
   // Also log to our logger
@@ -287,6 +325,9 @@ export function captureException(error, context = {}) {
 
 /**
  * Capture a message
+ * @param message
+ * @param level
+ * @param context
  */
 export function captureMessage(message, level = 'error', context = {}) {
   getProvider().captureMessage(message, level, context);
@@ -294,6 +335,7 @@ export function captureMessage(message, level = 'error', context = {}) {
 
 /**
  * Set user context for error reports
+ * @param user
  */
 export function setUser(user) {
   if (user) {
@@ -310,6 +352,8 @@ export function setUser(user) {
 
 /**
  * Set additional context for error reports
+ * @param name
+ * @param context
  */
 export function setContext(name, context) {
   getProvider().setContext(name, context);
@@ -317,6 +361,10 @@ export function setContext(name, context) {
 
 /**
  * Add a breadcrumb for debugging
+ * @param category
+ * @param message
+ * @param data
+ * @param level
  */
 export function addBreadcrumb(category, message, data = {}, level = 'info') {
   getProvider().addBreadcrumb({
@@ -330,6 +378,8 @@ export function addBreadcrumb(category, message, data = {}, level = 'info') {
 
 /**
  * Start a performance transaction
+ * @param name
+ * @param op
  */
 export function startTransaction(name, op = 'custom') {
   return getProvider().startTransaction(name, op);
@@ -337,6 +387,8 @@ export function startTransaction(name, op = 'custom') {
 
 /**
  * Wrap a function with error tracking
+ * @param fn
+ * @param context
  */
 export function withErrorTracking(fn, context = {}) {
   return async (...args) => {
@@ -352,6 +404,8 @@ export function withErrorTracking(fn, context = {}) {
 /**
  * React Error Boundary helper
  * Use with React's componentDidCatch or ErrorBoundary
+ * @param error
+ * @param errorInfo
  */
 export function handleReactError(error, errorInfo) {
   captureException(error, {
@@ -362,6 +416,7 @@ export function handleReactError(error, errorInfo) {
 
 /**
  * Create an error boundary wrapper component
+ * @param FallbackComponent
  */
 export function createErrorBoundary(FallbackComponent) {
   return class ErrorBoundary extends React.Component {
@@ -388,6 +443,11 @@ export function createErrorBoundary(FallbackComponent) {
     }
   };
 }
+
+/**
+ * Sentry-wrapped Routes component for route-aware performance tracing
+ */
+export const SentryRoutes = Sentry.withSentryReactRouterV7Routing(Routes);
 
 /**
  * Sentry Error Boundary component wrapper
