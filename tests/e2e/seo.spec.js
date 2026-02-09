@@ -12,11 +12,8 @@ test.describe('SEO Meta Tags', () => {
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
 
-      // Wait for React to hydrate and update meta tags
-      await page.waitForTimeout(500);
-
-      // Title
-      await expect(page).toHaveTitle(/BizScreen/);
+      // Wait for React to hydrate and update meta tags by waiting for the title to be set
+      await expect(page).toHaveTitle(/BizScreen/, { timeout: 5000 });
 
       // Meta description
       const description = page.locator('meta[name="description"]');
@@ -40,10 +37,9 @@ test.describe('SEO Meta Tags', () => {
     test('pricing page has correct meta tags', async ({ page }) => {
       await page.goto('/pricing');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
 
-      // Title
-      await expect(page).toHaveTitle(/Pricing.*BizScreen/);
+      // Wait for React to hydrate by waiting for the title to be set
+      await expect(page).toHaveTitle(/Pricing.*BizScreen/, { timeout: 5000 });
 
       // Meta description
       const description = page.locator('meta[name="description"]');
@@ -53,10 +49,9 @@ test.describe('SEO Meta Tags', () => {
     test('features page has correct meta tags', async ({ page }) => {
       await page.goto('/features');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
 
-      // Title
-      await expect(page).toHaveTitle(/Features.*BizScreen/);
+      // Wait for React to hydrate by waiting for the title to be set
+      await expect(page).toHaveTitle(/Features.*BizScreen/, { timeout: 5000 });
 
       // Meta description
       const description = page.locator('meta[name="description"]');
@@ -68,10 +63,9 @@ test.describe('SEO Meta Tags', () => {
     test('login page has noindex directive', async ({ page }) => {
       await page.goto('/auth/login');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
 
-      // Title
-      await expect(page).toHaveTitle(/Sign In.*BizScreen/);
+      // Wait for React to hydrate by waiting for the title to be set
+      await expect(page).toHaveTitle(/Sign In.*BizScreen/, { timeout: 5000 });
 
       // Robots should have noindex
       const robots = page.locator('meta[name="robots"]');
@@ -81,10 +75,9 @@ test.describe('SEO Meta Tags', () => {
     test('signup page has correct meta tags', async ({ page }) => {
       await page.goto('/auth/signup');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(500);
 
-      // Title
-      await expect(page).toHaveTitle(/Create Account.*BizScreen/);
+      // Wait for React to hydrate by waiting for the title to be set
+      await expect(page).toHaveTitle(/Create Account.*BizScreen/, { timeout: 5000 });
 
       // Should be indexable (signup pages are often indexed)
       const description = page.locator('meta[name="description"]');

@@ -20,19 +20,22 @@ test.describe('Social Accounts Page', () => {
   test('can navigate to social accounts page', async ({ page }) => {
     // Look for social accounts link in sidebar
     const socialButton = page.getByRole('button', { name: /social accounts/i });
-    if (await socialButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+    const socialButtonCount = await socialButton.count();
+    if (socialButtonCount > 0 && await socialButton.isVisible()) {
       await socialButton.click();
     } else {
       // Try direct navigation - click through settings if needed
       const settingsButton = page.getByRole('button', { name: /settings/i });
-      if (await settingsButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+      const settingsCount = await settingsButton.count();
+      if (settingsCount > 0 && await settingsButton.isVisible()) {
         await settingsButton.click();
-        await page.waitForTimeout(300);
-      }
-      // Try clicking social accounts again
-      const socialLink = page.getByText(/social accounts/i);
-      if (await socialLink.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await socialLink.click();
+        // Wait for submenu to expand by waiting for social accounts link to appear
+        const socialLink = page.getByText(/social accounts/i);
+        await socialLink.waitFor({ state: 'visible', timeout: 2000 }).catch(() => {});
+        const linkCount = await socialLink.count();
+        if (linkCount > 0 && await socialLink.first().isVisible()) {
+          await socialLink.first().click();
+        }
       }
     }
 

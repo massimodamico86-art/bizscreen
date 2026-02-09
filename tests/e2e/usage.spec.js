@@ -71,12 +71,9 @@ test.describe.skip('Usage Dashboard', () => {
 
     await refreshButton.click();
 
-    // Should show loading state briefly
-    // The button might have a spinning icon or be disabled
-    await page.waitForTimeout(500);
-
-    // Should return to normal state
-    await expect(refreshButton).toBeEnabled();
+    // Should show loading state briefly and return to normal state
+    // Wait for the button to be enabled (handles loading state automatically)
+    await expect(refreshButton).toBeEnabled({ timeout: 5000 });
   });
 
   test('displays correct color coding for usage levels', async ({ page }) => {
@@ -123,10 +120,9 @@ test.describe.skip('Usage Dashboard', () => {
     if (await infoIcon.isVisible()) {
       await infoIcon.hover();
 
-      // Tooltip should appear
-      await page.waitForTimeout(300);
+      // Tooltip should appear - use auto-waiting
       const tooltip = page.locator('[class*="bg-gray-900"]');
-      await expect(tooltip).toBeVisible();
+      await expect(tooltip).toBeVisible({ timeout: 2000 });
     }
   });
 });

@@ -51,8 +51,11 @@ test('check supabase config in browser', async ({ page }) => {
   // Click sign in
   await page.getByRole('button', { name: /sign in|log in/i }).click();
 
-  // Wait a bit and check the page state
-  await page.waitForTimeout(3000);
+  // Wait for auth to process - either redirect or error message appears
+  await Promise.race([
+    page.waitForURL(/\/app/, { timeout: 10000 }),
+    page.locator('.bg-red-50').waitFor({ state: 'visible', timeout: 10000 }),
+  ]).catch(() => {});
 
   // Get any error messages
   const errorText = await page.locator('.bg-red-50').textContent().catch(() => 'no error');
