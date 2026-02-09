@@ -36,17 +36,18 @@ Plans:
   2. Element assertions use appropriate wait strategies
   3. Network-dependent tests handle async operations correctly
   4. Previously flaky tests pass consistently across 5 consecutive runs
-**Plans**: 8 plans
+**Plans**: 9 plans
 
 Plans:
-- [ ] 37-01-PLAN.md — Stabilize Core Auth & Navigation (helpers.js, auth.spec.js)
-- [ ] 37-02-PLAN.md — Stabilize Dashboard & Basic Pages (dashboard, screens, playlists, media)
-- [ ] 37-03-PLAN.md — Stabilize Complex Interactions (smoke tests, client tests)
-- [ ] 37-04-PLAN.md — Stabilize Feature-Specific Pages (schedules, settings, admin, brand-theme)
-- [ ] 37-05-PLAN.md — Stabilize Content & Templates (content-performance, template tests)
-- [ ] 37-06-PLAN.md — Stabilize Advanced Features (scenes, editors, screen-assignments)
-- [ ] 37-07-PLAN.md — Stabilize Alerts & Diagnostics (alerts, diagnostics tests)
-- [ ] 37-08-PLAN.md — Stabilize Remaining Files and finalize SKIPPED-TESTS.md
+- [x] 37-01-PLAN.md — Stabilize Core Auth & Navigation (helpers.js, auth.spec.js)
+- [x] 37-02-PLAN.md — Stabilize Dashboard & Basic Pages (dashboard, screens, playlists, media)
+- [x] 37-03-PLAN.md — Stabilize Complex Interactions (smoke tests, client tests)
+- [x] 37-04-PLAN.md — Stabilize Feature-Specific Pages (schedules, settings, admin, brand-theme)
+- [x] 37-05-PLAN.md — Stabilize Content & Templates (content-performance, template tests)
+- [x] 37-06-PLAN.md — Stabilize Advanced Features (scenes, editors, screen-assignments)
+- [x] 37-07-PLAN.md — Stabilize Alerts & Diagnostics (alerts, diagnostics tests)
+- [x] 37-08-PLAN.md — Stabilize Remaining Files and finalize SKIPPED-TESTS.md
+- [ ] 37-09-PLAN.md — Gap closure: Fix test design issues in 5 files
 
 ### Phase 38: E2E Test Coverage Gate
 **Goal**: E2E test pass rate reaches 90%+ threshold
@@ -110,7 +111,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 36. E2E Test Infrastructure | 2/2 | Complete | 2026-02-08 |
-| 37. E2E Test Stabilization | 0/8 | Not started | - |
+| 37. E2E Test Stabilization | 8/9 | Gap Closure | - |
 | 38. E2E Test Coverage Gate | 0/TBD | Not started | - |
 | 39. Error Monitoring Setup | 0/TBD | Not started | - |
 | 40. Error Monitoring Production | 0/TBD | Not started | - |
@@ -145,10 +146,10 @@ All milestones shipped successfully.
 | v2 Templates & Platform | 13-23 | 39 | Complete | 2026-01-27 |
 | v2.1 Tech Debt Cleanup | 24-29 | 11 | Complete | 2026-01-28 |
 | v2.2 Onboarding Polish | 30-35 | 16 | Complete | 2026-02-05 |
-| v2.3 Production Hardening | 36-41 | 10+ | In Progress | - |
+| v2.3 Production Hardening | 36-41 | 11+ | In Progress | - |
 
 **Total:** 36 phases complete, 143 plans executed | 6 phases planned for v2.3
 
 ---
-*Last updated: 2026-02-08 — Phase 37 planned (8 plans)*
-*Next: `/gsd:execute-phase 37` to stabilize E2E tests*
+*Last updated: 2026-02-08 — Phase 37 gap closure plan added (37-09)*
+*Next: `/gsd:execute-phase 37` to complete gap closure*
