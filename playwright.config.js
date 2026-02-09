@@ -37,7 +37,8 @@ export default defineConfig({
   // Reporter to use
   reporter: [
     ['list'],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }]
+    ['html', { open: 'never', outputFolder: 'playwright-report' }],
+    ['json', { outputFile: 'test-results/e2e-results.json' }],
   ],
 
   // Shared settings for all projects
