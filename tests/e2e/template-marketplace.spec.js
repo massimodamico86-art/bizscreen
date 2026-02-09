@@ -18,8 +18,9 @@ import { loginAndPrepare, waitForPageReady, dismissAnyModals } from './helpers.j
  * Navigate to marketplace section
  */
 async function navigateToMarketplace(page) {
-  const marketplaceButton = page.getByRole('button', { name: /marketplace/i }).first();
-  await marketplaceButton.click();
+  // Navigation shows "Templates" not "Marketplace"
+  const templatesButton = page.getByRole('button', { name: /templates/i }).first();
+  await templatesButton.click();
   await waitForPageReady(page);
 }
 
@@ -187,21 +188,19 @@ test.describe('Template Preview Modal', () => {
 // ============================================================================
 
 test.describe('Admin Template Management', () => {
-  // Skip if super admin credentials not configured
+  // Use storage state for super admin authentication
+  test.use({ storageState: 'playwright/.auth/superadmin.json' });
+
+  // Skip if super admin credentials not configured (needed for storage state generation)
   test.skip(
     () => !process.env.TEST_SUPERADMIN_EMAIL,
     'Super admin credentials not configured. Set TEST_SUPERADMIN_EMAIL and TEST_SUPERADMIN_PASSWORD to run these tests.'
   );
 
   test.beforeEach(async ({ page }) => {
-    if (process.env.TEST_SUPERADMIN_EMAIL && process.env.TEST_SUPERADMIN_PASSWORD) {
-      await page.goto('/');
-      await page.getByPlaceholder(/email/i).fill(process.env.TEST_SUPERADMIN_EMAIL);
-      await page.getByPlaceholder(/password/i).fill(process.env.TEST_SUPERADMIN_PASSWORD);
-      await page.getByRole('button', { name: /sign in|log in/i }).click();
-      await page.waitForURL('**/*', { timeout: 10000 });
-      await dismissAnyModals(page);
-    }
+    // Navigate to app (already authenticated via storage state)
+    await page.goto('/app');
+    await dismissAnyModals(page);
   });
 
   test('shows Template Library navigation for super admin', async ({ page }) => {
