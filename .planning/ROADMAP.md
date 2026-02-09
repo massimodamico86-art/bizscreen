@@ -53,11 +53,10 @@ All milestones shipped successfully.
   2. User can search codebase for OnboardingWizard and WelcomeModal and find zero file matches
   3. User can search codebase for legacy onboarding localStorage keys and find zero references
   4. User can inspect migration 105 and confirm it no longer references a non-existent tenants table
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 42-01: TBD
-- [ ] 42-02: TBD
+- [ ] 42-01-PLAN.md — Remove dead code (AutoBuildOnboardingModal, autoBuildService), fix migration 105 tenant_id, verify all cleanup
 
 ### Phase 43: E2E Test Triage
 **Goal**: Every E2E test either passes, is deleted (if obsolete), or has documented justification for being skipped
