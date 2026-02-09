@@ -157,12 +157,10 @@ test.describe.skip('Alert Notification Flow', () => {
       if (await bellButton.isVisible({ timeout: 5000 }).catch(() => false)) {
         await bellButton.click();
 
-        // Wait for dropdown
-        await page.waitForTimeout(500);
-
-        // Look for dropdown content
+        // Wait for dropdown to appear with proper element wait
         const dropdown = page.locator('[role="menu"], .dropdown, .notification-dropdown').first();
-        const hasDropdown = await dropdown.isVisible({ timeout: 3000 }).catch(() => false);
+        await dropdown.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
+        const hasDropdown = await dropdown.isVisible();
 
         // Close by clicking elsewhere
         if (hasDropdown) {
@@ -180,7 +178,9 @@ test.describe.skip('Alert Notification Flow', () => {
       const bellButton = page.locator('[aria-label*="notification"], button:has(svg)').first();
       if (await bellButton.isVisible({ timeout: 5000 }).catch(() => false)) {
         await bellButton.click();
-        await page.waitForTimeout(500);
+        // Wait for dropdown to appear
+        const dropdown = page.locator('[role="menu"], .dropdown, .notification-dropdown').first();
+        await dropdown.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
         // Look for mark all read button
         const markReadBtn = page.locator('button, a').filter({ hasText: /mark.*read/i }).first();
@@ -227,8 +227,8 @@ test.describe('Alert UI Components', () => {
         }
       });
 
-      // Wait for page to stabilize
-      await page.waitForTimeout(1000);
+      // Wait for page to stabilize using DOM content instead of timeout
+      await page.waitForLoadState('domcontentloaded');
 
       // Check for critical errors (not warning-level)
       const criticalErrors = errors.filter(

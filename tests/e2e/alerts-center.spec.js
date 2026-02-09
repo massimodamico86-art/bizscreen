@@ -349,7 +349,8 @@ test.describe('Notification Preferences', () => {
       const initialState = await firstToggle.isChecked().catch(() => false);
 
       await firstToggle.click();
-      await page.waitForTimeout(500);
+      // Wait for toggle state to change instead of arbitrary timeout
+      await expect(firstToggle).not.toBeChecked({ timeout: 2000 }).catch(() => {});
 
       // Toggle back to original state
       await firstToggle.click();
