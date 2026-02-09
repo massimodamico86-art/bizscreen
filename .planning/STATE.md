@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-07)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 39 - Error Monitoring Setup
+**Current focus:** Phase 40 - Error Monitoring Production
 
 ## Current Position
 
-Phase: 39 of 41 (Error Monitoring Setup)
-Plan: 1 of 2 in current phase (Sentry wiring complete)
-Status: In progress
-Last activity: 2026-02-09 - Completed 39-01-PLAN.md (Error Monitoring Wiring)
+Phase: 39 of 41 (Error Monitoring Setup — Complete)
+Plan: 2 of 2 in current phase (all plans complete)
+Status: Phase complete, verified
+Last activity: 2026-02-09 - Completed Phase 39 (Error Monitoring Setup verified)
 
-Progress: [#######################.......] 39/41 phases (v2.3 in progress)
+Progress: [########################......] 39/41 phases (v2.3 in progress)
 
 ## Milestone: v2.3 Production Hardening
 
@@ -23,15 +23,15 @@ Progress: [#######################.......] 39/41 phases (v2.3 in progress)
 | 36 | E2E Test Infrastructure | Complete |
 | 37 | E2E Test Stabilization | Verified ✓ |
 | 38 | E2E Test Coverage Gate | Plan 02 checkpoint pending |
-| 39 | Error Monitoring Setup | Plan 01 complete |
+| 39 | Error Monitoring Setup | Complete ✓ |
 | 40 | Error Monitoring Production | Not started |
 | 41 | Feature Flag Cleanup | Not started |
 
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1 + v2.2 + v2.3):**
-- Total plans executed: 155 (75 + 39 + 11 + 16 + 14)
-- Total phases: 37 completed
+- Total plans executed: 157 (75 + 39 + 11 + 16 + 16)
+- Total phases: 39 completed
 - Total codebase: 315,480 LOC JavaScript/JSX
 - Test suite: 2079 unit tests, 1218 E2E tests (172 waitForTimeout calls removed, 5 test files with auth pattern fixes)
 
@@ -90,7 +90,7 @@ Feature flag cleanup pending:
 - VITE_USE_UNIFIED_ONBOARDING flag
 - Obsolete localStorage keys
 
-Error monitoring: Sentry SDK wired into app lifecycle (39-01). Needs DSN configuration and production setup (39-02, Phase 40).
+Error monitoring: Sentry SDK wired and verified end-to-end (Phase 39 complete). DSN configured, errors flowing to Sentry dashboard. Needs production alerting and source maps (Phase 40).
 
 Core patterns from v2.3 (Phase 38):
 - Best-of-3 pass rate gating: run Playwright up to 3 times, pass if any run >= 90%
@@ -127,9 +127,9 @@ None for v2.3.
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed 39-01-PLAN.md (Error Monitoring Wiring)
+Stopped at: Phase 39 complete and verified
 Resume file: None
-Next: 39-02-PLAN.md (Error Monitoring Production Configuration)
+Next: Phase 40 (Error Monitoring Production — alerting, source maps)
 
 ---
-*Updated: 2026-02-09 - Completed 39-01-PLAN.md (Sentry wired with React 19 hooks, Router v7 tracing, Supabase interception)*
+*Updated: 2026-02-09 - Phase 39 complete (Sentry error monitoring verified end-to-end, 8/8 must-haves passed)*

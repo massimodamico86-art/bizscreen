@@ -76,8 +76,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 39-01-PLAN.md — Wire Sentry into app lifecycle, React Router v7 tracing, user context, cleanup dead code
-- [ ] 39-02-PLAN.md — Verify Sentry DSN configuration and end-to-end error pipeline
+- [x] 39-01-PLAN.md — Wire Sentry into app lifecycle, React Router v7 tracing, user context, cleanup dead code
+- [x] 39-02-PLAN.md — Verify Sentry DSN configuration and end-to-end error pipeline
 
 ### Phase 40: Error Monitoring Production
 **Goal**: Critical errors trigger immediate notifications with readable stack traces
@@ -115,7 +115,7 @@ Plans:
 | 36. E2E Test Infrastructure | 2/2 | Complete | 2026-02-08 |
 | 37. E2E Test Stabilization | 9/9 | Complete | 2026-02-08 |
 | 38. E2E Test Coverage Gate | 0/2 | Planned | - |
-| 39. Error Monitoring Setup | 0/2 | Planned | - |
+| 39. Error Monitoring Setup | 2/2 | Complete | 2026-02-09 |
 | 40. Error Monitoring Production | 0/TBD | Not started | - |
 | 41. Feature Flag Cleanup | 0/TBD | Not started | - |
 
@@ -153,5 +153,5 @@ All milestones shipped successfully.
 **Total:** 37 phases complete, 155 plans executed | 6 phases planned for v2.3
 
 ---
-*Last updated: 2026-02-09 — Phase 39 plans created (2 plans in 2 waves)*
-*Next: `/gsd:execute-phase 39` to wire Sentry error monitoring into app lifecycle*
+*Last updated: 2026-02-09 — Phase 39 complete (Sentry error monitoring verified end-to-end)*
+*Next: `/gsd:plan-phase 40` to plan production alerting and source maps*
