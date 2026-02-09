@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-09)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone
+**Current focus:** v2.4 Tech Debt Zero
 
 ## Current Position
 
-Phase: 41 of 41 (all milestones complete)
-Plan: N/A — between milestones
-Status: v2.3 Production Hardening archived
-Last activity: 2026-02-09 - Milestone v2.3 archived
-
-Progress: [##############################] 5/5 milestones shipped
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-09 — Milestone v2.4 started
 
 ## Milestones Shipped
 
@@ -66,9 +64,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: v2.3 milestone archived
+Stopped at: Defining v2.4 requirements
 Resume file: None
-Next: `/gsd:new-milestone` to define next milestone
+Next: Define requirements and create roadmap
 
 ---
-*Updated: 2026-02-09 - v2.3 Production Hardening milestone archived. All 5 milestones shipped.*
+*Updated: 2026-02-09 — Milestone v2.4 Tech Debt Zero started.*

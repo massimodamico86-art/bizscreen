@@ -82,13 +82,16 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-**Next milestone: TBD** — Run `/gsd:new-milestone` to define.
+## Current Milestone: v2.4 Tech Debt Zero
 
-Potential areas:
-- Performance optimization (bundle analysis, Core Web Vitals)
-- Delete remaining dead files (AutoBuildOnboardingModal, OnboardingWizard, WelcomeModal)
-- Sentry alert rules and Slack integration
-- RTL/CJK language support
+**Goal:** Eliminate all accumulated tech debt — dead code, ESLint warnings, skipped tests, and incomplete observability — to establish a clean foundation for future feature work.
+
+**Target features:**
+- Dead code cleanup (AutoBuildOnboardingModal, OnboardingWizard, WelcomeModal, obsolete localStorage keys)
+- E2E test triage (fix fixable, delete obsolete, categorize remaining, adopt fixtures)
+- ESLint zero warnings (fix all 7,807 warnings, promote warn→error)
+- Sentry operationalization (Slack integration, alert rules)
+- Migration cleanup (migration 105 tenants table reference)
 
 ### Out of Scope
 
@@ -177,4 +180,4 @@ Potential areas:
 | Feature flag removal over file deletion | De-wire first, delete in separate cleanup | ✓ Good — safe incremental approach |
 
 ---
-*Last updated: 2026-02-09 after v2.3 milestone complete*
+*Last updated: 2026-02-09 after v2.4 milestone started*
