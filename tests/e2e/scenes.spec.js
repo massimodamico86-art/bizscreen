@@ -39,8 +39,9 @@ test.describe.skip('Scenes', () => {
       const sceneCards = page.locator('[data-testid="scene-card"], .scene-card, [class*="SceneCard"]');
       const emptyState = page.locator('text=/no scenes|create.*scene|generate.*scene/i');
 
-      // Wait for content to load
-      await page.waitForTimeout(2000);
+      // Wait for content to load - check for either scenes or empty state
+      const contentIndicator = sceneCards.first().or(emptyState.first());
+      await contentIndicator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
       // Either should be visible
       const hasScenes = await sceneCards.count() > 0;
@@ -54,7 +55,8 @@ test.describe.skip('Scenes', () => {
       await waitForPageReady(page);
 
       // Wait for content to load
-      await page.waitForTimeout(2000);
+      const sceneContent = page.locator('[data-testid="scene-card"], article, .bg-white.rounded-xl').first();
+      await sceneContent.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
       // If scenes exist, they should have business type badges
       const sceneCards = page.locator('[data-testid="scene-card"], article, .bg-white.rounded-xl').first();
@@ -72,13 +74,11 @@ test.describe.skip('Scenes', () => {
       await navigateToSection(page, 'scenes');
       await waitForPageReady(page);
 
-      // Wait for content to load
-      await page.waitForTimeout(2000);
-
       // Look for an "Open Scene" button (if scenes exist)
       const openButton = page.getByRole('button', { name: /open scene/i }).first();
+      await openButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
-      if (await openButton.isVisible().catch(() => false)) {
+      if (await openButton.isVisible()) {
         await openButton.click();
         await waitForPageReady(page);
 
@@ -91,11 +91,10 @@ test.describe.skip('Scenes', () => {
       await navigateToSection(page, 'scenes');
       await waitForPageReady(page);
 
-      await page.waitForTimeout(2000);
-
       const openButton = page.getByRole('button', { name: /open scene/i }).first();
+      await openButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
-      if (await openButton.isVisible().catch(() => false)) {
+      if (await openButton.isVisible()) {
         await openButton.click();
         await waitForPageReady(page);
 
@@ -108,11 +107,10 @@ test.describe.skip('Scenes', () => {
       await navigateToSection(page, 'scenes');
       await waitForPageReady(page);
 
-      await page.waitForTimeout(2000);
-
       const openButton = page.getByRole('button', { name: /open scene/i }).first();
+      await openButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
-      if (await openButton.isVisible().catch(() => false)) {
+      if (await openButton.isVisible()) {
         await openButton.click();
         await waitForPageReady(page);
 
@@ -128,11 +126,10 @@ test.describe.skip('Scenes', () => {
       await navigateToSection(page, 'scenes');
       await waitForPageReady(page);
 
-      await page.waitForTimeout(2000);
-
       const openButton = page.getByRole('button', { name: /open scene/i }).first();
+      await openButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
-      if (await openButton.isVisible().catch(() => false)) {
+      if (await openButton.isVisible()) {
         await openButton.click();
         await waitForPageReady(page);
 
@@ -150,16 +147,15 @@ test.describe.skip('Scenes', () => {
       await navigateToSection(page, 'scenes');
       await waitForPageReady(page);
 
-      await page.waitForTimeout(2000);
-
       const openButton = page.getByRole('button', { name: /open scene/i }).first();
+      await openButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
-      if (await openButton.isVisible().catch(() => false)) {
+      if (await openButton.isVisible()) {
         await openButton.click();
         await waitForPageReady(page);
 
         const publishButton = page.getByRole('button', { name: /publish.*screen/i });
-        if (await publishButton.isVisible().catch(() => false)) {
+        if (await publishButton.isVisible()) {
           await publishButton.click();
 
           // Modal should show device selection area
@@ -179,16 +175,15 @@ test.describe.skip('Scenes', () => {
       await navigateToSection(page, 'scenes');
       await waitForPageReady(page);
 
-      await page.waitForTimeout(2000);
-
       const openButton = page.getByRole('button', { name: /open scene/i }).first();
+      await openButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
-      if (await openButton.isVisible().catch(() => false)) {
+      if (await openButton.isVisible()) {
         await openButton.click();
         await waitForPageReady(page);
 
         const publishButton = page.getByRole('button', { name: /publish.*screen/i });
-        if (await publishButton.isVisible().catch(() => false)) {
+        if (await publishButton.isVisible()) {
           await publishButton.click();
 
           // Modal should open
@@ -197,9 +192,9 @@ test.describe.skip('Scenes', () => {
 
           // Click cancel or close button
           const cancelButton = modal.getByRole('button', { name: /cancel|close/i });
-          if (await cancelButton.isVisible().catch(() => false)) {
+          if (await cancelButton.isVisible()) {
             await cancelButton.click();
-            await expect(modal).not.toBeVisible({ timeout: 3000 });
+            await modal.waitFor({ state: 'hidden', timeout: 3000 });
           }
         }
       }

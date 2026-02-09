@@ -30,11 +30,12 @@ test.describe.skip('Scene Editor', () => {
     // Go to scenes list
     await navigateToSection(page, 'scenes');
     await waitForPageReady(page);
-    await page.waitForTimeout(2000);
 
-    // Open first scene
+    // Wait for scenes to load
     const openButton = page.getByRole('button', { name: /open scene/i }).first();
-    if (!await openButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await openButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+
+    if (!await openButton.isVisible()) {
       return false;
     }
 
@@ -43,13 +44,18 @@ test.describe.skip('Scene Editor', () => {
 
     // Click "Edit Design" button
     const editDesignButton = page.getByRole('button', { name: /edit design/i });
-    if (!await editDesignButton.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await editDesignButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+
+    if (!await editDesignButton.isVisible()) {
       return false;
     }
 
     await editDesignButton.click();
     await waitForPageReady(page);
-    await page.waitForTimeout(1000);
+
+    // Wait for editor canvas to be ready
+    const canvas = page.locator('[data-testid="editor-canvas"], .editor-canvas, [class*="EditorCanvas"]').first();
+    await canvas.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
     return true;
   }
@@ -127,7 +133,10 @@ test.describe.skip('Scene Editor', () => {
           const slidesBefore = await page.locator('[data-testid="slide-thumbnail"], .slide-thumbnail').count();
 
           await addSlideButton.click();
-          await page.waitForTimeout(500);
+
+          // Wait for slide to be added
+          const newSlide = page.locator('[data-testid="slide-thumbnail"], .slide-thumbnail').last();
+          await newSlide.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
           // Should have one more slide
           const slidesAfter = await page.locator('[data-testid="slide-thumbnail"], .slide-thumbnail').count();
@@ -147,11 +156,13 @@ test.describe.skip('Scene Editor', () => {
         if (count > 1) {
           // Click second slide
           await thumbnails.nth(1).click();
-          await page.waitForTimeout(300);
+
+          // Wait for selection indicator to appear
+          const selectedSlide = page.locator('[data-testid="slide-thumbnail"].ring-2, .slide-thumbnail.selected, .ring-blue-500').first();
+          await selectedSlide.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
           // Should have visual indicator of selection
-          const selectedSlide = page.locator('[data-testid="slide-thumbnail"].ring-2, .slide-thumbnail.selected, .ring-blue-500');
-          await expect(selectedSlide.first()).toBeVisible({ timeout: 5000 });
+          await expect(selectedSlide).toBeVisible({ timeout: 5000 });
         }
       }
     });
@@ -183,12 +194,14 @@ test.describe.skip('Scene Editor', () => {
         // Click text button
         const textButton = page.getByRole('button', { name: /text/i }).first();
 
-        if (await textButton.isVisible().catch(() => false)) {
+        if (await textButton.isVisible()) {
           await textButton.click();
-          await page.waitForTimeout(500);
+
+          // Wait for text indicator in properties panel
+          const textIndicator = page.locator('text=/text|heading|body/i').first();
+          await textIndicator.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
           // Should see a text block on canvas or properties panel updates
-          const textIndicator = page.locator('text=/text|heading|body/i').first();
           await expect(textIndicator).toBeVisible({ timeout: 5000 });
         }
       }
@@ -200,12 +213,14 @@ test.describe.skip('Scene Editor', () => {
       if (success) {
         const shapeButton = page.getByRole('button', { name: /shape|square|rectangle/i }).first();
 
-        if (await shapeButton.isVisible().catch(() => false)) {
+        if (await shapeButton.isVisible()) {
           await shapeButton.click();
-          await page.waitForTimeout(500);
+
+          // Wait for shape indicator in properties panel
+          const shapeIndicator = page.locator('text=/shape|fill|opacity/i').first();
+          await shapeIndicator.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
           // Properties should update to show shape options
-          const shapeIndicator = page.locator('text=/shape|fill|opacity/i').first();
           await expect(shapeIndicator).toBeVisible({ timeout: 5000 });
         }
       }
@@ -257,13 +272,15 @@ test.describe.skip('Scene Editor', () => {
         // Look for AI/sparkles button
         const aiButton = page.getByRole('button', { name: /ai|suggest|sparkle/i }).first();
 
-        if (await aiButton.isVisible().catch(() => false)) {
+        if (await aiButton.isVisible()) {
           await aiButton.click();
-          await page.waitForTimeout(500);
+
+          // Wait for AI panel to appear
+          const aiPanel = page.locator('text=/ai assistant|templates|improve/i').first();
+          await aiPanel.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
           // Should see AI panel with tabs
-          const aiPanel = page.locator('text=/ai assistant|templates|improve/i');
-          await expect(aiPanel.first()).toBeVisible({ timeout: 5000 });
+          await expect(aiPanel).toBeVisible({ timeout: 5000 });
         }
       }
     });
@@ -275,15 +292,20 @@ test.describe.skip('Scene Editor', () => {
         // Open AI panel
         const aiButton = page.getByRole('button', { name: /ai|suggest|sparkle/i }).first();
 
-        if (await aiButton.isVisible().catch(() => false)) {
+        if (await aiButton.isVisible()) {
           await aiButton.click();
-          await page.waitForTimeout(500);
+
+          // Wait for AI panel to appear
+          const panelContent = page.locator('text=/ai assistant|templates|improve/i').first();
+          await panelContent.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
 
           // Click templates tab if not already active
           const templatesTab = page.getByRole('button', { name: /templates/i }).first();
-          if (await templatesTab.isVisible().catch(() => false)) {
+          if (await templatesTab.isVisible()) {
             await templatesTab.click();
-            await page.waitForTimeout(300);
+            // Wait for presets to appear
+            const presets = page.locator('text=/menu|special|welcome|promo|announcement/i').first();
+            await presets.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
           }
 
           // Should show preset templates
