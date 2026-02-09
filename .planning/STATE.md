@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-07)
 
 ## Current Position
 
-Phase: 39 of 41 (Error Monitoring Setup — Complete)
-Plan: 2 of 2 in current phase (all plans complete)
-Status: Phase complete, verified
-Last activity: 2026-02-09 - Completed Phase 39 (Error Monitoring Setup verified)
+Phase: 40 of 41 (Error Monitoring Production — In Progress)
+Plan: 1 of 2 in current phase
+Status: Plan 01 complete, Plan 02 remaining
+Last activity: 2026-02-09 - Completed 40-01 (Source map upload pipeline)
 
 Progress: [########################......] 39/41 phases (v2.3 in progress)
 
@@ -24,13 +24,13 @@ Progress: [########################......] 39/41 phases (v2.3 in progress)
 | 37 | E2E Test Stabilization | Verified ✓ |
 | 38 | E2E Test Coverage Gate | Plan 02 checkpoint pending |
 | 39 | Error Monitoring Setup | Complete ✓ |
-| 40 | Error Monitoring Production | Not started |
+| 40 | Error Monitoring Production | Plan 01 complete |
 | 41 | Feature Flag Cleanup | Not started |
 
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1 + v2.2 + v2.3):**
-- Total plans executed: 157 (75 + 39 + 11 + 16 + 16)
+- Total plans executed: 158 (75 + 39 + 11 + 16 + 17)
 - Total phases: 39 completed
 - Total codebase: 315,480 LOC JavaScript/JSX
 - Test suite: 2079 unit tests, 1218 E2E tests (172 waitForTimeout calls removed, 5 test files with auth pattern fixes)
@@ -90,7 +90,7 @@ Feature flag cleanup pending:
 - VITE_USE_UNIFIED_ONBOARDING flag
 - Obsolete localStorage keys
 
-Error monitoring: Sentry SDK wired and verified end-to-end (Phase 39 complete). DSN configured, errors flowing to Sentry dashboard. Needs production alerting and source maps (Phase 40).
+Error monitoring: Sentry SDK wired and verified end-to-end (Phase 39 complete). DSN configured, errors flowing to Sentry dashboard. Source map upload pipeline configured (Phase 40-01) -- @sentry/vite-plugin with hidden source maps, auto-injected release IDs. Pending: user configures SENTRY_AUTH_TOKEN/ORG/PROJECT secrets, production alerting rules (Phase 40-02).
 
 Core patterns from v2.3 (Phase 38):
 - Best-of-3 pass rate gating: run Playwright up to 3 times, pass if any run >= 90%
@@ -103,6 +103,13 @@ Core patterns from v2.3 (Phase 38):
 - test.fixme for individual tests pending selector updates (preserves test code)
 - storageState auth replacing manual login in test beforeEach
 - element.or() composition for resilient close button selectors (cancelButton.or(closeButton).or(closeModalButton))
+
+### Key Decisions (Phase 40-01)
+
+- Used hidden source maps (sourcemap: 'hidden') to generate .map files without sourceMappingURL comments, preventing public exposure
+- Removed manual release from Sentry.init() -- auto-injected by @sentry/vite-plugin via Debug IDs to prevent release mismatch
+- SENTRY_* env vars are server-side (not VITE_ prefixed) since they are consumed by the Vite plugin process, not embedded in client bundle
+- Created barrel re-export files for broken feature-flags imports rather than rewriting FeatureFlagsPage (3 pre-existing broken import paths fixed)
 
 ### Key Decisions (Phase 39-01)
 
@@ -127,9 +134,9 @@ None for v2.3.
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Phase 39 complete and verified
+Stopped at: Completed 40-01-PLAN.md (source map upload pipeline)
 Resume file: None
-Next: Phase 40 (Error Monitoring Production — alerting, source maps)
+Next: Phase 40 Plan 02 (production alerting rules)
 
 ---
-*Updated: 2026-02-09 - Phase 39 complete (Sentry error monitoring verified end-to-end, 8/8 must-haves passed)*
+*Updated: 2026-02-09 - Phase 40 Plan 01 complete (source map upload pipeline with @sentry/vite-plugin, hidden source maps, CI env vars)*
