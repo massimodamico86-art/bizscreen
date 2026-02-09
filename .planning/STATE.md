@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-07)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 40 - Error Monitoring Production
+**Current focus:** Phase 41 - Feature Flag Cleanup (Complete)
 
 ## Current Position
 
-Phase: 40 of 41 (Error Monitoring Production — Complete)
-Plan: 2 of 2 in current phase
-Status: Phase 40 complete (both plans finished)
-Last activity: 2026-02-09 - Completed 40-02 (Production alerting configuration - GitHub secrets configured, alerting deferred)
+Phase: 41 of 41 (Feature Flag Cleanup — Complete)
+Plan: 1 of 1 in current phase
+Status: Phase 41 complete — v2.3 Production Hardening milestone finished
+Last activity: 2026-02-09 - Completed 41-01 (Feature flag cleanup - VITE_USE_UNIFIED_ONBOARDING removed, AutoBuild dead code removed)
 
-Progress: [#########################.....] 40/41 phases (v2.3 in progress)
+Progress: [##############################] 41/41 phases (v2.3 complete)
 
 ## Milestone: v2.3 Production Hardening
 
@@ -25,13 +25,13 @@ Progress: [#########################.....] 40/41 phases (v2.3 in progress)
 | 38 | E2E Test Coverage Gate | Plan 02 checkpoint pending |
 | 39 | Error Monitoring Setup | Complete ✓ |
 | 40 | Error Monitoring Production | Complete ✓ |
-| 41 | Feature Flag Cleanup | Not started |
+| 41 | Feature Flag Cleanup | Complete ✓ |
 
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1 + v2.2 + v2.3):**
-- Total plans executed: 159 (75 + 39 + 11 + 16 + 18)
-- Total phases: 40 completed
+- Total plans executed: 160 (75 + 39 + 11 + 16 + 19)
+- Total phases: 41 completed
 - Total codebase: 315,480 LOC JavaScript/JSX
 - Test suite: 2079 unit tests, 1218 E2E tests (172 waitForTimeout calls removed, 5 test files with auth pattern fixes)
 
@@ -61,7 +61,7 @@ Core patterns from v2.3 (Phase 36):
 
 Core patterns from v2.2:
 - Unified onboarding step sequence: welcome_tour -> industry_selection -> starter_pack -> screen_pairing -> complete
-- Feature flag pattern for safe rollout (VITE_USE_UNIFIED_ONBOARDING)
+- Feature flag pattern for safe rollout (VITE_USE_UNIFIED_ONBOARDING) — flag removed in Phase 41, unified onboarding now unconditional
 - Modal-based editor isolation with callback props (onReady, onError)
 
 ### Tech Debt (v2.3 Targets)
@@ -84,11 +84,11 @@ E2E test stability issues:
 - Coverage report: .planning/phases/38-e2e-test-coverage-gate/COVERAGE-REPORT.md
 - Recommendation: Run with --workers=1 for consistent results
 
-Feature flag cleanup pending:
-- OnboardingWizard component (confirmed broken)
-- WelcomeModal legacy code
-- VITE_USE_UNIFIED_ONBOARDING flag
-- Obsolete localStorage keys
+Feature flag cleanup (Phase 41 complete):
+- VITE_USE_UNIFIED_ONBOARDING flag removed from env schema, config, DashboardPage, .env.local
+- AutoBuildOnboardingModal de-wired from App.jsx (dead code removed)
+- Remaining unused files: AutoBuildOnboardingModal.jsx, OnboardingWizard (confirmed broken), WelcomeModal legacy code
+- Obsolete localStorage keys still present (out of scope for flag cleanup)
 
 Error monitoring: Sentry SDK wired and verified end-to-end (Phase 39 complete). DSN configured, errors flowing to Sentry dashboard. Source map upload pipeline configured (Phase 40-01) -- @sentry/vite-plugin with hidden source maps, auto-injected release IDs. GitHub secrets configured (Phase 40-02) -- SENTRY_AUTH_TOKEN, SENTRY_ORG=bizscreen, SENTRY_PROJECT=javascript-react set for CI builds. Slack integration and alert rules deferred to future work.
 
@@ -103,6 +103,13 @@ Core patterns from v2.3 (Phase 38):
 - test.fixme for individual tests pending selector updates (preserves test code)
 - storageState auth replacing manual login in test beforeEach
 - element.or() composition for resilient close button selectors (cancelButton.or(closeButton).or(closeModalButton))
+
+### Key Decisions (Phase 41-01)
+
+- Removed config() import from DashboardPage after all config() references eliminated by flag removal
+- Removed config and fetchScenesForTenant imports from App.jsx since both were only used in dead AutoBuild code
+- Did NOT delete AutoBuildOnboardingModal.jsx file (only de-wired from App.jsx, file deletion out of scope for flag cleanup)
+- .env.local change is local-only (gitignored) — developers need to remove VITE_USE_UNIFIED_ONBOARDING=true from their local .env.local
 
 ### Key Decisions (Phase 40-02)
 
@@ -141,9 +148,9 @@ None for v2.3.
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed Phase 40 (Error Monitoring Production - GitHub secrets configured, alerting deferred)
+Stopped at: Completed Phase 41 (Feature Flag Cleanup - VITE_USE_UNIFIED_ONBOARDING removed, AutoBuild dead code removed)
 Resume file: None
-Next: Phase 41 (Feature Flag Cleanup)
+Next: v2.3 Production Hardening milestone complete. All 41 phases finished.
 
 ---
-*Updated: 2026-02-09 - Phase 40 complete (Error monitoring production with source maps and GitHub secrets configured, alerting deferred)*
+*Updated: 2026-02-09 - Phase 41 complete (Feature flag cleanup - VITE_USE_UNIFIED_ONBOARDING removed, dead AutoBuild code removed from App.jsx). v2.3 milestone finished.*
