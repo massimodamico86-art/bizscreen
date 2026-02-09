@@ -69,27 +69,27 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DEAD-01 | — | Pending |
-| DEAD-02 | — | Pending |
-| DEAD-03 | — | Pending |
-| DEAD-04 | — | Pending |
-| E2E-01 | — | Pending |
-| E2E-02 | — | Pending |
-| E2E-03 | — | Pending |
-| E2E-04 | — | Pending |
-| E2E-05 | — | Pending |
-| LINT-01 | — | Pending |
-| LINT-02 | — | Pending |
-| LINT-03 | — | Pending |
-| SNTY-01 | — | Pending |
-| SNTY-02 | — | Pending |
-| MIGR-01 | — | Pending |
+| DEAD-01 | Phase 42 | Pending |
+| DEAD-02 | Phase 42 | Pending |
+| DEAD-03 | Phase 42 | Pending |
+| DEAD-04 | Phase 42 | Pending |
+| E2E-01 | Phase 43 | Pending |
+| E2E-02 | Phase 43 | Pending |
+| E2E-03 | Phase 43 | Pending |
+| E2E-04 | Phase 43 | Pending |
+| E2E-05 | Phase 43 | Pending |
+| LINT-01 | Phase 44 | Pending |
+| LINT-02 | Phase 44 | Pending |
+| LINT-03 | Phase 44 | Pending |
+| SNTY-01 | Phase 45 | Pending |
+| SNTY-02 | Phase 45 | Pending |
+| MIGR-01 | Phase 42 | Pending |
 
 **Coverage:**
 - v2.4 requirements: 15 total
-- Mapped to phases: 0
-- Unmapped: 15
+- Mapped to phases: 15
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-09*
-*Last updated: 2026-02-09 after initial definition*
+*Last updated: 2026-02-09 -- Traceability updated with phase mappings*
