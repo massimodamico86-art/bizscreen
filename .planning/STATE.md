@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-07)
 
 ## Current Position
 
-Phase: 40 of 41 (Error Monitoring Production — In Progress)
-Plan: 1 of 2 in current phase
-Status: Plan 01 complete, Plan 02 remaining
-Last activity: 2026-02-09 - Completed 40-01 (Source map upload pipeline)
+Phase: 40 of 41 (Error Monitoring Production — Complete)
+Plan: 2 of 2 in current phase
+Status: Phase 40 complete (both plans finished)
+Last activity: 2026-02-09 - Completed 40-02 (Production alerting configuration - GitHub secrets configured, alerting deferred)
 
-Progress: [########################......] 39/41 phases (v2.3 in progress)
+Progress: [#########################.....] 40/41 phases (v2.3 in progress)
 
 ## Milestone: v2.3 Production Hardening
 
@@ -24,14 +24,14 @@ Progress: [########################......] 39/41 phases (v2.3 in progress)
 | 37 | E2E Test Stabilization | Verified ✓ |
 | 38 | E2E Test Coverage Gate | Plan 02 checkpoint pending |
 | 39 | Error Monitoring Setup | Complete ✓ |
-| 40 | Error Monitoring Production | Plan 01 complete |
+| 40 | Error Monitoring Production | Complete ✓ |
 | 41 | Feature Flag Cleanup | Not started |
 
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1 + v2.2 + v2.3):**
-- Total plans executed: 158 (75 + 39 + 11 + 16 + 17)
-- Total phases: 39 completed
+- Total plans executed: 159 (75 + 39 + 11 + 16 + 18)
+- Total phases: 40 completed
 - Total codebase: 315,480 LOC JavaScript/JSX
 - Test suite: 2079 unit tests, 1218 E2E tests (172 waitForTimeout calls removed, 5 test files with auth pattern fixes)
 
@@ -90,7 +90,7 @@ Feature flag cleanup pending:
 - VITE_USE_UNIFIED_ONBOARDING flag
 - Obsolete localStorage keys
 
-Error monitoring: Sentry SDK wired and verified end-to-end (Phase 39 complete). DSN configured, errors flowing to Sentry dashboard. Source map upload pipeline configured (Phase 40-01) -- @sentry/vite-plugin with hidden source maps, auto-injected release IDs. Pending: user configures SENTRY_AUTH_TOKEN/ORG/PROJECT secrets, production alerting rules (Phase 40-02).
+Error monitoring: Sentry SDK wired and verified end-to-end (Phase 39 complete). DSN configured, errors flowing to Sentry dashboard. Source map upload pipeline configured (Phase 40-01) -- @sentry/vite-plugin with hidden source maps, auto-injected release IDs. GitHub secrets configured (Phase 40-02) -- SENTRY_AUTH_TOKEN, SENTRY_ORG=bizscreen, SENTRY_PROJECT=javascript-react set for CI builds. Slack integration and alert rules deferred to future work.
 
 Core patterns from v2.3 (Phase 38):
 - Best-of-3 pass rate gating: run Playwright up to 3 times, pass if any run >= 90%
@@ -103,6 +103,13 @@ Core patterns from v2.3 (Phase 38):
 - test.fixme for individual tests pending selector updates (preserves test code)
 - storageState auth replacing manual login in test beforeEach
 - element.or() composition for resilient close button selectors (cancelButton.or(closeButton).or(closeModalButton))
+
+### Key Decisions (Phase 40-02)
+
+- GitHub secrets configured for source map uploads (SENTRY_AUTH_TOKEN set, SENTRY_ORG=bizscreen, SENTRY_PROJECT=javascript-react)
+- Deferred Slack integration setup to future work when alerting strategy is clearer
+- Deferred alert rules (issue alert, metric alert) to future work when error patterns are understood
+- Deferred end-to-end verification to future work when production deployment pipeline is active
 
 ### Key Decisions (Phase 40-01)
 
@@ -134,9 +141,9 @@ None for v2.3.
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed 40-01-PLAN.md (source map upload pipeline)
+Stopped at: Completed Phase 40 (Error Monitoring Production - GitHub secrets configured, alerting deferred)
 Resume file: None
-Next: Phase 40 Plan 02 (production alerting rules)
+Next: Phase 41 (Feature Flag Cleanup)
 
 ---
-*Updated: 2026-02-09 - Phase 40 Plan 01 complete (source map upload pipeline with @sentry/vite-plugin, hidden source maps, CI env vars)*
+*Updated: 2026-02-09 - Phase 40 complete (Error monitoring production with source maps and GitHub secrets configured, alerting deferred)*
