@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { instrumentSupabaseClient } from './utils/supabaseErrorInterceptor.js';
 
 // Note: We don't import logger here to avoid circular dependency
 // (loggingService -> supabase -> loggingService)
@@ -58,7 +59,7 @@ if (import.meta.env.DEV) {
   });
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+const _supabaseRaw = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
@@ -66,6 +67,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     flowType: 'pkce'
   }
 });
+
+// Wrap with error interceptor for automatic Sentry breadcrumbs and error capture
+export const supabase = instrumentSupabaseClient(_supabaseRaw);
 
 // Only expose in development for debugging
 if (typeof window !== 'undefined' && import.meta.env.DEV) {
