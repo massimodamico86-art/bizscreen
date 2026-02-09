@@ -93,8 +93,10 @@ test.describe('Playlist-Screen Assignment Persistence', () => {
     await page.getByPlaceholder(/enter playlist name/i).fill(playlistName);
     await page.getByRole('button', { name: /create playlist/i }).click();
 
-    // Wait for creation and navigate back to playlists
-    await page.waitForTimeout(2000);
+    // Wait for creation success or navigation
+    const successIndicator = page.getByText(playlistName).or(page.locator('h1:has-text("Playlists")'));
+    await successIndicator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+
     await navigateToSection(page, 'playlists');
 
     // Verify playlist was created
@@ -102,7 +104,10 @@ test.describe('Playlist-Screen Assignment Persistence', () => {
 
     // Step 2: Navigate to screens and assign the playlist
     await navigateToSection(page, 'screens');
-    await page.waitForTimeout(1000);
+
+    // Wait for table or empty state to load
+    const tableOrEmpty = page.locator('table tbody tr').first().or(page.getByText(/you don't have any screens/i));
+    await tableOrEmpty.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
     // Check if we have any screens
     const screenRows = page.locator('table tbody tr');
@@ -121,7 +126,10 @@ test.describe('Playlist-Screen Assignment Persistence', () => {
       if (await nameInput.isVisible({ timeout: 3000 }).catch(() => false)) {
         await nameInput.fill(screenName);
         await page.getByRole('button', { name: /create screen/i }).click();
-        await page.waitForTimeout(2000);
+
+        // Wait for success dialog or error
+        const successDialog = page.getByText(/pairing code/i).or(page.getByText(/screen created/i));
+        await successDialog.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
         // Close success dialog if visible
         const doneBtn = page.getByRole('button', { name: /done/i });
@@ -145,16 +153,19 @@ test.describe('Playlist-Screen Assignment Persistence', () => {
       // Playlist options typically have the playlist name as text
       await firstSelect.selectOption({ label: new RegExp(playlistName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') });
 
-      // Wait for assignment to save
-      await page.waitForTimeout(1000);
+      // Wait for save to complete (the select should still have the value)
+      await page.waitForLoadState('networkidle');
 
       // Step 3: Reload the page
       await page.reload();
-      await page.waitForTimeout(2000);
+      await page.waitForLoadState('domcontentloaded');
 
       // Navigate back to screens (may have been redirected)
       await navigateToSection(page, 'screens');
-      await page.waitForTimeout(1000);
+
+      // Wait for table to reload
+      const tableReloaded = page.locator('table tbody tr').first().or(page.getByText(/you don't have any screens/i));
+      await tableReloaded.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
       // Step 4: Verify the assignment persists
       const refreshedSelect = page.locator('select').first();

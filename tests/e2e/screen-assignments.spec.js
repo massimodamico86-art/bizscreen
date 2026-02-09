@@ -92,8 +92,9 @@ test.describe('Screen Assignments', () => {
   test('screens have playlist assignment dropdowns', async ({ page }) => {
     await navigateToSection(page, 'screens');
 
-    // Wait for screens to load
-    await page.waitForTimeout(1000);
+    // Wait for table or empty state to load
+    const tableOrEmpty = page.locator('table tbody tr').first().or(page.getByText(/you don't have any screens/i));
+    await tableOrEmpty.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
     // Check if there are any screens
     const screenRows = page.locator('table tbody tr');
@@ -116,8 +117,11 @@ test.describe('Screen Assignments', () => {
     test('can assign playlist to screen via dropdown', async ({ page }) => {
       await navigateToSection(page, 'screens');
 
+      // Wait for table or empty state to load
+      const tableOrEmpty = page.locator('table tbody tr').first().or(page.getByText(/you don't have any screens/i));
+      await tableOrEmpty.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+
       // Check if we have any screens with playlist dropdowns
-      await page.waitForTimeout(1000);
       const screenRows = page.locator('table tbody tr');
       const screenCount = await screenRows.count().catch(() => 0);
 
@@ -138,9 +142,12 @@ test.describe('Screen Assignments', () => {
     test('playlist assignment persists after page refresh', async ({ page }) => {
       await navigateToSection(page, 'screens');
 
+      // Wait for table or empty state to load
+      const tableOrEmpty = page.locator('table tbody tr').first().or(page.getByText(/you don't have any screens/i));
+      await tableOrEmpty.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+
       // This test requires existing screens with assigned playlists
       // Check if we have screens with playlist selects that have values
-      await page.waitForTimeout(1000);
       const screensWithPlaylist = page.locator('select').filter({ hasNotText: /no playlist/i });
       const count = await screensWithPlaylist.count().catch(() => 0);
 
@@ -151,11 +158,13 @@ test.describe('Screen Assignments', () => {
         if (originalValue) {
           // Refresh the page
           await page.reload();
-          await page.waitForTimeout(2000);
+          await page.waitForLoadState('domcontentloaded');
 
           // Navigate back to screens
           await navigateToSection(page, 'screens');
-          await page.waitForTimeout(1000);
+
+          // Wait for table to reload
+          await tableOrEmpty.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
           // The value should persist
           const refreshedSelect = page.locator('select').first();
@@ -174,8 +183,9 @@ test.describe('Screen Assignments', () => {
     test('can view screen status (online/offline)', async ({ page }) => {
       await navigateToSection(page, 'screens');
 
-      // Wait for screens to load
-      await page.waitForTimeout(1000);
+      // Wait for table or empty state to load
+      const tableOrEmpty = page.locator('table tbody tr').first().or(page.getByText(/you don't have any screens/i));
+      await tableOrEmpty.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
       const screenRows = page.locator('table tbody tr');
       const screenCount = await screenRows.count().catch(() => 0);

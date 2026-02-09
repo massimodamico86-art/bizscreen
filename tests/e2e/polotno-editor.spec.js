@@ -213,11 +213,11 @@ test.describe('Polotno Editor - Close Behavior', () => {
     await expect(page.locator('[role="dialog"]')).toBeVisible({ timeout: 5000 });
     await page.waitForSelector('iframe[title="Design Editor"]', { timeout: 15000 });
 
-    // Give editor a moment to fully initialize
-    await page.waitForTimeout(1000);
+    // Wait for editor to fully initialize by checking for close button state
+    const closeButton = page.locator('[aria-label="Close modal"]');
+    await closeButton.waitFor({ state: 'visible', timeout: 5000 });
 
     // Click close button
-    const closeButton = page.locator('[aria-label="Close modal"]');
     await closeButton.click();
 
     // Modal should close without showing unsaved changes dialog
