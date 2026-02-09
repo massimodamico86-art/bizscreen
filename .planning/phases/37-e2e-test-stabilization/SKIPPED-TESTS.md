@@ -11,6 +11,7 @@ Tracking document for E2E tests that are skipped during stabilization.
 | External dependencies | 0 | |
 | Infrastructure issues | 0 | Backend timeouts are transient, not test issues |
 | Feature not accessible | 30 | scenes.spec.js and scene-editor.spec.js (Scenes not in sidebar nav) |
+| Test design issues | 2 files | feature-diagnostic.spec.js and location-diagnostic.spec.js use legacy patterns |
 
 ## Skipped Tests by Category
 
@@ -187,6 +188,46 @@ All 30 waitForTimeout calls removed across 5 files.
 
 **Recommendation:** Scenes and scene-editor tests are correctly skipped since the feature is not accessible via navigation. The polotno-editor and screen-assignments tests are stable. The playlist-screen-persistence test passes for the intended project (chromium with client credentials).
 
+### Category 7: Alerts & Diagnostics
+
+**Status:** Stabilized (waitForTimeout removal complete, pre-existing test design issues documented)
+
+All 13 waitForTimeout calls removed across 4 files.
+
+**Files stabilized:**
+- `alerts-center.spec.js` - 1 waitForTimeout call removed
+- `alert-notification-flow.spec.js` - 3 waitForTimeout calls removed
+- `feature-diagnostic.spec.js` - 8 waitForTimeout calls removed
+- `location-diagnostic.spec.js` - 1 waitForTimeout call removed (5 seconds)
+
+**Verification results:**
+
+| File | 5 Consecutive Runs | Pass Rate | Notes |
+|------|-------------------|-----------|-------|
+| alerts-center.spec.js | 5/5 passed | 100% | 7-8 tests per run + 8-9 skipped |
+| alert-notification-flow.spec.js | 5/5 passed | 100% | 4 tests per run + 9 skipped |
+| feature-diagnostic.spec.js | 0/5 passed | 0% | Pre-existing test design issues |
+| location-diagnostic.spec.js | 0/5 passed | 0% | Pre-existing test design issues |
+
+**Pre-existing test design issues (not timing-related):**
+
+1. **feature-diagnostic.spec.js:**
+   - Tests are marked as serial but run under authenticated storage state
+   - "Layouts" navigation button not found - test uses `/layouts/i` pattern but button may be named differently
+   - Test design expects navigation structure that may not match current app
+   - Failures occur before any code I modified was reached
+
+2. **location-diagnostic.spec.js:**
+   - Test navigates to `/auth/login` and expects to fill email/password fields
+   - BUT the chromium project uses pre-authenticated storage state from auth.setup.js
+   - User is already logged in so they get redirected to dashboard instead of login form
+   - Test fails waiting for `input[type="email"]` which doesn't exist on dashboard
+   - Same pattern issue as template tests in Category 5
+
+**Note:** Both diagnostic tests use legacy manual login patterns instead of the storage state fixture pattern used by other tests. The waitForTimeout calls were successfully removed and replaced with proper element-based waits. The failures are due to incompatible authentication patterns, not timing issues.
+
+**Alerts tests (alerts-center, alert-notification-flow):** 100% pass rate after stabilization. These tests properly handle the storage state pattern and work correctly.
+
 ## Legend
 
 - **Unfixable timing issues:** Tests that fail due to inherent timing problems that cannot be resolved with proper waits
@@ -196,4 +237,4 @@ All 30 waitForTimeout calls removed across 5 files.
 
 ---
 *Created: 2026-02-08*
-*Last updated: 2026-02-09 - Category 6 stabilized*
+*Last updated: 2026-02-09 - Category 7 stabilized*
