@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-07)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 37 - E2E Test Stabilization
+**Current focus:** Phase 38 - E2E Test Coverage Gate
 
 ## Current Position
 
-Phase: 37 of 41 (E2E Test Stabilization)
-Plan: 9 of 9 in current phase (gap closure complete)
-Status: Phase complete
-Last activity: 2026-02-09 - Completed 37-09-PLAN.md (Gap Closure)
+Phase: 38 of 41 (E2E Test Coverage Gate)
+Plan: 1 of 2 in current phase (gate infrastructure complete)
+Status: In progress
+Last activity: 2026-02-09 - Completed 38-01-PLAN.md (E2E Gate Infrastructure)
 
 Progress: [######################........] 38/41 phases (v2.3 in progress)
 
@@ -22,7 +22,7 @@ Progress: [######################........] 38/41 phases (v2.3 in progress)
 |-------|------|--------|
 | 36 | E2E Test Infrastructure | Complete |
 | 37 | E2E Test Stabilization | Verified ✓ |
-| 38 | E2E Test Coverage Gate | Not started |
+| 38 | E2E Test Coverage Gate | Plan 01 complete |
 | 39 | Error Monitoring Setup | Not started |
 | 40 | Error Monitoring Production | Not started |
 | 41 | Feature Flag Cleanup | Not started |
@@ -30,7 +30,7 @@ Progress: [######################........] 38/41 phases (v2.3 in progress)
 ## Performance Metrics
 
 **Cumulative (v1 + v2 + v2.1 + v2.2 + v2.3):**
-- Total plans executed: 153 (75 + 39 + 11 + 16 + 12)
+- Total plans executed: 154 (75 + 39 + 11 + 16 + 13)
 - Total phases: 37 completed
 - Total codebase: 315,480 LOC JavaScript/JSX
 - Test suite: 2079 unit tests, 1218 E2E tests (172 waitForTimeout calls removed, 5 test files with auth pattern fixes)
@@ -89,6 +89,13 @@ Feature flag cleanup pending:
 
 No error monitoring currently in place.
 
+Core patterns from v2.3 (Phase 38):
+- Best-of-3 pass rate gating: run Playwright up to 3 times, pass if any run >= 90%
+- Pass rate formula: passed / (passed + failed), skipped excluded from both
+- Playwright JSON reporter status mapping: expected->passed, flaky->passed, unexpected->failed, skipped->excluded
+- Gate script CLI args (--threshold, --max-runs) for local testing flexibility
+- CI artifacts uploaded on every run (always condition) not just failures
+
 ### Blockers/Concerns
 
 None for v2.3.
@@ -96,9 +103,9 @@ None for v2.3.
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed 37-09-PLAN.md (Gap Closure - Phase 37 fully complete)
+Stopped at: Completed 38-01-PLAN.md (E2E Gate Infrastructure)
 Resume file: None
-Next: Phase 38 - E2E Test Coverage Gate
+Next: 38-02-PLAN.md (E2E Test Triage & Fix)
 
 ---
-*Updated: 2026-02-09 - Completed 37-09-PLAN.md (Gap Closure complete, Phase 37 fully complete)*
+*Updated: 2026-02-09 - Completed 38-01-PLAN.md (E2E Gate Infrastructure complete)*
