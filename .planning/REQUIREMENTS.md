@@ -59,8 +59,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | TEST-01 | Phase 38 | Pending |
-| TEST-02 | Phase 37 | Pending |
-| TEST-03 | Phase 37 | Pending |
+| TEST-02 | Phase 37 | Complete |
+| TEST-03 | Phase 37 | Complete |
 | TEST-04 | Phase 36 | Complete |
 | TEST-05 | Phase 36 | Complete |
 | MON-01 | Phase 39 | Pending |

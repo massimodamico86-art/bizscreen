@@ -47,7 +47,7 @@ Plans:
 - [x] 37-06-PLAN.md — Stabilize Advanced Features (scenes, editors, screen-assignments)
 - [x] 37-07-PLAN.md — Stabilize Alerts & Diagnostics (alerts, diagnostics tests)
 - [x] 37-08-PLAN.md — Stabilize Remaining Files and finalize SKIPPED-TESTS.md
-- [ ] 37-09-PLAN.md — Gap closure: Fix test design issues in 5 files
+- [x] 37-09-PLAN.md — Gap closure: Fix test design issues in 5 files
 
 ### Phase 38: E2E Test Coverage Gate
 **Goal**: E2E test pass rate reaches 90%+ threshold
@@ -111,7 +111,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 36. E2E Test Infrastructure | 2/2 | Complete | 2026-02-08 |
-| 37. E2E Test Stabilization | 8/9 | Gap Closure | - |
+| 37. E2E Test Stabilization | 9/9 | Complete | 2026-02-08 |
 | 38. E2E Test Coverage Gate | 0/TBD | Not started | - |
 | 39. Error Monitoring Setup | 0/TBD | Not started | - |
 | 40. Error Monitoring Production | 0/TBD | Not started | - |
