@@ -4,10 +4,11 @@
  */
 import { test } from '@playwright/test';
 
-// Skip in CI - this is a manual debug test that has no assertions
-test.skip(!!process.env.CI, 'Debug test skipped in CI');
+// Skip always - this is a manual debug test with no assertions
+// To use, temporarily change test.skip to test and run manually
+test.describe.skip('Debug Tests', () => {});
 
-test('check supabase config in browser', async ({ page }) => {
+test.skip('check supabase config in browser', async ({ page }) => {
   await page.goto('/auth/login');
 
   // Wait for the page to fully load
