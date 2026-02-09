@@ -109,11 +109,6 @@ const envSchema = {
       default: 'false',
       sensitive: false
     },
-    VITE_USE_UNIFIED_ONBOARDING: {
-      description: 'Enable unified onboarding controller (Phase 31)',
-      default: 'false',
-      sensitive: false
-    },
     VITE_ERROR_TRACKING_PROVIDER: {
       description: 'Error tracking provider (console, sentry)',
       default: 'console',
@@ -211,8 +206,6 @@ export function getConfig() {
 
     // Features
     enableAI: import.meta.env.VITE_ENABLE_AI === 'true',
-    useUnifiedOnboarding: import.meta.env.VITE_USE_UNIFIED_ONBOARDING === 'true',
-
     // Error tracking
     errorTrackingProvider: import.meta.env.VITE_ERROR_TRACKING_PROVIDER || 'console',
 

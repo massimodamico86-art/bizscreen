@@ -54,8 +54,6 @@ import ErrorBoundary from '../components/ErrorBoundary';
 
 // Unified onboarding controller (Phase 31)
 import { UnifiedOnboardingController } from '../components/onboarding/UnifiedOnboardingController';
-import { config } from '../config/env';
-
 import { useBreakpoints } from '../hooks/useMediaQuery';
 
 /**
@@ -134,9 +132,9 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
     return () => clearInterval(interval);
   }, [fetchData]);
 
-  // Check for unified onboarding (feature flag - Phase 31)
+  // Check for unified onboarding state
   useEffect(() => {
-    if (config().useUnifiedOnboarding && !loading) {
+    if (!loading) {
       import('../services/onboardingService').then(({ getUnifiedOnboardingState }) => {
         getUnifiedOnboardingState().then(state => {
           // Show unified onboarding if not complete (covers both first-run and resume cases)
@@ -192,7 +190,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
   return (
     <ErrorBoundary>
       {/* Unified Onboarding Controller (Phase 31) */}
-      {config().useUnifiedOnboarding && showUnifiedOnboarding && (
+      {showUnifiedOnboarding && (
         <UnifiedOnboardingController onComplete={handleUnifiedOnboardingComplete} />
       )}
 
@@ -213,9 +211,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
             <HealthBanner alertSummary={alertSummary} onNavigate={setCurrentPage} />
 
             {/* Screen Pairing Reminder - for users who skipped pairing during onboarding (Phase 32) */}
-            {config().useUnifiedOnboarding && (
-              <ScreenPairingReminderCard onNavigate={setCurrentPage} />
-            )}
+            <ScreenPairingReminderCard onNavigate={setCurrentPage} />
 
             {/* Stats Grid */}
             <StatsGrid

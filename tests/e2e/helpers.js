@@ -82,7 +82,7 @@ export async function loginAndPrepare(page, options = {}) {
  * Dismiss any open modal dialogs
  *
  * Looks for common modal close buttons and clicks them if found.
- * This handles the Welcome Modal, OnboardingWizard, and any other dialogs.
+ * This handles any modal dialogs that may appear on page load.
  *
  * Uses proper Playwright auto-waiting patterns instead of catch swallowing.
  *
