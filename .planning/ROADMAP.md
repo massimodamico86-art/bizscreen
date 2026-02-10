@@ -38,7 +38,7 @@ All milestones shipped successfully.
 **Milestone Goal:** Eliminate all accumulated tech debt -- dead code, ESLint warnings, skipped tests, and incomplete observability -- to establish a clean foundation for future feature work.
 
 - [x] **Phase 42: Dead Code & Legacy Cleanup** — Remove dead files, obsolete localStorage keys, and fix broken migration (completed 2026-02-09)
-- [ ] **Phase 43: E2E Test Triage** — Audit, fix, delete, document, and modernize all skipped E2E tests
+- [x] **Phase 43: E2E Test Triage** — Audit, fix, delete, document, and modernize all skipped E2E tests (completed 2026-02-10)
 - [ ] **Phase 44: ESLint Zero Warnings** — Fix all 7,807 warnings and promote warn rules to error
 - [ ] **Phase 45: Sentry Operationalization** — Configure alert rules and Slack integration for production error monitoring
 
@@ -71,10 +71,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 43-01-PLAN.md -- Audit report categorizing all 917 skipped tests, delete 3 obsolete diagnostic/debug test files
-- [ ] 43-02-PLAN.md -- Fix fixable selector/auth skips and document test.fixme/test.skip in 10 spec files
-- [ ] 43-03-PLAN.md -- Document describe.skip blocks and credential-based skips in 13 spec files
-- [ ] 43-04-PLAN.md -- Adopt src/__fixtures__/ shared test data pattern in 3 unit test files
+- [x] 43-01-PLAN.md -- Audit report categorizing all 917 skipped tests, delete 3 obsolete diagnostic/debug test files
+- [x] 43-02-PLAN.md -- Fix fixable selector/auth skips and document test.fixme/test.skip in 10 spec files
+- [x] 43-03-PLAN.md -- Document describe.skip blocks and credential-based skips in 13 spec files
+- [x] 43-04-PLAN.md -- Adopt src/__fixtures__/ shared test data pattern in 3 unit test files
 
 ### Phase 44: ESLint Zero Warnings
 **Goal**: ESLint runs with zero warnings and all rules enforce at error level
@@ -109,7 +109,7 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 42. Dead Code & Legacy Cleanup | v2.4 | 1/1 | ✓ Complete | 2026-02-09 |
-| 43. E2E Test Triage | v2.4 | 0/4 | Not started | - |
+| 43. E2E Test Triage | v2.4 | 4/4 | ✓ Complete | 2026-02-10 |
 | 44. ESLint Zero Warnings | v2.4 | 0/TBD | Not started | - |
 | 45. Sentry Operationalization | v2.4 | 0/TBD | Not started | - |
 
@@ -124,7 +124,7 @@ Plans:
 | v2.3 Production Hardening | 36-41 | 18 | Complete | 2026-02-09 |
 | v2.4 Tech Debt Zero | 42-45 | TBD | In progress | - |
 
-**Total:** 42 phases complete, 160 plans executed | 5 milestones shipped | 1 milestone in progress
+**Total:** 43 phases complete, 164 plans executed | 5 milestones shipped | 1 milestone in progress
 
 ---
-*Last updated: 2026-02-09 -- Phase 42 Dead Code & Legacy Cleanup complete*
+*Last updated: 2026-02-10 -- Phase 43 E2E Test Triage complete*
