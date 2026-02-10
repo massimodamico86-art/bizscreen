@@ -93,7 +93,15 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-(No active requirements — planning next milestone)
+## Current Milestone: v3.0 Creative Experience
+
+**Goal:** Make the template-to-editor experience feel premium and effortless — a design marketplace quality that beats Yodeck and OptiSigns.
+
+**Target features:**
+- Premium template browse page with visual richness (large thumbnails, smooth animations, micro-interactions on hover)
+- Instant template-to-editor flow (pick template → editing in seconds, no intermediate modals)
+- Editor UI polish (better toolbar, smoother interactions, modern feel around Polotno core)
+- In-editor stock asset library (Unsplash photos, icons/stickers searchable inside the editor)
 
 ### Out of Scope
 
@@ -112,7 +120,7 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (Post v2.4):**
+**Current State (v3.0 in progress):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
 - ~361,000 lines of JavaScript/JSX/CSS/JSON across codebase
 - Unified onboarding flow (feature flag removed, unconditional)
@@ -186,4 +194,4 @@ These capabilities shipped and are production-verified:
 | Dual Sentry alert strategy (issue + metric) | Different alert types for different patterns | ✓ Good — covers new errors and spikes |
 
 ---
-*Last updated: 2026-02-10 after v2.4 milestone*
+*Last updated: 2026-02-10 after starting v3.0 Creative Experience milestone*

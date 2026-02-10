@@ -5,15 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone
+**Current focus:** v3.0 Creative Experience
 
 ## Current Position
 
-Phase: All complete (45 phases across 6 milestones)
-Status: Milestone v2.4 archived
-Last activity: 2026-02-10 -- Archived v2.4 Tech Debt Zero milestone
-
-Progress: [██████████] 100%
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-10 — Milestone v3.0 started
 
 ## Milestones Shipped
 
@@ -50,9 +49,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: v2.4 milestone archived
+Stopped at: Defining v3.0 requirements
 Resume file: None
-Next: `/gsd:new-milestone` for next milestone planning
+Next: Define requirements → create roadmap
 
 ---
-*Updated: 2026-02-10 -- v2.4 Tech Debt Zero milestone archived. All 6 milestones shipped.*
+*Updated: 2026-02-10 — Milestone v3.0 Creative Experience started.*
