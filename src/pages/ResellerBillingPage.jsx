@@ -61,6 +61,7 @@ export default function ResellerBillingPage({ showToast, onNavigate }) {
 
   useEffect(() => {
     loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, [selectedPeriod, statusFilter]);
 
   const loadData = async () => {

@@ -43,6 +43,7 @@ export default function BulkTemplateUpload({ onComplete, onCancel }) {
       .filter(f => f.name.endsWith('.svg'));
 
     addFiles(droppedFiles);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- state fn
   }, []);
 
   // Handle file select
@@ -51,6 +52,7 @@ export default function BulkTemplateUpload({ onComplete, onCancel }) {
       .filter(f => f.name.endsWith('.svg'));
     addFiles(selectedFiles);
     e.target.value = ''; // Reset input
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- state fn
   }, []);
 
   // Parse SVG dimensions to determine orientation

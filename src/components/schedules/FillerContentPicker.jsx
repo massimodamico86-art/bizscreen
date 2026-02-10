@@ -69,7 +69,7 @@ export function FillerContentPicker({
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [logger]);
 
   // Load options when type changes
   useEffect(() => {

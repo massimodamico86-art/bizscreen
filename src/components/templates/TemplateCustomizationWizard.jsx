@@ -70,6 +70,7 @@ export function TemplateCustomizationWizard({
       });
       setCustomization((prev) => ({ ...prev, texts: initialTexts }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- textFields derived from template; template?.id triggers re-initialization
   }, [template?.id]); // Re-initialize when template changes
 
   // Handle logo file selection

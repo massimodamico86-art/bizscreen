@@ -129,6 +129,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
     if (layoutId) {
       loadLayout();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- layoutId change
   }, [layoutId]);
 
   const loadLayout = async () => {
@@ -324,6 +325,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
     if (layout) {
       fetchCurrentReview();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchCurrentReview is inline; layout?.id is the real trigger
   }, [layout?.id]);
 
   // Request approval handler

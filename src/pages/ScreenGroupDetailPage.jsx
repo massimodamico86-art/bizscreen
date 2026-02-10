@@ -78,6 +78,7 @@ export default function ScreenGroupDetailPage({ groupId, onNavigate, showToast }
     if (groupId) {
       loadGroup();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- groupId change
   }, [groupId]);
 
   // Load screens when devices tab is active
@@ -85,7 +86,8 @@ export default function ScreenGroupDetailPage({ groupId, onNavigate, showToast }
     if (group && activeTab === 'devices') {
       loadScreens();
     }
-  }, [group?.id, activeTab]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- tab/group change
+  }, [group?.id, activeTab, group]);
 
   async function loadGroup() {
     setLoading(true);

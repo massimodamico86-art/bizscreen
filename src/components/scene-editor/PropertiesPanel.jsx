@@ -293,7 +293,7 @@ function DataBindingSection({ binding, onChange }) {
       }
     }
     loadDataSources();
-  }, []);
+  }, [logger]);
 
   // Load selected data source details when binding changes
   useEffect(() => {
@@ -313,7 +313,7 @@ function DataBindingSection({ binding, onChange }) {
       }
     }
     loadSelectedSource();
-  }, [binding?.sourceId]);
+  }, [binding?.sourceId, logger]);
 
   function handleSourceChange(sourceId) {
     if (!sourceId) {

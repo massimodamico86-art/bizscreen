@@ -235,7 +235,7 @@ export function ViewPage() {
       }
     };
     init();
-  }, []);
+  }, [logger]);
 
   // Initialize playback tracking and track scene changes
   // Ref to track previous scene ID for change detection
@@ -287,7 +287,7 @@ export function ViewPage() {
         stopTracking();
       }
     };
-  }, [content]);
+  }, [content, logger]);
 
   // Track online/offline status changes
   useEffect(() => {
@@ -366,6 +366,7 @@ export function ViewPage() {
       if (unsubscribeRefresh) unsubscribeRefresh();
       if (fallbackPollInterval) clearInterval(fallbackPollInterval);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Mount-only: command listener setup; uses refs for latest values
   }, []);
 
   // Keep ref updated for use in stuck detection callback

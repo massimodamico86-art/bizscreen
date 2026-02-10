@@ -23,6 +23,7 @@ export default function LoginHistory({ _showToast }) {
 
   useEffect(() => {
     loadHistory();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadHistory = async (offset = 0) => {

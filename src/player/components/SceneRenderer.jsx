@@ -2,7 +2,7 @@
 // Scene rendering with slides, blocks, transitions, and data binding
 // Extracted from Player.jsx for maintainability
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import {
   getBlockAnimationStyles,
   getSlideTransitionStyles,
@@ -168,7 +168,7 @@ export function SceneRenderer({ scene, _screenId, _tenantId }) {
   const timerRef = useRef(null);
   const preloadedRef = useRef(new Set());
 
-  const slides = scene?.slides || [];
+  const slides = useMemo(() => scene?.slides || [], [scene?.slides]);
 
   // Prefetch and resolve data bindings for the scene
   useEffect(() => {

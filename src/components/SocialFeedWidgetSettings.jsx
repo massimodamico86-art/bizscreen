@@ -66,7 +66,7 @@ export default function SocialFeedWidgetSettings({
     };
 
     loadAccounts();
-  }, []);
+  }, [logger]);
 
   // Load existing widget settings
   useEffect(() => {
@@ -94,7 +94,7 @@ export default function SocialFeedWidgetSettings({
     };
 
     loadSettings();
-  }, [widgetId]);
+  }, [widgetId, logger]);
 
   // Handle save
   const handleSave = async () => {

@@ -57,6 +57,7 @@ export default function ScreenGroupSettingsTab({ group, onUpdate, showToast }) {
       setDisplayLanguage(group.display_language || '');
       setLocation(group.location_code || '');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Specific group fields are the real deps, not the full group object
   }, [group?.id, group?.display_language, group?.location_code]);
 
   // Update suggested language when location changes

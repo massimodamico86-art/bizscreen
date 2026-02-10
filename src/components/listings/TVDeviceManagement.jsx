@@ -145,6 +145,7 @@ export const TVDeviceManagement = ({ formData, setFormData, showToast }) => {
     return () => {
       supabase.removeChannel(channel);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Realtime subscription, intentionally mount-per-id only
   }, [formData.id]);
 
   // Generate pairing code for a device
@@ -200,7 +201,7 @@ export const TVDeviceManagement = ({ formData, setFormData, showToast }) => {
     } finally {
       setGeneratingCode(null);
     }
-  }, [showToast]);
+  }, [showToast, logger]);
 
   // Copy code to clipboard
   const copyCode = useCallback((code) => {

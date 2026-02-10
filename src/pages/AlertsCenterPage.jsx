@@ -156,7 +156,7 @@ export default function AlertsCenterPage({ showToast, onNavigate }) {
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, severityFilter, typeFilter, page, showToast, t]);
+  }, [statusFilter, severityFilter, typeFilter, page, showToast, t, logger]);
 
   // Initial load and filter changes
   useEffect(() => {

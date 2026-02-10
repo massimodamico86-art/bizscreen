@@ -71,7 +71,7 @@ export default function PasswordStrengthIndicator({
       setBreachResult(null);
       onValidationChange?.(result);
     }
-  }, [password, email, checkBreaches]);
+  }, [password, email, checkBreaches, onValidationChange]);
 
   if (!password) {
     return null;

@@ -78,7 +78,7 @@ export default function EditorModal({
       // Close directly
       handleActualClose();
     }
-  }, [isDirty]);
+  }, [isDirty, handleActualClose]);
 
   // Actual close - reset all state
   const handleActualClose = useCallback(() => {

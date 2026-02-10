@@ -70,6 +70,7 @@ const ScreenGroupsPage = ({ showToast }) => {
 
   useEffect(() => {
     loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount/filter change
   }, [locationFilter]);
 
   const loadData = async () => {
@@ -111,6 +112,7 @@ const ScreenGroupsPage = ({ showToast }) => {
       loadData();
     }, 300);
     return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount/filter change
   }, [search]);
 
   const handleDelete = async (id) => {
@@ -518,6 +520,7 @@ function AssignScreensModal({ group, onClose, onUpdate, showToast, t }) {
 
   useEffect(() => {
     loadScreens();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- group selection
   }, [group.id]);
 
   const loadScreens = async () => {

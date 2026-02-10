@@ -41,6 +41,7 @@ export default function AiSuggestionPanel({ scene, isOpen, onClose, showToast })
       setError(null);
       setCopiedIndex(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- scene?.scene_id is the real trigger, not the full scene object
   }, [isOpen, scene?.scene_id]);
 
   // Handle escape key to close panel

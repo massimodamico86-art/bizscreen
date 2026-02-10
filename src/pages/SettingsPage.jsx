@@ -86,6 +86,7 @@ const SettingsPage = ({ showToast, setCurrentPage }) => {
     if (activeTab === 'branding' && brandThemes.length === 0 && !brandLoading) {
       fetchBrandThemes();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- brandLoading/brandThemes.length are guards, not deps
   }, [activeTab]);
 
   // Fetch onboarding settings when onboarding tab is selected
@@ -108,6 +109,7 @@ const SettingsPage = ({ showToast, setCurrentPage }) => {
     if (activeTab === 'onboarding' && !onboardingSettings && !onboardingLoading) {
       fetchOnboardingSettings();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- onboardingLoading/onboardingSettings are guards, not deps
   }, [activeTab]);
 
   const handleRestartTour = async () => {

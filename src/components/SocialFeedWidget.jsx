@@ -71,7 +71,7 @@ export default function SocialFeedWidget({
     } finally {
       setLoading(false);
     }
-  }, [widgetId, accountId, maxItems]);
+  }, [widgetId, accountId, maxItems, logger, provider]);
 
   useEffect(() => {
     loadPosts();

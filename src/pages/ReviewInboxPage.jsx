@@ -80,6 +80,7 @@ const ReviewInboxPage = ({ showToast, onNavigate }) => {
   // Load reviews
   useEffect(() => {
     loadReviews();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, [statusFilter, typeFilter]);
 
   const loadReviews = async () => {

@@ -162,6 +162,7 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
       loadSchedule();
       loadContentOptions();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- scheduleId change
   }, [scheduleId]);
 
   // Check if user requires approval for content assignment
@@ -306,7 +307,7 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
     } finally {
       setIsCheckingConflicts(false);
     }
-  }, [scheduleId, showEventModal, eventForm.startTime, eventForm.endTime, eventForm.startDate, eventForm.endDate, eventForm.repeat, editingEntry?.id]);
+  }, [scheduleId, showEventModal, eventForm.startTime, eventForm.endTime, eventForm.startDate, eventForm.endDate, eventForm.repeat, editingEntry?.id, logger]);
 
   // Check conflicts when relevant form fields change
   useEffect(() => {

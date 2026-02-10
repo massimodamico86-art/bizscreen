@@ -20,6 +20,7 @@ export default function OpsConsolePage() {
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const fetchData = async () => {

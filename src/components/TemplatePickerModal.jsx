@@ -39,7 +39,7 @@ export default function TemplatePickerModal({ onClose, onSelectTemplate }) {
     fetchCategories()
       .then(setCategories)
       .catch(err => logger.error('Failed to load categories', { error: err }));
-  }, []);
+  }, [logger]);
 
   // Load templates
   const loadTemplates = useCallback(async () => {
@@ -57,7 +57,7 @@ export default function TemplatePickerModal({ onClose, onSelectTemplate }) {
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, logger]);
 
   useEffect(() => {
     const timer = setTimeout(loadTemplates, 300);

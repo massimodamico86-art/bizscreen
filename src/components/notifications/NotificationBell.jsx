@@ -86,7 +86,7 @@ export default function NotificationBell({ onNavigate }) {
     } catch (error) {
       logger.error('Error loading unread count', { error });
     }
-  }, []);
+  }, [logger]);
 
   // Load notifications
   const loadNotifications = useCallback(async () => {
@@ -99,7 +99,7 @@ export default function NotificationBell({ onNavigate }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [logger]);
 
   // Initial load and polling
   useEffect(() => {

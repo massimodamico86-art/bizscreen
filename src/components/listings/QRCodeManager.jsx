@@ -100,6 +100,7 @@ export const QRCodeManager = ({ formData, setFormData, showToast }) => {
     return () => {
       supabase.removeChannel(channel);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Realtime subscription, intentionally mount-per-id only
   }, [formData.id]);
 
   // Helper function to update QR code in Supabase

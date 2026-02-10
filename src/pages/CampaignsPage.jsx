@@ -93,6 +93,7 @@ const CampaignsPage = ({ showToast }) => {
 
   useEffect(() => {
     loadCampaigns();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount/filter
   }, [statusFilter]);
 
   const loadCampaigns = async () => {
@@ -116,6 +117,7 @@ const CampaignsPage = ({ showToast }) => {
       loadCampaigns();
     }, 300);
     return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount/filter
   }, [search]);
 
   const handleDelete = async (id) => {

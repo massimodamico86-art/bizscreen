@@ -98,7 +98,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
     fetchCategories()
       .then(setCategories)
       .catch(err => logger.error('Failed to load categories', { error: err }));
-  }, []);
+  }, [logger]);
 
   // Load template if editing
   useEffect(() => {
@@ -126,7 +126,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
         setError('Failed to load template');
       })
       .finally(() => setLoading(false));
-  }, [templateId, isNew]);
+  }, [templateId, isNew, logger]);
 
   // Load enterprise access for enterprise templates
   useEffect(() => {
@@ -135,7 +135,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
     fetchEnterpriseAccess(templateId)
       .then(setEnterpriseAccess)
       .catch(err => logger.error('Failed to load enterprise access', { templateId, error: err }));
-  }, [templateId, isNew, form.license]);
+  }, [templateId, isNew, form.license, logger]);
 
   // Handle form change
   const handleChange = (field, value) => {

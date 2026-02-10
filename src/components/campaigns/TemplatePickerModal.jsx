@@ -32,6 +32,7 @@ export function TemplatePickerModal({ onSelect, onClose }) {
 
   useEffect(() => {
     loadTemplates();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadTemplates = async () => {

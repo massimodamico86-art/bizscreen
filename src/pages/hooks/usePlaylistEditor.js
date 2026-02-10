@@ -359,6 +359,7 @@ export function usePlaylistEditor(playlistId, { showToast }) {
         .then(setCurrentReview)
         .catch(err => logger.error('Error fetching approval review', { error: err, playlistId }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- playlist used for truthy check; playlist?.id is the real dep
   }, [playlist?.id, playlistId]);
 
   // Cleanup playback timer on unmount

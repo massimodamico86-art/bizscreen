@@ -380,7 +380,7 @@ function BizScreenAppInner() {
       supabase.removeChannel(channel);
       clearInterval(updateOfflineDevicesInterval);
     };
-  }, [user]);
+  }, [user, logger]);
 
   // Handle sign out
   const handleSignOut = async () => {

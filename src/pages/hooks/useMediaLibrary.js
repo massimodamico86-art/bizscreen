@@ -872,18 +872,18 @@ export function useMediaLibrary({ showToast, filter = null } = {}) {
   useEffect(() => {
     fetchAssets();
     fetchLimits();
-  }, [filter, currentFolderId]);
+  }, [filter, currentFolderId, fetchAssets, fetchLimits]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
     fetchAssets(1);
-  }, [search, filter, itemsPerPage, currentFolderId]);
+  }, [search, filter, itemsPerPage, currentFolderId, fetchAssets]);
 
   // Refetch when page changes
   useEffect(() => {
     fetchAssets(currentPage);
-  }, [currentPage]);
+  }, [currentPage, fetchAssets]);
 
   // ============================================================
   // Return

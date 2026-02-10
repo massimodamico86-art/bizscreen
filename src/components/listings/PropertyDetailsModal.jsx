@@ -57,7 +57,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, _lis
     } else {
       setWeatherData(null);
     }
-  }, [formData.weatherCity, formData.weatherUnit, formData.showWeather]);
+  }, [formData.weatherCity, formData.weatherUnit, formData.showWeather, logger]);
 
   // Update formData and trigger re-render
   const _updateFormData = (newData) => {

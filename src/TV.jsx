@@ -128,7 +128,7 @@ export default function TV() {
       clearInterval(contentPollInterval);
       clearInterval(weatherRefreshInterval);
     };
-  }, [otp]);
+  }, [otp, logger]);
 
   const handlePairDevice = (e) => {
     e.preventDefault();

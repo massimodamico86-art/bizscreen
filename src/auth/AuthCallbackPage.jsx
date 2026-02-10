@@ -89,7 +89,7 @@ export default function AuthCallbackPage() {
     };
 
     handleCallback();
-  }, [navigate]);
+  }, [navigate, logger]);
 
   return (
     <AuthLayout>

@@ -51,7 +51,7 @@ const CanvaCallbackPage = ({ onNavigate, showToast }) => {
     };
 
     processCallback();
-  }, [onNavigate, showToast]);
+  }, [onNavigate, showToast, logger]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

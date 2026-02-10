@@ -316,7 +316,7 @@ export default function LeftSidebar({
     } finally {
       setLoadingPhotos(false);
     }
-  }, []);
+  }, [logger]);
 
   // GIPHY API configuration
   const GIPHY_API_KEY = 'ZhPq2lyo9BmnTkVOy7jQRgv1nKOsgJJ9';
@@ -412,7 +412,7 @@ export default function LeftSidebar({
     } finally {
       setLoadingGiphy(false);
     }
-  }, []);
+  }, [logger]);
 
   // Handle photo search with debounce
   useEffect(() => {
@@ -463,7 +463,7 @@ export default function LeftSidebar({
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [searchQuery, activePanel, templates]);
+  }, [searchQuery, activePanel, templates, logger]);
 
   // Nav items matching OptiSigns
   const navItems = [

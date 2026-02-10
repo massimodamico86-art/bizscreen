@@ -31,7 +31,7 @@ export const TVPreviewModal = ({ listing, onClose }) => {
       };
       fetchWeather();
     }
-  }, [listing.weatherCity, listing.weatherUnit, listing.showWeather]);
+  }, [listing.weatherCity, listing.weatherUnit, listing.showWeather, logger]);
 
   // Map layout names to components
   const layoutComponents = {

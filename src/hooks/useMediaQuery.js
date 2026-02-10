@@ -28,10 +28,8 @@ export function useMediaQuery(query) {
 
     const mediaQuery = window.matchMedia(query);
 
-    // Update state if it's different from initial
-    if (mediaQuery.matches !== matches) {
-      setMatches(mediaQuery.matches);
-    }
+    // Sync initial state for new query
+    setMatches(mediaQuery.matches);
 
     // Modern API: addEventListener
     const handler = (event) => setMatches(event.matches);

@@ -74,7 +74,7 @@ export default function TranslationDashboardPage({ showToast }) {
     };
 
     loadScenes();
-  }, [filters]);
+  }, [filters, logger, showToast]);
 
   // Handle row selection
   const toggleSelect = (sceneId) => {

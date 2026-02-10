@@ -49,6 +49,7 @@ export default function StatusPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   useEffect(() => { fetchAllStatus(); }, []);
 
   const fetchAllStatus = async () => {

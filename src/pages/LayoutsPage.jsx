@@ -125,6 +125,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
   // Load templates on mount
   useEffect(() => {
     loadTemplates();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   // Load user layouts when "Your Templates" is selected or page changes

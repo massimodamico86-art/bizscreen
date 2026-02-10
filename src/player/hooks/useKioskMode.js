@@ -54,6 +54,7 @@ export function useKioskMode() {
         logger.warn('Failed to enter fullscreen on init', { error: err })
       );
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Mount-only: initializes fullscreen once based on initial kioskMode
   }, []); // Only run on mount
 
   // Keyboard handler (Escape to show exit dialog)

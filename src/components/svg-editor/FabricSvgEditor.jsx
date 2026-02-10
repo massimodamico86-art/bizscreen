@@ -1082,7 +1082,7 @@ export default function FabricSvgEditor({
       logger.error('Failed to load image', { error: err });
       showToast?.('Failed to load image', 'error');
     });
-  }, [canvasWidth, canvasHeight, syncCanvasObjects, showToast]);
+  }, [canvasWidth, canvasHeight, syncCanvasObjects, showToast, logger]);
 
   // Add text with preset style
   const handleAddTextWithPreset = useCallback((preset) => {
@@ -1172,7 +1172,7 @@ export default function FabricSvgEditor({
       logger.error('Failed to generate QR code', { error: err });
       showToast?.('Failed to generate QR code', 'error');
     }
-  }, [canvasWidth, canvasHeight, syncCanvasObjects, showToast]);
+  }, [canvasWidth, canvasHeight, syncCanvasObjects, showToast, logger]);
 
   // Add icon as text (using Unicode/emoji or custom symbol)
   const handleAddIcon = useCallback((iconId, _IconComponent, color, customSymbol) => {
@@ -1918,7 +1918,7 @@ export default function FabricSvgEditor({
         widgetType: 'playlist',
       });
     }
-  }, [canvasWidth, canvasHeight, showToast, syncCanvasObjects]);
+  }, [canvasWidth, canvasHeight, showToast, syncCanvasObjects, logger]);
 
   // Alignment handlers
   const handleAlignLeft = useCallback(() => {
@@ -2120,7 +2120,8 @@ export default function FabricSvgEditor({
       logger.warn('Template has no SVG content or URL', { template });
       showToast?.('Template has no content to load', 'error');
     }
-  }, [showToast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- template load
+  }, [showToast, logger]);
 
   // Handle save as template
   const handleSaveAsTemplate = useCallback(async () => {
@@ -2145,7 +2146,7 @@ export default function FabricSvgEditor({
       logger.error('Failed to save template', { error: err });
       showToast?.('Failed to save template', 'error');
     }
-  }, [designName, showToast]);
+  }, [designName, showToast, logger]);
 
   // Update selected object property
   const handleUpdateObject = useCallback((property, value) => {
@@ -2213,7 +2214,7 @@ export default function FabricSvgEditor({
     } finally {
       setIsSaving(false);
     }
-  }, [designId, designName, templateId, canvasWidth, canvasHeight, onSave, showToast]);
+  }, [designId, designName, templateId, canvasWidth, canvasHeight, onSave, showToast, logger]);
 
   // Export as PNG
   const handleExport = useCallback(() => {

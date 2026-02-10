@@ -98,7 +98,7 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
         setOrientation('1:1');
       }
     }
-  }, [layout?.canvasSize?.width, layout?.canvasSize?.height]);
+  }, [layout?.canvasSize?.width, layout?.canvasSize?.height, layout.canvasSize]);
 
   // Handle orientation change
   const handleOrientationChange = useCallback((newOrientation) => {

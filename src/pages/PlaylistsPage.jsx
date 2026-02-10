@@ -726,6 +726,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
   useEffect(() => {
     fetchPlaylists();
     fetchLimits();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const fetchLimits = async () => {

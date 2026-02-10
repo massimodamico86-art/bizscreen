@@ -106,6 +106,7 @@ export default function DataBoundWizardModal({
         .then(setBrandTheme)
         .catch(() => setBrandTheme(null));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- modal open
   }, [isOpen]);
 
   // Load source details when source is selected
@@ -113,6 +114,7 @@ export default function DataBoundWizardModal({
     if (selectedSource) {
       loadSourceDetails(selectedSource);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- source select
   }, [selectedSource]);
 
   // Reset when modal opens

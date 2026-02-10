@@ -101,7 +101,7 @@ export function AssignScreensModal({
     } finally {
       setIsLoading(false);
     }
-  }, [scheduleId]);
+  }, [scheduleId, logger]);
 
   // Load data when modal opens
   useEffect(() => {

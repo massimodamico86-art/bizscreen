@@ -66,6 +66,7 @@ const BillingBanner = ({ className = '' }) => {
 
   useEffect(() => {
     loadStatus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadStatus = async () => {

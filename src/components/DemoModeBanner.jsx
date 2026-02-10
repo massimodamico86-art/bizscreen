@@ -22,6 +22,7 @@ export default function DemoModeBanner() {
 
   useEffect(() => {
     loadDemoStatus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadDemoStatus = async () => {

@@ -170,7 +170,7 @@ const TemplatesPage = ({ showToast }) => {
       .catch((err) => {
         logger.error('Failed to load categories', { error: err });
       });
-  }, []);
+  }, [logger]);
 
   // Load favorite IDs on mount (US-130)
   useEffect(() => {
@@ -183,7 +183,7 @@ const TemplatesPage = ({ showToast }) => {
       }
     };
     if (user) loadFavoriteIds();
-  }, [user]);
+  }, [user, logger]);
 
   // Load recently used templates (US-129)
   useEffect(() => {
@@ -199,7 +199,7 @@ const TemplatesPage = ({ showToast }) => {
       }
     };
     if (user) loadRecentlyUsed();
-  }, [user]);
+  }, [user, logger]);
 
   // Load templates with server-side filtering and pagination
   const loadTemplates = useCallback(async () => {
@@ -235,7 +235,7 @@ const TemplatesPage = ({ showToast }) => {
       setLoading(false);
       setLoadingFavorites(false);
     }
-  }, [activeCategory, activeType, currentPage, debouncedSearch, showFavorites, showToast]);
+  }, [activeCategory, activeType, currentPage, debouncedSearch, showFavorites, showToast, logger]);
 
   // Fetch templates when filters or page change
   useEffect(() => {

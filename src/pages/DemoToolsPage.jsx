@@ -89,6 +89,7 @@ export default function DemoToolsPage({ showToast }) {
   // Load demo tenants
   useEffect(() => {
     loadDemoTenants();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadDemoTenants = async () => {

@@ -87,7 +87,7 @@ export default function AnalyticsPage({ showToast }) {
       }
     }
     loadLocations();
-  }, []);
+  }, [logger]);
 
   // Check permissions
   useEffect(() => {
@@ -132,6 +132,7 @@ export default function AnalyticsPage({ showToast }) {
   // Load data on filter change
   useEffect(() => {
     loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- filter change
   }, [dateRange, locationId]);
 
   // Load report settings
@@ -149,7 +150,7 @@ export default function AnalyticsPage({ showToast }) {
     if (canManageReports) {
       loadReportSettings();
     }
-  }, [canManageReports]);
+  }, [canManageReports, logger]);
 
   // Toggle report subscription
   const handleToggleReport = async (frequency, enabled) => {

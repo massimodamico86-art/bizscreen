@@ -120,7 +120,7 @@ export default function PolotnoEditor({
         onDirtyChange?.(data?.dirty ?? true);
         break;
     }
-  }, [initialDesign, onSave, onClose, onReady, onError, onDirtyChange, designName, templates]);
+  }, [initialDesign, onSave, onClose, onReady, onError, onDirtyChange, designName, templates, logger, sendToIframe]);
 
   // Send message to iframe
   const sendToIframe = useCallback((action, payload = {}) => {

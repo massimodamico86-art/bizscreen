@@ -103,6 +103,7 @@ export default function SceneDetailPage({ sceneId, onNavigate, onShowToast }) {
     if (sceneId) {
       loadScene();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- sceneId change
   }, [sceneId]);
 
   async function loadScene() {

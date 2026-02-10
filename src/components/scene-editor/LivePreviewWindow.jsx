@@ -120,22 +120,22 @@ export default function LivePreviewWindow({
   }, []);
 
   // Navigation handlers
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
     setAnimationKey(k => k + 1);
-  };
+  }, [slides.length]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % slides.length);
     setAnimationKey(k => k + 1);
-  };
+  }, [slides.length]);
 
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-    if (!isPlaying) {
-      setAnimationKey(k => k + 1);
-    }
-  };
+  const handlePlayPause = useCallback(() => {
+    setIsPlaying(prev => {
+      if (!prev) setAnimationKey(k => k + 1);
+      return !prev;
+    });
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -153,7 +153,7 @@ export default function LivePreviewWindow({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen, isPlaying]);
+  }, [isFullscreen, handleNext, handlePlayPause, handlePrev]);
 
   return (
     <div

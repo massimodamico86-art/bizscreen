@@ -33,6 +33,7 @@ export default function TwoFactorSetup({ showToast }) {
 
   useEffect(() => {
     loadMfaStatus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadMfaStatus = async () => {

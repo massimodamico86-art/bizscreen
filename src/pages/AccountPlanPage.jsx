@@ -76,6 +76,7 @@ const AccountPlanPage = ({ showToast }) => {
   useEffect(() => {
     loadData();
     handleCheckoutResult();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Mount-only: loadData and handleCheckoutResult are stable inline functions
   }, []);
 
   const loadData = async () => {

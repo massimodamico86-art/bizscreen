@@ -91,7 +91,7 @@ export default function ContentPerformancePage({ showToast }) {
       }
     }
     loadFilterOptions();
-  }, []);
+  }, [logger]);
 
   // Load analytics data
   const loadData = useCallback(async (isRefresh = false) => {
@@ -115,7 +115,7 @@ export default function ContentPerformancePage({ showToast }) {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [dateRange, groupId, showToast]);
+  }, [dateRange, groupId, showToast, logger]);
 
   // Load data on filter change
   useEffect(() => {

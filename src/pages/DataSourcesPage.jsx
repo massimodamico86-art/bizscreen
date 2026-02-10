@@ -374,7 +374,7 @@ export default function DataSourcesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [logger]);
 
   useEffect(() => {
     loadDataSources();
@@ -397,7 +397,7 @@ export default function DataSourcesPage() {
     } finally {
       setLoadingSource(false);
     }
-  }, []);
+  }, [logger]);
 
   useEffect(() => {
     if (selectedSource) {
@@ -645,7 +645,7 @@ export default function DataSourcesPage() {
     } catch (err) {
       logger.error('Failed to load sync history', { dataSourceId, error: err });
     }
-  }, []);
+  }, [logger]);
 
   // Load sync history when source changes
   useEffect(() => {

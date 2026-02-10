@@ -118,7 +118,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
       setError(err.message || 'Failed to load dashboard data');
       showToast?.('Error loading dashboard: ' + err.message, 'error');
     }
-  }, [user, showToast]);
+  }, [user, showToast, logger]);
 
   useEffect(() => {
     const loadData = async () => {

@@ -66,6 +66,7 @@ export default function AdminDashboardPage({ _onNavigate }) {
 
   useEffect(() => {
     fetchAdminData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const fetchAdminData = async () => {

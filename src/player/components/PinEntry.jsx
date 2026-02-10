@@ -64,6 +64,7 @@ export function PinEntry({ onValidate, onDismiss, onSuccess }) {
         validatePin(newPin);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- uses state setters
   }, [pin, resetTimeout]);
 
   // Handle backspace

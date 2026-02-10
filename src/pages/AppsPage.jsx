@@ -96,6 +96,7 @@ const AppsPage = ({ showToast }) => {
   // Load user's created apps
   useEffect(() => {
     loadUserApps();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadUserApps = async () => {

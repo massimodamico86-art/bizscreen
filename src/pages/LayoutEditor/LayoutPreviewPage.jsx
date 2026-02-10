@@ -73,7 +73,7 @@ export default function LayoutPreviewPage({ layoutId, showToast, onNavigate }) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen, toggleFullscreen]);
+  }, [isFullscreen, toggleFullscreen, handleBack]);
 
   // Navigate back to editor
   const handleBack = useCallback(() => {

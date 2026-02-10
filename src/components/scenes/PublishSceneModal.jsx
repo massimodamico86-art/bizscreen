@@ -89,6 +89,7 @@ export default function PublishSceneModal({
     if (isOpen && tenantId) {
       loadData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, [isOpen, tenantId]);
 
   // Reset state when modal closes

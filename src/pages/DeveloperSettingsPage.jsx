@@ -83,6 +83,7 @@ const DeveloperSettingsPage = ({ showToast }) => {
 
   useEffect(() => {
     loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadData = async () => {

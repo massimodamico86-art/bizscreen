@@ -55,7 +55,7 @@ export default function AdminTemplatesPage({ onNavigate }) {
     fetchCategories()
       .then(setCategories)
       .catch(err => logger.error('Failed to load categories:', err));
-  }, []);
+  }, [logger]);
 
   // Load templates
   const loadTemplates = useCallback(async () => {
@@ -74,7 +74,7 @@ export default function AdminTemplatesPage({ onNavigate }) {
     } finally {
       setLoading(false);
     }
-  }, [categoryFilter, licenseFilter, activeFilter]);
+  }, [categoryFilter, licenseFilter, activeFilter, logger]);
 
   useEffect(() => {
     loadTemplates();

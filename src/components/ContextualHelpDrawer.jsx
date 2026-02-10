@@ -60,6 +60,7 @@ export default function ContextualHelpDrawer({
     if (isOpen && pageId) {
       loadRelatedTopics();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, [isOpen, pageId]);
 
   const loadRelatedTopics = async () => {

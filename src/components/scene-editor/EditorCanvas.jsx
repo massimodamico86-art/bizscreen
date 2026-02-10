@@ -9,7 +9,7 @@
  * - Smart snap guides for alignment
  */
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { Type, Image, Square, Clock, CloudSun, QrCode, Calendar } from 'lucide-react';
 import {
   calculateSnapPosition,
@@ -60,7 +60,7 @@ export default function EditorCanvas({
 
   // Defensive: ensure design properties exist with safe defaults
   const background = design?.background || { type: 'solid', color: '#1a1a2e' };
-  const blocks = design?.blocks || [];
+  const blocks = useMemo(() => design?.blocks || [], [design?.blocks]);
 
   // Resolve data bindings for blocks
   useEffect(() => {
@@ -98,7 +98,7 @@ export default function EditorCanvas({
     return () => {
       cancelled = true;
     };
-  }, [blocks]);
+  }, [blocks, logger]);
 
   // Subscribe to real-time data source updates for the editor
   useEffect(() => {
@@ -154,7 +154,7 @@ export default function EditorCanvas({
         }
       });
     };
-  }, [design, blocks]);
+  }, [design, blocks, logger]);
 
   // Get canvas dimensions for position calculations
   const getCanvasDimensions = useCallback(() => {

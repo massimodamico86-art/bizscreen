@@ -57,6 +57,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
   useEffect(() => {
     loadSchedules();
     loadLimits();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadLimits = async () => {

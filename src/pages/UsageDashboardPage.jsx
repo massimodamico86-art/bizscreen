@@ -164,6 +164,7 @@ export default function UsageDashboardPage({ showToast, onNavigate }) {
 
   useEffect(() => {
     fetchUsageData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const handleUpgrade = () => {

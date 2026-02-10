@@ -44,6 +44,7 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
     if (screen?.id) {
       loadDiagnostics();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- prop change
   }, [screen?.id]);
 
   const loadDiagnostics = async () => {

@@ -116,6 +116,7 @@ const ContentAssistantPage = ({ showToast }) => {
   // Load profile data and permissions
   useEffect(() => {
     loadInitialData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadInitialData = async () => {

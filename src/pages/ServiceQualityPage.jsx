@@ -655,6 +655,7 @@ export default function ServiceQualityPage() {
       setLoading(false);
       setRefreshing(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch functions defined inline; tenantId and timeRange are the real deps
   }, [tenantId, timeRange]);
 
   const fetchSlaData = async () => {

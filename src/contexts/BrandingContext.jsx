@@ -93,7 +93,7 @@ export function BrandingProvider({ children }) {
     };
 
     checkDomainBranding();
-  }, []);
+  }, [logger]);
 
   /**
    * Fetch and apply branding
@@ -139,7 +139,7 @@ export function BrandingProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, [user, domainInfo.isWhiteLabel]);
+  }, [user, domainInfo.isWhiteLabel, logger]);
 
   // Load branding on mount and when user changes
   useEffect(() => {

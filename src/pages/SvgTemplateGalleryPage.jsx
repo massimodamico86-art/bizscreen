@@ -105,6 +105,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
   // Load data
   useEffect(() => {
     loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
   }, []);
 
   const loadData = async () => {

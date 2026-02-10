@@ -121,6 +121,7 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
         clearTimeout(saveTimeoutRef.current);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- sceneId change
   }, [sceneId]);
 
   async function loadSceneData() {
