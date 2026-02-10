@@ -60,7 +60,10 @@ All milestones shipped successfully.
   2. Photo results include photographer name, profile URL with UTM params, and photo page link per Unsplash TOS
   3. Repeated identical searches within 24 hours are served from cache (no Unsplash API call)
   4. A single tenant making excessive requests gets rate-limited with a clear error message
-**Plans:** TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 46-01-PLAN.md — Database migrations, CORS module, and Edge Function handler (server-side proxy)
+- [ ] 46-02-PLAN.md — Client-side service layer for frontend integration
 
 #### Phase 47: Template Browse Premium
 **Goal:** Users experience a visually rich, responsive template browsing page with large thumbnails, smooth animations, and instant search — the first impression says "premium."
@@ -126,11 +129,11 @@ All milestones shipped successfully.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 46. Unsplash Proxy Infrastructure | 0/TBD | Not started | - |
+| 46. Unsplash Proxy Infrastructure | 0/2 | Planned | - |
 | 47. Template Browse Premium | 0/TBD | Not started | - |
 | 48. Template-to-Editor Flow | 0/TBD | Not started | - |
 | 49. Stock Assets in Editor | 0/TBD | Not started | - |
 | 50. Editor Polish | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-10 — v3.0 Creative Experience roadmap created.*
+*Last updated: 2026-02-10 — Phase 46 planned (2 plans).*
