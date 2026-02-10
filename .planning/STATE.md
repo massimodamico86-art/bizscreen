@@ -5,14 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.0 Creative Experience
+**Current focus:** v3.0 Creative Experience — Phase 46 (Unsplash Proxy Infrastructure)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-10 — Milestone v3.0 started
+Phase: 46 of 50 (Unsplash Proxy Infrastructure)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-02-10 — v3.0 roadmap created (5 phases, 21 requirements)
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Milestones Shipped
 
@@ -34,24 +36,28 @@ Last activity: 2026-02-10 — Milestone v3.0 started
 
 ## Accumulated Context
 
-### Key Patterns
+### Key Research Insights
 
-(Cleared for next milestone — see phase summaries in `.planning/phases/` for historical patterns)
+- Polotno runs in an isolated React 18 iframe -- stock asset panels MUST be built inside the iframe, not bridged via postMessage
+- `unsplash-js` npm package is archived -- use raw HTTP fetch to Unsplash REST API
+- Unsplash API has 4 mandatory compliance requirements: attribution with UTM, hotlinking CDN, download tracking endpoint, no re-hosting
+- Existing Framer Motion (12.x) and Lucide React (0.548+) cover all animation and icon needs -- zero new dependencies
+- Unsplash hotlinking vs offline player conflict needs resolution during Phase 46
 
 ### Decisions
 
-(Cleared for next milestone — see PROJECT.md Key Decisions table for complete history)
+(No new decisions yet for v3.0 -- see PROJECT.md Key Decisions for history)
 
 ### Blockers/Concerns
 
-None.
+- Unsplash offline caching question: TOS may conflict with offline player requirement. Needs clarification before Phase 46 implementation.
 
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Defining v3.0 requirements
+Stopped at: v3.0 roadmap created
 Resume file: None
-Next: Define requirements → create roadmap
+Next: `/gsd:plan-phase 46`
 
 ---
-*Updated: 2026-02-10 — Milestone v3.0 Creative Experience started.*
+*Updated: 2026-02-10 — v3.0 Creative Experience roadmap created.*

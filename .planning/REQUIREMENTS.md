@@ -78,33 +78,33 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BROWSE-01 | — | Pending |
-| BROWSE-02 | — | Pending |
-| BROWSE-03 | — | Pending |
-| BROWSE-04 | — | Pending |
-| BROWSE-05 | — | Pending |
-| FLOW-01 | — | Pending |
-| FLOW-02 | — | Pending |
-| FLOW-03 | — | Pending |
-| FLOW-04 | — | Pending |
-| ASSET-01 | — | Pending |
-| ASSET-02 | — | Pending |
-| ASSET-03 | — | Pending |
-| ASSET-04 | — | Pending |
-| ASSET-05 | — | Pending |
-| ASSET-06 | — | Pending |
-| EDITOR-01 | — | Pending |
-| EDITOR-02 | — | Pending |
-| EDITOR-03 | — | Pending |
-| EDITOR-04 | — | Pending |
-| EDITOR-05 | — | Pending |
-| INFRA-01 | — | Pending |
+| INFRA-01 | Phase 46 | Pending |
+| BROWSE-01 | Phase 47 | Pending |
+| BROWSE-02 | Phase 47 | Pending |
+| BROWSE-03 | Phase 47 | Pending |
+| BROWSE-04 | Phase 47 | Pending |
+| BROWSE-05 | Phase 47 | Pending |
+| FLOW-01 | Phase 48 | Pending |
+| FLOW-02 | Phase 48 | Pending |
+| FLOW-03 | Phase 48 | Pending |
+| FLOW-04 | Phase 48 | Pending |
+| ASSET-01 | Phase 49 | Pending |
+| ASSET-02 | Phase 49 | Pending |
+| ASSET-03 | Phase 49 | Pending |
+| ASSET-04 | Phase 49 | Pending |
+| ASSET-05 | Phase 49 | Pending |
+| ASSET-06 | Phase 49 | Pending |
+| EDITOR-01 | Phase 50 | Pending |
+| EDITOR-02 | Phase 50 | Pending |
+| EDITOR-03 | Phase 50 | Pending |
+| EDITOR-04 | Phase 50 | Pending |
+| EDITOR-05 | Phase 50 | Pending |
 
 **Coverage:**
 - v3.0 requirements: 21 total
-- Mapped to phases: 0
-- Unmapped: 21 ⚠️
+- Mapped to phases: 21
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-10*
-*Last updated: 2026-02-10 after initial definition*
+*Last updated: 2026-02-10 after roadmap creation*
