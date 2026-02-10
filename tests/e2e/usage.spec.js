@@ -12,7 +12,8 @@
 
 import { test, expect } from '@playwright/test';
 
-// Skip all usage dashboard tests until the route is wired up
+// SKIP REASON: /app/usage route is not wired up in the application router. The UsageDashboardPage
+// component exists but is not connected to navigation. Re-enable when route is added.
 test.describe.skip('Usage Dashboard', () => {
   // Skip these tests if not authenticated or feature not available
   test.beforeEach(async ({ page }) => {
@@ -127,6 +128,7 @@ test.describe.skip('Usage Dashboard', () => {
   });
 });
 
+// SKIP REASON: Depends on Usage Dashboard route which is not wired up (see above).
 test.describe.skip('Usage Dashboard - Visual States', () => {
   test.beforeEach(async ({ page }) => {
     const email = process.env.TEST_USER_EMAIL;

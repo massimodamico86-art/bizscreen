@@ -10,7 +10,8 @@
 import { test, expect } from '@playwright/test';
 import { loginAndPrepare, waitForPageReady, navigateToSection } from './helpers.js';
 
-// Skip: Scenes feature not in sidebar navigation (page exists but not accessible via nav)
+// SKIP REASON: Scenes feature not accessible via sidebar navigation -- page exists at /app/scenes but
+// no nav button is wired up. Re-enable when Scenes is added to the sidebar.
 test.describe.skip('Scenes', () => {
   // Skip if user credentials not configured
   test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');

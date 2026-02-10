@@ -16,8 +16,9 @@
  */
 import { test, expect } from '@playwright/test';
 
-// Skip these tests in CI since they require database state
-// Run locally with: npm run test:e2e -- alert-notification-flow.spec.js
+// SKIP REASON: Tests require pre-existing database state (alerts, notifications) and use manual login
+// pattern incompatible with storage state auth. Run locally with seeded data:
+// npm run test:e2e -- alert-notification-flow.spec.js
 test.describe.skip('Alert Notification Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Login as client user
