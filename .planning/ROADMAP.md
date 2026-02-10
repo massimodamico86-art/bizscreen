@@ -68,12 +68,12 @@ Plans:
   3. User can search for deleted test files and confirm they covered features that no longer exist
   4. User can inspect every remaining test.skip/test.fixme and find a comment explaining why it is skipped
   5. User can find tests that use src/__fixtures__/ for shared test data instead of inline setup
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 43-01: TBD
-- [ ] 43-02: TBD
-- [ ] 43-03: TBD
+- [ ] 43-01-PLAN.md -- Audit report categorizing all 917 skipped tests, delete 3 obsolete diagnostic/debug test files
+- [ ] 43-02-PLAN.md -- Fix fixable selector/auth skips, document every remaining skip with SKIP REASON comments
+- [ ] 43-03-PLAN.md -- Adopt src/__fixtures__/ shared test data pattern in 3-5 unit test files
 
 ### Phase 44: ESLint Zero Warnings
 **Goal**: ESLint runs with zero warnings and all rules enforce at error level
