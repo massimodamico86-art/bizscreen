@@ -1,22 +1,23 @@
 /**
- * SVG Template Gallery Page - OptiSigns Style
+ * SVG Template Gallery Page - Premium Browsing Experience
  *
  * Browse and select SVG templates for editing.
  * Features:
+ * - Skeleton grid loading state (no spinner)
+ * - Debounced search (300ms) via design-system SearchBar
  * - Collapsible filter sidebar with categories, industries, styles
  * - Featured, Popular, Recent sections with horizontal scroll
- * - Quick filter chips
- * - Search functionality
- * - User's saved designs section
+ * - Premium TemplateCard from design-system in grid views
+ * - Framer Motion stagger animations on grid entry
+ * - Responsive 4-column grid layout
  */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { motion } from 'framer-motion';
 import {
-  Loader2,
   ChevronRight,
   ChevronLeft,
   ChevronDown,
-  Search,
   X,
   Monitor,
   Smartphone,
@@ -31,6 +32,36 @@ import {
   fetchUserSvgDesigns,
   deleteUserSvgDesign,
 } from '../services/svgTemplateService';
+import { TemplateCard as DSTemplateCard, TemplateCardSkeleton } from '../design-system';
+import { SearchBar } from '../design-system';
+
+// Debounce hook for search input
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debouncedValue;
+}
+
+// Grid-specific stagger variants (slightly slower than default for visual impact)
+const gridContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.04 },
+  },
+};
+
+const gridItem = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] },
+  },
+};
 
 // Filter configurations
 const FILTER_CONFIG = {
@@ -83,6 +114,8 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 300);
+  const debouncedHeaderSearch = useDebounce(headerSearchQuery, 300);
   const [activeView, setActiveView] = useState('home'); // 'home' | 'your-designs'
   const [expandedFilters, setExpandedFilters] = useState({
     categories: true,
@@ -125,10 +158,10 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
     }
   };
 
-  // Filter templates
+  // Filter templates (uses debounced search values)
   const filteredTemplates = useMemo(() => {
     let result = [...templates];
-    const query = searchQuery || headerSearchQuery;
+    const query = debouncedSearch || debouncedHeaderSearch;
 
     if (query) {
       const q = query.toLowerCase();
@@ -152,7 +185,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
     }
 
     return result;
-  }, [templates, searchQuery, headerSearchQuery, activeFilters]);
+  }, [templates, debouncedSearch, debouncedHeaderSearch, activeFilters]);
 
   // Apply base filters (orientation) to get filtered base
   const baseFilteredTemplates = useMemo(() => {
@@ -296,24 +329,18 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
     );
   };
 
-  // Template Card Component
-  const TemplateCard = ({ template, isUserDesign = false, size = 'normal', inGrid = false }) => {
+  // Simplified card for horizontal scroll sections (thumbnail-only with hover overlay)
+  const ScrollCard = ({ template, isUserDesign = false, size = 'normal' }) => {
     // Check if template is portrait orientation
     const isPortrait = template.orientation?.toLowerCase() === 'portrait' ||
       (template.height && template.width && template.height > template.width);
 
-    // Adjust sizing based on orientation
+    // Sizing for scroll view - portrait cards are narrower and taller
     let cardClass;
-    if (inGrid) {
-      // Grid view - portrait cards are taller
-      cardClass = isPortrait ? 'w-full h-64' : 'w-full h-44';
+    if (isPortrait) {
+      cardClass = size === 'large' ? 'w-44 h-64 flex-shrink-0' : 'w-40 h-56 flex-shrink-0';
     } else {
-      // Scroll view - portrait cards are narrower and taller
-      if (isPortrait) {
-        cardClass = size === 'large' ? 'w-44 h-64 flex-shrink-0' : 'w-40 h-56 flex-shrink-0';
-      } else {
-        cardClass = size === 'large' ? 'w-80 h-44 flex-shrink-0' : 'w-72 h-40 flex-shrink-0';
-      }
+      cardClass = size === 'large' ? 'w-80 h-44 flex-shrink-0' : 'w-72 h-40 flex-shrink-0';
     }
 
     return (
@@ -382,7 +409,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
   };
 
   // Horizontal Scroll Section
-  const HorizontalSection = ({ title, templates, scrollRef, isUserDesign = false }) => (
+  const HorizontalSection = ({ title, templates: sectionTemplates, scrollRef, isUserDesign = false }) => (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
@@ -408,8 +435,8 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
           className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {templates.map((template) => (
-            <TemplateCard key={template.id} template={template} isUserDesign={isUserDesign} />
+          {sectionTemplates.map((template) => (
+            <ScrollCard key={template.id} template={template} isUserDesign={isUserDesign} />
           ))}
         </div>
 
@@ -424,10 +451,37 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
     </div>
   );
 
+  // Skeleton loading state (replaces Loader2 spinner)
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+      <div className="flex h-[calc(100vh-64px)] -mx-6 -mt-6">
+        {/* Left Sidebar skeleton */}
+        <div className="w-52 flex-shrink-0 bg-white border-r border-gray-200 p-3 space-y-3">
+          <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
+          <div className="h-9 bg-gray-200 rounded-lg animate-pulse" />
+          <div className="h-9 bg-gray-100 rounded-lg animate-pulse" />
+          <div className="h-9 bg-gray-100 rounded-lg animate-pulse" />
+          <div className="border-t border-gray-200 pt-4 space-y-3">
+            <div className="h-3 bg-gray-200 rounded animate-pulse w-16" />
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-4 bg-gray-100 rounded animate-pulse" style={{ width: `${60 + Math.random() * 30}%` }} />
+            ))}
+          </div>
+        </div>
+        {/* Main content skeleton */}
+        <div className="flex-1 bg-gray-50 p-6">
+          {/* Header skeleton */}
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg px-8 py-10 mb-6 -mx-6 -mt-6">
+            <div className="h-7 bg-white/20 rounded w-80 mx-auto mb-6 animate-pulse" />
+            <div className="max-w-2xl mx-auto h-12 bg-white/30 rounded-lg animate-pulse" />
+          </div>
+          {/* Template grid skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <TemplateCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -437,17 +491,13 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
       {/* Left Sidebar */}
       <div className="w-52 flex-shrink-0 bg-white border-r border-gray-200 overflow-y-auto">
         <div className="p-3 space-y-3">
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='Try "Building Directory"'
-              className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
-            />
-          </div>
+          {/* Search - Design System SearchBar */}
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder='Try "Building Directory"'
+            size="sm"
+          />
 
           {/* Home Button */}
           <button
@@ -580,13 +630,13 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
           <div className="max-w-2xl mx-auto mb-4">
             <div className="flex gap-2">
               <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
+                <SearchBar
                   value={headerSearchQuery}
-                  onChange={(e) => setHeaderSearchQuery(e.target.value)}
+                  onChange={setHeaderSearchQuery}
                   placeholder='Try "Building Directory"'
-                  className="w-full pl-12 pr-4 py-3 text-base rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  size="lg"
+                  showClear={false}
+                  className="[&_input]:border-0 [&_input]:focus:ring-white/50"
                 />
               </div>
               <button
@@ -627,11 +677,28 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+                <motion.div
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                  variants={gridContainer}
+                  initial="hidden"
+                  animate="visible"
+                  key={'designs-' + activeFilters.orientation}
+                >
                   {userDesigns.map((design) => (
-                    <TemplateCard key={design.id} template={design} isUserDesign inGrid />
+                    <motion.div key={design.id} variants={gridItem}>
+                      <DSTemplateCard
+                        title={design.name}
+                        description={design.description}
+                        imageUrl={design.thumbnail || design.background_image || design.svgUrl || design.svg_url}
+                        category={design.category}
+                        tags={design.tags?.slice(0, 2)}
+                        orientation={design.orientation?.toLowerCase()}
+                        onSelect={() => handleDesignClick(design)}
+                        actionLabel="Edit"
+                      />
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
             </div>
           ) : searchQuery || headerSearchQuery ? (
@@ -645,11 +712,28 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
                   <p className="text-gray-500">No templates found matching your search.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+                <motion.div
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                  variants={gridContainer}
+                  initial="hidden"
+                  animate="visible"
+                  key={debouncedSearch + debouncedHeaderSearch + activeFilters.category + activeFilters.orientation}
+                >
                   {filteredTemplates.map((template) => (
-                    <TemplateCard key={template.id} template={template} inGrid />
+                    <motion.div key={template.id} variants={gridItem}>
+                      <DSTemplateCard
+                        title={template.name}
+                        description={template.description}
+                        imageUrl={template.thumbnail || template.background_image || template.svgUrl || template.svg_url}
+                        category={template.category}
+                        tags={template.tags?.slice(0, 2)}
+                        orientation={template.orientation?.toLowerCase()}
+                        onSelect={() => handleTemplateClick(template)}
+                        actionLabel="Use Template"
+                      />
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
             </div>
           ) : (
