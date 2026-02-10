@@ -216,6 +216,7 @@ export default function SvgEditorPage({
       designId={editorConfig.designId}
       canvasWidth={editorConfig.canvasWidth}
       canvasHeight={editorConfig.canvasHeight}
+      isFromTemplate={!!urlTemplateId && !urlDesignId}
       onSave={handleSave}
       onClose={handleClose}
       showToast={showToast}
