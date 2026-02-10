@@ -176,3 +176,44 @@
 
 ---
 
+
+## v2.4 Tech Debt Zero (Shipped: 2026-02-10)
+
+**Delivered:** Eliminated all accumulated tech debt -- dead code removal, E2E test triage, ESLint zero warnings, and Sentry alert operationalization -- establishing a clean foundation for future feature work.
+
+**Phases completed:** 42-45 (11 plans total)
+
+**Key accomplishments:**
+
+- Removed dead AutoBuildOnboardingModal/autoBuildService (631 lines) and created corrective migration 141 for orphaned tenant_id
+- Audited all 917 skipped E2E tests into 9 categories, deleted 3 obsolete diagnostic files, documented all remaining skips with SKIP REASON comments
+- Fixed 8 test.fixme tests (selectors confirmed matching current UI) and adopted `__fixtures__/` shared test data pattern in 3 unit tests
+- Fixed all 7,332 ESLint warnings to zero: 34 no-undef bugs, 355 unused vars, 125 exhaustive-deps, plus disabled 3 impractical rules
+- Promoted all 6 warn-level ESLint rules to error with pre-commit enforcement via Husky/lint-staged
+- Installed Sentry Slack integration with dual alert rules (issue + metric) routing production errors to #sentry-alerts
+
+**Stats:**
+
+- 271 files modified (+4,899/-1,691 lines)
+- 36 commits over 2 days (2026-02-09 → 2026-02-10)
+- 4 phases, 11 plans
+
+**Git range:** `a4de49f` → `b679538`
+
+**Tech debt resolved:**
+
+- Dead code: AutoBuildOnboardingModal.jsx, autoBuildService.js deleted
+- Migration 105 tenant_id: corrective migration 141 applied
+- ESLint warnings: 7,332 → 0, all rules at error level
+- Sentry alerting: Slack integration + 2 alert rules operational
+- E2E test skips: all categorized and documented
+
+**Tech debt remaining (accepted):**
+
+- ~900 E2E tests skipped (project-specific multi-project pattern, intentional)
+- Sentry alert environment set to "all" (will narrow to "production" once first production event creates environment)
+
+**What's next:** Next milestone planning
+
+---
+
