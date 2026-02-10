@@ -18,6 +18,7 @@
 import { forwardRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { cardLift } from '../motion';
+import Button from './Button';
 import {
   Badge,
   LayoutTemplate,
