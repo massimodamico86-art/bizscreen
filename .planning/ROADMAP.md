@@ -100,10 +100,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can view Sentry alert rules that trigger on error rate thresholds
   2. User can see Sentry alerts arriving in a designated Slack channel when error thresholds are exceeded
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 45-01: TBD
+- [ ] 45-01-PLAN.md -- Configure Sentry Slack integration, create issue + metric alert rules, verify end-to-end alert delivery
 
 ## Progress
 
