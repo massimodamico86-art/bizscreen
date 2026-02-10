@@ -43,7 +43,7 @@ All milestones shipped successfully.
 
 ### Phases
 
-- [ ] **Phase 46: Unsplash Proxy Infrastructure** — Server-side foundation for stock photo integration
+- [x] **Phase 46: Unsplash Proxy Infrastructure** — Server-side foundation for stock photo integration (completed 2026-02-10)
 - [ ] **Phase 47: Template Browse Premium** — Visual richness and micro-interactions on the template grid
 - [ ] **Phase 48: Template-to-Editor Flow** — One-click path from template selection to editing
 - [ ] **Phase 49: Stock Assets in Editor** — Unsplash photos, icons, and media library inside the Polotno editor
@@ -62,8 +62,8 @@ All milestones shipped successfully.
   4. A single tenant making excessive requests gets rate-limited with a clear error message
 **Plans:** 2 plans
 Plans:
-- [ ] 46-01-PLAN.md — Database migrations, CORS module, and Edge Function handler (server-side proxy)
-- [ ] 46-02-PLAN.md — Client-side service layer for frontend integration
+- [x] 46-01-PLAN.md — Database migrations, CORS module, and Edge Function handler (server-side proxy)
+- [x] 46-02-PLAN.md — Client-side service layer for frontend integration
 
 #### Phase 47: Template Browse Premium
 **Goal:** Users experience a visually rich, responsive template browsing page with large thumbnails, smooth animations, and instant search — the first impression says "premium."
@@ -123,17 +123,17 @@ Plans:
 | v2.4 Tech Debt Zero | 42-45 | 11 | Complete | 2026-02-10 |
 | v3.0 Creative Experience | 46-50 | TBD | In progress | - |
 
-**Total:** 45 phases complete, 170 plans executed | 6 milestones shipped
+**Total:** 46 phases complete, 172 plans executed | 6 milestones shipped
 
 ### v3.0 Phase Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 46. Unsplash Proxy Infrastructure | 0/2 | Planned | - |
+| 46. Unsplash Proxy Infrastructure | 2/2 | ✓ Complete | 2026-02-10 |
 | 47. Template Browse Premium | 0/TBD | Not started | - |
 | 48. Template-to-Editor Flow | 0/TBD | Not started | - |
 | 49. Stock Assets in Editor | 0/TBD | Not started | - |
 | 50. Editor Polish | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-10 — Phase 46 planned (2 plans).*
+*Last updated: 2026-02-10 — Phase 46 complete (2/2 plans).*
