@@ -75,7 +75,10 @@ Plans:
   3. Before thumbnails load, the user sees animated skeleton placeholders matching final card dimensions — no raw spinners
   4. Typing in the search bar produces filtered results within 300ms and category filters narrow the grid immediately
   5. The template grid gracefully adapts from 4 columns on desktop to 1 column on mobile without horizontal scrolling
-**Plans:** TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 47-01-PLAN.md — Enhance design-system TemplateCard with Framer Motion hover lift, h-60 thumbnails, and matched skeletons
+- [ ] 47-02-PLAN.md — Upgrade SvgTemplateGalleryPage with skeleton loading, debounced search, stagger animations, and responsive grid
 
 #### Phase 48: Template-to-Editor Flow
 **Goal:** Users go from browsing a template to editing it in one click — no intermediate modals, no waiting, no confusion about what happened.
