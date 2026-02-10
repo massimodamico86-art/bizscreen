@@ -37,7 +37,7 @@ All milestones shipped successfully.
 
 **Milestone Goal:** Eliminate all accumulated tech debt -- dead code, ESLint warnings, skipped tests, and incomplete observability -- to establish a clean foundation for future feature work.
 
-- [ ] **Phase 42: Dead Code & Legacy Cleanup** — Remove dead files, obsolete localStorage keys, and fix broken migration
+- [x] **Phase 42: Dead Code & Legacy Cleanup** — Remove dead files, obsolete localStorage keys, and fix broken migration (completed 2026-02-09)
 - [ ] **Phase 43: E2E Test Triage** — Audit, fix, delete, document, and modernize all skipped E2E tests
 - [ ] **Phase 44: ESLint Zero Warnings** — Fix all 7,807 warnings and promote warn rules to error
 - [ ] **Phase 45: Sentry Operationalization** — Configure alert rules and Slack integration for production error monitoring
@@ -56,7 +56,7 @@ All milestones shipped successfully.
 **Plans**: 1 plan
 
 Plans:
-- [ ] 42-01-PLAN.md — Remove dead code (AutoBuildOnboardingModal, autoBuildService), fix migration 105 tenant_id, verify all cleanup
+- [x] 42-01-PLAN.md — Remove dead code (AutoBuildOnboardingModal, autoBuildService), fix migration 105 tenant_id, verify all cleanup
 
 ### Phase 43: E2E Test Triage
 **Goal**: Every E2E test either passes, is deleted (if obsolete), or has documented justification for being skipped
@@ -107,7 +107,7 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 42. Dead Code & Legacy Cleanup | v2.4 | 0/TBD | Not started | - |
+| 42. Dead Code & Legacy Cleanup | v2.4 | 1/1 | ✓ Complete | 2026-02-09 |
 | 43. E2E Test Triage | v2.4 | 0/TBD | Not started | - |
 | 44. ESLint Zero Warnings | v2.4 | 0/TBD | Not started | - |
 | 45. Sentry Operationalization | v2.4 | 0/TBD | Not started | - |
@@ -123,7 +123,7 @@ Plans:
 | v2.3 Production Hardening | 36-41 | 18 | Complete | 2026-02-09 |
 | v2.4 Tech Debt Zero | 42-45 | TBD | In progress | - |
 
-**Total:** 41 phases complete, 159 plans executed | 5 milestones shipped | 1 milestone in progress
+**Total:** 42 phases complete, 160 plans executed | 5 milestones shipped | 1 milestone in progress
 
 ---
-*Last updated: 2026-02-09 -- v2.4 Tech Debt Zero roadmap created*
+*Last updated: 2026-02-09 -- Phase 42 Dead Code & Legacy Cleanup complete*
