@@ -39,7 +39,7 @@ All milestones shipped successfully.
 
 - [x] **Phase 42: Dead Code & Legacy Cleanup** — Remove dead files, obsolete localStorage keys, and fix broken migration (completed 2026-02-09)
 - [x] **Phase 43: E2E Test Triage** — Audit, fix, delete, document, and modernize all skipped E2E tests (completed 2026-02-10)
-- [ ] **Phase 44: ESLint Zero Warnings** — Fix all 7,807 warnings and promote warn rules to error
+- [ ] **Phase 44: ESLint Zero Warnings** — Fix all 7,332 warnings and promote warn rules to error
 - [ ] **Phase 45: Sentry Operationalization** — Configure alert rules and Slack integration for production error monitoring
 
 ## Phase Details
@@ -84,11 +84,14 @@ Plans:
   1. User can run `npx eslint .` and see zero warnings and zero errors across the entire codebase
   2. User can inspect ESLint config and confirm all previously-warn rules are now set to error
   3. User can attempt a commit with a warning-level violation and see it blocked by pre-commit hook
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 44-01: TBD
-- [ ] 44-02: TBD
+- [ ] 44-01-PLAN.md — Disable impractical rules (prop-types/jsdoc/react-refresh) and fix small warning categories (42 warnings, 14 files)
+- [ ] 44-02-PLAN.md — Fix no-undef bugs (34 undefined variable references across 9 files)
+- [ ] 44-03-PLAN.md — Fix unused-imports/no-unused-vars (356 warnings across 172 files)
+- [ ] 44-04-PLAN.md — Fix react-hooks/exhaustive-deps (125 warnings across 81 files)
+- [ ] 44-05-PLAN.md — Promote all warn rules to error and verify zero warnings/errors
 
 ### Phase 45: Sentry Operationalization
 **Goal**: Production errors automatically trigger alerts that reach the team via Slack
@@ -110,7 +113,7 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 42. Dead Code & Legacy Cleanup | v2.4 | 1/1 | ✓ Complete | 2026-02-09 |
 | 43. E2E Test Triage | v2.4 | 4/4 | ✓ Complete | 2026-02-10 |
-| 44. ESLint Zero Warnings | v2.4 | 0/TBD | Not started | - |
+| 44. ESLint Zero Warnings | v2.4 | 0/5 | Planned | - |
 | 45. Sentry Operationalization | v2.4 | 0/TBD | Not started | - |
 
 ## Progress Summary
@@ -127,4 +130,4 @@ Plans:
 **Total:** 43 phases complete, 164 plans executed | 5 milestones shipped | 1 milestone in progress
 
 ---
-*Last updated: 2026-02-10 -- Phase 43 E2E Test Triage complete*
+*Last updated: 2026-02-10 -- Phase 44 ESLint Zero Warnings planned (5 plans)*
