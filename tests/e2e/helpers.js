@@ -90,7 +90,7 @@ export async function loginAndPrepare(page, options = {}) {
  */
 export async function dismissAnyModals(page) {
   // Import expect for auto-waiting assertions
-  const { expect } = await import('@playwright/test');
+  const { _expect } = await import('@playwright/test');
 
   // Try to find and click modal close buttons
   // The design-system Modal has a close button with aria-label="Close modal"

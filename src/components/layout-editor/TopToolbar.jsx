@@ -228,7 +228,7 @@ export default function TopToolbar({
                 </div>
               ) : (
                 <>
-                  {YODECK_ORIENTATIONS.map((preset, index) => {
+                  {YODECK_ORIENTATIONS.map((preset, _index) => {
                     if (preset.isSeparator) {
                       return (
                         <div key={preset.id} className="px-3 py-2">

@@ -332,7 +332,7 @@ describe('Screen Pairing API', () => {
     let apiKey;
 
     beforeEach(() => {
-      const { code, screenId: sId } = service.generatePairingCode('owner-123', 'Test Screen');
+      const { code, screenId: _sId } = service.generatePairingCode('owner-123', 'Test Screen');
       const result = service.claimCode(code, { deviceId: 'device-abc' });
       screenId = result.data.screenId;
       apiKey = result.data.apiKey;

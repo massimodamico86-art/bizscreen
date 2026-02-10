@@ -24,7 +24,7 @@ import {
 // Feature Flags Tab
 // ============================================
 
-export function FeatureFlagsTab({ flags, onRefresh, onToggle, onDelete, onEdit, onAdd }) {
+export function FeatureFlagsTab({ flags, _onRefresh, onToggle, onDelete, onEdit, onAdd }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -165,7 +165,7 @@ export function FeatureFlagsTab({ flags, onRefresh, onToggle, onDelete, onEdit, 
 // Experiments Tab
 // ============================================
 
-export function ExperimentsTab({ experiments, onRefresh, onStatusChange, onDelete, onEdit, onAdd }) {
+export function ExperimentsTab({ experiments, _onRefresh, onStatusChange, onDelete, onEdit, onAdd }) {
   const handleStatusChange = async (exp, newStatus) => {
     await onStatusChange(exp.id, newStatus);
   };
@@ -301,7 +301,7 @@ export function ExperimentsTab({ experiments, onRefresh, onStatusChange, onDelet
 // Feedback Tab
 // ============================================
 
-export function FeedbackTab({ feedback, onRefresh, onStatusChange }) {
+export function FeedbackTab({ feedback, _onRefresh, onStatusChange }) {
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -435,7 +435,7 @@ export function FeedbackTab({ feedback, onRefresh, onStatusChange }) {
 // Announcements Tab
 // ============================================
 
-export function AnnouncementsTab({ announcements, onRefresh, onToggle, onDelete, onEdit, onAdd }) {
+export function AnnouncementsTab({ announcements, _onRefresh, onToggle, onDelete, onEdit, onAdd }) {
   const handleDelete = async (ann) => {
     if (!confirm(`Delete announcement "${ann.title}"?`)) return;
     await onDelete(ann.id);
@@ -583,7 +583,7 @@ export function FlagModal({ open, onClose, flag, onSave }) {
       }
       onSave();
       onClose();
-    } catch (error) {
+    } catch (_error) {
       // Error handled by hook's refresh
     } finally {
       setSaving(false);
@@ -766,7 +766,7 @@ export function ExperimentModal({ open, onClose, experiment, onSave }) {
       }
       onSave();
       onClose();
-    } catch (error) {
+    } catch (_error) {
       // Error handled by hook's refresh
     } finally {
       setSaving(false);
@@ -917,7 +917,7 @@ export function AnnouncementModal({ open, onClose, announcement, onSave }) {
       }
       onSave();
       onClose();
-    } catch (error) {
+    } catch (_error) {
       // Error handled by hook's refresh
     } finally {
       setSaving(false);

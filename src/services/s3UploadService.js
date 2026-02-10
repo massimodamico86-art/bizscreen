@@ -13,7 +13,7 @@ const API_BASE = import.meta.env.VITE_API_URL || '';
 /**
  * Get file type category from MIME type
  */
-function getMediaType(mimeType) {
+function _getMediaType(mimeType) {
   if (mimeType.startsWith('image/')) return 'image';
   if (mimeType.startsWith('video/')) return 'video';
   if (mimeType.startsWith('audio/')) return 'audio';

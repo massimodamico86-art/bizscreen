@@ -7,7 +7,7 @@ import { describe, it, expect, vi } from 'vitest';
 // Mock html2canvas
 vi.mock('html2canvas', () => ({
   default: vi.fn().mockImplementation(() => Promise.resolve({
-    toBlob: vi.fn((callback, format, quality) => {
+    toBlob: vi.fn((callback, _format, _quality) => {
       callback(new Blob(['test'], { type: 'image/jpeg' }));
     }),
   })),

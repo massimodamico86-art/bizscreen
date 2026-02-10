@@ -221,12 +221,12 @@ test.describe('Admin API Endpoints', () => {
     'Super admin credentials not configured'
   );
 
-  test('tenant list API returns valid structure', async ({ request }) => {
+  test('tenant list API returns valid structure', async ({ _request }) => {
     // SKIP REASON: API test requires auth token extraction which is not implemented for Playwright request context
     test.skip();
   });
 
-  test('tenant detail API returns valid structure', async ({ request }) => {
+  test('tenant detail API returns valid structure', async ({ _request }) => {
     // SKIP REASON: API test requires auth token extraction which is not implemented for Playwright request context
     test.skip();
   });

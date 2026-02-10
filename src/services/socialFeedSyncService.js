@@ -28,7 +28,7 @@ const MAX_CONCURRENT_SYNCS = 3;
 const RATE_LIMIT_COOLDOWN_MS = 60000; // 1 minute cooldown on rate limit
 
 // Provider-specific rate limits (requests per minute)
-const PROVIDER_RATE_LIMITS = {
+const _PROVIDER_RATE_LIMITS = {
   instagram: 200,
   facebook: 200,
   tiktok: 100,

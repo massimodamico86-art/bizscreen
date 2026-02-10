@@ -35,7 +35,7 @@ import { useLogger } from '../hooks/useLogger.js';
 import { useResponsiveColumns } from '../components/tables';
 
 const SchedulesPage = ({ showToast, onNavigate }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const logger = useLogger('SchedulesPage');
   const { showSecondary } = useResponsiveColumns();
   const [schedules, setSchedules] = useState([]);

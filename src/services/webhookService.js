@@ -16,7 +16,7 @@ import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('WebhookService');
+const _logger = createScopedLogger('WebhookService');
 
 // Retry configuration
 export const WEBHOOK_RETRY_CONFIG = {
@@ -89,7 +89,7 @@ export function validateWebhookUrl(url) {
     }
 
     return { valid: true };
-  } catch (e) {
+  } catch (_e) {
     return { valid: false, error: 'Invalid URL format' };
   }
 }
@@ -380,7 +380,7 @@ export async function replayMultipleEvents(eventIds) {
     try {
       await replayWebhookEvent(eventId);
       success++;
-    } catch (e) {
+    } catch (_e) {
       failed++;
     }
   }

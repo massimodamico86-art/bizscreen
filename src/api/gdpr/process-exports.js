@@ -52,7 +52,7 @@ export async function POST(request) {
 
     // Process each export
     for (const exportRequest of pendingExports) {
-      const { data: result, error } = await supabaseAdmin
+      const { data: _result, error } = await supabaseAdmin
         .rpc('process_data_export', { p_request_id: exportRequest.id });
 
       if (error) {

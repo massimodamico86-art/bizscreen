@@ -203,7 +203,7 @@ test.describe.skip('Scenes', () => {
   });
 
   test.describe('AI Onboarding', () => {
-    test('AutoBuild modal appears for new users without scenes', async ({ page }) => {
+    test('AutoBuild modal appears for new users without scenes', async ({ _page }) => {
       // This test is for new users who haven't completed onboarding
       // The modal should auto-trigger when they have no scenes
       // Note: This requires a fresh test user or mocking the has_completed_onboarding flag

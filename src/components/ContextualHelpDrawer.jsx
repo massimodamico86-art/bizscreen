@@ -22,7 +22,7 @@ import { useLogger } from '../hooks/useLogger.js';
  * @param root0.pageId
  * @param root0.onClick
  */
-export function HelpButton({ pageId, onClick }) {
+export function HelpButton({ _pageId, onClick }) {
   return (
     <button
       onClick={onClick}

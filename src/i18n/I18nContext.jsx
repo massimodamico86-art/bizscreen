@@ -78,7 +78,7 @@ export function I18nProvider({ children, initialLocale }) {
       if (stored && isLocaleSupported(stored)) {
         return stored;
       }
-    } catch (e) {
+    } catch (_e) {
       // localStorage not available
     }
 
@@ -152,7 +152,7 @@ export function I18nProvider({ children, initialLocale }) {
     // Persist to localStorage
     try {
       localStorage.setItem('bizscreen_locale', newLocale);
-    } catch (e) {
+    } catch (_e) {
       // localStorage not available
     }
 

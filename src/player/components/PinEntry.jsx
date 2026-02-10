@@ -91,7 +91,7 @@ export function PinEntry({ onValidate, onDismiss, onSuccess }) {
         setError('Incorrect PIN');
         setPin('');
       }
-    } catch (err) {
+    } catch (_err) {
       setError('Validation failed');
       setPin('');
     } finally {

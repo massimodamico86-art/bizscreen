@@ -42,7 +42,7 @@ export function AnnouncementBanner({ onHeightChange }) {
   const logger = useLogger('AnnouncementBanner');
   const [announcements, setAnnouncements] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, _setIsVisible] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load announcements on mount

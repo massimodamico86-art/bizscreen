@@ -20,7 +20,7 @@ const CONTENT_TYPES = [
 ];
 
 export function FillerContentPicker({
-  scheduleId,
+  _scheduleId,
   currentType = null,
   currentId = null,
   currentName = null,

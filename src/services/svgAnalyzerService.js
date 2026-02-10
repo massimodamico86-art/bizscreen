@@ -11,7 +11,7 @@
  */
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('SvgAnalyzerService');
+const _logger = createScopedLogger('SvgAnalyzerService');
 
 /**
  * Parse SVG content and extract analyzable features

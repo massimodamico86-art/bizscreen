@@ -31,10 +31,10 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
     hasUnsavedChanges,
     saveLayoutNow,
     updateLayout: saveLayoutDebounced,
-    updateElement,
-    addElement,
-    deleteElement,
-    duplicateElement,
+    _updateElement,
+    _addElement,
+    _deleteElement,
+    _duplicateElement,
   } = useLayout(layoutId, {
     debounceMs: 800,
     onSaveSuccess: (msg) => showToast?.({ type: 'success', message: msg }),
@@ -75,7 +75,7 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
   const [mediaLibraryOpen, setMediaLibraryOpen] = useState(false);
 
   // Media items (would come from media library)
-  const [mediaItems, setMediaItems] = useState([]);
+  const [mediaItems, _setMediaItems] = useState([]);
 
   // Initialize history when layout loads
   useEffect(() => {

@@ -62,7 +62,7 @@ const BUSINESS_TYPE_LABELS = {
  * @param root0.onShowToast
  */
 export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
-  const { userProfile } = useAuth();
+  const { _userProfile } = useAuth();
 
   // Scene and slides state
   const [scene, setScene] = useState(null);
@@ -91,7 +91,7 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
   const [activeTheme, setActiveTheme] = useState(null);
 
   // Approval state
-  const [currentReview, setCurrentReview] = useState(null);
+  const [_currentReview, setCurrentReview] = useState(null);
   const [userRequiresApproval, setUserRequiresApproval] = useState(false);
   const [approvalPending, setApprovalPending] = useState(false);
 
@@ -439,7 +439,7 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
     setShowPreviewPanel(!showPreviewPanel);
   }
 
-  function toggleEditorMode() {
+  function _toggleEditorMode() {
     setEditorMode(prev => prev === 'edit' ? 'preview' : 'edit');
   }
 

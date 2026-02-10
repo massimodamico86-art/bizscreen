@@ -69,7 +69,7 @@ export default function UpdatePasswordPage() {
           navigate('/app');
         }, 2000);
       }
-    } catch (err) {
+    } catch (_err) {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);

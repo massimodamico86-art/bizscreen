@@ -126,7 +126,7 @@ export function usePlayerMetrics({ deviceId, tenantId, enabled = true }) {
       } else {
         setConnectionQuality('poor');
       }
-    } catch (error) {
+    } catch (_error) {
       failedPings.current++;
 
       setMetrics(prev => ({

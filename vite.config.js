@@ -52,7 +52,7 @@ function apiRoutesPlugin() {
       };
 
       // Handle /api/media/presign
-      server.middlewares.use('/api/media/presign', async (req, res, next) => {
+      server.middlewares.use('/api/media/presign', async (req, res, _next) => {
         if (req.method !== 'POST') {
           res.statusCode = 405;
           res.end(JSON.stringify({ error: 'Method not allowed' }));

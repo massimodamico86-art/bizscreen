@@ -12,7 +12,7 @@ import GlassTheme from './GlassTheme';
 import { getWeatherWallData, getWeatherEmoji } from '../../services/weatherService';
 import { useLogger } from '../../hooks/useLogger.js';
 
-export default function WeatherWall({ config, appId }) {
+export default function WeatherWall({ config, _appId }) {
   const logger = useLogger('WeatherWall');
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);

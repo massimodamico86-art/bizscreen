@@ -67,7 +67,7 @@ const colorClasses = {
 const AppsPage = ({ showToast }) => {
   const { t } = useTranslation();
   const logger = useLogger('AppsPage');
-  const { user } = useAuth();
+  const { _user } = useAuth();
 
   // User's created app instances
   const [userApps, setUserApps] = useState([]);
@@ -235,7 +235,7 @@ const AppsPage = ({ showToast }) => {
         {/* Category Chips */}
         <div className="flex flex-wrap gap-2">
           {APP_CATEGORIES.map((category) => {
-            const Icon = category.icon;
+            const _Icon = category.icon;
             const isActive = activeCategory === category.id;
             return (
               <button
@@ -802,6 +802,7 @@ function WebPageAppModal({ app, onClose, onCreate, creating }) {
   );
 }
 
+// eslint-disable-next-line unused-imports/no-unused-vars
 function WeatherAppModal({ app, onClose, onCreate, creating }) {
   const [name, setName] = useState(app?.name || 'Weather');
   const [location, setLocation] = useState('');

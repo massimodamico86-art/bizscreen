@@ -1155,7 +1155,7 @@ function BackgroundSettings({ design, onDesignUpdate }) {
 // COLOR PICKER
 // ===========================================
 
-function ColorPicker({ label, value, onChange, compact }) {
+function ColorPicker({ label, value, onChange, _compact }) {
   const [showPicker, setShowPicker] = useState(false);
 
   return (

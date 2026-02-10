@@ -115,7 +115,7 @@ function WarningBadge({ warningLevel }) {
 }
 
 // Cache status badge component
-function CacheStatusBadge({ cacheStatus, isOfflineMode }) {
+function CacheStatusBadge({ cacheStatus, _isOfflineMode }) {
   if (!cacheStatus || cacheStatus === 'none') {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">

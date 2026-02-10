@@ -125,7 +125,7 @@ export function getEffectiveLocaleSync() {
     if (stored && isLocaleSupported(stored)) {
       return stored;
     }
-  } catch (e) {
+  } catch (_e) {
     // localStorage not available
   }
 
@@ -144,7 +144,7 @@ export async function setUserPreferredLocale(locale) {
   }
 
   try {
-    const { data, error } = await supabase.rpc('set_user_preferred_locale', {
+    const { _data, error } = await supabase.rpc('set_user_preferred_locale', {
       p_locale: locale,
     });
 
@@ -171,7 +171,7 @@ export async function setUserPreferredLocale(locale) {
 
     try {
       localStorage.setItem('bizscreen_locale', locale);
-    } catch (e) {
+    } catch (_e) {
       // localStorage not available
     }
 

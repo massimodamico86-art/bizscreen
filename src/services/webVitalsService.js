@@ -52,7 +52,7 @@ function handleMetric(metric) {
 
   // Log in development
   if (!isProduction()) {
-    const emoji = rating === 'good' ? '✅' : rating === 'needs-improvement' ? '⚠️' : '❌';
+    const _emoji = rating === 'good' ? '✅' : rating === 'needs-improvement' ? '⚠️' : '❌';
     logger.info('${emoji} ${name}: ${value.toFixed(2)} (${rating})');
   }
 
@@ -271,7 +271,7 @@ export function measurePerformance(name, startMark, endMark) {
     try {
       const measure = performance.measure(name, startMark, endMark);
       return measure.duration;
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }

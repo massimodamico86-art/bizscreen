@@ -74,7 +74,7 @@ const getWeekDates = (date) => {
 // Format date for display
 const formatDateShort = (date) => {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return `${days[date.getDay()]} ${date.getMonth() + 1}/${date.getDate()}`;
 };
 
@@ -82,7 +82,7 @@ const formatDateInput = (date) => {
   return date.toISOString().split('T')[0];
 };
 
-const formatDateDisplay = (dateStr) => {
+const _formatDateDisplay = (dateStr) => {
   const date = new Date(dateStr + 'T00:00:00');
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -96,7 +96,7 @@ for (let h = 8; h <= 19; h++) {
 }
 
 const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const logger = useLogger('ScheduleEditorPage');
   const [schedule, setSchedule] = useState(null);
   const [entries, setEntries] = useState([]);
@@ -105,7 +105,7 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
   const [saving, setSaving] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [editingEntry, setEditingEntry] = useState(null);
-  const [isDirty, setIsDirty] = useState(false);
+  const [_isDirty, setIsDirty] = useState(false);
 
   // Calendar state
   const [currentDate, setCurrentDate] = useState(new Date());

@@ -388,7 +388,7 @@ function CreateClientModal({ onClose, onCreated }) {
       return;
     }
 
-    const { data, error: createError } = await createClient(formData);
+    const { _data, error: createError } = await createClient(formData);
 
     if (createError) {
       setError(createError);
@@ -568,7 +568,7 @@ function EditClientModal({ client, onClose, onUpdated }) {
     setLoading(true);
     setError(null);
 
-    const { success: updateSuccess, error: updateError } = await updateClient(
+    const { success: _updateSuccess, error: updateError } = await updateClient(
       client.id,
       formData
     );

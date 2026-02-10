@@ -26,7 +26,7 @@ import { PLAN_OPTIONS, TENANT_STATUS_OPTIONS } from '../../services/adminService
  * @param root0.onNavigate
  * @param root0.showToast
  */
-export default function AdminTenantsListPage({ onNavigate, showToast }) {
+export default function AdminTenantsListPage({ onNavigate, _showToast }) {
   const {
     tenants,
     pagination,

@@ -75,8 +75,8 @@ export function useMediaLibrary({ showToast, filter = null } = {}) {
     renameFolder,
     deleteFolder,
     refresh: refreshFolders,
-    moveMediaToFolder: moveFolderMedia,
-    moveMediaToFolderOrdered: moveFolderMediaOrdered,
+    moveMediaToFolder: _moveFolderMedia,
+    moveMediaToFolderOrdered: _moveFolderMediaOrdered,
   } = folderHook;
 
   // Upload success handler (defined before useS3Upload)
@@ -97,7 +97,7 @@ export function useMediaLibrary({ showToast, filter = null } = {}) {
     renderFileInput,
     uploading: isUploading,
     progress: uploadProgress,
-    uploadedFiles: s3UploadedFiles,
+    uploadedFiles: _s3UploadedFiles,
     handleDrop: handleS3Drop,
   } = uploadHook;
 
@@ -130,7 +130,7 @@ export function useMediaLibrary({ showToast, filter = null } = {}) {
   // ============================================================
 
   const [selectedIds, setSelectedIds] = useState(new Set());
-  const [bulkActionLoading, setBulkActionLoading] = useState(false);
+  const [bulkActionLoading, _setBulkActionLoading] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const [isBulkDownloading, setIsBulkDownloading] = useState(false);
   const [isBulkAddingToPlaylist, setIsBulkAddingToPlaylist] = useState(false);

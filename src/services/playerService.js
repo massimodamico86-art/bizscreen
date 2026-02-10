@@ -782,7 +782,7 @@ export class PlayerManager {
    * @param {Object} command
    */
   async handleCommand(command) {
-    const { commandId, commandType, payload } = command;
+    const { commandId, commandType, _payload } = command;
 
     try {
       switch (commandType) {
@@ -839,7 +839,7 @@ export class PlayerManager {
         () => getPlayerContentWithOffline(this.screenId),
         {
           maxAttempts: 3,
-          onRetry: (attempt, delay) => {
+          onRetry: (attempt, _delay) => {
             this.retryAttempt = attempt;
           }
         }

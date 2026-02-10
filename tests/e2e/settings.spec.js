@@ -117,7 +117,7 @@ test.describe('Settings Page', () => {
     // Should either show loading or content, not error
     const hasLoading = await page.locator('.animate-spin').isVisible({ timeout: 1000 }).catch(() => false);
     const hasContent = await page.getByText(/settings/i).isVisible({ timeout: 5000 }).catch(() => false);
-    const hasError = await page.getByText(/error|failed/i).isVisible({ timeout: 1000 }).catch(() => false);
+    const _hasError = await page.getByText(/error|failed/i).isVisible({ timeout: 1000 }).catch(() => false);
 
     // Should have loading or content, but ideally no error
     expect(hasLoading || hasContent).toBeTruthy();

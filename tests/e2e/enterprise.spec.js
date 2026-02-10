@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Enterprise Security', () => {
   // SKIP REASON: Requires TEST_ENTERPRISE_EMAIL environment variable (enterprise account not provisioned in test env)
-  test.skip(({ browserName }) => !process.env.TEST_ENTERPRISE_EMAIL, 'Enterprise credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_ENTERPRISE_EMAIL, 'Enterprise credentials not configured');
 
   test.beforeEach(async ({ page }) => {
     if (process.env.TEST_ENTERPRISE_EMAIL && process.env.TEST_ENTERPRISE_PASSWORD) {

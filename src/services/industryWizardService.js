@@ -15,7 +15,7 @@ import { createSlide, normalizeDesign } from './sceneDesignService';
 import { getBrandTheme, getThemedBlockDefaults } from './brandThemeService';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('IndustryWizardService');
+const _logger = createScopedLogger('IndustryWizardService');
 
 // ===========================================
 // WIZARD DEFINITIONS BY INDUSTRY
@@ -493,7 +493,7 @@ const WIZARD_DEFINITIONS = {
  * Generate a design blueprint for a specific wizard and industry
  */
 function generateBlueprint(industry, wizardKey, formData = {}, brandTheme = null) {
-  const themeDefaults = brandTheme ? getThemedBlockDefaults(brandTheme) : {};
+  const _themeDefaults = brandTheme ? getThemedBlockDefaults(brandTheme) : {};
 
   // Theme colors with fallbacks
   const colors = {

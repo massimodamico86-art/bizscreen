@@ -120,7 +120,7 @@ describe('permissionsService', () => {
       const orgMemberCall = vi.fn().mockResolvedValue({ data: { role: 'manager' }, error: null });
 
       let callCount = 0;
-      supabase.from.mockImplementation((table) => {
+      supabase.from.mockImplementation((_table) => {
         callCount++;
         return {
           select: vi.fn().mockReturnThis(),
@@ -143,7 +143,7 @@ describe('permissionsService', () => {
       getEffectiveOwnerId.mockResolvedValue('tenant-1');
 
       // Mock profile query first, then org member query
-      let callCount = 0;
+      let _callCount = 0;
       supabase.from.mockImplementation((table) => {
         callCount++;
         if (table === 'profiles') {

@@ -411,7 +411,7 @@ export const ScreenRow = ({
 export const ScreenActionMenu = ({
   screen,
   commandingDevice,
-  onClose,
+  _onClose,
   onEdit,
   onViewDetails,
   onViewAnalytics,

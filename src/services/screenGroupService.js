@@ -207,7 +207,7 @@ export async function getUnassignedScreens(excludeGroupId = null, locationId = n
 export async function assignScreensToGroup(groupId, screenIds) {
   if (!screenIds || screenIds.length === 0) return 0;
 
-  const { error, count } = await supabase
+  const { error, _count } = await supabase
     .from('tv_devices')
     .update({ screen_group_id: groupId })
     .in('id', screenIds);

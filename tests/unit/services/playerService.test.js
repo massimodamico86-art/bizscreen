@@ -29,7 +29,7 @@ describe('playerService - Content Resolution', () => {
         playlist_id: 'playlist-123'
       });
 
-      const campaign = createTestCampaign({
+      const _campaign = createTestCampaign({
         status: 'active',
         priority: 10,
         screen_ids: [screen.id]
@@ -138,7 +138,7 @@ describe('playerService - Content Resolution', () => {
   describe('Schedule Time Block Resolution', () => {
     it('should find current time block in schedule', () => {
       const now = new Date();
-      const currentHour = now.getHours();
+      const _currentHour = now.getHours();
 
       const schedule = createTestSchedule({
         time_blocks: [
@@ -215,7 +215,7 @@ describe('playerService - Content Resolution', () => {
     });
 
     it('should handle empty playlist gracefully', () => {
-      const playlist = createTestPlaylist();
+      const _playlist = createTestPlaylist();
       const items = [];
 
       expect(items).toHaveLength(0);

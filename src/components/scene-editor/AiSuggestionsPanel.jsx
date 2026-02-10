@@ -54,7 +54,7 @@ export default function AiSuggestionsPanel({
   brandTheme,
   onClose,
 }) {
-  const logger = useLogger('AiSuggestionsPanel');
+  const _logger = useLogger('AiSuggestionsPanel');
   const [activeTab, setActiveTab] = useState('presets'); // 'presets' | 'actions' | 'improve' | 'polish'
   const [loading, setLoading] = useState(false);
 

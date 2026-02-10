@@ -3,7 +3,7 @@ import { supabase } from '../supabase';
 import { getOpenReviewForResource } from './approvalService';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('PreviewService');
+const _logger = createScopedLogger('PreviewService');
 
 /**
  * Resource types that support preview

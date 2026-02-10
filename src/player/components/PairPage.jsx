@@ -71,7 +71,7 @@ export function PairPage() {
           clearInterval(pollInterval);
           navigate('/player/view', { replace: true });
         }
-      } catch (err) {
+      } catch (_err) {
         // Ignore errors, keep polling
       }
     }, 3000);

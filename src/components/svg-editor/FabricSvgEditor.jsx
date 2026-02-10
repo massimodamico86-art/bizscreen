@@ -135,7 +135,7 @@ export default function FabricSvgEditor({
   const [styleClipboard, setStyleClipboard] = useState(null);
 
   // Counter to force re-renders when object properties change
-  const [updateCounter, setUpdateCounter] = useState(0);
+  const [_updateCounter, setUpdateCounter] = useState(0);
 
   // Load Google Fonts
   useEffect(() => {
@@ -2131,8 +2131,8 @@ export default function FabricSvgEditor({
     if (!templateName?.trim()) return;
 
     try {
-      const fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented']);
-      const thumbnailDataUrl = canvas.toDataURL({
+      const _fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented']);
+      const _thumbnailDataUrl = canvas.toDataURL({
         format: 'png',
         quality: 0.8,
         multiplier: 0.3,

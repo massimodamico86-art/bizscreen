@@ -7,13 +7,13 @@ import { getSupabaseErrorMessage, logError } from '../utils/errorMessages';
 import { convertToLegacyFormat } from '../utils/mediaMigration';
 
 const ListingsPage = ({ showToast, listings, setListings }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [selectedListing, setSelectedListing] = useState(null);
   const [previewListing, setPreviewListing] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [_saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
   const filteredListings = listings.filter(listing =>

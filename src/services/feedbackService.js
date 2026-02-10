@@ -86,7 +86,7 @@ async function getCurrentPlan(tenantId) {
 export async function submitFeedback(feedback) {
   try {
     const tenantId = await getCurrentTenantId();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { _user } } = await supabase.auth.getUser();
 
     const { data, error } = await supabase.rpc('submit_in_app_feedback', {
       p_tenant_id: tenantId,
@@ -209,7 +209,7 @@ function getDismissedIds() {
   try {
     const stored = localStorage.getItem(DISMISSED_KEY);
     return new Set(stored ? JSON.parse(stored) : []);
-  } catch (e) {
+  } catch (_e) {
     return new Set();
   }
 }

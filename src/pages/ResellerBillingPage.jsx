@@ -50,7 +50,7 @@ import {
  * @param root0.onNavigate
  */
 export default function ResellerBillingPage({ showToast, onNavigate }) {
-  const { userProfile } = useAuth();
+  const { _userProfile } = useAuth();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [resellerAccount, setResellerAccount] = useState(null);

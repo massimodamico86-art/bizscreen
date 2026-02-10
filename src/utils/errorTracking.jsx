@@ -50,7 +50,7 @@ const providers = {
         logger.debug('Breadcrumb', breadcrumb);
       }
     },
-    startTransaction(name, op) {
+    startTransaction(_name, _op) {
       return { finish: () => {} };
     }
   },

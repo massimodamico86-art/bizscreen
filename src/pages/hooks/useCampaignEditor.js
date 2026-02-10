@@ -513,7 +513,7 @@ export function useCampaignEditor(campaignId, { showToast }) {
       setCopiedLinkId(link.id);
       setTimeout(() => setCopiedLinkId(null), 2000);
       showToast?.('Link copied to clipboard');
-    } catch (error) {
+    } catch (_error) {
       showToast?.('Failed to copy link', 'error');
     }
   }, [showToast]);

@@ -212,7 +212,7 @@ describe('approvalService', () => {
   describe('approveReview', () => {
     it('updates review and resource status to approved', async () => {
       const { supabase } = await import('../../../src/supabase');
-      const { sendApprovalDecisionEmail } = await import('../../../src/services/emailService.js');
+      const { sendApprovalDecisionEmail: _sendApprovalDecisionEmail } = await import('../../../src/services/emailService.js');
 
       supabase.auth.getUser.mockResolvedValue({ data: { user: { id: 'approver-1' } } });
 

@@ -71,7 +71,7 @@ import {
  * @param root0.onNavigate
  */
 export default function ResellerDashboardPage({ showToast, onNavigate }) {
-  const { userProfile } = useAuth();
+  const { _userProfile } = useAuth();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [resellerAccount, setResellerAccount] = useState(null);
@@ -179,7 +179,7 @@ export default function ResellerDashboardPage({ showToast, onNavigate }) {
     try {
       await exportLicensesCSV(resellerAccount.id);
       showToast?.('Licenses exported', 'success');
-    } catch (err) {
+    } catch (_err) {
       showToast?.('Export failed', 'error');
     }
   };

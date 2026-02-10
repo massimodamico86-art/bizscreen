@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Reseller Portal', () => {
   // SKIP REASON: Requires TEST_RESELLER_EMAIL environment variable (reseller account not provisioned in test env)
-  test.skip(({ browserName }) => !process.env.TEST_RESELLER_EMAIL, 'Reseller credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_RESELLER_EMAIL, 'Reseller credentials not configured');
 
   test.beforeEach(async ({ page }) => {
     if (process.env.TEST_RESELLER_EMAIL && process.env.TEST_RESELLER_PASSWORD) {
@@ -72,7 +72,7 @@ test.describe('Reseller Portal', () => {
 
 test.describe('License Generation', () => {
   // SKIP REASON: Requires TEST_RESELLER_EMAIL environment variable (reseller account not provisioned in test env)
-  test.skip(({ browserName }) => !process.env.TEST_RESELLER_EMAIL, 'Reseller credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_RESELLER_EMAIL, 'Reseller credentials not configured');
 
   test.beforeEach(async ({ page }) => {
     if (process.env.TEST_RESELLER_EMAIL && process.env.TEST_RESELLER_PASSWORD) {

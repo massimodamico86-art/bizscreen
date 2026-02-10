@@ -92,7 +92,7 @@ test.describe.skip('Usage Dashboard', () => {
     await page.goto('/usage');
 
     // If there are exceeded quotas, upgrade CTA should be visible
-    const upgradeCTA = page.locator('text=/upgrade/i');
+    const _upgradeCTA = page.locator('text=/upgrade/i');
 
     // This may or may not be visible depending on current usage
     // Just verify the page loads correctly
@@ -153,7 +153,7 @@ test.describe.skip('Usage Dashboard - Visual States', () => {
     await page.goto('/usage');
 
     // Should show loading spinner initially
-    const spinner = page.locator('[class*="animate-spin"]');
+    const _spinner = page.locator('[class*="animate-spin"]');
     // This might be too fast to catch, so we check for either spinner or content
   });
 

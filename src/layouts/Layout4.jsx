@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function Layout4({ layout, guest }) {
+export default function Layout4({ layout, _guest }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const {
@@ -13,11 +13,11 @@ export default function Layout4({ layout, guest }) {
     logo,
     propertyName,
     showCheckInOut,
-    standardCheckInTime,
+    _standardCheckInTime,
     standardCheckOutTime,
     showWeather,
     weatherTemp,
-    weatherCity,
+    _weatherCity,
     weatherDescription,
     showWifi,
     wifiNetwork,
@@ -42,7 +42,7 @@ export default function Layout4({ layout, guest }) {
   };
 
   // Helper to format time
-  const formatTime = (time24) => {
+  const _formatTime = (time24) => {
     if (!time24) return '';
     const [hours, minutes] = time24.split(':');
     const hour = parseInt(hours);

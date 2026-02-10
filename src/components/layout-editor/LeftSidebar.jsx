@@ -84,7 +84,7 @@ const SHAPE_ICONS = {
 export default function LeftSidebar({
   onAddElement,
   onOpenMediaLibrary,
-  mediaItems = [],
+  _mediaItems = [],
   playlists = [],
   smartGuidesEnabled,
   onSmartGuidesChange,
@@ -94,7 +94,7 @@ export default function LeftSidebar({
   onSnapToGridChange,
 }) {
   const [activeTab, setActiveTab] = useState('media');
-  const [expandedSection, setExpandedSection] = useState(null);
+  const [_expandedSection, _setExpandedSection] = useState(null);
 
   const handleAddWidget = (widgetType) => {
     const id = `widget-${Date.now()}`;
@@ -306,7 +306,7 @@ const MEDIA_TYPE_FILTERS = [
   { id: 'audio', label: 'Audio', icon: Music },
 ];
 
-const ORIENTATION_FILTERS = [
+const _ORIENTATION_FILTERS = [
   { id: null, label: 'All' },
   { id: 'landscape', label: 'Landscape' },
   { id: 'portrait', label: 'Portrait' },
@@ -331,7 +331,7 @@ function MediaTabContent({ onAddImage, onOpenLibrary }) {
     isLoading,
     error,
     hasMore,
-    filters,
+    _filters,
     setFilters,
     fetchMore,
     refresh,

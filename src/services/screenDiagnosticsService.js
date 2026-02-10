@@ -8,7 +8,7 @@
 import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('ScreenDiagnosticsService');
+const _logger = createScopedLogger('ScreenDiagnosticsService');
 
 /**
  * Resolution path labels for display

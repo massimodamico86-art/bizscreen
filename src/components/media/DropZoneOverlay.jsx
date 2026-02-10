@@ -30,7 +30,7 @@ const SUPPORTED_TYPES = {
 export function useDropZone(onDrop, options = {}) {
   const { disabled = false, accept = Object.keys(SUPPORTED_TYPES) } = options;
   const [isDragging, setIsDragging] = useState(false);
-  const [dragCounter, setDragCounter] = useState(0);
+  const [_dragCounter, setDragCounter] = useState(0);
   const dragCounterRef = useRef(0);
 
   const handleDragEnter = useCallback((e) => {

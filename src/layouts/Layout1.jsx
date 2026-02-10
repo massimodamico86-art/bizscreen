@@ -1,4 +1,4 @@
-export default function Layout1({ layout = {}, guest = null }) {
+export default function Layout1({ layout = {}, _guest = null }) {
   const {
     showWelcomeMessage,
     welcomeGreeting = "Welcome!",

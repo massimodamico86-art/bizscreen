@@ -330,7 +330,7 @@ export async function syncDataSourceFromSheet(dataSource) {
     }
 
     // Sync rows to database
-    const { data: syncResult, error: syncError } = await supabase
+    const { data: _syncResult, error: syncError } = await supabase
       .rpc('sync_data_source_rows', {
         p_data_source_id: dataSource.id,
         p_new_rows: rows.map(r => ({ values: r.values })),

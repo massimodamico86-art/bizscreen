@@ -63,7 +63,7 @@ export default function OpsConsolePage() {
       if (tokensError) throw tokensError;
 
       // Get subscriptions
-      const { data: subscriptions, error: subsError } = await supabase
+      const { data: subscriptions, error: _subsError } = await supabase
         .from('subscriptions')
         .select('user_id, plan_id');
 

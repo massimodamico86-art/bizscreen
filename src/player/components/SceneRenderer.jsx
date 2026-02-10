@@ -26,7 +26,7 @@ import { useLogger } from '../../hooks/useLogger.js';
  * Scene Block - Renders individual blocks in a scene slide
  * Supports data-bound text blocks with resolvedContent
  */
-function SceneBlock({ block, slideIndex }) {
+function SceneBlock({ block, _slideIndex }) {
   const { type, x, y, width, height, layer, props, widgetType, animation, resolvedContent } = block;
 
   // Get animation styles from block.animation
@@ -160,10 +160,10 @@ function SceneWidgetRenderer({ widgetType, props }) {
  * Supports text, image, shape, and widget blocks
  * Phase 6: Added media preloading for smooth transitions
  */
-export function SceneRenderer({ scene, screenId, tenantId }) {
+export function SceneRenderer({ scene, _screenId, _tenantId }) {
   const logger = useLogger('SceneRenderer');
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isPreloading, setIsPreloading] = useState(false);
+  const [_isPreloading, setIsPreloading] = useState(false);
   const [resolvedBlocksMap, setResolvedBlocksMap] = useState(new Map());
   const timerRef = useRef(null);
   const preloadedRef = useRef(new Set());

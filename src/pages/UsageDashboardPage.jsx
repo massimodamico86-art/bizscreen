@@ -197,7 +197,7 @@ export default function UsageDashboardPage({ showToast, onNavigate }) {
     );
   }
 
-  const { plan, billingPeriod, quotas, summary } = usageData || {};
+  const { plan, _billingPeriod, quotas, summary } = usageData || {};
   const daysRemaining = getDaysUntilReset();
 
   return (

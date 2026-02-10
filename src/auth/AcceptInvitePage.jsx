@@ -54,7 +54,7 @@ export default function AcceptInvitePage() {
         } else {
           setInviteDetails(result.data);
         }
-      } catch (err) {
+      } catch (_err) {
         setError('Failed to load invitation details.');
       } finally {
         setLoading(false);
@@ -84,7 +84,7 @@ export default function AcceptInvitePage() {
       } else {
         setError(result.error || 'Failed to accept invitation.');
       }
-    } catch (err) {
+    } catch (_err) {
       setError('An unexpected error occurred.');
     } finally {
       setAccepting(false);

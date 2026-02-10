@@ -9,7 +9,7 @@ import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('ContentAnalyticsService');
+const _logger = createScopedLogger('ContentAnalyticsService');
 
 // ============================================================================
 // DATE RANGE HELPERS

@@ -9,7 +9,7 @@
 import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('ScimService');
+const _logger = createScopedLogger('ScimService');
 
 /**
  * SCIM API scopes
@@ -23,7 +23,7 @@ export const SCIM_SCOPES = {
  * List users for SCIM provisioning
  */
 export async function listUsers(tenantId, options = {}) {
-  const { limit = 100, offset = 0, filter = null } = options;
+  const { limit = 100, offset = 0, _filter = null } = options;
 
   const { data, error } = await supabase.rpc('scim_list_users', {
     p_tenant_id: tenantId,

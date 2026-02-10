@@ -202,7 +202,7 @@ describe('playlistService defaults', () => {
 
     const { createPlaylist } = await import('../../../src/services/playlistService');
 
-    const result = await createPlaylist({ name: newPlaylist.name });
+    const _result = await createPlaylist({ name: newPlaylist.name });
 
     // Verify insert was called with defaults
     expect(mockInsert).toHaveBeenCalled();

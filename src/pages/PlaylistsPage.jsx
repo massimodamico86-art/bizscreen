@@ -899,7 +899,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
     }
   };
 
-  const handleDelete = async (playlist) => {
+  const _handleDelete = async (playlist) => {
     setDeleteConfirm({ id: playlist.id, name: playlist.name, usage: null, loading: true });
 
     try {
@@ -991,7 +991,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
   };
 
   // Handle Item Details menu action
-  const handleItemDetails = (playlist) => {
+  const _handleItemDetails = (playlist) => {
     // Navigate to playlist editor for now
     onNavigate?.(`playlist-editor-${playlist.id}`);
   };

@@ -9,14 +9,14 @@ import { useState, useEffect } from 'react';
 import { useSystemEvents } from '../../hooks/useAuditLogs';
 import { SEVERITY_LEVELS, SYSTEM_SOURCES } from '../../services/auditService';
 
-export default function AdminSystemEventsPage({ onBack, showToast }) {
+export default function AdminSystemEventsPage({ onBack, _showToast }) {
   const {
     events,
     pagination,
     loading,
     error,
     filters,
-    filterOptions,
+    _filterOptions,
     updateFilters,
     clearFilters,
     goToPage,

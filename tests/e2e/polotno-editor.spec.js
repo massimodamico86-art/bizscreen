@@ -14,7 +14,7 @@ import { loginAndPrepare, waitForPageReady, navigateToSection } from './helpers.
 test.describe.skip('Polotno Editor - Modal Opening', () => {
   // SKIPPED: Layouts page template cards (.cursor-pointer) not found - editor modal flow needs UI update
   // Only run on chromium (client) project
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test.beforeEach(async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
@@ -82,14 +82,14 @@ test.describe('Polotno Editor - Error Handling', () => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
   });
 
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
-  test('error state has retry button', async ({ page }) => {
+  test('error state has retry button', async ({ _page }) => {
     // SKIP REASON: Requires mocking network to force editor timeout -- complex setup not implemented
     test.skip();
   });
 
-  test('error state has Design Studio fallback link', async ({ page }) => {
+  test('error state has Design Studio fallback link', async ({ _page }) => {
     // SKIP REASON: Requires forcing editor error state via network mocking -- complex setup not implemented
     test.skip();
   });
@@ -104,7 +104,7 @@ test.describe.skip('Polotno Editor - Mobile Warning', () => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
   });
 
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test('shows desktop recommendation on mobile viewport', async ({ page }) => {
     // Set mobile viewport before navigating
@@ -190,7 +190,7 @@ test.describe.skip('Polotno Editor - Close Behavior', () => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
   });
 
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test('modal has close button when editor is loaded', async ({ page }) => {
     await loginAndPrepare(page);
@@ -250,13 +250,13 @@ test.describe('Polotno Editor - Unsaved Changes', () => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
   });
 
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   // Note: Testing unsaved changes requires making edits in the iframe,
   // which is complex and may require postMessage communication.
   // These tests document expected behavior but may need to be skipped.
 
-  test('shows unsaved changes dialog when closing with edits', async ({ page }) => {
+  test('shows unsaved changes dialog when closing with edits', async ({ _page }) => {
     // SKIP REASON: Requires making edits inside iframe editor via postMessage -- complex iframe interaction not implemented
     test.skip();
   });
@@ -270,9 +270,9 @@ test.describe('Polotno Editor - Post-Save Dialog', () => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
   });
 
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
-  test('post-save dialog appears after successful save', async ({ page }) => {
+  test('post-save dialog appears after successful save', async ({ _page }) => {
     // SKIP REASON: Requires triggering save inside iframe editor via postMessage -- complex iframe interaction not implemented
     test.skip();
   });
@@ -287,7 +287,7 @@ test.describe.skip('Phase 35 Success Criteria', () => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
   });
 
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test('Criterion 1: Editor opens in modal (not page navigation)', async ({ page }) => {
     await loginAndPrepare(page);
@@ -310,14 +310,14 @@ test.describe.skip('Phase 35 Success Criteria', () => {
     expect(page.url()).toBe(initialUrl);
   });
 
-  test('Criterion 2: Loading state with timeout shows error + retry', async ({ page }) => {
+  test('Criterion 2: Loading state with timeout shows error + retry', async ({ _page }) => {
     // SKIP REASON: Requires forcing editor timeout via network mocking -- verified by code inspection instead
     // - 10s timeout implemented in PolotnoEditor.jsx
     // - Error state renders Try Again button in EditorModal.jsx
     test.skip();
   });
 
-  test('Criterion 3: Fallback guidance offers Design Studio', async ({ page }) => {
+  test('Criterion 3: Fallback guidance offers Design Studio', async ({ _page }) => {
     // SKIP REASON: Requires forcing editor error state via network mocking -- verified by code inspection instead
     // - Error state renders "Open Design Studio" button in EditorModal.jsx
     test.skip();

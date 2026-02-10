@@ -47,7 +47,7 @@ async function initDB() {
   if (dbInstance) return dbInstance;
 
   dbInstance = await openDB(DB_NAME, DB_VERSION, {
-    upgrade(db, oldVersion, newVersion, transaction) {
+    upgrade(db, oldVersion, newVersion, _transaction) {
       logger.debug('[CacheService] Upgrading database from', oldVersion, 'to', newVersion);
 
       // Scenes store

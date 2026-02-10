@@ -70,6 +70,7 @@ export default [
           varsIgnorePattern: '^_',
           args: 'after-used',
           argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
           // Ignore variables used in JSX
           ignoreRestSiblings: true,
         },

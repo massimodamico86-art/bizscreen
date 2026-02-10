@@ -141,7 +141,7 @@ describe('HelpCenterPage', () => {
       fireEvent.click(screen.getByText('OnClick Test'));
 
       await waitFor(() => {
-        const { container } = render(<HelpCenterPage />);
+        const { _container } = render(<HelpCenterPage />);
         // Any img tags should not have onerror attribute
         const imgs = document.querySelectorAll('img');
         imgs.forEach((img) => {

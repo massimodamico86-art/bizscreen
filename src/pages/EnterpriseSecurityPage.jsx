@@ -158,7 +158,7 @@ export default function EnterpriseSecurityPage({ showToast }) {
       const updated = await toggleSSOEnabled(ssoProvider.id, !ssoProvider.is_enabled);
       setSsoProvider(updated);
       showToast?.(updated.is_enabled ? 'SSO enabled' : 'SSO disabled', 'success');
-    } catch (err) {
+    } catch (_err) {
       showToast?.('Error toggling SSO', 'error');
     }
   };

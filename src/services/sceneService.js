@@ -11,7 +11,7 @@ import { requiresApproval } from './permissionsService.js';
 import { requestApproval, getOpenReviewForResource, APPROVAL_STATUS } from './approvalService.js';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('SceneService');
+const _logger = createScopedLogger('SceneService');
 
 /**
  * Create a new scene

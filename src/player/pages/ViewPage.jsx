@@ -56,7 +56,7 @@ const STORAGE_KEYS = {
 
 // Player version for heartbeats
 // Phase 6: Updated with media preloading and real-time sync
-const PLAYER_VERSION = '1.2.0';
+const _PLAYER_VERSION = '1.2.0';
 
 // Retry configuration
 const RETRY_CONFIG = {
@@ -71,7 +71,7 @@ const RETRY_CONFIG = {
  * @param fn
  * @param maxRetries
  */
-async function retryWithBackoff(fn, maxRetries = RETRY_CONFIG.maxRetries) {
+async function _retryWithBackoff(fn, maxRetries = RETRY_CONFIG.maxRetries) {
   let lastError;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
@@ -107,7 +107,7 @@ export function ViewPage() {
     error,
     connectionStatus,
     isOfflineMode,
-    loadContent,
+    _loadContent,
     advanceToNext,
     setContent,
     setItems,
@@ -141,7 +141,7 @@ export function ViewPage() {
   // Playback hook - manages timing, video control, analytics
   const {
     videoRef,
-    timerRef,
+    _timerRef,
     lastVideoTimeRef,
     handleVideoEnd,
     handleAdvanceToNext,

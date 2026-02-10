@@ -160,7 +160,7 @@ const SettingsPage = ({ showToast, setCurrentPage }) => {
     }
   };
 
-  const handleThemeCreated = async (theme) => {
+  const handleThemeCreated = async (_theme) => {
     setShowBrandModal(false);
     await fetchBrandThemes();
     showToast(t('settings.branding.themeCreated', 'Brand theme created successfully!'));

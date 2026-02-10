@@ -199,7 +199,7 @@ import { supabase } from '../../../src/supabase';
 
 const TEST_SCREEN_ID = 'test-screen-smoke';
 
-const mockContent = {
+const _mockContent = {
   mode: 'playlist',
   source: 'playlist',
   screen: {
@@ -226,7 +226,7 @@ const mockContent = {
   ],
 };
 
-function renderPlayer(route = `/player/${TEST_SCREEN_ID}`) {
+function _renderPlayer(route = `/player/${TEST_SCREEN_ID}`) {
   return render(
     <MemoryRouter initialEntries={[route]}>
       <Routes>

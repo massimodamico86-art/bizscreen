@@ -85,7 +85,7 @@ export async function uploadScreenshot(deviceId, blob) {
 
   try {
     // Upload to Supabase Storage
-    const { data, error: uploadError } = await supabase.storage
+    const { _data, error: uploadError } = await supabase.storage
       .from('device-screenshots')
       .upload(fileName, blob, {
         contentType: SCREENSHOT_CONFIG.format,

@@ -31,7 +31,7 @@ const STORAGE_KEYS = {
  * @returns {Function} handleAdvanceToNext - Wrapper that includes analytics
  */
 export function usePlayerPlayback(items, currentIndex, content, advanceToNext) {
-  const logger = useLogger('usePlayerPlayback');
+  const _logger = useLogger('usePlayerPlayback');
 
   // Refs for video and timers
   const videoRef = useRef(null);

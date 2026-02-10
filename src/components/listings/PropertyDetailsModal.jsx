@@ -16,7 +16,7 @@ import { TVPreviewModal } from './TVPreviewModal';
 import { BackgroundMusicSelector } from './BackgroundMusicSelector';
 import { ImageUploadModal } from './ImageUploadModal';
 import ImageUploadButton from '../media/ImageUploadButton';
-export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, listings }) => {
+export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, _listings }) => {
   const logger = useLogger('PropertyDetailsModal');
   // Migrate old format to unified media on init
   const [formData, setFormData] = useState(() => {
@@ -60,7 +60,7 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, list
   }, [formData.weatherCity, formData.weatherUnit, formData.showWeather]);
 
   // Update formData and trigger re-render
-  const updateFormData = (newData) => {
+  const _updateFormData = (newData) => {
     setFormData(newData);
   };
 

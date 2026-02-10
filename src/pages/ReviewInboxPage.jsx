@@ -60,7 +60,7 @@ const RESOURCE_ICONS = {
 
 const ReviewInboxPage = ({ showToast, onNavigate }) => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { _user } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');

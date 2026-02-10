@@ -65,7 +65,7 @@ export default function ContentPerformancePage({ showToast }) {
   const [topScenes, setTopScenes] = useState([]);
   const [deviceUptime, setDeviceUptime] = useState([]);
   const [screenGroups, setScreenGroups] = useState([]);
-  const [allScenes, setAllScenes] = useState([]);
+  const [_allScenes, setAllScenes] = useState([]);
 
   // Loading states
   const [loading, setLoading] = useState(true);

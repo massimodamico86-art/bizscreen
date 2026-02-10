@@ -188,7 +188,7 @@ export default function MediaDetailModal({
       });
       showToast?.('Media updated successfully', 'success');
       onClose();
-    } catch (err) {
+    } catch (_err) {
       showToast?.('Failed to update media', 'error');
     } finally {
       setIsSaving(false);
@@ -222,7 +222,7 @@ export default function MediaDetailModal({
       await onDelete?.(asset.id);
       onClose();
       showToast?.('Media deleted successfully', 'success');
-    } catch (err) {
+    } catch (_err) {
       showToast?.('Failed to delete media', 'error');
     } finally {
       setIsDeleting(false);

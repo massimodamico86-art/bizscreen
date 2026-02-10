@@ -8,7 +8,7 @@
 import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('AssistantService');
+const _logger = createScopedLogger('AssistantService');
 
 /**
  * Business type options for the assistant
@@ -171,7 +171,7 @@ export async function fetchSuggestion(suggestionId) {
  * @returns {Promise<object>} Created playlist
  */
 export async function materializePlaylist(suggestion) {
-  const { payload, business_context } = suggestion;
+  const { payload, _business_context } = suggestion;
 
   if (!payload || !payload.slides) {
     throw new Error('Invalid playlist suggestion: missing slides');

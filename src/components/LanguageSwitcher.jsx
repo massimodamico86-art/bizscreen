@@ -12,7 +12,7 @@ import { setUserPreferredLocale } from '../services/localeService';
 import { useLogger } from '../hooks/useLogger.js';
 
 export function LanguageSwitcher({ showLabel = true, size = 'default' }) {
-  const logger = useLogger('LanguageSwitcher');
+  const _logger = useLogger('LanguageSwitcher');
   const { locale, setLocale, supportedLocales, t } = useI18n();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -128,7 +128,7 @@ export function CompactLanguageSwitcher() {
     }
   }, [locale, setLocale, logger]);
 
-  const currentLocale = supportedLocales.find(l => l.code === locale);
+  const _currentLocale = supportedLocales.find(l => l.code === locale);
 
   return (
     <div className="relative inline-block">

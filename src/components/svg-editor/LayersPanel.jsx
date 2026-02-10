@@ -91,7 +91,7 @@ export default function LayersPanel({
             {displayObjects.map((obj, displayIndex) => {
               const Icon = getObjectIcon(obj.type);
               const isSelected = obj.id === selectedObjectId;
-              const realIndex = objects.length - 1 - displayIndex;
+              const _realIndex = objects.length - 1 - displayIndex;
 
               return (
                 <div

@@ -42,7 +42,7 @@ const logger = createScopedLogger('OfflineService');
  * @param {Blob} blob
  * @returns {Promise<string>}
  */
-function blobToBase64(blob) {
+function _blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => resolve(reader.result);
@@ -57,7 +57,7 @@ function blobToBase64(blob) {
  * @param {string} mimeType
  * @returns {Promise<Blob>}
  */
-function base64ToBlob(base64, mimeType) {
+function base64ToBlob(base64, _mimeType) {
   return fetch(base64).then(res => res.blob());
 }
 
@@ -118,7 +118,7 @@ export async function registerServiceWorker() {
  * @param event
  */
 function handleServiceWorkerMessage(event) {
-  const { type, payload } = event.data || {};
+  const { type, _payload } = event.data || {};
 
   switch (type) {
     case 'SYNC_HEARTBEATS':
@@ -441,7 +441,7 @@ export async function syncPendingEvents() {
 
     // Group events by type
     const heartbeats = pending.filter((e) => e.eventType === 'heartbeat');
-    const screenshots = pending.filter((e) => e.eventType === 'screenshot');
+    const _screenshots = pending.filter((e) => e.eventType === 'screenshot');
     const playbacks = pending.filter((e) => e.eventType === 'playback');
 
     let syncedIds = [];
@@ -482,7 +482,7 @@ export async function syncPendingEvents() {
  * Sync pending heartbeats
  * @param heartbeats
  */
-async function syncHeartbeats(heartbeats) {
+async function syncHeartbeats(_heartbeats) {
   // Heartbeats don't need to be synced individually
   // The server will see the device is back online
   logger.debug('[OfflineService] Device back online, heartbeats will resume');

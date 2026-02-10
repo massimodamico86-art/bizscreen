@@ -240,7 +240,7 @@ function hexToRgb(hex) {
 /**
  * Get contrast ratio between two colors
  */
-function getContrastRatio(color1, color2) {
+function _getContrastRatio(color1, color2) {
   const l1 = getLuminance(color1);
   const l2 = getLuminance(color2);
   const lighter = Math.max(l1, l2);
@@ -334,7 +334,7 @@ function darkenColor(hex, percent) {
 export function suggestFontPairings(colors) {
   // Analyze the primary color to determine mood
   const primary = colors?.primary_color || DEFAULT_THEME.primary_color;
-  const { r, g, b } = hexToRgb(primary);
+  const { r, _g, b } = hexToRgb(primary);
 
   // Heuristic: warmer colors (red/orange) = more traditional fonts
   // Cooler colors (blue/green) = more modern fonts

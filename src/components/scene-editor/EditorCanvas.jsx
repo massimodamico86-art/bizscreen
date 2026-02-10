@@ -294,7 +294,7 @@ export default function EditorCanvas({
 
   function renderBlock(block) {
     const isSelected = block.id === selectedBlockId;
-    const Icon = BLOCK_ICONS[block.type] || Square;
+    const _Icon = BLOCK_ICONS[block.type] || Square;
 
     const style = {
       position: 'absolute',

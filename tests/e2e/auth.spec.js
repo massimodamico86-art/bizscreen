@@ -87,7 +87,7 @@ test.describe('Login Flow', () => {
   });
 
   // Note: Loading state test skipped - too flaky in fast local environments
-  test.skip('shows loading state during login attempt', async ({ page }) => {
+  test.skip('shows loading state during login attempt', async ({ _page }) => {
     // Loading states are too fast to reliably test in E2E
   });
 
@@ -178,7 +178,7 @@ test.describe('Signup Flow', () => {
   });
 
   // Note: Loading state test skipped - too flaky in fast local environments
-  test.skip('shows loading state during signup attempt', async ({ page }) => {
+  test.skip('shows loading state during signup attempt', async ({ _page }) => {
     // Loading states are too fast to reliably test in E2E
   });
 });
@@ -256,7 +256,7 @@ test.describe('Session Persistence', () => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
   });
 
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test('successful login redirects to app', async ({ page }) => {
     await loginAndPrepare(page);
@@ -308,7 +308,7 @@ test.describe('Logout Flow', () => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
   });
 
-  test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+  test.skip(({ _browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test('can find logout option in UI', async ({ page }) => {
     await loginAndPrepare(page);

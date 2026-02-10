@@ -15,7 +15,7 @@ import {
 } from '../services/domainService';
 
 const WhiteLabelSettingsPage = ({ showToast }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [activeTab, setActiveTab] = useState('domains');
   const [loading, setLoading] = useState(true);
 

@@ -8,7 +8,7 @@
 import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('SsoService');
+const _logger = createScopedLogger('SsoService');
 
 /**
  * SSO Provider types

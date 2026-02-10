@@ -95,7 +95,7 @@ const LocationsPage = ({ showToast, setCurrentPage }) => {
       }
 
       setPermissions(permsResult);
-    } catch (err) {
+    } catch (_err) {
       showToast?.('Error loading data', 'error');
     } finally {
       setLoading(false);
@@ -166,7 +166,7 @@ const LocationsPage = ({ showToast, setCurrentPage }) => {
           loadData();
         }
       }
-    } catch (err) {
+    } catch (_err) {
       showToast?.('Error saving location', 'error');
     } finally {
       setProcessing(false);
@@ -185,7 +185,7 @@ const LocationsPage = ({ showToast, setCurrentPage }) => {
       } else {
         showToast?.(result.error, 'error');
       }
-    } catch (err) {
+    } catch (_err) {
       showToast?.('Error deleting location', 'error');
     } finally {
       setProcessing(false);

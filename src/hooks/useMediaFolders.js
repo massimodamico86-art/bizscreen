@@ -190,7 +190,7 @@ export function useMediaFolders({ parentId = null } = {}) {
   const deleteFolder = useCallback(
     async (folderId, moveToRoot = true) => {
       try {
-        const { data, error: deleteError } = await supabase.rpc('delete_media_folder', {
+        const { _data, error: deleteError } = await supabase.rpc('delete_media_folder', {
           p_folder_id: folderId,
           p_move_to_root: moveToRoot,
         });

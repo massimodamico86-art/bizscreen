@@ -78,7 +78,7 @@ export default function AiSuggestionPanel({ scene, isOpen, onClose, showToast })
       await navigator.clipboard.writeText(text);
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 2000);
-    } catch (err) {
+    } catch (_err) {
       showToast?.('Failed to copy to clipboard', 'error');
     }
   };
@@ -91,7 +91,7 @@ export default function AiSuggestionPanel({ scene, isOpen, onClose, showToast })
       const allText = formatAllTranslations(suggestions);
       await navigator.clipboard.writeText(allText);
       showToast?.('All translations copied to clipboard', 'success');
-    } catch (err) {
+    } catch (_err) {
       showToast?.('Failed to copy to clipboard', 'error');
     }
   };

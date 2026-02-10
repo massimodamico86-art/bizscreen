@@ -25,7 +25,7 @@ export default function FloatingElementToolbar({
   onOpenSettings,
   onRotate,
   onFlipHorizontal,
-  onFlipVertical,
+  _onFlipVertical,
   onAlignElement,
   onToggleLock,
   onOpenLayers,

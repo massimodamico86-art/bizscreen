@@ -229,7 +229,7 @@ function QRWidget({ props }) {
 }
 
 function DataWidget({ props }) {
-  const { textColor = '#ffffff', fontSize = 24, field = 'value', dataSourceId } = props;
+  const { textColor = '#ffffff', fontSize = 24, field = 'value', _dataSourceId } = props;
 
   // Show placeholder in editor
   return (

@@ -73,7 +73,7 @@ export function clearExperimentCache() {
   };
   try {
     localStorage.removeItem(CACHE_KEY);
-  } catch (e) {
+  } catch (_e) {
     // Ignore localStorage errors
   }
 }

@@ -17,7 +17,7 @@ import {
 } from '../../services/playerService';
 
 // Storage keys
-const STORAGE_KEYS = {
+const _STORAGE_KEYS = {
   screenId: 'player_screen_id',
   playlistId: 'player_playlist_id',
   contentHash: 'player_content_hash',

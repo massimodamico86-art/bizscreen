@@ -239,7 +239,7 @@ export default function DemoToolsPage({ showToast }) {
                     const data = await res.json();
                     showToast?.(t('demoTools.resetStaleSuccess', 'Reset {{count}} stale tenants', { count: data.reset || 0 }));
                     await loadDemoTenants();
-                  } catch (err) {
+                  } catch (_err) {
                     showToast?.(t('demoTools.resetStaleFailed', 'Failed to reset stale tenants'), 'error');
                   }
                 }}

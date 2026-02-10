@@ -415,13 +415,13 @@ export async function getWeatherWallData(config) {
   const {
     location,
     usePlayerLocation,
-    tempUnit = 'celsius',
+    _tempUnit = 'celsius',
     measurementSystem = 'metric',
     language = 'en'
   } = config;
 
   const units = measurementSystem;
-  let lat, lon, locationName;
+  let lat, lon, _locationName;
 
   // Determine location
   if (usePlayerLocation) {

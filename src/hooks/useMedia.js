@@ -50,7 +50,7 @@ const DEFAULT_PAGE_SIZE = 24;
  * @returns {Object} Media state and actions
  */
 export function useMedia(initialFilters = {}) {
-  const { userProfile } = useAuth();
+  const { _userProfile } = useAuth();
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -269,7 +269,7 @@ export function useMedia(initialFilters = {}) {
    */
   const deleteAsset = useCallback(async (id) => {
     try {
-      const { data, error: deleteError } = await supabase.rpc('soft_delete_media', {
+      const { _data, error: deleteError } = await supabase.rpc('soft_delete_media', {
         p_media_id: id,
       });
 

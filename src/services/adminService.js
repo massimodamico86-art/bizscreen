@@ -1,7 +1,7 @@
 import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('AdminService');
+const _logger = createScopedLogger('AdminService');
 
 /**
  * Admin Management Service

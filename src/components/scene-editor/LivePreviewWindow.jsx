@@ -46,7 +46,7 @@ export default function LivePreviewWindow({
   slides,
   activeSlideIndex,
   onClose,
-  brandTheme,
+  _brandTheme,
   showSafeZone = false,
   autoPlay = false,
 }) {
@@ -285,7 +285,7 @@ export default function LivePreviewWindow({
  * @param root0.slideIndex
  * @param root0.showSafeZone
  */
-function PreviewRenderer({ design, slideIndex, showSafeZone }) {
+function PreviewRenderer({ design, _slideIndex, showSafeZone }) {
   // Background style
   const backgroundStyle = useMemo(() => {
     const bg = design.background || {};

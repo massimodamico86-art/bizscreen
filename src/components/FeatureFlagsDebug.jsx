@@ -37,8 +37,8 @@ const isDev = import.meta.env.DEV || import.meta.env.MODE === 'development';
  */
 export default function FeatureFlagsDebug() {
   const { userProfile } = useAuth();
-  const { plan, tenantId, tenantOverrides, isLoading, refresh } = useFeatureContext();
-  const effectiveFeatures = useEffectiveFeatures();
+  const { plan, tenantId, tenantOverrides, _isLoading, refresh } = useFeatureContext();
+  const _effectiveFeatures = useEffectiveFeatures();
 
   const [simulatedPlan, setSimulatedPlan] = useState(null);
   const [localOverrides, setLocalOverrides] = useState({});

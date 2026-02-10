@@ -52,7 +52,7 @@ export function TemplatePickerModal({ onSelect, onClose }) {
   const myTemplates = templates.filter(t => !t.is_system);
   const systemTemplates = templates.filter(t => t.is_system);
 
-  const selectedTemplate = templates.find(t => t.id === selectedTemplateId);
+  const _selectedTemplate = templates.find(t => t.id === selectedTemplateId);
 
   const handleConfirm = () => {
     if (selectedTemplateId) {

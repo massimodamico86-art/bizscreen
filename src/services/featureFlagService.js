@@ -75,7 +75,7 @@ export function clearFeatureFlagCache() {
   };
   try {
     localStorage.removeItem(CACHE_KEY);
-  } catch (e) {
+  } catch (_e) {
     // Ignore localStorage errors
   }
 }

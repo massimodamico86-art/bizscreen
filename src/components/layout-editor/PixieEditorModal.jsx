@@ -187,7 +187,7 @@ export default function PixieEditorModal({
       if (pixieRef.current?.destroy) {
         try {
           pixieRef.current.destroy();
-        } catch (e) {
+        } catch (_e) {
           // Ignore cleanup errors
         }
         pixieRef.current = null;
@@ -201,7 +201,7 @@ export default function PixieEditorModal({
       if (pixieRef.current?.destroy) {
         try {
           pixieRef.current.destroy();
-        } catch (e) {
+        } catch (_e) {
           // Ignore cleanup errors
         }
         pixieRef.current = null;

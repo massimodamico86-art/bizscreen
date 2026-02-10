@@ -37,19 +37,19 @@ import {
 } from '../../services/mediaService';
 
 // Cloud provider icons (simplified)
-const OneDriveIcon = () => (
+const _OneDriveIcon = () => (
   <svg viewBox="0 0 24 24" className="w-8 h-8" fill="currentColor">
     <path d="M12 14l-2-2-4 4h16l-4-4-2 2-4-4z" />
   </svg>
 );
 
-const DropboxIcon = () => (
+const _DropboxIcon = () => (
   <svg viewBox="0 0 24 24" className="w-8 h-8" fill="currentColor">
     <path d="M6 2l6 4-6 4 6 4-6 4-6-4 6-4-6-4 6-4zm12 0l6 4-6 4 6 4-6 4-6-4 6-4-6-4 6-4z" />
   </svg>
 );
 
-const GoogleDriveIcon = () => (
+const _GoogleDriveIcon = () => (
   <svg viewBox="0 0 24 24" className="w-8 h-8" fill="currentColor">
     <path d="M8 16l-4-7h8l4 7H8zm8-7l4 7-4 7-4-7 4-7zM8 2l4 7H4l4-7z" />
   </svg>
@@ -148,7 +148,7 @@ const TypeButton = ({ type, selected, onClick }) => {
 };
 
 // Drop zone component
-const DropZone = ({ onDrop, onBrowse, instructions, maxResolution }) => {
+const DropZone = ({ onDrop, onBrowse, _instructions, _maxResolution }) => {
   const handleDragOver = (e) => {
     e.preventDefault();
     e.currentTarget.classList.add('border-[#f26f21]', 'bg-orange-50');
@@ -439,7 +439,7 @@ const ImagesTabContent = ({
 };
 
 // YouTube input form
-const YouTubeInputForm = ({ url, setUrl, name, setName, onAdd, loading, showToast }) => {
+const YouTubeInputForm = ({ url, setUrl, name, setName, onAdd, loading, _showToast }) => {
   const videoId = url ? parseYouTubeUrl(url) : null;
   const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null;
 
@@ -667,7 +667,7 @@ const StreamInputForm = ({ url, setUrl, name, setName, streamType, setStreamType
 };
 
 // Stock media browser (placeholder - would integrate with Pexels/Unsplash API)
-const StockMediaBrowser = ({ type, onSelect, showToast }) => {
+const StockMediaBrowser = ({ type, _onSelect, _showToast }) => {
   const [query, setQuery] = useState('');
 
   return (
@@ -1224,8 +1224,8 @@ const WebPagesTabContent = ({ url, setUrl, name, setName, onAdd, loading }) => {
 const YodeckAddMediaModal = ({
   open,
   onClose,
-  onUpload,
-  onAddWebPage,
+  _onUpload,
+  _onAddWebPage,
   onMediaAdded,
   openFilePicker,
   showToast,

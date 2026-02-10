@@ -92,7 +92,7 @@ const TeamPage = ({ showToast }) => {
         setMembers(membersResult.data);
       }
       setPermissions(permsResult);
-    } catch (err) {
+    } catch (_err) {
       showToast?.(t('team.errorLoadingData', 'Error loading team data'), 'error');
     } finally {
       setLoading(false);
@@ -124,7 +124,7 @@ const TeamPage = ({ showToast }) => {
       } else {
         showToast?.(result.error || t('team.inviteFailed', 'Failed to invite member'), 'error');
       }
-    } catch (err) {
+    } catch (_err) {
       showToast?.(t('team.errorInviting', 'Error inviting member'), 'error');
     } finally {
       setProcessing(false);
@@ -143,7 +143,7 @@ const TeamPage = ({ showToast }) => {
       } else {
         showToast?.(result.error || t('team.roleUpdateFailed', 'Failed to update role'), 'error');
       }
-    } catch (err) {
+    } catch (_err) {
       showToast?.(t('team.errorUpdatingRole', 'Error updating role'), 'error');
     } finally {
       setProcessing(false);
@@ -162,7 +162,7 @@ const TeamPage = ({ showToast }) => {
       } else {
         showToast?.(result.error || t('team.revokeFailed', 'Failed to revoke access'), 'error');
       }
-    } catch (err) {
+    } catch (_err) {
       showToast?.(t('team.errorRevoking', 'Error revoking access'), 'error');
     } finally {
       setProcessing(false);
@@ -180,7 +180,7 @@ const TeamPage = ({ showToast }) => {
       } else {
         showToast?.(result.error || t('team.resendFailed', 'Failed to resend invitation'), 'error');
       }
-    } catch (err) {
+    } catch (_err) {
       showToast?.(t('team.errorResending', 'Error resending invitation'), 'error');
     } finally {
       setProcessing(false);
@@ -199,7 +199,7 @@ const TeamPage = ({ showToast }) => {
       } else {
         showToast?.(result.error || t('team.deleteFailed', 'Failed to delete invitation'), 'error');
       }
-    } catch (err) {
+    } catch (_err) {
       showToast?.(t('team.errorDeleting', 'Error deleting invitation'), 'error');
     } finally {
       setProcessing(false);
@@ -494,7 +494,7 @@ function MemberRow({ member, currentUserId, canManage, onChangeRole, onRevoke, d
 }
 
 function PendingRow({ member, canManage, onResend, onDelete, processing, t }) {
-  const Icon = ROLE_ICONS[member.role];
+  const _Icon = ROLE_ICONS[member.role];
 
   return (
     <div className="flex items-center gap-4 px-6 py-4" role="listitem">

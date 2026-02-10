@@ -471,7 +471,7 @@ export default function AlertsCenterPage({ showToast, onNavigate }) {
               {alerts.map((alert) => {
                 const Icon = TYPE_ICONS[alert.type] || AlertCircle;
                 const severityStyle = SEVERITY_STYLES[alert.severity] || SEVERITY_STYLES.info;
-                const statusStyle = STATUS_STYLES[alert.status] || STATUS_STYLES.open;
+                const _statusStyle = STATUS_STYLES[alert.status] || STATUS_STYLES.open;
                 const isSelected = selectedAlerts.has(alert.id);
 
                 return (

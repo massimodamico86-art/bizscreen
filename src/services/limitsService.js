@@ -190,7 +190,7 @@ export async function canCreateSchedule(currentCount, limits) {
  */
 export async function checkResourceLimit(resourceType) {
   try {
-    const { data, error } = await supabase.rpc('check_resource_limit', {
+    const { _data, error } = await supabase.rpc('check_resource_limit', {
       resource_type: resourceType
     });
 

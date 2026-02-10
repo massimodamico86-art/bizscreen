@@ -23,7 +23,7 @@ function getHueRotation(hexColor) {
   if (!hexColor || hexColor.length < 7) return 0;
   try {
     const r = parseInt(hexColor.slice(1, 3), 16);
-    const g = parseInt(hexColor.slice(3, 5), 16);
+    const _g = parseInt(hexColor.slice(3, 5), 16);
     const b = parseInt(hexColor.slice(5, 7), 16);
     // Very rough hue estimation for visual hint
     return Math.round((r - b) / 2);
@@ -42,7 +42,7 @@ function getHueRotation(hexColor) {
  */
 export function TemplateCustomizationWizard({
   template,
-  sceneId,
+  _sceneId,
   onComplete,
   onSkip,
 }) {

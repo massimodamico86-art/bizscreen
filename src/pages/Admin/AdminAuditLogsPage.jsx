@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 
 import { useAuditLogs } from '../../hooks/useAuditLogs';
 
-export default function AdminAuditLogsPage({ tenantId, tenantName, onBack, showToast }) {
+export default function AdminAuditLogsPage({ tenantId, tenantName, onBack, _showToast }) {
   const {
     logs,
     pagination,

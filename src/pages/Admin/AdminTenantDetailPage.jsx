@@ -639,15 +639,15 @@ function ScreensTab({ screens, onReboot, actionLoading }) {
 
 function BillingTab({
   tenant,
-  showPlanModal,
+  _showPlanModal,
   setShowPlanModal,
-  showQuotaModal,
+  _showQuotaModal,
   setShowQuotaModal,
-  selectedQuotaFeature,
+  _selectedQuotaFeature,
   setSelectedQuotaFeature,
-  onChangePlan,
-  onOverrideQuota,
-  actionLoading,
+  _onChangePlan,
+  _onOverrideQuota,
+  _actionLoading,
 }) {
   const currentPlanConfig = PLAN_OPTIONS.find(p => p.value === tenant.plan);
 

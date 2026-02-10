@@ -59,7 +59,7 @@ export default function PositionPanel({
   onToggleVisibility,
   onToggleLock,
   onDeleteObject,
-  onReorderObjects,
+  _onReorderObjects,
   onUndo,
   onRedo,
   onHistoryJump,

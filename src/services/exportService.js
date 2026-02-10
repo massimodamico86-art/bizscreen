@@ -2,7 +2,7 @@
 
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('ExportService');
+const _logger = createScopedLogger('ExportService');
 
 /**
  * Convert array of objects to CSV string

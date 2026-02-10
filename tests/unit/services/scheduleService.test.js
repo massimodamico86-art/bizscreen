@@ -273,7 +273,7 @@ describe('Scene scheduling validation', () => {
 // ============================================================================
 
 describe('scheduleService - Extended Coverage', () => {
-  let mockSupabase;
+  let _mockSupabase;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -717,7 +717,7 @@ describe('scheduleService - Extended Coverage', () => {
         });
 
         const { assignScheduleToDevice } = await import('../../../src/services/scheduleService');
-        const result = await assignScheduleToDevice('device-1', 'sched-1');
+        const _result = await assignScheduleToDevice('device-1', 'sched-1');
 
         expect(supabase.rpc).toHaveBeenCalledWith('assign_schedule_to_device', {
           p_device_id: 'device-1',
@@ -763,7 +763,7 @@ describe('scheduleService - Extended Coverage', () => {
         });
 
         const { assignScheduleToGroup } = await import('../../../src/services/scheduleService');
-        const result = await assignScheduleToGroup('group-1', 'sched-1');
+        const _result = await assignScheduleToGroup('group-1', 'sched-1');
 
         expect(supabase.rpc).toHaveBeenCalledWith('assign_schedule_to_group', {
           p_group_id: 'group-1',

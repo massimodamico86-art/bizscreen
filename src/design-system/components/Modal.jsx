@@ -327,7 +327,7 @@ export const ConfirmDialog = forwardRef(function ConfirmDialog(
     danger: 'bg-red-100 text-red-600',
   };
 
-  const confirmButtonVariant = variant === 'danger' ? 'danger' : 'primary';
+  const _confirmButtonVariant = variant === 'danger' ? 'danger' : 'primary';
 
   return (
     <Modal

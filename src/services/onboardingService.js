@@ -385,7 +385,7 @@ export async function updateWelcomeTourStep(step, completed = false) {
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 export async function skipWelcomeTour() {
-  const { data, error } = await supabase.rpc('skip_welcome_tour');
+  const { _data, error } = await supabase.rpc('skip_welcome_tour');
 
   if (error) {
     logger.error('Error skipping welcome tour:', { error });
@@ -447,7 +447,7 @@ export async function getSelectedIndustry() {
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 export async function markStarterPackApplied() {
-  const { data, error } = await supabase.rpc('mark_starter_pack_applied');
+  const { _data, error } = await supabase.rpc('mark_starter_pack_applied');
 
   if (error) {
     logger.error('Error marking starter pack applied:', { error });

@@ -42,7 +42,7 @@ export default function SocialFeedWidget({
   showAuthor = true,
   rotationSpeed = 5,
   className = '',
-  isPreview = false,
+  _isPreview = false,
 }) {
   const logger = useLogger('SocialFeedWidget');
   const [posts, setPosts] = useState([]);
@@ -316,7 +316,7 @@ function CarouselLayout({
  * @param root0.showLikes
  * @param root0.className
  */
-function GridLayout({ posts, provider, showCaption, showLikes, className }) {
+function GridLayout({ posts, _provider, showCaption, showLikes, className }) {
   const gridCols = posts.length <= 4 ? 2 : 3;
 
   return (
@@ -377,7 +377,7 @@ function GridLayout({ posts, provider, showCaption, showLikes, className }) {
  */
 function ListLayout({
   posts,
-  provider,
+  _provider,
   showCaption,
   showLikes,
   showDate,
@@ -542,7 +542,7 @@ function SingleLayout({
  * @param root0.showCaption
  * @param root0.className
  */
-function MasonryLayout({ posts, provider, showCaption, className }) {
+function MasonryLayout({ posts, _provider, showCaption, className }) {
   // Simple 2-column masonry
   const leftColumn = posts.filter((_, i) => i % 2 === 0);
   const rightColumn = posts.filter((_, i) => i % 2 === 1);
@@ -586,7 +586,7 @@ function MasonryLayout({ posts, provider, showCaption, className }) {
  * @param root0.showDate
  * @param root0.showAuthor
  */
-function PostInfo({ post, provider, showCaption, showLikes, showDate, showAuthor }) {
+function PostInfo({ post, _provider, showCaption, showLikes, showDate, showAuthor }) {
   return (
     <div className="bg-white p-3 rounded-b-lg">
       {/* Author */}

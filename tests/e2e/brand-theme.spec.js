@@ -119,7 +119,7 @@ test.describe.skip('Brand Theme Management', () => {
 
     test('shows step indicator in modal', async ({ page }) => {
       // Should show step indicator (Upload, Colors, Fonts, Preview)
-      const steps = ['upload', 'colors', 'fonts', 'preview'];
+      const _steps = ['upload', 'colors', 'fonts', 'preview'];
       const stepIndicator = page.locator('[data-step]').or(page.getByText(/step|1.*4/i));
 
       // Either step indicator or step labels should be visible
@@ -166,7 +166,7 @@ test.describe.skip('Brand Theme Management', () => {
       // Check that color-related UI exists in modal
       // The actual step may not be accessible without uploading
       const colorText = page.getByText(/color|palette|primary|secondary/i);
-      const hasColorUI = await colorText.first().isVisible({ timeout: 3000 }).catch(() => false);
+      const _hasColorUI = await colorText.first().isVisible({ timeout: 3000 }).catch(() => false);
 
       // Either shows colors in upload step or as a step label
       // This is a light check since full flow requires file upload
@@ -184,7 +184,7 @@ test.describe.skip('Brand Theme Management', () => {
 
       // Check for scenes list or empty state
       const scenesContent = page.getByText(/scene|create.*new/i);
-      const hasContent = await scenesContent.first().isVisible({ timeout: 5000 }).catch(() => false);
+      const _hasContent = await scenesContent.first().isVisible({ timeout: 5000 }).catch(() => false);
 
       // If there are scenes, click first one to open editor
       const sceneCard = page.locator('[data-testid="scene-card"]').or(page.getByRole('article'));
@@ -235,7 +235,7 @@ test.describe.skip('Brand Theme Service Integration', () => {
 
     // Get current state
     const pageContent = await page.content();
-    const hasThemes = pageContent.includes('theme') || pageContent.includes('brand');
+    const _hasThemes = pageContent.includes('theme') || pageContent.includes('brand');
 
     // Reload page
     await page.reload();

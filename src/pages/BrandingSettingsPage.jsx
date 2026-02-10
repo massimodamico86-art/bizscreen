@@ -119,7 +119,7 @@ export default function BrandingSettingsPage() {
       return;
     }
 
-    const { success: updateSuccess, error: updateError } = await updateBranding({
+    const { success: _updateSuccess, error: updateError } = await updateBranding({
       businessName: formData.businessName || null,
       logoUrl: formData.logoUrl || null,
       primaryColor: formData.primaryColor || null,

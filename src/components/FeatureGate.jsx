@@ -297,7 +297,7 @@ export function withFeatureGate(WrappedComponent, featureKey, FallbackComponent 
  * @param root0.showAll
  */
 export function FeatureList({ features, showAll = false }) {
-  const { plan } = useFeatureContext();
+  const { _plan } = useFeatureContext();
 
   const featuresToShow = showAll
     ? Object.keys(FEATURE_METADATA)
@@ -325,7 +325,7 @@ FeatureList.defaultProps = {
 };
 
 function FeatureListItem({ feature }) {
-  const isEnabled = useFeatureFlag(feature);
+  const _isEnabled = useFeatureFlag(feature);
   const featureMeta = FEATURE_METADATA[feature];
 
   if (!featureMeta) return null;

@@ -13,7 +13,7 @@ import { requiresApproval } from './permissionsService.js';
 import { requestApproval, getOpenReviewForResource, APPROVAL_STATUS } from './approvalService.js';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('PlaylistService');
+const _logger = createScopedLogger('PlaylistService');
 
 /**
  * @typedef {Object} PlaylistItem

@@ -52,7 +52,7 @@ function createRLSMockClient(authenticatedUserId, allData) {
             resolve({ data: filtered, error: null });
           })
         }),
-        update: vi.fn((updates) => ({
+        update: vi.fn((_updates) => ({
           eq: vi.fn((field, value) => {
             // Simulate RLS on update: only affects rows owned by user
             const affectedRows = tableData.filter(row =>

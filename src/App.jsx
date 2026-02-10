@@ -61,7 +61,7 @@ const ActivityLogPage = lazy(() => import('./pages/ActivityLogPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
-const TemplatesPage = lazy(() => import('./pages/TemplatesPage'));
+const _TemplatesPage = lazy(() => import('./pages/TemplatesPage'));
 const ContentAssistantPage = lazy(() => import('./pages/ContentAssistantPage'));
 const ScreenGroupsPage = lazy(() => import('./pages/ScreenGroupsPage'));
 const ScreenGroupDetailPage = lazy(() => import('./pages/ScreenGroupDetailPage'));
@@ -438,7 +438,7 @@ function BizScreenAppInner() {
   );
 
   // Get media filter from page ID
-  const getMediaFilter = (pageId) => {
+  const _getMediaFilter = (pageId) => {
     const filterMap = {
       'media-all': null,
       'media-images': 'image',

@@ -149,7 +149,7 @@ export default function YodeckEmptyState({
   className = '',
 }) {
   const illustration = illustrations[type] || illustrations.screens;
-  const FallbackIcon = iconMap[type] || Monitor;
+  const _FallbackIcon = iconMap[type] || Monitor;
 
   // Default titles based on type
   const defaultTitles = {

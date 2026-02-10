@@ -60,7 +60,7 @@ test.describe('Playlist-Screen Assignment Persistence', () => {
   });
 
    
-  test.afterEach(async ({ page }, testInfo) => {
+  test.afterEach(async ({ _page }, testInfo) => {
     // Log captured errors for debugging
     if (consoleErrors.length > 0) {
       console.log(`[${testInfo.title}] Console errors captured:`, consoleErrors);

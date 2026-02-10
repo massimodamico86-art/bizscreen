@@ -325,7 +325,7 @@ const RowEditor = ({ row, fields, onUpdate, onDelete }) => {
  */
 export default function DataSourcesPage() {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const logger = useLogger('DataSourcesPage');
 
   // List state

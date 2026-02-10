@@ -352,7 +352,7 @@ test.describe('License-Based Access Control', () => {
     const enterpriseBadge = page.locator('text=Enterprise');
 
     // At least one should be visible if templates exist
-    const hasLicenseBadge =
+    const _hasLicenseBadge =
       await freeBadge.first().isVisible({ timeout: 2000 }).catch(() => false) ||
       await proBadge.first().isVisible({ timeout: 1000 }).catch(() => false) ||
       await enterpriseBadge.first().isVisible({ timeout: 1000 }).catch(() => false);

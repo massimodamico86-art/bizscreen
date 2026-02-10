@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function Layout3({ layout, guest }) {
+export default function Layout3({ layout, _guest }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const {
@@ -14,7 +14,7 @@ export default function Layout3({ layout, guest }) {
     propertyName,
     showWeather,
     weatherTemp,
-    weatherCity,
+    _weatherCity,
     weatherDescription,
     showWifi,
     wifiNetwork,

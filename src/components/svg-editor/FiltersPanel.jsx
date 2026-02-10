@@ -44,7 +44,7 @@ export default function FiltersPanel({
   selectedObject,
   canvas,
   onClose,
-  onUpdate,
+  _onUpdate,
 }) {
   const [expandedSections, setExpandedSections] = useState({
     presets: true,

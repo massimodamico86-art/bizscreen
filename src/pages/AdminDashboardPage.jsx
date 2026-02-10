@@ -37,7 +37,7 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
  * @param root0
  * @param root0.onNavigate
  */
-export default function AdminDashboardPage({ onNavigate }) {
+export default function AdminDashboardPage({ _onNavigate }) {
   const { t } = useTranslation();
   const logger = useLogger('AdminDashboardPage');
   const { userProfile } = useAuth();
@@ -60,7 +60,7 @@ export default function AdminDashboardPage({ onNavigate }) {
   const [propertyName, setPropertyName] = useState('');
   const [propertyAddress, setPropertyAddress] = useState('');
   const [guestFile, setGuestFile] = useState(null);
-  const [reportDateRange, setReportDateRange] = useState({ start: '', end: '' });
+  const [_reportDateRange, _setReportDateRange] = useState({ start: '', end: '' });
   const [actionLoading, setActionLoading] = useState(false);
   const [actionSuccess, setActionSuccess] = useState('');
 
@@ -148,7 +148,7 @@ export default function AdminDashboardPage({ onNavigate }) {
     setError('');
 
     try {
-      const { data, error: insertError } = await supabase
+      const { _data, error: insertError } = await supabase
         .from('listings')
         .insert({
           owner_id: selectedClientId,

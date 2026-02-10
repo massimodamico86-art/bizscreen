@@ -161,7 +161,7 @@ test.describe('Content Performance Dashboard', () => {
         await page.waitForLoadState('domcontentloaded');
 
         // Button should show as selected (different styling)
-        const isSelected = await button24h.evaluate(el => {
+        const _isSelected = await button24h.evaluate(el => {
           const classes = el.className;
           return classes.includes('bg-blue') || classes.includes('bg-primary') || classes.includes('selected');
         });
@@ -176,7 +176,7 @@ test.describe('Content Performance Dashboard', () => {
       await page.waitForLoadState('domcontentloaded');
 
       // Try to switch date range
-      const button7d = page.getByRole('button', { name: /7.*days?/i });
+      const _button7d = page.getByRole('button', { name: /7.*days?/i });
       const button30d = page.getByRole('button', { name: /30.*days?/i });
 
       if (await button30d.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -234,8 +234,8 @@ test.describe('Content Performance Dashboard', () => {
           await page.waitForLoadState('domcontentloaded');
 
           // Check for modal or detail view
-          const hasModal = await page.locator('[role="dialog"], [data-testid="scene-detail-modal"]').isVisible({ timeout: 2000 }).catch(() => false);
-          const hasDetail = await page.locator('text=/scene detail|analytics detail/i').isVisible({ timeout: 2000 }).catch(() => false);
+          const _hasModal = await page.locator('[role="dialog"], [data-testid="scene-detail-modal"]').isVisible({ timeout: 2000 }).catch(() => false);
+          const _hasDetail = await page.locator('text=/scene detail|analytics detail/i').isVisible({ timeout: 2000 }).catch(() => false);
 
           // Either modal opened or we stayed on page (no scenes to click)
           expect(true).toBeTruthy();
@@ -312,7 +312,7 @@ test.describe('Content Performance Dashboard', () => {
         await navButton.click();
 
         // Should show loading or content quickly
-        const hasLoadingOrContent = await Promise.race([
+        const _hasLoadingOrContent = await Promise.race([
           page.locator('text=/loading|fetching/i').isVisible({ timeout: 1000 }).catch(() => false),
           page.locator('h1, h2').isVisible({ timeout: 2000 }).catch(() => false),
         ]);

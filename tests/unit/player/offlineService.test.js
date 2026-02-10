@@ -539,7 +539,7 @@ describe('offlineService - Extended Coverage', () => {
 
       it('fetches from server when online and caches result', async () => {
         const { supabase } = await import('../../../src/supabase');
-        const { cacheScene, getCachedScene } = await import('../../../src/player/cacheService');
+        const { cacheScene, getCachedScene: _getCachedScene } = await import('../../../src/player/cacheService');
         const { getSceneForPlayback, setOfflineMode } = await import('../../../src/player/offlineService');
 
         setOfflineMode(false);
@@ -653,7 +653,7 @@ describe('offlineService - Extended Coverage', () => {
           scope: '/'
         });
 
-        const result = await registerServiceWorker();
+        const _result = await registerServiceWorker();
 
         expect(mockNavigator.serviceWorker.register).toHaveBeenCalledWith('/sw.js', { scope: '/' });
       });
@@ -780,7 +780,7 @@ describe('offlineService - Extended Coverage', () => {
   describe('Event sync operations', () => {
     describe('syncPendingEvents - success cases', () => {
       it('syncs queued heartbeats to server', async () => {
-        const { getPendingEvents, markEventsSynced } = await import('../../../src/player/cacheService');
+        const { getPendingEvents, markEventsSynced: _markEventsSynced } = await import('../../../src/player/cacheService');
         const { syncPendingEvents, setOfflineMode } = await import('../../../src/player/offlineService');
 
         setOfflineMode(false);
@@ -817,7 +817,7 @@ describe('offlineService - Extended Coverage', () => {
       });
 
       it('syncs queued errors to server', async () => {
-        const { getPendingEvents, markEventsSynced } = await import('../../../src/player/cacheService');
+        const { getPendingEvents, markEventsSynced: _markEventsSynced } = await import('../../../src/player/cacheService');
         const { syncPendingEvents, setOfflineMode } = await import('../../../src/player/offlineService');
 
         setOfflineMode(false);

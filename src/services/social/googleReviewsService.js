@@ -22,7 +22,7 @@ const GOOGLE_REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI ||
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_PLACES_URL = 'https://maps.googleapis.com/maps/api/place';
-const GOOGLE_MY_BUSINESS_URL = 'https://mybusinessaccountmanagement.googleapis.com/v1';
+const _GOOGLE_MY_BUSINESS_URL = 'https://mybusinessaccountmanagement.googleapis.com/v1';
 
 // Scopes for Google My Business API
 const GMB_SCOPES = [

@@ -120,7 +120,7 @@ describe('Password Validation - SEC-03', () => {
     it('reduces score for sequential characters', () => {
       // Password with "abc" sequence gets penalty
       const hasSeq = validatePassword('Abcptmk1!'); // Has "abc" sequence
-      const noSeq = validatePassword('Ptmk1234!');  // No common sequences (no abc, no 123 in sequence pattern)
+      const _noSeq = validatePassword('Ptmk1234!');  // No common sequences (no abc, no 123 in sequence pattern)
 
       // Both have similar complexity, but hasSeq has "abc" penalty
       // Note: "1234" contains "123" and "234" sequences too

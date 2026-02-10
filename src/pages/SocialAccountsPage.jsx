@@ -110,7 +110,7 @@ export default function SocialAccountsPage({ showToast }) {
         window.history.replaceState({}, document.title, window.location.pathname);
 
         try {
-          const tenantId = await getEffectiveOwnerId();
+          const _tenantId = await getEffectiveOwnerId();
           // The callback handlers are in individual services
           // This would normally be handled by a separate callback page/route
           showToast?.(`${PROVIDER_LABELS[provider]} connected successfully!`, 'success');

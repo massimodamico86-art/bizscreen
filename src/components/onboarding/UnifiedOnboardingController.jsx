@@ -38,7 +38,7 @@ const STEP_COMPONENTS = {
 };
 
 // Step sequence for progress and back navigation
-const STEP_SEQUENCE = ['welcome_tour', 'industry_selection', 'starter_pack', 'screen_pairing', 'complete'];
+const _STEP_SEQUENCE = ['welcome_tour', 'industry_selection', 'starter_pack', 'screen_pairing', 'complete'];
 
 // Progress percentages for each step
 const STEP_PROGRESS = {

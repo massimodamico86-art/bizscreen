@@ -253,7 +253,7 @@ export function handleSummary(data) {
 /**
  * Generate text summary
  */
-function textSummary(data, options = {}) {
+function textSummary(data, _options = {}) {
   const lines = [
     '',
     '='.repeat(60),

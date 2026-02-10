@@ -3,7 +3,7 @@ import { supabase } from '../supabase';
 import { checkRateLimit, createRateLimitError } from './rateLimitService.js';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('MediaService');
+const _logger = createScopedLogger('MediaService');
 
 /**
  * Media asset types
@@ -227,7 +227,7 @@ export async function uploadMediaFromDataUrl(dataUrl, options = {}) {
   const filename = `${user.id}/${timestamp}-${name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
 
   // Upload to Supabase storage
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  const { data: _uploadData, error: uploadError } = await supabase.storage
     .from('media')
     .upload(filename, blob, {
       contentType: type,

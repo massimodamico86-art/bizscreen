@@ -9,7 +9,7 @@ import { supabase } from '../supabase';
 import { getEffectiveOwnerId } from './tenantService';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('DomainService');
+const _logger = createScopedLogger('DomainService');
 
 /**
  * Get auth headers for API requests

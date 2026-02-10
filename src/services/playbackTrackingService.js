@@ -648,7 +648,7 @@ function clearOfflineQueue() {
 
   try {
     localStorage.removeItem(CONFIG.OFFLINE_STORAGE_KEY);
-  } catch (error) {
+  } catch (_error) {
     // Ignore
   }
 }

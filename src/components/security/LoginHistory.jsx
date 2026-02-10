@@ -12,7 +12,7 @@ import { Button } from '../../design-system';
  * @param root0
  * @param root0.showToast
  */
-export default function LoginHistory({ showToast }) {
+export default function LoginHistory({ _showToast }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);

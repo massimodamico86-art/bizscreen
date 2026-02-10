@@ -7,7 +7,7 @@
 
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('CanvaService');
+const _logger = createScopedLogger('CanvaService');
 
 const CANVA_CLIENT_ID = import.meta.env.VITE_CANVA_CLIENT_ID;
 const CANVA_OAUTH_URL = 'https://www.canva.com/api/oauth/authorize';
@@ -412,9 +412,9 @@ export function openCanvaTemplates(categoryId = null) {
  */
 export function openCanvaDesigner(options = {}) {
   const {
-    designType = 'Presentation',
-    width = 1920,
-    height = 1080,
+    _designType = 'Presentation',
+    _width = 1920,
+    _height = 1080,
     onDesignPublish,
   } = options;
 

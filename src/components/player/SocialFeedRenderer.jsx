@@ -173,7 +173,7 @@ export default function SocialFeedRenderer({
 /**
  * Carousel View - auto-rotating single post display
  */
-function CarouselView({ posts, currentIndex, provider, showCaption, showLikes, showDate, showAuthor, style }) {
+function CarouselView({ posts, currentIndex, _provider, showCaption, showLikes, _showDate, showAuthor, style }) {
   const post = posts[currentIndex];
   if (!post) return null;
 
@@ -251,7 +251,7 @@ function CarouselView({ posts, currentIndex, provider, showCaption, showLikes, s
 /**
  * Grid View - fixed grid of posts
  */
-function GridView({ posts, provider, showCaption, showLikes, style }) {
+function GridView({ posts, _provider, _showCaption, _showLikes, style }) {
   const gridCols = posts.length <= 4 ? 2 : 3;
 
   return (
@@ -285,7 +285,7 @@ function GridView({ posts, provider, showCaption, showLikes, style }) {
 /**
  * List View - vertical list of posts
  */
-function ListView({ posts, provider, showCaption, showLikes, showDate, showAuthor, style }) {
+function ListView({ posts, _provider, showCaption, _showLikes, _showDate, showAuthor, style }) {
   return (
     <div style={style} className="w-full h-full overflow-hidden flex flex-col gap-2 p-2">
       {posts.slice(0, 4).map((post, idx) => (
@@ -316,7 +316,7 @@ function ListView({ posts, provider, showCaption, showLikes, showDate, showAutho
 /**
  * Single View - single post with full details
  */
-function SingleView({ posts, currentIndex, provider, showCaption, showLikes, showDate, showAuthor, style }) {
+function SingleView({ posts, currentIndex, provider, showCaption, showLikes, _showDate, showAuthor, style }) {
   const post = posts[currentIndex];
   if (!post) return null;
 
@@ -393,7 +393,7 @@ function SingleView({ posts, currentIndex, provider, showCaption, showLikes, sho
 /**
  * Masonry View - Pinterest-style layout
  */
-function MasonryView({ posts, provider, showCaption, style }) {
+function MasonryView({ posts, _provider, _showCaption, style }) {
   const leftCol = posts.filter((_, i) => i % 2 === 0);
   const rightCol = posts.filter((_, i) => i % 2 === 1);
 

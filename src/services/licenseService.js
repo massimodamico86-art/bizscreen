@@ -8,7 +8,7 @@
 import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('LicenseService');
+const _logger = createScopedLogger('LicenseService');
 
 /**
  * License types

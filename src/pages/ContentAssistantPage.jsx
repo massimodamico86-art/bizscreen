@@ -78,10 +78,10 @@ const StepIndicator = ({ currentStep, steps }) => (
 );
 
 const ContentAssistantPage = ({ showToast }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const logger = useLogger('ContentAssistantPage');
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { _user } = useAuth();
 
   // Step management
   const [currentStep, setCurrentStep] = useState(0);
@@ -135,7 +135,7 @@ const ContentAssistantPage = ({ showToast }) => {
             ...profileContext,
           }));
         }
-      } catch (error) {
+      } catch (_error) {
         // Profile might not have business info yet
         logger.info('No profile business context found');
       }
@@ -630,7 +630,7 @@ const ContentAssistantPage = ({ showToast }) => {
               </div>
 
               <div className="space-y-3">
-                {generatedPlaylists.map((result, index) => (
+                {generatedPlaylists.map((result, _index) => (
                   <div
                     key={result.playlist.id}
                     className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"

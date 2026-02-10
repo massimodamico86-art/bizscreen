@@ -126,12 +126,12 @@ const TemplatesPage = ({ showToast }) => {
 
   // Favorites state (US-130, US-131)
   const [favoriteIds, setFavoriteIds] = useState(new Set());
-  const [favoriteTemplates, setFavoriteTemplates] = useState([]);
+  const [_favoriteTemplates, setFavoriteTemplates] = useState([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
 
   // Recently used state (US-129)
   const [recentlyUsed, setRecentlyUsed] = useState([]);
-  const [loadingRecent, setLoadingRecent] = useState(false);
+  const [_loadingRecent, setLoadingRecent] = useState(false);
 
   // Get filters from URL params
   const activeCategory = searchParams.get('category') || 'all';
@@ -317,7 +317,7 @@ const TemplatesPage = ({ showToast }) => {
         await addFavoriteTemplate(template.id);
         showToast?.(t('templates.addedToFavorites', 'Added to favorites'), 'success');
       }
-    } catch (error) {
+    } catch (_error) {
       // Revert optimistic update
       setFavoriteIds((prev) => {
         const next = new Set(prev);
@@ -348,7 +348,7 @@ const TemplatesPage = ({ showToast }) => {
   };
 
   // Apply template from customize modal (US-127)
-  const handleApplyFromModal = async (template, customization) => {
+  const handleApplyFromModal = async (template, _customization) => {
     try {
       setApplying(template.slug);
       setApplyError(null);

@@ -16,7 +16,7 @@ import {
 } from './sceneDesignService';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('SceneAiService');
+const _logger = createScopedLogger('SceneAiService');
 
 // ============================================
 // INDUSTRY-SPECIFIC PRESETS
@@ -311,7 +311,7 @@ export function getPresetsForBusinessType(businessType) {
  * @param {Object} params - { scene, slide }
  * @returns {Object} Improved design JSON
  */
-export function suggestImprovements({ scene, slide }) {
+export function suggestImprovements({ _scene, slide }) {
   const design = { ...slide.design_json };
 
   // Modern color palette
@@ -382,7 +382,7 @@ export function suggestImprovements({ scene, slide }) {
  * @param {Object} params - { scene, businessType }
  * @returns {Object} Slide data with design
  */
-export function suggestPromoSlide({ scene, businessType }) {
+export function suggestPromoSlide({ _scene, businessType }) {
   const presets = getPresetsForBusinessType(businessType);
   const promoPreset = presets.find(p => p.kind === 'promo' || p.kind === 'sale') || presets[0];
 
@@ -398,7 +398,7 @@ export function suggestPromoSlide({ scene, businessType }) {
  * @param {Object} params - { scene, businessType }
  * @returns {Object} Slide data with design
  */
-export function suggestMenuSlide({ scene, businessType }) {
+export function suggestMenuSlide({ _scene, businessType }) {
   const presets = getPresetsForBusinessType(businessType);
   const menuPreset = presets.find(p => p.kind === 'menu' || p.kind === 'services') || presets[0];
 
@@ -430,7 +430,7 @@ export function makeTextConcise(text) {
  * @param {Object} params - { businessType, currentSlide }
  * @returns {Array} List of available AI actions
  */
-export function getAiQuickActions({ businessType, currentSlide }) {
+export function getAiQuickActions({ businessType, _currentSlide }) {
   const actions = [
     {
       id: 'improve',
@@ -538,7 +538,7 @@ function ensureContrast(textColor, bgColor, minRatio = 4.5) {
 /**
  * Lighten a color
  */
-function lightenColor(hex, amount = 0.2) {
+function _lightenColor(hex, amount = 0.2) {
   const { r, g, b } = hexToRgb(hex);
   return rgbToHex(
     r + (255 - r) * amount,
@@ -550,7 +550,7 @@ function lightenColor(hex, amount = 0.2) {
 /**
  * Darken a color
  */
-function darkenColor(hex, amount = 0.2) {
+function _darkenColor(hex, amount = 0.2) {
   const { r, g, b } = hexToRgb(hex);
   return rgbToHex(r * (1 - amount), g * (1 - amount), b * (1 - amount));
 }
@@ -712,7 +712,7 @@ export function improveSlideModern({ slide, brandTheme, industry }) {
  * @param {Object} params - { slide, brandTheme }
  * @returns {Object} New design JSON
  */
-export function improveSlideReadable({ slide, brandTheme }) {
+export function improveSlideReadable({ slide, _brandTheme }) {
   const design = JSON.parse(JSON.stringify(slide.design_json || slide));
   const bgColor = design.background?.color || '#0f172a';
 

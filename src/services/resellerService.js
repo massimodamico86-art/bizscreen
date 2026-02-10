@@ -9,7 +9,7 @@
 import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService';
 
-const logger = createScopedLogger('ResellerService');
+const _logger = createScopedLogger('ResellerService');
 
 /**
  * Reseller status values

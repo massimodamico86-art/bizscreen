@@ -24,7 +24,7 @@ import {
 // COLOR HARMONY RULES
 // ============================================
 
-const COLOR_HARMONIES = {
+const _COLOR_HARMONIES = {
   complementary: { angle: 180, description: 'High contrast, vibrant' },
   triadic: { angle: 120, description: 'Balanced, colorful' },
   analogous: { angle: 30, description: 'Harmonious, natural' },
@@ -113,7 +113,7 @@ export async function extractBrandIdentity(imageUrl) {
 function generateBackgroundVariations(palette) {
   const primary = palette.primary_color || DEFAULT_THEME.primary_color;
   const secondary = palette.secondary_color || DEFAULT_THEME.secondary_color;
-  const background = palette.background_color || DEFAULT_THEME.background_color;
+  const _background = palette.background_color || DEFAULT_THEME.background_color;
 
   return [
     {
@@ -181,7 +181,7 @@ function analyzeBrandMood(colors) {
   let totalSaturation = 0;
 
   colors.forEach(hex => {
-    const { r, g, b } = hexToRgb(hex);
+    const { r, _g, b } = hexToRgb(hex);
     totalWarmth += (r - b) / 255;
     totalSaturation += getSaturation(hex);
   });

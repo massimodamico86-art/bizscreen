@@ -44,7 +44,7 @@ test.describe.skip('Alert Notification Flow', () => {
 
         // Look for device offline alerts
         const offlineAlert = page.locator('text=/device.*offline/i');
-        const hasOfflineAlert = await offlineAlert.isVisible({ timeout: 5000 }).catch(() => false);
+        const _hasOfflineAlert = await offlineAlert.isVisible({ timeout: 5000 }).catch(() => false);
 
         // Either we have alerts or the list is empty (both valid states)
         const alertsSection = page.locator('h1, h2').filter({ hasText: /alerts/i }).first();
@@ -60,7 +60,7 @@ test.describe.skip('Alert Notification Flow', () => {
       const bellButton = page.locator('[aria-label*="notification"], [data-testid="notification-bell"]').first();
       if (await bellButton.isVisible({ timeout: 5000 }).catch(() => false)) {
         // Check if there's a badge with count
-        const badge = page.locator('.notification-badge, [class*="badge"]').first();
+        const _badge = page.locator('.notification-badge, [class*="badge"]').first();
         const bellArea = page.locator('header, nav').first();
 
         await expect(bellArea).toBeVisible();
@@ -78,7 +78,7 @@ test.describe.skip('Alert Notification Flow', () => {
 
         // Look for screenshot failure alerts
         const screenshotAlert = page.locator('text=/screenshot.*fail/i');
-        const hasScreenshotAlert = await screenshotAlert.isVisible({ timeout: 3000 }).catch(() => false);
+        const _hasScreenshotAlert = await screenshotAlert.isVisible({ timeout: 3000 }).catch(() => false);
 
         // Page should at least show alerts section
         const pageTitle = page.locator('h1, h2').first();
@@ -97,7 +97,7 @@ test.describe.skip('Alert Notification Flow', () => {
 
         // Look for sync failure alerts
         const syncAlert = page.locator('text=/sync.*fail|data.*source/i');
-        const hasSyncAlert = await syncAlert.isVisible({ timeout: 3000 }).catch(() => false);
+        const _hasSyncAlert = await syncAlert.isVisible({ timeout: 3000 }).catch(() => false);
 
         // Page should load successfully
         expect(true).toBeTruthy();
@@ -115,7 +115,7 @@ test.describe.skip('Alert Notification Flow', () => {
 
         // Look for social sync alerts
         const socialAlert = page.locator('text=/social.*fail|feed.*sync/i');
-        const hasSocialAlert = await socialAlert.isVisible({ timeout: 3000 }).catch(() => false);
+        const _hasSocialAlert = await socialAlert.isVisible({ timeout: 3000 }).catch(() => false);
 
         // Page should load successfully
         expect(true).toBeTruthy();

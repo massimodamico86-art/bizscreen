@@ -136,8 +136,8 @@ test.describe('Alerts Center', () => {
 
     if (await header.isVisible({ timeout: 5000 }).catch(() => false)) {
       // Check if bell or any notification indicator exists
-      const hasBell = await notificationBell.isVisible({ timeout: 5000 }).catch(() => false);
-      const hasBellIcon = await page.locator('[aria-label*="notification"], [title*="notification"]').isVisible({ timeout: 3000 }).catch(() => false);
+      const _hasBell = await notificationBell.isVisible({ timeout: 5000 }).catch(() => false);
+      const _hasBellIcon = await page.locator('[aria-label*="notification"], [title*="notification"]').isVisible({ timeout: 3000 }).catch(() => false);
 
       // At minimum, the header should be visible
       await expect(header).toBeVisible();
@@ -240,7 +240,7 @@ test.describe('Alerts Center', () => {
         const bulkAcknowledge = page.locator('button').filter({ hasText: /acknowledge selected|bulk acknowledge/i }).first();
         const bulkResolve = page.locator('button').filter({ hasText: /resolve selected|bulk resolve/i }).first();
 
-        const hasBulkActions = await bulkAcknowledge.isVisible({ timeout: 3000 }).catch(() => false) ||
+        const _hasBulkActions = await bulkAcknowledge.isVisible({ timeout: 3000 }).catch(() => false) ||
                                await bulkResolve.isVisible({ timeout: 3000 }).catch(() => false);
 
         // Uncheck to clean up
@@ -347,8 +347,8 @@ test.describe('Notification Preferences', () => {
     await page.waitForLoadState('networkidle');
 
     // Look for channel toggles
-    const inAppToggle = page.locator('input[type="checkbox"], [role="switch"]').filter({ hasText: /in.?app/i }).first();
-    const emailToggle = page.locator('input[type="checkbox"], [role="switch"]').filter({ hasText: /email/i }).first();
+    const _inAppToggle = page.locator('input[type="checkbox"], [role="switch"]').filter({ hasText: /in.?app/i }).first();
+    const _emailToggle = page.locator('input[type="checkbox"], [role="switch"]').filter({ hasText: /email/i }).first();
 
     // Try to find any toggle
     const toggles = page.locator('input[type="checkbox"], [role="switch"]');
@@ -357,7 +357,7 @@ test.describe('Notification Preferences', () => {
     if (toggleCount > 0) {
       // Toggle the first one
       const firstToggle = toggles.first();
-      const initialState = await firstToggle.isChecked().catch(() => false);
+      const _initialState = await firstToggle.isChecked().catch(() => false);
 
       await firstToggle.click();
       // Wait for toggle state to change instead of arbitrary timeout
@@ -412,7 +412,7 @@ test.describe('Notification Preferences', () => {
 
       // Look for success indication
       const successToast = page.locator('[role="alert"], .toast, .notification').filter({ hasText: /saved|updated|success/i });
-      const hasSuccess = await successToast.isVisible({ timeout: 5000 }).catch(() => false);
+      const _hasSuccess = await successToast.isVisible({ timeout: 5000 }).catch(() => false);
 
       expect(true).toBeTruthy();
     } else {

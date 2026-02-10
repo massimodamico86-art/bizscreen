@@ -94,7 +94,7 @@ const ZONE_COLORS = [
 ];
 
 const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const logger = useLogger('LayoutEditorPage');
   const [layout, setLayout] = useState(null);
   const [zones, setZones] = useState([]);
@@ -112,7 +112,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [approvalMessage, setApprovalMessage] = useState('');
   const [submittingApproval, setSubmittingApproval] = useState(false);
-  const [currentReview, setCurrentReview] = useState(null);
+  const [_currentReview, setCurrentReview] = useState(null);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewLinks, setPreviewLinks] = useState([]);
   const [loadingPreviewLinks, setLoadingPreviewLinks] = useState(false);
@@ -423,7 +423,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
       setCopiedLinkId(link.id);
       setTimeout(() => setCopiedLinkId(null), 2000);
       showToast?.('Link copied to clipboard');
-    } catch (error) {
+    } catch (_error) {
       showToast?.('Failed to copy link', 'error');
     }
   };
@@ -1013,7 +1013,7 @@ const LayoutEditorPage = ({ layoutId, showToast, onNavigate }) => {
                       onChange={(e) => setSelectedExpiry(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                     >
-                      {Object.entries(EXPIRY_PRESETS).map(([key, value]) => (
+                      {Object.entries(EXPIRY_PRESETS).map(([key, _value]) => (
                         <option key={key} value={key}>
                           {getExpiryLabel(key)}
                         </option>

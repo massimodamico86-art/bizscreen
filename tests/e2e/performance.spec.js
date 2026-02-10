@@ -20,7 +20,7 @@ async function getPerformanceMetrics(page) {
     const navigation = performance.getEntriesByType('navigation')[0];
     const paint = performance.getEntriesByType('paint');
     const fcp = paint.find(p => p.name === 'first-contentful-paint');
-    const lcp = new Promise(resolve => {
+    const _lcp = new Promise(resolve => {
       new PerformanceObserver(list => {
         const entries = list.getEntries();
         resolve(entries[entries.length - 1]?.startTime || 0);

@@ -153,12 +153,12 @@ export default function PolotnoEditor({
   }, [isLoading, onError]);
 
   // Export design (callable from parent)
-  const exportDesign = useCallback(() => {
+  const _exportDesign = useCallback(() => {
     sendToIframe('exportImage');
   }, [sendToIframe]);
 
   // Get design JSON (callable from parent)
-  const getDesign = useCallback(() => {
+  const _getDesign = useCallback(() => {
     sendToIframe('getDesign');
   }, [sendToIframe]);
 

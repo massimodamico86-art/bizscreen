@@ -120,7 +120,7 @@ export async function verifyEnrollment(factorId, code) {
     }
 
     // Then verify with the code
-    const { data, error } = await supabase.auth.mfa.verify({
+    const { _data, error } = await supabase.auth.mfa.verify({
       factorId,
       challengeId: challengeData.id,
       code,
