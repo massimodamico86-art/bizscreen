@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.0 Creative Experience — Phase 47 complete, Phase 48 next
+**Current focus:** v3.0 Creative Experience — Phase 48 in progress
 
 ## Current Position
 
-Phase: 47 of 50 (Template Browse Premium)
-Plan: 2 of 2 in current phase
-Status: Phase 47 verified (human_needed)
-Last activity: 2026-02-10 — Phase 47 executed and verified (2/2 plans, 5/5 must-haves)
+Phase: 48 of 50 (Template-to-Editor Flow)
+Plan: 1 of 2 in current phase
+Status: Plan 48-01 complete, executing phase
+Last activity: 2026-02-10 — Phase 48 Plan 01 executed (2/2 tasks, scroll preservation + isFromTemplate prop)
 
 Progress: [████░░░░░░] 40%
 
@@ -42,6 +42,7 @@ Progress: [████░░░░░░] 40%
 | 46 | 02 | 1min | 1 | 1 |
 | 47 | 01 | 2min | 1 | 3 |
 | 47 | 02 | 2min | 1 | 1 |
+| 48 | 01 | 4min | 2 | 6 |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Progress: [████░░░░░░] 40%
 - [47-02] Horizontal scroll cards kept as simple ScrollCard, not DSTemplateCard (different layout context)
 - [47-02] Raw searchQuery drives UI visibility, debouncedSearch drives filtering (immediate feedback + 300ms debounce)
 - [47-02] Composite key on motion.div container for re-animation on search/filter changes
+- [48-01] Scroll restore gated on loading===false with requestAnimationFrame for post-render DOM scroll
+- [48-01] isFromTemplate uses !!urlTemplateId && !urlDesignId so saved designs do not trigger customize panel
 
 ### Blockers/Concerns
 
@@ -73,9 +76,9 @@ Progress: [████░░░░░░] 40%
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Phase 47 verified (human_needed — 4 visual polish items need human testing)
+Stopped at: Completed 48-01-PLAN.md
 Resume file: None
-Next: `/gsd:plan-phase 48`
+Next: Execute 48-02-PLAN.md
 
 ---
-*Updated: 2026-02-10 — Phase 47 executed and verified (human_needed for visual testing).*
+*Updated: 2026-02-10 — Phase 48 Plan 01 executed (scroll preservation + isFromTemplate prop).*
