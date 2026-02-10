@@ -11,15 +11,15 @@
 
 import { useState, useCallback } from 'react';
 import {
-  Upload,
-  Palette,
-  Type,
-  Check,
   ArrowLeft,
   ArrowRight,
-  Loader2,
-  Sparkles,
+  Check,
   Image as ImageIcon,
+  Loader2,
+  Palette,
+  Sparkles,
+  Type,
+  Upload,
 } from 'lucide-react';
 import { Button, Modal } from '../../design-system';
 import {

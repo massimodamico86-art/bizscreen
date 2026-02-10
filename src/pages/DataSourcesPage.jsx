@@ -20,20 +20,25 @@
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  Table2,
-  FileSpreadsheet,
-  MoreVertical,
-  GripVertical,
-  ArrowUp,
-  ArrowDown,
-  RefreshCw,
   AlertTriangle,
+  ArrowDown,
+  ArrowUp,
   Check,
-  Pencil as Edit,
-  Trash2,
-  Plus,
-  X,
+  Clock,
+  Database,
+  Edit,
+  FileSpreadsheet,
+  GripVertical,
+  Link2,
   Loader2,
+  MoreVertical,
+  Plus,
+  RefreshCw,
+  Search,
+  Table2,
+  Trash2,
+  Unlink,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
@@ -87,8 +92,6 @@ import {
 } from '../services/googleSheetsService';
 
 // Design system imports
-
-
 
 // --------------------------------------------------------------------------
 // Sub-components

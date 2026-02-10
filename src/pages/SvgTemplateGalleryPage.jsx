@@ -35,6 +35,8 @@ import {
 import { TemplateCard as DSTemplateCard, TemplateCardSkeleton } from '../design-system';
 import { SearchBar } from '../design-system';
 
+const SCROLL_KEY = 'svg-gallery-scroll';
+
 // Debounce hook for search input
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -134,6 +136,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
   const featuredRef = useRef(null);
   const popularRef = useRef(null);
   const recentRef = useRef(null);
+  const mainContentRef = useRef(null);
 
   // Load data
   useEffect(() => {
@@ -157,6 +160,22 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
       setLoading(false);
     }
   };
+
+  // Restore scroll position after loading completes (for back-navigation from editor)
+  useEffect(() => {
+    if (!loading) {
+      const savedScroll = sessionStorage.getItem(SCROLL_KEY);
+      if (savedScroll && mainContentRef.current) {
+        // Use requestAnimationFrame to ensure DOM has rendered after loading state change
+        requestAnimationFrame(() => {
+          if (mainContentRef.current) {
+            mainContentRef.current.scrollTop = parseInt(savedScroll, 10);
+          }
+          sessionStorage.removeItem(SCROLL_KEY);
+        });
+      }
+    }
+  }, [loading]);
 
   // Filter templates (uses debounced search values)
   const filteredTemplates = useMemo(() => {
@@ -222,6 +241,11 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
 
   // Handle template click
   const handleTemplateClick = (template) => {
+    // Save scroll position before navigating to editor
+    if (mainContentRef.current) {
+      sessionStorage.setItem(SCROLL_KEY, String(mainContentRef.current.scrollTop));
+    }
+
     // Store template data in sessionStorage for the editor to retrieve
     const templateData = {
       id: template.id,
@@ -619,7 +643,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto bg-gray-50">
+      <div ref={mainContentRef} className="flex-1 overflow-y-auto bg-gray-50">
         {/* Green Header */}
         <div className="bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-10">
           <h1 className="text-2xl font-bold text-white text-center mb-6">

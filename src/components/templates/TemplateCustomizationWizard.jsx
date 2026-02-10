@@ -11,7 +11,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { X, Upload, Palette, Type, Loader2, Image as ImageIcon } from 'lucide-react';
+import {
+  Image as ImageIcon,
+  Loader2,
+  Palette,
+  Type,
+  Upload,
+  X,
+} from 'lucide-react';
 import PropTypes from 'prop-types';
 
 /**
