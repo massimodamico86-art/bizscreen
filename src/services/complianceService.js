@@ -201,7 +201,7 @@ export async function exportAsCSV(dataType, tenantId = null) {
   let filename;
 
   switch (dataType) {
-    case 'screens':
+    case 'screens': {
       const { data: screens } = await supabase
         .from('tv_devices')
         .select('id, name, pairing_code, status, resolution, last_seen_at, created_at')
@@ -209,8 +209,9 @@ export async function exportAsCSV(dataType, tenantId = null) {
       data = screens;
       filename = 'screens';
       break;
+    }
 
-    case 'playlists':
+    case 'playlists': {
       const { data: playlists } = await supabase
         .from('playlists')
         .select('id, name, description, is_active, created_at, updated_at')
@@ -218,8 +219,9 @@ export async function exportAsCSV(dataType, tenantId = null) {
       data = playlists;
       filename = 'playlists';
       break;
+    }
 
-    case 'media':
+    case 'media': {
       const { data: media } = await supabase
         .from('media_assets')
         .select('id, name, type, url, file_size, duration, created_at')
@@ -227,8 +229,9 @@ export async function exportAsCSV(dataType, tenantId = null) {
       data = media;
       filename = 'media';
       break;
+    }
 
-    case 'activity':
+    case 'activity': {
       const { data: activity } = await supabase
         .from('activity_log')
         .select('id, action, entity_type, entity_id, details, created_at')
@@ -238,6 +241,7 @@ export async function exportAsCSV(dataType, tenantId = null) {
       data = activity;
       filename = 'activity';
       break;
+    }
 
     default:
       throw new Error('Unknown data type');

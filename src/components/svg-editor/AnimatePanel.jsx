@@ -72,7 +72,7 @@ const runAnimation = (obj, animationId, canvas, onComplete) => {
       });
       break;
 
-    case 'bounce':
+    case 'bounce': {
       const bounceHeight = 30;
       obj.animate('top', originalTop - bounceHeight, {
         duration: duration / 2,
@@ -88,8 +88,9 @@ const runAnimation = (obj, animationId, canvas, onComplete) => {
         easing: (t) => 1 - (1 - t) * (1 - t), // ease out
       });
       break;
+    }
 
-    case 'pulse':
+    case 'pulse': {
       const pulseScale = 1.1;
       obj.animate({ scaleX: originalScaleX * pulseScale, scaleY: originalScaleY * pulseScale }, {
         duration: duration / 2,
@@ -103,8 +104,9 @@ const runAnimation = (obj, animationId, canvas, onComplete) => {
         },
       });
       break;
+    }
 
-    case 'shake':
+    case 'shake': {
       const shakeAmount = 10;
       let shakeCount = 0;
       const shakeStep = () => {
@@ -124,6 +126,7 @@ const runAnimation = (obj, animationId, canvas, onComplete) => {
       };
       shakeStep();
       break;
+    }
 
     case 'flip':
       obj.animate('scaleX', 0, {

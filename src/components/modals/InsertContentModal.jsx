@@ -288,23 +288,27 @@ export function InsertContentModal({
       setLoading(true);
       try {
         switch (activeTab) {
-          case 'media':
+          case 'media': {
             // Fetch media with high page size for modal display
             const mediaResult = await fetchMediaAssets({ page: 1, pageSize: 500 });
             setMediaItems(mediaResult?.data || []);
             break;
-          case 'apps':
+          }
+          case 'apps': {
             const appsData = await fetchApps({});
             setApps(appsData || []);
             break;
-          case 'layouts':
+          }
+          case 'layouts': {
             const layoutsResult = await fetchLayouts();
             setLayouts(layoutsResult.data || []);
             break;
-          case 'playlists':
+          }
+          case 'playlists': {
             const playlistsData = await fetchPlaylists();
             setPlaylists(playlistsData || []);
             break;
+          }
         }
       } catch (error) {
         logger.error('Error loading content', { activeTab, error: error.message });

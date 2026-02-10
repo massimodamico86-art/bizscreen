@@ -247,7 +247,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
   // Handle template click - open in modal overlay instead of navigating
   const handleTemplateClick = (template) => {
     // Debug: log template data from database
-    console.log('Template clicked:', {
+    logger.debug('Template clicked:', {
       name: template.name,
       width: template.width,
       height: template.height,
@@ -274,7 +274,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
       height: templateHeight, // Use resolved height
     };
 
-    console.log('Template data for modal:', templateData);
+    logger.debug('Template data for modal:', templateData);
     // Open in modal instead of navigating
     setEditorModal({ isOpen: true, templateData });
   };

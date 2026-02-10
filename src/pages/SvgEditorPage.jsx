@@ -15,6 +15,9 @@ import {
   saveUserSvgDesign,
 } from '../services/svgTemplateService';
 import { FabricSvgEditor } from '../components/svg-editor/index.js';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('SvgEditorPage');
 
 /**
  * Parse query params from route string
@@ -70,12 +73,12 @@ export default function SvgEditorPage({
       setLoading(true);
       setError(null);
 
-      console.log('SvgEditorPage loadContent - designId:', urlDesignId, 'templateId:', urlTemplateId);
+      logger.debug('SvgEditorPage loadContent - designId:', urlDesignId, 'templateId:', urlTemplateId);
 
       try {
         // Check for existing design ID
         if (urlDesignId) {
-          console.log('Loading existing design:', urlDesignId);
+          logger.debug('Loading existing design:', urlDesignId);
           const design = await loadUserSvgDesign(urlDesignId);
           if (cancelled) return;
           setEditorConfig({
@@ -96,7 +99,7 @@ export default function SvgEditorPage({
               throw new Error('Template data not found');
             }
             const templateData = JSON.parse(storedTemplate);
-            console.log('Loading template:', templateData.name);
+            logger.debug('Loading template:', templateData.name);
 
             // Clear the stored template
             sessionStorage.removeItem('pendingTemplate');
@@ -127,7 +130,7 @@ export default function SvgEditorPage({
         }
         // New blank design
         else {
-          console.log('Starting blank design');
+          logger.debug('Starting blank design');
           if (cancelled) return;
           setEditorConfig({
             svgUrl: null,

@@ -225,7 +225,7 @@ export function initializeEnv() {
   const config = getConfig();
 
   if (config.isLocal) {
-    console.info('[env] Environment initialized', {
+    console.warn('[env] Environment initialized', {
       env: config.env,
       supabaseUrl: config.supabaseUrl
     });

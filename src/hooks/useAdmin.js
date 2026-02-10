@@ -150,8 +150,6 @@ export function useTenantDetail(tenantId) {
       const result = await updateTenantPlan(tenantId, planSlug, reason);
       await fetchTenant(); // Refresh
       return result;
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }
@@ -164,8 +162,6 @@ export function useTenantDetail(tenantId) {
       const result = await suspendTenant(tenantId, action, reason);
       await fetchTenant(); // Refresh
       return result;
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }
@@ -177,8 +173,6 @@ export function useTenantDetail(tenantId) {
       const result = await overrideFeatureFlag(tenantId, featureKey, enabled, reason);
       await fetchTenant(); // Refresh
       return result;
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }
@@ -190,8 +184,6 @@ export function useTenantDetail(tenantId) {
       const result = await overrideQuota(tenantId, featureKey, options);
       await fetchTenant(); // Refresh
       return result;
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }
@@ -202,8 +194,6 @@ export function useTenantDetail(tenantId) {
       setActionLoading(true);
       const result = await resetUserPassword(userId, sendEmail);
       return result;
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }
@@ -216,8 +206,6 @@ export function useTenantDetail(tenantId) {
       const result = await disableUser(userId, action, reason);
       await fetchTenant(); // Refresh
       return result;
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }
@@ -229,8 +217,6 @@ export function useTenantDetail(tenantId) {
       const result = await rebootScreen(screenId, reason);
       await fetchTenant(); // Refresh
       return result;
-    } catch (err) {
-      throw err;
     } finally {
       setActionLoading(false);
     }

@@ -12,6 +12,9 @@ import { useState, useEffect, lazy, useMemo } from 'react';
 import { Loader2 } from 'lucide-react';
 import { uploadMediaFromDataUrl, getMediaAsset, updateMediaAsset } from '../services/mediaService';
 import { fetchLayoutTemplates } from '../services/layoutTemplateService';
+import { createScopedLogger } from '../services/loggingService.js';
+
+const logger = createScopedLogger('DesignEditorPage');
 
 // UUID regex pattern
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -100,7 +103,7 @@ export default function DesignEditorPage({
     if (queryParams.template) {
       try {
         const parsed = JSON.parse(decodeURIComponent(queryParams.template));
-        console.log('DesignEditorPage received templateData:', parsed);
+        logger.debug('DesignEditorPage received templateData:', parsed);
         return parsed;
       } catch (e) {
         console.error('Failed to parse template data:', e);
@@ -119,7 +122,7 @@ export default function DesignEditorPage({
         height: templateData.height || 1080,
         name: templateData.name || 'Template Design',
       };
-      console.log('Dimensions calculated from templateData:', dims);
+      logger.debug('Dimensions calculated from templateData:', dims);
       return dims;
     }
 

@@ -864,7 +864,7 @@ export function getBlockAnimationStyles(animation) {
         ...baseStyles,
         animationName: 'fadeIn',
       };
-    case 'slide':
+    case 'slide': {
       const slideAnimations = {
         up: 'slideInUp',
         down: 'slideInDown',
@@ -875,6 +875,7 @@ export function getBlockAnimationStyles(animation) {
         ...baseStyles,
         animationName: slideAnimations[direction] || 'slideInUp',
       };
+    }
     case 'zoom':
       return {
         ...baseStyles,

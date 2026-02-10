@@ -925,7 +925,7 @@ export default function FabricSvgEditor({
           name: 'Diamond',
         });
         break;
-      case 'star':
+      case 'star': {
         // Create a 5-point star using polygon
         const starPoints = [];
         const outerRadius = 50;
@@ -943,6 +943,7 @@ export default function FabricSvgEditor({
           name: options.filled ? 'Star (Filled)' : 'Star',
         });
         break;
+      }
       case 'heart':
         // Approximate heart using path
         shape = new fabric.Path('M 50 30 C 50 20, 30 0, 10 20 C -10 40, 10 60, 50 90 C 90 60, 110 40, 90 20 C 70 0, 50 20, 50 30 Z', {
@@ -952,7 +953,7 @@ export default function FabricSvgEditor({
           name: options.filled ? 'Heart (Filled)' : 'Heart',
         });
         break;
-      case 'hexagon':
+      case 'hexagon': {
         const hexPoints = [];
         for (let i = 0; i < 6; i++) {
           const angle = (Math.PI / 3) * i - Math.PI / 2;
@@ -966,7 +967,8 @@ export default function FabricSvgEditor({
           name: 'Hexagon',
         });
         break;
-      case 'pentagon':
+      }
+      case 'pentagon': {
         const pentPoints = [];
         for (let i = 0; i < 5; i++) {
           const angle = (2 * Math.PI / 5) * i - Math.PI / 2;
@@ -980,7 +982,8 @@ export default function FabricSvgEditor({
           name: 'Pentagon',
         });
         break;
-      case 'octagon':
+      }
+      case 'octagon': {
         const octPoints = [];
         for (let i = 0; i < 8; i++) {
           const angle = (Math.PI / 4) * i - Math.PI / 8;
@@ -994,6 +997,7 @@ export default function FabricSvgEditor({
           name: 'Octagon',
         });
         break;
+      }
       case 'line':
         shape = new fabric.Line([0, 0, 100, 0], {
           left: canvasWidth / 2 - 50,
@@ -1004,7 +1008,7 @@ export default function FabricSvgEditor({
           name: 'Line',
         });
         break;
-      case 'arrow':
+      case 'arrow': {
         // Create arrow using polyline
         const arrowPoints = [
           { x: 0, y: 10 },
@@ -1020,7 +1024,8 @@ export default function FabricSvgEditor({
           name: 'Arrow',
         });
         break;
-      case 'arrow-double':
+      }
+      case 'arrow-double': {
         const dblArrowPoints = [
           { x: 20, y: 0 },
           { x: 0, y: 15 },
@@ -1038,6 +1043,7 @@ export default function FabricSvgEditor({
           name: 'Double Arrow',
         });
         break;
+      }
       default:
         return;
     }

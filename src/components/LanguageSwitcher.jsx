@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { Globe, Loader2 } from 'lucide-react'; // eslint-disable-line unused-imports/no-unused-imports
+import { Globe, Loader2 } from 'lucide-react';
 import { useI18n } from '../i18n';
 import { setUserPreferredLocale } from '../services/localeService';
 import { useLogger } from '../hooks/useLogger.js';

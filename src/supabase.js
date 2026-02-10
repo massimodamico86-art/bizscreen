@@ -52,7 +52,7 @@ if (missingOptional.length > 0 && import.meta.env.DEV) {
 
 // Log successful configuration in development
 if (import.meta.env.DEV) {
-  console.info('[Supabase] Configured:', {
+  console.warn('[Supabase] Configured:', {
     url: supabaseUrl,
     hasKey: !!supabaseAnonKey,
     keyLength: supabaseAnonKey?.length

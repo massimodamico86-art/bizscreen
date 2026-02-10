@@ -556,7 +556,7 @@ export default function EditorCanvas({
             );
           }
 
-          default:
+          default: {
             const WidgetIcon = WIDGET_ICONS[widgetType] || Clock;
             return (
               <div
@@ -571,6 +571,7 @@ export default function EditorCanvas({
                 </div>
               </div>
             );
+          }
         }
       }
 
