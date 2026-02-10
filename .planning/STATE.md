@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 ## Current Position
 
 Phase: 44 of 45 (ESLint Zero Warnings)
-Plan: 3 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-10 -- Completed 44-03 (fix unused variables)
+Last activity: 2026-02-10 -- Completed 44-04 (fix exhaustive deps)
 
-Progress: [██████░░░░] 60%
+Progress: [████████░░] 80%
 
 ## Milestones Shipped
 
@@ -48,6 +48,7 @@ Progress: [██████░░░░] 60%
 | 44 | 01 | 6min | 2 | 15 |
 | 44 | 02 | 4min | 1 | 9 |
 | 44 | 03 | 8min | 1 | 172 |
+| 44 | 04 | 20min | 1 | 81 |
 
 ## Accumulated Context
 
@@ -73,6 +74,7 @@ Progress: [██████░░░░] 60%
 - [Phase 44-01]: Used console.warn for env/supabase init, createScopedLogger for page debug logging
 - [Phase 44]: Fixed no-undef warnings by adding useLogger hook to child components and correcting stale variable references in error logging
 - [Phase 44-03]: Added caughtErrorsIgnorePattern to ESLint config; _ prefix convention for all unused vars/args/catch params
+- [Phase 44-04]: eslint-disable with reason for mount-only effects; useMemo for logical expression deps; useCallback for handler function deps
 
 ### Known Debt (This Milestone Targets)
 
@@ -80,7 +82,7 @@ Progress: [██████░░░░] 60%
 - ~~Dead files: AutoBuildOnboardingModal.jsx, OnboardingWizard, WelcomeModal~~ (RESOLVED - Phase 42-01)
 - ~~Obsolete localStorage keys from legacy onboarding~~ (RESOLVED - confirmed absent, Phase 42-01)
 - Sentry Slack integration and alert rules not configured
-- ~~7,807 ESLint warnings (warn-level rules)~~ (REDUCED to ~125 -- 44-03 fixed 355 unused-vars warnings)
+- ~~7,807 ESLint warnings (warn-level rules)~~ (REDUCED to 1 -- 44-04 fixed 125 exhaustive-deps warnings)
 - ~~Migration 105 references non-existent tenants table~~ (RESOLVED - corrective migration 141, Phase 42-01)
 
 ### Blockers/Concerns
@@ -90,9 +92,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 44-03
+Stopped at: Completed 44-04
 Resume file: None
-Next: Execute 44-04-PLAN.md
+Next: Execute 44-05-PLAN.md
 
 ---
-*Updated: 2026-02-10 -- Plan 44-03 complete. unused-imports/no-unused-vars at zero (355 warnings fixed across 172 files).*
+*Updated: 2026-02-10 -- Plan 44-04 complete. react-hooks/exhaustive-deps at zero (125 warnings fixed across 81 files).*
