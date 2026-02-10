@@ -1,7 +1,8 @@
 /**
  * TemplateCard Component
  *
- * Yodeck-inspired template card for galleries and marketplaces.
+ * Premium template card with Framer Motion hover animations,
+ * large thumbnails, and progressive image loading.
  *
  * @example
  * <TemplateCard
@@ -15,6 +16,15 @@
  */
 
 import { forwardRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { cardLift } from '../motion';
+import {
+  Badge,
+  LayoutTemplate,
+  Loader2,
+  Plus,
+  Sparkles,
+} from 'lucide-react';
 
 export const TemplateCard = forwardRef(function TemplateCard(
   {
@@ -35,25 +45,26 @@ export const TemplateCard = forwardRef(function TemplateCard(
   ref
 ) {
   const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Aspect ratio based on orientation
-  const aspectClasses = {
-    landscape: 'aspect-video',
-    portrait: 'aspect-[9/16]',
-    square: 'aspect-square',
+  // Height classes based on orientation (fixed height prevents layout shift)
+  const heightClasses = {
+    landscape: 'h-60',
+    portrait: 'h-80',
+    square: 'h-60',
   };
-  const aspectClass = aspectClasses[orientation] || 'aspect-video';
+  const heightClass = heightClasses[orientation] || 'h-60';
 
   return (
-    <div
+    <motion.div
       ref={ref}
       className={`
         group bg-white border border-gray-200 rounded-card overflow-hidden
-        hover:shadow-elevated transition-all duration-200
         ${onSelect ? 'cursor-pointer' : ''}
         ${featured ? 'ring-2 ring-brand-500/30' : ''}
         ${className}
       `.trim()}
+      {...cardLift}
       onClick={(e) => {
         // Don't trigger card click if clicking buttons
         if (e.target.closest('button')) return;
@@ -62,14 +73,22 @@ export const TemplateCard = forwardRef(function TemplateCard(
       {...props}
     >
       {/* Preview Image */}
-      <div className={`${aspectClass} bg-gray-100 relative overflow-hidden`}>
+      <div className={`${heightClass} bg-gray-100 relative overflow-hidden`}>
         {imageUrl && !imageError ? (
-          <img
-            src={imageUrl}
-            alt={title}
-            className="w-full h-full object-cover"
-            onError={() => setImageError(true)}
-          />
+          <>
+            {/* Pulse placeholder while image loads */}
+            {!imageLoaded && (
+              <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+            )}
+            <img
+              src={imageUrl}
+              alt={title}
+              loading="lazy"
+              className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={() => setImageLoaded(true)}
+              onError={() => setImageError(true)}
+            />
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <LayoutTemplate size={32} className="text-gray-300" />
@@ -109,7 +128,7 @@ export const TemplateCard = forwardRef(function TemplateCard(
       </div>
 
       {/* Info */}
-      <div className="p-3">
+      <div className="p-4">
         <h3 className="font-medium text-gray-900 text-sm truncate">{title}</h3>
         {description && (
           <p className="text-xs text-gray-500 mt-1 line-clamp-2">{description}</p>
@@ -125,7 +144,7 @@ export const TemplateCard = forwardRef(function TemplateCard(
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 });
 
@@ -159,7 +178,7 @@ export const TemplateCardGrid = forwardRef(function TemplateCardGrid(
 });
 
 /**
- * TemplateCardSkeleton - Loading placeholder
+ * TemplateCardSkeleton - Loading placeholder matching enhanced card dimensions
  */
 export const TemplateCardSkeleton = forwardRef(function TemplateCardSkeleton(
   { className = '', ...props },
@@ -171,8 +190,8 @@ export const TemplateCardSkeleton = forwardRef(function TemplateCardSkeleton(
       className={`bg-white border border-gray-200 rounded-card overflow-hidden ${className}`}
       {...props}
     >
-      <div className="aspect-video bg-gray-100 animate-pulse" />
-      <div className="p-3 space-y-2">
+      <div className="h-60 bg-gray-100 animate-pulse" />
+      <div className="p-4 space-y-2">
         <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
         <div className="h-3 bg-gray-100 rounded animate-pulse w-full" />
         <div className="h-3 bg-gray-100 rounded animate-pulse w-2/3" />

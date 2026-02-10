@@ -108,6 +108,7 @@ export {
   slideDown,
   scaleTap,
   scaleHover,
+  cardLift,
   modal,
   dropdown,
   drawer,

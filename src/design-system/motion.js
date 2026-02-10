@@ -101,6 +101,20 @@ export const scaleHover = {
   transition: { duration: duration.fast, ease: easing.smooth },
 };
 
+/**
+ * Card lift animation
+ * Use for template cards and premium interactive surfaces
+ * Combines subtle scale with y-translate and shadow deepening
+ */
+export const cardLift = {
+  whileHover: {
+    y: -4,
+    scale: 1.02,
+    boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+  },
+  transition: { duration: duration.fast, ease: easing.smooth },
+};
+
 // ============================================
 // COMPONENT-SPECIFIC ANIMATIONS
 // ============================================
