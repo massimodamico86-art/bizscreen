@@ -44,7 +44,7 @@ All milestones shipped successfully.
 ### Phases
 
 - [x] **Phase 46: Unsplash Proxy Infrastructure** — Server-side foundation for stock photo integration (completed 2026-02-10)
-- [ ] **Phase 47: Template Browse Premium** — Visual richness and micro-interactions on the template grid
+- [x] **Phase 47: Template Browse Premium** — Visual richness and micro-interactions on the template grid (completed 2026-02-10)
 - [ ] **Phase 48: Template-to-Editor Flow** — One-click path from template selection to editing
 - [ ] **Phase 49: Stock Assets in Editor** — Unsplash photos, icons, and media library inside the Polotno editor
 - [ ] **Phase 50: Editor Polish** — Toolbar refinement, loading states, save celebrations, and keyboard shortcuts
@@ -77,8 +77,8 @@ Plans:
   5. The template grid gracefully adapts from 4 columns on desktop to 1 column on mobile without horizontal scrolling
 **Plans:** 2 plans
 Plans:
-- [ ] 47-01-PLAN.md — Enhance design-system TemplateCard with Framer Motion hover lift, h-60 thumbnails, and matched skeletons
-- [ ] 47-02-PLAN.md — Upgrade SvgTemplateGalleryPage with skeleton loading, debounced search, stagger animations, and responsive grid
+- [x] 47-01-PLAN.md — Enhance design-system TemplateCard with Framer Motion hover lift, h-60 thumbnails, and matched skeletons
+- [x] 47-02-PLAN.md — Upgrade SvgTemplateGalleryPage with skeleton loading, debounced search, stagger animations, and responsive grid
 
 #### Phase 48: Template-to-Editor Flow
 **Goal:** Users go from browsing a template to editing it in one click — no intermediate modals, no waiting, no confusion about what happened.
@@ -126,17 +126,17 @@ Plans:
 | v2.4 Tech Debt Zero | 42-45 | 11 | Complete | 2026-02-10 |
 | v3.0 Creative Experience | 46-50 | TBD | In progress | - |
 
-**Total:** 46 phases complete, 172 plans executed | 6 milestones shipped
+**Total:** 47 phases complete, 174 plans executed | 6 milestones shipped
 
 ### v3.0 Phase Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 46. Unsplash Proxy Infrastructure | 2/2 | ✓ Complete | 2026-02-10 |
-| 47. Template Browse Premium | 0/TBD | Not started | - |
+| 47. Template Browse Premium | 2/2 | ✓ Complete | 2026-02-10 |
 | 48. Template-to-Editor Flow | 0/TBD | Not started | - |
 | 49. Stock Assets in Editor | 0/TBD | Not started | - |
 | 50. Editor Polish | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-10 — Phase 46 complete (2/2 plans).*
+*Last updated: 2026-02-10 — Phase 47 complete (2/2 plans).*
