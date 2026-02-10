@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 ## Current Position
 
 Phase: 43 of 45 (E2E Test Triage)
-Plan: 1 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: Executing
-Last activity: 2026-02-10 -- Plan 43-01 complete (E2E audit report)
+Last activity: 2026-02-10 -- Plan 43-03 complete (skip reason documentation)
 
-Progress: [██░░░░░░░░] 25%
+Progress: [███████░░░] 75%
 
 ## Milestones Shipped
 
@@ -34,14 +34,15 @@ Progress: [██░░░░░░░░] 25%
 - Total codebase: 361,172 LOC JavaScript/JSX/CSS/JSON
 
 **v2.4 Velocity:**
-- Plans completed: 2
-- Average duration: 5min
-- Total execution time: 9min
+- Plans completed: 3
+- Average duration: 4min
+- Total execution time: 11min
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 42 | 01 | 2min | 3 | 4 |
 | 43 | 01 | 7min | 1 | 4 |
+| 43 | 03 | 2min | 1 | 6 |
 
 ## Accumulated Context
 
@@ -61,10 +62,11 @@ Progress: [██░░░░░░░░] 25%
 - ~800 project-specific E2E skips classified as intentional/correct -- no action needed for multi-project pattern
 - Separated obsolete-feature tests (44) from blocked-navigation tests (30) for different triage paths
 - Deleted 3 diagnostic test files immediately (zero test value, hardcoded credentials, legacy auth)
+- SKIP REASON comment convention: use '// SKIP REASON:' prefix for new documentation, preserve existing '// SKIPPED:' comments
 
 ### Known Debt (This Milestone Targets)
 
-- 917 E2E tests skipped -- audited in 43-01, 10 obsolete tests deleted, remaining categorized for 43-02/43-03
+- 917 E2E tests skipped -- audited in 43-01, 10 obsolete tests deleted, remaining categorized and documented in 43-03
 - ~~Dead files: AutoBuildOnboardingModal.jsx, OnboardingWizard, WelcomeModal~~ (RESOLVED - Phase 42-01)
 - ~~Obsolete localStorage keys from legacy onboarding~~ (RESOLVED - confirmed absent, Phase 42-01)
 - Sentry Slack integration and alert rules not configured
@@ -78,9 +80,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 43-01-PLAN.md
+Stopped at: Completed 43-03-PLAN.md
 Resume file: None
-Next: Execute 43-02-PLAN.md
+Next: Execute 43-04-PLAN.md (43-02 still pending)
 
 ---
-*Updated: 2026-02-10 -- Plan 43-01 complete. E2E audit report created, 3 diagnostic files deleted.*
+*Updated: 2026-02-10 -- Plan 43-03 complete. SKIP REASON documentation added to 6 spec files.*
