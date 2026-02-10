@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 Phase: 44 of 45 (ESLint Zero Warnings)
 Plan: 2 of 5 in current phase
 Status: Executing
-Last activity: 2026-02-10 -- Completed 44-02 (no-undef warnings)
+Last activity: 2026-02-10 -- Completed 44-01 and 44-02 (config overhaul + no-undef)
 
 Progress: [█████░░░░░] 50%
 
@@ -34,9 +34,9 @@ Progress: [█████░░░░░] 50%
 - Total codebase: 361,172 LOC JavaScript/JSX/CSS/JSON
 
 **v2.4 Velocity:**
-- Plans completed: 5
+- Plans completed: 7
 - Average duration: 4min
-- Total execution time: 21min
+- Total execution time: 27min
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
@@ -45,6 +45,7 @@ Progress: [█████░░░░░] 50%
 | 43 | 02 | 5min | 1 | 9 |
 | 43 | 03 | 2min | 1 | 6 |
 | 43 | 04 | 5min | 1 | 6 |
+| 44 | 01 | 6min | 2 | 15 |
 | 44 | 02 | 4min | 1 | 9 |
 
 ## Accumulated Context
@@ -67,6 +68,8 @@ Progress: [█████░░░░░] 50%
 - Deleted 3 diagnostic test files immediately (zero test value, hardcoded credentials, legacy auth)
 - SKIP REASON comment convention: use '// SKIP REASON:' prefix for new documentation, preserve existing '// SKIPPED:' comments
 - Fixture field names corrected to match DB columns (device_name, last_seen, default_duration) for accurate test mocking
+- [Phase 44-01]: Disabled react/prop-types (deprecated React 19+), jsdoc enforcement (impractical), react-refresh (legitimate co-exports)
+- [Phase 44-01]: Used console.warn for env/supabase init, createScopedLogger for page debug logging
 - [Phase 44]: Fixed no-undef warnings by adding useLogger hook to child components and correcting stale variable references in error logging
 
 ### Known Debt (This Milestone Targets)
@@ -75,7 +78,7 @@ Progress: [█████░░░░░] 50%
 - ~~Dead files: AutoBuildOnboardingModal.jsx, OnboardingWizard, WelcomeModal~~ (RESOLVED - Phase 42-01)
 - ~~Obsolete localStorage keys from legacy onboarding~~ (RESOLVED - confirmed absent, Phase 42-01)
 - Sentry Slack integration and alert rules not configured
-- 7,807 ESLint warnings (warn-level rules)
+- ~~7,807 ESLint warnings (warn-level rules)~~ (REDUCED to 480 -- 44-01 disabled impractical rules & fixed small categories)
 - ~~Migration 105 references non-existent tenants table~~ (RESOLVED - corrective migration 141, Phase 42-01)
 
 ### Blockers/Concerns
@@ -85,9 +88,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 44-02-PLAN.md
+Stopped at: Completed 44-01 and 44-02
 Resume file: None
 Next: Execute 44-03-PLAN.md
 
 ---
-*Updated: 2026-02-10 -- Plan 44-02 complete. 34 no-undef warnings resolved.*
+*Updated: 2026-02-10 -- Plans 44-01 and 44-02 complete. ESLint warnings reduced from 7,332 to 480.*
