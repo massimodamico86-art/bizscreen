@@ -211,9 +211,8 @@ test.describe('Media Library', () => {
     await expect(mainContent.getByRole('heading', { name: /all media/i })).toBeVisible({ timeout: 5000 });
   });
 
-  // TODO: File upload testing requires mocking Cloudinary widget
-  // The app opens an external Cloudinary widget for file uploads
-  // which cannot be easily automated in E2E tests
+  // SKIP REASON: Cloudinary upload widget is an external service that opens in a popup
+  // and cannot be controlled by Playwright -- requires mocking or external service setup
   test.skip('can upload a media file', async () => {
     // This test is skipped because the app uses Cloudinary widget
     // for file uploads, which is an external service that opens

@@ -190,7 +190,7 @@ test.describe('Admin Panel - Access Control', () => {
   });
 
   test('non-super-admin cannot access admin panel', async ({ page }) => {
-    // Skip if client credentials not configured
+    // SKIP REASON: Client test credentials not configured (TEST_USER_EMAIL env var missing)
     if (!process.env.TEST_USER_EMAIL) {
       test.skip();
       return;
@@ -200,7 +200,7 @@ test.describe('Admin Panel - Access Control', () => {
     try {
       await expect(page.getByText(/dashboard|screens|welcome/i)).toBeVisible({ timeout: 10000 });
     } catch {
-      // If dashboard doesn't load, skip this test
+      // SKIP REASON: Dashboard did not load within timeout -- auth may have failed or page is slow
       test.skip();
       return;
     }
@@ -222,12 +222,12 @@ test.describe('Admin API Endpoints', () => {
   );
 
   test('tenant list API returns valid structure', async ({ request }) => {
-    // This would require auth token - skip for now
+    // SKIP REASON: API test requires auth token extraction which is not implemented for Playwright request context
     test.skip();
   });
 
   test('tenant detail API returns valid structure', async ({ request }) => {
-    // This would require auth token - skip for now
+    // SKIP REASON: API test requires auth token extraction which is not implemented for Playwright request context
     test.skip();
   });
 });

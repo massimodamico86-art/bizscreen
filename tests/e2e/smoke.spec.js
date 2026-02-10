@@ -421,7 +421,7 @@ test.describe('Production Smoke Tests', () => {
 
     // Only run login test on client project since it uses client credentials
     test('can complete login successfully', async ({ page }, testInfo) => {
-      // Skip this test on admin/superadmin projects - login creds are for client
+      // SKIP REASON: Login credentials are for client project only -- admin/superadmin projects use different auth
       if (testInfo.project.name !== 'chromium') {
         test.skip();
         return;

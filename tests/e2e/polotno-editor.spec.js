@@ -85,14 +85,12 @@ test.describe('Polotno Editor - Error Handling', () => {
   test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test('error state has retry button', async ({ page }) => {
-    // This test would require mocking network to force timeout
-    // Skipping as it requires complex setup
+    // SKIP REASON: Requires mocking network to force editor timeout -- complex setup not implemented
     test.skip();
   });
 
   test('error state has Design Studio fallback link', async ({ page }) => {
-    // This test would require forcing error state
-    // Skipping as it requires complex setup
+    // SKIP REASON: Requires forcing editor error state via network mocking -- complex setup not implemented
     test.skip();
   });
 });
@@ -259,8 +257,7 @@ test.describe('Polotno Editor - Unsaved Changes', () => {
   // These tests document expected behavior but may need to be skipped.
 
   test('shows unsaved changes dialog when closing with edits', async ({ page }) => {
-    // This test requires making edits in the iframe editor
-    // Skipping as it requires complex iframe interaction
+    // SKIP REASON: Requires making edits inside iframe editor via postMessage -- complex iframe interaction not implemented
     test.skip();
   });
 });
@@ -276,8 +273,7 @@ test.describe('Polotno Editor - Post-Save Dialog', () => {
   test.skip(({ browserName }) => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 
   test('post-save dialog appears after successful save', async ({ page }) => {
-    // This test requires triggering save in the iframe editor
-    // Skipping as it requires complex iframe interaction
+    // SKIP REASON: Requires triggering save inside iframe editor via postMessage -- complex iframe interaction not implemented
     test.skip();
   });
 });
@@ -315,16 +311,14 @@ test.describe.skip('Phase 35 Success Criteria', () => {
   });
 
   test('Criterion 2: Loading state with timeout shows error + retry', async ({ page }) => {
-    // Verify error state has retry button - requires forcing timeout
-    // This is verified by code inspection:
+    // SKIP REASON: Requires forcing editor timeout via network mocking -- verified by code inspection instead
     // - 10s timeout implemented in PolotnoEditor.jsx
     // - Error state renders Try Again button in EditorModal.jsx
     test.skip();
   });
 
   test('Criterion 3: Fallback guidance offers Design Studio', async ({ page }) => {
-    // Verify error state has Design Studio link - requires forcing timeout
-    // This is verified by code inspection:
+    // SKIP REASON: Requires forcing editor error state via network mocking -- verified by code inspection instead
     // - Error state renders "Open Design Studio" button in EditorModal.jsx
     test.skip();
   });

@@ -57,6 +57,7 @@ test.describe('Industry Wizards', () => {
   });
 
   test.describe('Wizard Modal UI', () => {
+    // SKIP REASON: Industry wizard button not present in current scene editor toolbar -- requires scene data setup
     test.skip('wizard button is visible in scene editor toolbar', async ({ page }) => {
       // This test requires navigating to a scene editor
       // Skip for now as it requires scene data setup
@@ -66,6 +67,7 @@ test.describe('Industry Wizards', () => {
       // await expect(page.getByRole('button', { name: /add from wizard/i })).toBeVisible();
     });
 
+    // SKIP REASON: Depends on scene editor access which requires scene data setup
     test.skip('wizard modal opens with industry options', async ({ page }) => {
       // This test requires scene editor access
       // Would open wizard modal and verify step 1:
@@ -73,11 +75,13 @@ test.describe('Industry Wizards', () => {
       // - Each industry has correct icon and label
     });
 
+    // SKIP REASON: Depends on scene editor access which requires scene data setup
     test.skip('wizard modal shows form fields for selected wizard', async ({ page }) => {
       // This test verifies step 2 of the wizard
       // Would select a wizard and verify form fields appear
     });
 
+    // SKIP REASON: Depends on scene editor access which requires scene data setup
     test.skip('wizard modal shows preview in confirmation step', async ({ page }) => {
       // This test verifies step 3 of the wizard
       // Would complete form and verify preview is shown
@@ -85,11 +89,13 @@ test.describe('Industry Wizards', () => {
   });
 
   test.describe('Dashboard Integration', () => {
+    // SKIP REASON: Requires fresh/new user account without existing scenes -- test data setup not available
     test.skip('industry quick start card appears for new users', async ({ page }) => {
       // This test requires a fresh/new user account
       // Would verify IndustryQuickStartCard is visible on dashboard
     });
 
+    // SKIP REASON: Depends on IndustryQuickStartCard being visible which requires new user account
     test.skip('clicking industry in quick start opens wizard', async ({ page }) => {
       // Would verify clicking an industry button triggers navigation
       // to scene editor with wizard modal open

@@ -38,7 +38,7 @@ test.describe('Alerts Center', () => {
       // Verify we're on the alerts page
       await expect(page.locator('h1, h2').filter({ hasText: /alerts/i }).first()).toBeVisible({ timeout: 10000 });
     } else {
-      // Navigation might be in a menu or different location
+      // SKIP REASON: Alerts navigation button not visible in current admin sidebar UI
       test.skip();
     }
   });
@@ -60,6 +60,7 @@ test.describe('Alerts Center', () => {
 
       expect(hasSummary || hasNoAlertsMessage).toBeTruthy();
     } else {
+      // SKIP REASON: Alerts navigation button not visible in current admin sidebar UI
       test.skip();
     }
   });
@@ -89,6 +90,7 @@ test.describe('Alerts Center', () => {
       // Test passes if we got this far without errors
       expect(true).toBeTruthy();
     } else {
+      // SKIP REASON: Alerts navigation button not visible in current admin sidebar UI
       test.skip();
     }
   });
@@ -117,6 +119,7 @@ test.describe('Alerts Center', () => {
 
       expect(true).toBeTruthy();
     } else {
+      // SKIP REASON: Alerts navigation button not visible in current admin sidebar UI
       test.skip();
     }
   });
@@ -139,6 +142,7 @@ test.describe('Alerts Center', () => {
       // At minimum, the header should be visible
       await expect(header).toBeVisible();
     } else {
+      // SKIP REASON: Header/navigation area not visible after page load -- auth may have failed
       test.skip();
     }
   });
@@ -172,6 +176,7 @@ test.describe('Alerts Center', () => {
         expect(true).toBeTruthy();
       }
     } else {
+      // SKIP REASON: Alerts navigation button not visible in current admin sidebar UI
       test.skip();
     }
   });
@@ -210,6 +215,7 @@ test.describe('Alerts Center', () => {
         expect(true).toBeTruthy();
       }
     } else {
+      // SKIP REASON: Alerts navigation button not visible in current admin sidebar UI
       test.skip();
     }
   });
@@ -246,6 +252,7 @@ test.describe('Alerts Center', () => {
         expect(true).toBeTruthy();
       }
     } else {
+      // SKIP REASON: Alerts navigation button not visible in current admin sidebar UI
       test.skip();
     }
   });
@@ -284,6 +291,7 @@ test.describe('Alerts Center', () => {
         expect(true).toBeTruthy();
       }
     } else {
+      // SKIP REASON: Alerts navigation button not visible in current admin sidebar UI
       test.skip();
     }
   });

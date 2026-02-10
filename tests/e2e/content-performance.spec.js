@@ -29,7 +29,7 @@ test.describe('Content Performance Dashboard', () => {
         // Verify page loaded
         await expect(page.getByRole('heading', { level: 1 })).toContainText(/content performance|analytics/i);
       } else {
-        // Feature might be gated - check for upgrade prompt or skip
+        // SKIP REASON: Content Performance page is feature-gated and not accessible with test user's plan
         test.skip(true, 'Content Performance page not accessible - may be feature-gated');
       }
     });
@@ -45,6 +45,7 @@ test.describe('Content Performance Dashboard', () => {
         const pageTitle = page.getByRole('heading', { level: 1 });
         await expect(pageTitle).toBeVisible({ timeout: 10000 });
       } else {
+        // SKIP REASON: Content Performance page is feature-gated and not accessible with test user's plan
         test.skip(true, 'Content Performance page not accessible');
       }
     });
@@ -60,6 +61,7 @@ test.describe('Content Performance Dashboard', () => {
         // Wait for page content to load
         await page.waitForLoadState('domcontentloaded');
       } else {
+        // SKIP REASON: Content Performance page is feature-gated and not accessible with test user's plan
         test.skip(true, 'Content Performance page not accessible');
       }
     });
@@ -143,6 +145,7 @@ test.describe('Content Performance Dashboard', () => {
         // Wait for page content to load
         await page.waitForLoadState('domcontentloaded');
       } else {
+        // SKIP REASON: Content Performance page is feature-gated and not accessible with test user's plan
         test.skip(true, 'Content Performance page not accessible');
       }
     });
@@ -197,6 +200,7 @@ test.describe('Content Performance Dashboard', () => {
         // Wait for page content to load
         await page.waitForLoadState('domcontentloaded');
       } else {
+        // SKIP REASON: Content Performance page is feature-gated and not accessible with test user's plan
         test.skip(true, 'Content Performance page not accessible');
       }
     });
@@ -249,6 +253,7 @@ test.describe('Content Performance Dashboard', () => {
         // Wait for page content to load
         await page.waitForLoadState('domcontentloaded');
       } else {
+        // SKIP REASON: Content Performance page is feature-gated and not accessible with test user's plan
         test.skip(true, 'Content Performance page not accessible');
       }
     });
@@ -294,6 +299,7 @@ test.describe('Content Performance Dashboard', () => {
         const hasContent = await page.locator('h1, h2, [role="main"]').first().isVisible({ timeout: 2000 }).catch(() => false);
         expect(hasContent).toBeTruthy();
       } else {
+        // SKIP REASON: Content Performance page is feature-gated and not accessible with test user's plan
         test.skip(true, 'Content Performance page not accessible');
       }
     });
@@ -314,6 +320,7 @@ test.describe('Content Performance Dashboard', () => {
         // Page should show something
         expect(true).toBeTruthy();
       } else {
+        // SKIP REASON: Content Performance page is feature-gated and not accessible with test user's plan
         test.skip(true, 'Content Performance page not accessible');
       }
     });

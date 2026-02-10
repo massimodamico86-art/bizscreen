@@ -66,7 +66,7 @@ test.describe('SEO Meta Tags', () => {
   });
 
   test.describe('Auth Pages', () => {
-    // Skip: Auth pages don't have noindex meta tag implemented yet
+    // SKIP REASON: Auth pages do not have noindex meta tag implemented yet -- future SEO work
     test.skip('login page has noindex directive', async ({ page }) => {
       await page.goto('/auth/login');
       await page.waitForLoadState('domcontentloaded');
@@ -79,7 +79,7 @@ test.describe('SEO Meta Tags', () => {
       await expect(robots).toHaveAttribute('content', /noindex/);
     });
 
-    // Skip: Signup page title/description not implemented yet
+    // SKIP REASON: Signup page title and meta description not implemented yet -- future SEO work
     test.skip('signup page has correct meta tags', async ({ page }) => {
       await page.goto('/auth/signup');
       await page.waitForLoadState('domcontentloaded');
@@ -114,7 +114,7 @@ test.describe('SEO Meta Tags', () => {
   });
 
   test.describe('Navigation SEO', () => {
-    // Skip: Marketing page CTA links not matching expected pattern
+    // SKIP REASON: Marketing page CTA links do not match expected selector pattern -- needs link text audit
     test.skip('internal links use meaningful text', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
@@ -131,7 +131,7 @@ test.describe('SEO Meta Tags', () => {
       await expect(pricingLink).toBeVisible();
     });
 
-    // Skip: Skip-to-content accessibility link not implemented yet
+    // SKIP REASON: Skip-to-content accessibility link (a[href="#main-content"]) not implemented yet
     test.skip('skip to content link is present', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
