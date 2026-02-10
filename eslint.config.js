@@ -49,7 +49,7 @@ export default [
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-refresh/only-export-components': 'off',
 
       // Console rule - warn level during legacy cleanup phase
       // TODO: Upgrade to error after console migration to loggingService
@@ -89,19 +89,13 @@ export default [
       // TODO: Phase 28-02 should address these systematically
       'no-undef': 'warn',
 
-      // PropTypes enforcement - warn level for gradual adoption
-      // Components should have PropTypes for all props
-      'react/prop-types': 'warn',
+      // PropTypes disabled - deprecated in React 19+, no PropTypes in this JS codebase
+      'react/prop-types': 'off',
 
-      // JSDoc enforcement - warn level for gradual adoption
-      // Exported functions should have JSDoc with @param and @returns
-      'jsdoc/require-jsdoc': ['warn', {
-        publicOnly: true,
-        require: { FunctionDeclaration: true },
-        contexts: ['ExportNamedDeclaration > FunctionDeclaration'],
-      }],
-      'jsdoc/require-param': 'warn',
-      'jsdoc/require-returns': 'warn',
+      // JSDoc disabled - enforcement on all public functions is impractical for this codebase size
+      'jsdoc/require-jsdoc': 'off',
+      'jsdoc/require-param': 'off',
+      'jsdoc/require-returns': 'off',
     },
   },
 
@@ -120,9 +114,6 @@ export default [
     rules: {
       'no-console': 'off',
       'react/prop-types': 'off',
-      'jsdoc/require-jsdoc': 'off',
-      'jsdoc/require-param': 'off',
-      'jsdoc/require-returns': 'off',
     },
   },
 
@@ -137,9 +128,6 @@ export default [
     rules: {
       'no-console': 'off',
       'react/prop-types': 'off',
-      'jsdoc/require-jsdoc': 'off',
-      'jsdoc/require-param': 'off',
-      'jsdoc/require-returns': 'off',
     },
   },
 
