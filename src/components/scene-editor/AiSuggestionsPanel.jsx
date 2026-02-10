@@ -352,6 +352,7 @@ function ImprovementsList({ improvements }) {
 // ===========================================
 
 function PolishSlidePanel({ currentSlide, onPolish, brandTheme, businessType, setLoading }) {
+  const logger = useLogger('PolishSlidePanel');
   const polishActions = getAiPolishActions();
 
   const icons = {
@@ -400,7 +401,7 @@ function PolishSlidePanel({ currentSlide, onPolish, brandTheme, businessType, se
         onPolish(newDesign);
       }
     } catch (err) {
-      logger.error('Polish slide error', { error: err, action: polishAction.id, slideId: currentSlide?.id });
+      logger.error('Polish slide error', { error: err, action: actionId, slideId: currentSlide?.id });
     } finally {
       setLoading(false);
     }

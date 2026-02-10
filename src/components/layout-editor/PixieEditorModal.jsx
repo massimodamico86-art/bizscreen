@@ -281,6 +281,7 @@ export function SimpleImageEditor({
   uploadToCloudinary = true,
   showToast,
 }) {
+  const logger = useLogger('SimpleImageEditor');
   const canvasRef = useRef(null);
   const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(100);

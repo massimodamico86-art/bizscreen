@@ -122,7 +122,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
         onNavigate(`schedule-editor-${data.id}`);
       }
     } catch (error) {
-      logger.error('Failed to create schedule', { scheduleName: newScheduleName, error });
+      logger.error('Failed to create schedule', { scheduleName: newSchedule.name, error });
       showToast?.('Error creating schedule: ' + error.message, 'error');
     } finally {
       setCreating(false);
@@ -137,7 +137,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
       setSchedules(prev => prev.filter(s => s.id !== id));
       showToast?.('Schedule deleted successfully');
     } catch (error) {
-      logger.error('Failed to delete schedule', { scheduleId, error });
+      logger.error('Failed to delete schedule', { scheduleId: id, error });
       showToast?.('Error deleting schedule: ' + error.message, 'error');
     }
   };
@@ -148,7 +148,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
       setSchedules(prev => [{ ...newData, entry_count: newData.schedule_entries?.length || 0 }, ...prev]);
       showToast?.('Schedule duplicated successfully');
     } catch (error) {
-      logger.error('Failed to duplicate schedule', { scheduleId, error });
+      logger.error('Failed to duplicate schedule', { scheduleId: schedule.id, error });
       showToast?.('Error duplicating schedule: ' + error.message, 'error');
     }
   };
@@ -167,7 +167,7 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
       );
       showToast?.(schedule.is_active ? 'Schedule paused' : 'Schedule activated');
     } catch (error) {
-      logger.error('Failed to update schedule', { scheduleId, updates, error });
+      logger.error('Failed to update schedule', { scheduleId: schedule.id, update: { is_active: !schedule.is_active }, error });
       showToast?.('Error updating schedule: ' + error.message, 'error');
     }
   };

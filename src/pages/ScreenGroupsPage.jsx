@@ -121,7 +121,7 @@ const ScreenGroupsPage = ({ showToast }) => {
       setGroups(groups.filter(g => g.id !== id));
       showToast?.('Screen group deleted');
     } catch (error) {
-      logger.error('Failed to delete group', { groupId, error });
+      logger.error('Failed to delete group', { groupId: id, error });
       showToast?.('Error deleting group: ' + error.message, 'error');
     }
     setOpenMenuId(null);
@@ -361,7 +361,7 @@ const ScreenGroupsPage = ({ showToast }) => {
                 setShowCreateModal(false);
                 loadData(); // Refresh to get counts
               } catch (error) {
-                logger.error('Failed to create group', { groupName: formData.name, error });
+                logger.error('Failed to create group', { groupName: data.name, error });
                 showToast?.(t('screenGroups.createError', 'Error creating group: {{error}}', { error: error.message }), 'error');
               } finally {
                 setSaving(false);
@@ -390,7 +390,7 @@ const ScreenGroupsPage = ({ showToast }) => {
                 setSelectedGroup(null);
                 loadData();
               } catch (error) {
-                logger.error('Failed to update group', { groupId: editingGroup.id, groupName: formData.name, error });
+                logger.error('Failed to update group', { groupId: selectedGroup.id, groupName: data.name, error });
                 showToast?.(t('screenGroups.updateError', 'Error updating group: {{error}}', { error: error.message }), 'error');
               } finally {
                 setSaving(false);
@@ -508,6 +508,7 @@ function GroupFormModal({ group, locations, onClose, onSave, saving, t }) {
 
 // Assign Screens Modal
 function AssignScreensModal({ group, onClose, onUpdate, showToast, t }) {
+  const logger = useLogger('AssignScreensModal');
   const [assignedScreens, setAssignedScreens] = useState([]);
   const [availableScreens, setAvailableScreens] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -529,7 +530,7 @@ function AssignScreensModal({ group, onClose, onUpdate, showToast, t }) {
       setAssignedScreens(assigned);
       setAvailableScreens(available);
     } catch (error) {
-      logger.error('Failed to load screens', { groupId, error });
+      logger.error('Failed to load screens', { groupId: group.id, error });
       showToast?.(t('screenGroups.loadError', 'Error loading screens'), 'error');
     } finally {
       setLoading(false);
@@ -547,7 +548,7 @@ function AssignScreensModal({ group, onClose, onUpdate, showToast, t }) {
       loadScreens();
       onUpdate();
     } catch (error) {
-      logger.error('Failed to add screens', { groupId, screenIds: selectedScreenIds, error });
+      logger.error('Failed to add screens', { groupId: group.id, screenIds: selectedToAdd, error });
       showToast?.(t('screenGroups.addError', 'Error adding screens: {{error}}', { error: error.message }), 'error');
     } finally {
       setSaving(false);
@@ -565,7 +566,7 @@ function AssignScreensModal({ group, onClose, onUpdate, showToast, t }) {
       loadScreens();
       onUpdate();
     } catch (error) {
-      logger.error('Failed to remove screens', { groupId, screenIds: selectedScreenIds, error });
+      logger.error('Failed to remove screens', { groupId: group.id, screenIds: selectedToRemove, error });
       showToast?.(t('screenGroups.removeError', 'Error removing screens: {{error}}', { error: error.message }), 'error');
     } finally {
       setSaving(false);

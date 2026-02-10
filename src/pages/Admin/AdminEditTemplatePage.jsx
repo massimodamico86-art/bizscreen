@@ -191,9 +191,9 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       if (uploadedSvgFile && savedTemplateId) {
         try {
           await uploadTemplateThumbnail(savedTemplateId, uploadedSvgFile);
-          logger.info('Thumbnail auto-uploaded successfully', { templateId: result.id });
+          logger.info('Thumbnail auto-uploaded successfully', { templateId: savedTemplateId });
         } catch (thumbErr) {
-          logger.error('Failed to upload thumbnail', { templateId: result.id, error: thumbErr });
+          logger.error('Failed to upload thumbnail', { templateId: savedTemplateId, error: thumbErr });
           // Don't fail the whole save, just log the error
         }
       }
@@ -396,7 +396,7 @@ export default function AdminEditTemplatePage({ templateId, onNavigate }) {
       await revokeEnterpriseAccess(templateId, tenantId);
       setEnterpriseAccess(prev => prev.filter(a => a.tenant_id !== tenantId));
     } catch (err) {
-      logger.error('Failed to revoke enterprise access', { accessId, error: err });
+      logger.error('Failed to revoke enterprise access', { tenantId, error: err });
       setError('Failed to revoke access');
     }
   };

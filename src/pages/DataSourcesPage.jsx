@@ -452,7 +452,7 @@ export default function DataSourcesPage() {
         setSelectedSource(newSource);
       }
     } catch (err) {
-      logger.error('Create data source failed', { name: campaign.name, type: createData.type, error: err });
+      logger.error('Create data source failed', { name: createData.name, type: createData.type, error: err });
       setError('Failed to create data source: ' + err.message);
     } finally {
       setCreating(false);

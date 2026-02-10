@@ -809,7 +809,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         }
       }
     } catch (error) {
-      logger.error('Failed to apply template', { templateId: selectedTemplate.id, playlistId: newPlaylist.id, error });
+      logger.error('Failed to apply template', { templateSlug: template.slug, error });
       showToast?.(error.message || 'Error applying template', 'error');
     } finally {
       setApplyingTemplate(null);
@@ -847,7 +847,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         onNavigate(`playlist-editor-${data.id}`);
       }
     } catch (error) {
-      logger.error('Failed to create playlist', { playlistName: newPlaylistName, error });
+      logger.error('Failed to create playlist', { playlistName: form.name, error });
       showToast?.('Error creating playlist: ' + error.message, 'error');
     } finally {
       setCreating(false);
@@ -894,7 +894,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       setPlaylists((prev) => [newData, ...prev]);
       showToast?.('Playlist duplicated successfully');
     } catch (error) {
-      logger.error('Failed to duplicate playlist', { playlistId, error });
+      logger.error('Failed to duplicate playlist', { playlistId: playlist.id, error });
       showToast?.('Error duplicating playlist: ' + error.message, 'error');
     }
   };
@@ -906,7 +906,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       const usage = await getPlaylistUsage(playlist.id);
       setDeleteConfirm({ id: playlist.id, name: playlist.name, usage, loading: false });
     } catch (error) {
-      logger.error('Failed to check usage', { playlistId, error });
+      logger.error('Failed to check usage', { playlistId: playlist.id, error });
       setDeleteConfirm({ id: playlist.id, name: playlist.name, usage: null, loading: false });
     }
   };
@@ -928,7 +928,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         showToast?.(result.error || 'Error deleting playlist', 'error');
       }
     } catch (error) {
-      logger.error('Failed to delete playlist', { playlistId, error });
+      logger.error('Failed to delete playlist', { playlistId: deleteConfirm.id, error });
       showToast?.('Error deleting playlist: ' + error.message, 'error');
     } finally {
       setDeletingForce(false);
@@ -985,7 +985,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
       await Promise.all(updates);
       showToast?.(`Playlist assigned to ${screenIds.length} screen${screenIds.length > 1 ? 's' : ''}`, 'success');
     } catch (error) {
-      logger.error('Failed to set playlist to screen', { playlistId, screenId, error });
+      logger.error('Failed to set playlist to screen', { playlistId: playlist.id, screenIds, error });
       showToast?.('Error assigning playlist to screen', 'error');
     }
   };

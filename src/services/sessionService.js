@@ -90,10 +90,10 @@ export async function recordSession(sessionData = {}) {
  * Update session activity (call periodically or on user actions)
  */
 export async function updateSessionActivity() {
-  try {
-    const sessionId = localStorage.getItem('bizscreen_session_id');
-    if (!sessionId) return;
+  const sessionId = localStorage.getItem('bizscreen_session_id');
+  if (!sessionId) return;
 
+  try {
     await supabase
       .from('user_sessions')
       .update({ last_activity: new Date().toISOString() })

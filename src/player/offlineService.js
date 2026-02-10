@@ -122,7 +122,7 @@ function handleServiceWorkerMessage(event) {
 
   switch (type) {
     case 'SYNC_HEARTBEATS':
-      syncPendingHeartbeats();
+      syncPendingEvents();
       break;
 
     case 'SYNC_SCREENSHOTS':
