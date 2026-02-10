@@ -88,7 +88,10 @@ Plans:
   1. Clicking "Edit" on a template card opens the Polotno editor with that template loaded as a fully editable design (not a flattened image) — no intermediate confirmation modal
   2. On first open from a template, a collapsible quick-customize panel appears offering brand color, logo, and text overrides without leaving the editor
   3. Pressing back from the editor returns to the template browse page with scroll position preserved — the user lands exactly where they left off
-**Plans:** TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 48-01-PLAN.md — Scroll position save/restore in gallery and isFromTemplate prop to editor
+- [ ] 48-02-PLAN.md — QuickCustomizePanel component with brand colors, logo, and text overrides inside FabricSvgEditor
 
 #### Phase 49: Stock Assets in Editor
 **Goal:** Users can search and insert Unsplash photos, icons, and their own uploaded media directly onto the canvas without ever leaving the editor.
@@ -134,9 +137,9 @@ Plans:
 |-------|----------------|--------|-----------|
 | 46. Unsplash Proxy Infrastructure | 2/2 | ✓ Complete | 2026-02-10 |
 | 47. Template Browse Premium | 2/2 | ✓ Complete | 2026-02-10 |
-| 48. Template-to-Editor Flow | 0/TBD | Not started | - |
+| 48. Template-to-Editor Flow | 0/2 | Planned | - |
 | 49. Stock Assets in Editor | 0/TBD | Not started | - |
 | 50. Editor Polish | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-10 — Phase 47 complete (2/2 plans).*
+*Last updated: 2026-02-10 — Phase 48 planned (2 plans in 2 waves).*
