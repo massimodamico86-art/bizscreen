@@ -256,3 +256,131 @@ For v2 MVP, prioritize:
 ### Approval Workflows (for template moderation reference)
 - [Courier Template Approval Workflow](https://www.courier.com/docs/platform/content/template-approval-workflow/) - Webhook-based approval
 - [Adobe Express Template Approval](https://helpx.adobe.com/express/web/share-and-publish/share-and-collaborate/set-template-approval.html) - Review workflows
+
+---
+
+## v3.0 Features: Premium Template Browsing, Editor Polish, Stock Assets
+
+**Domain:** Digital Signage Platform -- Premium Creative Experience
+**Researched:** 2026-02-10
+**Focus:** Animated template gallery, in-editor stock photos/icons, editor polish and micro-interactions
+
+### Summary
+
+v3.0 focuses on the "premium feel" -- making BizScreen's template browsing and editor experience competitive with Yodeck and OptiSigns. The key insight from stack research is that BizScreen already has all the infrastructure needed (Framer Motion, Lucide, Polotno SDK, canvas-confetti) but underutilizes it. The template grid uses zero Framer Motion despite `motion.js` having 15+ animation presets. The upgrade is about **better utilization of existing tools**, not new capabilities.
+
+---
+
+### Table Stakes
+
+Features users expect in a premium template browsing + editor experience.
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| Animated template card entrance | Competitors show cards with stagger fade-in; static grids feel dated | LOW | Framer Motion staggerChildren + motion.js presets |
+| Card hover micro-interactions | Lift, shadow, scale on hover is standard in modern galleries | LOW | Framer Motion whileHover + whileTap |
+| Smooth preview panel transitions | Slide-in panel for template details is expected UX pattern | LOW | Already implemented with `drawer` preset in TemplatePreviewPanel |
+| Image lazy loading | Off-screen images should not load until near viewport | LOW | Native `loading="lazy"` already in OptimizedImage; add `useInView` for animation trigger |
+| Stock photo search in editor | Canva, Yodeck, OptiSigns all offer in-editor stock photos | MEDIUM | Polotno custom side panel with Unsplash API |
+| Loading state polish | Skeleton screens or blur-to-sharp image reveal vs. bare spinners | LOW | Framer Motion `imageReveal` preset + Tailwind skeleton |
+| Save success feedback | Visual confirmation beyond a plain toast | LOW | canvas-confetti (already installed) + animated checkmark |
+
+### Differentiators
+
+Features that set BizScreen apart from Yodeck/OptiSigns.
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Shared element transition (card to editor) | Template thumbnail morphs into editor loading screen -- feels native, not web | MEDIUM | Framer Motion `layoutId` on TemplateCard + EditorModal |
+| In-editor icon library | Drop-in Lucide icons directly onto design canvas -- competitors lack this | MEDIUM | Polotno custom side panel + icon manifest generated from Lucide at build time |
+| Scroll-triggered section animations | Featured templates, starter packs animate in on scroll -- premium feel | LOW | Framer Motion `useInView` + `scrollReveal` preset |
+| Dual stock photo sources | Both Pexels (Polotno built-in) AND Unsplash -- wider selection than competitors | MEDIUM | Custom Unsplash side panel alongside Polotno's default photos section |
+| Template usage badges | "Used 5x" badge shows social proof and helps users find their go-to templates | LOW | Already in TemplateCard (`usageCount` prop); currently data-backed via `user_template_history` |
+| Animated "Quick Apply" button | Pulse/glow effect draws attention to primary action on hover | LOW | Tailwind `animate-pulse` or Framer Motion `scaleTap` |
+| Confetti on first template apply | Celebration effect on first-time use drives engagement and delight | LOW | canvas-confetti already installed; track first-use in localStorage |
+
+### Anti-Features
+
+Features to explicitly NOT build for v3.0.
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| Lottie/animated loading spinners | Adds animation file management burden, Lottie runtime is 60KB+ | Tailwind `animate-spin` + Framer Motion `fadeInScale` is sufficient |
+| Masonry layout for template grid | Adds complexity; template cards are uniform aspect ratio (16:9) | Tailwind grid with `aspect-video` -- consistent, predictable |
+| Virtual scrolling for template grid | Template grids are paginated (20-50 items); virtual scroll adds complexity | Native `loading="lazy"` handles off-screen images; revisit if grid exceeds 500 items |
+| AI-powered template recommendations | Recommendation engine adds ML infrastructure complexity | Use simple rules: "popular in your industry", "recently featured" -- already have `business_type` from onboarding |
+| Custom animation builder in editor | Allowing users to define keyframe animations is massively complex | Polotno has built-in animation presets (setAnimationsEnabled); use those |
+| Re-hosting Unsplash images | Violates Unsplash TOS; they require hotlinking to their URLs | Store Unsplash URLs directly in design JSON; only download to media library on explicit user action |
+| Icon upload feature | Users uploading custom SVG icons creates validation/security burden | Curated Lucide icon set (1500+ icons) covers signage needs |
+| Real-time collaborative editing | Multi-user editing in Polotno iframe is architecturally impossible | Sequential editing with save/load |
+
+---
+
+### Feature Dependencies (v3.0)
+
+```
+Template Card Animations --> motion.js presets (exists) + TemplateGrid.jsx refactor
+    |
+Template Preview Transitions --> TemplatePreviewPanel.jsx (already uses drawer preset)
+    |
+Shared Element Transition --> layoutId on TemplateCard + EditorModal (new wiring)
+    |
+Scroll-Triggered Sections --> useInView from framer-motion (already bundled)
+    |
+Stock Photo Panel --> Unsplash API key (new) + Polotno custom section (new)
+    |                  + polotno-editor.jsx rebuild
+    |
+Icon Panel in Editor --> Build-time icon manifest (new) + Polotno custom section (new)
+    |                    + polotno-editor.jsx rebuild (same rebuild as stock photos)
+    |
+Image Optimization --> OptimizedImage.jsx enhancement + CloudFront URL params
+    |
+Save Celebration --> canvas-confetti (already installed) + PostSaveDialog.jsx enhancement
+```
+
+**Critical dependency:** Both the Stock Photo Panel and Icon Panel require a Polotno iframe rebuild. These should ship together in a single rebuild to avoid double effort.
+
+---
+
+### MVP Recommendation (v3.0)
+
+**Prioritize (immediate high impact):**
+
+1. **Template card animations** -- Highest visible impact for lowest effort. Wrap existing `TemplateGrid` and `TemplateCard` in Framer Motion `motion.div` with stagger, cardLift, and imageReveal presets from motion.js. Goes from "static HTML grid" to "premium animated gallery" in a few hours of work.
+
+2. **Stock photo panel in Polotno editor** -- Users currently leave BizScreen to find stock photos. Adding Unsplash inside the editor keeps them in-flow. Uses Polotno's built-in `ImagesGrid` + `SectionTab` API, so the panel is mostly configuration, not custom rendering.
+
+3. **Save celebration with confetti** -- Canvas-confetti is already installed and unused. Firing it on PostSaveDialog open is a one-line integration that creates memorable delight.
+
+4. **Shared element transition (card to editor)** -- The "wow" factor. Template thumbnail morphs into editor modal loading state using Framer Motion `layoutId`. Medium complexity but high perceived polish.
+
+**Defer (v3.1 or later):**
+
+- **In-editor icon library** -- Valuable but requires build script for manifest + custom panel. Ship stock photos first, add icons in follow-up.
+- **Scroll-triggered section animations** -- Nice-to-have; the featured templates row and starter packs row can get `scrollReveal` treatment, but it is polish on top of polish.
+- **CloudFront image resizing** -- May require Lambda@Edge configuration. Current image sizes are adequate; optimize when performance data demands it.
+
+---
+
+### Confidence Assessment (v3.0 Features)
+
+| Area | Confidence | Reason |
+|------|------------|--------|
+| Template card animations | HIGH | Framer Motion presets verified in codebase; TemplateGrid.jsx reviewed and confirmed zero animation usage |
+| Stock photo integration | HIGH | Unsplash API docs verified; Polotno custom panel API verified; unsplash-js confirmed archived |
+| Icon panel feasibility | HIGH | Lucide SVG output confirmed across 238 files; Polotno SVG element support verified |
+| Shared element transition | MEDIUM | layoutId API documented in Framer Motion; cross-component animation may need testing with Modal overlay |
+| Save celebration | HIGH | canvas-confetti already in package.json; PostSaveDialog exists as integration point |
+| Competitor comparison | MEDIUM | Based on WebSearch-verified competitor feature sets; some features may have changed |
+
+---
+
+### Sources (v3.0 Features)
+
+- [Yodeck Template Gallery](https://www.yodeck.com/features/free-digital-signage-templates/) -- Competitor feature analysis
+- [OptiSigns Template Library](https://www.optisigns.com/templates) -- Competitor template browsing UX
+- [Unsplash API Documentation](https://unsplash.com/documentation) -- Stock photo integration requirements
+- [Polotno Custom Images Panel](https://polotno.com/docs/custom-images-panel) -- ImagesGrid, SectionTab API
+- [Framer Motion Layout Animations](https://www.framer.com/motion/layout-animations/) -- layoutId for shared element transitions
+- [Motion useInView](https://motion.dev/docs/react-use-in-view) -- Scroll-triggered animation hook
+- Existing codebase analysis: `TemplateGrid.jsx`, `TemplateCard`, `EditorModal.jsx`, `TemplatePreviewPanel.jsx`, `motion.js`, `OptimizedImage.jsx`, `PostSaveDialog.jsx`

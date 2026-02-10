@@ -995,4 +995,567 @@ npm install lottie-react
 
 ---
 
-*Stack research updated: 2026-01-28*
+## v3.0 Stack: Premium Template Browsing, Editor Polish, Stock Assets
+
+**Researched:** 2026-02-10
+**Focus:** Animation upgrades, Unsplash API integration, icon packs in Polotno editor, image optimization for template gallery
+
+### Executive Summary
+
+**Recommendation: ZERO NEW npm DEPENDENCIES REQUIRED. One API key needed.**
+
+BizScreen's existing stack is remarkably well-suited for v3.0. The key finding: Framer Motion (already installed at ^12.23.24, latest is 12.34.0), Lucide React (already installed at ^0.548.0, latest is 0.563.0), Polotno SDK's built-in `ImagesGrid`/`useInfiniteAPI` utilities, and native browser APIs (`IntersectionObserver`, `loading="lazy"`) cover every v3.0 requirement without adding a single new npm package.
+
+The only external addition is an **Unsplash API key** (free tier: 50 req/hr demo, 5000 req/hr production) and a thin service wrapper using native `fetch`.
+
+**Key insight:** The "premium feel" comes from **better use of existing tools**, not new libraries. BizScreen already has `motion.js` with 15+ animation presets, `staggerContainer`/`staggerItem` for grid animations, and `AnimatePresence` for transitions -- but the template grid currently uses zero Framer Motion. The upgrade is architectural, not dependency-driven.
+
+---
+
+### What Already Exists (Verified in Codebase)
+
+| Capability | Current State | v3.0 Role |
+|------------|---------------|-----------|
+| **Framer Motion** ^12.23.24 | 16 files using it; `motion.js` has fadeIn, slideUp, staggerContainer, scaleHover, drawer, etc. | Animate template cards, grid stagger, preview panel transitions, hover micro-interactions |
+| **Lucide React** ^0.548.0 | 238 files, 241 imports | 1500+ tree-shakable icons already available for in-editor icon panel |
+| **Polotno SDK** ^2.33.2 | iframe-isolated editor with `DEFAULT_SECTIONS` (templates, photos, text, elements, upload, background, layers, size) | Built-in `ImagesGrid`, `useInfiniteAPI`, `SectionTab` for custom Unsplash/icon panels |
+| **OptimizedImage** component | `loading="lazy"`, blur placeholder, error fallback | Template thumbnail lazy loading |
+| **Tailwind CSS** ^3.4.18 | Full utility framework | `transition-*`, `animate-*`, `hover:*` for CSS-level animations |
+| **canvas-confetti** ^1.9.4 | Already installed | Celebration effects for template apply success |
+| **Design system motion.js** | 15+ presets: fadeIn, fadeInScale, slideUp, slideDown, scaleTap, scaleHover, modal, dropdown, drawer, pageTransition, staggerContainer, staggerItem, cssTransitions | All micro-interaction primitives needed |
+
+---
+
+### 1. Animations & Micro-Interactions
+
+#### Recommendation: Extend existing `motion.js` presets (NO new library)
+
+**Why Framer Motion ^12.23.24 is sufficient:**
+- Layout animations with `layout` prop (GPU-accelerated via CSS transforms)
+- `AnimatePresence` for mount/unmount transitions (already used in 16 files)
+- `useInView` hook wraps IntersectionObserver (0.6KB, scroll-triggered animations)
+- `staggerChildren` for grid cascade effects
+- `whileHover`/`whileTap` for card micro-interactions
+- Shared layout animations via `layoutId` for template-to-editor morph effects
+
+**Current gap:** The template grid (`TemplateGrid.jsx`) and cards (`TemplateCard`) use zero Framer Motion -- only plain CSS `transition-shadow hover:shadow-md`. This is where the "premium" upgrade lives.
+
+**New presets to add to `motion.js`:**
+
+```javascript
+// === v3.0 ADDITIONS TO motion.js ===
+
+/** Template card entrance with stagger */
+export const templateGrid = {
+  container: {
+    animate: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+  },
+  item: {
+    initial: { opacity: 0, y: 20, scale: 0.95 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.3, ease: easing.easeOut },
+  },
+};
+
+/** Card hover with lift and shadow */
+export const cardLift = {
+  whileHover: { y: -4, scale: 1.02, boxShadow: '0 12px 24px rgba(0,0,0,0.12)' },
+  whileTap: { scale: 0.98 },
+  transition: { duration: duration.fast, ease: easing.smooth },
+};
+
+/** Image reveal on load (blur-to-sharp) */
+export const imageReveal = {
+  initial: { opacity: 0, filter: 'blur(8px)' },
+  animate: { opacity: 1, filter: 'blur(0px)' },
+  transition: { duration: 0.4, ease: easing.smooth },
+};
+
+/** Scroll-triggered section entrance */
+export const scrollReveal = {
+  initial: { opacity: 0, y: 30 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-50px' },
+  transition: { duration: 0.5, ease: easing.easeOut },
+};
+```
+
+**Confidence:** HIGH -- all primitives verified as existing in Framer Motion 12.x via [Motion docs](https://motion.dev/docs/react-motion-component) and [layout animation docs](https://www.framer.com/motion/layout-animations/).
+
+---
+
+### 2. Stock Photo Integration (Unsplash)
+
+#### Recommendation: Direct `fetch` to Unsplash API + Polotno custom side panel (NO npm package)
+
+**Why NOT use `unsplash-js`:** The official JavaScript wrapper has been **archived** and no longer receives updates. Unsplash recommends direct API calls.
+
+**Why direct `fetch` is better:**
+- Zero dependencies (native browser API)
+- Full control over caching, error handling, rate limiting
+- Simple REST API with `Authorization: Client-ID {key}` header
+- Already have debounce utilities for search throttling
+
+**Unsplash API details (verified via [official docs](https://unsplash.com/documentation)):**
+- Base URL: `https://api.unsplash.com/`
+- Search: `GET /search/photos?query={term}&per_page=30`
+- Curated: `GET /photos?per_page=30`
+- Auth: `Authorization: Client-ID YOUR_ACCESS_KEY` header
+- Rate limits: 50 req/hr (demo), 5000 req/hr (production)
+- **Image requests to `images.unsplash.com` do NOT count against rate limits**
+- Attribution required: photographer name + Unsplash link with UTM params
+- Must call `GET /photos/:id/download` on use (API guideline requirement)
+
+**Integration architecture -- TWO paths:**
+
+**Path A: In the main app (Template Marketplace page)**
+```javascript
+// src/services/unsplashService.js
+const UNSPLASH_BASE = 'https://api.unsplash.com';
+const ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
+
+export async function searchPhotos(query, page = 1, perPage = 30) {
+  const res = await fetch(
+    `${UNSPLASH_BASE}/search/photos?query=${encodeURIComponent(query)}&page=${page}&per_page=${perPage}`,
+    { headers: { Authorization: `Client-ID ${ACCESS_KEY}` } }
+  );
+  if (!res.ok) throw new Error(`Unsplash API error: ${res.status}`);
+  return res.json(); // { results: [...], total, total_pages }
+}
+
+export async function trackDownload(photoId) {
+  // Required by Unsplash API guidelines
+  await fetch(`${UNSPLASH_BASE}/photos/${photoId}/download`, {
+    headers: { Authorization: `Client-ID ${ACCESS_KEY}` },
+  });
+}
+```
+
+**Path B: In the Polotno editor iframe (custom side panel section)**
+
+The Polotno editor runs in a separate iframe with React 18. Stock photos should be added as a **custom side panel section** using Polotno's built-in utilities:
+
+```javascript
+// Inside polotno-build/src/polotno-editor.jsx
+import { observer } from 'mobx-react-lite';
+import { SectionTab } from 'polotno/side-panel';
+import { ImagesGrid } from 'polotno/side-panel/images-grid';
+import { getImageSize } from 'polotno/utils/image';
+
+const UnsplashPanel = observer(({ store }) => {
+  const [images, setImages] = useState([]);
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const searchPhotos = async (q) => {
+    setLoading(true);
+    const res = await fetch(
+      `https://api.unsplash.com/search/photos?query=${q}&per_page=30`,
+      { headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` } }
+    );
+    const data = await res.json();
+    setImages(data.results);
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <input
+        placeholder="Search Unsplash..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && searchPhotos(query)}
+      />
+      <ImagesGrid
+        images={images}
+        getPreview={(img) => img.urls.small}
+        onSelect={async (img, pos) => {
+          // Track download per Unsplash guidelines
+          await fetch(`https://api.unsplash.com/photos/${img.id}/download`, {
+            headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` },
+          });
+          const size = await getImageSize(img.urls.regular);
+          store.activePage?.addElement({
+            type: 'image',
+            src: img.urls.regular,
+            width: size.width,
+            height: size.height,
+            x: pos?.x || 0,
+            y: pos?.y || 0,
+          });
+        }}
+        isLoading={loading}
+        rowsNumber={2}
+        getCredit={(img) => `Photo by ${img.user.name}`}
+      />
+    </div>
+  );
+});
+
+export const UnsplashSection = {
+  name: 'unsplash',
+  Tab: (props) => (
+    <SectionTab name="Stock Photos" {...props}>
+      {/* Camera icon SVG */}
+    </SectionTab>
+  ),
+  Panel: UnsplashPanel,
+};
+```
+
+Then replace or extend `DEFAULT_SECTIONS` in the editor initialization:
+```javascript
+const sections = [...DEFAULT_SECTIONS, UnsplashSection];
+// Pass to <SidePanel store={store} sections={sections} />
+```
+
+**Required env variable:**
+```bash
+# .env
+VITE_UNSPLASH_ACCESS_KEY=your_unsplash_access_key
+```
+
+**Unsplash vs Pexels decision:**
+Use **Unsplash** because:
+- 3M+ photos vs Pexels' 1M+ (larger library for visual design)
+- Higher aesthetic quality (curated by photographers)
+- Polotno's built-in "photos" section already uses Pexels internally -- adding Unsplash gives users a second, complementary source
+- No attribution required for the photos themselves (only link back to photographer on Unsplash)
+- Free for commercial use
+
+**Confidence:** HIGH -- Unsplash API verified via [official documentation](https://unsplash.com/documentation), Polotno custom panel API verified via [Polotno docs](https://polotno.com/docs/custom-images-panel).
+
+---
+
+### 3. Icon Integration in Editor
+
+#### Recommendation: Expose Lucide icons through Polotno custom side panel (NO new library)
+
+**Why Lucide (already installed ^0.548.0) is sufficient:**
+- 1500+ icons, tree-shakable (each ~1KB SVG)
+- Updated to 0.563.0 (latest as of 2026-02-10), but ^0.548.0 already has extensive coverage
+- Consistent 24x24 grid, stroke-based design
+- Perfect for digital signage (clean, readable at distance)
+
+**Implementation approach:** Rather than importing Lucide into the Polotno iframe (which would bloat the iframe bundle), generate SVG strings from a curated subset and serve them as a JSON manifest that the Polotno editor's custom panel fetches.
+
+```javascript
+// scripts/generate-icon-manifest.cjs (build-time script)
+// Generates a JSON file mapping icon names to SVG strings
+// Output: public/polotno/icons-manifest.json
+
+// Then in polotno-editor.jsx:
+const IconsPanel = observer(({ store }) => {
+  const [icons, setIcons] = useState([]);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    fetch('/polotno/icons-manifest.json')
+      .then(r => r.json())
+      .then(setIcons);
+  }, []);
+
+  const filtered = icons.filter(i =>
+    i.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div>
+      <input placeholder="Search icons..." value={search}
+        onChange={(e) => setSearch(e.target.value)} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+        {filtered.map(icon => (
+          <button key={icon.name} onClick={() => {
+            store.activePage?.addElement({
+              type: 'svg',
+              src: `data:image/svg+xml,${encodeURIComponent(icon.svg)}`,
+              width: 100, height: 100,
+            });
+          }}>
+            <div dangerouslySetInnerHTML={{ __html: icon.svg }} />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+});
+```
+
+**Alternative considered: icon packs like `react-icons` or `iconify`:**
+- `react-icons` bundles ALL icon sets (~400KB uncompressed) -- massive bloat
+- `iconify` requires runtime API calls to their CDN -- latency + dependency on external service
+- Lucide's curated set is already the right aesthetic for BizScreen
+
+**Confidence:** HIGH -- Lucide's SVG output verified in codebase (238 files using it). Polotno's SVG element support verified in `polotno-editor.jsx` (uses `addElement` with type: 'image').
+
+---
+
+### 4. Image Optimization & Lazy Loading
+
+#### Recommendation: Enhance existing `OptimizedImage` component + Framer Motion `useInView` (NO new library)
+
+**Current state:** `OptimizedImage.jsx` already has:
+- `loading="lazy"` (native browser lazy loading)
+- Blur placeholder while loading (CSS `animate-pulse`)
+- Error fallback to Unsplash default image
+- Opacity transition on load
+
+**What to add for v3.0:**
+
+1. **Framer Motion `useInView`** for scroll-triggered animation (0.6KB, built into framer-motion):
+```javascript
+import { useInView } from 'framer-motion';
+
+function TemplateCard({ template }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.3 }}
+    >
+      {/* card content */}
+    </motion.div>
+  );
+}
+```
+
+2. **CloudFront image resizing** via URL parameters (already have CloudFront CDN):
+```javascript
+// Append resize params to CloudFront URLs for template thumbnails
+function getThumbnailUrl(originalUrl, width = 400) {
+  if (originalUrl?.includes('cloudfront.net')) {
+    return `${originalUrl}?w=${width}&q=80&f=webp`;
+  }
+  return originalUrl;
+}
+```
+
+3. **Unsplash built-in image sizing** (URL-based, zero cost):
+```javascript
+// Unsplash images support URL-based resizing
+// img.urls.small = 400px wide
+// img.urls.regular = 1080px wide
+// img.urls.thumb = 200px wide
+// Use `small` for grid, `regular` for preview panel, `thumb` for search results
+```
+
+**Why NOT add a dedicated image optimization library:**
+- `next/image` requires Next.js
+- `react-lazy-load-image-component` adds 15KB for functionality already in browser (`loading="lazy"`)
+- `blurhash` adds complexity; CSS `animate-pulse` placeholder is visually adequate
+- Framer Motion's `useInView` is already bundled (0.6KB overhead, already paying for full library)
+
+**Why NOT add virtual scrolling (react-virtuoso / @tanstack/react-virtual):**
+- Template grids typically show 20-50 items per page with pagination
+- Virtual scrolling adds complexity for grids (variable row heights, image loading)
+- Native `loading="lazy"` handles off-screen images efficiently
+- If the grid ever reaches 500+ items, revisit with `@tanstack/react-virtual` then
+
+**Confidence:** HIGH -- `useInView` verified at [motion.dev/docs/react-use-in-view](https://motion.dev/docs/react-use-in-view). Native `loading="lazy"` [supported in all modern browsers](https://caniuse.com/loading-lazy-attr).
+
+---
+
+### 5. Editor UI Polish (Wrapper Layer)
+
+#### Recommendation: Enhance `EditorModal.jsx` with existing design system (NO new library)
+
+The Polotno editor runs in an iframe -- we cannot style its internals. But we control:
+- **EditorModal.jsx** wrapper (loading states, transitions, toolbar)
+- **PolotnoEditor.jsx** container (iframe communication)
+- **PostSaveDialog.jsx** (save success flow)
+
+**Polish opportunities using existing stack:**
+
+| Area | Current | v3.0 Enhancement | Tool |
+|------|---------|------------------|------|
+| Modal entrance | `Modal` component | Add `layoutId` for morph from template card | Framer Motion |
+| Loading state | Loader2 spinner | Skeleton preview + progress indicator | Tailwind + Framer Motion |
+| Save success | PostSaveDialog text | Confetti + animated checkmark | canvas-confetti (already installed) |
+| Error recovery | Text + retry button | Animated error with pulsing retry | motion.js `fadeInScale` preset |
+| Panel transitions | Instant show/hide | Smooth slide with `drawer.right` preset | motion.js (existing) |
+
+**Shared element transition (template card to editor):**
+```javascript
+// On TemplateMarketplacePage: card has layoutId
+<motion.div layoutId={`template-${template.id}`}>
+  <img src={template.thumbnail_url} />
+</motion.div>
+
+// On EditorModal open: receives same layoutId
+<AnimatePresence>
+  {isOpen && (
+    <motion.div layoutId={`template-${templateData?.id}`}>
+      {/* editor loading/content */}
+    </motion.div>
+  )}
+</AnimatePresence>
+```
+
+**Confidence:** HIGH -- `layoutId` shared element transitions verified in [Framer Motion layout docs](https://www.framer.com/motion/layout-animations/). `canvas-confetti` already in package.json (^1.9.4).
+
+---
+
+### Recommended Stack (v3.0 Summary)
+
+#### Core (no installation needed)
+
+| Technology | Version (installed) | Purpose | Why Sufficient |
+|------------|--------------------|---------|----------------|
+| framer-motion | ^12.23.24 | All animations, micro-interactions, layout transitions, useInView | 15+ presets in motion.js, AnimatePresence in 16 files, layout/layoutId for morph effects |
+| lucide-react | ^0.548.0 | In-editor icon panel source (1500+ icons) | Tree-shakable SVGs, already used in 238 files |
+| Polotno SDK | ^2.33.2 | Custom side panel for Unsplash + icons | Built-in ImagesGrid, useInfiniteAPI, SectionTab |
+| canvas-confetti | ^1.9.4 | Save/apply celebration effects | Already installed |
+| Tailwind CSS | ^3.4.18 | CSS transitions, hover states, responsive grid | Already installed, transition-* utilities |
+
+#### External API (key needed, no npm package)
+
+| Service | Integration | Rate Limit | Cost |
+|---------|-------------|------------|------|
+| [Unsplash API](https://unsplash.com/documentation) | Direct `fetch` with `Client-ID` header | 50/hr demo, 5000/hr production | Free |
+
+#### Infrastructure
+
+| Component | Purpose | How |
+|-----------|---------|-----|
+| `VITE_UNSPLASH_ACCESS_KEY` | Unsplash API auth | New env variable |
+| `public/polotno/icons-manifest.json` | Icon catalog for editor panel | Generated at build time from Lucide |
+| Polotno iframe rebuild | Add Unsplash + Icons custom sections | Update `polotno-build/src/polotno-editor.jsx` |
+
+---
+
+### Alternatives Considered
+
+| Category | Recommended | Alternative | Why Not |
+|----------|-------------|-------------|---------|
+| Animations | framer-motion (existing) | GSAP, react-spring, @react-spring/web | Already installed, 12.x has everything needed, adding another animation lib is pure bloat |
+| Stock photos | Unsplash direct fetch | unsplash-js (npm), Pexels API, Pixabay | unsplash-js is archived; Pexels already in Polotno DEFAULT_SECTIONS; Pixabay has lower quality |
+| Icons in editor | Lucide SVG manifest | react-icons, iconify, Font Awesome | react-icons bundles 400KB; iconify depends on external CDN; FA requires license for pro |
+| Image lazy loading | Native `loading="lazy"` + useInView | react-lazy-load-image-component, react-intersection-observer | Native API handles it; useInView already in framer-motion bundle |
+| Virtual scrolling | None (not needed yet) | @tanstack/react-virtual, react-virtuoso | Template grids are paginated (20-50 items); virtual scroll adds complexity without benefit |
+| Image optimization | CloudFront URL params + Unsplash URL sizing | sharp, next/image, imgix | Server-side processing not needed; URL-based resizing is zero-cost |
+
+---
+
+### What NOT to Add (and Why)
+
+| Library | Why Skip |
+|---------|----------|
+| **GSAP** | Framer Motion already covers all animation needs; GSAP adds 60KB+ and a different API paradigm |
+| **react-spring** | Would conflict with/duplicate Framer Motion; no advantage for this use case |
+| **unsplash-js** | **Archived** -- Unsplash recommends direct API calls |
+| **react-icons** | Bundles ALL icon families (400KB+); Lucide already has 1500+ curated icons |
+| **iconify** | Runtime dependency on external CDN; Lucide SVGs can be self-hosted |
+| **react-lazy-load-image-component** | 15KB for what `loading="lazy"` + `useInView` do natively |
+| **react-intersection-observer** | `useInView` from framer-motion is identical (wraps IntersectionObserver), already in bundle |
+| **blurhash** | CSS `animate-pulse` placeholder is good enough; blurhash adds encoding/decoding complexity |
+| **@tanstack/react-virtual** | Template grids are small (paginated); premature optimization |
+| **lottie-react** | Loading spinners work fine with Tailwind animate-spin; Lottie adds animation file management burden |
+| **masonry-layout / react-masonry-css** | Tailwind grid with `aspect-video` is sufficient; masonry adds complexity without UX benefit for template cards |
+
+---
+
+### v3.0 Installation Summary
+
+```bash
+# REQUIRED: Nothing to install
+# The existing stack covers all v3.0 needs
+
+# REQUIRED: Add environment variable
+echo 'VITE_UNSPLASH_ACCESS_KEY=your_key_here' >> .env
+```
+
+**Total new npm dependencies: 0**
+**Total new env variables: 1 (VITE_UNSPLASH_ACCESS_KEY)**
+
+---
+
+### v3.0 Integration Points
+
+| v3.0 Feature | Integrates With | How |
+|--------------|-----------------|-----|
+| Template card animations | `motion.js` presets + `TemplateGrid.jsx` | Wrap cards in `motion.div`, add stagger container |
+| Template preview transitions | `TemplatePreviewPanel.jsx` + `drawer` preset | Already using `motion` + `drawer` from motion.js |
+| Shared element morph | `TemplateCard` + `EditorModal` | `layoutId` prop on matching elements |
+| Scroll-triggered reveals | `FeaturedTemplatesRow`, `StarterPacksRow` | `useInView` + `scrollReveal` preset |
+| Unsplash in template marketplace | `unsplashService.js` (new) | Direct fetch, debounced search |
+| Unsplash in Polotno editor | `polotno-editor.jsx` custom section | ImagesGrid + SectionTab from Polotno SDK |
+| Icons in Polotno editor | `icons-manifest.json` + custom section | Build-time SVG generation + editor panel |
+| Image optimization | `OptimizedImage.jsx` | Add useInView, CloudFront resize params |
+| Save celebration | `PostSaveDialog.jsx` | canvas-confetti (already installed) |
+
+---
+
+### Bundle Size Impact
+
+| Change | Size Impact | Notes |
+|--------|------------|-------|
+| New motion.js presets | ~0 KB | Just JS objects, tree-shaken if unused |
+| unsplashService.js | ~1 KB | Thin fetch wrapper |
+| useInView usage | ~0.6 KB | Already in framer-motion bundle |
+| Icon manifest JSON | ~150 KB (static file) | Loaded on-demand in editor iframe only, not in main bundle |
+| Polotno editor custom sections | ~5 KB | Inside iframe bundle (separate from main app) |
+| **Net main bundle change** | **~1.6 KB** | Negligible |
+
+---
+
+### Version Verification (v3.0)
+
+| Library | Installed | Latest (verified) | Source | Action |
+|---------|-----------|-------------------|--------|--------|
+| framer-motion | ^12.23.24 | 12.34.0 | [npm](https://www.npmjs.com/package/framer-motion) | No change needed (^ range covers it) |
+| lucide-react | ^0.548.0 | 0.563.0 | [npm](https://www.npmjs.com/package/lucide-react) | Optional `npm update` for latest icons |
+| polotno | ^2.33.2 | Verify at build time | [npm](https://www.npmjs.com/package/polotno) | Check iframe bundle compatibility |
+| canvas-confetti | ^1.9.4 | Already installed | package.json | No change |
+| tailwindcss | ^3.4.18 | 3.4.x stable | [npm](https://www.npmjs.com/package/tailwindcss) | No change |
+
+---
+
+### Confidence Assessment (v3.0)
+
+| Area | Confidence | Reason |
+|------|------------|--------|
+| Framer Motion for all animations | HIGH | Verified in codebase (16 files), motion.js presets confirmed, layout animations documented |
+| Unsplash direct fetch | HIGH | Official docs recommend direct API; unsplash-js confirmed archived |
+| Polotno custom panels | HIGH | Official Polotno docs show ImagesGrid/SectionTab/useInfiniteAPI API |
+| Lucide for icons | HIGH | Already installed with 238 file usage; SVG export is standard |
+| No virtual scrolling needed | MEDIUM | Correct for current 20-50 item grids; revisit if template count grows to 500+ |
+| CloudFront image resizing | MEDIUM | Depends on CloudFront function configuration; may need Lambda@Edge setup |
+| Polotno iframe rebuild | MEDIUM | Custom sections API is documented, but iframe communication for API key passing needs testing |
+
+---
+
+### Sources (v3.0)
+
+**Framer Motion:**
+- [Motion for React docs](https://motion.dev/docs/react) - Official documentation
+- [Layout animations](https://www.framer.com/motion/layout-animations/) - layoutId, shared element transitions
+- [useInView hook](https://motion.dev/docs/react-use-in-view) - IntersectionObserver wrapper (0.6KB)
+- [framer-motion npm](https://www.npmjs.com/package/framer-motion) - v12.34.0 latest
+
+**Unsplash API:**
+- [Unsplash API Documentation](https://unsplash.com/documentation) - Official endpoints, rate limits, auth
+- [Unsplash API Guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines) - Attribution requirements, usage rules
+- [unsplash-js GitHub](https://github.com/unsplash/unsplash-js) - Confirmed archived, recommends direct API
+- [Guideline: Attribution](https://help.unsplash.com/en/articles/2511315-guideline-attribution) - Required attribution format
+
+**Polotno SDK:**
+- [Custom images panel](https://polotno.com/docs/custom-images-panel) - ImagesGrid, SectionTab API
+- [Side panel overview](https://polotno.com/docs/side-panel-overview) - DEFAULT_SECTIONS, custom sections
+- [Pexels photos integration](https://polotno.com/docs/pexels-photos) - Reference pattern for stock photo panels
+- [Utils API](https://polotno.com/docs/utils-api) - useInfiniteAPI, ImagesGrid props, getImageSize
+
+**Lucide React:**
+- [Lucide React guide](https://lucide.dev/guide/packages/lucide-react) - Tree-shaking, bundle size
+- [lucide-react npm](https://www.npmjs.com/package/lucide-react) - v0.563.0 latest
+
+**Image Optimization:**
+- [Native lazy loading](https://caniuse.com/loading-lazy-attr) - Browser support
+- [Framer Motion vs Motion One performance](https://reactlibraries.com/blog/framer-motion-vs-motion-one-mobile-animation-performance-in-2025) - GPU acceleration details
+
+---
+
+*Stack research updated: 2026-02-10*

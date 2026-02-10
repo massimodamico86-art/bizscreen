@@ -705,3 +705,349 @@ Based on pitfall analysis, recommended phase order and pitfall addressing:
 ### Content Moderation
 - [Azure AI Content Safety](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/overview)
 - [Marketplace Content Moderation Challenges](https://besedo.com/blog/10-content-moderation-challenges-for-marketplaces/)
+
+---
+
+## v3.0 Pitfalls: Premium Template Browsing, Editor Polish, Stock Assets
+
+**Researched:** 2026-02-10
+**Focus:** Animation implementation, Unsplash API integration, Polotno editor customization, bundle size management
+**Confidence:** HIGH (codebase-specific analysis combined with verified API documentation)
+
+### Summary
+
+v3.0's pitfalls are fundamentally different from v2's. Where v2 dealt with multi-tenant data isolation and offline cache correctness, v3.0's risks center on:
+
+1. **Polotno iframe boundary complexity** -- Custom panels (Unsplash, icons) must work inside an iframe running React 18, isolated from the main app's React 19
+2. **Unsplash API compliance** -- Download tracking, attribution requirements, and rate limits are contractual obligations, not just best practices
+3. **Animation performance** -- Framer Motion on 20-50 animated cards simultaneously can cause jank if not properly constrained
+
+The good news: v3.0 adds zero new npm dependencies, so there are no new supply chain risks. The risks are integration risks, not dependency risks.
+
+---
+
+### Critical
+
+#### Pitfall 25: Polotno Iframe Version Mismatch Breaks Custom Panels
+
+**What goes wrong:** Custom side panels (Unsplash, icons) work in development but break in production because the Polotno iframe bundle uses a different SDK version than expected.
+
+**Why it happens:** The polotno-build `package.json` specifies `polotno ^2.10.0` while the main app has `polotno ^2.33.2`. The `ImagesGrid`, `SectionTab`, and `useInfiniteAPI` imports may have different APIs between these versions.
+
+**BizScreen-specific risk:** Verified from codebase: `scripts/polotno-build/package.json` has `"polotno": "^2.10.0"` and `"react": "^18.2.0"`. The main app's `package.json` has `"polotno": "^2.33.2"`. This is a 23+ minor version gap.
+
+**Warning signs:**
+- Custom panel renders empty or throws errors in production iframe
+- `ImagesGrid` missing props or changed API signature
+- "Cannot find module 'polotno/side-panel/images-grid'" in iframe build
+- Editor works in dev but fails in production build
+
+**Prevention strategy:**
+1. **Before building custom panels:** Align polotno-build version to match main app (`^2.33.2`)
+2. Test custom panel imports against the exact version used in the iframe build
+3. Lock the iframe's Polotno version (remove `^` caret) to prevent unexpected upgrades
+4. Add iframe build to CI -- if it fails, it fails early
+5. Test the production iframe bundle (not just dev mode)
+
+**Phase mapping:** MUST resolve in first phase before any Polotno customization work
+
+**Confidence:** HIGH (verified by direct comparison of both `package.json` files)
+
+---
+
+#### Pitfall 26: Unsplash API Key Exposed in Client-Side Code
+
+**What goes wrong:** `VITE_UNSPLASH_ACCESS_KEY` is bundled into client JavaScript. Anyone can extract it from browser dev tools. Malicious actors use your key, exhaust rate limits, or get your key revoked by Unsplash.
+
+**Why it happens:** Vite's `VITE_` prefix is designed to expose env vars to client-side code. This is standard for frontend apps but inappropriate for API keys that can be abused.
+
+**BizScreen-specific risk:** Two integration paths exist:
+- **Main app:** `unsplashService.js` uses `import.meta.env.VITE_UNSPLASH_ACCESS_KEY` -- exposed to client
+- **Polotno iframe:** Also needs the key, would need it passed via postMessage or embedded in iframe bundle
+
+**Warning signs:**
+- Rate limit errors (50 req/hr demo, 5000 req/hr production) appearing for legitimate users
+- Unsplash revocation notice email
+- Unexpected API usage spike in Unsplash dashboard
+
+**Prevention strategy:**
+1. **Recommended:** Proxy Unsplash requests through a Supabase Edge Function. Edge Function holds the secret key server-side. Client calls `/functions/v1/unsplash-proxy?query=landscape&page=1`. This also enables server-side caching and rate limiting per tenant.
+2. **Acceptable minimum for v3.0 MVP:** Use `VITE_UNSPLASH_ACCESS_KEY` directly (simpler), but register for Unsplash production approval (5000 req/hr) and monitor usage. Migrate to proxy before public launch.
+3. For the Polotno iframe: pass search results via postMessage bridge (main app does the API call, sends results to iframe). This avoids embedding the key in the iframe bundle entirely.
+
+**Phase mapping:** Architecture decision needed before Unsplash integration work starts
+
+**Confidence:** HIGH (ARCHITECTURE.md v3.0 already recommends the Edge Function proxy approach)
+
+---
+
+#### Pitfall 27: Unsplash Attribution and Download Tracking Non-Compliance
+
+**What goes wrong:** BizScreen integrates Unsplash photos but fails to (a) call the download tracking endpoint when a user uses an image, or (b) display proper attribution. Unsplash revokes API access.
+
+**Why it happens:** Developers focus on "search and display" and forget the compliance requirements. Attribution is especially easy to miss because it is a UX requirement, not a technical one.
+
+**BizScreen-specific risk:** In digital signage, Unsplash photos end up displayed on screens in public spaces. The attribution requirement says "credit the photographer" but signage screens typically don't show credits. This creates a gray area.
+
+**Unsplash API requirements (verified):**
+- **Download tracking:** Must call `GET /photos/:id/download` when a photo is used in a design (not when displayed in search results). This is how photographers get credited for downloads.
+- **Attribution:** Must show photographer name linking to their Unsplash profile with UTM params (`?utm_source=bizscreen&utm_medium=referral`). Required in the design editor UI, not necessarily on the display screen.
+- **Hotlinking:** Must use Unsplash CDN URLs directly (`images.unsplash.com`). Do NOT re-host images.
+
+**Warning signs:**
+- Unsplash API access revoked with notice of TOS violation
+- Missing download counts for photographers (harms their analytics)
+- Legal notice from Unsplash about attribution
+
+**Prevention strategy:**
+1. Call download tracking endpoint in `onSelect` handler of the Unsplash panel (when user adds image to design, not when browsing)
+2. Show attribution line in the editor panel: "Photo by [Name] on Unsplash" with link
+3. Store photographer name + profile URL in design JSON alongside the image URL
+4. Do NOT attempt to show attribution on the signage screen itself (signage screens are for content, not credits). The editor-level attribution satisfies the requirement.
+5. Add unit test: every Unsplash image selection triggers download tracking
+
+**Phase mapping:** Must be built into the Unsplash panel from day one, not retrofitted
+
+**Confidence:** HIGH (verified from [Unsplash API Guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines))
+
+---
+
+### Moderate
+
+#### Pitfall 28: Framer Motion Stagger Animation Causes Jank on Large Grids
+
+**What goes wrong:** Template grid renders 50 cards with `staggerChildren: 0.06`. The 50th card animates 3 seconds after the first. During this time, the browser is running 50 concurrent animations, causing frame drops and jank on lower-end devices.
+
+**Why it happens:** Framer Motion `staggerChildren` applies delay incrementally. With many children, the total animation duration = items * stagger_delay. Each item runs its own requestAnimationFrame loop.
+
+**BizScreen-specific risk:** `TemplateGrid.jsx` renders up to 50 templates in a 4-column grid. If all 50 animate simultaneously with stagger, that is 50 concurrent motion components.
+
+**Warning signs:**
+- Frame rate drops below 30fps during grid animation
+- Visible jank/stuttering as cards animate in
+- CPU usage spike visible in performance profiler
+- Users on tablets/low-end devices experience poor performance
+
+**Prevention strategy:**
+1. Only animate cards that are in the viewport using `useInView` (skip off-screen cards)
+2. Limit stagger to first visible row (4-8 cards) -- rest appear instantly
+3. Use `will-change: transform, opacity` hint on animating elements
+4. Keep animations simple: opacity + translateY only (no blur, no scale during stagger)
+5. Add `layout` prop only when needed (layout animations are expensive)
+6. Test on a mid-range tablet, not just a MacBook Pro
+
+**Phase mapping:** Performance testing during template grid animation implementation
+
+**Confidence:** HIGH (standard Framer Motion performance guidance from [motion.dev performance docs](https://motion.dev/docs/react-performance))
+
+---
+
+#### Pitfall 29: layoutId Shared Element Transition Fails Across Modal Boundary
+
+**What goes wrong:** `layoutId` on TemplateCard expects to morph into EditorModal, but the Modal component uses React Portal (renders in different DOM subtree). The layout animation either doesn't fire or animates to the wrong position.
+
+**Why it happens:** Framer Motion `layoutId` tracks elements by measuring their DOM position. React Portals move elements to a different part of the DOM tree (typically `document.body`). If `AnimatePresence` doesn't wrap both the source and target, the animation fails.
+
+**BizScreen-specific risk:** BizScreen's `Modal` component (from design system) likely uses a Portal. The `TemplateCard` is inside the page content. The `EditorModal` is rendered at the root level via Portal.
+
+**Warning signs:**
+- Template card disappears, editor modal appears with no animation
+- Card animates to wrong screen position (corner instead of center)
+- Flash of unstyled content during transition
+- Works in some browsers, not others
+
+**Prevention strategy:**
+1. Wrap the entire page (including modal portal target) in a single `LayoutGroup` component from Framer Motion
+2. OR abandon `layoutId` for this transition and use a simpler approach: fade-out card + zoom-in modal with matching thumbnail
+3. Test the transition with the actual Modal component in a prototype BEFORE building the full flow
+4. Have a fallback: if `layoutId` doesn't work reliably, a well-timed fade/scale transition is 90% as good
+
+**Phase mapping:** Prototype early in the animation phase; don't assume it works
+
+**Confidence:** MEDIUM (layoutId with Portals is a known challenge; [Framer Motion LayoutGroup docs](https://www.framer.com/motion/layout-group/) suggest this is solvable but tricky)
+
+---
+
+#### Pitfall 30: Icon Manifest JSON Becomes Stale After Lucide Update
+
+**What goes wrong:** `npm update lucide-react` adds new icons, but the generated `icons-manifest.json` is not regenerated. The editor panel shows outdated icon set.
+
+**Why it happens:** The icon manifest is generated by a build script (`generate-icon-manifest.cjs`). If this script is not part of the CI/CD pipeline or pre-build hook, it only runs when manually invoked.
+
+**Warning signs:**
+- Users asking "where is the [new icon]?" that exists in Lucide but not in editor
+- Icon manifest has fewer icons than `lucide-react` package
+- Manifest was last generated weeks/months ago
+
+**Prevention strategy:**
+1. Add manifest generation to the Vite build pipeline (plugin or pre-build script)
+2. OR add to CI: regenerate manifest on any `package.json` change
+3. Include manifest generation in the `npm run build` command: `"build": "node scripts/generate-icon-manifest.cjs && vite build"`
+4. Add manifest metadata: include generation timestamp and Lucide version for debugging
+
+**Phase mapping:** Address during icon panel build script implementation
+
+**Confidence:** HIGH (standard build pipeline concern)
+
+---
+
+#### Pitfall 31: Polotno Custom Panel Styling Conflicts with Editor Theme
+
+**What goes wrong:** Custom Unsplash and icon panels use styling that clashes with Polotno's built-in editor theme. Input fields, buttons, scrollbars look inconsistent.
+
+**Why it happens:** Polotno editor has its own CSS theming (dark mode, specific fonts, padding). Custom panels inject unstyled or differently-styled React components.
+
+**BizScreen-specific risk:** The Polotno iframe uses React 18 with its own styling. Custom panels cannot use BizScreen's Tailwind classes (Tailwind is not in the iframe bundle). Inline styles or a separate CSS file is needed.
+
+**Warning signs:**
+- Custom panel looks visually out of place (wrong colors, fonts, spacing)
+- Dark mode in Polotno but custom panel is light
+- Scrollbar style mismatch
+- Input focus states don't match
+
+**Prevention strategy:**
+1. Study Polotno's built-in panel styling (inspect elements in browser) and match colors/fonts
+2. Use inline styles (not Tailwind) for custom panels inside the iframe
+3. Polotno exposes CSS variables for theming -- use them for colors/fonts
+4. Keep custom panel UI minimal: search input + image grid. Let `ImagesGrid` handle most rendering (it inherits Polotno styling).
+5. Test with both light and dark Polotno themes
+
+**Phase mapping:** Address during custom panel UI implementation
+
+**Confidence:** MEDIUM (depends on Polotno's theming API, which may have limited documentation)
+
+---
+
+#### Pitfall 32: Unsplash Rate Limit Exhaustion During Demo/Testing
+
+**What goes wrong:** Development team has demo API key (50 req/hr). Multiple developers testing Unsplash search simultaneously exhaust rate limit. Search stops working for everyone.
+
+**Why it happens:** Demo API keys have strict 50 req/hr limit. Development and testing often involve repeated searches.
+
+**Warning signs:**
+- `429 Too Many Requests` errors during development
+- Unsplash search returns errors intermittently
+- Works in morning, breaks by afternoon
+
+**Prevention strategy:**
+1. Apply for Unsplash production API access BEFORE starting development (takes 1-2 weeks review)
+2. Implement request caching: cache search results for 1 hour (Unsplash allows this)
+3. Add rate limit awareness: show "Rate limited, try again in X minutes" instead of generic error
+4. Use mock data in unit/integration tests (never hit real API in CI)
+5. Each developer can register their own demo key for local development
+
+**Phase mapping:** Apply for production access as FIRST action, before any code
+
+**Confidence:** HIGH (verified from [Unsplash API rate limits documentation](https://unsplash.com/documentation#rate-limiting))
+
+---
+
+### Minor
+
+#### Pitfall 33: Animation Presets Not Accessible (Motion Sensitivity)
+
+**What goes wrong:** Users with vestibular disorders experience motion sickness from template grid stagger animations and card hover effects.
+
+**Why it happens:** Animations are enabled by default with no opt-out mechanism.
+
+**Warning signs:**
+- Accessibility audit failures
+- User complaints about motion/nausea
+- Reduced score in Lighthouse accessibility
+
+**Prevention strategy:**
+1. Respect `prefers-reduced-motion` media query: `const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches`
+2. In motion.js presets, add reduced-motion variants (instant transitions, no scale/translate)
+3. Framer Motion supports this natively: `<motion.div initial={false}>` when reduced motion preferred
+4. Test all animations with "Reduce motion" enabled in OS settings
+
+**Phase mapping:** Include in animation implementation from day one
+
+**Confidence:** HIGH (WCAG 2.1 requirement, standard web accessibility)
+
+---
+
+#### Pitfall 34: canvas-confetti Blocks Main Thread on Low-End Devices
+
+**What goes wrong:** Confetti celebration after save causes brief UI freeze on low-end tablets. Confetti particles are rendered on the main thread canvas.
+
+**Why it happens:** `canvas-confetti` renders hundreds of particles in a single `requestAnimationFrame` loop. On fast devices this is invisible, but on slow devices it causes 100-200ms jank.
+
+**Warning signs:**
+- Save dialog appears sluggishly after save completes
+- Visible frame drop when confetti fires
+- Users think save failed because of UI freeze
+
+**Prevention strategy:**
+1. Limit particle count: `confetti({ particleCount: 50 })` instead of default (50 is already low)
+2. Use a `setTimeout(() => confetti(...), 100)` to let the dialog render first, then fire confetti
+3. Skip confetti on devices with `navigator.hardwareConcurrency < 4`
+4. Keep confetti duration short: `ticks: 100` (about 1.5 seconds)
+
+**Phase mapping:** Minor concern, address during save celebration implementation
+
+**Confidence:** MEDIUM (depends on target device hardware; modern tablets handle it fine)
+
+---
+
+#### Pitfall 35: PostMessage Bridge Becomes Untyped Spaghetti
+
+**What goes wrong:** Adding stock image and icon panel messages to the postMessage bridge creates an untyped, hard-to-debug communication channel. Messages get lost, handlers don't match, or new message types conflict with existing ones.
+
+**Why it happens:** The current bridge in `PolotnoEditor.jsx` handles 8 message types. Adding stock images and icons could add 4-6 more. Without a schema, message contracts drift.
+
+**Current messages (verified):** ready, save, close, error, designLoaded, templateLoaded, imageExported, triggerSave
+
+**Warning signs:**
+- "Unknown message type" warnings in console
+- Iframe receiving messages from other sources (window.addEventListener is global)
+- Message payloads silently missing required fields
+- Debugging requires console.log on both sides of the iframe
+
+**Prevention strategy:**
+1. Define a message type enum: `const EDITOR_MESSAGES = { READY: 'ready', SAVE: 'save', SEARCH_STOCK: 'searchStockImages', ... }`
+2. Validate incoming messages: check `event.data.target === 'polotno-editor'` (already done) and validate payload shape
+3. Add TypeScript JSDoc types for all message payloads
+4. Log all bridge messages in structured logging with correlation IDs
+5. Consider using a thin abstraction: `bridge.send('searchStock', { query })` and `bridge.on('stockResults', handler)` on both sides
+
+**Phase mapping:** Refactor bridge before adding new message types
+
+**Confidence:** HIGH (verified from `PolotnoEditor.jsx` and `polotno-editor.jsx` message handling code)
+
+---
+
+## v3.0 Phase-Specific Warnings
+
+| Phase Topic | Likely Pitfall | Mitigation |
+|-------------|---------------|------------|
+| Polotno version alignment | P25: Version mismatch between iframe and main app | Align `polotno-build/package.json` to `^2.33.2` first |
+| Unsplash API setup | P32: Rate limit exhaustion during dev | Apply for production access immediately; P26: Key exposure -- decide proxy vs. direct |
+| Template grid animations | P28: Jank on large grids | Limit stagger to visible cards; P33: Accessibility -- respect prefers-reduced-motion |
+| Shared element transition | P29: Portal boundary breaks layoutId | Prototype early; have fallback animation ready |
+| Custom Polotno panels | P31: Style conflicts with editor theme | Use Polotno CSS variables; P25: Test against correct SDK version |
+| Icon manifest | P30: Stale after npm update | Add to build pipeline |
+| PostMessage bridge | P35: Untyped message sprawl | Define message enum + payload types before adding new messages |
+| Save celebration | P34: canvas-confetti main thread blocking | Limit particles, delay after dialog render |
+| Unsplash compliance | P27: Attribution + download tracking | Build into panel from day one, not retrofitted |
+
+---
+
+### v3.0 Confidence Assessment
+
+| Area | Confidence | Reason |
+|------|------------|--------|
+| Polotno iframe risks | HIGH | Verified version mismatch in codebase; iframe architecture well-understood |
+| Unsplash compliance risks | HIGH | Verified from official API guidelines and TOS |
+| Animation performance risks | HIGH | Standard Framer Motion performance considerations, verified from docs |
+| Shared element transition | MEDIUM | layoutId with Portal is documented but known to be tricky |
+| Custom panel styling | MEDIUM | Polotno theming API documentation is sparse; may need experimentation |
+
+### v3.0 Sources
+
+- [Unsplash API Guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines) -- Attribution, download tracking, TOS requirements
+- [Unsplash API Rate Limiting](https://unsplash.com/documentation#rate-limiting) -- Demo vs. production limits
+- [Framer Motion Performance](https://motion.dev/docs/react-performance) -- Animation optimization guidance
+- [Framer Motion LayoutGroup](https://www.framer.com/motion/layout-group/) -- Cross-component layout animations
+- [WCAG 2.1 Motion Guidelines](https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html) -- prefers-reduced-motion requirements
+- Existing codebase: `scripts/polotno-build/package.json` (version mismatch), `PolotnoEditor.jsx` (postMessage bridge), `TemplateGrid.jsx` (animation targets), `EditorModal.jsx` (Modal/Portal), `PostSaveDialog.jsx` (confetti integration point)
