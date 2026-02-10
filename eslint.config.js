@@ -51,9 +51,8 @@ export default [
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': 'off',
 
-      // Console rule - warn level during legacy cleanup phase
-      // TODO: Upgrade to error after console migration to loggingService
-      'no-console': ['warn', {
+      // All rules enforced at error level (Phase 44 complete)
+      'no-console': ['error', {
         allow: ['warn', 'error']
       }],
 
@@ -61,10 +60,9 @@ export default [
       // NOTE: unused-imports plugin has JSX detection issues, use with jsxFactory
       'no-unused-vars': 'off', // Disable base rule in favor of plugin
       'unused-imports/no-unused-imports': 'error',
-      // Unused vars - warning level (visibility without blocking legacy code)
-      // TODO: Consider upgrading to error after cleanup sprint
+      // Unused vars - error level (blocks commits)
       'unused-imports/no-unused-vars': [
-        'warn',
+        'error',
         {
           vars: 'all',
           varsIgnorePattern: '^_',
@@ -79,16 +77,13 @@ export default [
       'react/jsx-uses-react': 'error',
       'react/jsx-uses-vars': 'error',
 
-      // Legacy code issues - warnings for visibility, not blocking
-      // TODO: Fix these in dedicated cleanup tasks
-      'no-case-declarations': 'warn',
-      'no-useless-catch': 'warn',
-      'no-useless-escape': 'warn',
+      // Code quality rules - all enforced at error level
+      'no-case-declarations': 'error',
+      'no-useless-catch': 'error',
+      'no-useless-escape': 'error',
 
-      // Legacy undefined variables - warning during migration
-      // Many components have undefined logger, result, etc.
-      // TODO: Phase 28-02 should address these systematically
-      'no-undef': 'warn',
+      // Undefined variable detection - error level
+      'no-undef': 'error',
 
       // PropTypes disabled - deprecated in React 19+, no PropTypes in this JS codebase
       'react/prop-types': 'off',

@@ -145,7 +145,7 @@ describe('permissionsService', () => {
       // Mock profile query first, then org member query
       let _callCount = 0;
       supabase.from.mockImplementation((table) => {
-        callCount++;
+        _callCount++;
         if (table === 'profiles') {
           return {
             select: vi.fn().mockReturnThis(),
