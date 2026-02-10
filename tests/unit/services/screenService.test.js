@@ -8,6 +8,7 @@ import {
   formatLastSeen,
   generateOtpCode,
 } from '../../../src/services/screenService';
+import { createMockScreen } from '../../../src/__fixtures__/screens.js';
 
 // Mock supabase
 vi.mock('../../../src/supabase', () => ({
@@ -57,57 +58,47 @@ describe('screenService', () => {
 
   describe('isScreenOnline', () => {
     it('returns false when screen has no last_seen', () => {
-      const screen = { id: '1', device_name: 'Test Screen' };
+      const screen = createMockScreen({ last_seen: undefined });
       expect(isScreenOnline(screen)).toBe(false);
     });
 
     it('returns false when last_seen is null', () => {
-      const screen = { id: '1', device_name: 'Test Screen', last_seen: null };
+      const screen = createMockScreen({ last_seen: null });
       expect(isScreenOnline(screen)).toBe(false);
     });
 
     it('returns true when last_seen is within 2 minutes', () => {
-      const screen = {
-        id: '1',
-        device_name: 'Test Screen',
+      const screen = createMockScreen({
         last_seen: new Date('2024-01-15T11:59:00Z').toISOString(),
-      };
+      });
       expect(isScreenOnline(screen)).toBe(true);
     });
 
     it('returns true when last_seen is exactly now', () => {
-      const screen = {
-        id: '1',
-        device_name: 'Test Screen',
+      const screen = createMockScreen({
         last_seen: new Date('2024-01-15T12:00:00Z').toISOString(),
-      };
+      });
       expect(isScreenOnline(screen)).toBe(true);
     });
 
     it('returns false when last_seen is more than 2 minutes ago', () => {
-      const screen = {
-        id: '1',
-        device_name: 'Test Screen',
+      const screen = createMockScreen({
         last_seen: new Date('2024-01-15T11:57:00Z').toISOString(),
-      };
+      });
       expect(isScreenOnline(screen)).toBe(false);
     });
 
     it('returns false when last_seen is exactly 2 minutes ago', () => {
-      const screen = {
-        id: '1',
-        device_name: 'Test Screen',
+      const screen = createMockScreen({
         last_seen: new Date('2024-01-15T11:58:00Z').toISOString(),
-      };
+      });
       expect(isScreenOnline(screen)).toBe(false);
     });
 
     it('handles screen with 1 minute 59 seconds ago (edge case)', () => {
-      const screen = {
-        id: '1',
-        device_name: 'Test Screen',
+      const screen = createMockScreen({
         last_seen: new Date('2024-01-15T11:58:01Z').toISOString(),
-      };
+      });
       expect(isScreenOnline(screen)).toBe(true);
     });
   });

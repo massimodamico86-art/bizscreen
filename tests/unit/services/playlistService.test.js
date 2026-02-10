@@ -3,6 +3,7 @@
  * Phase 6: Tests for playlist service operations
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { mockPlaylist, createMockPlaylist } from '../../../src/__fixtures__/playlists.js';
 
 // Mock supabase before importing the service
 vi.mock('../../../src/supabase', () => ({
@@ -88,7 +89,7 @@ describe('playlistService', () => {
 
       const { deletePlaylistSafely } = await import('../../../src/services/playlistService');
 
-      const result = await deletePlaylistSafely('playlist-123', { force: false });
+      const result = await deletePlaylistSafely(mockPlaylist.id, { force: false });
 
       expect(result.success).toBe(false);
       expect(result.code).toBe('IN_USE');
@@ -106,7 +107,7 @@ describe('playlistService', () => {
 
       const { deletePlaylistSafely } = await import('../../../src/services/playlistService');
 
-      const result = await deletePlaylistSafely('playlist-123');
+      const result = await deletePlaylistSafely(mockPlaylist.id);
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Database error');
@@ -132,11 +133,12 @@ describe('playlistService', () => {
     it('only allows whitelisted fields', async () => {
       const { supabase } = await import('../../../src/supabase');
 
+      const updatedPlaylist = createMockPlaylist({ id: 'test-id', name: 'Updated' });
       const mockUpdate = vi.fn().mockReturnThis();
       const mockEq = vi.fn().mockReturnThis();
       const mockSelect = vi.fn().mockReturnThis();
       const mockSingle = vi.fn().mockResolvedValue({
-        data: { id: 'test-id', name: 'Updated' },
+        data: { id: updatedPlaylist.id, name: updatedPlaylist.name },
         error: null
       });
 
@@ -149,7 +151,7 @@ describe('playlistService', () => {
 
       const { updatePlaylist } = await import('../../../src/services/playlistService');
 
-      await updatePlaylist('test-id', {
+      await updatePlaylist(updatedPlaylist.id, {
         name: 'Updated',
         owner_id: 'should-be-filtered', // Should not be allowed
         malicious_field: 'ignored'
@@ -173,16 +175,17 @@ describe('playlistService defaults', () => {
   it('createPlaylist has sensible defaults', async () => {
     const { supabase } = await import('../../../src/supabase');
 
+    const newPlaylist = createMockPlaylist({ id: 'new-playlist-id' });
     const mockInsert = vi.fn().mockReturnThis();
     const mockSelect = vi.fn().mockReturnThis();
     const mockSingle = vi.fn().mockResolvedValue({
       data: {
-        id: 'new-playlist-id',
-        name: 'Test Playlist',
-        description: null,
-        default_duration: 10,
-        transition_effect: 'fade',
-        shuffle: false
+        id: newPlaylist.id,
+        name: newPlaylist.name,
+        description: newPlaylist.description,
+        default_duration: newPlaylist.default_duration,
+        transition_effect: newPlaylist.transition_effect,
+        shuffle: newPlaylist.shuffle,
       },
       error: null
     });
@@ -199,7 +202,7 @@ describe('playlistService defaults', () => {
 
     const { createPlaylist } = await import('../../../src/services/playlistService');
 
-    const result = await createPlaylist({ name: 'Test Playlist' });
+    const result = await createPlaylist({ name: newPlaylist.name });
 
     // Verify insert was called with defaults
     expect(mockInsert).toHaveBeenCalled();

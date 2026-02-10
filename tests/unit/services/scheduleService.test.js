@@ -10,6 +10,7 @@ import {
   formatTime,
   formatTimeRange
 } from '../../../src/services/scheduleService';
+import { createMockSchedule, createMockSlot } from '../../../src/__fixtures__/schedules.js';
 
 // Mock supabase
 vi.mock('../../../src/supabase', () => ({
@@ -331,7 +332,7 @@ describe('scheduleService - Extended Coverage', () => {
     describe('createSchedule', () => {
       it('creates schedule with required fields', async () => {
         const { supabase } = await import('../../../src/supabase');
-        const mockSchedule = { id: 'new-sched', name: 'Test Schedule', description: 'Test desc' };
+        const testSchedule = createMockSchedule({ id: 'new-sched', description: 'Test desc' });
 
         supabase.auth.getUser.mockResolvedValueOnce({
           data: { user: { id: 'user-123' } }
@@ -340,13 +341,13 @@ describe('scheduleService - Extended Coverage', () => {
         supabase.from.mockImplementationOnce(() => ({
           insert: vi.fn().mockReturnThis(),
           select: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: mockSchedule, error: null })
+          single: vi.fn().mockResolvedValue({ data: testSchedule, error: null })
         }));
 
         const { createSchedule } = await import('../../../src/services/scheduleService');
-        const result = await createSchedule({ name: 'Test Schedule', description: 'Test desc' });
+        const result = await createSchedule({ name: testSchedule.name, description: 'Test desc' });
 
-        expect(result).toEqual(mockSchedule);
+        expect(result).toEqual(testSchedule);
       });
 
       it('throws error when user not authenticated', async () => {
@@ -365,7 +366,7 @@ describe('scheduleService - Extended Coverage', () => {
       it('logs activity on successful creation', async () => {
         const { supabase } = await import('../../../src/supabase');
         const { logActivity } = await import('../../../src/services/activityLogService');
-        const mockSchedule = { id: 'new-sched', name: 'Logged Schedule' };
+        const loggedSchedule = createMockSchedule({ id: 'new-sched', name: 'Logged Schedule' });
 
         supabase.auth.getUser.mockResolvedValueOnce({
           data: { user: { id: 'user-123' } }
@@ -374,11 +375,11 @@ describe('scheduleService - Extended Coverage', () => {
         supabase.from.mockImplementationOnce(() => ({
           insert: vi.fn().mockReturnThis(),
           select: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: mockSchedule, error: null })
+          single: vi.fn().mockResolvedValue({ data: loggedSchedule, error: null })
         }));
 
         const { createSchedule } = await import('../../../src/services/scheduleService');
-        await createSchedule({ name: 'Logged Schedule' });
+        await createSchedule({ name: loggedSchedule.name });
 
         expect(logActivity).toHaveBeenCalled();
       });
@@ -516,12 +517,12 @@ describe('scheduleService - Extended Coverage', () => {
     describe('createScheduleEntry', () => {
       it('creates entry with time range', async () => {
         const { supabase } = await import('../../../src/supabase');
-        const mockEntry = {
+        const mockEntry = createMockSlot({
           id: 'entry-1',
           schedule_id: 'sched-1',
           start_time: '08:00',
           end_time: '12:00'
-        };
+        });
 
         supabase.from.mockImplementationOnce(() => ({
           insert: vi.fn().mockReturnThis(),
@@ -541,11 +542,11 @@ describe('scheduleService - Extended Coverage', () => {
 
       it('creates entry with days of week', async () => {
         const { supabase } = await import('../../../src/supabase');
-        const mockEntry = {
+        const mockEntry = createMockSlot({
           id: 'entry-1',
           schedule_id: 'sched-1',
           days_of_week: [1, 2, 3, 4, 5]
-        };
+        });
 
         supabase.from.mockImplementationOnce(() => ({
           insert: vi.fn().mockReturnThis(),

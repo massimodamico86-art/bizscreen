@@ -11,10 +11,12 @@ export const mockPlaylistItem = {
 export const mockPlaylist = {
   id: 'playlist-123',
   name: 'Test Playlist',
+  description: null,
   owner_id: 'user-123',
   tenant_id: 'tenant-123',
   shuffle: false,
-  defaultDuration: 10,
+  default_duration: 10,
+  transition_effect: 'fade',
   items: [mockPlaylistItem],
 };
 
@@ -23,6 +25,10 @@ export const mockPlaylistItems = [
   { ...mockPlaylistItem, id: 'item-2', position: 1, name: 'Image 2' },
 ];
 
+/**
+ *
+ * @param overrides
+ */
 export function createMockPlaylist(overrides = {}) {
   return { ...mockPlaylist, ...overrides };
 }

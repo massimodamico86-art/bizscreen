@@ -11,16 +11,25 @@ export const mockScheduleSlot = {
 export const mockSchedule = {
   id: 'schedule-123',
   name: 'Test Schedule',
+  description: 'Test schedule description',
   owner_id: 'user-123',
   tenant_id: 'tenant-123',
   timezone: 'America/New_York',
   slots: [mockScheduleSlot],
 };
 
+/**
+ *
+ * @param overrides
+ */
 export function createMockSchedule(overrides = {}) {
   return { ...mockSchedule, ...overrides };
 }
 
+/**
+ *
+ * @param overrides
+ */
 export function createMockSlot(overrides = {}) {
   return { ...mockScheduleSlot, ...overrides };
 }
