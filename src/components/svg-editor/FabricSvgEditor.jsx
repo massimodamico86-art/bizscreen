@@ -1108,6 +1108,47 @@ export default function FabricSvgEditor({
     });
   }, [canvasWidth, canvasHeight, syncCanvasObjects, showToast, logger]);
 
+  // Add SVG icon as vector Fabric object (not rasterized)
+  const handleAddSvgIcon = useCallback(async (iconName) => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || !iconName) return;
+
+    try {
+      const [prefix, name] = iconName.split(':');
+      const svgUrl = `https://api.iconify.design/${prefix}/${name}.svg?height=128&color=%23333333`;
+
+      const response = await fetch(svgUrl);
+      if (!response.ok) throw new Error(`Failed to fetch icon SVG: ${response.status}`);
+      const svgString = await response.text();
+
+      const result = await fabric.loadSVGFromString(svgString);
+      const objects = result.objects?.filter(Boolean) || [];
+
+      if (objects.length === 0) {
+        // Fallback: load as image if SVG parsing fails
+        handleAddImageFromUrl(svgUrl);
+        return;
+      }
+
+      const group = objects.length === 1 ? objects[0] : new fabric.Group(objects);
+      group.set({
+        left: canvasWidth / 2 - 64,
+        top: canvasHeight / 2 - 64,
+        id: `icon-${Date.now()}`,
+        name: `Icon: ${name}`,
+      });
+
+      canvas.add(group);
+      canvas.setActiveObject(group);
+      canvas.renderAll();
+      setHasUnsavedChanges(true);
+      syncCanvasObjects();
+    } catch (err) {
+      logger.error('Failed to insert SVG icon', { error: err, iconName });
+      showToast?.('Failed to insert icon', 'error');
+    }
+  }, [canvasWidth, canvasHeight, syncCanvasObjects, showToast, logger, handleAddImageFromUrl]);
+
   // Add text with preset style
   const handleAddTextWithPreset = useCallback((preset) => {
     const canvas = fabricCanvasRef.current;
@@ -2533,6 +2574,7 @@ export default function FabricSvgEditor({
             onAddText={handleAddTextWithPreset}
             onAddImage={handleAddImageFromUrl}
             onAddIcon={handleAddIcon}
+            onAddSvgIcon={handleAddSvgIcon}
             onAddQRCode={handleAddQRCode}
             onAddWidget={handleAddWidget}
             onSelectTemplate={handleSelectTemplate}
@@ -2665,6 +2707,39 @@ export default function FabricSvgEditor({
             // Fire download tracking for Unsplash photos
             if (asset.type === 'unsplash' && asset.downloadTrackingUrl) {
               trackDownload(asset.id, asset.downloadTrackingUrl);
+            }
+
+            // Handle SVG icon drops differently -- load as vector
+            if (asset.type === 'icon' && asset.iconName) {
+              const [prefix, name] = asset.iconName.split(':');
+              const svgUrl = `https://api.iconify.design/${prefix}/${name}.svg?height=128&color=%23333333`;
+
+              fetch(svgUrl)
+                .then(res => res.text())
+                .then(svgString => fabric.loadSVGFromString(svgString))
+                .then(result => {
+                  const objects = result.objects?.filter(Boolean) || [];
+                  if (objects.length === 0) return;
+
+                  const group = objects.length === 1 ? objects[0] : new fabric.Group(objects);
+                  group.set({
+                    left: x - 64,
+                    top: y - 64,
+                    id: `icon-${Date.now()}`,
+                    name: asset.name || 'Dropped Icon',
+                  });
+
+                  canvas.add(group);
+                  canvas.setActiveObject(group);
+                  canvas.renderAll();
+                  setHasUnsavedChanges(true);
+                  syncCanvasObjects();
+                })
+                .catch(err => {
+                  logger.error('Failed to load dropped icon', { error: err });
+                  showToast?.('Failed to load icon', 'error');
+                });
+              return; // Don't fall through to image loading
             }
 
             // Load and place image at drop position
