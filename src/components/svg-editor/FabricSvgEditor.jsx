@@ -26,6 +26,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { loadSvgContent, LOCAL_SVG_TEMPLATES } from '../../services/svgTemplateService';
+import { trackDownload } from '../../services/unsplashProxyService.js';
 
 import QRCode from 'qrcode';
 import { useLogger } from '../../hooks/useLogger.js';
@@ -2635,6 +2636,62 @@ export default function FabricSvgEditor({
         <div
           ref={containerRef}
           onContextMenu={handleContextMenu}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            const jsonData = e.dataTransfer.getData('application/json');
+            if (!jsonData) return;
+
+            let asset;
+            try {
+              asset = JSON.parse(jsonData);
+            } catch {
+              return;
+            }
+            if (!asset?.url) return;
+
+            const canvas = fabricCanvasRef.current;
+            if (!canvas) return;
+
+            // Convert screen coordinates to canvas coordinates accounting for zoom
+            const canvasEl = canvas.lowerCanvasEl || canvas.getElement();
+            const rect = canvasEl.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / zoom;
+            const y = (e.clientY - rect.top) / zoom;
+
+            // Fire download tracking for Unsplash photos
+            if (asset.type === 'unsplash' && asset.downloadTrackingUrl) {
+              trackDownload(asset.id, asset.downloadTrackingUrl);
+            }
+
+            // Load and place image at drop position
+            fabric.FabricImage.fromURL(asset.url, { crossOrigin: 'anonymous' })
+              .then((img) => {
+                const maxWidth = canvasWidth * 0.4;
+                const maxHeight = canvasHeight * 0.4;
+                const scale = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+                img.set({
+                  left: x - (img.width * scale) / 2,
+                  top: y - (img.height * scale) / 2,
+                  scaleX: scale,
+                  scaleY: scale,
+                  id: `${asset.type || 'dropped'}-${Date.now()}`,
+                  name: asset.name || 'Dropped Asset',
+                });
+                canvas.add(img);
+                canvas.setActiveObject(img);
+                canvas.renderAll();
+                setHasUnsavedChanges(true);
+                syncCanvasObjects();
+              })
+              .catch((err) => {
+                logger.error('Failed to load dropped image', { error: err });
+                showToast?.('Failed to load image', 'error');
+              });
+          }}
           className={`flex-1 overflow-auto bg-gray-900 flex items-center justify-center p-6 relative ${
             isPreviewMode ? 'cursor-none' : isPanMode ? 'cursor-grab' : ''
           }`}
