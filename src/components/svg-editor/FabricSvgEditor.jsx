@@ -40,6 +40,8 @@ import PositionPanel from './PositionPanel.jsx';
 import CanvasControls from './CanvasControls.jsx';
 import LayersPanel from './LayersPanel.jsx';
 import ContextMenu from './ContextMenu.jsx';
+import QuickCustomizePanel from './QuickCustomizePanel.jsx';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Google Fonts to load
 const GOOGLE_FONTS = [
@@ -77,6 +79,7 @@ export const COLOR_PRESETS = [
  * @param root0.designId
  * @param root0.canvasWidth
  * @param root0.canvasHeight
+ * @param root0.isFromTemplate
  * @param root0.onSave
  * @param root0.onClose
  * @param root0.showToast
@@ -89,6 +92,7 @@ export default function FabricSvgEditor({
   designId = null,
   canvasWidth = 1920,
   canvasHeight = 1080,
+  isFromTemplate = false,
   onSave,
   onClose,
   showToast,
@@ -105,6 +109,9 @@ export default function FabricSvgEditor({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [designName, setDesignName] = useState(templateName || 'Untitled Design');
+
+  // Quick customize panel - shows on first open from template
+  const [showQuickCustomize, setShowQuickCustomize] = useState(isFromTemplate);
 
   // New features state
   const [showLayersPanel, setShowLayersPanel] = useState(false);
@@ -136,6 +143,22 @@ export default function FabricSvgEditor({
 
   // Counter to force re-renders when object properties change
   const [_updateCounter, setUpdateCounter] = useState(0);
+
+  // Trigger canvas resize recalculation when quick-customize panel opens/closes
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (containerRef.current && fabricCanvasRef.current) {
+        const container = containerRef.current;
+        const containerWidth = container.clientWidth - 48;
+        const containerHeight = container.clientHeight - 48;
+        const scaleX = containerWidth / canvasWidth;
+        const scaleY = containerHeight / canvasHeight;
+        const scale = Math.min(scaleX, scaleY, 1);
+        setZoom(scale);
+      }
+    }, 250); // Wait for AnimatePresence animation (200ms) + buffer
+    return () => clearTimeout(timeoutId);
+  }, [showQuickCustomize, canvasWidth, canvasHeight]);
 
   // Load Google Fonts
   useEffect(() => {
@@ -2645,7 +2668,26 @@ export default function FabricSvgEditor({
           )}
         </div>
 
-        {/* Right Properties Panel removed - properties now in contextual top toolbar */}
+        {/* Quick Customize Panel - right side, shows on first open from template */}
+        <AnimatePresence>
+          {showQuickCustomize && !isPreviewMode && (
+            <motion.div
+              key="quick-customize"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 288, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              className="overflow-hidden flex-shrink-0"
+            >
+              <QuickCustomizePanel
+                canvas={fabricCanvasRef.current}
+                isLoading={isLoading}
+                onDismiss={() => setShowQuickCustomize(false)}
+                onCanvasModified={() => setHasUnsavedChanges(true)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Floating Layers Panel */}
         {showLayersPanel && !isPreviewMode && (
