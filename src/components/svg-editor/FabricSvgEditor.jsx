@@ -24,7 +24,9 @@ import {
   Download,
   Save,
   AlertCircle,
+  Check,
 } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { loadSvgContent, LOCAL_SVG_TEMPLATES } from '../../services/svgTemplateService';
 import { trackDownload } from '../../services/unsplashProxyService.js';
 
@@ -42,6 +44,7 @@ import CanvasControls from './CanvasControls.jsx';
 import LayersPanel from './LayersPanel.jsx';
 import ContextMenu from './ContextMenu.jsx';
 import QuickCustomizePanel from './QuickCustomizePanel.jsx';
+import KeyboardShortcutsOverlay from './KeyboardShortcutsOverlay.jsx';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // Google Fonts to load
@@ -137,6 +140,12 @@ export default function FabricSvgEditor({
   const [usedColors, setUsedColors] = useState([]);
   const [usedFonts, setUsedFonts] = useState([]);
 
+  // Save celebration & undo/redo toast & shortcuts overlay
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [undoRedoToast, setUndoRedoToast] = useState(null);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const undoRedoTimerRef = useRef(null);
+
   // Context menu state
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
   const [clipboard, setClipboard] = useState(null);
@@ -160,6 +169,11 @@ export default function FabricSvgEditor({
     }, 250); // Wait for AnimatePresence animation (200ms) + buffer
     return () => clearTimeout(timeoutId);
   }, [showQuickCustomize, canvasWidth, canvasHeight]);
+
+  // Cleanup undo/redo toast timer on unmount
+  useEffect(() => {
+    return () => clearTimeout(undoRedoTimerRef.current);
+  }, []);
 
   // Load Google Fonts
   useEffect(() => {
@@ -559,6 +573,10 @@ export default function FabricSvgEditor({
       setHistoryIndex(newIndex);
       isUndoRedoAction.current = false;
       setHasUnsavedChanges(true);
+      // Show undo feedback toast
+      clearTimeout(undoRedoTimerRef.current);
+      setUndoRedoToast('Undo');
+      undoRedoTimerRef.current = setTimeout(() => setUndoRedoToast(null), 1500);
     });
   }, [history, historyIndex]);
 
@@ -578,6 +596,10 @@ export default function FabricSvgEditor({
       setHistoryIndex(newIndex);
       isUndoRedoAction.current = false;
       setHasUnsavedChanges(true);
+      // Show redo feedback toast
+      clearTimeout(undoRedoTimerRef.current);
+      setUndoRedoToast('Redo');
+      undoRedoTimerRef.current = setTimeout(() => setUndoRedoToast(null), 1500);
     });
   }, [history, historyIndex]);
 
@@ -2273,6 +2295,16 @@ export default function FabricSvgEditor({
 
       setHasUnsavedChanges(false);
       showToast?.('Design saved successfully!', 'success');
+      // Celebration animation
+      setSaveSuccess(true);
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { x: 0.85, y: 0.05 },
+        disableForReducedMotion: true,
+        zIndex: 10001,
+      });
+      setTimeout(() => setSaveSuccess(false), 2000);
     } catch (err) {
       logger.error('Failed to save', { error: err });
       showToast?.('Failed to save design: ' + err.message, 'error');
@@ -2321,6 +2353,15 @@ export default function FabricSvgEditor({
       // Ignore if typing in input
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+      // Keyboard shortcuts overlay: ? key
+      if (e.key === '?') {
+        // Don't trigger while editing text on canvas
+        const activeObj = fabricCanvasRef.current?.getActiveObject();
+        if (activeObj?.isEditing) return;
+        setShowShortcuts(prev => !prev);
+        return;
+      }
+
       // Delete
       if (e.key === 'Delete' || e.key === 'Backspace') {
         e.preventDefault();
@@ -2360,7 +2401,7 @@ export default function FabricSvgEditor({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleDelete, handleUndo, handleRedo, handleSave, handleDuplicate, isPreviewMode]);
+  }, [handleDelete, handleUndo, handleRedo, handleSave, handleDuplicate, isPreviewMode, showShortcuts]);
 
   // Error state - show full screen error
   if (error) {
@@ -2383,12 +2424,41 @@ export default function FabricSvgEditor({
 
   return (
     <div className="h-screen flex flex-col bg-gray-900 relative">
-      {/* Loading Overlay - shown on top while loading */}
+      {/* Loading Skeleton - matches editor layout */}
       {isLoading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-gray-900">
-          <div className="text-center">
-            <Loader2 className="w-10 h-10 text-orange-500 animate-spin mx-auto mb-4" />
-            <p className="text-gray-400">Loading template...</p>
+        <div className="absolute inset-0 z-50 flex flex-col bg-gray-900">
+          {/* Header skeleton */}
+          <div className="h-14 bg-gray-800 border-b border-gray-700 flex items-center px-4 gap-4">
+            <div className="w-8 h-8 bg-gray-700 rounded-lg animate-pulse" />
+            <div className="w-48 h-8 bg-gray-700 rounded-lg animate-pulse" />
+            <div className="flex-1" />
+            <div className="w-20 h-8 bg-gray-700 rounded-lg animate-pulse" />
+            <div className="w-24 h-9 bg-orange-500/30 rounded-lg animate-pulse" />
+          </div>
+          {/* Toolbar skeleton */}
+          <div className="h-11 bg-gray-800 border-b border-gray-700 flex items-center px-3 gap-2">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="w-16 h-7 bg-gray-700 rounded animate-pulse" />
+            ))}
+          </div>
+          {/* Body skeleton */}
+          <div className="flex-1 flex">
+            {/* Left sidebar skeleton */}
+            <div className="w-14 bg-gray-800 border-r border-gray-700 flex flex-col items-center py-2 gap-1">
+              {[...Array(10)].map((_, i) => (
+                <div key={i} className="w-12 h-12 bg-gray-700 rounded-lg animate-pulse" />
+              ))}
+            </div>
+            {/* Canvas area skeleton */}
+            <div className="flex-1 flex items-center justify-center bg-gray-900">
+              <div className="w-3/4 aspect-video bg-gray-800 rounded-lg animate-pulse" />
+            </div>
+            {/* Right controls skeleton */}
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="w-10 h-10 bg-gray-800 border border-gray-700 rounded-lg animate-pulse" />
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -2510,18 +2580,38 @@ export default function FabricSvgEditor({
           Export
         </button>
 
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors disabled:opacity-50"
-        >
-          {isSaving ? (
-            <Loader2 size={18} className="animate-spin" />
+        <AnimatePresence mode="wait">
+          {saveSuccess ? (
+            <motion.div
+              key="save-check"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg"
+            >
+              <Check size={18} />
+              Saved!
+            </motion.div>
           ) : (
-            <Save size={18} />
+            <motion.button
+              key="save-btn"
+              initial={{ opacity: 1 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors disabled:opacity-50"
+            >
+              {isSaving ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Save size={18} />
+              )}
+              Save
+            </motion.button>
           )}
-          Save
-        </button>
+        </AnimatePresence>
       </header>
 
       {/* Hidden file input for image upload */}
@@ -2834,6 +2924,28 @@ export default function FabricSvgEditor({
           />
         )}
       </div>
+
+      {/* Undo/Redo Toast */}
+      <AnimatePresence>
+        {undoRedoToast && (
+          <motion.div
+            key="undo-redo-toast"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.15 }}
+            className="fixed bottom-16 left-1/2 -translate-x-1/2 z-[10000] px-4 py-2 bg-gray-800 text-white text-sm rounded-lg shadow-lg border border-gray-700"
+          >
+            {undoRedoToast}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Keyboard Shortcuts Overlay */}
+      <KeyboardShortcutsOverlay
+        isOpen={showShortcuts}
+        onClose={() => setShowShortcuts(false)}
+      />
 
       {/* Preview mode overlay with exit hint */}
       {isPreviewMode && (
