@@ -46,7 +46,7 @@ All milestones shipped successfully.
 - [x] **Phase 46: Unsplash Proxy Infrastructure** — Server-side foundation for stock photo integration (completed 2026-02-10)
 - [x] **Phase 47: Template Browse Premium** — Visual richness and micro-interactions on the template grid (completed 2026-02-10)
 - [x] **Phase 48: Template-to-Editor Flow** — One-click path from template selection to editing (completed 2026-02-10)
-- [ ] **Phase 49: Stock Assets in Editor** — Unsplash photos, icons, and media library inside the Polotno editor
+- [x] **Phase 49: Stock Assets in Editor** — Unsplash photos, icons, and media library inside the Polotno editor (completed 2026-02-10)
 - [ ] **Phase 50: Editor Polish** — Toolbar refinement, loading states, save celebrations, and keyboard shortcuts
 
 ### Phase Details
@@ -105,8 +105,8 @@ Plans:
   5. User can drag any asset (photo, icon, uploaded media) from its panel directly onto the canvas at the desired position
 **Plans:** 2 plans
 Plans:
-- [ ] 49-01-PLAN.md — Unsplash proxy Photos panel, My Media panel, and canvas drag-and-drop handler
-- [ ] 49-02-PLAN.md — Iconify icon search in Elements panel and SVG vector drag-and-drop
+- [x] 49-01-PLAN.md — Unsplash proxy Photos panel, My Media panel, and canvas drag-and-drop handler
+- [x] 49-02-PLAN.md — Iconify icon search in Elements panel and SVG vector drag-and-drop
 
 #### Phase 50: Editor Polish
 **Goal:** The editor feels modern and responsive — toolbar interactions are snappy, state changes have visual feedback, and power users discover keyboard shortcuts.
@@ -132,7 +132,7 @@ Plans:
 | v2.4 Tech Debt Zero | 42-45 | 11 | Complete | 2026-02-10 |
 | v3.0 Creative Experience | 46-50 | TBD | In progress | - |
 
-**Total:** 47 phases complete, 174 plans executed | 6 milestones shipped
+**Total:** 49 phases complete, 178 plans executed | 6 milestones shipped
 
 ### v3.0 Phase Progress
 
@@ -141,8 +141,8 @@ Plans:
 | 46. Unsplash Proxy Infrastructure | 2/2 | ✓ Complete | 2026-02-10 |
 | 47. Template Browse Premium | 2/2 | ✓ Complete | 2026-02-10 |
 | 48. Template-to-Editor Flow | 2/2 | ✓ Complete | 2026-02-10 |
-| 49. Stock Assets in Editor | 0/TBD | Not started | - |
+| 49. Stock Assets in Editor | 2/2 | ✓ Complete | 2026-02-10 |
 | 50. Editor Polish | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-10 — Phase 48 complete (2/2 plans, human verification needed).*
+*Last updated: 2026-02-10 — Phase 49 complete (2/2 plans, verification passed).*
