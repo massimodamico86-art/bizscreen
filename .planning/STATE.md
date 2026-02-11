@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.0 Creative Experience — Phase 49, Plan 01 complete
+**Current focus:** v3.0 Creative Experience — Phase 49 complete, Phase 50 pending
 
 ## Current Position
 
-Phase: 49 of 50 (Stock Assets in Editor)
-Plan: 1 of 2 in current phase
-Status: Plan 01 complete, Plan 02 pending
-Last activity: 2026-02-11 — Phase 49 Plan 01 executed (2/2 tasks)
+Phase: 49 of 50 (Stock Assets in Editor) -- COMPLETE
+Plan: 2 of 2 in current phase (all plans complete)
+Status: Phase 49 complete, ready for Phase 50
+Last activity: 2026-02-11 — Phase 49 Plan 02 executed (2/2 tasks)
 
 Progress: [███████░░░] 70%
 
@@ -45,6 +45,7 @@ Progress: [███████░░░] 70%
 | 48 | 01 | 4min | 2 | 6 |
 | 48 | 02 | 3min | 2 | 2 |
 | 49 | 01 | 4min | 2 | 2 |
+| 49 | 02 | 3min | 2 | 2 |
 
 ## Accumulated Context
 
@@ -77,6 +78,10 @@ Progress: [███████░░░] 70%
 - [49-01] Attribution overlay on hover using group/opacity-0 pattern for clean UX
 - [49-01] Drag data uses dual format (text/plain + application/json) for maximum compatibility
 - [49-01] Dropped images scale to 40% of canvas (vs 50% for click-insert) to leave room for positioning
+- [49-02] Iconify API with 5 curated prefixes (mdi,lucide,tabler,heroicons,fa-solid) to avoid complex emoji SVGs
+- [49-02] loadSVGFromString for vector insertion preserving scalability over rasterized FabricImage
+- [49-02] Single SVG objects insert directly without Group wrapper for simpler object tree
+- [49-02] Fallback to rasterized image if SVG parsing returns empty result
 
 ### Blockers/Concerns
 
@@ -85,9 +90,9 @@ Progress: [███████░░░] 70%
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: Completed 49-01-PLAN.md
+Stopped at: Completed 49-02-PLAN.md (Phase 49 complete)
 Resume file: None
-Next: Execute 49-02-PLAN.md
+Next: Plan Phase 50
 
 ---
-*Updated: 2026-02-11 — Phase 49 Plan 01 executed (proxy photos, My Media panel, drag-and-drop).*
+*Updated: 2026-02-11 — Phase 49 complete (stock assets in editor: proxy photos, icons, drag-and-drop).*
