@@ -91,37 +91,37 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | — | Pending |
-| DATA-02 | — | Pending |
-| DATA-03 | — | Pending |
-| DATA-04 | — | Pending |
-| DATA-05 | — | Pending |
-| DATA-06 | — | Pending |
-| DATA-07 | — | Pending |
-| DATA-08 | — | Pending |
-| DATA-09 | — | Pending |
-| RSS-01 | — | Pending |
-| RSS-02 | — | Pending |
-| RSS-03 | — | Pending |
-| RSS-04 | — | Pending |
-| SOCIAL-01 | — | Pending |
-| SOCIAL-02 | — | Pending |
-| SOCIAL-03 | — | Pending |
-| WIDGET-01 | — | Pending |
-| WIDGET-02 | — | Pending |
-| WIDGET-03 | — | Pending |
-| WIDGET-04 | — | Pending |
-| WIDGET-05 | — | Pending |
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
-| INFRA-03 | — | Pending |
-| INFRA-04 | — | Pending |
+| DATA-01 | Phase 51 | Pending |
+| DATA-02 | Phase 51 | Pending |
+| DATA-03 | Phase 51 | Pending |
+| DATA-04 | Phase 51 | Pending |
+| DATA-05 | Phase 51 | Pending |
+| DATA-06 | Phase 55 | Pending |
+| DATA-07 | Phase 55 | Pending |
+| DATA-08 | Phase 55 | Pending |
+| DATA-09 | Phase 51 | Pending |
+| RSS-01 | Phase 52 | Pending |
+| RSS-02 | Phase 52 | Pending |
+| RSS-03 | Phase 52 | Pending |
+| RSS-04 | Phase 52 | Pending |
+| SOCIAL-01 | Phase 53 | Pending |
+| SOCIAL-02 | Phase 53 | Pending |
+| SOCIAL-03 | Phase 53 | Pending |
+| WIDGET-01 | Phase 54 | Pending |
+| WIDGET-02 | Phase 54 | Pending |
+| WIDGET-03 | Phase 54 | Pending |
+| WIDGET-04 | Phase 54 | Pending |
+| WIDGET-05 | Phase 55 | Pending |
+| INFRA-01 | Phase 51 | Pending |
+| INFRA-02 | Phase 52 | Pending |
+| INFRA-03 | Phase 55 | Pending |
+| INFRA-04 | Phase 51 | Pending |
 
 **Coverage:**
 - v3.1 requirements: 25 total
-- Mapped to phases: 0
-- Unmapped: 25 (pending roadmap creation)
+- Mapped to phases: 25
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-11*
-*Last updated: 2026-02-11 after initial definition*
+*Last updated: 2026-02-11 after roadmap creation (all 25 requirements mapped to phases 51-55)*

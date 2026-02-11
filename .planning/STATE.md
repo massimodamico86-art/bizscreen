@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.1 Data-Driven Screens
+**Current focus:** v3.1 Data-Driven Screens — Phase 51 (Data Source Widget Pipeline)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-11 — Milestone v3.1 started
+Phase: 51 of 55 (Data Source Widget Pipeline)
+Plan: — (not yet planned)
+Status: Ready to plan
+Last activity: 2026-02-11 — v3.1 roadmap created (5 phases, 25 requirements)
 
-Progress: Idle
+Progress: [░░░░░░░░░░] 0%
 
 ## Milestones Shipped
 
@@ -34,18 +34,27 @@ Progress: Idle
 - Total plans executed: 184
 - Total phases: 50 completed
 - Total milestones: 7 shipped
-- Total codebase: ~362,000 LOC JavaScript/JSX/CSS/JSON
 
 ## Accumulated Context
 
-(Cleared — milestone archived. Start fresh with v3.1.)
+### Research Flags (from v3.1 research)
+
+- Phase 51: IndexedDB schema migration (v1 to v2) must preserve existing cached scenes/media
+- Phase 51: ZonePlayer ready-signal protocol is an architectural decision with lasting impact
+- Phase 52: fast-xml-parser Deno compatibility needs prototype spike
+- Phase 54: Tizen/WebOS timer throttling needs platform testing
+- Phase 55: Supabase Realtime channel limits (200-500) may constrain subscription architecture
+
+### Blockers/Concerns
+
+None yet.
 
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: v3.1 milestone initialization
+Stopped at: v3.1 roadmap created, ready to plan Phase 51
 Resume file: None
-Next: Define requirements → create roadmap
+Next: `/gsd:plan-phase 51`
 
 ---
-*Updated: 2026-02-11 — Milestone v3.1 Data-Driven Screens started.*
+*Updated: 2026-02-11 — v3.1 roadmap created.*
