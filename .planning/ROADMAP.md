@@ -118,7 +118,10 @@ Plans:
   3. Saving a design triggers a brief celebration animation (checkmark or confetti) confirming the save succeeded
   4. User can open a keyboard shortcuts overlay that lists available shortcuts and dismiss it easily
   5. Undo and redo actions produce visible feedback (brief toast or element highlight) confirming what changed
-**Plans:** TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 50-01-PLAN.md — CanvasControls scaleTap press animations and KeyboardShortcutsOverlay component
+- [ ] 50-02-PLAN.md — Loading skeleton, save celebration, undo/redo toast, and shortcuts overlay integration in FabricSvgEditor
 
 ## Progress Summary
 
@@ -142,7 +145,7 @@ Plans:
 | 47. Template Browse Premium | 2/2 | ✓ Complete | 2026-02-10 |
 | 48. Template-to-Editor Flow | 2/2 | ✓ Complete | 2026-02-10 |
 | 49. Stock Assets in Editor | 2/2 | ✓ Complete | 2026-02-10 |
-| 50. Editor Polish | 0/TBD | Not started | - |
+| 50. Editor Polish | 0/2 | Not started | - |
 
 ---
-*Last updated: 2026-02-10 — Phase 49 complete (2/2 plans, verification passed).*
+*Last updated: 2026-02-10 — Phase 50 planned (2 plans in 2 waves).*
