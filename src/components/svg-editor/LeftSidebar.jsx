@@ -17,67 +17,74 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { fetchSvgTemplates } from '../../services/svgTemplateService';
+import { searchPhotos as proxySearchPhotos, trackDownload } from '../../services/unsplashProxyService.js';
+import { fetchMediaAssets, MEDIA_TYPES } from '../../services/mediaService.js';
 import { useLogger } from '../../hooks/useLogger.js';
 import {
-  LayoutTemplate,
-  Image,
-  Type,
-  Shapes,
-  QrCode,
-  Grid3X3,
-  Square,
-  Circle,
-  Triangle,
-  Minus,
+  AppWindow,
   ArrowRight,
-  Star,
-  Heart,
-  Hexagon,
-  Octagon,
-  Pentagon,
-  Diamond,
-  Clock,
-  Calendar,
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  Instagram,
-  Facebook,
-  Twitter,
-  Youtube,
-  Linkedin,
-  ShoppingCart,
-  Gift,
+  ArrowUpDown,
   Award,
   BarChart3,
-  Sun,
-  Cloud,
-  Video,
-  FileText,
-  AppWindow,
-  ListMusic,
-  ScrollText,
-  Users,
-  Repeat,
-  Database,
-  Palette,
-  Wifi,
-  MessageSquare,
-  Smartphone,
-  Link2,
-  PhoneCall,
-  ImagePlus,
-  CloudSun,
-  CalendarDays,
-  Timer,
   Building2,
-  ArrowUpDown,
-  Radio,
-  Smile,
-  Sticker,
+  Calendar,
+  CalendarDays,
+  ChevronLeft,
+  Circle,
+  Clock,
+  Cloud,
+  CloudSun,
+  Database,
+  Diamond,
+  Facebook,
+  FileText,
+  FolderOpen,
+  Gift,
+  Globe,
+  Grid3X3,
+  Heart,
+  Hexagon,
+  Image,
+  ImagePlus,
+  Instagram,
+  LayoutTemplate,
+  Link2,
+  Linkedin,
+  ListMusic,
+  Loader2,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Minus,
+  Octagon,
+  Palette,
+  Pentagon,
+  Phone,
+  PhoneCall,
   Play,
+  Plus,
+  QrCode,
+  Radio,
+  Repeat,
+  ScrollText,
+  Search,
+  Shapes,
+  ShoppingCart,
+  Smartphone,
+  Smile,
+  Square,
+  Star,
+  Sticker,
+  Sun,
+  Timer,
+  Triangle,
+  Twitter,
+  Type,
   TypeIcon,
+  Users,
+  Video,
+  Wifi,
+  Youtube,
 } from 'lucide-react';
 
 // Sidebar panel types
@@ -85,6 +92,7 @@ const PANELS = {
   TEMPLATES: 'templates',
   WIDGETS: 'widgets',
   PHOTOS: 'photos',
+  MY_MEDIA: 'mymedia',
   GIPHY: 'giphy',
   REPEATERS: 'repeaters',
   TEXT: 'text',
@@ -245,74 +253,20 @@ export default function LeftSidebar({
   const [templateTab, setTemplateTab] = useState('templates');
   const [filteredTemplates, setFilteredTemplates] = useState([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [myMedia, setMyMedia] = useState([]);
+  const [loadingMyMedia, setLoadingMyMedia] = useState(false);
+  const [myMediaPage, _setMyMediaPage] = useState(1);
 
-  // Unsplash API configuration
-  const UNSPLASH_ACCESS_KEY = 'vWbf4D7AsEBx99UbqXK_Bf7Uv1rAfkLFc7PWqjDrSls';
-
-  // Fetch stock photos from Unsplash
+  // Fetch stock photos from Unsplash via proxy service
   const searchPhotos = useCallback(async (query) => {
     setLoadingPhotos(true);
-
     try {
-      // Try Unsplash API first (if key is configured)
-      if (UNSPLASH_ACCESS_KEY && UNSPLASH_ACCESS_KEY !== 'demo') {
-        const searchQuery = query.trim() || 'nature';
-        const response = await fetch(
-          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(searchQuery)}&per_page=20&orientation=landscape`,
-          {
-            headers: {
-              'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`
-            }
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          const unsplashPhotos = data.results.map((photo) => ({
-            id: photo.id,
-            url: photo.urls.regular,
-            thumb: photo.urls.small,
-            alt: photo.alt_description || photo.description || 'Unsplash photo',
-            author: photo.user.name,
-          }));
-          setPhotos(unsplashPhotos);
-          return;
-        }
-      }
-
-      // Fallback: Use Lorem Picsum (reliable free image service)
-      const searchTerm = query.trim() || 'nature';
-      const picsumPhotos = [];
-
-      // Generate varied photos using Picsum with different seeds
-      const seeds = ['business', 'office', 'nature', 'city', 'food', 'technology',
-        'people', 'abstract', 'architecture', 'travel', 'sports', 'fashion',
-        'animals', 'health', 'education', 'music', 'art', 'science', 'home', 'garden'];
-
-      for (let i = 0; i < 20; i++) {
-        const seed = searchTerm === 'nature' ? seeds[i % seeds.length] : `${searchTerm}-${i}`;
-        picsumPhotos.push({
-          id: `picsum-${i}-${Date.now()}`,
-          url: `https://picsum.photos/seed/${seed}/800/600`,
-          thumb: `https://picsum.photos/seed/${seed}/300/200`,
-          alt: `${searchTerm} photo ${i + 1}`,
-        });
-      }
-
-      setPhotos(picsumPhotos);
+      const searchQuery = query.trim() || 'nature';
+      const result = await proxySearchPhotos(searchQuery, { perPage: 20, orientation: 'landscape' });
+      setPhotos(result.photos || []);
     } catch (error) {
       logger.error('Error fetching photos', { error });
-      // Ultimate fallback with placeholder images
-      const fallbackPhotos = [];
-      for (let i = 0; i < 12; i++) {
-        fallbackPhotos.push({
-          id: `fallback-${i}`,
-          url: `https://picsum.photos/800/600?random=${i}`,
-          thumb: `https://picsum.photos/300/200?random=${i}`,
-          alt: `Photo ${i + 1}`,
-        });
-      }
-      setPhotos(fallbackPhotos);
+      setPhotos([]);
     } finally {
       setLoadingPhotos(false);
     }
@@ -465,11 +419,36 @@ export default function LeftSidebar({
     }
   }, [searchQuery, activePanel, templates, logger]);
 
+  // Handle My Media fetch with debounce
+  useEffect(() => {
+    if (activePanel === PANELS.MY_MEDIA) {
+      setLoadingMyMedia(true);
+      const timer = setTimeout(async () => {
+        try {
+          const result = await fetchMediaAssets({
+            type: MEDIA_TYPES.IMAGE,
+            search: searchQuery || undefined,
+            page: myMediaPage,
+            pageSize: 30,
+          });
+          setMyMedia(result.data || []);
+        } catch (err) {
+          logger.error('Error fetching my media', { error: err });
+          setMyMedia([]);
+        } finally {
+          setLoadingMyMedia(false);
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [searchQuery, activePanel, myMediaPage, logger]);
+
   // Nav items matching OptiSigns
   const navItems = [
     { id: PANELS.TEMPLATES, icon: LayoutTemplate, label: 'Templates' },
     { id: PANELS.WIDGETS, icon: Grid3X3, label: 'Widgets' },
     { id: PANELS.PHOTOS, icon: Image, label: 'Photos' },
+    { id: PANELS.MY_MEDIA, icon: FolderOpen, label: 'My Media' },
     { id: PANELS.GIPHY, icon: Smile, label: 'GIPHY' },
     { id: PANELS.REPEATERS, icon: Repeat, label: 'Repeaters' },
     { id: PANELS.TEXT, icon: Type, label: 'Text' },
@@ -650,18 +629,98 @@ export default function LeftSidebar({
             ) : (
               <div className="grid grid-cols-3 gap-2">
                 {photos.map((photo) => (
-                  <button
+                  <div
                     key={photo.id}
-                    onClick={() => onAddImage?.(photo.url)}
-                    className="aspect-square bg-gray-700 rounded-lg overflow-hidden hover:ring-2 hover:ring-orange-500 transition-all"
+                    className="relative group aspect-square bg-gray-700 rounded-lg overflow-hidden hover:ring-2 hover:ring-orange-500 transition-all cursor-pointer"
+                    onClick={() => {
+                      trackDownload(photo.id, photo.download_tracking_url);
+                      onAddImage?.(photo.urls.regular);
+                    }}
+                    draggable="true"
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData('text/plain', photo.urls.regular);
+                      e.dataTransfer.setData('application/json', JSON.stringify({
+                        type: 'unsplash',
+                        url: photo.urls.regular,
+                        id: photo.id,
+                        downloadTrackingUrl: photo.download_tracking_url,
+                        name: photo.description || 'Unsplash Photo',
+                      }));
+                    }}
                   >
                     <img
-                      src={photo.thumb}
-                      alt={photo.alt}
+                      src={photo.urls.thumb}
+                      alt={photo.description || 'Unsplash photo'}
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
-                  </button>
+                    {photo.attribution?.photographer && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-1.5 py-0.5 text-[9px] text-white truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a
+                          href={photo.attribution.photographer.profile_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="hover:underline"
+                        >
+                          {photo.attribution.photographer.name}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+
+      case PANELS.MY_MEDIA:
+        return (
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search your media..."
+                className="w-full pl-9 pr-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-orange-500"
+              />
+            </div>
+
+            {loadingMyMedia ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
+              </div>
+            ) : myMedia.length === 0 ? (
+              <div className="text-center py-8">
+                <FolderOpen className="w-12 h-12 text-gray-600 mx-auto mb-2" />
+                <p className="text-sm text-gray-400">No images uploaded yet</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-2">
+                {myMedia.map((asset) => (
+                  <div
+                    key={asset.id}
+                    className="aspect-square bg-gray-700 rounded-lg overflow-hidden hover:ring-2 hover:ring-orange-500 transition-all cursor-pointer"
+                    onClick={() => onAddImage?.(asset.url)}
+                    draggable="true"
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData('text/plain', asset.url);
+                      e.dataTransfer.setData('application/json', JSON.stringify({
+                        type: 'media',
+                        url: asset.url,
+                        name: asset.name || 'Media Asset',
+                      }));
+                    }}
+                  >
+                    <img
+                      src={asset.thumbnail_url || asset.url}
+                      alt={asset.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
                 ))}
               </div>
             )}
