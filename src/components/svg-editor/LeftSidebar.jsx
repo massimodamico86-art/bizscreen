@@ -24,23 +24,18 @@ import {
   AppWindow,
   ArrowRight,
   ArrowUpDown,
-  Award,
-  BarChart3,
   Building2,
   Calendar,
   CalendarDays,
   ChevronLeft,
   Circle,
   Clock,
-  Cloud,
   CloudSun,
   Database,
   Diamond,
   Facebook,
   FileText,
   FolderOpen,
-  Gift,
-  Globe,
   Grid3X3,
   Heart,
   Hexagon,
@@ -53,13 +48,11 @@ import {
   ListMusic,
   Loader2,
   Mail,
-  MapPin,
   MessageSquare,
   Minus,
   Octagon,
   Palette,
   Pentagon,
-  Phone,
   PhoneCall,
   Play,
   Plus,
@@ -69,19 +62,16 @@ import {
   ScrollText,
   Search,
   Shapes,
-  ShoppingCart,
   Smartphone,
   Smile,
   Square,
   Star,
   Sticker,
-  Sun,
   Timer,
   Triangle,
   Twitter,
   Type,
   TypeIcon,
-  Users,
   Video,
   Wifi,
   Youtube,
@@ -145,37 +135,6 @@ const SHAPE_ELEMENTS = [
   { id: 'heart-filled', icon: Heart, label: 'Heart Filled', type: 'heart', filled: true },
 ];
 
-// Icon elements - expanded with FontAwesome-style icons
-const ICON_ELEMENTS = [
-  // Numbers
-  { id: '0', label: '0', symbol: '0', category: 'numbers' },
-  { id: '1', label: '1', symbol: '1', category: 'numbers' },
-  { id: '2', label: '2', symbol: '2', category: 'numbers' },
-  { id: '3', label: '3', symbol: '3', category: 'numbers' },
-  { id: '4', label: '4', symbol: '4', category: 'numbers' },
-  { id: '5', label: '5', symbol: '5', category: 'numbers' },
-  { id: '6', label: '6', symbol: '6', category: 'numbers' },
-  { id: '7', label: '7', symbol: '7', category: 'numbers' },
-  { id: '8', label: '8', symbol: '8', category: 'numbers' },
-  { id: '9', label: '9', symbol: '9', category: 'numbers' },
-  // Common icons
-  { id: 'clock', icon: Clock, label: 'Clock' },
-  { id: 'calendar', icon: Calendar, label: 'Calendar' },
-  { id: 'location', icon: MapPin, label: 'Location' },
-  { id: 'phone', icon: Phone, label: 'Phone' },
-  { id: 'email', icon: Mail, label: 'Email' },
-  { id: 'globe', icon: Globe, label: 'Globe' },
-  { id: 'shopping', icon: ShoppingCart, label: 'Shopping' },
-  { id: 'gift', icon: Gift, label: 'Gift' },
-  { id: 'award', icon: Award, label: 'Award' },
-  { id: 'chart', icon: BarChart3, label: 'Chart' },
-  { id: 'sun', icon: Sun, label: 'Sun' },
-  { id: 'cloud', icon: Cloud, label: 'Cloud' },
-  { id: 'users', icon: Users, label: 'Users' },
-  { id: 'video', icon: Video, label: 'Video' },
-  { id: 'wifi', icon: Wifi, label: 'WiFi' },
-];
-
 // Social icons
 const SOCIAL_ICONS = [
   { id: 'instagram', icon: Instagram, label: 'Instagram', color: '#E4405F' },
@@ -218,6 +177,22 @@ const GIPHY_TABS = [
   { id: 'text', label: 'Text', icon: TypeIcon },
 ];
 
+// Iconify API for searchable icons (15k+ from 5 curated sets)
+const ICONIFY_API = 'https://api.iconify.design';
+const ICON_PREFIXES = 'mdi,lucide,tabler,heroicons,fa-solid';
+
+async function searchIconify(query, limit = 64) {
+  const url = `${ICONIFY_API}/search?query=${encodeURIComponent(query)}&limit=${limit}&prefixes=${ICON_PREFIXES}`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Icon search failed');
+  return response.json();
+}
+
+function getIconPreviewUrl(iconName) {
+  const [prefix, name] = iconName.split(':');
+  return `${ICONIFY_API}/${prefix}/${name}.svg?height=48`;
+}
+
 // Repeater categories
 const REPEATER_CATEGORIES = [
   { id: 'workiversary', label: 'Workiversary Components' },
@@ -232,6 +207,7 @@ export default function LeftSidebar({
   onAddText,
   onAddImage,
   onAddIcon,
+  onAddSvgIcon,
   onAddQRCode,
   onAddWidget,
   onSelectTemplate,
@@ -256,6 +232,9 @@ export default function LeftSidebar({
   const [myMedia, setMyMedia] = useState([]);
   const [loadingMyMedia, setLoadingMyMedia] = useState(false);
   const [myMediaPage, _setMyMediaPage] = useState(1);
+  const [iconResults, setIconResults] = useState([]);
+  const [loadingIcons, setLoadingIcons] = useState(false);
+  const [iconSearchQuery, setIconSearchQuery] = useState('');
 
   // Fetch stock photos from Unsplash via proxy service
   const searchPhotos = useCallback(async (query) => {
@@ -442,6 +421,28 @@ export default function LeftSidebar({
       return () => clearTimeout(timer);
     }
   }, [searchQuery, activePanel, myMediaPage, logger]);
+
+  // Handle Iconify icon search with debounce
+  useEffect(() => {
+    if (activePanel === PANELS.ELEMENTS && iconSearchQuery.trim()) {
+      setLoadingIcons(true);
+      const timer = setTimeout(async () => {
+        try {
+          const result = await searchIconify(iconSearchQuery);
+          setIconResults(result.icons || []);
+        } catch (err) {
+          logger.error('Error searching icons', { error: err });
+          setIconResults([]);
+        } finally {
+          setLoadingIcons(false);
+        }
+      }, 500);
+      return () => clearTimeout(timer);
+    } else {
+      setIconResults([]);
+      setLoadingIcons(false);
+    }
+  }, [iconSearchQuery, activePanel, logger]);
 
   // Nav items matching OptiSigns
   const navItems = [
@@ -917,41 +918,77 @@ export default function LeftSidebar({
               </div>
             </div>
 
-            {/* Icons/Elements */}
+            {/* Icons - Iconify search */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm text-white font-medium">Elements</h4>
+                <h4 className="text-sm text-white font-medium">Icons</h4>
                 <span className="text-xs text-gray-400">
-                  Icons by <span className="text-green-500">FontAwesome</span>
+                  Icons by{' '}
+                  <a
+                    href="https://iconify.design"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-500 hover:underline"
+                  >
+                    Iconify
+                  </a>
                 </span>
               </div>
-              <div className="grid grid-cols-8 gap-1">
-                {ICON_ELEMENTS.map((element) => {
-                  if (element.symbol) {
-                    return (
-                      <button
-                        key={element.id}
-                        onClick={() => onAddIcon?.(element.id, null, null, element.symbol)}
-                        className="aspect-square flex items-center justify-center text-lg font-bold text-gray-300 hover:bg-gray-700 rounded transition-colors"
-                        title={element.label}
-                      >
-                        {element.symbol}
-                      </button>
-                    );
-                  }
-                  const Icon = element.icon;
-                  return (
-                    <button
-                      key={element.id}
-                      onClick={() => onAddIcon?.(element.id, Icon)}
-                      className="aspect-square flex items-center justify-center p-1.5 hover:bg-gray-700 rounded transition-colors"
-                      title={element.label}
-                    >
-                      <Icon className="w-4 h-4 text-gray-300" />
-                    </button>
-                  );
-                })}
+              <div className="relative mb-3">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={iconSearchQuery}
+                  onChange={(e) => setIconSearchQuery(e.target.value)}
+                  placeholder="Search icons..."
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-orange-500"
+                />
               </div>
+              {loadingIcons ? (
+                <div className="flex items-center justify-center py-6">
+                  <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+                </div>
+              ) : iconResults.length > 0 ? (
+                <div className="grid grid-cols-8 gap-1">
+                  {iconResults.map((iconName) => (
+                    <button
+                      key={iconName}
+                      onClick={() => {
+                        if (onAddSvgIcon) {
+                          onAddSvgIcon(iconName);
+                        } else {
+                          onAddImage?.(getIconPreviewUrl(iconName).replace('height=48', 'height=128'));
+                        }
+                      }}
+                      className="aspect-square flex items-center justify-center p-1 hover:bg-gray-700 rounded transition-colors"
+                      title={iconName}
+                      draggable="true"
+                      onDragStart={(e) => {
+                        const [prefix, name] = iconName.split(':');
+                        const svgUrl = `${ICONIFY_API}/${prefix}/${name}.svg?height=128&color=%23333333`;
+                        e.dataTransfer.setData('text/plain', svgUrl);
+                        e.dataTransfer.setData('application/json', JSON.stringify({
+                          type: 'icon',
+                          iconName: iconName,
+                          url: svgUrl,
+                          name: `Icon: ${name}`,
+                        }));
+                      }}
+                    >
+                      <img
+                        src={getIconPreviewUrl(iconName)}
+                        alt={iconName}
+                        className="w-5 h-5"
+                        loading="lazy"
+                      />
+                    </button>
+                  ))}
+                </div>
+              ) : iconSearchQuery.trim() ? (
+                <p className="text-xs text-gray-400 text-center py-4">No icons found</p>
+              ) : (
+                <p className="text-xs text-gray-400 text-center py-4">Search 15,000+ icons</p>
+              )}
             </div>
 
             {/* Social Icons */}
