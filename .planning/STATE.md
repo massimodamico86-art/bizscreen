@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.0 Creative Experience — Phase 49 complete, Phase 50 pending
+**Current focus:** v3.0 Creative Experience — Phase 50 in progress
 
 ## Current Position
 
-Phase: 49 of 50 (Stock Assets in Editor) -- COMPLETE
-Plan: 2 of 2 in current phase (all plans complete)
-Status: Phase 49 complete, ready for Phase 50
-Last activity: 2026-02-11 — Phase 49 Plan 02 executed (2/2 tasks)
+Phase: 50 of 50 (Editor Polish)
+Plan: 1 of 2 in current phase
+Status: Plan 50-01 complete, Plan 50-02 pending
+Last activity: 2026-02-11 — Phase 50 Plan 01 executed (2/2 tasks)
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 80%
 
 ## Milestones Shipped
 
@@ -46,6 +46,7 @@ Progress: [███████░░░] 70%
 | 48 | 02 | 3min | 2 | 2 |
 | 49 | 01 | 4min | 2 | 2 |
 | 49 | 02 | 3min | 2 | 2 |
+| 50 | 01 | 1min | 2 | 2 |
 
 ## Accumulated Context
 
@@ -82,6 +83,9 @@ Progress: [███████░░░] 70%
 - [49-02] loadSVGFromString for vector insertion preserving scalability over rasterized FabricImage
 - [49-02] Single SVG objects insert directly without Group wrapper for simpler object tree
 - [49-02] Fallback to rasterized image if SVG parsing returns empty result
+- [50-01] Conditional scaleTap spread for disabled undo/redo buttons instead of always applying
+- [50-01] Dark-themed custom overlay instead of design-system Modal to match editor chrome
+- [50-01] Mac detection via navigator.platform.includes('Mac') on mount with useState initializer
 
 ### Blockers/Concerns
 
@@ -90,9 +94,9 @@ Progress: [███████░░░] 70%
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: Completed 49-02-PLAN.md (Phase 49 complete)
+Stopped at: Completed 50-01-PLAN.md
 Resume file: None
-Next: Plan Phase 50
+Next: Execute 50-02-PLAN.md
 
 ---
-*Updated: 2026-02-11 — Phase 49 complete (stock assets in editor: proxy photos, icons, drag-and-drop).*
+*Updated: 2026-02-11 — Phase 50 Plan 01 complete (toolbar scaleTap animations, keyboard shortcuts overlay).*
