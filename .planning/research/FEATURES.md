@@ -1,386 +1,300 @@
-# Features Research: BizScreen v2
+# Feature Landscape: Data-Driven Signage Widgets
 
-**Domain:** Digital Signage Platform Enhancement
-**Researched:** 2026-01-24
-**Focus:** Templates Marketplace, Multi-Language Content, Advanced Scheduling
+**Domain:** Digital signage data source rendering, social/RSS feeds, utility widgets
+**Researched:** 2026-02-11
+**Overall confidence:** HIGH (strong training data for Yodeck, ScreenCloud, OptiSigns, Rise Vision, NoviSign patterns; verified against existing BizScreen codebase)
 
 ## Summary
 
-Research into digital signage platform features reveals clear patterns for the three target v2 capabilities:
+Research into data-driven widget features for digital signage reveals three distinct feature clusters with different maturity expectations:
 
-1. **Templates Marketplace**: Industry standard is platform-provided templates (not user commerce). Platforms like Yodeck offer 400+ templates organized by category/industry. The key differentiator is one-click apply + customization workflow. User-generated template marketplaces (like Canva's creator economy) require significant moderation infrastructure.
+1. **Data Source Widgets (Google Sheets/CSV/API rendering)**: Table stakes is connecting a spreadsheet and showing it as a formatted table or menu board on screen. The differentiation comes from how seamlessly data binds to visual templates (not just raw tables), automatic refresh with visual transition, and multi-row pagination (auto-scrolling through rows that don't fit one screen). BizScreen already has the data management layer (DataSourcesPage, Google Sheets sync, CSV import, data binding resolution) -- what is missing is the rendering pipeline: a DataSourceWidget that resolves bindings at display time, styled table/list/card renderers for the player, and configurable poll refresh that triggers re-render.
 
-2. **Multi-Language Content**: Expected behavior is per-device language assignment with content variants. Standard approach uses a centralized CMS with language variants stored together, then device-level selection determines which variant plays. Cultural adaptation beyond translation is increasingly expected.
+2. **Social/RSS Feed Display**: BizScreen has strong foundations -- SocialFeedWidget with 5 layout modes (carousel, grid, list, single, masonry), SocialFeedRenderer for player with cached-data-only rendering, a sync service with rate limiting across 4 providers (Instagram, Facebook, TikTok, Google Reviews), and an RSS ticker app. What is missing is connecting these to the layout zone system, RSS feed widget (not just ticker), content moderation/approval for social posts before display, and hashtag filtering at the player level.
 
-3. **Advanced Scheduling**: Industry features dayparting, priority-based override (emergency content), date ranges, and campaign grouping. Priority scheduling is critical for emergency alerts (can override in <3 seconds). Conflict detection with visual preview is table stakes.
+3. **Weather/Time/Countdown Widgets**: Weather and Clock already render in the player (WeatherWidget, ClockWidget, full WeatherWall app). Missing: countdown widget (event countdown, store opening, promotion end), date widget with formatting options, world clock (multi-timezone), and analog clock styles beyond the basic digital display.
 
-**Key insight for BizScreen**: The existing "save layout as template" feature and schedule system provide foundation. v2 should focus on:
-- Template discovery and import (not commerce)
-- Content language variants (not UI translation which exists)
-- Campaign grouping and priority override
+**Critical dependency insight**: BizScreen's existing `AppRenderer` already routes app types (clock, weather, web_page, rss_ticker, data_table) with a `useAppData` hook for polling refresh. New widgets should follow this established pattern rather than inventing new rendering infrastructure.
 
 ---
 
-## Templates Marketplace Features
+## Table Stakes
 
-### Table Stakes
-Features users expect in any template marketplace implementation.
+Features users expect in any digital signage platform offering "data-driven content." Missing = product feels incomplete.
 
-| Feature | Description | Complexity | Notes |
-|---------|-------------|------------|-------|
-| Category browsing | Templates organized by industry (restaurant, retail, salon, etc.) | LOW | Existing `template_categories` table supports this |
-| Search functionality | Text search by name/description | LOW | Already implemented in `templateService.js` |
-| Template preview | Visual preview before applying | LOW | `thumbnail_url` exists, need modal preview |
-| One-click apply | Apply template creates usable content immediately | MEDIUM | `applyTemplate` RPC exists, verify scene/layout creation |
-| Featured templates | Curated selection on homepage | LOW | Already have `is_featured` in `template_library` |
-| Orientation filter | Landscape vs portrait filtering | LOW | `meta.orientation` exists in current schema |
-| Recently used | Quick access to templates user has applied before | LOW | `user_template_history` table exists |
-| Favorites | User can bookmark templates for later | LOW | `user_template_favorites` table exists |
+### Data Source Rendering
 
-### Differentiators
-Features that set BizScreen apart from competitors.
+| Feature | Why Expected | Complexity | Existing BizScreen State | Notes |
+|---------|-------------|------------|--------------------------|-------|
+| Google Sheets table display | Every competitor offers this (Yodeck, ScreenCloud, OptiSigns) | Med | DataSourcesPage + googleSheetsService exist; DataTableApp renders generic tables; DataBoundWizardModal creates data-bound slides | Need to connect existing data sources to player rendering via DataTableApp or new widget |
+| CSV data display | Complement to Sheets for offline/simple use | Low | CSV import + createDataSourceFromCSV exist; same rendering path as Sheets | Already built on management side; just need player path |
+| Auto-refresh/polling | Users expect data to update without manual intervention | Med | `useAppData` hook polls every N minutes; data source has `pollIntervalMinutes`; Supabase realtime subscriptions exist | Configurable interval (5-60 min) already designed in link modal |
+| Table layout with header/rows | Default expectation for spreadsheet data | Low | DataTableApp already renders headers + rows with alternating colors | Need to wire data source service into DataTableApp config |
+| Menu board layout | #1 use case for restaurant/retail signage | Med | DataBoundWizardModal generates list/grid/featured blueprints | Scene-based approach exists; need standalone widget approach too |
+| Real-time sync status indicator | Users need confidence data is current | Low | Sync status + sync history + last_sync_at all tracked in data source service | Need to expose "last updated" in player corner overlay |
+| Data binding to scene text elements | Let users bind specific fields to text blocks in scene editor | Med | Full data binding system exists: `resolveBinding`, `resolveMultipleBindings`, `getBindingKey`, `formatValue` | Already implemented in DataBoundWizardModal; needs polish |
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Starter packs | Pre-configured scene+layout+schedule bundles for quick onboarding | MEDIUM | `apply_pack_template` RPC exists, needs UX refinement |
-| Canva integration | Edit templates with Canva, sync changes to BizScreen | HIGH | Yodeck offers this; requires Canva Connect API |
-| Template customization wizard | Guided replacement of placeholder content (logo, colors, text) | MEDIUM | Improve on raw editor for non-designers |
-| Smart template suggestions | Recommend templates based on user's industry/usage | MEDIUM | Leverage `business_type` from onboarding |
-| Template rating/reviews | Community feedback on template quality | LOW | Simple star rating + review text |
-| Usage analytics | Show which templates perform best (view duration) | MEDIUM | Connect to existing analytics infrastructure |
+### Social/RSS Feed Display
 
-### Anti-Features
-Features to explicitly NOT build.
+| Feature | Why Expected | Complexity | Existing BizScreen State | Notes |
+|---------|-------------|------------|--------------------------|-------|
+| Social media wall/feed display | Standard feature in Yodeck, ScreenCloud, OptiSigns | Med | SocialFeedWidget (5 layouts), SocialFeedRenderer (player), socialFeedSyncService | Core exists; needs zone integration |
+| Instagram feed | Most requested social platform for signage | Low | instagramService with syncInstagramPosts | Exists |
+| Facebook feed | Second most requested | Low | facebookService with syncFacebookPosts | Exists |
+| Google Reviews display | Critical for restaurants/retail | Low | googleReviewsService, star rating rendering in SocialFeedRenderer | Exists with rating stars |
+| RSS feed content display | Expected for news/corporate comms | Med | RssTickerApp exists as scrolling ticker only | Need full RSS card/article layout, not just ticker |
+| Auto-rotation of feed items | Signage cycles through content automatically | Low | rotationSpeed prop on SocialFeedWidget, carousel auto-advance | Already built |
+| Configurable item count | Control how many posts/items show | Low | maxItems prop on SocialFeedWidget | Already built |
 
-| Anti-Feature | Why Avoid | Alternative |
-|--------------|-----------|-------------|
-| User template marketplace (buy/sell) | Requires complex moderation, payment processing, copyright enforcement, and ongoing curation. Canva has 220M users to make creator economy viable. | Platform-curated templates only; allow users to share templates within their organization |
-| AI-generated templates | Generative AI for templates is emerging trend but adds complexity, unpredictable results, and support burden | Manual curation of professionally designed templates |
-| Real-time template collaboration | Multi-user editing adds significant complexity | Sequential editing with version history |
-| Custom template pricing tiers | Monetizing individual templates creates support burden | Simpler plan-based access (free/pro/enterprise on templates) |
+### Utility Widgets
 
----
-
-## Multi-Language Content Features
-
-### Table Stakes
-Features users expect for multi-language digital signage.
-
-| Feature | Description | Complexity | Notes |
-|---------|-------------|------------|-------|
-| Content language variants | Same scene/playlist with multiple language versions | MEDIUM | Need `language_code` field on content, or separate language_variants table |
-| Per-device language assignment | Device plays content in assigned language | LOW | Add `language_code` to `tv_devices` table |
-| Language fallback | If variant missing, show default language | LOW | Logic in player content resolution |
-| CMS language selector | Easy toggle between language versions when editing | MEDIUM | UI component for scene/playlist editor |
-| Language indicator | Visual badge showing which languages have content | LOW | UI badge on content cards |
-| Bulk language management | View all content needing translation in one place | MEDIUM | Dashboard for translation status |
-
-### Differentiators
-Features that provide competitive advantage.
-
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Screen group language assignment | Assign language to group, all devices inherit | LOW | Leverage existing `screen_groups` table |
-| Location-based language | Auto-assign language based on device location | MEDIUM | Map locations to default languages |
-| Playlist per-language scheduling | Different playlists for different languages on same schedule | MEDIUM | Alternative to content variants approach |
-| Translation workflow | Track draft/review/approved status per language | MEDIUM | Similar to existing content approval workflow |
-| AI translation suggestions | Machine translation as starting point | MEDIUM | Integration with translation API (DeepL, Google) |
-| Dynamic text localization | Text elements with per-language values | HIGH | Requires Polotno editor modifications |
-
-### Anti-Features
-Features to explicitly NOT build.
-
-| Anti-Feature | Why Avoid | Alternative |
-|--------------|-----------|-------------|
-| Real-time translation display | On-screen language switching is viewer-confusing and technically complex | Static language assignment per device |
-| Automatic content translation | AI translation without human review creates quality/liability issues | Translation suggestions with required human approval |
-| Character-based languages (CJK) | Significant font/rendering complexity, requires special testing | Focus on LTR Latin alphabet languages initially (already have: en, es, pt, it, fr, de) |
-| RTL language support | Hebrew, Arabic require complete UI/content mirroring | Defer to future version; current i18n config notes direction but no RTL locales |
+| Feature | Why Expected | Complexity | Existing BizScreen State | Notes |
+|---------|-------------|------------|--------------------------|-------|
+| Clock display | Universal expectation | Low | ClockWidget (simple), ClockApp (full-screen with date) | Already built in two variants |
+| Weather display | Top 3 most-used widget across all platforms | Low | WeatherWidget (minimal/card), WeatherWall (full-screen), weatherService | Already built |
+| Current date display | Common companion to clock | Low | DateWidget exists in player widgets index | Already exported |
+| Countdown timer | Expected for events, promotions, store openings | Med | Not built | Need new CountdownWidget |
+| Configurable refresh intervals | Users control how often data updates | Low | `refreshMinutes` config on AppRenderer's useAppData, `pollIntervalMinutes` on data sources | Pattern exists; apply consistently |
 
 ---
 
-## Advanced Scheduling Features
+## Differentiators
 
-### Table Stakes
-Features users expect in advanced scheduling systems.
+Features that set BizScreen apart. Not expected by all users, but valued when present.
 
-| Feature | Description | Complexity | Notes |
-|---------|-------------|------------|-------|
-| Date range scheduling | Content plays only between start/end dates | LOW | `start_date`/`end_date` already in `schedule_entries` |
-| Priority levels | Higher priority content overrides lower | LOW | `priority` field exists, verify player respects it |
-| Conflict detection | Warn when entries overlap | LOW | `check_schedule_entry_conflicts` RPC exists |
-| Week preview | Visual 7-day view of schedule | LOW | `getWeekPreview` function exists |
-| Campaign grouping | Group related schedule entries as campaign | MEDIUM | New `campaigns` table or add campaign_id to entries |
-| Emergency override | Instant content push that overrides all schedules | MEDIUM | Max priority entry + push notification to players |
-| Dayparting presets | Quick-select breakfast/lunch/dinner time slots | LOW | Predefined time templates in UI |
-
-### Differentiators
-Features that provide competitive advantage.
+### Data Source Rendering
 
 | Feature | Value Proposition | Complexity | Notes |
 |---------|-------------------|------------|-------|
-| Campaign analytics | Performance metrics grouped by campaign | MEDIUM | Extend existing analytics to campaign level |
-| Content rotation rules | Percentage-based content mix within time slot | MEDIUM | Multiple entries same slot with rotation logic |
-| Frequency limits | Play content max N times per hour/day | LOW | Xibo has this; add to `schedule_entries` |
-| Conditional triggers | Play based on external data (weather, inventory) | HIGH | Already have data feeds infrastructure |
-| Campaign templates | Save campaign configuration for reuse | LOW | Serialize campaign as JSON template |
-| Seasonal campaigns | Auto-activate campaigns by season/holiday | LOW | Pre-set date ranges with optional yearly recurrence |
-| Multi-zone scheduling | Different content per zone within layout, per time | HIGH | Extends layout zone concept into scheduling |
+| Visual template binding (not just tables) | Data appears in branded scene designs, not raw spreadsheet look | High | DataBoundWizardModal already does this; extend to more template types (cards, featured items, image grids) |
+| Multi-row auto-pagination | When data has 20 items but screen fits 6, automatically cycle through pages with smooth transitions | Med | Yodeck and ScreenCloud offer this; critical for menu boards with many items |
+| Row filtering/conditional display | Show only rows where a column matches a condition (e.g., "Category = Lunch") | Med | rowSelector already supports `match` mode in data binding; expose in UI |
+| Image URL field rendering | If a data source field contains an image URL, render it as an image (product photos in menu boards) | Med | FIELD_DATA_TYPES.IMAGE_URL exists; DataTableApp currently renders as text |
+| Data source preview in editor | See live data in the scene editor while designing | Med | DataBoundWizardModal has a preview; extend to real-time in EditorCanvas |
+| Transition animations between data refreshes | Smooth fade/slide when data updates rather than jarring content replacement | Med | Improves perceived quality; standard in premium platforms |
+| Multi-source dashboard | Combine multiple data sources in one layout (weather + menu + social in zones) | Low | Layout zone system already supports this via zone content assignment |
 
-### Anti-Features
-Features to explicitly NOT build.
+### Social/RSS Feed Display
 
-| Anti-Feature | Why Avoid | Alternative |
-|--------------|-----------|-------------|
-| Per-viewer personalization | Face detection, demographic targeting is privacy nightmare and technically complex | Time-based dayparting achieves similar goals |
-| Programmatic advertising integration | Complex ad-tech ecosystem, billing, reporting | Focus on owned content scheduling |
-| AI content optimization | Auto-scheduling based on predicted performance adds unpredictability | Manual scheduling with performance reports |
-| Complex recurrence rules (RFC 5545) | iCal-level recurrence is over-engineered for signage | Simple daily/weekly/yearly repeat options |
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Content moderation/approval queue | Review social posts before they appear on screens | Med | ReviewInboxPage exists; socialFeedSyncService tracks posts; need approval status field |
+| Hashtag-based filtering | Only show posts with specific hashtags | Low | FILTER_MODES.HASHTAG defined in social index; implement filter in query |
+| TikTok video playback | Video content from TikTok plays natively on screens | Med | tiktokService + video rendering in SocialFeedRenderer exist |
+| RSS article cards (not just ticker) | Full article preview with image, title, excerpt in card format | Med | RssTickerApp is ticker-only; need RssCardApp/RssFeedWidget |
+| Multi-feed aggregation | Combine Instagram + Facebook + Reviews into one rotating wall | Med | Each provider syncs independently; need aggregation layer |
+| Social proof overlay | Show review count + average rating as a persistent overlay on any content | Low | Google Reviews data available; create compact overlay widget |
+
+### Utility Widgets
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Countdown to specific date/time | "Grand Opening in 3 days 14 hours" for promotions | Med | New widget; straightforward timer logic |
+| Recurring countdown | Daily countdown (e.g., "Happy Hour starts in 2h 15m") | Med | Needs day-of-week + time-of-day logic |
+| World clock (multi-timezone) | Corporate offices with teams across time zones | Low | ClockApp already supports timezone config; need multi-instance layout |
+| Analog clock face | Visual variety; some venues prefer analog aesthetic | Med | SVG-based clock face rendering needed |
+| Custom date format per locale | "Lundi 11 Fevrier 2026" vs "Monday, February 11, 2026" | Low | Intl.DateTimeFormat with locale prop |
+
+---
+
+## Anti-Features
+
+Features to explicitly NOT build in this milestone.
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| Full Google Sheets OAuth integration | Massive complexity (OAuth flows, token refresh, scoped permissions); public sheet access via API key already works | Keep current approach: publicly-shared sheets with API key reads. Document that sheets must be "Anyone with link" |
+| User-editable data directly on player screens | Signage is display-only; interactive data editing belongs in CMS | Keep data editing in DataSourcesPage; player is read-only |
+| Real-time social media API polling from player | Players should never make external API calls (rate limits, API keys on client) | Continue SocialFeedRenderer pattern: player reads cached data from Supabase; sync service handles API calls server-side |
+| Custom widget SDK / plugin system | Premature abstraction; too few widget types to justify SDK overhead | Use the established AppRenderer switch pattern; add new widget types as cases |
+| AI-powered data interpretation | "Smart" data display that reorganizes or summarizes spreadsheet data | Display data exactly as structured; users control layout via templates and field mapping |
+| Bi-directional data sync (write back to Sheets) | Complexity + auth concerns; one-way sync is the standard | Read-only from Google Sheets; edits happen in Sheets or BizScreen DataSourcesPage |
+| Social media posting/scheduling | Completely different product category; stay focused on display | Only consume/display social content, never post |
+| Embeddable third-party widget marketplace | Too early; need core widgets solid first | Build first-party widgets; consider marketplace in future milestone |
 
 ---
 
 ## Feature Dependencies
 
-How new v2 features depend on existing BizScreen capabilities.
+```
+Data Source Management (EXISTS) --> Data Source Widget Renderer (NEW)
+                                --> Data-Bound Scene Templates (PARTIAL - DataBoundWizardModal)
+                                --> Player Data Resolution (PARTIAL - resolveMultipleBindings)
 
-### Templates Marketplace Dependencies
+Google Sheets Sync (EXISTS) --> Configurable Poll Refresh (PARTIAL - interval exists, timer needed)
+                            --> Sync Status in Player (NEW)
 
-| New Feature | Depends On | Status |
-|-------------|------------|--------|
-| Category browsing | `template_categories` table | EXISTS |
-| Template preview | `thumbnail_url` on templates | EXISTS |
-| One-click apply | `applyTemplate` RPC, scene/layout creation | EXISTS |
-| Favorites | `user_template_favorites` table | EXISTS |
-| Recently used | `user_template_history` table | EXISTS |
-| Starter packs | `apply_pack_template` RPC | EXISTS |
-| Template search | `fetchTemplates` with search param | EXISTS |
+Social Feed Sync (EXISTS) --> Social Feed Zone Widget (NEW - connect to layout zones)
+                          --> Content Moderation Queue (NEW)
+                          --> Hashtag Filtering (NEW)
 
-**Gap:** Template customization wizard needs new UI component.
+SocialFeedWidget (EXISTS) --> Player SocialFeedRenderer (EXISTS)
+                          --> Layout Zone Integration (NEW)
 
-### Multi-Language Content Dependencies
+SocialFeedRenderer (EXISTS) --> Already reads from Supabase cached data
+                             --> Needs: zone sizing awareness, refresh on new data
 
-| New Feature | Depends On | Status |
-|-------------|------------|--------|
-| Admin UI translation | i18n context with locale files | EXISTS (6 locales configured) |
-| Content variants | `language_code` field on content | NEEDS MIGRATION |
-| Per-device language | `language_code` on `tv_devices` | NEEDS MIGRATION |
-| Language fallback | Player content resolution logic | NEEDS PLAYER UPDATE |
-| CMS language selector | Scene/playlist editor UI | NEEDS UI COMPONENT |
+RssTickerApp (EXISTS) --> RSS Card Layout (NEW)
+                      --> RSS in Layout Zones (NEW)
 
-**Gap:** Need database schema for language variants and player logic update.
+ClockWidget (EXISTS) --> Countdown Widget (NEW - separate widget)
+WeatherWidget (EXISTS) --> No new dependencies for weather
+DateWidget (EXISTS) --> Locale formatting enhancement (LOW)
 
-### Advanced Scheduling Dependencies
-
-| New Feature | Depends On | Status |
-|-------------|------------|--------|
-| Date range scheduling | `start_date`/`end_date` fields | EXISTS |
-| Priority levels | `priority` field | EXISTS |
-| Conflict detection | `check_schedule_entry_conflicts` RPC | EXISTS |
-| Week preview | `getWeekPreview` function | EXISTS |
-| Filler content | `filler_content_type/id` fields | EXISTS |
-| Device assignment | `assigned_schedule_id` on devices | EXISTS |
-
-**Gap:** Campaign grouping needs new table or field; emergency override needs push mechanism.
+AppRenderer routing (EXISTS) --> New widget types added as cases
+useAppData hook (EXISTS) --> Reuse for all data-fetching widgets
+Layout Zone System (EXISTS) --> All widgets must render in zones
+```
 
 ---
 
 ## MVP Recommendation
 
-For v2 MVP, prioritize:
+### Prioritize (Phase 1 -- Wire Existing Infrastructure)
 
-### Templates Marketplace
-1. **Improved browse UI** with category filtering and search (table stakes)
-2. **Template preview modal** with full-size image and details (table stakes)
-3. **Starter packs UX** on onboarding flow (differentiator, partially exists)
-4. Template customization wizard (differentiator)
+These features connect already-built infrastructure to produce visible value:
 
-### Multi-Language Content
-1. **Per-device language assignment** (table stakes, lowest complexity)
-2. **Content language variants** with simple variant picker (table stakes)
-3. **Language fallback** logic in player (table stakes)
-4. Translation status dashboard (differentiator)
+1. **Data Source Widget in Player** -- Connect DataSourcesPage data to DataTableApp rendering via direct Supabase query (not just useAppData API). The data source service has `getDataSource`, `getDataSourceRows`, `subscribeToDataSource`. Wire these to a new player widget.
+   - Complexity: Med
+   - Leverage: DataTableApp + dataSourceService + existing data
+   - Why first: Highest user value; "I connected my Google Sheet, now show it on screen"
 
-### Advanced Scheduling
-1. **Campaign grouping** to organize related entries (table stakes for "advanced" label)
-2. **Emergency override** capability (table stakes for enterprise)
-3. **Frequency limits** per schedule entry (differentiator, low complexity)
-4. Campaign analytics view (differentiator)
+2. **Social Feed in Layout Zones** -- Make SocialFeedWidget/SocialFeedRenderer available as a layout zone content type. The widget exists with 5 layouts; it just needs to be assignable to zones.
+   - Complexity: Low
+   - Leverage: SocialFeedWidget + SocialFeedRenderer + layout zone system
+   - Why second: Most infrastructure already built; small integration effort
 
-### Defer to Post-v2
-- Canva integration (high complexity)
-- AI translation suggestions (medium complexity, quality concerns)
-- Conditional triggers (high complexity)
-- Multi-zone scheduling (high complexity)
-- User template marketplace (not aligned with platform model)
+3. **Countdown Widget** -- New widget but straightforward: target date/time, calculate remaining, display formatted countdown. Follow ClockWidget pattern.
+   - Complexity: Low-Med
+   - Leverage: AppRenderer routing, widget pattern from ClockWidget
+   - Why third: Unique feature request; simple to build right
+
+4. **Configurable Poll Refresh UI** -- Expose the existing pollIntervalMinutes in a user-friendly way across all data widgets. Show "last updated" timestamp.
+   - Complexity: Low
+   - Leverage: useAppData hook, data source pollIntervalMinutes
+   - Why fourth: Completes the data pipeline UX
+
+### Prioritize (Phase 2 -- Polish and Differentiate)
+
+5. **Multi-row auto-pagination** for data tables/menus -- When data exceeds visible rows, auto-cycle through pages
+6. **RSS card/article layout** -- Extend RssTickerApp with card view for news feeds
+7. **Content moderation for social feeds** -- Approval queue before posts hit screens
+8. **Image URL rendering in data sources** -- Render IMAGE_URL field type as actual images
+9. **Transition animations** on data refresh
+
+### Defer
+
+- **Analog clock face** -- Nice to have, not core to data-driven milestone
+- **World clock multi-timezone** -- Niche use case
+- **Multi-feed aggregation** -- Complex; individual feeds work fine for v1
+- **TikTok video playback optimization** -- Works via standard video tag; optimize later if needed
+- **Recurring daily countdown** -- Complex scheduling logic; offer one-time countdown first
 
 ---
 
-## Confidence Assessment
+## Existing BizScreen Assets Inventory
 
-| Area | Confidence | Notes |
-|------|------------|-------|
-| Templates table stakes | HIGH | Well-documented by multiple platforms (Yodeck, ScreenCloud, OptiSigns) |
-| Templates differentiators | MEDIUM | Canva integration common but integration complexity uncertain |
-| Multi-language table stakes | HIGH | Standard approach documented across platforms |
-| Multi-language differentiators | MEDIUM | AI translation accuracy and integration effort unclear |
-| Scheduling table stakes | HIGH | Xibo documentation provides clear priority/dayparting patterns |
-| Scheduling differentiators | MEDIUM | Conditional triggers complexity depends on data feed maturity |
-| Existing code foundation | HIGH | Direct code inspection confirms feature presence |
-| Player impact | MEDIUM | Player changes needed for language support not fully scoped |
+This section maps what already exists to avoid rebuilding.
+
+### Fully Built (Use As-Is)
+
+| Asset | Location | What It Does |
+|-------|----------|-------------|
+| DataSourcesPage | `src/pages/DataSourcesPage.jsx` | Full CRUD for data sources, CSV import, Google Sheets linking, field/row editing, sync history |
+| dataSourceService | `src/services/dataSourceService.js` | Complete service: CRUD, CSV parsing, data binding resolution, realtime subscriptions, sync status |
+| googleSheetsService | `src/services/googleSheetsService.js` | Sheet fetching via API key, change detection, field generation, sync with status tracking |
+| SocialFeedWidget | `src/components/SocialFeedWidget.jsx` | 5 layout modes (carousel, grid, list, single, masonry), auto-rotation, post info display |
+| SocialFeedRenderer | `src/components/player/SocialFeedRenderer.jsx` | Player-optimized renderer, cached data only, 5 view modes, Google Reviews special rendering |
+| socialFeedSyncService | `src/services/socialFeedSyncService.js` | Background sync for 4 providers, rate limiting, concurrent sync control |
+| Social provider services | `src/services/social/` | Instagram, Facebook, TikTok, Google Reviews sync services |
+| WeatherWidget | `src/player/components/widgets/WeatherWidget.jsx` | Minimal + card styles, auto-refresh, OpenWeatherMap integration |
+| WeatherWall | `src/components/WeatherWall/` | Full-screen weather with 3 themes (animated, classic, glass) |
+| ClockWidget | `src/player/components/widgets/ClockWidget.jsx` | Configurable size, color, 12-hour format |
+| ClockApp | `src/player/components/AppRenderer.jsx` | Full-screen clock with date, timezone support, format options |
+| DateWidget | `src/player/components/widgets/DateWidget.jsx` | Date display widget |
+| AppRenderer | `src/player/components/AppRenderer.jsx` | Routes app types to components, `useAppData` hook with caching + polling |
+| DataTableApp | `src/player/components/AppRenderer.jsx` | Table rendering with headers, alternating rows, dark/light theme, "has more" indicator |
+| RssTickerApp | `src/player/components/AppRenderer.jsx` | Scrolling ticker with configurable speed, title bar, API data fetching |
+| DataBoundWizardModal | `src/components/scene-editor/DataBoundWizardModal.jsx` | 3-step wizard: select source, configure layout (list/grid/featured), preview + create slide |
+
+### Partially Built (Extend)
+
+| Asset | Location | What Exists | What's Missing |
+|-------|----------|-------------|----------------|
+| Data binding in scenes | DataBoundWizardModal + dataSourceService | Blueprint generation with `dataBinding` props on text blocks | Runtime resolution in player SceneRenderer; only wizard creates bindings, not manual scene editor |
+| RSS feed display | RssTickerApp | Scrolling ticker only | Card layout, image display, article excerpts |
+| Social feed in zones | SocialFeedWidget | Works as standalone component | Not available as zone content type in layout editor |
+| Poll refresh config | Data source link modal | UI for selecting 5/10/15/30/60 min intervals | No visible "last updated" indicator; no refresh trigger from player |
+| Content moderation | ReviewInboxPage exists | Review inbox page for approvals | Not connected to social feed posts; no approve/reject workflow for social content |
+
+### Not Built (Create New)
+
+| Feature | Recommended Approach |
+|---------|---------------------|
+| CountdownWidget | New widget following ClockWidget pattern; target date prop, interval timer, formatted display |
+| Data source zone widget | New zone content type that references a data source ID; renders via DataTableApp or template |
+| RSS card/article widget | New RssCardApp component alongside RssTickerApp in AppRenderer |
+| Social feed content moderation | Add `approval_status` to social_feeds table; filter in SocialFeedRenderer query |
+| Auto-pagination for data tables | Page cycling logic in DataTableApp; calculate visible rows from container height |
+| Sync status overlay | Small "Updated 5m ago" badge rendered in player widget corner |
+
+---
+
+## User Behavior Expectations
+
+### Data Source Widget Users
+
+- **Primary persona**: Restaurant/retail manager who maintains a Google Sheet with menu items and prices
+- **Expected flow**: Create data source > Link Google Sheet > Choose display template > Assign to screen > Data auto-updates
+- **Key expectation**: Change a price in Google Sheets, see it update on screen within 5-15 minutes without any action in BizScreen
+- **Frustration point**: If data doesn't update, there must be clear status indicators explaining why
+- **Power user behavior**: Multiple data sources (lunch menu, dinner menu, specials) assigned to different dayparts via scheduling
+
+### Social Feed Widget Users
+
+- **Primary persona**: Marketing manager at restaurant, retail store, or hotel
+- **Expected flow**: Connect Instagram account > Choose layout > Assign to screen zone > Posts auto-appear
+- **Key expectation**: New Instagram posts appear on screens automatically; no manual curation needed
+- **Frustration point**: Inappropriate customer-tagged posts appearing on lobby screen without review
+- **Power user behavior**: Filtered feeds (only posts with brand hashtag), moderation queue for review before display
+
+### Utility Widget Users
+
+- **Primary persona**: Office manager, event coordinator
+- **Expected flow**: Add clock/weather/countdown to a layout zone > Configure > Done
+- **Key expectation**: Widgets are always accurate and visually clean
+- **Frustration point**: Clock showing wrong timezone; countdown that shows negative time after event passes
+- **Power user behavior**: Multiple clocks for different office locations in one layout; countdown that switches to "Event is Live!" message
+
+---
+
+## Complexity Budget
+
+Total estimated complexity for the full milestone, based on existing infrastructure:
+
+| Category | Table Stakes | Differentiators | Total |
+|----------|-------------|-----------------|-------|
+| Data Source Widgets | ~3 features (Med) | ~4 features (Med-High) | 7 features |
+| Social/RSS Widgets | ~2 features (Low-Med) | ~3 features (Med) | 5 features |
+| Utility Widgets | ~1 feature (Med) | ~2 features (Low-Med) | 3 features |
+| **Total** | **~6 features** | **~9 features** | **15 features** |
+
+**Key insight**: BizScreen's existing infrastructure dramatically reduces complexity. The data source service, social feed sync, weather/clock widgets, and app renderer pattern are all built. This milestone is primarily about **connecting existing services to the player rendering pipeline** and adding the countdown widget as the only wholly new component.
 
 ---
 
 ## Sources
 
-### Templates Marketplace
-- [Yodeck Digital Signage](https://www.yodeck.com/) - 400+ templates, Canva integration
-- [ScreenCloud vs Yodeck](https://www.yodeck.com/news/yodeck-vs-screencloud/) - Template library comparison
-- [OptiSigns Templates](https://www.optisigns.com/templates) - Template organization patterns
-- [Canva Creators Program](https://www.canva.com/creators/) - Creator economy model (for reference)
-- [Play Digital Signage Templates](https://playsignage.com/blog/free-digital-signage-templates/) - Category organization
-
-### Multi-Language Content
-- [ScreenCloud Multilingual](https://screencloud.com/digital-signage/multilingual) - Language assignment patterns
-- [Fugo Wiki: Localized Multi-Language Support](https://www.fugo.ai/wiki/localized-multi-language-support/) - Cultural adaptation
-- [NowSignage Multi-Language CMS](https://www.nowsignage.com/2022/05/nowsignage-launches-multi-language-cms/) - CMS approach
-- [MetroClick Multi-Language Implementation](https://www.metroclick.com/digital-signage/software/implementing-multi-language-support-in-digital-signage-software/) - Technical considerations
-- [PosterBooking Multilingual Setup](https://www.posterbooking.com/signage/how-to-guides/set-up-multilingual-support-on-digital-signage/) - Playlist-per-language approach
-
-### Advanced Scheduling
-- [Xibo Priority and Display Order](https://account.xibosignage.com/manual/en/scheduling_priority_display_order) - Priority scheduling documentation
-- [NowSignage Content Scheduling](https://www.nowsignage.com/2024/07/content-scheduling) - Campaign scheduling
-- [Digital Signage Today: Dayparting](https://www.digitalsignagetoday.com/blogs/keys-to-dayparting-and-digital-signage/) - Dayparting best practices
-- [PiSignage Emergency Playlist](https://blog.pisignage.com/emergency-playlist-feature/) - Emergency override patterns
-- [AIScreen Scheduled Content](https://www.aiscreen.io/digital-signage/scheduled-content/) - Date range scheduling
-
-### Approval Workflows (for template moderation reference)
-- [Courier Template Approval Workflow](https://www.courier.com/docs/platform/content/template-approval-workflow/) - Webhook-based approval
-- [Adobe Express Template Approval](https://helpx.adobe.com/express/web/share-and-publish/share-and-collaborate/set-template-approval.html) - Review workflows
-
----
-
-## v3.0 Features: Premium Template Browsing, Editor Polish, Stock Assets
-
-**Domain:** Digital Signage Platform -- Premium Creative Experience
-**Researched:** 2026-02-10
-**Focus:** Animated template gallery, in-editor stock photos/icons, editor polish and micro-interactions
-
-### Summary
-
-v3.0 focuses on the "premium feel" -- making BizScreen's template browsing and editor experience competitive with Yodeck and OptiSigns. The key insight from stack research is that BizScreen already has all the infrastructure needed (Framer Motion, Lucide, Polotno SDK, canvas-confetti) but underutilizes it. The template grid uses zero Framer Motion despite `motion.js` having 15+ animation presets. The upgrade is about **better utilization of existing tools**, not new capabilities.
-
----
-
-### Table Stakes
-
-Features users expect in a premium template browsing + editor experience.
-
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| Animated template card entrance | Competitors show cards with stagger fade-in; static grids feel dated | LOW | Framer Motion staggerChildren + motion.js presets |
-| Card hover micro-interactions | Lift, shadow, scale on hover is standard in modern galleries | LOW | Framer Motion whileHover + whileTap |
-| Smooth preview panel transitions | Slide-in panel for template details is expected UX pattern | LOW | Already implemented with `drawer` preset in TemplatePreviewPanel |
-| Image lazy loading | Off-screen images should not load until near viewport | LOW | Native `loading="lazy"` already in OptimizedImage; add `useInView` for animation trigger |
-| Stock photo search in editor | Canva, Yodeck, OptiSigns all offer in-editor stock photos | MEDIUM | Polotno custom side panel with Unsplash API |
-| Loading state polish | Skeleton screens or blur-to-sharp image reveal vs. bare spinners | LOW | Framer Motion `imageReveal` preset + Tailwind skeleton |
-| Save success feedback | Visual confirmation beyond a plain toast | LOW | canvas-confetti (already installed) + animated checkmark |
-
-### Differentiators
-
-Features that set BizScreen apart from Yodeck/OptiSigns.
-
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Shared element transition (card to editor) | Template thumbnail morphs into editor loading screen -- feels native, not web | MEDIUM | Framer Motion `layoutId` on TemplateCard + EditorModal |
-| In-editor icon library | Drop-in Lucide icons directly onto design canvas -- competitors lack this | MEDIUM | Polotno custom side panel + icon manifest generated from Lucide at build time |
-| Scroll-triggered section animations | Featured templates, starter packs animate in on scroll -- premium feel | LOW | Framer Motion `useInView` + `scrollReveal` preset |
-| Dual stock photo sources | Both Pexels (Polotno built-in) AND Unsplash -- wider selection than competitors | MEDIUM | Custom Unsplash side panel alongside Polotno's default photos section |
-| Template usage badges | "Used 5x" badge shows social proof and helps users find their go-to templates | LOW | Already in TemplateCard (`usageCount` prop); currently data-backed via `user_template_history` |
-| Animated "Quick Apply" button | Pulse/glow effect draws attention to primary action on hover | LOW | Tailwind `animate-pulse` or Framer Motion `scaleTap` |
-| Confetti on first template apply | Celebration effect on first-time use drives engagement and delight | LOW | canvas-confetti already installed; track first-use in localStorage |
-
-### Anti-Features
-
-Features to explicitly NOT build for v3.0.
-
-| Anti-Feature | Why Avoid | What to Do Instead |
-|--------------|-----------|-------------------|
-| Lottie/animated loading spinners | Adds animation file management burden, Lottie runtime is 60KB+ | Tailwind `animate-spin` + Framer Motion `fadeInScale` is sufficient |
-| Masonry layout for template grid | Adds complexity; template cards are uniform aspect ratio (16:9) | Tailwind grid with `aspect-video` -- consistent, predictable |
-| Virtual scrolling for template grid | Template grids are paginated (20-50 items); virtual scroll adds complexity | Native `loading="lazy"` handles off-screen images; revisit if grid exceeds 500 items |
-| AI-powered template recommendations | Recommendation engine adds ML infrastructure complexity | Use simple rules: "popular in your industry", "recently featured" -- already have `business_type` from onboarding |
-| Custom animation builder in editor | Allowing users to define keyframe animations is massively complex | Polotno has built-in animation presets (setAnimationsEnabled); use those |
-| Re-hosting Unsplash images | Violates Unsplash TOS; they require hotlinking to their URLs | Store Unsplash URLs directly in design JSON; only download to media library on explicit user action |
-| Icon upload feature | Users uploading custom SVG icons creates validation/security burden | Curated Lucide icon set (1500+ icons) covers signage needs |
-| Real-time collaborative editing | Multi-user editing in Polotno iframe is architecturally impossible | Sequential editing with save/load |
-
----
-
-### Feature Dependencies (v3.0)
-
-```
-Template Card Animations --> motion.js presets (exists) + TemplateGrid.jsx refactor
-    |
-Template Preview Transitions --> TemplatePreviewPanel.jsx (already uses drawer preset)
-    |
-Shared Element Transition --> layoutId on TemplateCard + EditorModal (new wiring)
-    |
-Scroll-Triggered Sections --> useInView from framer-motion (already bundled)
-    |
-Stock Photo Panel --> Unsplash API key (new) + Polotno custom section (new)
-    |                  + polotno-editor.jsx rebuild
-    |
-Icon Panel in Editor --> Build-time icon manifest (new) + Polotno custom section (new)
-    |                    + polotno-editor.jsx rebuild (same rebuild as stock photos)
-    |
-Image Optimization --> OptimizedImage.jsx enhancement + CloudFront URL params
-    |
-Save Celebration --> canvas-confetti (already installed) + PostSaveDialog.jsx enhancement
-```
-
-**Critical dependency:** Both the Stock Photo Panel and Icon Panel require a Polotno iframe rebuild. These should ship together in a single rebuild to avoid double effort.
-
----
-
-### MVP Recommendation (v3.0)
-
-**Prioritize (immediate high impact):**
-
-1. **Template card animations** -- Highest visible impact for lowest effort. Wrap existing `TemplateGrid` and `TemplateCard` in Framer Motion `motion.div` with stagger, cardLift, and imageReveal presets from motion.js. Goes from "static HTML grid" to "premium animated gallery" in a few hours of work.
-
-2. **Stock photo panel in Polotno editor** -- Users currently leave BizScreen to find stock photos. Adding Unsplash inside the editor keeps them in-flow. Uses Polotno's built-in `ImagesGrid` + `SectionTab` API, so the panel is mostly configuration, not custom rendering.
-
-3. **Save celebration with confetti** -- Canvas-confetti is already installed and unused. Firing it on PostSaveDialog open is a one-line integration that creates memorable delight.
-
-4. **Shared element transition (card to editor)** -- The "wow" factor. Template thumbnail morphs into editor modal loading state using Framer Motion `layoutId`. Medium complexity but high perceived polish.
-
-**Defer (v3.1 or later):**
-
-- **In-editor icon library** -- Valuable but requires build script for manifest + custom panel. Ship stock photos first, add icons in follow-up.
-- **Scroll-triggered section animations** -- Nice-to-have; the featured templates row and starter packs row can get `scrollReveal` treatment, but it is polish on top of polish.
-- **CloudFront image resizing** -- May require Lambda@Edge configuration. Current image sizes are adequate; optimize when performance data demands it.
-
----
-
-### Confidence Assessment (v3.0 Features)
-
-| Area | Confidence | Reason |
-|------|------------|--------|
-| Template card animations | HIGH | Framer Motion presets verified in codebase; TemplateGrid.jsx reviewed and confirmed zero animation usage |
-| Stock photo integration | HIGH | Unsplash API docs verified; Polotno custom panel API verified; unsplash-js confirmed archived |
-| Icon panel feasibility | HIGH | Lucide SVG output confirmed across 238 files; Polotno SVG element support verified |
-| Shared element transition | MEDIUM | layoutId API documented in Framer Motion; cross-component animation may need testing with Modal overlay |
-| Save celebration | HIGH | canvas-confetti already in package.json; PostSaveDialog exists as integration point |
-| Competitor comparison | MEDIUM | Based on WebSearch-verified competitor feature sets; some features may have changed |
-
----
-
-### Sources (v3.0 Features)
-
-- [Yodeck Template Gallery](https://www.yodeck.com/features/free-digital-signage-templates/) -- Competitor feature analysis
-- [OptiSigns Template Library](https://www.optisigns.com/templates) -- Competitor template browsing UX
-- [Unsplash API Documentation](https://unsplash.com/documentation) -- Stock photo integration requirements
-- [Polotno Custom Images Panel](https://polotno.com/docs/custom-images-panel) -- ImagesGrid, SectionTab API
-- [Framer Motion Layout Animations](https://www.framer.com/motion/layout-animations/) -- layoutId for shared element transitions
-- [Motion useInView](https://motion.dev/docs/react-use-in-view) -- Scroll-triggered animation hook
-- Existing codebase analysis: `TemplateGrid.jsx`, `TemplateCard`, `EditorModal.jsx`, `TemplatePreviewPanel.jsx`, `motion.js`, `OptimizedImage.jsx`, `PostSaveDialog.jsx`
+- BizScreen codebase analysis (HIGH confidence -- direct code review)
+  - `src/pages/DataSourcesPage.jsx` -- Full data source management
+  - `src/services/dataSourceService.js` -- Complete CRUD + binding resolution + realtime
+  - `src/services/googleSheetsService.js` -- Google Sheets integration
+  - `src/components/SocialFeedWidget.jsx` -- 5-layout social widget
+  - `src/components/player/SocialFeedRenderer.jsx` -- Player social renderer
+  - `src/services/socialFeedSyncService.js` -- Background sync with rate limiting
+  - `src/player/components/AppRenderer.jsx` -- App routing + useAppData pattern
+  - `src/player/components/widgets/` -- Clock, Date, Weather, QRCode widgets
+  - `src/components/scene-editor/DataBoundWizardModal.jsx` -- Data binding wizard
+  - `src/components/apps/WeatherWallConfigModal.jsx` -- Weather configuration
+  - `src/config/appCatalog.js` -- App catalog with categories
+- Digital signage industry knowledge (MEDIUM confidence -- training data from Yodeck, ScreenCloud, OptiSigns, Rise Vision, NoviSign documentation and feature comparisons; not verified against current 2026 versions)

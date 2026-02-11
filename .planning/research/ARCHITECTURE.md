@@ -1,725 +1,765 @@
-# Architecture: v3.0 Creative Experience
+# Architecture Patterns: Data-Driven Signage Widgets
 
-**Domain:** Premium template browsing, stock asset integration, editor polish for digital signage
-**Researched:** 2026-02-10
-**Overall Confidence:** HIGH (existing codebase fully analyzed, external APIs verified via official docs)
-
----
+**Domain:** Digital signage platform - dynamic data widget integration
+**Researched:** 2026-02-11
+**Confidence:** HIGH (based on comprehensive codebase analysis)
 
 ## Executive Summary
 
-The v3.0 Creative Experience milestone requires integrating three major feature areas into BizScreen's existing React 19 + Supabase + Polotno architecture: (1) consolidating the two separate template systems into a unified premium browsing experience, (2) adding stock asset integration via Unsplash API with a server-side proxy, and (3) polishing the editor with animations and a streamlined template-to-editor flow.
+BizScreen already has a robust foundation for data-driven content. The data source pipeline (data_sources -> data_source_fields -> data_source_rows) with Google Sheets sync, the social feed system (social_accounts -> social_feeds with SocialFeedRenderer), and the weather service (OpenWeatherMap with in-memory cache) all exist as working services. The scene editor supports widget blocks (clock, date, weather, qr, data) with a data binding resolver that connects blocks to data sources.
 
-The primary architectural challenge is that the current system has **two parallel template systems** with different data models, services, and UI flows -- `templateService.js` + `TemplatesPage.jsx` (content_templates table) and `marketplaceService.js` + `TemplateMarketplacePage.jsx` (template_library table). These need to converge. The secondary challenge is the **Polotno iframe isolation**: the editor runs in a separate React 18 iframe communicating via postMessage, meaning stock asset integration and animation features must be coordinated across the iframe boundary.
+**The gap is not in plumbing -- it is in the last mile.** The player does not consume data sources at render time. The scene editor's widget palette is limited. RSS feeds have no fetching/caching backend. Countdown/timer widgets do not exist. Configurable polling intervals exist in the DB schema but no player-side polling loop connects them. This milestone is about wiring existing infrastructure through to actual screen rendering, and filling the few missing pieces (RSS proxy, countdown widget, data table renderer, refresh orchestration on the player).
 
 ---
 
-## Current Architecture Analysis
+## Current Architecture (As-Is)
 
-### Two Template Systems: The Core Problem
-
-**System 1: Template Library** (`templateService.js` + `TemplatesPage.jsx`)
-- **Table:** `content_templates` with `content_template_blueprints`
-- **Types:** playlist, layout, pack
-- **Apply flow:** `applyTemplate()` / `applyPack()` via Supabase RPC --> creates playlists/layouts/schedules
-- **UI flow:** Browse --> Click "Use Template" --> `TemplateCustomizeModal` (rename) --> Apply --> `SuccessModal` (shows created items) --> Navigate to playlist/layout
-- **Features:** Favorites (`user_template_favorites`), history (`user_template_history`), search, category tabs, type filters, pagination
-- **Scope:** Creates operational signage infrastructure (playlists, layouts, schedules)
-
-**System 2: Template Marketplace** (`marketplaceService.js` + `TemplateMarketplacePage.jsx`)
-- **Table:** `template_library` with `template_library_slides`
-- **Types:** scene, slide, block (license tiers: free/pro/enterprise)
-- **Apply flow:** `installTemplateAsScene()` via `clone_template_to_scene` RPC --> creates a scene
-- **UI flow:** Browse --> Click --> `TemplatePreviewPanel` (side panel) --> "Quick Apply" --> `TemplateCustomizationWizard` (if customizable: logo/color/texts) --> Navigate to `/scene-editor/{sceneId}`
-- **Features:** Sidebar with recents/favorites/suggestions, featured row, starter packs, ratings, usage counts, enterprise access
-- **Scope:** Creates editable scene content with slide-based design
-
-**Assessment:** These systems serve fundamentally different purposes. System 1 creates *infrastructure* (playlists + layouts + schedules). System 2 creates *visual content* (scenes with design JSON). The v3.0 "premium browsing" should enhance System 2 (marketplace) as the primary creative experience, while keeping System 1 available for operational setup. Do NOT merge the data models. Instead, unify the browsing UX.
-
-### Polotno Editor Architecture
-
-The Polotno editor is isolated in an iframe at `/polotno/index.html`:
+### Content Resolution Pipeline
 
 ```
-Main App (React 19)
-  |
-  +-- EditorModal.jsx (full-screen modal wrapper)
+Schedule --> Campaign --> Playlist --> Scene --> Slide --> Blocks
+                                                           |
+                                                    design_json: {
+                                                      background: {...},
+                                                      blocks: [
+                                                        { type: 'text', props: {...}, dataBinding: {...} },
+                                                        { type: 'image', props: {...} },
+                                                        { type: 'widget', widgetType: 'clock', props: {...} },
+                                                        { type: 'widget', widgetType: 'weather', props: {...} },
+                                                        { type: 'widget', widgetType: 'data', props: {...} },
+                                                        { type: 'shape', props: {...} }
+                                                      ]
+                                                    }
+```
+
+### Existing Data Flow (Admin Side)
+
+```
+Google Sheets API                                Admin UI (DataSourcesPage)
+       |                                                |
+       v                                                v
+googleSheetsService.js  <--- dataFeedScheduler.js ---> dataSourceService.js
+       |                     (1-min check interval)           |
+       v                                                      v
+   Supabase DB: data_sources + data_source_fields + data_source_rows
        |
-       +-- PolotnoEditor.jsx (iframe host, postMessage bridge)
-            |
-            +-- /polotno/index.html (React 18 iframe)
-                 |
-                 +-- polotno-editor.js (bundled Polotno SDK)
+       v
+   Real-time subscriptions (postgres_changes on data_source_rows)
 ```
 
-**Communication protocol:** Parent sends `{ target: 'polotno-editor', action, payload }`, iframe sends `{ source: 'polotno-editor', type, data }`.
+### Existing Data Flow (Player Side) - INCOMPLETE
 
-**Existing message types:**
-- Parent --> Iframe: `loadDesign`, `loadTemplate`, `exportImage`, `getDesign`, `setTemplates`, `triggerSave`
-- Iframe --> Parent: `ready`, `save`, `close`, `error`, `requestTemplates`, `designChanged`, `imageExported`
+```
+playerService.getPlayerContent(screenId) --> RPC get_player_content
+    Returns: { device, playlist, items: [{ type, url, duration }] }
 
-**Key constraint:** The Polotno iframe is a pre-built bundle (`polotno-editor.js` at 1.6MB). Adding features like stock image panels or animation controls requires rebuilding this bundle. The iframe approach exists to isolate React 18 (Polotno's requirement) from the main app's React 19.
+    PROBLEM: items are media/app references only.
+    Data sources, social feeds, weather are NOT part of the player content payload.
+    The player has no mechanism to resolve data bindings at render time.
+```
 
-### Scene Editor (Non-Polotno)
+### Existing Widget Renderer Capabilities
 
-`SceneEditorPage.jsx` is a **separate, native React editor** (not Polotno-based) for the scene slide system. It has:
-- Slide strip (left), Canvas (center), Properties panel (right), AI panel
-- Block operations: text, image, shape, widget
-- Auto-save with 800ms debounce
-- Brand theme integration
-- Undo/redo history
-- Live preview with device sync
+**LayoutElementRenderer.jsx** currently renders these widget types:
+| Widget Type | Status | Renders |
+|-------------|--------|---------|
+| `clock` | WORKING | Static time display |
+| `date` | WORKING | Static date display |
+| `weather` | PARTIAL | Mock temperature in editor; no live API call |
+| `qr` | WORKING | QR code from URL prop |
+| `data` | PLACEHOLDER | Shows `{{field}}` template string |
 
-This editor is where marketplace templates land after "Quick Apply". It operates on `scene_slides.design_json`, not Polotno JSON format.
+**SocialFeedRenderer.jsx** exists as standalone component:
+- Fetches cached posts from `social_feeds` table directly via Supabase
+- Supports carousel, grid, list, single, masonry layouts
+- Auto-rotation with configurable speed
+- BUT: not wired into the widget block system in the scene editor
+
+### Existing Service Capabilities
+
+| Service | What It Does | What Is Missing |
+|---------|-------------|-----------------|
+| `dataSourceService.js` | Full CRUD for data sources, fields, rows. Google Sheets linking. Real-time subscriptions. | Nothing - complete for admin side |
+| `dataBindingResolver.js` | Resolves bindings to values with caching, preloading, stale detection. Player-specific prefetch utilities. | Not called by player at render time |
+| `dataFeedScheduler.js` | Client-side scheduler for Google Sheets sync. Checks every 60s, max 3 concurrent, retry with 5-min backoff. | Only runs in admin tab, not on player |
+| `googleSheetsService.js` | Fetches sheet data, detects changes, syncs to DB, broadcasts updates. | Nothing - complete |
+| `weatherService.js` | OpenWeatherMap current + 5-day forecast. 30-min in-memory cache. Supports city name and coords. | No server-side caching; no player refresh loop |
+| `socialFeedSyncService.js` | Syncs Instagram, Facebook, TikTok, Google Reviews. Rate limiting, cooldowns. | No RSS support (RSS is a different feed type) |
+| `realtimeService.js` | Supabase subscriptions for device commands, device refresh, content updates. | No subscription for data_source_rows changes on player |
+| `playerService.js` | Content fetching, IndexedDB offline cache, command polling, heartbeat, backoff retry. | Content payload does not include data source bindings |
+
+### Database Schema (Existing)
+
+```
+data_sources
+  - id, tenant_id, name, description, type
+  - integration_type ('none'|'google_sheets')
+  - integration_config (JSONB: {sheetId, range, pollIntervalMinutes})
+  - last_sync_at, last_sync_status, last_sync_error
+
+data_source_fields
+  - id, data_source_id, name, label, data_type, order_index
+  - default_value, format_options (JSONB)
+
+data_source_rows
+  - id, data_source_id, values (JSONB), order_index, is_active
+
+data_source_sync_logs
+  - id, data_source_id, status, message, changed_rows, sync_duration_ms
+
+social_accounts
+  - id, tenant_id, provider, account_name, access_token, etc.
+
+social_feeds
+  - id, tenant_id, account_id, provider, post_id, content_text, media_url
+  - likes_count, comments_count, rating, posted_at
+
+social_feed_settings
+  - id, tenant_id, widget_id, provider, account_id
+  - filter_mode, hashtags, max_items, auto_refresh_minutes
+  - layout, show_caption, show_likes, rotation_speed
+```
 
 ---
 
-## Recommended Architecture
+## Recommended Architecture (To-Be)
 
-### Component 1: Unified Template Browser
+### Core Design Principle: Server-Cached, Player-Polled
 
-**Strategy:** Create a new unified browsing page that merges the best UX from both systems, backed by a single composite data layer. Do NOT merge the database tables.
-
-**New/Modified Files:**
-
-| File | Action | Purpose |
-|------|--------|---------|
-| `src/pages/CreativeHubPage.jsx` | NEW | Unified browse page replacing both TemplatesPage and TemplateMarketplacePage as the primary creative entry point |
-| `src/services/creativeHubService.js` | NEW | Composite service that queries both template systems and merges results into a unified response |
-| `src/components/templates/PremiumTemplateCard.jsx` | NEW | Enhanced card with hover preview, instant-apply button, license badge, rating |
-| `src/components/templates/TemplateDetailDrawer.jsx` | NEW | Right-side drawer replacing both TemplateCustomizeModal and TemplatePreviewPanel |
-| `src/components/templates/CategoryHeroSection.jsx` | NEW | Featured category banners with hero imagery |
-| `src/pages/TemplatesPage.jsx` | MODIFY | Add redirect/link to CreativeHubPage, keep for backwards compat |
-| `src/pages/TemplateMarketplacePage.jsx` | MODIFY | Add redirect/link to CreativeHubPage, keep for backwards compat |
-
-**Data Flow:**
+All dynamic data resolves through Supabase as the single source of truth. External APIs (Google Sheets, RSS, weather, social) are fetched server-side (Edge Functions or admin-side scheduler) and cached in DB tables. The player never calls external APIs directly. This enables offline mode and avoids CORS/rate-limit issues on constrained player devices.
 
 ```
-CreativeHubPage
-  |
-  +-- creativeHubService.fetchUnifiedTemplates(filters)
-  |     |
-  |     +-- marketplaceService.fetchMarketplaceTemplates()  // Scene templates
-  |     +-- templateService.fetchTemplates()                 // Pack/playlist/layout templates
-  |     +-- Merge, normalize, rank results
-  |
-  +-- PremiumTemplateCard (renders both types uniformly)
-  |     |
-  |     +-- Marketplace template: shows slides preview, license tier, rating
-  |     +-- Library template: shows type badge, category, pack contents
-  |
-  +-- TemplateDetailDrawer (slide-out detail view)
-        |
-        +-- For scene templates: Live preview, customization, "Edit Now" --> SceneEditorPage
-        +-- For pack templates: Contents list, customization, "Apply Pack" --> SuccessModal
+External APIs                 Supabase Edge Functions / Admin Scheduler
+  Google Sheets   ----------->   dataFeedScheduler (existing)
+  RSS Feeds       ----------->   rssFeedSyncService (NEW)
+  Weather API     ----------->   weatherCacheService (NEW Edge Function)
+  Social APIs     ----------->   socialFeedSyncService (existing)
+                                        |
+                                        v
+                                   Supabase DB
+                                   (cached data)
+                                        |
+                        +-----------+---+---+-----------+
+                        |           |       |           |
+                        v           v       v           v
+                  data_source   rss_feed  weather   social_feeds
+                  _rows         _items    _cache    (existing)
+                  (existing)    (NEW)     (NEW)
+                                        |
+                                        v
+                              Supabase Realtime
+                              (postgres_changes)
+                                        |
+                        +-------+-------+-------+
+                        |       |       |       |
+                        v       v       v       v
+                    Player 1  Player 2  ...   Player N
+                    (poll + subscribe for changes)
 ```
 
-**Why a composite service instead of a unified table:** The data models are genuinely different. `content_templates` stores blueprint references for creating infrastructure, while `template_library` stores design JSON for visual content. Merging them would create a bloated table with half-null columns. A composite frontend service is cheaper and more maintainable.
-
-### Component 2: Unsplash API Proxy
-
-**Strategy:** Supabase Edge Function that proxies Unsplash API requests. The proxy holds the API key server-side, adds caching, and enforces per-tenant rate limits.
-
-**Architecture:**
-
-```
-Browser (React)
-  |
-  +-- stockAssetService.js
-       |
-       +-- POST /functions/v1/unsplash-proxy
-            |
-            +-- Supabase Edge Function (Deno)
-                 |
-                 +-- Rate limit check (per tenant, stored in Supabase table)
-                 +-- Cache check (search results cached 24h in Supabase table)
-                 +-- Unsplash API (api.unsplash.com)
-                 +-- Cache write
-                 +-- Return results
-```
-
-**New/Modified Files:**
-
-| File | Action | Purpose |
-|------|--------|---------|
-| `supabase/functions/unsplash-proxy/index.ts` | NEW | Edge Function: authenticates user, rate limits, proxies to Unsplash |
-| `src/services/stockAssetService.js` | NEW | Frontend service: search, download tracking, attribution helpers |
-| `src/components/media/StockImagePicker.jsx` | NEW | Reusable picker UI: search, grid, attribution footer |
-| `src/components/media/UnsplashAttribution.jsx` | NEW | "Photo by X on Unsplash" attribution component (required by Unsplash TOS) |
-| `supabase/migrations/142_stock_asset_cache.sql` | NEW | Cache table + rate limit tracking table |
-
-**Unsplash API Details (verified from official docs):**
-
-| Concern | Value |
-|---------|-------|
-| Demo rate limit | 50 requests/hour (during development) |
-| Production rate limit | 5,000 requests/hour (after approval) |
-| Image hotlinking | **Required** -- must use Unsplash URLs directly, preserve `ixid` param |
-| Attribution | **Required** -- "Photo by {name} on Unsplash" with links |
-| Download tracking | **Required** -- must trigger download endpoint when image is used |
-| Image file requests | NOT rate-limited (only JSON API calls count) |
-
-**Edge Function Design:**
-
-```typescript
-// supabase/functions/unsplash-proxy/index.ts
-import { createClient } from '@supabase/supabase-js';
-
-const UNSPLASH_ACCESS_KEY = Deno.env.get('UNSPLASH_ACCESS_KEY');
-const CACHE_TTL_HOURS = 24;
-const RATE_LIMIT_PER_HOUR = 100; // per tenant
-
-Deno.serve(async (req) => {
-  // 1. Verify JWT from Authorization header
-  const supabase = createClient(/* ... */);
-  const { data: { user } } = await supabase.auth.getUser(jwt);
-
-  // 2. Rate limit check (per tenant)
-  const { data: usage } = await supabase.rpc('check_unsplash_rate_limit', {
-    p_tenant_id: user.tenant_id,
-    p_limit: RATE_LIMIT_PER_HOUR
-  });
-  if (usage.exceeded) return new Response('Rate limited', { status: 429 });
-
-  // 3. Cache check
-  const { action, params } = await req.json();
-  const cacheKey = `${action}:${JSON.stringify(params)}`;
-  const { data: cached } = await supabase
-    .from('unsplash_cache')
-    .select('response_json')
-    .eq('cache_key', cacheKey)
-    .gte('expires_at', new Date().toISOString())
-    .maybeSingle();
-
-  if (cached) return new Response(JSON.stringify(cached.response_json));
-
-  // 4. Forward to Unsplash
-  const unsplashUrl = `https://api.unsplash.com/${action}?${new URLSearchParams(params)}`;
-  const response = await fetch(unsplashUrl, {
-    headers: { 'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}` }
-  });
-  const data = await response.json();
-
-  // 5. Cache response
-  await supabase.from('unsplash_cache').upsert({
-    cache_key: cacheKey,
-    response_json: data,
-    expires_at: new Date(Date.now() + CACHE_TTL_HOURS * 3600000).toISOString()
-  });
-
-  // 6. Record usage
-  await supabase.rpc('record_unsplash_usage', { p_tenant_id: user.tenant_id });
-
-  return new Response(JSON.stringify(data));
-});
-```
-
-**Database Schema:**
-
-```sql
--- Migration 142: Stock asset proxy infrastructure
-CREATE TABLE unsplash_cache (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  cache_key TEXT NOT NULL UNIQUE,
-  response_json JSONB NOT NULL,
-  expires_at TIMESTAMPTZ NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE INDEX idx_unsplash_cache_key ON unsplash_cache(cache_key);
-CREATE INDEX idx_unsplash_cache_expires ON unsplash_cache(expires_at);
-
-CREATE TABLE unsplash_usage_log (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL REFERENCES profiles(id),
-  request_count INT NOT NULL DEFAULT 1,
-  window_start TIMESTAMPTZ NOT NULL DEFAULT date_trunc('hour', now()),
-  UNIQUE(tenant_id, window_start)
-);
-
--- Rate limit check function
-CREATE OR REPLACE FUNCTION check_unsplash_rate_limit(p_tenant_id UUID, p_limit INT)
-RETURNS TABLE(exceeded BOOLEAN, current_count INT) AS $$
-  SELECT
-    COALESCE(SUM(request_count), 0) >= p_limit,
-    COALESCE(SUM(request_count), 0)::INT
-  FROM unsplash_usage_log
-  WHERE tenant_id = p_tenant_id
-    AND window_start = date_trunc('hour', now());
-$$ LANGUAGE sql SECURITY DEFINER;
-
--- Usage recording (upsert to increment)
-CREATE OR REPLACE FUNCTION record_unsplash_usage(p_tenant_id UUID)
-RETURNS void AS $$
-  INSERT INTO unsplash_usage_log (tenant_id, request_count, window_start)
-  VALUES (p_tenant_id, 1, date_trunc('hour', now()))
-  ON CONFLICT (tenant_id, window_start)
-  DO UPDATE SET request_count = unsplash_usage_log.request_count + 1;
-$$ LANGUAGE sql SECURITY DEFINER;
-
--- Cleanup old cache entries (run periodically)
-CREATE OR REPLACE FUNCTION cleanup_unsplash_cache()
-RETURNS void AS $$
-  DELETE FROM unsplash_cache WHERE expires_at < now();
-  DELETE FROM unsplash_usage_log WHERE window_start < now() - INTERVAL '48 hours';
-$$ LANGUAGE sql SECURITY DEFINER;
-```
-
-### Component 3: Stock Image Integration Points
-
-The `StockImagePicker` component needs to work in three contexts:
-
-| Context | Where | How Image Is Used |
-|---------|-------|-------------------|
-| Scene Editor | `SceneEditorPage.jsx` block toolbar | Inserted as image block in `design_json` via `addBlockToDesign()` |
-| Polotno Editor | Inside Polotno iframe side panel | Added via Polotno `store.activePage.addElement({ type: 'image', src })` |
-| Media Library | `MediaLibraryPage.jsx` upload area | Saved to Supabase storage as a regular media asset |
-
-**For the Scene Editor (native):** Straightforward. Add a new toolbar button "Stock Photos" next to the existing Image/Shape/Widget buttons. Opens `StockImagePicker` as a modal/drawer. On select, calls `handleAddBlock('image')` with the Unsplash URL as `src`.
-
-**For the Polotno Editor (iframe):** More complex due to iframe boundary.
-
-Option A (Recommended): **Rebuild Polotno bundle with custom Unsplash side panel.** The Polotno SDK supports custom side panels via `ImagesGrid` component. Add a custom panel in the Polotno iframe source that calls back to the parent for API proxying:
-
-```
-User clicks "Stock Photos" tab in Polotno sidebar
-  --> Polotno iframe sends postMessage: { type: 'searchStockImages', query: '...' }
-  --> Parent receives, calls stockAssetService.searchPhotos(query)
-  --> Parent sends postMessage: { action: 'stockImageResults', payload: results }
-  --> Polotno panel renders results via ImagesGrid
-  --> User clicks image --> Polotno adds to canvas via store API
-```
-
-Option B: **Parent-hosted picker.** Show `StockImagePicker` as an overlay above the Polotno iframe. On select, send the image URL to the iframe via postMessage `addImageElement`. Simpler but breaks the Polotno workflow (user leaves editor context).
-
-**Recommendation:** Option A for production quality. The Polotno bundle at `/public/polotno/` is already pre-built; adding a custom panel requires modifying the source and rebuilding. This is a one-time build step.
-
-**For Media Library:** Add "Stock Photos" tab alongside existing upload. On select, download the image via Unsplash's download endpoint (required by TOS) and upload to Supabase storage.
-
-### Component 4: Editor Polish -- Animations
-
-**Polotno Animations (verified from official docs):**
-
-```javascript
-import { setAnimationsEnabled } from 'polotno/config';
-setAnimationsEnabled(true);
-```
-
-Enabling this in the Polotno bundle automatically adds:
-- Animation property controls in the toolbar per selected element
-- A "Videos" side panel for stock video library
-- Scene preview with animation playback
-- Export to GIF (`store.saveAsGIF()`) and MP4 (`@polotno/video-export`)
-
-**Impact:** Animations are stored in the Polotno design JSON. This does NOT affect the scene editor's `design_json` format. The two editors have separate design schemas.
-
-**For the Scene Editor (native, SceneEditorPage):** Animations require a different approach since this editor uses a custom block-based `design_json` format, not Polotno's format.
-
-Recommended approach for scene editor animations:
-- Add `animation` property to block schema: `{ type: 'fadeIn'|'slideLeft'|'slideRight'|'scaleUp', duration: 500, delay: 0 }`
-- Add animation controls in `PropertiesPanel.jsx` when a block is selected
-- Render animations via CSS transitions in `EditorCanvas.jsx` (edit mode) and `LivePreviewWindow.jsx` (preview mode)
-- Store in `design_json.blocks[].animation`
-
-**This is separate from Polotno animations** and should be built as a Scene Editor feature, not a Polotno feature.
-
-### Component 5: Instant Template-to-Editor Flow
-
-**Current Flow (Marketplace):**
-```
-Browse --> Click template --> TemplatePreviewPanel (side drawer)
-  --> "Quick Apply" --> installTemplateAsScene() RPC (creates scene + slides)
-  --> hasCustomizableFields? --> TemplateCustomizationWizard (full screen)
-  --> Apply customizations --> Navigate to /scene-editor/{sceneId}
-```
-
-**Problems with current flow:**
-1. 3-4 steps before user can edit
-2. Scene is created before user decides to customize (wasteful if they cancel)
-3. TemplateCustomizationWizard is a full-screen takeover that feels disconnected
-4. No "undo" -- once applied, the scene exists even if user abandons
-
-**Proposed "Instant Edit" Flow:**
-```
-Browse --> Click template --> TemplateDetailDrawer (enhanced preview)
-  --> "Edit Now" --> installTemplateAsScene() RPC
-  --> Navigate to /scene-editor/{sceneId} immediately
-  --> Editor loads with customization panel open by default (optional first-time UX)
-```
-
-**Changes needed:**
-
-| File | Action | Change |
-|------|--------|--------|
-| `src/components/templates/TemplateDetailDrawer.jsx` | NEW | Replaces TemplatePreviewPanel + TemplateCustomizeModal. Single drawer with preview, details, "Edit Now" button |
-| `src/pages/SceneEditorPage.jsx` | MODIFY | Accept `?fromTemplate=true` query param. When present, auto-open a customization sidebar on first load |
-| `src/components/scene-editor/QuickCustomizePanel.jsx` | NEW | Inline customization (logo/color/texts) panel that appears in the scene editor as a collapsible section in the properties panel |
-| `src/components/templates/TemplateCustomizationWizard.jsx` | DEPRECATE | Replaced by inline customization in the editor itself |
-
-**Key design decision:** Move customization INTO the editor rather than BEFORE it. The user should be editing immediately. Customization fields (logo, color, text) become a "Getting Started" panel within the scene editor that appears for newly-cloned template scenes.
-
----
-
-## Component Boundaries
+### Component Boundaries
 
 | Component | Responsibility | Communicates With |
 |-----------|---------------|-------------------|
-| `CreativeHubPage` | Unified template browsing, filtering, search | `creativeHubService`, `TemplateDetailDrawer`, `PremiumTemplateCard` |
-| `creativeHubService` | Composite query layer over both template systems | `templateService`, `marketplaceService` |
-| `TemplateDetailDrawer` | Preview + apply CTA for selected template | `marketplaceService.installTemplateAsScene()`, router (navigate to editor) |
-| `stockAssetService` | Unsplash API client (search, download tracking) | `unsplash-proxy` Edge Function |
-| `unsplash-proxy` Edge Function | Server-side API proxy with caching + rate limiting | Unsplash API, `unsplash_cache` table, `unsplash_usage_log` table |
-| `StockImagePicker` | Reusable UI for searching/selecting stock photos | `stockAssetService` |
-| `UnsplashAttribution` | TOS-compliant attribution display | Pure presentational |
-| `PremiumTemplateCard` | Enhanced template card with hover effects | `CreativeHubPage` (parent) |
-| `QuickCustomizePanel` | In-editor customization for template scenes | `SceneEditorPage`, `marketplaceService.applyCustomizationToScene()` |
-| Polotno custom panel | Stock photos inside Polotno iframe | postMessage bridge to parent `stockAssetService` |
+| **Data Source Widgets** (scene editor) | Configure data source binding on text/table blocks | dataSourceService, dataBindingResolver |
+| **RSS Feed Service** (NEW) | Fetch/parse RSS and Atom feeds, cache entries in DB | Supabase DB, Edge Function for CORS proxy |
+| **RSS Feed Widget** (NEW renderer) | Render RSS items as ticker/list/card in player | rss_feed_items table via Supabase |
+| **Weather Cache** (Edge Function) | Periodic weather fetch per location, cache in DB | OpenWeatherMap API, Supabase DB |
+| **Weather Widget** (enhanced renderer) | Render live weather from cached DB data | weather_cache table or existing weatherService |
+| **Countdown Widget** (NEW) | Client-side countdown to target datetime | None (pure client-side computation) |
+| **Social Feed Widget** (existing, needs wiring) | Render social posts from cached data | social_feeds table (existing) |
+| **Data Table Renderer** (NEW) | Render data source as styled table/list | dataBindingResolver (existing) |
+| **Player Data Refresh Orchestrator** (NEW) | Poll for stale data, manage refresh intervals | dataBindingResolver.refreshStaleDataSources, Supabase subscriptions |
+| **Widget Palette** (scene editor enhancement) | Add new widget types to editor sidebar | sceneDesignService.createWidgetBlock |
+
+### New Widget Types for Scene Editor
+
+Extend the existing `createWidgetBlock` pattern with these new `widgetType` values:
+
+```javascript
+// Existing widget types (already in LayoutElementRenderer):
+// 'clock', 'date', 'weather', 'qr', 'data'
+
+// NEW widget types to add:
+'social_feed'   // Social media feed display (wraps SocialFeedRenderer)
+'rss_feed'      // RSS/Atom feed ticker or list
+'countdown'     // Countdown timer to target date/time
+'data_table'    // Data source rendered as formatted table
+'time_weather'  // Combined time + weather composite widget
+```
+
+Each widget type stores its config in `block.props`:
+
+```javascript
+// RSS Feed widget block
+{
+  id: 'blk_xxx',
+  type: 'widget',
+  widgetType: 'rss_feed',
+  x: 0, y: 0.9, width: 1, height: 0.1,
+  props: {
+    feedUrl: 'https://feeds.bbci.co.uk/news/rss.xml',
+    layout: 'ticker',        // 'ticker' | 'list' | 'cards'
+    maxItems: 10,
+    refreshMinutes: 15,
+    showImages: true,
+    scrollSpeed: 30,          // pixels per second for ticker
+    style: { backgroundColor: '#000', textColor: '#fff' }
+  }
+}
+
+// Countdown widget block
+{
+  id: 'blk_xxx',
+  type: 'widget',
+  widgetType: 'countdown',
+  x: 0.3, y: 0.3, width: 0.4, height: 0.3,
+  props: {
+    targetDate: '2026-03-15T09:00:00',
+    label: 'Grand Opening',
+    showDays: true,
+    showHours: true,
+    showMinutes: true,
+    showSeconds: true,
+    completedMessage: 'Event Started!',
+    style: { textColor: '#fff', fontSize: 48 }
+  }
+}
+
+// Data Table widget block
+{
+  id: 'blk_xxx',
+  type: 'widget',
+  widgetType: 'data_table',
+  x: 0.05, y: 0.15, width: 0.9, height: 0.7,
+  props: {
+    dataSourceId: 'uuid-of-data-source',
+    visibleFields: ['name', 'price', 'description'],
+    rowLimit: 10,
+    theme: 'dark',            // 'dark' | 'light' | 'branded'
+    showHeaders: true,
+    alternateRows: true,
+    refreshMinutes: 5,
+    pagination: 'scroll',     // 'scroll' | 'rotate' | 'none'
+    rotationSpeed: 10,        // seconds per page if pagination='rotate'
+    style: { headerColor: '#3B82F6', fontSize: 16 }
+  }
+}
+
+// Social Feed widget block
+{
+  id: 'blk_xxx',
+  type: 'widget',
+  widgetType: 'social_feed',
+  x: 0, y: 0, width: 0.3, height: 1,
+  props: {
+    widgetId: 'uuid-from-social-feed-settings',
+    accountId: 'uuid-of-social-account',
+    provider: 'instagram',
+    layout: 'carousel',
+    maxItems: 6,
+    showCaption: true,
+    showLikes: true,
+    rotationSpeed: 5
+  }
+}
+```
 
 ---
 
-## Data Flow Diagrams
+## Data Flow: Source to Screen (Detailed)
 
-### Template Browse to Edit
-
-```
-User visits /creative-hub
-  |
-  v
-CreativeHubPage loads
-  |
-  +-- creativeHubService.fetchUnifiedTemplates({ category, search, license })
-  |     |-- marketplaceService.fetchMarketplaceTemplates() --> scene templates
-  |     |-- templateService.fetchTemplates()                --> pack/playlist/layout templates
-  |     +-- Normalize + merge + rank by featured/rating/recent
-  |
-  +-- Render PremiumTemplateCard grid
-  |
-  v
-User clicks a scene template card
-  |
-  v
-TemplateDetailDrawer opens (slide-out from right)
-  |-- Shows full preview, slide thumbnails, rating, description
-  |-- "Edit Now" button (primary CTA)
-  |-- "Add to Favorites" toggle
-  |
-  v
-User clicks "Edit Now"
-  |
-  +-- marketplaceService.installTemplateAsScene(templateId, autoName)
-  |     |-- Supabase RPC: clone_template_to_scene
-  |     +-- Returns new sceneId
-  |
-  +-- navigate(`/scene-editor/${sceneId}?fromTemplate=true`)
-  |
-  v
-SceneEditorPage loads with fromTemplate=true
-  |-- Detects query param
-  |-- Shows QuickCustomizePanel in properties sidebar
-  |-- User can customize logo/color/texts inline
-  |-- Or dismiss and start editing directly
-```
-
-### Stock Image Search Flow
+### Flow 1: Data Source Widget (Google Sheets / CSV)
 
 ```
-User in SceneEditorPage clicks "Stock Photos" in toolbar
-  |
-  v
-StockImagePicker modal opens
-  |
-  v
-User types search query
-  |
-  +-- stockAssetService.searchPhotos(query, page)
-  |     |
-  |     +-- POST /functions/v1/unsplash-proxy
-  |           |-- JWT auth (from Supabase session)
-  |           |-- Rate limit check
-  |           |-- Cache check (24h TTL)
-  |           |-- If miss: GET api.unsplash.com/search/photos?query=...
-  |           |-- Cache write
-  |           +-- Return { results, total, total_pages }
-  |
-  +-- Render image grid with UnsplashAttribution per image
-  |
-  v
-User clicks an image
-  |
-  +-- stockAssetService.trackDownload(photo.links.download_location)
-  |     |-- Required by Unsplash TOS
-  |     +-- POST /functions/v1/unsplash-proxy { action: 'track-download', ... }
-  |
-  +-- SceneEditorPage.handleAddBlock('image', { src: photo.urls.regular })
-  |     |-- Creates image block with Unsplash URL (hotlinking required by TOS)
-  |     +-- Block metadata stores attribution: { unsplash: true, photographer, photographerUrl }
-  |
-  v
-Image appears on canvas as a new block
+1. ADMIN: User creates data source on DataSourcesPage
+   - Uploads CSV or links Google Sheet
+   - Data stored in: data_sources + data_source_fields + data_source_rows
+
+2. ADMIN: User adds data_table or data-bound text block in Scene Editor
+   - Block gets { dataBinding: { sourceId, field, rowSelector } }
+   - Or for data_table widget: { props: { dataSourceId } }
+
+3. SYNC: dataFeedScheduler checks every 60s for sources needing sync
+   - Calls list_data_sources_needing_sync RPC
+   - For Google Sheets: fetches via Sheets API, detects changes, updates rows
+   - Broadcasts update via Supabase realtime
+
+4. PLAYER: On scene load, player prefetches data sources
+   - dataBindingResolver.prefetchSceneDataSources(designJson)
+   - Resolves all bindings to values
+   - Stores in in-memory cache (5-min TTL for editor, 30-min for player)
+
+5. PLAYER: Refresh loop
+   - OPTION A (existing): dataBindingResolver.refreshStaleDataSources(designJson, maxAge)
+   - OPTION B (better): Subscribe to data_source_rows changes via Supabase realtime
+   - On change: re-resolve bindings, re-render affected blocks
+
+6. PLAYER: Offline fallback
+   - Cache resolved data in IndexedDB alongside content
+   - Show stale data with optional "Last updated" indicator
 ```
 
-### Polotno Stock Image Flow (iframe bridge)
+### Flow 2: RSS Feed Widget
 
 ```
-User in Polotno editor clicks "Stock Photos" side panel tab
-  |
-  v
-Custom Polotno panel renders search UI
-  |
-  v
-User types query --> Panel sends postMessage to parent:
-  { source: 'polotno-editor', type: 'searchStockImages', data: { query, page } }
-  |
-  v
-Parent (PolotnoEditor.jsx) receives message
-  |-- Calls stockAssetService.searchPhotos(query, page)
-  +-- Sends results back via postMessage:
-      { target: 'polotno-editor', action: 'stockImageResults', payload: { images, total } }
-  |
-  v
-Polotno panel receives results, renders in ImagesGrid
-  |
-  v
-User clicks image --> Polotno panel:
-  1. Sends postMessage: { type: 'trackStockDownload', data: { downloadUrl } }
-  2. Calls store.activePage.addElement({ type: 'image', src: photo.urls.regular, ... })
-  |
-  v
-Parent tracks download via stockAssetService.trackDownload()
-Image appears on Polotno canvas
+1. ADMIN: User adds RSS feed widget in Scene Editor
+   - Enters feed URL, selects layout (ticker/list/cards)
+   - Config stored in block.props
+
+2. BACKEND: RSS feed proxy (NEW Supabase Edge Function)
+   - Fetches RSS/Atom feed XML
+   - Parses to JSON (title, link, description, pubDate, image)
+   - Caches in rss_feed_items table (NEW)
+   - Runs on schedule OR on-demand when player requests
+
+3. PLAYER: Fetches cached feed items from rss_feed_items table
+   - No direct RSS fetch (avoids CORS, works offline)
+   - Polls on refreshMinutes interval from widget config
+   - Renders via RssFeedRenderer component (NEW)
+
+4. PLAYER: Offline fallback
+   - IndexedDB cache of last-known feed items
 ```
+
+### Flow 3: Weather Widget (Enhanced)
+
+```
+1. ADMIN: User adds weather widget in Scene Editor
+   - Selects location, units, style
+   - Config stored in block.props
+
+2. CURRENT APPROACH (sufficient for v1):
+   - weatherService.js fetches from OpenWeatherMap directly
+   - 30-min in-memory cache prevents excessive API calls
+   - Works on player (browser-based, no CORS issues with OWM)
+
+3. ENHANCED APPROACH (for v2 if needed):
+   - Edge Function fetches weather per tenant's configured locations
+   - Caches in weather_cache table
+   - Player reads from cache, never calls external API
+   - Better for constrained devices (WebOS, Tizen)
+
+4. PLAYER: Renders via enhanced WeatherWidget component
+   - Shows live temp, conditions, optional forecast
+   - Refreshes on 30-min interval
+```
+
+### Flow 4: Countdown Widget
+
+```
+1. ADMIN: User adds countdown widget in Scene Editor
+   - Sets target date/time, display format, label
+
+2. PLAYER: Pure client-side rendering
+   - No backend needed -- just calculates time remaining
+   - requestAnimationFrame or 1-second interval for live countdown
+   - Shows "completed" message when target reached
+
+3. OFFLINE: Works perfectly offline
+   - Only needs device clock (which is the one dependency)
+   - Consider timezone: store target in UTC, convert to device timezone
+```
+
+### Flow 5: Social Feed Widget
+
+```
+1. ADMIN: User connects social account (existing OAuth flow)
+   - socialFeedSyncService syncs posts every 20 minutes
+   - Posts cached in social_feeds table
+
+2. ADMIN: User adds social_feed widget in Scene Editor
+   - Selects account, layout, display options
+   - Creates social_feed_settings entry
+
+3. PLAYER: SocialFeedRenderer (existing) fetches from social_feeds table
+   - Already works with cached data only
+   - Just needs to be wired into WidgetElement switch statement
+
+4. PLAYER: Refresh
+   - social_feed_settings.auto_refresh_minutes controls poll interval
+   - Supabase subscription on social_feeds table for push updates
+```
+
+---
+
+## Player Refresh Orchestrator (NEW - Critical Component)
+
+The player needs a unified refresh mechanism for all dynamic content. Currently `dataFeedScheduler` only runs in the admin browser tab.
+
+### Design: PlayerDataOrchestrator
+
+```javascript
+// src/services/playerDataOrchestrator.js
+
+class PlayerDataOrchestrator {
+  constructor(screenId, designJson) {
+    this.screenId = screenId;
+    this.designJson = designJson;
+    this.refreshTimers = new Map();    // widgetId -> intervalId
+    this.subscriptions = [];            // Supabase channel unsubscribers
+    this.cache = new Map();             // widgetId -> { data, fetchedAt }
+    this.listeners = new Set();         // onChange callbacks
+  }
+
+  // Start all refresh loops based on widget configs in designJson
+  start() {
+    const widgets = this.extractDynamicWidgets(this.designJson);
+
+    for (const widget of widgets) {
+      // Set up polling based on widget type
+      const interval = this.getRefreshInterval(widget);
+      if (interval > 0) {
+        this.refreshTimers.set(widget.id, setInterval(
+          () => this.refreshWidget(widget),
+          interval
+        ));
+      }
+
+      // Set up realtime subscription for push updates
+      this.setupRealtimeSubscription(widget);
+    }
+  }
+
+  getRefreshInterval(widget) {
+    switch (widget.widgetType) {
+      case 'data_table':
+      case 'data':
+        return (widget.props.refreshMinutes || 5) * 60 * 1000;
+      case 'rss_feed':
+        return (widget.props.refreshMinutes || 15) * 60 * 1000;
+      case 'weather':
+        return 30 * 60 * 1000; // 30 minutes
+      case 'social_feed':
+        return (widget.props.autoRefreshMinutes || 20) * 60 * 1000;
+      case 'countdown':
+        return 0; // Client-side only, no server refresh
+      case 'clock':
+      case 'date':
+        return 0; // Client-side only
+      default:
+        return 0;
+    }
+  }
+
+  setupRealtimeSubscription(widget) {
+    if (widget.widgetType === 'data_table' || widget.widgetType === 'data') {
+      const unsub = subscribeToDataSource(widget.props.dataSourceId, () => {
+        this.refreshWidget(widget);
+      });
+      this.subscriptions.push(unsub);
+    }
+  }
+
+  stop() {
+    this.refreshTimers.forEach(timer => clearInterval(timer));
+    this.subscriptions.forEach(unsub => unsub());
+  }
+}
+```
+
+### Refresh Strategy by Widget Type
+
+| Widget Type | Refresh Method | Default Interval | Push Updates? |
+|-------------|---------------|------------------|---------------|
+| `data_table` | Poll DB + Realtime subscription | 5 min | YES (data_source_rows changes) |
+| `data` (bound text) | Poll DB + Realtime subscription | 5 min | YES (data_source_rows changes) |
+| `rss_feed` | Poll DB (Edge Function refreshes cache) | 15 min | NO (poll only) |
+| `weather` | Direct API call with cache | 30 min | NO (poll only) |
+| `social_feed` | Poll DB + Realtime subscription | 20 min | YES (social_feeds changes) |
+| `countdown` | Client-side timer | N/A (1s tick) | NO |
+| `clock` | Client-side timer | N/A (1s tick) | NO |
+| `date` | Client-side timer | N/A (1min tick) | NO |
+
+---
+
+## New Components Needed
+
+### New Services
+
+| Service | File | Purpose |
+|---------|------|---------|
+| RSS Feed Service | `src/services/rssFeedService.js` | Fetch, parse, cache RSS/Atom feeds |
+| Player Data Orchestrator | `src/services/playerDataOrchestrator.js` | Unified refresh management for all dynamic widgets on player |
+
+### New Supabase Edge Function
+
+| Function | Purpose |
+|----------|---------|
+| `rss-feed-proxy` | CORS-safe RSS/Atom fetching and caching |
+
+### New DB Migration
+
+| Table | Purpose |
+|-------|---------|
+| `rss_feed_configs` | Feed URL, poll interval, max items per tenant |
+| `rss_feed_items` | Cached parsed RSS items (title, link, description, image, pubDate) |
+
+### New UI Components
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| RssFeedRenderer | `src/components/player/RssFeedRenderer.jsx` | Render RSS as ticker/list/cards |
+| CountdownRenderer | `src/components/player/CountdownRenderer.jsx` | Countdown timer display |
+| DataTableRenderer | `src/components/player/DataTableRenderer.jsx` | Render data source as styled table |
+| EnhancedWeatherRenderer | `src/components/player/WeatherRenderer.jsx` | Full weather widget (not just mock) |
+
+### Modified Components
+
+| Component | File | Changes |
+|-----------|------|---------|
+| LayoutElementRenderer | `src/components/layout-editor/LayoutElementRenderer.jsx` | Add `social_feed`, `rss_feed`, `countdown`, `data_table` cases to WidgetElement switch |
+| EditorCanvas | `src/components/scene-editor/EditorCanvas.jsx` | Wire up data refresh for preview |
+| PropertiesPanel | `src/components/scene-editor/PropertiesPanel.jsx` | Add widget-specific config panels for each new type |
+| sceneDesignService | `src/services/sceneDesignService.js` | Add factory functions for new widget types |
+| realtimeService | `src/services/realtimeService.js` | Add `subscribeToDataSourceUpdates` for player |
+| playerService | `src/services/playerService.js` | Include data source IDs in player content payload |
 
 ---
 
 ## Patterns to Follow
 
-### Pattern 1: Composite Service Layer
+### Pattern 1: Widget Block Extension
 
-**What:** Frontend services that aggregate data from multiple backend sources into a unified interface for UI components.
+Follow the existing `createWidgetBlock` pattern. All widget blocks use `type: 'widget'` with a `widgetType` discriminator. Config goes in `props`.
 
-**When:** Two or more data sources need to appear as one to the UI, but merging them in the database would be wrong.
-
-**Example:**
 ```javascript
-// src/services/creativeHubService.js
-export async function fetchUnifiedTemplates(filters) {
-  const [marketplace, library] = await Promise.all([
-    fetchMarketplaceTemplates({
-      search: filters.search,
-      categoryId: filters.categoryId,
-      license: filters.license,
-    }),
-    fetchTemplates({
-      search: filters.search,
-      categorySlug: filters.categorySlug,
-    }).then(r => r.data),
-  ]);
-
-  // Normalize to common shape
-  const normalized = [
-    ...marketplace.map(t => ({
-      id: t.id,
-      source: 'marketplace',
-      name: t.name,
-      thumbnail: t.thumbnail_url,
-      type: t.template_type,
-      license: t.license,
-      rating: t.average_rating,
-      category: t.category?.name,
-      // ... common fields
-    })),
-    ...library.map(t => ({
-      id: t.id,
-      source: 'library',
-      name: t.name,
-      thumbnail: t.thumbnail_url,
-      type: t.type,
-      license: 'free', // library templates are always free
-      category: t.category?.name,
-      // ... common fields
-    })),
-  ];
-
-  return rankTemplates(normalized, filters);
+// sceneDesignService.js - add new factory functions
+export function createRssFeedBlock(options = {}) {
+  return {
+    id: generateBlockId(),
+    type: 'widget',
+    widgetType: 'rss_feed',
+    x: options.x ?? 0,
+    y: options.y ?? 0.9,
+    width: options.width ?? 1,
+    height: options.height ?? 0.1,
+    layer: options.layer ?? 10,
+    props: {
+      feedUrl: options.feedUrl || '',
+      layout: options.layout || 'ticker',
+      maxItems: options.maxItems || 10,
+      refreshMinutes: options.refreshMinutes || 15,
+      ...options.props,
+    },
+  };
 }
 ```
 
-### Pattern 2: PostMessage Bridge for Iframe Integration
+**Why:** Consistent with existing widget infrastructure. Editor, renderer, and properties panel all dispatch on `widgetType`.
 
-**What:** Extend the existing Polotno postMessage protocol with new message types for stock images.
+### Pattern 2: Server-Cached External Data
 
-**When:** New functionality needs to cross the React 19 / React 18 iframe boundary.
+For any external API data (RSS, weather, social), the flow should be:
 
-**Example:**
+1. Server/Edge Function fetches external data
+2. Data cached in Supabase table with timestamp
+3. Player reads from Supabase table (never external API directly)
+4. Realtime subscription or polling for freshness
+
 ```javascript
-// In PolotnoEditor.jsx - add to handleMessage switch
-case 'searchStockImages':
-  try {
-    const results = await stockAssetService.searchPhotos(
-      data.query, data.page
-    );
-    sendToIframe('stockImageResults', results);
-  } catch (err) {
-    sendToIframe('stockImageError', { message: err.message });
-  }
-  break;
+// Edge Function: supabase/functions/rss-feed-proxy/index.ts
+import { createClient } from '@supabase/supabase-js';
 
-case 'trackStockDownload':
-  stockAssetService.trackDownload(data.downloadUrl).catch(() => {});
-  break;
+Deno.serve(async (req) => {
+  const { feedUrl, feedConfigId } = await req.json();
+
+  // Fetch and parse RSS
+  const response = await fetch(feedUrl);
+  const xml = await response.text();
+  const items = parseRSS(xml); // XML -> JSON
+
+  // Cache in DB
+  const supabase = createClient(/* ... */);
+  await supabase.from('rss_feed_items')
+    .upsert(items.map(item => ({
+      feed_config_id: feedConfigId,
+      guid: item.guid,
+      title: item.title,
+      link: item.link,
+      description: item.description,
+      image_url: item.imageUrl,
+      published_at: item.pubDate,
+    })), { onConflict: 'feed_config_id,guid' });
+
+  return new Response(JSON.stringify({ count: items.length }));
+});
 ```
 
-### Pattern 3: Feature-Flag-Gated Premium Features
+**Why:** Avoids CORS issues on player devices (WebOS/Tizen browsers may block cross-origin requests). Enables offline mode. Centralizes rate limiting. One fetch serves all players showing the same feed.
 
-**What:** Use existing feature flag system to gate stock assets and premium templates by plan.
+### Pattern 3: Stale-While-Revalidate on Player
 
-**When:** Features that should only be available on certain pricing tiers.
+The player should always show the last-known data immediately, then refresh in the background.
 
-**Example:**
 ```javascript
-// In CreativeHubPage.jsx
-const stockPhotosEnabled = isFeatureResolved('stock_assets', featureContext);
+// In player widget renderer
+const [data, setData] = useState(null);
 
-// In featureFlags.js
-export const GLOBAL_FLAGS = {
-  // ...existing flags
-  [Feature.STOCK_ASSETS]: false, // Plan-gated, not global
-};
+useEffect(() => {
+  // 1. Show cached data immediately
+  const cached = getCachedContent(`widget-${widgetId}`);
+  if (cached) setData(cached);
+
+  // 2. Fetch fresh data in background
+  fetchFreshData(widgetId).then(fresh => {
+    setData(fresh);
+    cacheContent(`widget-${widgetId}`, fresh);
+  });
+}, [widgetId]);
 ```
+
+**Why:** Digital signage screens should never show loading spinners. Stale data is better than no data. The `dataBindingResolver` already implements this pattern (returns stale cache on fetch error).
+
+### Pattern 4: Composition Over New Block Types
+
+Do NOT create new top-level block types. Use `type: 'widget'` with `widgetType` variants. This keeps the editor's drag-drop, resize, layering, and snapping logic unchanged.
+
+**Why:** The EditorCanvas, PropertiesPanel, and LayoutElementRenderer all dispatch on `block.type`. Adding a new `type` would require changes in 10+ places. Adding a new `widgetType` requires changes in exactly 3 places: WidgetElement switch, PropertiesPanel widget section, and the widget palette.
 
 ---
 
 ## Anti-Patterns to Avoid
 
-### Anti-Pattern 1: Direct Unsplash API Calls from Browser
+### Anti-Pattern 1: Player Calling External APIs Directly
 
-**What:** Calling `api.unsplash.com` directly from frontend JavaScript.
+**What:** Player fetches RSS/weather/social data directly from external APIs.
+**Why bad:** CORS failures on WebOS/Tizen. Rate limit hits from N players. No offline support. API keys exposed to client.
+**Instead:** All external data goes through server-side caching. Player reads only from Supabase.
 
-**Why bad:** Exposes your API key in client-side code. Anyone can extract it from browser dev tools. Unsplash explicitly warns against this. You also cannot enforce per-tenant rate limits.
+### Anti-Pattern 2: Separate Content Pipelines Per Widget Type
 
-**Instead:** Always proxy through the Edge Function. The only direct browser requests should be to `images.unsplash.com` (the CDN) for displaying images, which is expected and required by Unsplash's hotlinking policy.
+**What:** Each widget type has its own page, service, DB schema, and rendering pipeline.
+**Why bad:** Duplicated infrastructure. Inconsistent behavior. Hard to add new widget types later.
+**Instead:** Use the existing block/widget pattern. All widgets live in scene `design_json` blocks. All server-cached data flows through standardized tables. The renderer dispatches on `widgetType`.
 
-### Anti-Pattern 2: Merging Template Database Tables
+### Anti-Pattern 3: Global Polling Intervals
 
-**What:** Creating a single `templates` table that holds both content_templates (infrastructure blueprints) and template_library (visual designs) data.
+**What:** One global refresh interval for all dynamic content on a screen.
+**Why bad:** Weather needs 30-min refresh, RSS needs 15-min, data tables might need 1-min. A single interval either wastes bandwidth or shows stale data.
+**Instead:** Per-widget `refreshMinutes` in props. The PlayerDataOrchestrator manages independent timers per widget.
 
-**Why bad:** These have fundamentally different schemas. content_templates link to blueprint records that create playlists/layouts/schedules. template_library stores slide-level design JSON with customizable fields. Merging them creates a wide table with nullable columns and complex conditional logic everywhere.
+### Anti-Pattern 4: Storing Widget Data in design_json
 
-**Instead:** Keep separate tables, unify at the service layer with `creativeHubService.js`.
+**What:** Embedding actual RSS items or weather data inside the slide's `design_json`.
+**Why bad:** `design_json` bloats. Every refresh requires updating the scene. Breaks real-time subscriptions (scene update != data update). Violates separation of config vs data.
+**Instead:** `design_json` stores widget CONFIG (feed URL, data source ID, location). Actual DATA lives in purpose-built tables. Player fetches data at render time.
 
-### Anti-Pattern 3: Storing Unsplash Images in Supabase Storage
+### Anti-Pattern 5: Real-Time for Everything
 
-**What:** Downloading Unsplash images and re-hosting them in your own storage.
-
-**Why bad:** Violates Unsplash API TOS which explicitly requires hotlinking to their URLs. The `ixid` parameter in URLs enables photographer analytics. Re-hosting breaks attribution tracking.
-
-**Instead:** Store the Unsplash URL directly in the design JSON. Display images via Unsplash CDN. Only exception: if user explicitly "downloads to media library", save a copy (this is permitted as a user-initiated download action, but attribution must be preserved).
-
-### Anti-Pattern 4: Synchronous Template Cloning in the Apply Flow
-
-**What:** Waiting for the full `clone_template_to_scene` RPC to complete before showing any UI feedback.
-
-**Why bad:** RPC can take 1-3 seconds for complex templates with multiple slides. User sees a spinner with no progress.
-
-**Instead:** Show optimistic navigation. Navigate to the scene editor immediately with a loading state. The scene editor already handles loading states (`if (loading) return <Loader />`). Let the RPC complete and the editor will load the data.
+**What:** Using Supabase realtime subscriptions for weather and RSS updates.
+**Why bad:** Weather and RSS updates are infrequent and don't benefit from sub-second latency. Each subscription consumes a WebSocket channel. Players already use several channels.
+**Instead:** Use realtime only for data_source_rows and social_feeds (where user edits should reflect immediately). Use polling for weather and RSS (which update on fixed server-side intervals anyway).
 
 ---
 
 ## Scalability Considerations
 
-| Concern | At 100 users | At 10K users | At 1M users |
-|---------|--------------|--------------|-------------|
-| Unsplash API calls | Well within 5K/hr limit | Cache hit rate reduces to ~2K/hr actual API calls | Need multiple API keys or Unsplash Enterprise |
-| Template browse queries | Direct Supabase queries fine | Add pagination, cache categories | Consider search index (pg_trgm or external) |
-| Cache table growth | Negligible | ~50K rows, auto-cleanup handles it | Partition by month, consider Redis |
-| Edge Function cold starts | Imperceptible | ~200ms p95 for cold starts | Acceptable; Supabase keeps warm for active functions |
-| Polotno iframe load | 10s timeout is generous | Same; files are static/cached | CDN the static assets |
+| Concern | At 100 screens | At 10K screens | At 100K screens |
+|---------|---------------|----------------|-----------------|
+| Weather API calls | Direct API OK (100 locations, 30-min cache) | Need server-side cache (deduplicate by location) | Must use Edge Function cache; batch by location |
+| RSS feed fetching | Direct via Edge Function per feed | Deduplicate: one fetch per unique URL regardless of screen count | Rate limit external RSS servers; aggressive cache TTLs |
+| Data source polling | Supabase realtime works fine | Channel fan-out concern; consider broadcast channel | Move to pg_notify with fan-out service |
+| Social feed sync | socialFeedSyncService handles well | Needs server-side scheduler (not browser-based) | Dedicated worker process for sync |
+| Offline cache size | ~1MB per screen in IndexedDB | Same per screen | Same; add cache eviction policies |
+
+### Key Scaling Decision: Where Does Sync Run?
+
+Currently `dataFeedScheduler` and `socialFeedSyncService` run in the admin's browser tab. This works for small deployments but fails when:
+- Admin tab is closed
+- Multiple admin tabs create duplicate syncs
+- Need guaranteed sync timing
+
+**Recommendation for this milestone:** Keep browser-based sync for now. Add the RSS Edge Function as the first server-side sync. Plan migration of all sync to Supabase Edge Functions or pg_cron in a future milestone.
 
 ---
 
-## Integration Points with Existing Files
+## Integration Map: New vs Modified
 
-### Files That Need Modification
+```
+NEW FILES:
+  src/services/rssFeedService.js          -- RSS fetch, parse, cache
+  src/services/playerDataOrchestrator.js  -- Player refresh management
+  src/components/player/RssFeedRenderer.jsx
+  src/components/player/CountdownRenderer.jsx
+  src/components/player/DataTableRenderer.jsx
+  src/components/player/WeatherRenderer.jsx
+  supabase/functions/rss-feed-proxy/index.ts
+  supabase/migrations/XXX_rss_feed_tables.sql
 
-| Existing File | Change Required | Why |
-|---------------|----------------|-----|
-| `src/components/PolotnoEditor.jsx` | Add stock image postMessage handlers | Bridge Polotno iframe stock photo requests |
-| `src/pages/SceneEditorPage.jsx` | Add `?fromTemplate` detection, stock photos toolbar button | Instant edit flow + stock image access |
-| `src/components/scene-editor/PropertiesPanel.jsx` | Add animation controls section | Block-level animation settings |
-| `src/services/sceneDesignService.js` | Add `animation` to block schema | Store animation data in design_json |
-| `src/components/scene-editor/EditorCanvas.jsx` | Render CSS animations on blocks | Visual animation preview in edit mode |
-| `src/components/scene-editor/LivePreviewWindow.jsx` | Animate blocks during preview playback | Animation preview in preview mode |
-| `public/polotno/polotno-editor.js` | Rebuild with animations enabled + custom stock panel | Polotno feature additions |
-| `src/config/featureFlags.js` | Add STOCK_ASSETS feature flag | Plan gating |
-| `src/config/env.js` | No change needed (Edge Function holds API key) | -- |
-| App router | Add `/creative-hub` route | New page |
+MODIFIED FILES:
+  src/components/layout-editor/LayoutElementRenderer.jsx  -- Add widget cases
+  src/components/scene-editor/EditorCanvas.jsx            -- Wire data preview
+  src/components/scene-editor/PropertiesPanel.jsx         -- Widget config panels
+  src/services/sceneDesignService.js                      -- Widget factory fns
+  src/services/realtimeService.js                         -- Data source subs
+  src/services/playerService.js                           -- Include data refs
+  src/config/appCatalog.js                                -- New app entries
 
-### Files That Stay Unchanged
-
-| File | Why Unchanged |
-|------|--------------|
-| `src/services/templateService.js` | Still needed for pack/playlist/layout templates |
-| `src/services/marketplaceService.js` | Still needed for scene templates, consumed by creativeHubService |
-| `src/components/templates/TemplateCustomizeModal.jsx` | Deprecated but kept for TemplatesPage backward compat |
-| `src/services/mediaService.js` | Stock images flow through it when user saves to library |
+UNCHANGED (already complete):
+  src/services/dataSourceService.js       -- Fully functional
+  src/services/dataBindingResolver.js     -- Fully functional
+  src/services/dataFeedScheduler.js       -- Fully functional
+  src/services/googleSheetsService.js     -- Fully functional
+  src/services/weatherService.js          -- Functional (enhance later)
+  src/services/socialFeedSyncService.js   -- Fully functional
+  src/components/player/SocialFeedRenderer.jsx -- Fully functional
+  src/pages/DataSourcesPage.jsx           -- Fully functional
+```
 
 ---
 
-## Build Order (Dependency Graph)
+## Suggested Build Order
 
-```
-Phase 1: Unsplash Proxy Infrastructure
-  |-- Migration: cache + rate limit tables
-  |-- Edge Function: unsplash-proxy
-  |-- Service: stockAssetService.js
-  |-- Component: StockImagePicker.jsx, UnsplashAttribution.jsx
-  |
-  +-- No dependencies on other phases
+Based on dependency analysis:
 
-Phase 2: Scene Editor Stock Photos + Animation
-  |-- Depends on: Phase 1 (stockAssetService)
-  |-- Modify: SceneEditorPage.jsx (add stock photos button)
-  |-- Modify: sceneDesignService.js (animation schema)
-  |-- Modify: PropertiesPanel.jsx (animation controls)
-  |-- Modify: EditorCanvas.jsx (animation rendering)
-  |-- New: QuickCustomizePanel.jsx
-  |
-  +-- Depends on Phase 1
+1. **Data Table Widget** (lowest risk, highest existing foundation)
+   - Depends on: dataSourceService (done), dataBindingResolver (done)
+   - New: DataTableRenderer, widget factory, editor panel, WidgetElement case
+   - Why first: Most infrastructure already exists. Validates the widget extension pattern.
 
-Phase 3: Polotno Editor Enhancements
-  |-- Depends on: Phase 1 (stockAssetService via postMessage)
-  |-- Rebuild: polotno-editor.js (enable animations + custom stock panel)
-  |-- Modify: PolotnoEditor.jsx (add stock image message handlers)
-  |
-  +-- Depends on Phase 1, can parallel with Phase 2
+2. **Countdown Widget** (zero backend dependencies)
+   - Depends on: nothing external
+   - New: CountdownRenderer, widget factory, editor panel
+   - Why second: Pure client-side. Quick win. No backend work.
 
-Phase 4: Unified Template Browser
-  |-- Depends on: Phase 2 (instant edit flow target)
-  |-- New: creativeHubService.js, CreativeHubPage.jsx
-  |-- New: PremiumTemplateCard.jsx, TemplateDetailDrawer.jsx
-  |-- New: CategoryHeroSection.jsx
-  |-- Modify: Router (add /creative-hub route)
-  |
-  +-- Depends on Phase 2 (for the instant-edit landing)
+3. **Enhanced Weather Widget** (small enhancement)
+   - Depends on: weatherService (done)
+   - New: WeatherRenderer with live API calls, widget config panel
+   - Why third: Service exists, just needs proper rendering.
 
-Phase 5: Polish + Integration Testing
-  |-- Depends on: All previous phases
-  |-- Wire up feature flags
-  |-- Add redirects from old template pages
-  |-- E2E testing of full flows
-```
+4. **Social Feed Widget Integration** (wiring only)
+   - Depends on: SocialFeedRenderer (done), socialFeedSyncService (done)
+   - New: Wire into WidgetElement, add config panel
+   - Why fourth: All infrastructure exists. Just connecting pieces.
 
-**Rationale for order:** The Unsplash proxy is infrastructure with zero UI dependencies, so it ships first and unblocks both editor integration phases. The scene editor gets stock photos and animations in Phase 2 because that is where marketplace templates land. Polotno can be enhanced in parallel. The unified browser is last because it depends on the instant-edit flow being ready in the scene editor.
+5. **RSS Feed Widget** (most new infrastructure)
+   - Depends on: NEW Edge Function, NEW DB tables, NEW service
+   - New: Everything from proxy to renderer
+   - Why fifth: Most greenfield work. Riskiest. Needs the most testing.
+
+6. **Player Data Orchestrator** (integration layer)
+   - Depends on: All widgets above being functional
+   - New: Unified refresh management, realtime subscriptions
+   - Why last: This is the glue. Build it after individual widgets work.
 
 ---
 
 ## Sources
 
-- [Unsplash API Official Documentation](https://unsplash.com/documentation) -- Rate limits, auth, attribution requirements (HIGH confidence)
-- [Unsplash API Guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines) -- Hotlinking and TOS requirements (HIGH confidence)
-- [Polotno SDK Custom Images Panel](https://polotno.com/docs/custom-images-panel) -- ImagesGrid component, custom panel API (HIGH confidence)
-- [Polotno SDK Animations](https://polotno.com/docs/animations-and-videos) -- setAnimationsEnabled, GIF/video export (HIGH confidence)
-- [Polotno SDK Side Panel Overview](https://polotno.com/docs/side-panel-overview) -- Custom section registration (HIGH confidence)
-- [Supabase Edge Functions Rate Limiting](https://supabase.com/docs/guides/functions/examples/rate-limiting) -- Upstash Redis pattern (MEDIUM confidence -- we use Supabase table instead)
-- [Supabase Edge Functions Architecture](https://supabase.com/docs/guides/functions/architecture) -- Deno runtime, cold starts (HIGH confidence)
-- Existing codebase analysis: `templateService.js`, `marketplaceService.js`, `PolotnoEditor.jsx`, `EditorModal.jsx`, `SceneEditorPage.jsx`, `TemplatesPage.jsx`, `TemplateMarketplacePage.jsx`, `TemplateCustomizationWizard.jsx` (HIGH confidence -- direct code review)
+- **Codebase analysis:** All findings come from reading the actual BizScreen source code
+  - `src/services/dataSourceService.js` - 1286 lines, complete CRUD + bindings + realtime
+  - `src/services/dataBindingResolver.js` - 398 lines, caching + resolution + player utilities
+  - `src/services/dataFeedScheduler.js` - 431 lines, scheduler with events + retry
+  - `src/services/googleSheetsService.js` - 517 lines, fetch + sync + change detection
+  - `src/services/weatherService.js` - 479 lines, OWM API + forecast + cache
+  - `src/services/socialFeedSyncService.js` - 445 lines, multi-provider sync
+  - `src/services/playerService.js` - 869 lines, offline cache + commands + backoff
+  - `src/services/realtimeService.js` - 333 lines, device + content subscriptions
+  - `src/components/player/SocialFeedRenderer.jsx` - 427 lines, 5 layout modes
+  - `src/components/layout-editor/LayoutElementRenderer.jsx` - 247 lines, widget dispatch
+  - `src/services/sceneDesignService.js` - block model with widget blocks
+  - `supabase/migrations/077_dynamic_data_sources.sql` - data source schema
+  - `supabase/migrations/078_realtime_data_feeds.sql` - sync infrastructure
+  - `supabase/migrations/081_social_media_feeds.sql` - social feed schema
+- **Confidence:** HIGH - all claims verified against actual source code, not assumptions
