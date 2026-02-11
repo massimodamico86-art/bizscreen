@@ -103,7 +103,10 @@ Plans:
   3. User can open an icon panel inside the editor, search by keyword, and insert icons as SVG elements onto the canvas
   4. User can open a media library panel inside the editor that shows their previously uploaded images and insert them onto the canvas
   5. User can drag any asset (photo, icon, uploaded media) from its panel directly onto the canvas at the desired position
-**Plans:** TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 49-01-PLAN.md — Unsplash proxy Photos panel, My Media panel, and canvas drag-and-drop handler
+- [ ] 49-02-PLAN.md — Iconify icon search in Elements panel and SVG vector drag-and-drop
 
 #### Phase 50: Editor Polish
 **Goal:** The editor feels modern and responsive — toolbar interactions are snappy, state changes have visual feedback, and power users discover keyboard shortcuts.
