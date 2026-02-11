@@ -65,7 +65,7 @@ Each task was committed atomically:
 2. **Task 2: Fix migration 105 tenant_id and update loggingService** - `f8bc736` (fix)
 3. **Task 3: Verify all success criteria** - No commit (verification-only, no file changes)
 
-**Plan metadata:** `1f74bf3` (docs: complete plan)
+**Plan metadata:** `8677141` (docs: complete plan)
 
 ## Files Created/Modified
 - `src/components/onboarding/AutoBuildOnboardingModal.jsx` - DELETED (dead onboarding modal, 421 lines)

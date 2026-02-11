@@ -91,17 +91,27 @@ These capabilities shipped and are production-verified:
 - ✓ All ESLint warn rules promoted to error with pre-commit enforcement — v2.4
 - ✓ Sentry Slack integration with dual alert rules (#sentry-alerts channel) — v2.4
 
+**v3.0 Creative Experience (2026-02-11):**
+- ✓ Unsplash proxy Edge Function with database cache, rate limiting, TOS compliance — v3.0
+- ✓ Client-side proxy service with fire-and-forget download tracking — v3.0
+- ✓ Premium template gallery with Framer Motion cardLift hover, skeleton loading, stagger animations — v3.0
+- ✓ Debounced search (300ms) with responsive 4→1 column grid — v3.0
+- ✓ One-click template-to-editor flow (no intermediate modals) — v3.0
+- ✓ QuickCustomizePanel with brand colors, logo placement, text overrides — v3.0
+- ✓ Scroll position save/restore via sessionStorage with RAF gating — v3.0
+- ✓ In-editor Unsplash photo search with attribution and download tracking — v3.0
+- ✓ In-editor Iconify icon search (15k+ icons, 5 curated sets) with SVG vector insertion — v3.0
+- ✓ In-editor My Media panel with uploaded image browsing — v3.0
+- ✓ Drag-and-drop from all asset panels with zoom-aware canvas positioning — v3.0
+- ✓ Toolbar scaleTap press animations via Framer Motion — v3.0
+- ✓ Editor loading skeleton matching editor layout structure — v3.0
+- ✓ Save celebration with confetti burst and green "Saved!" badge — v3.0
+- ✓ Undo/redo toast with auto-dismiss and replacement on rapid actions — v3.0
+- ✓ Keyboard shortcuts overlay with Mac/PC detection and text editing guard — v3.0
+
 ### Active
 
-## Current Milestone: v3.0 Creative Experience
-
-**Goal:** Make the template-to-editor experience feel premium and effortless — a design marketplace quality that beats Yodeck and OptiSigns.
-
-**Target features:**
-- Premium template browse page with visual richness (large thumbnails, smooth animations, micro-interactions on hover)
-- Instant template-to-editor flow (pick template → editing in seconds, no intermediate modals)
-- Editor UI polish (better toolbar, smoother interactions, modern feel around Polotno core)
-- In-editor stock asset library (Unsplash photos, icons/stickers searchable inside the editor)
+(No active milestone — planning next)
 
 ### Out of Scope
 
@@ -120,9 +130,9 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (v3.0 in progress):**
+**Current State (post v3.0):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- ~361,000 lines of JavaScript/JSX/CSS/JSON across codebase
+- ~362,000 lines of JavaScript/JSX/CSS/JSON across codebase
 - Unified onboarding flow (feature flag removed, unconditional)
 - Test suite: 2,079 unit tests, 1,191 E2E tests (all skips categorized and documented)
 - ESLint: zero warnings, zero errors, all rules at error level with pre-commit enforcement
@@ -132,13 +142,16 @@ These capabilities shipped and are production-verified:
 - Multi-tenant with feature flags for plan differentiation
 - AWS S3 for media storage with CloudFront CDN
 - Pre-commit hooks enforce ESLint at error level on all commits
-- EditorModal pattern for Polotno editor isolation
+- Fabric.js SVG editor with stock asset panels (Unsplash proxy, Iconify icons, My Media)
+- Framer Motion animations throughout template gallery and editor (cardLift, scaleTap, stagger)
+- Unsplash proxy Edge Function with database cache and per-tenant rate limiting
 - Best-of-3 E2E gate script in CI (90% threshold)
 - `src/__fixtures__/` shared test data pattern adopted (3 service tests)
 
 **Technical Debt (Minimal):**
 - ~900 E2E tests skipped (intentional: ~800 project-specific multi-project pattern, remainder categorized with SKIP REASON documentation)
 - Sentry alert environment set to "all" (will narrow to "production" once environment auto-creates)
+- Unsplash offline caching: TOS may conflict with offline player requirement (needs clarification before production use)
 
 **Codebase Mapping:**
 - `.planning/codebase/ARCHITECTURE.md` — system design
@@ -192,6 +205,17 @@ These capabilities shipped and are production-verified:
 | eslint-disable with reason for mount-only effects | Inline functions recreate every render | ✓ Good — intentional suppression documented |
 | All ESLint warn rules promoted to error | Zero-warning standard with enforcement | ✓ Good — pre-commit blocks violations |
 | Dual Sentry alert strategy (issue + metric) | Different alert types for different patterns | ✓ Good — covers new errors and spikes |
+| Database-backed Unsplash cache over Redis | PostgreSQL already available in Edge Functions | ✓ Good — no external dependency |
+| Hourly window rate limiting (date_trunc) | Simpler than sliding window, adequate for per-tenant throttling | ✓ Good — clean implementation |
+| Fire-and-forget download tracking | Never blocks user workflow per Unsplash TOS | ✓ Good — UX unaffected |
+| Fixed height thumbnails (h-60/h-80) over aspect-ratio | Prevents layout shift during load | ✓ Good — consistent grid |
+| cardLift preset (y-translate + scale + boxShadow) | Premium hover feel on template cards | ✓ Good — feels responsive |
+| Dominant color replacement for brand colors | Simpler than per-object targeting | ✓ Good — intuitive UX |
+| Iconify API with 5 curated prefixes | Avoids complex emoji SVGs, 15k+ quality icons | ✓ Good — vector insertion works |
+| loadSVGFromString for icon insertion | Preserves scalability over rasterized FabricImage | ✓ Good — crisp at any size |
+| Server-side Unsplash proxy (removed client key) | API key never reaches browser | ✓ Good — security improvement |
+| Dark-themed editor overlays (shortcuts, customize) | Matches editor chrome aesthetic | ✓ Good — cohesive look |
+| Scroll restore gated on loading===false with RAF | Prevents premature scroll before DOM ready | ✓ Good — accurate positioning |
 
 ---
-*Last updated: 2026-02-10 after starting v3.0 Creative Experience milestone*
+*Last updated: 2026-02-11 after completing v3.0 Creative Experience milestone*
