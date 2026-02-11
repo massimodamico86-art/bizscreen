@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone
+**Current focus:** v3.1 Data-Driven Screens
 
 ## Current Position
 
-Phase: None active
-Plan: None active
-Status: v3.0 Creative Experience shipped — ready for next milestone
-Last activity: 2026-02-11 — v3.0 milestone completed and archived
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-11 — Milestone v3.1 started
 
 Progress: Idle
 
@@ -38,14 +38,14 @@ Progress: Idle
 
 ## Accumulated Context
 
-(Cleared — milestone archived. Start fresh with `/gsd:new-milestone`.)
+(Cleared — milestone archived. Start fresh with v3.1.)
 
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: v3.0 milestone completed
+Stopped at: v3.1 milestone initialization
 Resume file: None
-Next: `/gsd:new-milestone` to plan next milestone
+Next: Define requirements → create roadmap
 
 ---
-*Updated: 2026-02-11 — v3.0 Creative Experience shipped and archived.*
+*Updated: 2026-02-11 — Milestone v3.1 Data-Driven Screens started.*

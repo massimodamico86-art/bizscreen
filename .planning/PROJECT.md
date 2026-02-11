@@ -111,7 +111,16 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-(No active milestone — planning next)
+## Current Milestone: v3.1 Data-Driven Screens
+
+**Goal:** Enable screens to display live, dynamic content from external data sources, social feeds, and environmental widgets.
+
+**Target features:**
+- Data source widgets (Google Sheets/CSV/API → template-based display on screens)
+- Data pages as playlist items (cycle through data rows as slides)
+- Social/RSS feed rendering on player screens
+- Weather, clock, and countdown timer widgets
+- Configurable polling refresh intervals (5/15/30/60 min)
 
 ### Out of Scope
 
@@ -218,4 +227,4 @@ These capabilities shipped and are production-verified:
 | Scroll restore gated on loading===false with RAF | Prevents premature scroll before DOM ready | ✓ Good — accurate positioning |
 
 ---
-*Last updated: 2026-02-11 after completing v3.0 Creative Experience milestone*
+*Last updated: 2026-02-11 after starting v3.1 Data-Driven Screens milestone*
