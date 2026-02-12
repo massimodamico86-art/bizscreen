@@ -7,21 +7,28 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Type,
-  Image,
-  Square,
-  Clock,
-  CloudSun,
-  QrCode,
-  Calendar,
-  ChevronDown,
-  Layers,
-  Database,
-  Link,
-  AlignLeft,
   AlignCenter,
+  AlignLeft,
   AlignRight,
   Bold,
+  Calendar,
+  ChevronDown,
+  Clock,
+  CloudSun,
+  Database,
+  Grid3X3,
+  Image,
+  Layers,
+  Link,
+  MapPin,
+  Palette,
+  Play,
+  QrCode,
+  Sparkles,
+  Square,
+  Table2,
+  Type,
+  X,
 } from 'lucide-react';
 import { Button } from '../../design-system';
 import {
@@ -32,6 +39,7 @@ import {
 import { fetchDataSources, getDataSource } from '../../services/dataSourceService';
 import { getBindingDisplayText } from '../../services/dataBindingResolver';
 import { useLogger } from '../../hooks/useLogger.js';
+import { DataTableWidgetControls } from './DataTableWidgetControls';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -635,6 +643,7 @@ function WidgetControls({ block, onUpdate }) {
     { key: 'date', icon: Calendar, label: 'Date' },
     { key: 'weather', icon: CloudSun, label: 'Weather' },
     { key: 'qr', icon: QrCode, label: 'QR Code' },
+    { key: 'data-table', icon: Table2, label: 'Data Table' },
   ];
 
   const props = block.props || {};
@@ -646,6 +655,10 @@ function WidgetControls({ block, onUpdate }) {
 
   function handlePropChange(key, value) {
     onUpdate({ props: { ...props, [key]: value } });
+  }
+
+  function handleMultiPropChange(updates) {
+    onUpdate({ props: { ...props, ...updates } });
   }
 
   return (
@@ -805,6 +818,15 @@ function WidgetControls({ block, onUpdate }) {
             <div className="text-xs text-gray-500 text-right">{props.cornerRadius || 8}px</div>
           </div>
         </>
+      )}
+
+      {/* Data Table Controls */}
+      {widgetType === 'data-table' && (
+        <DataTableWidgetControls
+          props={props}
+          onPropChange={handlePropChange}
+          onMultiPropChange={handleMultiPropChange}
+        />
       )}
 
       {/* Text Color for all widgets */}
