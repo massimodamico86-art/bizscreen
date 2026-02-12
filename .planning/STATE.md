@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 51 of 55 (Data Source Widget Pipeline)
-Plan: 2 of 3 complete
-Status: Executing
-Last activity: 2026-02-12 — Completed 51-02 (Data Preview & Column Picker)
+Plan: 3 of 3 complete
+Status: Phase Complete
+Last activity: 2026-02-12 — Completed 51-03 (Scene Editor Data Table Integration)
 
 Progress: [██████░░░░] 13%
 
@@ -41,6 +41,7 @@ Progress: [██████░░░░] 13%
 |-------|------|----------|-------|-------|
 | 51 | 01 | 3min | 2 | 4 |
 | 51 | 02 | 3min | 2 | 3 |
+| 51 | 03 | 3min | 2 | 4 |
 
 ## Accumulated Context
 
@@ -59,6 +60,9 @@ Progress: [██████░░░░] 13%
 - Phase 51-01: formatValue from dataSourceService used for type-aware rendering in tables
 - Phase 51-02: Column config (visibleColumns/columnOrder) stored as local state; per-widget overrides in plan 51-03
 - Phase 51-02: null means "show all / source order" for column config optimization
+- Phase 51-03: DataTableWidgetControls extracted to own file to keep PropertiesPanel manageable
+- Phase 51-03: EditorCanvas shows mock preview, LivePreviewWindow shows real DataTableWidget with live data
+- Phase 51-03: Column config resets on data source switch via batch update
 
 ### Blockers/Concerns
 
@@ -67,9 +71,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Completed 51-02-PLAN.md (Data Preview & Column Picker)
+Stopped at: Completed 51-03-PLAN.md (Scene Editor Data Table Integration) - Phase 51 complete
 Resume file: None
-Next: Execute 51-03-PLAN.md
+Next: Phase 52
 
 ---
-*Updated: 2026-02-12 — Phase 51 Plan 02 complete.*
+*Updated: 2026-02-12 — Phase 51 complete (all 3 plans).*
