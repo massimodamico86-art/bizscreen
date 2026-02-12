@@ -47,7 +47,7 @@ All milestones shipped successfully.
 
 ### Phases
 
-- [ ] **Phase 51: Data Source Widget Pipeline** — Foundation for rendering Google Sheets and CSV data on screens
+- [x] **Phase 51: Data Source Widget Pipeline** — Foundation for rendering Google Sheets and CSV data on screens (completed 2026-02-12)
 - [ ] **Phase 52: RSS & External Data Proxy** — Server-side feed fetching with player rendering
 - [ ] **Phase 53: Social Feed & Content Moderation** — Wire existing social components into layout zones with moderation
 - [ ] **Phase 54: Countdown Widget & Utilities** — Timezone-aware countdown timer and locale-based formatting
@@ -68,9 +68,9 @@ All milestones shipped successfully.
 **Plans:** 3 plans
 
 Plans:
-- [ ] 51-01-PLAN.md — Player DataTableWidget + IndexedDB cache extension
-- [ ] 51-02-PLAN.md — Admin data preview table + column picker
-- [ ] 51-03-PLAN.md — Scene editor data table integration
+- [x] 51-01-PLAN.md — Player DataTableWidget + IndexedDB cache extension
+- [x] 51-02-PLAN.md — Admin data preview table + column picker
+- [x] 51-03-PLAN.md — Scene editor data table integration
 
 #### Phase 52: RSS & External Data Proxy
 **Goal**: Users can add RSS feed URLs and see feed content rendered on screens as scrolling tickers or article cards, with all fetching handled server-side
@@ -141,19 +141,19 @@ Plans:
 | v2.3 Production Hardening | 36-41 | 18 | Complete | 2026-02-09 |
 | v2.4 Tech Debt Zero | 42-45 | 11 | Complete | 2026-02-10 |
 | v3.0 Creative Experience | 46-50 | 10 | Complete | 2026-02-11 |
-| v3.1 Data-Driven Screens | 51-55 | TBD | In progress | - |
+| v3.1 Data-Driven Screens | 51-55 | 3+ | In progress | - |
 
-**Total:** 50 phases complete, 184 plans executed | 7 milestones shipped | 1 milestone in progress
+**Total:** 51 phases complete, 187 plans executed | 7 milestones shipped | 1 milestone in progress
 
 ### v3.1 Phase Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 51. Data Source Widget Pipeline | 0/TBD | Not started | - |
+| 51. Data Source Widget Pipeline | 3/3 | ✓ Complete | 2026-02-12 |
 | 52. RSS & External Data Proxy | 0/TBD | Not started | - |
 | 53. Social Feed & Content Moderation | 0/TBD | Not started | - |
 | 54. Countdown Widget & Utilities | 0/TBD | Not started | - |
 | 55. Player Data Orchestrator & Polish | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-11 — v3.1 Data-Driven Screens roadmap created.*
+*Last updated: 2026-02-12 — Phase 51 complete.*
