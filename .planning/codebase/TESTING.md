@@ -1,117 +1,75 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-02-05
+**Analysis Date:** 2026-02-12
 
 ## Test Framework
 
 **Runner:**
-- Vitest 4.0.14
+- Vitest 4.0.14 (unit & integration tests)
 - Config: `vitest.config.js`
 
 **Assertion Library:**
-- Vitest expect + Testing Library matchers
-- Extended via `expect.extend(matchers)` in setup
+- Vitest expect (extended with @testing-library/jest-dom matchers)
+- React Testing Library (@testing-library/react 16.3.0)
 
 **Run Commands:**
 ```bash
-npm run test              # Run all tests (unit + integration)
+npm run test              # Run all unit/integration tests
 npm run test:watch        # Watch mode
-npm run test:coverage     # Generate coverage report
-npm run test:unit         # Run only unit tests
-npm run test:integration  # Run only integration tests
-npm run test:e2e          # Run E2E tests (Playwright)
-npm run test:all          # Run all tests (unit + integration + E2E)
+npm run test:unit         # Unit tests only
+npm run test:integration  # Integration tests only
+npm run test:coverage     # With coverage report
+npm run test:e2e          # E2E tests (Playwright)
+npm run test:all          # All tests (unit + e2e)
 ```
-
-**E2E Framework:**
-- Playwright 1.57.0
-- Config: `playwright.config.js`
 
 ## Test File Organization
 
 **Location:**
-- Unit tests: `tests/unit/**/*.test.{js,jsx}`
-- Integration tests: `tests/integration/**/*.test.{js,jsx}`
-- E2E tests: `tests/e2e/**/*.spec.{js,jsx}`
+- Unit tests: `tests/unit/**/*.test.js`
+- Integration tests: `tests/integration/**/*.test.js`
+- E2E tests: `tests/e2e/**/*.spec.js`
 
 **Naming:**
-- Unit: Match source file name with `.test.js` suffix
-  - `src/services/mediaService.js` → `tests/unit/services/mediaService.test.js`
-  - `src/components/Badge.jsx` → `tests/unit/components/Badge.test.jsx`
-- E2E: Descriptive name with `.spec.js` suffix
-  - `tests/e2e/auth.spec.js`, `tests/e2e/dashboard.spec.js`
+- Unit/integration: `.test.js` extension
+- E2E: `.spec.js` extension
+- Mirror source structure: `services/cacheService.js` → `tests/unit/services/cacheService.test.js`
 
 **Structure:**
 ```
 tests/
 ├── unit/
-│   ├── components/         # Component tests
-│   ├── services/          # Service layer tests
-│   ├── hooks/             # Custom hook tests
-│   ├── utils/             # Utility function tests
-│   ├── config/            # Config tests
-│   └── player/            # Player-specific tests
+│   ├── services/         # Service layer tests
+│   ├── hooks/           # React hook tests
+│   ├── api/             # API client tests
+│   ├── config/          # Config tests
+│   ├── security/        # Security tests
+│   ├── utils/           # Utility tests
+│   └── player/          # Player-specific tests
 ├── integration/
-│   └── api/               # API integration tests
+│   └── api/             # API integration tests
 ├── e2e/
-│   ├── auth.spec.js       # E2E feature tests
-│   ├── helpers.js         # Shared E2E utilities
-│   └── auth.setup.js      # Setup project
-└── setup.js               # Global test setup
+│   ├── fixtures/        # Custom Playwright fixtures
+│   └── *.spec.js        # E2E test files
+└── setup.js             # Global test setup
 ```
 
 ## Test Structure
 
 **Suite Organization:**
 ```javascript
-/**
- * Service/Component Unit Tests
- * Brief description of what's being tested
- */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-describe('ComponentName or serviceName', () => {
+describe('ServiceCache', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    clearAllServiceCaches();
   });
 
-  describe('Feature Group', () => {
-    it('describes specific behavior', () => {
-      // Arrange
-      const input = { ... };
-
-      // Act
-      const result = functionUnderTest(input);
-
-      // Assert
-      expect(result).toBe(expected);
-    });
-  });
-});
-```
-
-**Example from `sceneDesignService.test.js`:**
-```javascript
-describe('sceneDesignService', () => {
-  describe('Animation Constants', () => {
-    it('defines all animation types', () => {
-      expect(ANIMATION_TYPES).toHaveLength(5);
-      const values = ANIMATION_TYPES.map(t => t.value);
-      expect(values).toContain('none');
-      expect(values).toContain('fade');
-    });
-  });
-
-  describe('applyBlockAnimation', () => {
-    it('applies animation to the correct block', () => {
-      const result = applyBlockAnimation(mockDesign, 'block1', { type: 'fade' });
-      expect(result.blocks[0].animation.type).toBe('fade');
-    });
-
-    it('does not mutate original design', () => {
-      const original = JSON.parse(JSON.stringify(mockDesign));
-      applyBlockAnimation(mockDesign, 'block1', { type: 'fade' });
-      expect(mockDesign).toEqual(original);
+  describe('basic operations', () => {
+    it('should set and get values', () => {
+      caches.screens.set('test-key', { id: 1, name: 'Test' });
+      const result = caches.screens.get('test-key');
+      expect(result).toEqual({ id: 1, name: 'Test' });
     });
   });
 });
@@ -119,441 +77,297 @@ describe('sceneDesignService', () => {
 
 **Patterns:**
 - Nested `describe` blocks for logical grouping
-- Descriptive `it` statements that read as specifications
-- One assertion per test (where practical)
-- Arrange-Act-Assert pattern (implicit, not commented)
+- `beforeEach` for test isolation/setup
+- `afterEach` for cleanup (automatic via setup.js for React components)
+- No `beforeAll` or `afterAll` in typical tests
+
+**Assertion Pattern:**
+- Use descriptive test names: `'should return null for non-existent keys'`
+- Single assertion per test preferred
+- Multiple related assertions acceptable
+- Use `toBe` for primitives, `toEqual` for objects/arrays
 
 ## Mocking
 
-**Framework:** Vitest `vi` utilities
+**Framework:** Vitest (`vi.mock()`, `vi.fn()`, `vi.spyOn()`)
 
 **Patterns:**
 
-**Mock modules at top of file:**
+**Module Mocking:**
 ```javascript
-vi.mock('../../../src/supabase', () => ({
+// Mock entire module before imports
+vi.mock('../../../src/supabase.js', () => ({
   supabase: {
-    from: vi.fn().mockReturnThis(),
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data: { id: 'mock-id' }, error: null }),
+    auth: {
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test-user-123' } } }),
+    },
   },
 }));
 ```
 
-**Mock services:**
+**Function Mocking:**
 ```javascript
-vi.mock('../../../src/services/languageService', () => ({
-  getSupportedLanguages: vi.fn(() => [
-    { code: 'en', name: 'English', nativeName: 'English', direction: 'ltr' },
-  ]),
+const fetcher = vi.fn().mockResolvedValue(['screen1', 'screen2']);
+```
+
+**Service Mocking:**
+```javascript
+vi.mock('../../../src/services/activityLogService', () => ({
+  logActivity: vi.fn(),
+  ACTIONS: { PLAYLIST_CREATED: 'playlist_created' },
+  RESOURCE_TYPES: { PLAYLIST: 'playlist' },
 }));
 ```
 
-**Mock functions:**
-```javascript
-const onUpdate = vi.fn();
-const showToast = vi.fn();
-
-// Later, assert calls:
-expect(onUpdate).toHaveBeenCalled();
-expect(showToast).toHaveBeenCalledWith('Success message', 'success');
-```
-
 **What to Mock:**
-- External services (Supabase, APIs)
-- Other service modules
-- Context providers (or wrap in real providers)
+- External services (Supabase, Sentry)
+- Cross-module dependencies
+- Logging service (mocked globally in `tests/setup.js`)
+- HTTP requests
 - Browser APIs (ResizeObserver, IntersectionObserver)
 
 **What NOT to Mock:**
-- The component/function under test
-- Simple utilities (unless testing boundaries)
-- React itself
+- Internal logic of the module under test
+- Simple utility functions
+- Constants and configuration
 
 ## Fixtures and Factories
 
 **Test Data:**
-
-**Inline fixtures for simple cases:**
+- Factory functions in `tests/utils/factories.js` (referenced but not read)
+- Example from integration test:
 ```javascript
-const mockDesign = {
-  background: { type: 'solid', color: '#000' },
-  blocks: [
-    { id: 'block1', type: 'text', props: { text: 'Hello' } },
-    { id: 'block2', type: 'image', props: { url: 'test.jpg' } },
-  ],
-};
-```
-
-**Factory functions for complex data:**
-```javascript
-const renderComponent = (props = {}) => {
-  const defaultGroup = {
-    id: 'group-123',
-    name: 'Test Group',
-    display_language: '',
-    location_code: '',
-  };
-
-  const defaultProps = {
-    group: defaultGroup,
-    onUpdate: vi.fn(),
-    showToast: vi.fn(),
-    ...props,
-  };
-
-  return render(
-    <BrowserRouter>
-      <ScreenGroupSettingsTab {...defaultProps} />
-    </BrowserRouter>
-  );
-};
+import {
+  createTestScreen,
+  createTestPlaylist,
+  createTestCampaign,
+  generateUUID
+} from '../../utils/factories';
 ```
 
 **Location:**
-- Defined within test files
-- Not extracted to separate fixture files (pattern observed)
+- Test utilities: `tests/utils/`
+- E2E fixtures: `tests/e2e/fixtures/index.js`
+
+**E2E Fixtures Pattern:**
+```javascript
+import { test as base, expect } from '@playwright/test';
+
+export const test = base.extend({
+  authenticatedPage: async ({ page }, use) => {
+    await loginAndPrepare(page);
+    await use(page);
+  },
+
+  freshPage: async ({ browser }, use) => {
+    const context = await browser.newContext({
+      storageState: { cookies: [], origins: [] }
+    });
+    const page = await context.newPage();
+    await use(page);
+    await context.close();
+  },
+});
+```
 
 ## Coverage
 
-**Requirements:** 0% thresholds (legacy codebase building coverage)
-
-**Config in `vitest.config.js`:**
-```javascript
-coverage: {
-  provider: 'v8',
-  reporter: ['text', 'json', 'html'],
-  reportsDirectory: './coverage',
-  include: ['src/**/*.{js,jsx}'],
-  exclude: [
-    'src/main.jsx',
-    'src/supabase.js',
-    'node_modules/**',
-    'tests/**'
-  ],
-  thresholds: {
-    statements: 0,
-    branches: 0,
-    functions: 0,
-    lines: 0
-  }
-}
-```
+**Requirements:** None enforced (thresholds set to 0)
 
 **View Coverage:**
 ```bash
-npm run test:coverage      # Generate report
-open coverage/index.html   # View HTML report
+npm run test:coverage
 ```
+
+**Configuration:**
+- Provider: v8
+- Reporter: text, json, html
+- Reports directory: `./coverage`
+- Include: `src/**/*.{js,jsx}`
+- Exclude: `src/main.jsx`, `src/supabase.js`, tests, node_modules
+
+**Thresholds:**
+```javascript
+thresholds: {
+  statements: 0,
+  branches: 0,
+  functions: 0,
+  lines: 0
+}
+```
+*Note: Set to 0 to allow CI to pass while coverage is being built out*
 
 ## Test Types
 
 **Unit Tests:**
-- Scope: Single function, component, or module
-- Location: `tests/unit/`
-- Isolation: Mock all external dependencies
-- Speed: Fast (< 100ms per test)
-- Run: `npm run test:unit`
-
-**Example:** `tests/unit/services/mediaService.test.js`
-```javascript
-describe('validateMediaFile', () => {
-  it('returns valid for supported file type under size limit', () => {
-    const file = { size: 1024 * 1024, type: 'image/jpeg' };
-    const result = validateMediaFile(file);
-    expect(result.valid).toBe(true);
-    expect(result.errors).toHaveLength(0);
-  });
-});
-```
+- Scope: Individual functions, services, hooks in isolation
+- Location: `tests/unit/**/*.test.js`
+- Mocking: Heavy mocking of dependencies
+- Example: `tests/unit/services/cacheService.test.js`
 
 **Integration Tests:**
 - Scope: Multiple modules working together
-- Location: `tests/integration/api/`
-- Isolation: Real services, mocked external APIs
-- Speed: Medium (< 1s per test)
-- Run: `npm run test:integration`
-
-**Example:** `tests/integration/api/billing.test.js`, `tests/integration/api/multitenancy.test.js`
+- Location: `tests/integration/**/*.test.js`
+- Mocking: Minimal, tests real interactions
+- Example: `tests/integration/api/content-resolution.test.js`
 
 **E2E Tests:**
-- Framework: Playwright
-- Scope: Complete user flows through UI
-- Location: `tests/e2e/`
-- Isolation: Real browser, real app, test database
-- Speed: Slow (5-30s per test)
-- Run: `npm run test:e2e`
+- Framework: Playwright 1.57.0
+- Config: `playwright.config.js`
+- Browser: Chromium (Chrome Desktop)
+- Scope: Full user flows in real browser
+- Location: `tests/e2e/**/*.spec.js`
 
-## Component Testing
+## E2E Testing (Playwright)
 
-**React Testing Library:**
+**Configuration:**
 ```javascript
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+// playwright.config.js
+timeout: 60_000,           // 60s global timeout
+expect.timeout: 10_000,    // 10s assertion timeout
+actionTimeout: 15_000,     // 15s click/fill timeout
+navigationTimeout: 30_000  // 30s navigation timeout
 ```
 
-**Render pattern:**
-```javascript
-const renderComponent = (props = {}) => {
-  const defaultProps = { /* defaults */ ...props };
-
-  return render(
-    <BrowserRouter>
-      <ComponentUnderTest {...defaultProps} />
-    </BrowserRouter>
-  );
-};
-```
-
-**Query pattern:**
-```javascript
-// Preferred: semantic queries
-screen.getByRole('button', { name: /save changes/i });
-screen.getByRole('combobox', { name: /display language/i });
-
-// Text content
-screen.getByText('Group Language');
-screen.getByText(/suggested language/i);
-
-// Form elements
-screen.getByLabelText(/email/i);
-screen.getByPlaceholder(/password/i);
-```
-
-**Interaction pattern:**
-```javascript
-const button = screen.getByRole('button', { name: /save/i });
-fireEvent.click(button);
-
-const input = screen.getByLabelText(/email/i);
-fireEvent.change(input, { target: { value: 'test@example.com' } });
-```
-
-**Async assertions:**
-```javascript
-await waitFor(() => {
-  expect(screen.getByText('Success')).toBeInTheDocument();
-});
-
-// Or
-const element = await screen.findByText('Loaded content');
-expect(element).toBeVisible();
-```
-
-## E2E Test Patterns
-
-**Setup:**
-```javascript
-import { test, expect } from '@playwright/test';
-import { loginAndPrepare, waitForPageReady } from './helpers.js';
-```
+**Projects:**
+- `setup` - Auth setup runs first
+- `chromium` - Client role (standard user)
+- `chromium-admin` - Admin role
+- `chromium-superadmin` - Superadmin role
 
 **Authentication:**
-```javascript
-test.describe('Feature Tests', () => {
-  // Use pre-authenticated session
-  test.use({ storageState: 'playwright/.auth/client.json' });
+- Storage state saved to `playwright/.auth/[role].json`
+- Projects depend on setup project
+- Auth state reused across tests
 
-  // Or login manually
-  test.beforeEach(async ({ page }) => {
-    await loginAndPrepare(page);
-  });
-});
-```
-
-**Unauthenticated tests:**
+**Test Isolation:**
 ```javascript
-test.describe('Public Pages', () => {
-  // Clear auth state
+// Unauthenticated tests
+test.describe('Login Flow', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
-
-  test('login page loads', async ({ page }) => {
-    await page.goto('/auth/login');
-    await expect(page.getByRole('heading', { name: /sign in/i })).toBeVisible();
-  });
+  // Tests here have clean state
 });
-```
 
-**Navigation pattern:**
-```javascript
-test('can navigate to feature', async ({ page }) => {
-  await loginAndPrepare(page);
-
-  await page.goto('/app/media');
-  await waitForPageReady(page);
-
-  await expect(page).toHaveURL(/\/app\/media/);
+// Fresh context for single test
+test('isolated test', async ({ freshPage }) => {
+  // freshPage is completely clean
 });
-```
-
-**Interaction pattern:**
-```javascript
-test('can submit form', async ({ page }) => {
-  await page.getByLabel(/email/i).fill('user@example.com');
-  await page.getByRole('button', { name: /submit/i }).click();
-
-  await expect(page.getByText('Success')).toBeVisible({ timeout: 10000 });
-});
-```
-
-**Conditional checks:**
-```javascript
-const button = page.locator('[data-testid="optional-button"]');
-if (await button.isVisible({ timeout: 100 }).catch(() => false)) {
-  await button.click();
-}
 ```
 
 ## Common Patterns
 
 **Async Testing:**
 ```javascript
-it('fetches data successfully', async () => {
-  const result = await fetchData();
-  expect(result).toHaveLength(5);
-});
+it('should call fetcher and cache result if not cached', async () => {
+  const fetcher = vi.fn().mockResolvedValue(['screen1', 'screen2']);
 
-it('waits for UI update', async () => {
-  renderComponent();
-  fireEvent.click(screen.getByRole('button'));
+  const result = await caches.screens.getOrFetch('new-key', fetcher);
 
-  await waitFor(() => {
-    expect(screen.getByText('Updated')).toBeInTheDocument();
-  });
+  expect(result).toEqual(['screen1', 'screen2']);
+  expect(fetcher).toHaveBeenCalledTimes(1);
 });
 ```
 
 **Error Testing:**
 ```javascript
-it('throws error for invalid input', () => {
-  expect(() => validateInput(null)).toThrow();
-  expect(() => validateInput(null)).toThrow('Input required');
-});
-
-it('handles async errors', async () => {
-  const mockFn = vi.fn().mockRejectedValue(new Error('Network error'));
-
-  await expect(mockFn()).rejects.toThrow('Network error');
+it('should throw error on failure', async () => {
+  const { error } = await query;
+  expect(error).toBeDefined();
 });
 ```
 
-**Snapshot Testing:**
+**React Component Testing:**
 ```javascript
-// Used for design/animation tests
-it('matches design snapshot', () => {
-  const design = getDefaultDesign();
-  expect(design).toMatchSnapshot();
+import { render, screen } from '@testing-library/react';
+
+it('renders component', () => {
+  render(<MyComponent />);
+  expect(screen.getByText('Expected Text')).toBeInTheDocument();
 });
 ```
 
-**Component Props Testing:**
+**Timer Testing:**
 ```javascript
-it('updates when props change', () => {
-  const { rerender } = render(<Component prop="initial" />);
-  expect(screen.getByText('initial')).toBeInTheDocument();
+it('should expire entries after TTL', async () => {
+  caches.screens.set('expiring', 'value', 50);
+  expect(caches.screens.get('expiring')).toBe('value');
 
-  rerender(<Component prop="updated" />);
-  expect(screen.getByText('updated')).toBeInTheDocument();
+  await new Promise((resolve) => setTimeout(resolve, 60));
+
+  expect(caches.screens.get('expiring')).toBeNull();
 });
 ```
 
-## Setup and Teardown
-
-**Global Setup:** `tests/setup.js`
+**E2E Selectors:**
 ```javascript
-import { expect, afterEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
-import * as matchers from '@testing-library/jest-dom/matchers';
+// Prefer accessible selectors
+await page.getByRole('button', { name: /sign in/i });
+await page.getByPlaceholder(/email/i);
+await page.getByText(/forgot.*password/i);
 
-// Extend matchers
-expect.extend(matchers);
+// Fallback to locators when needed
+await page.locator('.bg-red-50');
+```
 
-// Cleanup after each test
-afterEach(() => {
-  cleanup();
-});
+## Global Test Setup
 
-// Mock global services
+**File:** `tests/setup.js`
+
+**Responsibilities:**
+- Extend Vitest expect with Testing Library matchers
+- Mock loggingService globally (breaks circular dependency)
+- Mock environment variables
+- Mock browser APIs (matchMedia, ResizeObserver, IntersectionObserver)
+- Auto-cleanup after each test
+
+**Critical Mocks:**
+```javascript
+// Global logging mock (prevents circular dependency)
 vi.mock('../src/services/loggingService.js', () => ({
   createScopedLogger: vi.fn(() => ({
+    trace: vi.fn(),
     debug: vi.fn(),
     info: vi.fn(),
     warn: vi.fn(),
     error: vi.fn(),
+    fatal: vi.fn(),
   })),
 }));
 
-// Mock browser APIs
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn()
-}));
+// Mock Supabase env vars
+vi.stubEnv('VITE_SUPABASE_URL', 'https://test-project.supabase.co');
+vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'eyJhbGci...[valid JWT format]');
 ```
-
-**Per-test Setup:**
-```javascript
-describe('Feature', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-});
-```
-
-**E2E Setup:** `tests/e2e/auth.setup.js`
-- Runs before test suites to authenticate
-- Saves session to `playwright/.auth/*.json`
-- Tests reuse saved sessions via `storageState`
 
 ## Test Environment
 
 **Vitest:**
-- Environment: jsdom
+- Environment: jsdom (simulates browser)
 - Globals: true (describe, it, expect available globally)
-- Timeout: 10000ms (10s)
 - Reporter: verbose
+- Timeout: 10 seconds
 
 **Playwright:**
-- Browser: Chromium (default), also supports Firefox, Webkit
-- Parallel: true (run tests concurrently)
+- Base URL: `http://localhost:5173` (dev server)
+- Web server: Auto-starts `npm run dev`
+- Parallel: Full parallel execution
 - Retries: 2 on CI, 0 locally
-- Video: on-first-retry
-- Screenshots: only-on-failure
-- Projects: chromium (client), chromium-admin, chromium-superadmin
+- Workers: 1 on CI, unlimited locally
 
-**Environment Variables:**
+## CI/CD Testing
+
+**Commands:**
 ```bash
-# Required for E2E tests
-TEST_USER_EMAIL=test@example.com
-TEST_USER_PASSWORD=password123
-
-# Playwright base URL
-PLAYWRIGHT_BASE_URL=http://localhost:5173
+npm run test:ci        # CI pipeline: unit + e2e with DB seed
+npm run test:ci:local  # Local simulation: unit + e2e
 ```
 
-## Skip Patterns
-
-**Conditional skips:**
-```javascript
-test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
-
-test.skip('slow test that is flaky', async ({ page }) => {
-  // Test implementation
-});
-```
-
-**FIXME tests:**
-```javascript
-test.fixme('not yet implemented', async ({ page }) => {
-  // TODO: Implement when feature is ready
-});
-```
+**CI Behavior:**
+- Retries E2E tests 2x on failure
+- Single worker (sequential E2E tests)
+- Forbids `test.only` in committed code
+- Seeds test user via `scripts/seed-ci-test-user.cjs`
 
 ---
 
-*Testing analysis: 2026-02-05*
+*Testing analysis: 2026-02-12*

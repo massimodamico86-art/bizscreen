@@ -1,193 +1,204 @@
 # Architecture
 
-**Analysis Date:** 2026-02-05
+**Analysis Date:** 2026-02-12
 
 ## Pattern Overview
 
-**Overall:** Multi-Layered React SPA with Supabase Backend
+**Overall:** Single-Page Application (SPA) with Client-Side Routing and Multi-Tenant Architecture
 
 **Key Characteristics:**
-- React 18 single-page application with React Router for client-side routing
-- Supabase (PostgreSQL + Auth + Storage + Realtime) as the backend platform
-- Service layer pattern for business logic abstraction
-- Context-based state management with custom hooks for data access
-- Role-based access control (super_admin, admin, client) enforced at both UI and database levels
-- Real-time data synchronization via Supabase channels
+- React SPA with lazy-loaded route-based code splitting
+- Context-based state management (no Redux/Zustand)
+- Service layer pattern for business logic and data access
+- Multi-tenant with role-based UI rendering (super_admin, admin, client)
+- Real-time updates via Supabase subscriptions
+- Offline-capable player subsystem with IndexedDB caching
 
 ## Layers
 
-**Presentation Layer (UI):**
-- Purpose: Renders user interface and handles user interactions
-- Location: `src/pages/`, `src/components/`, `src/marketing/`
-- Contains: Page components, reusable UI components, forms, modals, layouts
-- Depends on: Contexts, hooks, services, design-system
-- Used by: Router
+**Presentation Layer:**
+- Purpose: User interface and interaction handling
+- Location: `src/pages`, `src/components`, `src/marketing`, `src/auth`
+- Contains: Page components, reusable UI components, forms, modals
+- Depends on: Contexts (auth, branding, emergency), Hooks, Services
+- Used by: Router (AppRouter.jsx)
+- Pattern: Lazy-loaded pages with Suspense, component composition
 
-**Routing Layer:**
-- Purpose: Maps URLs to components and handles navigation
-- Location: `src/router/AppRouter.jsx`, `src/App.jsx`
-- Contains: Route definitions, protected route wrappers, lazy-loaded components
-- Depends on: Auth context, page components
-- Used by: Main entry point
+**Context Layer:**
+- Purpose: Global application state and cross-cutting concerns
+- Location: `src/contexts`
+- Contains: AuthContext, BrandingContext, EmergencyContext, I18nContext
+- Depends on: Services (authService, brandingService, loggingService)
+- Used by: All components needing global state
+- Pattern: React Context API with custom hooks (useAuth, useBranding)
 
-**State Management Layer (Contexts):**
-- Purpose: Provides global state and cross-cutting concerns
-- Location: `src/contexts/`
-- Contains: AuthContext, BrandingContext, EmergencyContext
-- Depends on: Supabase client, services
-- Used by: All components via hooks
+**Service Layer:**
+- Purpose: Business logic, API calls, data transformations
+- Location: `src/services`
+- Contains: 100+ service modules for domain logic (playlistService, mediaService, campaignService, etc.)
+- Depends on: Supabase client (`src/supabase.js`), logging service
+- Used by: Components, Contexts, Hooks
+- Pattern: Functional modules with typed JSDoc, async/await for data operations
 
-**Data Access Layer (Hooks):**
-- Purpose: Encapsulates data fetching and state management logic
-- Location: `src/hooks/`
-- Contains: useMedia, useLayout, useFeatureFlag, useAdmin, useCloudinaryUpload
-- Depends on: Services, Supabase client
-- Used by: Pages and components
+**Data Access Layer:**
+- Purpose: Database and external API communication
+- Location: `src/supabase.js` (client initialization), service layer (queries)
+- Contains: Supabase client configuration, RPC function calls, database queries
+- Depends on: Supabase JS SDK, environment configuration
+- Used by: Service layer exclusively
+- Pattern: All database access flows through services (no direct supabase calls from components)
 
-**Business Logic Layer (Services):**
-- Purpose: Implements business rules and data operations
-- Location: `src/services/`
-- Contains: 100+ service modules for media, campaigns, playlists, schedules, analytics, etc.
-- Depends on: Supabase client, rate limiting, logging
-- Used by: Hooks, contexts, components
+**Player Subsystem:**
+- Purpose: Content playback engine for digital signage displays
+- Location: `src/player`, `src/Player.jsx`, `src/TV.jsx`
+- Contains: Offline-capable content player, pairing flow, heartbeat system, command polling
+- Depends on: playerService, offlineService, IndexedDB cache
+- Used by: TV/display devices via `/player/*` and `/tv/*` routes
+- Pattern: Isolated subsystem with own routing, hooks, and offline-first architecture
 
-**Infrastructure Layer:**
-- Purpose: External integrations and low-level utilities
-- Location: `src/supabase.js`, `src/config/`, `src/security/`, `src/utils/`
-- Contains: Supabase client, environment config, sanitization, error tracking
-- Depends on: External SDKs (@supabase/supabase-js, @sentry/react, AWS S3)
-- Used by: All layers
+**Router Layer:**
+- Purpose: URL-based navigation and route protection
+- Location: `src/router/AppRouter.jsx`, `src/main.jsx`
+- Contains: Route definitions, auth guards (RequireAuth, PublicRoute), lazy loading
+- Depends on: AuthContext, page components (lazy-loaded)
+- Used by: main.jsx as application entry point
+- Pattern: React Router v7 with Sentry-wrapped routes for error tracking
 
-**Player/TV Layer:**
-- Purpose: Standalone content playback system for digital signage displays
-- Location: `src/player/`, `src/TV.jsx`, `src/Player.jsx`
-- Contains: ZonePlayer, SceneRenderer, AppRenderer, offline service
-- Depends on: Services, realtime subscriptions
-- Used by: Device endpoints (`/tv/*`, `/player/*`)
+**Design System:**
+- Purpose: Reusable UI primitives and design tokens
+- Location: `src/design-system`
+- Contains: Button, Modal, Alert, SearchBar, tokens.css
+- Depends on: Tailwind CSS, Framer Motion
+- Used by: All components for consistent UI
+- Pattern: Token-based theming with CSS variables
 
 ## Data Flow
 
 **User Authentication Flow:**
 
-1. User submits credentials via `LoginPage.jsx`
-2. `authService.signIn()` calls Supabase auth
-3. `AuthContext` receives auth state change
-4. `fetchUserProfile()` retrieves role and permissions from `profiles` table
-5. Router redirects based on role (super_admin → SuperAdminDashboard, admin → AdminDashboard, client → App)
-6. UI renders with role-appropriate permissions
+1. User navigates to `/auth/login` (PublicRoute guard)
+2. LoginPage calls `authService.signIn(email, password)`
+3. authService communicates with Supabase Auth
+4. On success, AuthContext.fetchUserProfile() loads profile from `profiles` table
+5. AuthContext updates user state, triggers re-render
+6. App.jsx detects user, renders role-appropriate dashboard or client UI
+7. setObservabilityUser() updates Sentry context
 
-**Content Management Flow:**
+**Content Playback Flow:**
 
-1. User interacts with page (e.g., `MediaLibraryPage.jsx`)
-2. Page calls custom hook (e.g., `useMedia()`)
-3. Hook invokes service method (e.g., `mediaService.fetchMediaAssets()`)
-4. Service queries Supabase with RLS policies enforced
-5. Data returns through hook to page state
-6. React re-renders UI with new data
-7. Real-time updates arrive via Supabase channel subscription
-8. Channel callback updates local state, triggering re-render
+1. TV device navigates to `/player` and displays pairing code
+2. User pairs device via `/pair/:deviceId` route
+3. Player polls playerService.getPlayerContent(screenId) every 30s
+4. playerService.getPlayerContent() calls RPC `get_player_content(screen_id)`
+5. Supabase returns resolved playlist with media URLs
+6. Player caches content in IndexedDB via offlineService
+7. Player renders content using LayoutElementRenderer or AppRenderer
+8. Heartbeat every 60s via playerService.heartbeat(screenId)
+
+**Real-time Update Flow:**
+
+1. Component mounts, subscribes to Supabase channel (e.g., `listings-${user.id}`)
+2. User modifies data via service layer (e.g., playlistService.updatePlaylist())
+3. Service performs Supabase query, database updates
+4. Postgres triggers real-time notification
+5. Supabase broadcasts change to subscribed clients
+6. Component's subscription callback receives payload
+7. Component updates local state (via useState setter)
+8. React re-renders affected UI
 
 **State Management:**
-- Global auth state in `AuthContext` (user, userProfile, loading)
-- Global branding state in `BrandingContext` (theme, logo, colors)
-- Emergency state in `EmergencyContext` (active emergency campaigns)
-- Local component state via `useState` for UI-specific data
-- Server state cached in custom hooks (useMedia, useLayout, etc.)
-- Feature flags resolved from `profiles.plan_slug` via `useFeatureFlag`
+- Global state: React Context (auth, branding, emergency, i18n, feature flags)
+- Local state: React useState/useReducer in components
+- Server state: Direct Supabase queries in services, no caching layer (except player offline cache)
+- Form state: Controlled components with local useState
 
 ## Key Abstractions
 
-**Service Pattern:**
-- Purpose: Encapsulates all backend operations
-- Examples: `src/services/mediaService.js`, `src/services/campaignService.js`, `src/services/playlistService.js`
-- Pattern: Pure functions that accept parameters and return Promises with Supabase data
+**Service Modules:**
+- Purpose: Encapsulate domain logic and data access
+- Examples: `src/services/playlistService.js`, `src/services/campaignService.js`, `src/services/screenService.js`
+- Pattern: Export async functions, JSDoc typed, scoped logger per service
+- Usage: `import { fetchPlaylists } from '../services/playlistService'`
 
-**Context + Hook Pattern:**
-- Purpose: Provides reactive global state
-- Examples: `src/contexts/AuthContext.jsx` + `useAuth()`, `src/contexts/BrandingContext.jsx` + `useBranding()`
-- Pattern: Context provides state and methods, custom hook provides type-safe access
+**Context Providers:**
+- Purpose: Share state across component tree without prop drilling
+- Examples: `src/contexts/AuthContext.jsx`, `src/contexts/BrandingContext.jsx`
+- Pattern: createContext + custom hook (useAuth, useBranding)
+- Usage: Wrap in `main.jsx`, consume via `const { user } = useAuth()`
 
-**Custom Data Hooks:**
-- Purpose: Encapsulates data fetching with caching and error handling
-- Examples: `src/hooks/useMedia.js`, `src/hooks/useLayout.js`, `src/hooks/useAdmin.js`
-- Pattern: Returns `{ data, loading, error, refetch }` objects
+**Custom Hooks:**
+- Purpose: Reusable stateful logic
+- Examples: `src/hooks/useFeatureFlag.jsx`, `src/hooks/useLayout.js`, `src/player/hooks/usePlayerContent.js`
+- Pattern: Prefix with `use`, return state and handlers
+- Usage: `const { hasFeature } = useFeatureFlag(Feature.AI_ASSISTANT)`
 
-**Feature Gate:**
-- Purpose: Controls access to premium features based on plan
-- Examples: `src/components/FeatureGate.jsx`, `src/hooks/useFeatureFlag.jsx`
-- Pattern: HOC that checks feature availability and renders fallback if unavailable
+**Layout Components:**
+- Purpose: Structural wrappers for pages
+- Examples: `src/layouts/Layout1.jsx`, `src/auth/AuthLayout.jsx`, `src/marketing/MarketingLayout.jsx`
+- Pattern: Children prop, shared navigation/header/footer
+- Usage: Wrap page content for consistent structure
+
+**Page Components:**
+- Purpose: Top-level views mapped to routes
+- Examples: `src/pages/DashboardPage.jsx`, `src/pages/PlaylistEditorPage.jsx`
+- Pattern: Lazy-loaded via `lazy(() => import('./pages/...'))`, accept navigation props
+- Usage: Rendered by AppRouter based on URL
 
 ## Entry Points
 
 **Web Application:**
 - Location: `src/main.jsx`
-- Triggers: Browser loads `/` or `/app/*`
-- Responsibilities: Mount React app, wrap with providers (I18n, Auth, FeatureFlag, Router, ErrorBoundary)
+- Triggers: Browser loads `index.html`, Vite injects main.jsx
+- Responsibilities: Initialize observability (Sentry, logging, web vitals), render React root with providers (ErrorBoundary, I18nProvider, AuthProvider, FeatureFlagProvider, BrowserRouter)
 
-**Router:**
-- Location: `src/router/AppRouter.jsx`
-- Triggers: URL changes
-- Responsibilities: Route matching, lazy loading pages, auth protection, redirects
-
-**App Container:**
+**App Shell:**
 - Location: `src/App.jsx`
-- Triggers: Authenticated route access (`/app/*`)
-- Responsibilities: Client UI shell (sidebar, header, page content), role-based dashboard routing, impersonation mode
+- Triggers: AuthProvider resolves user, AppRouter routes to `/app/*`
+- Responsibilities: Determine user role, render SuperAdminDashboard, AdminDashboard, or client UI with sidebar/header
 
-**Player Entry Points:**
-- Location: `src/Player.jsx`, `src/TV.jsx`
-- Triggers: Device accesses `/player/*` or `/tv/*`
-- Responsibilities: Render content for digital signage displays, handle pairing, play playlists/scenes
+**Player Application:**
+- Location: `src/Player.jsx`
+- Triggers: Device navigates to `/player/*`
+- Responsibilities: Route to PairPage (`/player`) or ViewPage (`/player/view`), manage pairing and playback
+
+**TV Application:**
+- Location: `src/TV.jsx`
+- Triggers: Device navigates to `/tv/*`
+- Responsibilities: Legacy TV player interface, render layouts based on query params
 
 **Marketing Site:**
 - Location: `src/marketing/MarketingLayout.jsx`
-- Triggers: Unauthenticated user accesses `/`, `/pricing`, `/features`
-- Responsibilities: Public marketing pages, SEO, lead generation
+- Triggers: Unauthenticated user visits `/`, `/pricing`, `/features`
+- Responsibilities: Render public marketing pages with header/footer
 
 ## Error Handling
 
-**Strategy:** Multi-layer error boundaries with graceful degradation
+**Strategy:** Multi-layered error boundaries with centralized tracking
 
 **Patterns:**
-- React ErrorBoundary at root (`src/components/ErrorBoundary.jsx`) catches render errors
-- Service layer wraps Supabase calls in try-catch, returns `{ data, error }` objects
-- Auth context handles session timeouts with retry logic and exponential backoff
-- Global unhandled rejection handler in `src/main.jsx` for async errors
-- Sentry integration (`src/utils/errorTracking.jsx`) for production error tracking
-- Toast notifications for user-facing errors (`showToast(message, 'error')`)
-- Logging service (`src/services/loggingService.js`) with scoped loggers per component
+- Top-level ErrorBoundary wraps entire app (`src/components/ErrorBoundary.jsx`)
+- React 19 error handlers on root (onUncaughtError, onCaughtError, onRecoverableError)
+- Service layer catches errors, logs via scoped logger, throws for component handling
+- Sentry integration captures all errors with context (user, route, breadcrumbs)
+- Auth errors trigger retry with exponential backoff (AuthContext)
+- Player errors fall back to offline cache
 
 ## Cross-Cutting Concerns
 
-**Logging:** Scoped logger pattern via `createScopedLogger('ComponentName')` in `src/services/loggingService.js`. Logs to console with context. Production logs sent to Sentry.
+**Logging:** Structured logging via `loggingService.js`, scoped loggers per module (createScopedLogger('ModuleName')), console in dev, Sentry breadcrumbs in production
 
-**Validation:** Input sanitization in `src/security/sanitize.js`. Server-side validation via RLS policies. File uploads validated in `mediaService.validateMediaFile()`.
+**Validation:** Client-side form validation in components, server-side validation via Supabase RLS policies and check constraints, file upload validation in `s3UploadService.js`
 
-**Authentication:**
-- JWT tokens managed by Supabase Auth
-- Session stored in localStorage via Supabase client
-- `AuthContext` provides `user` and `userProfile` to all components
-- Protected routes via `RequireAuth` wrapper in `src/router/AppRouter.jsx`
-- RLS policies enforce data access at database level
+**Authentication:** Supabase Auth with JWT sessions, AuthContext manages user state, RequireAuth/PublicRoute guards protect routes, MFA support via `mfaService.js`, session timeout with retry logic
 
-**Authorization:**
-- Role-based: super_admin, admin, client stored in `profiles.role`
-- Plan-based: feature flags resolved from `profiles.plan_slug` via `useFeatureFlags()`
-- UI-level: `FeatureGate` component conditionally renders premium features
-- Data-level: Supabase RLS policies filter queries by user role and tenant
+**Authorization:** Role-based access control (RBAC) via `permissionsService.js`, Supabase RLS policies enforce tenant isolation, feature flags gate premium features (useFeatureFlag hook), approval workflow for content changes
 
-**Internationalization:**
-- `I18nProvider` context in `src/i18n/I18nContext.jsx`
-- `useTranslation()` hook provides `t(key, fallback)` function
-- Language stored in localStorage, defaults to browser language
-- Translation service manages multi-language content in database
+**Internationalization:** I18nContext provides translations, useTranslation hook for components, locale files in `src/i18n/locales`, language switching via LanguageSwitcher component
 
-**Real-time Updates:**
-- Supabase channels for postgres_changes events
-- Subscription setup in `App.jsx` for listings, playlists, schedules
-- Player uses channels for device commands and content updates
-- Emergency broadcasts via `EmergencyContext` real-time subscription
+**Analytics:** Player analytics via `playerAnalyticsService.js`, content performance tracking via `contentAnalyticsService.js`, Web Vitals monitoring via `webVitalsService.js`
+
+**Observability:** Sentry error tracking, structured logging, health monitoring (`healthService.js`), performance monitoring, initialized in `utils/observability.js`
 
 ---
 
-*Architecture analysis: 2026-02-05*
+*Architecture analysis: 2026-02-12*

@@ -1,277 +1,219 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-02-05
+**Analysis Date:** 2026-02-12
 
 ## Naming Patterns
 
 **Files:**
-- React components: PascalCase with `.jsx` extension (`DashboardPage.jsx`, `AuthContext.jsx`)
-- Services: camelCase with `.js` extension (`mediaService.js`, `sceneDesignService.js`)
-- Test files: Match source name with `.test.js` or `.spec.js` suffix
-  - Unit tests: `*.test.js` or `*.test.jsx` in `tests/unit/`
-  - E2E tests: `*.spec.js` in `tests/e2e/`
-- Utilities: camelCase with `.js` extension (`formatters.js`, `errorMessages.js`)
+- Components: PascalCase with `.jsx` extension - `FeedbackWidget.jsx`, `StatCard.jsx`
+- Services: camelCase with `.js` extension - `screenService.js`, `playlistService.js`
+- Pages: PascalCase with `Page.jsx` suffix - `LoginPage.jsx`, `SignupPage.jsx`
+- Hooks: camelCase with `use` prefix - `useLogger.js`, `useAuth.test.js`
+- Tests: Same name as source with `.test.js` or `.spec.js` - `cacheService.test.js`, `auth.spec.js`
+- Config: camelCase or kebab-case - `featureFlags.js`, `eslint.config.js`
 
 **Functions:**
-- Use camelCase for all functions (`fetchUserProfile`, `loginAndPrepare`, `getMediaTypeFromMime`)
-- Exported functions start with verb (`get`, `fetch`, `create`, `update`, `delete`, `validate`)
-- Boolean predicates start with `is`, `has`, `should` (seen in helper functions)
-- Event handlers prefixed with `handle` or `on` (`onClick`, `handleSubmit`)
+- Components: PascalCase - `FeedbackWidget`, `StatCard`
+- Service functions: camelCase - `fetchScreens`, `updateScreen`, `createPlaylist`
+- Hooks: camelCase with `use` prefix - `useLogger`, `useAuth`
+- Event handlers: `handle` prefix - `handleSubmit`, `handleClick`
 
 **Variables:**
-- Use camelCase for local variables (`userProfile`, `retryCount`, `authStatus`)
-- Use UPPER_SNAKE_CASE for constants (`MEDIA_TYPES`, `AUTH_STATUS`, `ANIMATION_TYPES`)
-- React state variables: descriptive names (`[loading, setLoading]`, `[user, setUser]`)
+- Constants: UPPER_SNAKE_CASE - `ACTIONS`, `RESOURCE_TYPES`, `FeedbackTypes`
+- Regular variables: camelCase - `screenData`, `isLoading`, `errorMessage`
+- React state: camelCase - `isOpen`, `setIsOpen`
+- Boolean flags: `is`, `has`, `should` prefix - `isLoading`, `hasError`, `shouldRetry`
 
 **Types:**
-- Constants objects use UPPER_SNAKE_CASE keys: `MEDIA_TYPES.IMAGE`, `AUTH_STATUS.LOADING`
-- Enum-like objects documented at module level
-- React Context names: PascalCase with "Context" suffix (`AuthContext`, `BrandingContext`)
+- Interfaces/Types: Not used (JavaScript, not TypeScript)
+- Enums: Object with UPPER_SNAKE_CASE keys - `FeedbackTypes.BUG`
 
 ## Code Style
 
 **Formatting:**
-- No Prettier config detected - relies on ESLint auto-fix
-- 2-space indentation (observed in all files)
-- Single quotes for strings (not enforced, mixed usage observed)
-- Semicolons used consistently
-- Trailing commas in multi-line arrays/objects
+- No Prettier config detected - formatting relies on ESLint auto-fix
+- Indentation: 2 spaces (implicit from codebase)
+- Semicolons: Consistently used at statement ends
+- Quotes: Single quotes for strings, double quotes in JSX
+- Line length: No enforced limit
 
 **Linting:**
-- ESLint via `eslint.config.js` (flat config format)
-- Config: `@eslint/js` recommended rules + React plugins
-- Plugins: `react-hooks`, `react-refresh`, `unused-imports`, `react`, `jsdoc`
-- Run: `npm run lint`
-- Pre-commit: `lint-staged` auto-fixes JS/JSX files
+- Tool: ESLint 9.x with flat config (`eslint.config.js`)
+- Config: `eslint.config.js` with multiple context-specific rule sets
+- Auto-fix: Available via `npm run lint`
+- Enforcement: Error level for most rules (blocks commits via lint-staged)
+
+**Key ESLint Rules:**
+- `no-console`: Error (allows `console.warn`, `console.error` only)
+- `unused-imports/no-unused-imports`: Error (auto-fixable)
+- `unused-imports/no-unused-vars`: Error (allows `_` prefix for intentionally unused)
+- `no-undef`: Error
+- `react/jsx-uses-react`: Error (ensures JSX element detection)
+- `react/jsx-uses-vars`: Error (prevents false unused var warnings)
+- `react/prop-types`: Off (deprecated in React 19+)
+- `jsdoc/require-jsdoc`: Off (not enforced)
 
 ## Import Organization
 
 **Order:**
-1. React and React-related imports
-2. External dependencies (libraries)
-3. Internal contexts and hooks
-4. Services and utilities
-5. Components (design system, then local)
-6. Config and constants
+1. External libraries (React, third-party packages)
+2. Internal modules (services, utils, hooks)
+3. Relative imports (components, assets)
+4. No path aliases detected
 
-**Pattern from `DashboardPage.jsx`:**
+**Pattern:**
 ```javascript
-import { useState, useEffect, useCallback } from 'react';
-import { Loader2, ArrowRight, Monitor } from 'lucide-react'; // External icons
+// External
+import { useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
+import { Bug, Check, X } from 'lucide-react';
 
-import { useAuth } from '../contexts/AuthContext';           // Contexts/hooks
-import { useTranslation } from '../i18n';
+// Services/utilities
+import { submitQuickFeedback } from '../services/feedbackService';
+import { useLogger } from '../hooks/useLogger.js';
 
-import { getDashboardStats } from '../services/dashboardService'; // Services
-
-import { PageLayout, PageHeader, Card } from '../design-system'; // Design system
-import { DashboardErrorState } from './dashboard/DashboardSections'; // Local components
-
-import ErrorBoundary from '../components/ErrorBoundary';     // Global components
-import { config } from '../config/env';                       // Config
+// Components
+import StatCard from './StatCard';
 ```
 
 **Path Aliases:**
-- Not detected - uses relative imports (`../`, `../../`)
-- Services: `../services/serviceName`
-- Components: `../components/ComponentName`
-- Design system: `../design-system`
+- None detected - uses relative imports (`../`, `../../`)
 
 ## Error Handling
 
 **Patterns:**
-- Services throw errors, components catch and display
-- Async/await with try-catch blocks in services
-- Supabase error checking: `if (error) throw error;`
-- Error boundaries wrap page components: `<ErrorBoundary>`
+- Async functions: Try-catch with error throwing
+- Service layer: Throws errors to caller
+- Component layer: Error state variables
 
-**Service pattern from `sceneDesignService.js`:**
+**Example from `screenService.js`:**
 ```javascript
-export async function fetchSlidesForScene(sceneId) {
-  const { data, error } = await supabase
-    .from('scene_slides')
-    .select('*')
-    .eq('scene_id', sceneId)
-    .order('position', { ascending: true });
-
+export async function fetchScreens({ search = '', limit = 100 } = {}) {
+  const { data, error } = await query;
   if (error) throw error;
   return data || [];
 }
 ```
 
-**Component pattern:**
-```javascript
-try {
-  const result = await someService();
-  setData(result);
-} catch (error) {
-  logger.error('Operation failed', { error });
-  showToast('Error message', 'error');
-}
-```
+**Supabase Pattern:**
+- All database operations return `{ data, error }`
+- Check error and throw if present
+- Return data or fallback value
 
 ## Logging
 
-**Framework:** Custom `loggingService.js`
+**Framework:** Custom scoped logger (`loggingService.js`)
 
 **Patterns:**
-- Create scoped logger at module level: `const logger = createScopedLogger('ModuleName');`
-- Use semantic log levels: `logger.debug()`, `logger.info()`, `logger.warn()`, `logger.error()`
-- Pass context objects: `logger.debug('Fetching profile', { userId, attempt });`
-- Alternative: `const logger = useLogger('ComponentName');` for React components
-
-**Example from `mediaService.js`:**
 ```javascript
-import { createScopedLogger } from './loggingService';
-const logger = createScopedLogger('MediaService');
+import { createScopedLogger } from './loggingService.js';
+const logger = createScopedLogger('ScreenService');
 
-logger.debug('Fetching media', { type, page });
+// Or in components via hook
+import { useLogger } from '../hooks/useLogger.js';
+const logger = useLogger('FeedbackWidget');
 ```
 
-**Console rule:** Warn level in ESLint (legacy migration phase)
-- `console.log()` shows warning - should use `loggingService`
-- `console.warn()` and `console.error()` allowed
-- Goal: Migrate all console usage to `loggingService`
+**Levels:**
+- `logger.trace()` - Detailed debugging
+- `logger.debug()` - Debug information
+- `logger.info()` - General information
+- `logger.warn()` - Warnings
+- `logger.error()` - Errors
+- `logger.fatal()` - Critical failures
+
+**Console Usage:**
+- Direct `console.log()` forbidden in source (ESLint error)
+- Allowed in tests, scripts, config files
+- `console.warn()` and `console.error()` allowed everywhere
 
 ## Comments
 
 **When to Comment:**
-- File headers: Purpose, module description, and usage context
-- Complex business logic: Explain "why" not "what"
-- Function documentation: JSDoc for exported functions
-- TODO comments: Mark technical debt and future work
+- File-level JSDoc headers for purpose/context
+- Complex business logic requiring explanation
+- TODO/FIXME for known issues
+- Not required for simple, self-explanatory code
 
 **JSDoc:**
-- Warn level in ESLint (gradual adoption)
-- Required for exported functions from services
-- Format: `@param`, `@returns`, `@throws`, `@example`
+- Not enforced (`jsdoc/require-jsdoc: off`)
+- Used sparingly for complex functions
+- Parameter documentation optional
 
-**Example from `sceneDesignService.js`:**
+**Example from `screenService.js`:**
 ```javascript
 /**
- * Fetch all slides for a scene ordered by position
- * @param {string} sceneId - The scene ID
- * @returns {Promise<Array>} List of slides with design data
+ * Fetch all screens for the current user
  */
-export async function fetchSlidesForScene(sceneId) {
-  // ...
-}
+export async function fetchScreens({ search = '', limit = 100 } = {}) {
 ```
 
-**Example from `AuthContext.jsx`:**
-```javascript
-/**
- * Fetch user profile from Supabase including role information
- *
- * This function handles profile fetching with built-in error handling and retry logic.
- * It supports skipping unnecessary fetches if the profile is already loaded.
- *
- * @param {string} userId - The UUID of the user to fetch profile for
- * @param {string} userEmail - The user's email address (used for logging)
- * @param {boolean} [skipIfExists=false] - If true, skip fetch if profile already exists in state
- * @param {number} [retryCount=0] - Current retry attempt number (used for logging)
- *
- * @returns {Promise<void>} Updates userProfile state
- *
- * @example
- * await fetchUserProfile(user.id, user.email);
- */
-```
+**Inline Comments:**
+- Used to explain non-obvious logic
+- Prefer descriptive code over comments
 
 ## Function Design
 
-**Size:** Functions kept focused and single-purpose
+**Size:**
+- No enforced limit
+- Generally focused on single responsibility
+- Service functions: 10-50 lines typical
+- Component functions: 50-200 lines typical
 
 **Parameters:**
-- Services: Named parameters via destructuring for options
-- Components: Props destructured in function signature
-- Default values provided inline: `{ type = null, search = '', page = 1 } = {}`
-
-**Example from `mediaService.js`:**
-```javascript
-export async function fetchMediaAssets({
-  type = null,
-  search = '',
-  page = 1,
-  pageSize = 50,
-  folderId = undefined
-} = {}) {
-  // ...
-}
-```
+- Prefer object parameters for multiple options: `fetchScreens({ search, limit })`
+- Use destructuring with defaults: `{ search = '', limit = 100 } = {}`
+- Avoid positional parameters beyond 2-3 arguments
 
 **Return Values:**
-- Services return data directly or throw errors
-- Avoid returning `{ success, data, error }` wrappers
-- Async functions always return Promises
-- Use `null` for "not found" states, empty arrays/objects for empty collections
+- Services: Return data directly or throw errors
+- Async functions: Return promises
+- Components: Return JSX
+
+**Async/Await:**
+- Preferred over `.then()` chains
+- Used consistently in service layer
 
 ## Module Design
 
 **Exports:**
-- Named exports preferred: `export function fetchData() {}`
-- Default exports for React components: `export default ComponentName;`
-- Constants exported as named exports: `export const MEDIA_TYPES = {...};`
+- Named exports preferred: `export async function fetchScreens()`
+- Default exports for React components: `export default StatCard`
+- Avoid mixing default + named exports in same file
+
+**File Organization:**
+- Imports at top
+- Constants/helpers after imports
+- Main logic/component function
+- Helper functions after main
+- Export at bottom (for default exports)
 
 **Barrel Files:**
-- Design system uses barrel exports: `../design-system` exports multiple components
-- Not widely used elsewhere - direct imports preferred
-
-**PropTypes:**
-- React components use PropTypes (gradual adoption, warn level)
-- Format: PropTypes with JSDoc comments
-- Default props via `Component.defaultProps` or inline defaults
-
-**Example from `Button.jsx`:**
-```javascript
-Button.propTypes = {
-  /** Button content - text, icon, or any React node */
-  children: PropTypes.node.isRequired,
-  /** Click handler function */
-  onClick: PropTypes.func,
-  /** Visual style variant */
-  variant: PropTypes.oneOf(['primary', 'outline', 'success', 'danger']),
-};
-
-Button.defaultProps = {
-  onClick: null,
-  variant: 'primary',
-};
-```
+- Not used - direct imports preferred
+- Example: `import { fetchScreens } from '../services/screenService'`
 
 ## React Patterns
 
+**Component Declaration:**
+- Function components only (no class components detected)
+- Named function declarations or arrow functions
+- Export default for components: `export default function LoginPage()`
+
 **Hooks:**
-- Custom hooks prefixed with `use`: `useAuth()`, `useLogger()`, `useBreakpoints()`
-- Hooks extracted to `src/hooks/` directory
-- Context hooks check for provider: `if (!context) throw new Error(...)`
+- Custom hooks in `src/hooks/` directory
+- Prefix with `use`: `useLogger`, `useAuth`
+- Follow Rules of Hooks (enforced by `react-hooks/recommended`)
+
+**Props:**
+- Destructure in function signature: `function StatCard({ title, value, icon })`
+- Use `...props` for pass-through: `{ title, value, ...props }`
+- No PropTypes (deprecated in React 19+)
 
 **State Management:**
-- React Context for global state (`AuthContext`, `BrandingContext`)
-- `useState` for local component state
-- `useCallback` for memoized callbacks in contexts
-
-**Component Structure:**
-1. Imports
-2. PropTypes/defaultProps (if component uses them)
-3. Component function
-4. PropTypes definition (after component)
-5. Default export
-
-**Legacy Wrappers:**
-- Components in `src/components/` wrap design system for backwards compatibility
-- Comments indicate "Legacy wrapper" and suggest importing from design system
-- Map old prop names to new design system props
-
-**Example from `Badge.jsx`:**
-```javascript
-/**
- * Badge Component - Legacy wrapper
- * Re-exports from design system with backwards-compatible prop mapping.
- * New code should import directly from '../design-system' instead.
- */
-```
+- `useState` for local state
+- Context for shared state (`AuthContext`, `BrandingContext`)
+- No Redux or external state library
 
 ---
 
-*Convention analysis: 2026-02-05*
+*Convention analysis: 2026-02-12*

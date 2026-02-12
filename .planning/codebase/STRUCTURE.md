@@ -1,319 +1,290 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-02-05
+**Analysis Date:** 2026-02-12
 
 ## Directory Layout
 
 ```
 bizscreen/
-├── src/                          # Application source code
-│   ├── pages/                    # Page-level components (70+ pages)
-│   ├── components/               # Reusable UI components (60+ components)
-│   ├── services/                 # Business logic layer (100+ services)
-│   ├── hooks/                    # Custom React hooks (17 hooks)
-│   ├── contexts/                 # React context providers (Auth, Branding, Emergency)
-│   ├── router/                   # React Router configuration
-│   ├── auth/                     # Authentication pages (login, signup, etc.)
-│   ├── marketing/                # Public marketing pages
-│   ├── player/                   # TV/display player code
-│   ├── config/                   # Configuration files
-│   ├── utils/                    # Utility functions
-│   ├── security/                 # Security utilities
-│   ├── i18n/                     # Internationalization
-│   ├── design-system/            # Design system components
-│   ├── templates/                # Template definitions
-│   ├── legacy/                   # Legacy code being phased out
-│   ├── App.jsx                   # Main app container
-│   ├── main.jsx                  # Application entry point
-│   ├── supabase.js               # Supabase client configuration
-│   └── index.css                 # Global styles
-├── supabase/                     # Supabase database configuration
-│   └── migrations/               # Database migration files (135 migrations)
-├── tests/                        # Test files
-│   ├── unit/                     # Unit tests
-│   ├── integration/              # Integration tests
-│   ├── e2e/                      # End-to-end tests (Playwright)
-│   └── load/                     # Load tests
-├── public/                       # Static assets
-├── .planning/                    # Planning and documentation
-├── package.json                  # Dependencies and scripts
-├── vite.config.js                # Vite build configuration
-└── playwright.config.js          # E2E test configuration
+├── src/                    # Application source code
+│   ├── pages/             # Top-level page components (lazy-loaded)
+│   ├── components/        # Reusable UI components
+│   ├── contexts/          # React Context providers (auth, branding, i18n)
+│   ├── services/          # Business logic and data access (100+ modules)
+│   ├── hooks/             # Custom React hooks
+│   ├── router/            # Route definitions and guards
+│   ├── auth/              # Authentication pages and layout
+│   ├── marketing/         # Public marketing pages
+│   ├── player/            # TV player subsystem (offline-capable)
+│   ├── layouts/           # Layout wrapper components
+│   ├── utils/             # Utility functions and helpers
+│   ├── config/            # Configuration files (plans, features, env)
+│   ├── design-system/     # UI primitives and tokens
+│   ├── i18n/              # Internationalization and locale files
+│   ├── security/          # Security utilities (sanitization, validation)
+│   ├── legacy/            # Legacy code being phased out
+│   ├── templates/         # Content templates
+│   ├── types/             # Type definitions (JSDoc patterns)
+│   ├── api/               # API utilities (GDPR handlers)
+│   ├── __fixtures__/      # Test fixtures and mock data
+│   ├── main.jsx           # Application entry point
+│   ├── App.jsx            # Main app shell with routing
+│   ├── Player.jsx         # Player routing entry point
+│   ├── TV.jsx             # Legacy TV player entry point
+│   └── supabase.js        # Supabase client initialization
+├── tests/                 # Test files (unit, integration, e2e)
+├── supabase/              # Database schema and functions
+│   ├── migrations/        # SQL migration files
+│   ├── functions/         # Edge functions (RSS proxy, Unsplash proxy)
+│   └── tests/             # Supabase function tests
+├── public/                # Static assets
+├── docs/                  # Documentation
+├── scripts/               # Build and utility scripts
+├── android-tv-player/     # Android TV player app
+├── yodeck-capture/        # Yodeck layout capture tool
+├── playwright/            # Playwright test configuration
+├── .planning/             # GSD planning and phase documents
+├── dist/                  # Build output (generated)
+├── vite.config.js         # Vite build configuration
+├── package.json           # Dependencies and scripts
+├── tailwind.config.js     # Tailwind CSS configuration
+└── index.html             # HTML entry point
 ```
 
 ## Directory Purposes
 
-**src/pages/**
-- Purpose: Top-level page components rendered by router
-- Contains: 70+ page components (DashboardPage, MediaLibraryPage, PlaylistsPage, etc.)
-- Key files: `src/pages/DashboardPage.jsx`, `src/pages/MediaLibraryPage.jsx`, `src/pages/ScreensPage.jsx`
-- Naming: PascalCase with "Page" suffix (e.g., `TemplatesPage.jsx`)
-- Sub-directories: `Admin/` (admin-specific pages), `LayoutEditor/` (layout editor pages), `components/` (page-specific components), `hooks/` (page-specific hooks), `dashboard/` (dashboard widgets)
+**src/pages:**
+- Purpose: Top-level page components mapped to routes
+- Contains: 60+ page components (DashboardPage, PlaylistEditorPage, etc.)
+- Key files: `src/pages/DashboardPage.jsx`, `src/pages/PlaylistEditorPage.jsx`, `src/pages/LayoutEditorPage.jsx`
+- Pattern: Default export, lazy-loaded via React.lazy(), accept navigation callbacks
 
-**src/components/**
-- Purpose: Reusable UI components used across multiple pages
-- Contains: 60+ components organized by feature area
-- Key files: `src/components/ErrorBoundary.jsx`, `src/components/Toast.jsx`, `src/components/FeatureGate.jsx`
-- Sub-directories:
-  - `layout/` - Header, MobileNav
-  - `scenes/` - Scene-related components
-  - `schedules/` - Schedule management components
-  - `screens/` - Screen management components
-  - `media/` - Media library components
-  - `svg-editor/` - SVG editor components
-  - `layout-editor/` - Layout editor components
-  - `templates/` - Template components
-  - `onboarding/` - Onboarding flows
-  - `dashboard/` - Dashboard widgets
-  - `campaigns/` - Campaign components
-  - `security/` - Security components (MFA, session management)
+**src/components:**
+- Purpose: Reusable UI components organized by domain
+- Contains: Subdirectories per feature area (analytics, campaigns, media, schedules, etc.)
+- Key files: `src/components/layout/Header.jsx`, `src/components/FeatureGate.jsx`, `src/components/ErrorBoundary.jsx`
+- Subfolders: `analytics/`, `campaigns/`, `dashboard/`, `layout/`, `layout-editor/`, `media/`, `modals/`, `player/`, `scene-editor/`, `schedules/`, `screens/`, `svg-editor/`, `templates/`
 
-**src/services/**
+**src/services:**
 - Purpose: Business logic and data access layer
-- Contains: 100+ service modules implementing CRUD operations and business rules
-- Key files:
-  - `src/services/mediaService.js` - Media library operations
-  - `src/services/playlistService.js` - Playlist management
-  - `src/services/scheduleService.js` - Schedule management
-  - `src/services/campaignService.js` - Campaign operations
-  - `src/services/sceneService.js` - Scene management
-  - `src/services/authService.js` - Authentication
-  - `src/services/brandingService.js` - Tenant branding
-  - `src/services/loggingService.js` - Centralized logging
-- Naming: camelCase with "Service" suffix (e.g., `mediaService.js`)
+- Contains: 100+ service modules, each handling a specific domain
+- Key files: `src/services/playlistService.js`, `src/services/mediaService.js`, `src/services/campaignService.js`, `src/services/authService.js`, `src/services/loggingService.js`
+- Pattern: Export async functions, JSDoc typed, use createScopedLogger for logging
 
-**src/hooks/**
-- Purpose: Custom React hooks for state management and data fetching
-- Contains: 17 custom hooks
-- Key files:
-  - `src/hooks/useMedia.js` - Media library state
-  - `src/hooks/useLayout.js` - Layout management
-  - `src/hooks/useFeatureFlag.jsx` - Feature flag resolution
-  - `src/hooks/useAuth.js` - Auth state (via context)
-  - `src/hooks/useLogger.js` - Component logging
-  - `src/hooks/useMediaQuery.js` - Responsive breakpoints
-- Naming: camelCase with "use" prefix (e.g., `useMedia.js`)
+**src/contexts:**
+- Purpose: Global state management via React Context
+- Contains: AuthContext, BrandingContext, EmergencyContext, I18nContext
+- Key files: `src/contexts/AuthContext.jsx`, `src/contexts/BrandingContext.jsx`
+- Pattern: createContext + custom hook (useAuth, useBranding)
 
-**src/contexts/**
-- Purpose: React Context providers for global state
-- Contains: AuthContext, BrandingContext, EmergencyContext
-- Key files:
-  - `src/contexts/AuthContext.jsx` - User authentication and profile
-  - `src/contexts/BrandingContext.jsx` - Tenant branding and theme
-  - `src/contexts/EmergencyContext.jsx` - Emergency broadcast state
+**src/hooks:**
+- Purpose: Custom reusable React hooks
+- Contains: useFeatureFlag, useLogger, useLayout, usePlayerMetrics, etc.
+- Key files: `src/hooks/useFeatureFlag.jsx`, `src/hooks/useLogger.js`
+- Pattern: Prefix with `use`, return state and handlers
 
-**src/router/**
-- Purpose: React Router configuration
-- Contains: Route definitions and protected route wrappers
-- Key files: `src/router/AppRouter.jsx` - Main router with lazy-loaded pages
+**src/player:**
+- Purpose: Offline-capable TV player subsystem
+- Contains: Player pages, hooks, components, offline service, cache service
+- Key files: `src/player/pages/ViewPage.jsx`, `src/player/offlineService.js`, `src/player/hooks/usePlayerContent.js`
+- Subdirectories: `pages/`, `hooks/`, `components/`
 
-**src/auth/**
-- Purpose: Authentication-related pages
-- Contains: LoginPage, SignupPage, ResetPasswordPage, UpdatePasswordPage, AuthCallbackPage, AcceptInvitePage, AuthLayout
+**src/router:**
+- Purpose: Route definitions and navigation guards
+- Contains: AppRouter with lazy-loaded routes, RequireAuth, PublicRoute
+- Key files: `src/router/AppRouter.jsx`
+- Pattern: React Router v7 with Sentry-wrapped routes
 
-**src/player/**
-- Purpose: TV/display player functionality (separate from main app)
-- Contains: Player components, offline service, pairing logic
-- Sub-directories:
-  - `components/` - PairPage, ViewPage, ZonePlayer, SceneRenderer, AppRenderer
-  - `pages/` - ViewPage
-  - `hooks/` - Player-specific hooks
+**src/auth:**
+- Purpose: Authentication UI and flows
+- Contains: Login, signup, password reset, OAuth callback pages
+- Key files: `src/auth/LoginPage.jsx`, `src/auth/SignupPage.jsx`, `src/auth/AuthLayout.jsx`
 
-**src/marketing/**
+**src/marketing:**
 - Purpose: Public marketing website pages
-- Contains: HomePage, PricingPage, FeaturesPage, MarketingLayout
+- Contains: Home, pricing, features pages with marketing layout
+- Key files: `src/marketing/HomePage.jsx`, `src/marketing/PricingPage.jsx`, `src/marketing/MarketingLayout.jsx`
 
-**src/config/**
-- Purpose: Configuration files and constants
-- Key files:
-  - `src/config/env.js` - Environment variable access
-  - `src/config/plans.js` - Plan definitions and feature flags
-  - `src/config/featureFlags.js` - Feature flag configuration
-  - `src/config/appCatalog.js` - App catalog definitions
+**src/design-system:**
+- Purpose: Reusable UI primitives and design tokens
+- Contains: Button, Modal, Alert, SearchBar, tokens.css
+- Key files: `src/design-system/components/Button.jsx`, `src/design-system/tokens.css`
 
-**src/utils/**
-- Purpose: Utility functions used across the application
-- Key files:
-  - `src/utils/errorTracking.jsx` - Sentry integration
-  - `src/utils/formatters.js` - Date/time formatting
-  - `src/utils/seo.js` - SEO utilities
-  - `src/utils/observability.js` - Performance monitoring
+**src/utils:**
+- Purpose: Utility functions and helpers
+- Contains: Observability, error tracking, formatting, validation
+- Key files: `src/utils/observability.js`, `src/utils/errorTracking.jsx`
 
-**src/security/**
-- Purpose: Security utilities and sanitization
-- Key files:
-  - `src/security/sanitize.js` - HTML/input sanitization
-  - `src/security/SafeHTML.jsx` - Safe HTML rendering component
+**src/config:**
+- Purpose: Application configuration
+- Contains: Plan definitions, feature flags, environment settings
+- Key files: `src/config/plans.js`, `src/config/featureFlags.js`, `src/config/env.js`
 
-**src/design-system/**
-- Purpose: Design system components (alternative to components/)
-- Contains: Modal, CreateLayoutModal
+**src/i18n:**
+- Purpose: Internationalization
+- Contains: I18nContext, translation utilities, locale JSON files
+- Key files: `src/i18n/I18nContext.jsx`, `src/i18n/locales/en.json`
 
-**supabase/migrations/**
-- Purpose: Database schema and RLS policy definitions
-- Contains: 135 SQL migration files
-- Generated: Yes (by Supabase CLI)
-- Committed: Yes
-- Naming: Timestamped (e.g., `20250101120000_add_feature.sql`)
+**supabase/migrations:**
+- Purpose: Database schema evolution
+- Contains: SQL migration files (001_initial_schema.sql, 014_yodeck_phase1_media_playlists.sql, etc.)
+- Pattern: Numbered migrations, applied in order
 
 **tests/**
-- Purpose: All test files
-- Sub-directories:
-  - `unit/` - Vitest unit tests (mirrors src/ structure)
-  - `integration/` - Integration tests
-  - `e2e/` - Playwright end-to-end tests
-  - `load/` - Load tests (k6 and Node.js)
-  - `mocks/` - Test mocks and fixtures
-  - `utils/` - Test utilities
-
-**.planning/**
-- Purpose: Project planning and documentation
-- Sub-directories:
-  - `codebase/` - This directory (codebase analysis)
-  - `milestones/` - Milestone roadmaps
-  - `quick/` - Quick task plans
-  - `debug/` - Debug investigation notes
+- Purpose: Test files
+- Contains: Unit tests (tests/unit), integration tests (tests/integration), e2e tests (tests/e2e)
+- Key files: `tests/e2e/*.spec.js` (Playwright tests)
+- Pattern: Co-located with source or in tests/ directory
 
 ## Key File Locations
 
 **Entry Points:**
-- `src/main.jsx`: React app entry point, renders root with providers
-- `src/router/AppRouter.jsx`: Route configuration and navigation
-- `src/App.jsx`: Main app container with sidebar and page content
-- `src/Player.jsx`: Player app entry point for `/player/*` routes
-- `src/TV.jsx`: TV app entry point for `/tv/*` routes
-- `index.html`: HTML entry point loaded by Vite
+- `index.html`: HTML entry point
+- `src/main.jsx`: React root, providers, observability initialization
+- `src/App.jsx`: Main app shell with role-based routing
+- `src/Player.jsx`: Player routing (/player, /player/view)
+- `src/TV.jsx`: Legacy TV player routing
 
 **Configuration:**
-- `vite.config.js`: Vite build configuration, plugins, aliases
-- `package.json`: Dependencies, scripts, project metadata
-- `.env`: Environment variables (not committed)
-- `.env.example`: Environment variable template
-- `src/config/env.js`: Environment variable access layer
-- `src/config/plans.js`: Plan and feature definitions
+- `package.json`: Dependencies and npm scripts
+- `vite.config.js`: Vite build config with code splitting, Sentry plugin
+- `tailwind.config.js`: Tailwind CSS theme configuration
+- `eslint.config.js`: ESLint rules
+- `playwright.config.js`: E2E test configuration
+- `vitest.config.js`: Unit test configuration
 
 **Core Logic:**
-- `src/contexts/AuthContext.jsx`: Authentication state and logic
-- `src/services/mediaService.js`: Media library operations
-- `src/services/playlistService.js`: Playlist management
-- `src/services/scheduleService.js`: Schedule management
-- `src/services/sceneService.js`: Scene management
 - `src/supabase.js`: Supabase client initialization
+- `src/contexts/AuthContext.jsx`: Authentication state management
+- `src/services/loggingService.js`: Structured logging
+- `src/utils/observability.js`: Sentry, logging, web vitals setup
+- `src/router/AppRouter.jsx`: Route definitions and guards
 
 **Testing:**
-- `playwright.config.js`: Playwright configuration
-- `vitest.config.js`: Vitest configuration
-- `tests/e2e/*.spec.js`: E2E test files
-- `tests/unit/**/*.test.js`: Unit test files
+- `tests/e2e/dashboard.spec.js`: Dashboard E2E tests
+- `tests/unit/services/playlistService.test.js`: Service unit tests
+- `tests/mocks/`: MSW handlers for API mocking
 
 ## Naming Conventions
 
 **Files:**
-- React components: PascalCase (e.g., `MediaLibraryPage.jsx`)
-- Services: camelCase with "Service" suffix (e.g., `mediaService.js`)
-- Hooks: camelCase with "use" prefix (e.g., `useMedia.js`)
-- Utilities: camelCase (e.g., `formatters.js`)
-- Config: camelCase (e.g., `env.js`)
-- Tests: Same as source file with `.test.js` or `.spec.js` suffix
+- Pages: PascalCase with `Page` suffix (e.g., `DashboardPage.jsx`)
+- Components: PascalCase (e.g., `Header.jsx`, `FeatureGate.jsx`)
+- Services: camelCase with `Service` suffix (e.g., `playlistService.js`, `authService.js`)
+- Hooks: camelCase with `use` prefix (e.g., `useFeatureFlag.jsx`, `useAuth.js`)
+- Utilities: camelCase (e.g., `observability.js`, `errorTracking.jsx`)
+- Contexts: PascalCase with `Context` suffix (e.g., `AuthContext.jsx`)
 
 **Directories:**
-- kebab-case for feature directories (e.g., `svg-editor/`)
-- PascalCase for component directories with single component (e.g., `Admin/`)
-- lowercase for utility directories (e.g., `utils/`, `config/`)
+- Lowercase with hyphens for multi-word (e.g., `layout-editor/`, `scene-editor/`)
+- Lowercase single word where possible (e.g., `pages/`, `services/`)
 
-**Variables/Functions:**
-- camelCase for variables and functions (e.g., `fetchMediaAssets`)
-- PascalCase for React components (e.g., `MediaLibraryPage`)
-- UPPER_SNAKE_CASE for constants (e.g., `MEDIA_TYPES`)
+**Variables:**
+- Components: PascalCase (e.g., `const Header = () => {}`)
+- Functions: camelCase (e.g., `function fetchPlaylists() {}`)
+- Constants: UPPER_SNAKE_CASE (e.g., `const API_VERSION = 'v1'`)
+- React hooks: camelCase with `use` prefix (e.g., `const useAuth = () => {}`)
 
-**React Components:**
-- Function components with arrow functions or function declarations
-- Named exports for pages (e.g., `export default DashboardPage`)
-- Named exports for reusable components (e.g., `export { Toast }`)
+**Types (JSDoc):**
+- Type definitions: `@typedef {Object} TypeName`
+- Exported types at top of service files
+- PascalCase for type names (e.g., `@typedef {Object} Playlist`)
 
 ## Where to Add New Code
 
 **New Feature Page:**
-- Primary code: `src/pages/FeatureNamePage.jsx`
-- Route: Add to `src/router/AppRouter.jsx` (if standalone) or `src/App.jsx` (if in-app)
-- Tests: `tests/e2e/feature-name.spec.js` for E2E, `tests/unit/pages/FeatureNamePage.test.js` for unit
+- Primary code: `src/pages/NewFeaturePage.jsx`
+- Tests: `tests/e2e/new-feature.spec.js` or `tests/unit/pages/NewFeaturePage.test.jsx`
+- Route: Add to `src/router/AppRouter.jsx` or `src/App.jsx` (for client UI pages)
 
-**New Reusable Component:**
-- Implementation: `src/components/ComponentName.jsx` or `src/components/feature-area/ComponentName.jsx`
-- Tests: `tests/unit/components/ComponentName.test.js`
+**New Component:**
+- Implementation: `src/components/{domain}/NewComponent.jsx`
+- Reusable across features: `src/design-system/components/NewComponent.jsx`
+- Domain-specific: `src/components/{domain}/` (e.g., `src/components/campaigns/`, `src/components/media/`)
 
 **New Service:**
-- Implementation: `src/services/featureService.js`
-- Export functions: Named exports (e.g., `export async function fetchFeature()`)
-- Tests: `tests/unit/services/featureService.test.js`
+- Implementation: `src/services/newFeatureService.js`
+- Pattern: Export functions, use JSDoc, create scoped logger
+- Tests: `tests/unit/services/newFeatureService.test.js`
 
-**New Custom Hook:**
-- Implementation: `src/hooks/useFeatureName.js`
-- Pattern: Return object with `{ data, loading, error, refetch }`
-- Tests: `tests/unit/hooks/useFeatureName.test.js`
+**New Hook:**
+- Implementation: `src/hooks/useNewFeature.js`
+- Player-specific: `src/player/hooks/useNewFeature.js`
+- Pattern: Return state and handlers, use dependency array
 
 **Utilities:**
-- Shared helpers: `src/utils/utilityName.js`
-- Security: `src/security/securityUtil.js`
-- Formatting: `src/utils/formatters.js`
+- Shared helpers: `src/utils/newUtility.js`
+- Security utilities: `src/security/newSecurityUtil.js`
+- Player utilities: `src/player/newPlayerUtil.js`
 
 **Database Changes:**
-- Create migration: `supabase migration new migration_name`
-- Edit: `supabase/migrations/YYYYMMDDHHMMSS_migration_name.sql`
-- Apply: `supabase db push` (local) or deploy to production
+- Schema: Create new migration in `supabase/migrations/NNN_description.sql`
+- RPC functions: Add to migration or new SQL file
+- Pattern: Numbered sequentially, descriptive name
 
-**Player/TV Features:**
-- Components: `src/player/components/ComponentName.jsx`
-- Logic: `src/player/services/` or use shared `src/services/`
-- Pages: `src/player/pages/PageName.jsx`
+**Configuration:**
+- Feature flags: `src/config/featureFlags.js`
+- Plans/tiers: `src/config/plans.js`
+- Environment: `src/config/env.js`
 
 ## Special Directories
 
-**_api-disabled/**
-- Purpose: Disabled API routes (legacy/unused)
+**src/legacy:**
+- Purpose: Deprecated code being phased out
 - Generated: No
 - Committed: Yes
-- Note: These were moved or deprecated in favor of Supabase functions
+- Note: Avoid adding new code here, refactor/remove over time
 
-**yodeck-capture/**
-- Purpose: Screen capture utility (separate Node.js project)
-- Generated: No
-- Committed: Yes
-- Note: Used for capturing Yodeck layout screenshots
-
-**android-tv-player/**
-- Purpose: Android TV player application
-- Generated: Yes (Gradle build outputs)
-- Committed: Partially (source yes, build artifacts no)
-- Note: Native Android app for TV devices
-
-**dist/**
+**dist:**
 - Purpose: Vite build output
-- Generated: Yes
-- Committed: No
-- Note: Production build artifacts
+- Generated: Yes (via `npm run build`)
+- Committed: No (.gitignore)
+- Note: Production bundle, deployed to hosting
 
-**node_modules/**
-- Purpose: npm dependencies
-- Generated: Yes
-- Committed: No
+**node_modules:**
+- Purpose: NPM dependencies
+- Generated: Yes (via `npm install`)
+- Committed: No (.gitignore)
 
-**.planning/**
-- Purpose: Project planning, milestones, and documentation
-- Generated: No (manually created)
+**playwright-report:**
+- Purpose: Playwright HTML test reports
+- Generated: Yes (via `npm run test:e2e`)
+- Committed: No (.gitignore)
+
+**test-results:**
+- Purpose: Playwright test artifacts (screenshots, traces)
+- Generated: Yes (during test runs)
+- Committed: No (.gitignore)
+
+**coverage:**
+- Purpose: Vitest code coverage reports
+- Generated: Yes (via `npm run test:coverage`)
+- Committed: No (.gitignore)
+
+**src/__fixtures__:**
+- Purpose: Mock data for tests and development
+- Generated: No
 - Committed: Yes
-- Sub-directories: `codebase/`, `milestones/`, `quick/`, `debug/`
+- Files: `playlists.js`, `schedules.js`, `screens.js`
 
-**playwright-report/**
-- Purpose: Playwright test reports
-- Generated: Yes
-- Committed: No (Git ignored)
+**android-tv-player:**
+- Purpose: Native Android TV player app
+- Generated: No (hand-written Kotlin/Java)
+- Committed: Yes
+- Pattern: Standard Android project structure
 
-**test-results/**
-- Purpose: Playwright test artifacts (screenshots, videos, traces)
-- Generated: Yes
-- Committed: No (Git ignored)
+**yodeck-capture:**
+- Purpose: Tool to capture Yodeck layouts for migration
+- Generated: No
+- Committed: Yes
+- Pattern: Node.js script with Puppeteer
+
+**.planning:**
+- Purpose: GSD planning documents and phase execution records
+- Generated: Yes (by GSD commands)
+- Committed: Yes
+- Structure: `phases/`, `codebase/`, `PROJECT.md`
 
 ---
 
-*Structure analysis: 2026-02-05*
+*Structure analysis: 2026-02-12*
