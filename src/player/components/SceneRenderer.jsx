@@ -28,6 +28,7 @@ import { QRCodeWidget } from './widgets/QRCodeWidget.jsx';
 import { DataTableWidget } from './widgets/DataTableWidget.jsx';
 import { RssTickerWidget } from './widgets/RssTickerWidget.jsx';
 import { RssCardWidget } from './widgets/RssCardWidget.jsx';
+import { SocialFeedWidget } from './widgets/SocialFeedWidget.jsx';
 
 /**
  * Scene Block - Renders individual blocks in a scene slide
@@ -152,6 +153,9 @@ function SceneWidgetRenderer({ widgetType, props }) {
 
     case 'rss-card':
       return <RssCardWidget props={safeProps} />;
+
+    case 'social-feed':
+      return <SocialFeedWidget props={safeProps} />;
 
     default:
       return (
