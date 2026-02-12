@@ -5,3 +5,4 @@ export { ClockWidget } from './ClockWidget.jsx';
 export { DateWidget } from './DateWidget.jsx';
 export { WeatherWidget } from './WeatherWidget.jsx';
 export { QRCodeWidget } from './QRCodeWidget.jsx';
+export { DataTableWidget } from './DataTableWidget.jsx';

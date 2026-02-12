@@ -21,6 +21,11 @@ import {
   subscribeToDataSource,
 } from '../../services/dataSourceService';
 import { useLogger } from '../../hooks/useLogger.js';
+import { ClockWidget } from './widgets/ClockWidget.jsx';
+import { DateWidget } from './widgets/DateWidget.jsx';
+import { WeatherWidget } from './widgets/WeatherWidget.jsx';
+import { QRCodeWidget } from './widgets/QRCodeWidget.jsx';
+import { DataTableWidget } from './widgets/DataTableWidget.jsx';
 
 /**
  * Scene Block - Renders individual blocks in a scene slide
@@ -136,6 +141,9 @@ function SceneWidgetRenderer({ widgetType, props }) {
 
     case 'qr':
       return <QRCodeWidget props={safeProps} />;
+
+    case 'data-table':
+      return <DataTableWidget props={safeProps} />;
 
     default:
       return (
