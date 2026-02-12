@@ -15,7 +15,7 @@ import { createScopedLogger } from '../services/loggingService.js';
 const logger = createScopedLogger('CacheService');
 
 const DB_NAME = 'bizscreen-player-cache';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 // Store names
 const STORES = {
@@ -23,6 +23,7 @@ const STORES = {
   MEDIA: 'media',
   DEVICE_STATE: 'deviceState',
   OFFLINE_QUEUE: 'offlineQueue',
+  DATA_SOURCES: 'dataSources',
 };
 
 // Cache limits for LRU eviction
@@ -79,6 +80,14 @@ async function initDB() {
         queueStore.createIndex('eventType', 'eventType');
         queueStore.createIndex('createdAt', 'createdAt');
         queueStore.createIndex('synced', 'synced');
+      }
+
+      // Data sources store (added in v2)
+      if (oldVersion < 2) {
+        if (!db.objectStoreNames.contains(STORES.DATA_SOURCES)) {
+          const dsStore = db.createObjectStore(STORES.DATA_SOURCES, { keyPath: 'id' });
+          dsStore.createIndex('cachedAt', 'cachedAt');
+        }
       }
     },
   });
@@ -304,6 +313,55 @@ export async function deleteCachedScene(sceneId) {
   }
 
   logger.debug('[CacheService] Deleted cached scene and media:', sceneId);
+}
+
+// ============================================================================
+// DATA SOURCE CACHING
+// ============================================================================
+
+/**
+ * Cache a data source snapshot for offline playback
+ * @param {string} dataSourceId - Data source UUID
+ * @param {object} data - Data source data with fields and rows
+ * @returns {Promise<void>}
+ */
+export async function cacheDataSource(dataSourceId, data) {
+  if (!dataSourceId || !data) return;
+
+  const db = await getDB();
+  const now = new Date().toISOString();
+
+  const cacheEntry = {
+    id: dataSourceId,
+    fields: data.fields,
+    rows: data.rows,
+    cachedAt: now,
+    lastAccessedAt: now,
+  };
+
+  await db.put(STORES.DATA_SOURCES, cacheEntry);
+  logger.debug('[CacheService] Cached data source:', dataSourceId);
+}
+
+/**
+ * Get a cached data source snapshot
+ * @param {string} dataSourceId - Data source UUID
+ * @returns {Promise<object|null>} Cached data source or null
+ */
+export async function getCachedDataSource(dataSourceId) {
+  if (!dataSourceId) return null;
+
+  const db = await getDB();
+  const entry = await db.get(STORES.DATA_SOURCES, dataSourceId);
+
+  if (entry) {
+    // Update lastAccessedAt for LRU tracking
+    entry.lastAccessedAt = new Date().toISOString();
+    await db.put(STORES.DATA_SOURCES, entry);
+    logger.debug('[CacheService] Retrieved cached data source:', dataSourceId);
+  }
+
+  return entry || null;
 }
 
 // ============================================================================
