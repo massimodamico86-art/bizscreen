@@ -31,6 +31,7 @@ import {
   ANIMATION_KEYFRAMES,
 } from '../../services/sceneDesignService';
 import { preloadSlide } from '../../services/mediaPreloader';
+import { DataTableWidget } from '../../player/components/widgets/DataTableWidget';
 
 /**
  * Main LivePreviewWindow component
@@ -518,6 +519,9 @@ function PreviewWidget({ widgetType, props = {} }) {
           {formatDate()}
         </div>
       );
+
+    case 'data-table':
+      return <DataTableWidget props={props} />;
 
     default:
       return (

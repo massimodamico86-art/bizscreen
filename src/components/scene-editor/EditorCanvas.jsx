@@ -10,7 +10,18 @@
  */
 
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import { Type, Image, Square, Clock, CloudSun, QrCode, Calendar } from 'lucide-react';
+import {
+  Calendar,
+  Clock,
+  CloudSun,
+  Database,
+  Image,
+  Move,
+  QrCode,
+  Square,
+  Table2,
+  Type,
+} from 'lucide-react';
 import {
   calculateSnapPosition,
   findAlignmentGuides,
@@ -39,6 +50,7 @@ const WIDGET_ICONS = {
   date: Calendar,
   weather: CloudSun,
   qr: QrCode,
+  'data-table': Table2,
 };
 
 export default function EditorCanvas({
@@ -555,6 +567,29 @@ export default function EditorCanvas({
               </div>
             );
           }
+
+          case 'data-table':
+            return (
+              <div className="w-full h-full flex flex-col overflow-hidden" style={{ fontSize: 'clamp(0.4rem, 1vw, 0.65rem)' }}>
+                {/* Mock header */}
+                <div className="flex bg-blue-900/30 px-1 py-0.5 gap-1">
+                  <span className="flex-1 text-gray-300 font-medium truncate">Column A</span>
+                  <span className="flex-1 text-gray-300 font-medium truncate">Column B</span>
+                  <span className="flex-1 text-gray-300 font-medium truncate">Column C</span>
+                </div>
+                {/* Mock rows */}
+                {[0, 1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className={`flex px-1 py-0.5 gap-1 flex-1 items-center ${i % 2 === 0 ? 'bg-white/5' : ''}`}
+                  >
+                    <span className="flex-1 text-gray-400 truncate">Data {i + 1}</span>
+                    <span className="flex-1 text-gray-400 truncate">Value</span>
+                    <span className="flex-1 text-gray-400 truncate">Info</span>
+                  </div>
+                ))}
+              </div>
+            );
 
           default: {
             const WidgetIcon = WIDGET_ICONS[widgetType] || Clock;
