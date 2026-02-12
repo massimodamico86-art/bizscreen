@@ -15,7 +15,7 @@ import { createScopedLogger } from '../services/loggingService.js';
 const logger = createScopedLogger('CacheService');
 
 const DB_NAME = 'bizscreen-player-cache';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 // Store names
 const STORES = {
@@ -24,6 +24,7 @@ const STORES = {
   DEVICE_STATE: 'deviceState',
   OFFLINE_QUEUE: 'offlineQueue',
   DATA_SOURCES: 'dataSources',
+  RSS_FEEDS: 'rssFeeds',
 };
 
 // Cache limits for LRU eviction
@@ -87,6 +88,13 @@ async function initDB() {
         if (!db.objectStoreNames.contains(STORES.DATA_SOURCES)) {
           const dsStore = db.createObjectStore(STORES.DATA_SOURCES, { keyPath: 'id' });
           dsStore.createIndex('cachedAt', 'cachedAt');
+        }
+      }
+
+      // RSS feeds store (added in v3)
+      if (oldVersion < 3) {
+        if (!db.objectStoreNames.contains(STORES.RSS_FEEDS)) {
+          db.createObjectStore(STORES.RSS_FEEDS, { keyPath: 'feedUrl' });
         }
       }
     },
@@ -359,6 +367,49 @@ export async function getCachedDataSource(dataSourceId) {
     entry.lastAccessedAt = new Date().toISOString();
     await db.put(STORES.DATA_SOURCES, entry);
     logger.debug('[CacheService] Retrieved cached data source:', dataSourceId);
+  }
+
+  return entry || null;
+}
+
+// ============================================================================
+// RSS FEED CACHING
+// ============================================================================
+
+/**
+ * Cache an RSS feed snapshot for offline playback
+ * @param {string} feedUrl - RSS feed URL
+ * @param {object} feedData - Feed data with feedTitle, items, itemCount
+ * @returns {Promise<void>}
+ */
+export async function cacheRssFeed(feedUrl, feedData) {
+  if (!feedUrl || !feedData) return;
+
+  const db = await getDB();
+
+  const cacheEntry = {
+    feedUrl,
+    ...feedData,
+    cachedAt: Date.now(),
+  };
+
+  await db.put(STORES.RSS_FEEDS, cacheEntry);
+  logger.debug('[CacheService] Cached RSS feed:', feedUrl);
+}
+
+/**
+ * Get a cached RSS feed snapshot
+ * @param {string} feedUrl - RSS feed URL
+ * @returns {Promise<object|null>} Cached feed data or null
+ */
+export async function getCachedRssFeed(feedUrl) {
+  if (!feedUrl) return null;
+
+  const db = await getDB();
+  const entry = await db.get(STORES.RSS_FEEDS, feedUrl);
+
+  if (entry) {
+    logger.debug('[CacheService] Retrieved cached RSS feed:', feedUrl);
   }
 
   return entry || null;
