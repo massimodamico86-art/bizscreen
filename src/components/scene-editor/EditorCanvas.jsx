@@ -20,6 +20,7 @@ import {
   Newspaper,
   QrCode,
   Rss,
+  Share2,
   Square,
   Table2,
   Type,
@@ -55,6 +56,7 @@ const WIDGET_ICONS = {
   'data-table': Table2,
   'rss-ticker': Rss,
   'rss-card': Newspaper,
+  'social-feed': Share2,
 };
 
 export default function EditorCanvas({
@@ -620,6 +622,23 @@ export default function EditorCanvas({
                     </div>
                   </div>
                 ))}
+              </div>
+            );
+
+          case 'social-feed':
+            return (
+              <div className="w-full h-full flex flex-col overflow-hidden bg-gray-800/30 p-0.5"
+                style={{ fontSize: 'clamp(0.3rem, 0.7vw, 0.5rem)' }}>
+                <div className="flex-1 flex gap-0.5">
+                  <div className="flex-1 bg-gray-700/30 rounded-sm flex items-center justify-center">
+                    <Share2 className="w-3 h-3 text-gray-500" />
+                  </div>
+                  <div className="flex-1 flex flex-col gap-0.5">
+                    <div className="flex-1 bg-gray-700/30 rounded-sm" />
+                    <div className="flex-1 bg-gray-700/30 rounded-sm" />
+                  </div>
+                </div>
+                <div className="text-center text-gray-500 mt-0.5" style={{ fontSize: 'inherit' }}>Social Feed</div>
               </div>
             );
 
