@@ -65,11 +65,12 @@ All milestones shipped successfully.
   3. User can set a refresh interval (5, 15, 30, or 60 minutes) on any data widget and the screen updates automatically at that cadence
   4. User can bind a data source field to a text element in the scene editor and the screen renders the live value
   5. Screen continues showing last-known data when the network drops, and resumes updating when connectivity returns
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 51-01: TBD
-- [ ] 51-02: TBD
+- [ ] 51-01-PLAN.md — Player DataTableWidget + IndexedDB cache extension
+- [ ] 51-02-PLAN.md — Admin data preview table + column picker
+- [ ] 51-03-PLAN.md — Scene editor data table integration
 
 #### Phase 52: RSS & External Data Proxy
 **Goal**: Users can add RSS feed URLs and see feed content rendered on screens as scrolling tickers or article cards, with all fetching handled server-side
