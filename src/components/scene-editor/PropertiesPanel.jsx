@@ -26,6 +26,7 @@ import {
   Play,
   QrCode,
   Rss,
+  Share2,
   Sparkles,
   Square,
   Table2,
@@ -43,6 +44,7 @@ import { getBindingDisplayText } from '../../services/dataBindingResolver';
 import { useLogger } from '../../hooks/useLogger.js';
 import { DataTableWidgetControls } from './DataTableWidgetControls';
 import { RssWidgetControls } from './RssWidgetControls';
+import { SocialFeedWidgetControls } from './SocialFeedWidgetControls';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -649,6 +651,7 @@ function WidgetControls({ block, onUpdate }) {
     { key: 'data-table', icon: Table2, label: 'Data Table' },
     { key: 'rss-ticker', icon: Rss, label: 'News Ticker' },
     { key: 'rss-card', icon: Newspaper, label: 'News Cards' },
+    { key: 'social-feed', icon: Share2, label: 'Social Feed' },
   ];
 
   const props = block.props || {};
@@ -838,6 +841,14 @@ function WidgetControls({ block, onUpdate }) {
       {(widgetType === 'rss-ticker' || widgetType === 'rss-card') && (
         <RssWidgetControls
           widgetType={widgetType}
+          props={props}
+          onPropChange={handlePropChange}
+        />
+      )}
+
+      {/* Social Feed Widget Controls */}
+      {widgetType === 'social-feed' && (
+        <SocialFeedWidgetControls
           props={props}
           onPropChange={handlePropChange}
         />
