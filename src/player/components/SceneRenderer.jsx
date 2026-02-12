@@ -26,6 +26,8 @@ import { DateWidget } from './widgets/DateWidget.jsx';
 import { WeatherWidget } from './widgets/WeatherWidget.jsx';
 import { QRCodeWidget } from './widgets/QRCodeWidget.jsx';
 import { DataTableWidget } from './widgets/DataTableWidget.jsx';
+import { RssTickerWidget } from './widgets/RssTickerWidget.jsx';
+import { RssCardWidget } from './widgets/RssCardWidget.jsx';
 
 /**
  * Scene Block - Renders individual blocks in a scene slide
@@ -144,6 +146,12 @@ function SceneWidgetRenderer({ widgetType, props }) {
 
     case 'data-table':
       return <DataTableWidget props={safeProps} />;
+
+    case 'rss-ticker':
+      return <RssTickerWidget props={safeProps} />;
+
+    case 'rss-card':
+      return <RssCardWidget props={safeProps} />;
 
     default:
       return (
