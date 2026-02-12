@@ -96,12 +96,13 @@ Plans:
   1. User can assign a social feed widget to any layout zone and see social posts rendered on the screen
   2. User can review and approve/reject individual social feed posts before they appear on screens
   3. User can filter a social feed by hashtag so only matching posts display on screen
-**Plans:** 3 plans
+**Plans:** 4 plans
 
 Plans:
 - [ ] 53-01-PLAN.md — Player SocialFeedWidget wrapper + SceneRenderer wiring
 - [ ] 53-02-PLAN.md — Scene editor SocialFeedWidgetControls + PropertiesPanel/EditorCanvas/LivePreviewWindow
 - [ ] 53-03-PLAN.md — Content moderation queue page with approve/reject
+- [ ] 53-04-PLAN.md — Gap closure: wire filterMode/hashtags into SocialFeedRenderer (SOCIAL-03)
 
 #### Phase 54: Countdown Widget & Utilities
 **Goal**: Users can add countdown timers to scenes that count down to a specific date/time with timezone awareness, recurring daily modes, and locale-based formatting
