@@ -81,11 +81,12 @@ Plans:
   2. User can display an RSS feed as a scrolling news ticker across the bottom of a screen
   3. User can display an RSS feed in a card/article layout showing images and text excerpts
   4. RSS content displayed on screens contains no executable scripts or dangerous HTML (sanitized server-side)
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 52-01: TBD
-- [ ] 52-02: TBD
+- [ ] 52-01-PLAN.md — RSS proxy Edge Function, feed cache migration, rssFeedService
+- [ ] 52-02-PLAN.md — Player RssTickerWidget + RssCardWidget + SceneRenderer wiring
+- [ ] 52-03-PLAN.md — Scene editor RssWidgetControls + PropertiesPanel/EditorCanvas/LivePreviewWindow
 
 #### Phase 53: Social Feed & Content Moderation
 **Goal**: Users can assign social media feeds to screen layout zones with content moderation and hashtag filtering before posts go live
