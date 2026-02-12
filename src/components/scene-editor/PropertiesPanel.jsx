@@ -21,9 +21,11 @@ import {
   Layers,
   Link,
   MapPin,
+  Newspaper,
   Palette,
   Play,
   QrCode,
+  Rss,
   Sparkles,
   Square,
   Table2,
@@ -40,6 +42,7 @@ import { fetchDataSources, getDataSource } from '../../services/dataSourceServic
 import { getBindingDisplayText } from '../../services/dataBindingResolver';
 import { useLogger } from '../../hooks/useLogger.js';
 import { DataTableWidgetControls } from './DataTableWidgetControls';
+import { RssWidgetControls } from './RssWidgetControls';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -644,6 +647,8 @@ function WidgetControls({ block, onUpdate }) {
     { key: 'weather', icon: CloudSun, label: 'Weather' },
     { key: 'qr', icon: QrCode, label: 'QR Code' },
     { key: 'data-table', icon: Table2, label: 'Data Table' },
+    { key: 'rss-ticker', icon: Rss, label: 'News Ticker' },
+    { key: 'rss-card', icon: Newspaper, label: 'News Cards' },
   ];
 
   const props = block.props || {};
@@ -826,6 +831,15 @@ function WidgetControls({ block, onUpdate }) {
           props={props}
           onPropChange={handlePropChange}
           onMultiPropChange={handleMultiPropChange}
+        />
+      )}
+
+      {/* RSS Widget Controls */}
+      {(widgetType === 'rss-ticker' || widgetType === 'rss-card') && (
+        <RssWidgetControls
+          widgetType={widgetType}
+          props={props}
+          onPropChange={handlePropChange}
         />
       )}
 
