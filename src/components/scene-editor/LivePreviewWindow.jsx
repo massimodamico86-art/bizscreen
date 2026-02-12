@@ -32,6 +32,8 @@ import {
 } from '../../services/sceneDesignService';
 import { preloadSlide } from '../../services/mediaPreloader';
 import { DataTableWidget } from '../../player/components/widgets/DataTableWidget';
+import { RssTickerWidget } from '../../player/components/widgets/RssTickerWidget.jsx';
+import { RssCardWidget } from '../../player/components/widgets/RssCardWidget.jsx';
 
 /**
  * Main LivePreviewWindow component
@@ -522,6 +524,12 @@ function PreviewWidget({ widgetType, props = {} }) {
 
     case 'data-table':
       return <DataTableWidget props={props} />;
+
+    case 'rss-ticker':
+      return <RssTickerWidget props={props} />;
+
+    case 'rss-card':
+      return <RssCardWidget props={props} />;
 
     default:
       return (

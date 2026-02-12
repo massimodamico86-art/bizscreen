@@ -17,7 +17,9 @@ import {
   Database,
   Image,
   Move,
+  Newspaper,
   QrCode,
+  Rss,
   Square,
   Table2,
   Type,
@@ -51,6 +53,8 @@ const WIDGET_ICONS = {
   weather: CloudSun,
   qr: QrCode,
   'data-table': Table2,
+  'rss-ticker': Rss,
+  'rss-card': Newspaper,
 };
 
 export default function EditorCanvas({
@@ -586,6 +590,34 @@ export default function EditorCanvas({
                     <span className="flex-1 text-gray-400 truncate">Data {i + 1}</span>
                     <span className="flex-1 text-gray-400 truncate">Value</span>
                     <span className="flex-1 text-gray-400 truncate">Info</span>
+                  </div>
+                ))}
+              </div>
+            );
+
+          case 'rss-ticker':
+            return (
+              <div className="w-full h-full flex items-center overflow-hidden" style={{ backgroundColor: 'rgba(0,0,0,0.85)', fontSize: 'clamp(0.35rem, 0.8vw, 0.55rem)' }}>
+                <div className="flex whitespace-nowrap text-gray-300 gap-3 px-2">
+                  <span>Breaking News</span>
+                  <span className="text-gray-500">|</span>
+                  <span>Latest Updates</span>
+                  <span className="text-gray-500">|</span>
+                  <span>More Headlines...</span>
+                </div>
+              </div>
+            );
+
+          case 'rss-card':
+            return (
+              <div className="w-full h-full grid grid-cols-2 gap-0.5 p-0.5 overflow-hidden" style={{ fontSize: 'clamp(0.3rem, 0.7vw, 0.5rem)' }}>
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="bg-gray-800/50 rounded-sm flex flex-col overflow-hidden">
+                    <div className="bg-gray-700/30 flex-shrink-0" style={{ height: '40%' }} />
+                    <div className="p-0.5 flex-1">
+                      <div className="text-gray-300 font-medium truncate">Article {i}</div>
+                      <div className="text-gray-500 truncate">Description text...</div>
+                    </div>
                   </div>
                 ))}
               </div>
