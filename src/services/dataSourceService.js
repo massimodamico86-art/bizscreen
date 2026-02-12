@@ -11,6 +11,7 @@ export const DATA_SOURCE_TYPES = {
   INTERNAL_TABLE: 'internal_table',
   CSV_IMPORT: 'csv_import',
   GOOGLE_SHEETS: 'google_sheets',
+  RSS_FEED: 'rss_feed',
 };
 
 /**
