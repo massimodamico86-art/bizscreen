@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 51 of 55 (Data Source Widget Pipeline)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: Executing
-Last activity: 2026-02-12 — Completed 51-01 (DataTableWidget + IndexedDB cache)
+Last activity: 2026-02-12 — Completed 51-02 (Data Preview & Column Picker)
 
-Progress: [███░░░░░░░] 6%
+Progress: [██████░░░░] 13%
 
 ## Milestones Shipped
 
@@ -40,6 +40,7 @@ Progress: [███░░░░░░░] 6%
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 51 | 01 | 3min | 2 | 4 |
+| 51 | 02 | 3min | 2 | 3 |
 
 ## Accumulated Context
 
@@ -56,6 +57,8 @@ Progress: [███░░░░░░░] 6%
 - Phase 51-01: Table renders full-bleed within zone (no card wrapper) for maximum screen real estate
 - Phase 51-01: Silent offline fallback pattern for data widgets (no error UI on player screen)
 - Phase 51-01: formatValue from dataSourceService used for type-aware rendering in tables
+- Phase 51-02: Column config (visibleColumns/columnOrder) stored as local state; per-widget overrides in plan 51-03
+- Phase 51-02: null means "show all / source order" for column config optimization
 
 ### Blockers/Concerns
 
@@ -64,9 +67,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Completed 51-01-PLAN.md (DataTableWidget + IndexedDB cache)
+Stopped at: Completed 51-02-PLAN.md (Data Preview & Column Picker)
 Resume file: None
-Next: Execute 51-02-PLAN.md
+Next: Execute 51-03-PLAN.md
 
 ---
-*Updated: 2026-02-12 — Phase 51 Plan 01 complete.*
+*Updated: 2026-02-12 — Phase 51 Plan 02 complete.*
