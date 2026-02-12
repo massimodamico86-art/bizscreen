@@ -27,6 +27,8 @@ import {
   Clock,
   Database,
   Edit,
+  Eye,
+  EyeOff,
   FileSpreadsheet,
   GripVertical,
   Link2,
@@ -65,6 +67,7 @@ import {
   Input,
   Select,
   Alert,
+  FormField,
 } from '../design-system';
 import {
   fetchDataSources,
@@ -90,6 +93,8 @@ import {
   syncDataSourceFromSheet,
   parseSheetId,
 } from '../services/googleSheetsService';
+import { DataPreviewTable } from '../components/data-sources/DataPreviewTable';
+import { ColumnPicker } from '../components/data-sources/ColumnPicker';
 
 // Design system imports
 
@@ -357,6 +362,10 @@ export default function DataSourcesPage() {
   const [showAddField, setShowAddField] = useState(false);
   const [newField, setNewField] = useState({ name: '', label: '', dataType: FIELD_DATA_TYPES.TEXT });
 
+  // Column config state (for preview table)
+  const [columnConfig, setColumnConfig] = useState({ visibleColumns: null, columnOrder: null });
+  const [showColumnPicker, setShowColumnPicker] = useState(false);
+
   // Google Sheets integration state
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkData, setLinkData] = useState({ sheetUrl: '', range: 'Sheet1!A:Z', pollIntervalMinutes: 15 });
@@ -406,6 +415,9 @@ export default function DataSourcesPage() {
     if (selectedSource) {
       loadSourceDetails(selectedSource.id);
     }
+    // Reset column config when source changes
+    setColumnConfig({ visibleColumns: null, columnOrder: null });
+    setShowColumnPicker(false);
   }, [selectedSource, loadSourceDetails]);
 
   // Create data source
@@ -924,6 +936,45 @@ export default function DataSourcesPage() {
                     )}
                   </CardContent>
                 </Card>
+
+                {/* Data Preview section */}
+                {sourceData.fields?.length > 0 && sourceData.rows?.length > 0 && (
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-medium text-gray-400">Data Preview</h4>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowColumnPicker(!showColumnPicker)}
+                          className="text-xs text-gray-500"
+                        >
+                          {showColumnPicker ? <EyeOff className="w-3.5 h-3.5 mr-1" /> : <Eye className="w-3.5 h-3.5 mr-1" />}
+                          Columns
+                        </Button>
+                      </div>
+
+                      {showColumnPicker && (
+                        <div className="mb-4 p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+                          <ColumnPicker
+                            fields={sourceData.fields || []}
+                            visibleColumns={columnConfig.visibleColumns}
+                            columnOrder={columnConfig.columnOrder}
+                            onChange={(config) => setColumnConfig(config)}
+                          />
+                        </div>
+                      )}
+
+                      <DataPreviewTable
+                        fields={sourceData.fields || []}
+                        rows={sourceData.rows || []}
+                        visibleColumns={columnConfig.visibleColumns}
+                        columnOrder={columnConfig.columnOrder}
+                        maxHeight="400px"
+                      />
+                    </CardContent>
+                  </Card>
+                )}
 
                 {/* Fields section */}
                 <Card>
