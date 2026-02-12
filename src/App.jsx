@@ -1,22 +1,22 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import {
-  Home,
-  LayoutDashboard,
-  Image,
-  Video,
-  Music,
+  Calendar,
+  ChevronDown,
   FileText,
   Globe,
   Grid3X3,
-  ListVideo,
-  Calendar,
-  Monitor,
-  LayoutTemplate,
-  ChevronDown,
-  UserCheck,
-  X,
   HelpCircle,
+  Home,
+  Image,
+  LayoutDashboard,
+  LayoutTemplate,
+  ListVideo,
   Menu,
+  Monitor,
+  Music,
+  UserCheck,
+  Video,
+  X,
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { useBranding, BrandingProvider } from './contexts/BrandingContext';
@@ -96,6 +96,7 @@ const TemplateMarketplacePage = lazy(() => import('./pages/TemplateMarketplacePa
 const AdminTemplatesPage = lazy(() => import('./pages/Admin/AdminTemplatesPage'));
 const AdminEditTemplatePage = lazy(() => import('./pages/Admin/AdminEditTemplatePage'));
 const SocialAccountsPage = lazy(() => import('./pages/SocialAccountsPage'));
+const ModerationPage = lazy(() => import('./pages/ModerationPage'));
 const AlertsCenterPage = lazy(() => import('./pages/AlertsCenterPage'));
 const NotificationSettingsPage = lazy(() => import('./pages/NotificationSettingsPage'));
 const YodeckLayoutEditorPage = lazy(() => import('./pages/LayoutEditor/YodeckLayoutEditorPage'));
@@ -506,6 +507,7 @@ function BizScreenAppInner() {
     'template-marketplace': <Suspense fallback={<PageLoader />}><TemplateMarketplacePage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'admin-templates': <Suspense fallback={<PageLoader />}><AdminTemplatesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'social-accounts': <Suspense fallback={<PageLoader />}><SocialAccountsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'content-moderation': <Suspense fallback={<PageLoader />}><ModerationPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'alerts': <Suspense fallback={<PageLoader />}><AlertsCenterPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'notification-settings': <Suspense fallback={<PageLoader />}><NotificationSettingsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'svg-templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
