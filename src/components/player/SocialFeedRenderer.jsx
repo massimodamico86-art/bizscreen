@@ -6,9 +6,10 @@
  * Supports offline mode using last-known cached content.
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '../../supabase';
 import { loggingService } from '../../services/loggingService.js';
+import { Heart, MessageCircle, Star } from 'lucide-react';
 
 /**
  * Fetch cached posts for player (no API calls, cached data only)
@@ -26,12 +27,16 @@ async function fetchCachedPosts(widgetId, accountId, maxItems = 6) {
       if (settings?.account_id) {
         const { data: posts } = await supabase
           .from('social_feeds')
-          .select('*')
+          .select('*, social_feed_moderation(status)')
           .eq('account_id', settings.account_id)
           .order('posted_at', { ascending: false })
           .limit(settings.max_items || maxItems);
 
-        return { posts: posts || [], settings };
+        const normalizedPosts = (posts || []).map(post => ({
+          ...post,
+          moderation_status: post.social_feed_moderation?.[0]?.status || null,
+        }));
+        return { posts: normalizedPosts, settings };
       }
     }
 
@@ -39,12 +44,16 @@ async function fetchCachedPosts(widgetId, accountId, maxItems = 6) {
     if (accountId) {
       const { data: posts } = await supabase
         .from('social_feeds')
-        .select('*')
+        .select('*, social_feed_moderation(status)')
         .eq('account_id', accountId)
         .order('posted_at', { ascending: false })
         .limit(maxItems);
 
-      return { posts: posts || [], settings: null };
+      const normalizedPosts = (posts || []).map(post => ({
+        ...post,
+        moderation_status: post.social_feed_moderation?.[0]?.status || null,
+      }));
+      return { posts: normalizedPosts, settings: null };
     }
 
     return { posts: [], settings: null };
@@ -68,6 +77,8 @@ export default function SocialFeedRenderer({
   showDate = true,
   showAuthor = true,
   rotationSpeed = 5,
+  filterMode = 'all',
+  hashtags = '',
   style = {},
   onError,
 }) {
@@ -85,6 +96,8 @@ export default function SocialFeedRenderer({
   const effectiveShowDate = settings?.show_date ?? showDate;
   const effectiveShowAuthor = settings?.show_author ?? showAuthor;
   const effectiveRotationSpeed = settings?.rotation_speed || rotationSpeed;
+  const effectiveFilterMode = settings?.filter_mode || filterMode;
+  const effectiveHashtags = settings?.hashtags || hashtags;
 
   // Load cached posts
   useEffect(() => {
@@ -105,15 +118,48 @@ export default function SocialFeedRenderer({
     loadPosts();
   }, [widgetId, accountId, effectiveMaxItems, onError]);
 
+  // Filter posts based on filterMode
+  const filteredPosts = useMemo(() => {
+    if (!posts.length) return posts;
+
+    switch (effectiveFilterMode) {
+      case 'hashtag': {
+        if (!effectiveHashtags) return posts;
+        // Parse hashtags — supports comma-separated string or array
+        const hashtagsStr = Array.isArray(effectiveHashtags)
+          ? effectiveHashtags.join(',')
+          : effectiveHashtags;
+        const tags = hashtagsStr
+          .split(',')
+          .map(t => t.trim().replace(/^#/, '').toLowerCase())
+          .filter(Boolean);
+        if (tags.length === 0) return posts;
+        // Filter posts where content_text contains any hashtag (case-insensitive)
+        return posts.filter(post => {
+          const text = (post.content_text || '').toLowerCase();
+          return tags.some(tag => text.includes(`#${tag}`) || text.includes(tag));
+        });
+      }
+      case 'approved': {
+        // Filter posts that have been approved via moderation
+        return posts.filter(post => post.moderation_status === 'approved');
+      }
+      case 'latest':
+      case 'all':
+      default:
+        return posts;
+    }
+  }, [posts, effectiveFilterMode, effectiveHashtags]);
+
   // Auto-rotation for carousel/single layouts
   useEffect(() => {
     if (
       (effectiveLayout === 'carousel' || effectiveLayout === 'single') &&
-      posts.length > 1 &&
+      filteredPosts.length > 1 &&
       effectiveRotationSpeed > 0
     ) {
       rotationRef.current = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % posts.length);
+        setCurrentIndex((prev) => (prev + 1) % filteredPosts.length);
       }, effectiveRotationSpeed * 1000);
 
       return () => {
@@ -122,7 +168,7 @@ export default function SocialFeedRenderer({
         }
       };
     }
-  }, [effectiveLayout, posts.length, effectiveRotationSpeed]);
+  }, [effectiveLayout, filteredPosts.length, effectiveRotationSpeed]);
 
   // Loading state - show subtle placeholder
   if (loading) {
@@ -134,7 +180,7 @@ export default function SocialFeedRenderer({
   }
 
   // No posts - show placeholder
-  if (posts.length === 0) {
+  if (filteredPosts.length === 0) {
     return (
       <div style={style} className="w-full h-full bg-gray-900 flex items-center justify-center">
         <div className="text-white/50 text-sm">Social Feed</div>
@@ -144,7 +190,7 @@ export default function SocialFeedRenderer({
 
   // Render based on layout
   const renderProps = {
-    posts,
+    posts: filteredPosts,
     currentIndex,
     provider: settings?.provider || provider,
     showCaption: effectiveShowCaption,
