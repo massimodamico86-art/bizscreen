@@ -2,7 +2,7 @@
 
 ## What This Is
 
-BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, and monitor device status remotely. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices.
+BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, display live data from Google Sheets/CSV/RSS feeds/social media on screens, and monitor device status remotely. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices with data-driven widget orchestration.
 
 ## Core Value
 
@@ -109,18 +109,29 @@ These capabilities shipped and are production-verified:
 - ✓ Undo/redo toast with auto-dismiss and replacement on rapid actions — v3.0
 - ✓ Keyboard shortcuts overlay with Mac/PC detection and text editing guard — v3.0
 
+**v3.1 Data-Driven Screens (2026-02-13):**
+- ✓ Google Sheets data rendered as styled table on screen with headers, alternating rows, theming — v3.1
+- ✓ CSV data rendered as styled table on screen (identical to Google Sheets) — v3.1
+- ✓ Configurable auto-refresh intervals (5/15/30/60 min) per data widget — v3.1
+- ✓ Data source field binding to text elements in scene editor — v3.1
+- ✓ Auto-pagination for large datasets with smooth fade transitions — v3.1
+- ✓ Image URL fields in data sources render as actual images on screen — v3.1
+- ✓ Offline data caching via IndexedDB (last-known data on network drop) — v3.1
+- ✓ RSS feed as scrolling news ticker with seamless loop animation — v3.1
+- ✓ RSS feed in card/article layout with images and text excerpts — v3.1
+- ✓ Server-side RSS proxy Edge Function with content sanitization — v3.1
+- ✓ Social feed widget assignable to layout zones — v3.1
+- ✓ Content moderation queue with approve/reject before screen display — v3.1
+- ✓ Social feed hashtag filtering — v3.1
+- ✓ Countdown timer with timezone awareness (TZDate) and daily recurring mode — v3.1
+- ✓ Locale-based date/time formatting (6 locales: en/es/pt/it/fr/de) — v3.1
+- ✓ Sync status indicator ("last updated") on all dynamic widgets — v3.1
+- ✓ Unified data refresh orchestrator managing per-widget timers with deduplication — v3.1
+- ✓ No API keys exposed in client-side player bundle — v3.1
+
 ### Active
 
-## Current Milestone: v3.1 Data-Driven Screens
-
-**Goal:** Enable screens to display live, dynamic content from external data sources, social feeds, and environmental widgets.
-
-**Target features:**
-- Data source widgets (Google Sheets/CSV/API → template-based display on screens)
-- Data pages as playlist items (cycle through data rows as slides)
-- Social/RSS feed rendering on player screens
-- Weather, clock, and countdown timer widgets
-- Configurable polling refresh intervals (5/15/30/60 min)
+(No active milestone — next milestone to be defined via `/gsd:new-milestone`)
 
 ### Out of Scope
 
@@ -139,9 +150,9 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (post v3.0):**
+**Current State (post v3.1):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- ~362,000 lines of JavaScript/JSX/CSS/JSON across codebase
+- ~185,700 lines of JavaScript/JSX/CSS in src/
 - Unified onboarding flow (feature flag removed, unconditional)
 - Test suite: 2,079 unit tests, 1,191 E2E tests (all skips categorized and documented)
 - ESLint: zero warnings, zero errors, all rules at error level with pre-commit enforcement
@@ -154,6 +165,10 @@ These capabilities shipped and are production-verified:
 - Fabric.js SVG editor with stock asset panels (Unsplash proxy, Iconify icons, My Media)
 - Framer Motion animations throughout template gallery and editor (cardLift, scaleTap, stagger)
 - Unsplash proxy Edge Function with database cache and per-tenant rate limiting
+- RSS proxy Edge Function with sanitize-html and 15-min cache TTL
+- 5 data-driven widget types: DataTable, RssTicker, RssCard, SocialFeed, Countdown
+- Unified data refresh orchestrator with per-widget timers, deduplication, and sync status
+- IndexedDB v3 with dataSources and rssFeeds stores for offline data caching
 - Best-of-3 E2E gate script in CI (90% threshold)
 - `src/__fixtures__/` shared test data pattern adopted (3 service tests)
 
@@ -161,6 +176,7 @@ These capabilities shipped and are production-verified:
 - ~900 E2E tests skipped (intentional: ~800 project-specific multi-project pattern, remainder categorized with SKIP REASON documentation)
 - Sentry alert environment set to "all" (will narrow to "production" once environment auto-creates)
 - Unsplash offline caching: TOS may conflict with offline player requirement (needs clarification before production use)
+- CountdownWidget not exported from barrel file (direct imports work, consistency fix only)
 
 **Codebase Mapping:**
 - `.planning/codebase/ARCHITECTURE.md` — system design
@@ -225,6 +241,18 @@ These capabilities shipped and are production-verified:
 | Server-side Unsplash proxy (removed client key) | API key never reaches browser | ✓ Good — security improvement |
 | Dark-themed editor overlays (shortcuts, customize) | Matches editor chrome aesthetic | ✓ Good — cohesive look |
 | Scroll restore gated on loading===false with RAF | Prevents premature scroll before DOM ready | ✓ Good — accurate positioning |
+| Full-bleed table rendering (no card wrapper) | Maximum screen real estate for data widgets | ✓ Good — clean display |
+| Silent offline fallback for data widgets | No error UI on player screen (show cached data) | ✓ Good — seamless UX |
+| fast-xml-parser + sanitize-html via npm: specifiers | Pure JS, no native deps for Deno Edge Functions | ✓ Good — RSS proxy works |
+| 15-min cache TTL with conditional GET for RSS | Efficient feed refresh without hammering sources | ✓ Good — balanced freshness |
+| Seamless ticker loop via content duplication | Render items twice, translateX(-50%) for wrap | ✓ Good — smooth animation |
+| SocialFeedWidget as thin wrapper | SocialFeedRenderer manages own data lifecycle | ✓ Good — minimal coupling |
+| Client-side status filtering for moderation | Avoids multiple API calls for tab switching | ✓ Good — responsive UI |
+| TZDate for countdown timezone handling | DST-safe, device timezone via Intl.DateTimeFormat | ✓ Good — accurate countdowns |
+| UNIT_LABELS constant for countdown locale | No I18nProvider dependency on player side | ✓ Good — lightweight |
+| Dual-page state for fade transitions | currentPage vs displayedPage prevents content flash | ✓ Good — smooth pagination |
+| Orchestrator version state for re-renders | useMemo in useWidgetData triggers consumer updates | ✓ Good — efficient reactivity |
+| 200ms fade on DataTable/RssCard refresh only | Bulk content swaps need transition; tickers/social skip | ✓ Good — appropriate per widget |
 
 ---
-*Last updated: 2026-02-11 after starting v3.1 Data-Driven Screens milestone*
+*Last updated: 2026-02-13 after v3.1 Data-Driven Screens milestone*

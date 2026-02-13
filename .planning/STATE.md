@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-11)
+See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.1 Data-Driven Screens — Phase 55 (Player Data Orchestrator & Polish)
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 55 of 55 (Player Data Orchestrator & Polish)
-Plan: 3 of 3
-Status: Phase complete
-Last activity: 2026-02-13 — Completed 55-03 (Widget orchestrator integration)
+Phase: None (between milestones)
+Plan: N/A
+Status: Milestone v3.1 shipped
+Last activity: 2026-02-13 — Archived v3.1 Data-Driven Screens milestone
 
-Progress: [██████████] 100%
+Progress: All milestones complete
 
 ## Milestones Shipped
 
@@ -27,98 +27,31 @@ Progress: [██████████] 100%
 | v2.3 Production Hardening | 36-41 | 18 | 2026-02-09 |
 | v2.4 Tech Debt Zero | 42-45 | 11 | 2026-02-10 |
 | v3.0 Creative Experience | 46-50 | 10 | 2026-02-11 |
+| v3.1 Data-Driven Screens | 51-55 | 15 | 2026-02-13 |
 
 ## Performance Metrics
 
-**Cumulative (v1 through v3.0):**
-- Total plans executed: 196
-- Total phases: 54 completed
-- Total milestones: 7 shipped
-
-**v3.1 Progress:**
-
-| Phase | Plan | Duration | Tasks | Files |
-|-------|------|----------|-------|-------|
-| 51 | 01 | 3min | 2 | 4 |
-| 51 | 02 | 3min | 2 | 3 |
-| 51 | 03 | 3min | 2 | 4 |
-| 52 | 01 | 2min | 2 | 4 |
-| 52 | 02 | 2min | 2 | 5 |
-| 52 | 03 | 3min | 2 | 4 |
-| 53 | 01 | 1min | 2 | 3 |
-| 53 | 02 | 2min | 2 | 4 |
-| 53 | 03 | 2min | 2 | 2 |
-| 53 | 04 | 2min | 1 | 1 |
-| 54 | 01 | 1min | 2 | 2 |
-| 54 | 02 | 2min | 2 | 4 |
-| 55 | 01 | 3min | 2 | 6 |
-| 55 | 02 | 2min | 2 | 1 |
-| 55 | 03 | 9min | 2 | 6 |
+**Cumulative (v1 through v3.1):**
+- Total plans executed: 195
+- Total phases: 55 completed
+- Total milestones: 8 shipped
 
 ## Accumulated Context
 
-### Research Flags (from v3.1 research)
-
-- Phase 51: IndexedDB schema migration (v1 to v2) must preserve existing cached scenes/media
-- Phase 51: ZonePlayer ready-signal protocol is an architectural decision with lasting impact
-- Phase 52: fast-xml-parser Deno compatibility confirmed (pure JS, works via npm: specifier in 52-01)
-- Phase 54: Tizen/WebOS timer throttling needs platform testing
-- Phase 55: Supabase Realtime channel limits (200-500) may constrain subscription architecture
-
 ### Decisions
 
-- Phase 51-01: Table renders full-bleed within zone (no card wrapper) for maximum screen real estate
-- Phase 51-01: Silent offline fallback pattern for data widgets (no error UI on player screen)
-- Phase 51-01: formatValue from dataSourceService used for type-aware rendering in tables
-- Phase 51-02: Column config (visibleColumns/columnOrder) stored as local state; per-widget overrides in plan 51-03
-- Phase 51-02: null means "show all / source order" for column config optimization
-- Phase 51-03: DataTableWidgetControls extracted to own file to keep PropertiesPanel manageable
-- Phase 51-03: EditorCanvas shows mock preview, LivePreviewWindow shows real DataTableWidget with live data
-- Phase 51-03: Column config resets on data source switch via batch update
-- Phase 52-01: fast-xml-parser + sanitize-html via npm: specifiers for Deno Edge Function (pure JS, no native deps)
-- Phase 52-01: 15-minute cache TTL with conditional GET (ETag/If-Modified-Since) for efficient feed refresh
-- Phase 52-01: RSS_FEED as data source type; feed items in separate rss_feed_cache table (not data_source_rows)
-- Phase 52-02: Seamless ticker loop via content duplication (render items twice, translateX(-50%) for wrap)
-- Phase 52-02: Carousel uses opacity fade transition rather than slide animation for player screen simplicity
-- Phase 52-02: Image failures tracked in failedImages Set to avoid repeated broken image renders
-- Phase 52-03: RssWidgetControls extracted to own file (same pattern as DataTableWidgetControls)
-- Phase 52-03: Feed URL validation on blur for better UX during typing
-- Phase 52-03: Conditional ticker/card controls in single RssWidgetControls component via widgetType prop
-- Phase 53-01: SocialFeedWidget is a thin wrapper only -- all rendering and data loading stays in SocialFeedRenderer
-- Phase 53-03: Client-side status filtering after loading full moderation queue (avoids multiple API calls for tab switching)
-- Phase 53-02: SocialFeedWidgetControls follows same { props, onPropChange } interface as RssWidgetControls for consistency
-- Phase 53-02: All social feed config stored in design_json props (not social_feed_settings table) consistent with RSS widget pattern
-- Phase 53-03: AlertCircle icon for moderation page header to differentiate from ReviewInbox (MessageSquare)
-- Phase 53-04: Hashtags prop accepts both string and array formats for compatibility with SocialFeedWidget (array) and settings table (string)
-- Phase 53-04: Client-side filtering via useMemo rather than server-side WHERE clauses -- consistent with 53-03 pattern
-- Phase 54-01: CountdownWidget handles locale internally via UNIT_LABELS constant (no I18nProvider dependency on player side)
-- Phase 54-01: Device timezone resolved at widget level via Intl.DateTimeFormat, not threaded through SceneRenderer
-- Phase 54-01: Daily mode uses TZDate constructor with date+1 for tomorrow target (DST-safe)
-- Phase 54-02: CountdownWidgetControls follows { props, onPropChange } interface consistent with SocialFeedWidgetControls/RssWidgetControls
-- Phase 54-02: EditorCanvas shows static mock countdown (no live ticking) consistent with all other widget mock previews
-- Phase 54-02: LivePreviewWindow renders real CountdownWidget for accurate ticking live preview
-- Phase 55-01: DataRefreshContext.jsx uses .jsx extension (Vite/Rollup requires JSX extension for files with JSX syntax)
-- Phase 55-01: Orchestrator version state triggers consumer re-renders via useMemo in useWidgetData
-- Phase 55-01: Fallback mode in useWidgetData logs warning and does standalone fetch when no provider wraps widget
-- Phase 55-02: Dual-page state (currentPage vs displayedPage) for smooth fade transitions without content flash
-- Phase 55-02: isFirstRender ref prevents fade animation on first page load (no flicker)
-- Phase 55-02: Smart page reset only when row count changes, not on every data refresh
-- Phase 55-02: Direct string comparison 'image_url' instead of importing FIELD_DATA_TYPES constant
-- Phase 55-03: DataTable and RssCard get 200ms fade on data refresh (bulk content swaps); RssTicker, Weather, SocialFeed intentionally skip fade
-- Phase 55-03: SocialFeedWidget uses orchestrator for sync status tracking only (SocialFeedRenderer manages own data lifecycle)
-- Phase 55-03: SocialFeed 30-minute refresh interval (social feeds change less frequently)
-- Phase 55-03: Removed createScopedLogger from migrated widgets (orchestrator handles error logging)
+(Cleared at milestone boundary — full decision log in PROJECT.md Key Decisions table)
 
 ### Blockers/Concerns
 
-None yet.
+None.
 
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: Completed 55-03-PLAN.md
+Stopped at: Archived v3.1 milestone
 Resume file: None
-Next: Phase 55 complete. v3.1 Data-Driven Screens milestone ready for review.
+Next: Start next milestone via `/gsd:new-milestone`
 
 ---
-*Updated: 2026-02-13 — Completed 55-03 (Widget orchestrator integration). All 3 plans in phase 55 complete. v3.1 milestone complete.*
+*Updated: 2026-02-13 — v3.1 Data-Driven Screens milestone archived. 8 milestones shipped.*

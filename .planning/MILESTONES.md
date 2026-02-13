@@ -249,3 +249,37 @@
 
 ---
 
+
+## v3.1 Data-Driven Screens (Shipped: 2026-02-13)
+
+**Delivered:** Complete data-driven screens capability with 5 specialized widget types for displaying live business data, news feeds, social content, and countdown timers — all managed by a unified refresh orchestrator with offline resilience and server-side security.
+
+**Phases completed:** 51-55 (15 plans total)
+
+**Key accomplishments:**
+
+- Data table widget rendering Google Sheets and CSV data with column config, alternating rows, theming, auto-pagination, and image URL rendering
+- RSS news ticker and card widgets with server-side proxy Edge Function, content sanitization, and seamless loop animations
+- Social feed widget with content moderation queue (approve/reject), hashtag filtering, and SocialFeedRenderer wrapper
+- Countdown timer widget with timezone awareness (TZDate), recurring daily mode, and 6-locale support (en/es/pt/it/fr/de)
+- Unified data refresh orchestrator managing per-widget refresh timers with deduplication, smooth fade transitions, and sync status indicators
+- Full editor integration: all 5 widget types registered in PropertiesPanel, EditorCanvas (mock previews), and LivePreviewWindow (live rendering)
+
+**Stats:**
+
+- 82 files created/modified (+13,731/-1,668 lines)
+- 65 commits over 2 days (2026-02-11 → 2026-02-13)
+- 5 phases, 15 plans
+- 185,697 lines of JavaScript/JSX/CSS
+
+**Git range:** `2294b18` → `25b9520`
+
+**Tech debt accepted:**
+
+- CountdownWidget not exported from barrel file (SceneRenderer/LivePreviewWindow import directly, non-breaking)
+- ~900 E2E tests skipped (carried forward from v2.4, intentional)
+
+**What's next:** Next milestone planning
+
+---
+
