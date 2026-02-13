@@ -129,11 +129,12 @@ Plans:
   3. Data refreshes on screen with smooth fade/slide transition animations (no jarring content swaps)
   4. User can see a "last updated" sync status indicator on any dynamic widget showing when data was last refreshed
   5. Player manages per-widget refresh timers without polling multiplication (single orchestrator coordinates all widgets on a screen)
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 55-01: TBD
-- [ ] 55-02: TBD
+- [ ] 55-01-PLAN.md — Data refresh orchestrator infrastructure (context, hooks, SyncStatusIndicator)
+- [ ] 55-02-PLAN.md — DataTableWidget pagination transitions + image URL rendering
+- [ ] 55-03-PLAN.md — Migrate all widgets to orchestrator + wire sync status indicators
 
 ## Progress Summary
 
@@ -146,7 +147,7 @@ Plans:
 | v2.3 Production Hardening | 36-41 | 18 | Complete | 2026-02-09 |
 | v2.4 Tech Debt Zero | 42-45 | 11 | Complete | 2026-02-10 |
 | v3.0 Creative Experience | 46-50 | 10 | Complete | 2026-02-11 |
-| v3.1 Data-Driven Screens | 51-55 | 6+ | In progress | - |
+| v3.1 Data-Driven Screens | 51-55 | 15+ | In progress | - |
 
 **Total:** 54 phases complete, 196 plans executed | 7 milestones shipped | 1 milestone in progress
 
@@ -158,7 +159,7 @@ Plans:
 | 52. RSS & External Data Proxy | 3/3 | ✓ Complete | 2026-02-12 |
 | 53. Social Feed & Content Moderation | 4/4 | ✓ Complete | 2026-02-12 |
 | 54. Countdown Widget & Utilities | 2/2 | ✓ Complete | 2026-02-12 |
-| 55. Player Data Orchestrator & Polish | 0/TBD | Not started | - |
+| 55. Player Data Orchestrator & Polish | 0/3 | Not started | - |
 
 ---
-*Last updated: 2026-02-12 — Phase 54 complete (2/2 plans). Phase 55 next.*
+*Last updated: 2026-02-12 — Phase 55 planned (3 plans in 2 waves).*
