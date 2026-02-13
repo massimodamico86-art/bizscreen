@@ -131,7 +131,18 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-(No active milestone — next milestone to be defined via `/gsd:new-milestone`)
+## Current Milestone: v3.2 Display Toolkit
+
+**Goal:** Make BizScreen versatile enough for any vertical by providing the display building blocks every signage deployment needs.
+
+**Target features:**
+- Weather widget — live weather conditions & forecast on screen
+- Video playback — basic HTML5 MP4 in playlists and layout zones
+- Screen groups — hierarchical groups (folders) + flexible tags, push content to groups
+- Portrait mode — per-screen rotation setting, layout orientation adaptation
+- Clock & date widget — analog/digital clock, timezone-aware
+- QR code widget — dynamic QR code generation from URL/text
+- Menu board widget — structured menu items (name, price, description, category)
 
 ### Out of Scope
 
@@ -255,4 +266,4 @@ These capabilities shipped and are production-verified:
 | 200ms fade on DataTable/RssCard refresh only | Bulk content swaps need transition; tickers/social skip | ✓ Good — appropriate per widget |
 
 ---
-*Last updated: 2026-02-13 after v3.1 Data-Driven Screens milestone*
+*Last updated: 2026-02-13 after v3.2 Display Toolkit milestone started*

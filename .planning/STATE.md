@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone
+**Current focus:** v3.2 Display Toolkit
 
 ## Current Position
 
-Phase: None (between milestones)
-Plan: N/A
-Status: Milestone v3.1 shipped
-Last activity: 2026-02-13 — Archived v3.1 Data-Driven Screens milestone
-
-Progress: All milestones complete
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-13 — Milestone v3.2 started
 
 ## Milestones Shipped
 
@@ -49,9 +47,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: Archived v3.1 milestone
+Stopped at: Milestone v3.2 setup
 Resume file: None
-Next: Start next milestone via `/gsd:new-milestone`
+Next: Define requirements and create roadmap
 
 ---
-*Updated: 2026-02-13 — v3.1 Data-Driven Screens milestone archived. 8 milestones shipped.*
+*Updated: 2026-02-13 — Milestone v3.2 Display Toolkit started.*
