@@ -1,765 +1,689 @@
-# Architecture Patterns: Data-Driven Signage Widgets
+# Architecture Patterns: Display Toolkit (v3.2)
 
-**Domain:** Digital signage platform - dynamic data widget integration
-**Researched:** 2026-02-11
-**Confidence:** HIGH (based on comprehensive codebase analysis)
+**Domain:** Digital signage display capability features
+**Researched:** 2026-02-13
+**Confidence:** HIGH (based on thorough codebase analysis of existing patterns)
 
-## Executive Summary
+## Existing Architecture Summary
 
-BizScreen already has a robust foundation for data-driven content. The data source pipeline (data_sources -> data_source_fields -> data_source_rows) with Google Sheets sync, the social feed system (social_accounts -> social_feeds with SocialFeedRenderer), and the weather service (OpenWeatherMap with in-memory cache) all exist as working services. The scene editor supports widget blocks (clock, date, weather, qr, data) with a data binding resolver that connects blocks to data sources.
+Before defining new components, here is the existing architecture that new features MUST integrate with:
 
-**The gap is not in plumbing -- it is in the last mile.** The player does not consume data sources at render time. The scene editor's widget palette is limited. RSS feeds have no fetching/caching backend. Countdown/timer widgets do not exist. Configurable polling intervals exist in the DB schema but no player-side polling loop connects them. This milestone is about wiring existing infrastructure through to actual screen rendering, and filling the few missing pieces (RSS proxy, countdown widget, data table renderer, refresh orchestration on the player).
+### Widget Registration Pattern (3 touch points)
+Every widget follows a consistent 3-layer pattern:
 
----
+1. **Editor Mock Preview** -- `src/components/layout-editor/LayoutElementRenderer.jsx`
+   - `WidgetElement` switch statement dispatches by `widgetType`
+   - Shows static/mock preview in editor canvas (no live data fetching)
 
-## Current Architecture (As-Is)
+2. **Editor Config UI** -- `src/components/layout-editor/LayoutPropertiesPanel.jsx`
+   - `WidgetControls` renders type-specific property editors
+   - Widget type selector grid + per-type config sections
 
-### Content Resolution Pipeline
+3. **Live Player Rendering** -- `src/player/components/SceneRenderer.jsx`
+   - `SceneWidgetRenderer` switch dispatches to real widget components
+   - Widgets use `useWidgetData()` hook for orchestrator integration
+   - `DataRefreshProvider` wraps the scene tree
 
+### Widget Data Flow
 ```
-Schedule --> Campaign --> Playlist --> Scene --> Slide --> Blocks
-                                                           |
-                                                    design_json: {
-                                                      background: {...},
-                                                      blocks: [
-                                                        { type: 'text', props: {...}, dataBinding: {...} },
-                                                        { type: 'image', props: {...} },
-                                                        { type: 'widget', widgetType: 'clock', props: {...} },
-                                                        { type: 'widget', widgetType: 'weather', props: {...} },
-                                                        { type: 'widget', widgetType: 'data', props: {...} },
-                                                        { type: 'shape', props: {...} }
-                                                      ]
-                                                    }
-```
+Editor (design-time):
+  LeftSidebar.handleAddWidget(widgetType)
+    -> creates element { type: 'widget', widgetType, props }
+    -> LayoutEditorCanvas renders LayoutElementRenderer (mock preview)
+    -> LayoutPropertiesPanel shows WidgetControls (config UI)
+    -> Save to Supabase layouts/scenes table as JSON
 
-### Existing Data Flow (Admin Side)
-
-```
-Google Sheets API                                Admin UI (DataSourcesPage)
-       |                                                |
-       v                                                v
-googleSheetsService.js  <--- dataFeedScheduler.js ---> dataSourceService.js
-       |                     (1-min check interval)           |
-       v                                                      v
-   Supabase DB: data_sources + data_source_fields + data_source_rows
-       |
-       v
-   Real-time subscriptions (postgres_changes on data_source_rows)
+Player (runtime):
+  SceneRenderer wraps in DataRefreshProvider
+    -> SceneBlock renders SceneWidgetRenderer
+    -> Widget calls useWidgetData(sourceKey, fetchFn, intervalMs)
+    -> DataRefreshOrchestrator deduplicates, manages tick loop (10s)
+    -> Widget receives { data, lastFetchedAt, isLoading, error }
 ```
 
-### Existing Data Flow (Player Side) - INCOMPLETE
+### Key Existing Infrastructure
 
+| Component | Path | Role |
+|-----------|------|------|
+| `types.js` | `src/components/layout-editor/types.js` | WidgetType enum, factory functions, default props |
+| `LeftSidebar.jsx` | `src/components/layout-editor/LeftSidebar.jsx` | Widget catalog (WIDGET_ITEMS array) |
+| `DataRefreshContext` | `src/player/contexts/DataRefreshContext.jsx` | Provider for coordinated data fetching |
+| `useWidgetData` | `src/player/hooks/useWidgetData.js` | Consumer hook with fallback |
+| `useDataRefreshOrchestrator` | `src/player/hooks/useDataRefreshOrchestrator.js` | Central tick loop, registry, dedup |
+| `cacheService.js` | `src/player/cacheService.js` | IndexedDB v3 with scenes/media/dataSources/rssFeeds stores |
+| `offlineService.js` | `src/player/offlineService.js` | Offline detection, scene caching, sync |
+| `weatherService.js` | `src/services/weatherService.js` | OpenWeatherMap integration with LRU cache |
+| `screenGroupService.js` | `src/services/screenGroupService.js` | CRUD, publish/unpublish scenes to groups |
+| `AppRenderer.jsx` | `src/player/components/AppRenderer.jsx` | Full-screen app rendering (clock, weather wall, RSS, data table) |
+| `ZonePlayer.jsx` | `src/player/components/ZonePlayer.jsx` | Multi-zone layout playback with video support |
+
+### Existing Widget Types in types.js
+```javascript
+// Already defined:
+'clock' | 'date' | 'weather' | 'qr' | 'data' | 'countdown' | 'ticker'
 ```
-playerService.getPlayerContent(screenId) --> RPC get_player_content
-    Returns: { device, playlist, items: [{ type, url, duration }] }
 
-    PROBLEM: items are media/app references only.
-    Data sources, social feeds, weather are NOT part of the player content payload.
-    The player has no mechanism to resolve data bindings at render time.
-```
-
-### Existing Widget Renderer Capabilities
-
-**LayoutElementRenderer.jsx** currently renders these widget types:
-| Widget Type | Status | Renders |
-|-------------|--------|---------|
-| `clock` | WORKING | Static time display |
-| `date` | WORKING | Static date display |
-| `weather` | PARTIAL | Mock temperature in editor; no live API call |
-| `qr` | WORKING | QR code from URL prop |
-| `data` | PLACEHOLDER | Shows `{{field}}` template string |
-
-**SocialFeedRenderer.jsx** exists as standalone component:
-- Fetches cached posts from `social_feeds` table directly via Supabase
-- Supports carousel, grid, list, single, masonry layouts
-- Auto-rotation with configurable speed
-- BUT: not wired into the widget block system in the scene editor
-
-### Existing Service Capabilities
-
-| Service | What It Does | What Is Missing |
-|---------|-------------|-----------------|
-| `dataSourceService.js` | Full CRUD for data sources, fields, rows. Google Sheets linking. Real-time subscriptions. | Nothing - complete for admin side |
-| `dataBindingResolver.js` | Resolves bindings to values with caching, preloading, stale detection. Player-specific prefetch utilities. | Not called by player at render time |
-| `dataFeedScheduler.js` | Client-side scheduler for Google Sheets sync. Checks every 60s, max 3 concurrent, retry with 5-min backoff. | Only runs in admin tab, not on player |
-| `googleSheetsService.js` | Fetches sheet data, detects changes, syncs to DB, broadcasts updates. | Nothing - complete |
-| `weatherService.js` | OpenWeatherMap current + 5-day forecast. 30-min in-memory cache. Supports city name and coords. | No server-side caching; no player refresh loop |
-| `socialFeedSyncService.js` | Syncs Instagram, Facebook, TikTok, Google Reviews. Rate limiting, cooldowns. | No RSS support (RSS is a different feed type) |
-| `realtimeService.js` | Supabase subscriptions for device commands, device refresh, content updates. | No subscription for data_source_rows changes on player |
-| `playerService.js` | Content fetching, IndexedDB offline cache, command polling, heartbeat, backoff retry. | Content payload does not include data source bindings |
-
-### Database Schema (Existing)
-
-```
-data_sources
-  - id, tenant_id, name, description, type
-  - integration_type ('none'|'google_sheets')
-  - integration_config (JSONB: {sheetId, range, pollIntervalMinutes})
-  - last_sync_at, last_sync_status, last_sync_error
-
-data_source_fields
-  - id, data_source_id, name, label, data_type, order_index
-  - default_value, format_options (JSONB)
-
-data_source_rows
-  - id, data_source_id, values (JSONB), order_index, is_active
-
-data_source_sync_logs
-  - id, data_source_id, status, message, changed_rows, sync_duration_ms
-
-social_accounts
-  - id, tenant_id, provider, account_name, access_token, etc.
-
-social_feeds
-  - id, tenant_id, account_id, provider, post_id, content_text, media_url
-  - likes_count, comments_count, rating, posted_at
-
-social_feed_settings
-  - id, tenant_id, widget_id, provider, account_id
-  - filter_mode, hashtags, max_items, auto_refresh_minutes
-  - layout, show_caption, show_likes, rotation_speed
+### Current WIDGET_ITEMS in LeftSidebar
+```javascript
+// Already in the catalog:
+clock, date, weather, qr, data
 ```
 
 ---
 
-## Recommended Architecture (To-Be)
+## Recommended Architecture for New Features
 
-### Core Design Principle: Server-Cached, Player-Polled
+### Feature 1: Weather Widget Enhancement
 
-All dynamic data resolves through Supabase as the single source of truth. External APIs (Google Sheets, RSS, weather, social) are fetched server-side (Edge Functions or admin-side scheduler) and cached in DB tables. The player never calls external APIs directly. This enables offline mode and avoids CORS/rate-limit issues on constrained player devices.
+**Status:** ALREADY EXISTS -- needs enhancement, not creation.
 
+**What exists:**
+- `src/player/components/widgets/WeatherWidget.jsx` -- live player widget with orchestrator integration
+- `src/components/layout-editor/LayoutElementRenderer.jsx` -- mock preview (minimal + card styles)
+- `src/services/weatherService.js` -- OpenWeatherMap API with 30-min LRU cache, forecast, coords support
+- `src/components/WeatherWall/` -- full-screen weather app (different from widget)
+
+**What to enhance:**
+- Add forecast display option to the widget (currently only shows current temp)
+- Add more style presets: `'detailed'` showing humidity/wind, `'forecast'` showing 3-5 day
+- Expand `WidgetWeatherProps` in types.js with new style options
+- Add forecast style to editor mock preview and properties panel
+
+**Integration points (MODIFY, not create):**
+
+| File | Change |
+|------|--------|
+| `types.js` | Add `'detailed' \| 'forecast'` to `WidgetWeatherProps.style` |
+| `LayoutElementRenderer.jsx` | Add `detailed` and `forecast` mock renderers to `WeatherWidget` |
+| `LayoutPropertiesPanel.jsx` | Add style selector with new options in weather controls |
+| `WeatherWidget.jsx` (player) | Add `detailed` and `forecast` render modes |
+| `weatherService.js` | Already has `getWeatherForecast()` -- no changes needed |
+
+**Data flow:** Unchanged. `useWidgetData` with `sourceKey: weather:${location}:${units}` already handles coordinated refresh.
+
+---
+
+### Feature 2: Video Playback in Layout Zones
+
+**Status:** PARTIALLY EXISTS -- `ZonePlayer` handles video in playlists. Layout editor needs video element support.
+
+**What exists:**
+- `ZonePlayer.jsx` already renders `<video>` elements with `autoPlay`, `muted`, `playsInline`, `onEnded`
+- `LeftSidebar.jsx` `handleAddImage` already detects video type and sets `{ autoplay: true, loop: true, muted: true }`
+- `LayoutElementRenderer.jsx` only handles `image` elements, NOT `video` elements
+
+**What to build:**
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| Video element renderer | MODIFY `LayoutElementRenderer.jsx` | Add `case 'video'` with `<video>` tag for editor preview |
+| Video properties panel | MODIFY `LayoutPropertiesPanel.jsx` | Add `VideoControls` with autoplay, loop, muted, fit toggles |
+| Video element type | MODIFY `types.js` | Add `'video'` to `ElementType`, `VideoElementProps` typedef, `createVideoElement` factory |
+| Player video in scenes | MODIFY `SceneRenderer.jsx` `SceneBlock` | Add `case 'video'` block type rendering |
+
+**Video element props schema:**
+```javascript
+/** @typedef {Object} VideoElementProps
+ * @property {string} url - Video URL (S3/CloudFront)
+ * @property {'cover' | 'contain' | 'fill'} [fit='cover'] - Object fit
+ * @property {boolean} [autoplay=true] - Auto play
+ * @property {boolean} [loop=true] - Loop playback
+ * @property {boolean} [muted=true] - Muted (required for autoplay)
+ * @property {number} [borderRadius=0] - Border radius
+ * @property {number} [opacity=1] - Opacity
+ * @property {string} [posterUrl] - Poster image URL
+ */
 ```
-External APIs                 Supabase Edge Functions / Admin Scheduler
-  Google Sheets   ----------->   dataFeedScheduler (existing)
-  RSS Feeds       ----------->   rssFeedSyncService (NEW)
-  Weather API     ----------->   weatherCacheService (NEW Edge Function)
-  Social APIs     ----------->   socialFeedSyncService (existing)
-                                        |
-                                        v
-                                   Supabase DB
-                                   (cached data)
-                                        |
-                        +-----------+---+---+-----------+
-                        |           |       |           |
-                        v           v       v           v
-                  data_source   rss_feed  weather   social_feeds
-                  _rows         _items    _cache    (existing)
-                  (existing)    (NEW)     (NEW)
-                                        |
-                                        v
-                              Supabase Realtime
-                              (postgres_changes)
-                                        |
-                        +-------+-------+-------+
-                        |       |       |       |
-                        v       v       v       v
-                    Player 1  Player 2  ...   Player N
-                    (poll + subscribe for changes)
+
+**Offline caching consideration:** Videos are already cached by `cacheService.js` via the `media` store with blob storage. The existing `fetchAndCacheScene` in `offlineService.js` downloads media URLs including videos. No new offline logic needed -- just ensure the video URL is included in the scene's `media_urls` array.
+
+**Cross-platform notes:**
+- WebOS/Tizen: `<video>` tag is natively supported. `playsInline` and `muted` are critical for autoplay.
+- Android WebView: Autoplay requires `muted`. May need `webkit-playsinline` attribute.
+- iOS: Autoplay works only when muted. Low Power Mode may block it.
+- **Key constraint:** Videos in layout zones MUST default to `muted: true` for reliable cross-platform autoplay. Audio requires explicit user interaction on most platforms.
+
+---
+
+### Feature 3: Screen Groups and Tags
+
+**Status:** ALREADY EXISTS -- fully functional with CRUD, publish/unpublish, and device management.
+
+**What exists (comprehensive):**
+- `src/services/screenGroupService.js` -- Full CRUD: create, update, delete, assign/remove screens, publish scenes
+- `src/pages/ScreenGroupsPage.jsx` -- List page
+- `src/pages/ScreenGroupDetailPage.jsx` -- Detail with devices tab and settings
+- `src/components/screens/ScreenGroupSettingsTab.jsx` -- Language settings per group
+- Database: `screen_groups` table with `tags` (text array), `location_id`, `active_scene_id`, `display_language`
+- Database: `tv_devices.screen_group_id` foreign key
+- RPC: `publish_scene_to_group`, `unpublish_scene_from_group`, `publish_scene_to_multiple_groups`, `get_screen_groups_with_scenes`
+- View: `v_screen_groups_with_counts`
+
+**What to enhance:**
+
+| Enhancement | Type | Detail |
+|-------------|------|--------|
+| Tag-based filtering | MODIFY `ScreenGroupsPage` | Add filter chips for tags, use Supabase `@>` array contains |
+| Bulk tag management | MODIFY `ScreenGroupDetailPage` | Tag editor component (add/remove tags) |
+| Tag autocomplete | NEW small component | Fetch distinct tags with `select distinct unnest(tags)` |
+| Content assignment by tag | MODIFY schedule/campaign editors | Target by tag instead of individual groups |
+
+**Data model:** Already exists. The `screen_groups.tags` column is a PostgreSQL text array. No schema changes needed.
+
+**Tag autocomplete service function:**
+```javascript
+// Add to screenGroupService.js
+export async function getDistinctTags() {
+  const { data, error } = await supabase.rpc('get_distinct_screen_tags');
+  if (error) throw error;
+  return data || [];
+}
 ```
 
-### Component Boundaries
+---
+
+### Feature 4: Portrait Mode Support
+
+**Status:** ALREADY EXISTS in the layout editor. Needs propagation to player.
+
+**What exists:**
+- `yodeckTheme.js` YODECK_ORIENTATIONS includes `9:16 (1080 x 1920)` and `3:4 (1080 x 1440)`
+- `LayoutEditorCanvas.jsx` uses `canvasSize` prop with computed `aspectRatio`
+- `TopToolbar.jsx` has orientation dropdown with portrait presets
+- `types.js` ASPECT_RATIOS includes `'9:16'`
+- `Layout` typedef has `aspectRatio: '16:9' | '9:16' | '4:3' | '1:1'`
+
+**What to build:**
+
+| Component | Type | Detail |
+|-----------|------|--------|
+| Screen orientation setting | MODIFY `ScreensPage`/screen settings | Add orientation field to `tv_devices` table |
+| Layout orientation in player | MODIFY `LayoutRenderer.jsx` | Apply aspect ratio from layout when rendering zones |
+| Player CSS rotation | MODIFY `ViewPage.jsx` | CSS `transform: rotate(90deg)` for portrait on landscape hardware |
+| Force-orientation override | MODIFY screen group settings | Group-level orientation setting that overrides individual screens |
+
+**Database change:**
+```sql
+ALTER TABLE tv_devices ADD COLUMN orientation TEXT DEFAULT 'landscape'
+  CHECK (orientation IN ('landscape', 'portrait', 'auto'));
+ALTER TABLE screen_groups ADD COLUMN default_orientation TEXT DEFAULT NULL
+  CHECK (default_orientation IN ('landscape', 'portrait', 'auto'));
+```
+
+**Player rotation approach:**
+The player should apply CSS rotation when the screen hardware is landscape but content is portrait (or vice versa). The recommended approach:
+
+```javascript
+// In ViewPage or a wrapper component
+const contentOrientation = layout?.aspectRatio === '9:16' ? 'portrait' : 'landscape';
+const screenOrientation = deviceSettings?.orientation || 'landscape';
+const needsRotation = contentOrientation !== screenOrientation;
+
+// CSS transform for rotation
+const rotationStyle = needsRotation ? {
+  transform: 'rotate(90deg)',
+  transformOrigin: 'center center',
+  width: '100vh',
+  height: '100vw',
+} : {};
+```
+
+---
+
+### Feature 5: Clock/Date Widget Enhancement
+
+**Status:** ALREADY EXISTS -- basic versions. Needs richer formatting options.
+
+**What exists:**
+- `ClockWidget.jsx` (player) -- 12h format, size presets, 1-second interval
+- `DateWidget.jsx` (player) -- "Thursday, January 23" format, size presets
+- Editor mock previews in `LayoutElementRenderer.jsx`
+- Editor config in `LayoutPropertiesPanel.jsx` (textColor only)
+- `types.js` has `WidgetClockProps` with format/showSeconds/timezone and `WidgetDateProps` with format
+
+**What to enhance:**
+
+| Enhancement | Files to modify | Detail |
+|-------------|----------------|--------|
+| 24h format support | `ClockWidget.jsx`, `LayoutPropertiesPanel.jsx` | Format toggle in editor, honor in player |
+| Show seconds | `ClockWidget.jsx`, `LayoutPropertiesPanel.jsx` | Checkbox in editor config |
+| Timezone selector | `ClockWidget.jsx`, `LayoutPropertiesPanel.jsx` | Dropdown with common timezones |
+| Date format options | `DateWidget.jsx`, `LayoutPropertiesPanel.jsx` | Short/long/numeric/custom formats |
+| Combined clock+date widget | NEW: `ClockDateWidget.jsx` | Single widget showing both time and date |
+| Analog clock style | NEW: render mode in `ClockWidget.jsx` | SVG-based analog clock face |
+
+**Props additions to types.js:**
+```javascript
+/** @typedef {Object} WidgetClockProps
+ * @property {string} [textColor='#ffffff']
+ * @property {'12h' | '24h'} [format='12h']
+ * @property {boolean} [showSeconds=false]
+ * @property {string} [timezone] - IANA timezone (e.g., 'America/New_York')
+ * @property {'digital' | 'analog' | 'minimal'} [displayStyle='digital']
+ * @property {string} [accentColor='#3b82f6'] - Analog clock hands/markers color
+ */
+```
+
+---
+
+### Feature 6: QR Code Widget Enhancement
+
+**Status:** ALREADY EXISTS -- functional. Needs richer configuration.
+
+**What exists:**
+- `QRCodeWidget.jsx` (player) -- uses `QRCodeSVG` from qrcode.react (already in package.json v4.2.0)
+- Editor mock preview with CSS grid placeholder pattern
+- Editor config for URL, label, colors in `LayoutPropertiesPanel.jsx`
+- `types.js` has `WidgetQRProps`
+
+**What to enhance:**
+
+| Enhancement | Files | Detail |
+|-------------|-------|--------|
+| Error correction level | `LayoutPropertiesPanel.jsx`, `QRCodeWidget.jsx` | L/M/Q/H selector |
+| Logo overlay | `QRCodeWidget.jsx` | Center image overlay (brand logo) |
+| Dynamic QR (data binding) | `QRCodeWidget.jsx` | URL from data source with `{{field}}` template |
+| Size/scale control | `LayoutPropertiesPanel.jsx` | Already has `qrScale` in player, expose in editor |
+| Style presets | `LayoutPropertiesPanel.jsx` | Quick color scheme presets (dark on light, light on dark, branded) |
+
+**Logo overlay approach:**
+```javascript
+// qrcode.react supports imageSettings prop
+<QRCodeSVG
+  value={url}
+  size={256}
+  level="H" // High error correction needed for logo overlay
+  imageSettings={{
+    src: logoUrl,
+    x: undefined, // Center by default
+    y: undefined,
+    height: 40,
+    width: 40,
+    excavate: true, // Remove QR modules behind logo
+  }}
+/>
+```
+
+**Note:** Logo overlay requires error correction level H (30% recovery) to remain scannable. The editor should auto-set level to H when a logo is provided.
+
+---
+
+### Feature 7: Menu Board Widget
+
+**Status:** PARTIALLY EXISTS as full-screen app (`DataTableApp` in `AppRenderer.jsx`). Needs a layout widget version.
+
+**What exists:**
+- `DataTableApp` in `AppRenderer.jsx` -- full-screen tabular data with title, headers, rows, themes
+- `DataTableWidget.jsx` in player widgets -- data source bound table widget
+- `useAppData` hook for app-level data fetching
+
+**What to build:**
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| `MenuBoardWidget.jsx` | NEW player widget | Compact menu board for layout zones |
+| `MenuBoardWidgetControls.jsx` | NEW editor component | Config UI for menu items, categories, styling |
+| Menu board editor mock | MODIFY `LayoutElementRenderer.jsx` | Add `case 'menu-board'` to widget switch |
+| Menu board properties | MODIFY `LayoutPropertiesPanel.jsx` | Add menu board config section |
+| Menu board data model | NEW Supabase table | `menu_boards` with categories and items |
+
+**Menu board data model:**
+```sql
+CREATE TABLE menu_boards (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id UUID NOT NULL REFERENCES auth.users(id),
+  name TEXT NOT NULL,
+  categories JSONB NOT NULL DEFAULT '[]',
+  -- categories: [{ name: "Appetizers", items: [{ name, description, price, image_url, available }] }]
+  style JSONB DEFAULT '{}',
+  -- style: { theme, headerFont, itemFont, priceAlignment, showImages, columns }
+  currency TEXT DEFAULT 'USD',
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- RLS: tenant isolation
+ALTER TABLE menu_boards ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Tenant isolation" ON menu_boards
+  FOR ALL USING (tenant_id = auth.uid() OR tenant_id IN (
+    SELECT managed_tenant_id FROM profiles WHERE id = auth.uid()
+  ));
+```
+
+**Widget props schema:**
+```javascript
+/** @typedef {Object} WidgetMenuBoardProps
+ * @property {string} menuBoardId - Menu board UUID
+ * @property {'compact' | 'detailed' | 'grid'} [layout='compact']
+ * @property {'light' | 'dark' | 'chalkboard'} [theme='dark']
+ * @property {boolean} [showPrices=true]
+ * @property {boolean} [showImages=false]
+ * @property {boolean} [showDescriptions=true]
+ * @property {string} [headerColor='#ffffff']
+ * @property {string} [priceColor='#22c55e']
+ * @property {string} [categoryColor='#f59e0b']
+ * @property {number} [fontSize=16]
+ */
+```
+
+**Orchestrator integration:**
+```javascript
+// In MenuBoardWidget.jsx
+const sourceKey = `menu-board:${menuBoardId}`;
+const fetchFn = useCallback(async () => {
+  const { data, error } = await supabase
+    .from('menu_boards')
+    .select('*')
+    .eq('id', menuBoardId)
+    .single();
+  if (error) throw error;
+  return data;
+}, [menuBoardId]);
+
+const { data: menuData, isLoading } = useWidgetData(sourceKey, fetchFn, 5 * 60 * 1000);
+```
+
+**Offline caching:** Add `menuBoards` store to IndexedDB (bump to v4), or store as a data source in existing `dataSources` store with key prefix `menu-board:`. The simpler approach is to use the existing `dataSources` store with a namespaced key -- avoids a schema migration.
+
+---
+
+## Component Boundaries
 
 | Component | Responsibility | Communicates With |
 |-----------|---------------|-------------------|
-| **Data Source Widgets** (scene editor) | Configure data source binding on text/table blocks | dataSourceService, dataBindingResolver |
-| **RSS Feed Service** (NEW) | Fetch/parse RSS and Atom feeds, cache entries in DB | Supabase DB, Edge Function for CORS proxy |
-| **RSS Feed Widget** (NEW renderer) | Render RSS items as ticker/list/card in player | rss_feed_items table via Supabase |
-| **Weather Cache** (Edge Function) | Periodic weather fetch per location, cache in DB | OpenWeatherMap API, Supabase DB |
-| **Weather Widget** (enhanced renderer) | Render live weather from cached DB data | weather_cache table or existing weatherService |
-| **Countdown Widget** (NEW) | Client-side countdown to target datetime | None (pure client-side computation) |
-| **Social Feed Widget** (existing, needs wiring) | Render social posts from cached data | social_feeds table (existing) |
-| **Data Table Renderer** (NEW) | Render data source as styled table/list | dataBindingResolver (existing) |
-| **Player Data Refresh Orchestrator** (NEW) | Poll for stale data, manage refresh intervals | dataBindingResolver.refreshStaleDataSources, Supabase subscriptions |
-| **Widget Palette** (scene editor enhancement) | Add new widget types to editor sidebar | sceneDesignService.createWidgetBlock |
-
-### New Widget Types for Scene Editor
-
-Extend the existing `createWidgetBlock` pattern with these new `widgetType` values:
-
-```javascript
-// Existing widget types (already in LayoutElementRenderer):
-// 'clock', 'date', 'weather', 'qr', 'data'
-
-// NEW widget types to add:
-'social_feed'   // Social media feed display (wraps SocialFeedRenderer)
-'rss_feed'      // RSS/Atom feed ticker or list
-'countdown'     // Countdown timer to target date/time
-'data_table'    // Data source rendered as formatted table
-'time_weather'  // Combined time + weather composite widget
-```
-
-Each widget type stores its config in `block.props`:
-
-```javascript
-// RSS Feed widget block
-{
-  id: 'blk_xxx',
-  type: 'widget',
-  widgetType: 'rss_feed',
-  x: 0, y: 0.9, width: 1, height: 0.1,
-  props: {
-    feedUrl: 'https://feeds.bbci.co.uk/news/rss.xml',
-    layout: 'ticker',        // 'ticker' | 'list' | 'cards'
-    maxItems: 10,
-    refreshMinutes: 15,
-    showImages: true,
-    scrollSpeed: 30,          // pixels per second for ticker
-    style: { backgroundColor: '#000', textColor: '#fff' }
-  }
-}
-
-// Countdown widget block
-{
-  id: 'blk_xxx',
-  type: 'widget',
-  widgetType: 'countdown',
-  x: 0.3, y: 0.3, width: 0.4, height: 0.3,
-  props: {
-    targetDate: '2026-03-15T09:00:00',
-    label: 'Grand Opening',
-    showDays: true,
-    showHours: true,
-    showMinutes: true,
-    showSeconds: true,
-    completedMessage: 'Event Started!',
-    style: { textColor: '#fff', fontSize: 48 }
-  }
-}
-
-// Data Table widget block
-{
-  id: 'blk_xxx',
-  type: 'widget',
-  widgetType: 'data_table',
-  x: 0.05, y: 0.15, width: 0.9, height: 0.7,
-  props: {
-    dataSourceId: 'uuid-of-data-source',
-    visibleFields: ['name', 'price', 'description'],
-    rowLimit: 10,
-    theme: 'dark',            // 'dark' | 'light' | 'branded'
-    showHeaders: true,
-    alternateRows: true,
-    refreshMinutes: 5,
-    pagination: 'scroll',     // 'scroll' | 'rotate' | 'none'
-    rotationSpeed: 10,        // seconds per page if pagination='rotate'
-    style: { headerColor: '#3B82F6', fontSize: 16 }
-  }
-}
-
-// Social Feed widget block
-{
-  id: 'blk_xxx',
-  type: 'widget',
-  widgetType: 'social_feed',
-  x: 0, y: 0, width: 0.3, height: 1,
-  props: {
-    widgetId: 'uuid-from-social-feed-settings',
-    accountId: 'uuid-of-social-account',
-    provider: 'instagram',
-    layout: 'carousel',
-    maxItems: 6,
-    showCaption: true,
-    showLikes: true,
-    rotationSpeed: 5
-  }
-}
-```
+| `LayoutElementRenderer` | Renders element by type in editor canvas | Reads element props |
+| `LayoutPropertiesPanel` | Per-type config UI in editor sidebar | Calls `onElementUpdate` |
+| `LeftSidebar` | Widget catalog, add to canvas | Calls `onAddElement` |
+| `types.js` | Type definitions, factory functions | Imported by all editor components |
+| `SceneWidgetRenderer` | Routes widget types to live components | Renders player widgets |
+| `useWidgetData` | Subscribes to orchestrator for data | DataRefreshContext |
+| `useDataRefreshOrchestrator` | Tick loop, registry, deduplication | Manages dataStoreRef |
+| `weatherService.js` | Weather API with caching | Called by WeatherWidget fetchFn |
+| `cacheService.js` | IndexedDB for offline | Called by offlineService |
+| `screenGroupService.js` | Group CRUD, publish, tags | Supabase RPC/REST |
 
 ---
 
-## Data Flow: Source to Screen (Detailed)
+## Data Flow Diagrams
 
-### Flow 1: Data Source Widget (Google Sheets / CSV)
-
-```
-1. ADMIN: User creates data source on DataSourcesPage
-   - Uploads CSV or links Google Sheet
-   - Data stored in: data_sources + data_source_fields + data_source_rows
-
-2. ADMIN: User adds data_table or data-bound text block in Scene Editor
-   - Block gets { dataBinding: { sourceId, field, rowSelector } }
-   - Or for data_table widget: { props: { dataSourceId } }
-
-3. SYNC: dataFeedScheduler checks every 60s for sources needing sync
-   - Calls list_data_sources_needing_sync RPC
-   - For Google Sheets: fetches via Sheets API, detects changes, updates rows
-   - Broadcasts update via Supabase realtime
-
-4. PLAYER: On scene load, player prefetches data sources
-   - dataBindingResolver.prefetchSceneDataSources(designJson)
-   - Resolves all bindings to values
-   - Stores in in-memory cache (5-min TTL for editor, 30-min for player)
-
-5. PLAYER: Refresh loop
-   - OPTION A (existing): dataBindingResolver.refreshStaleDataSources(designJson, maxAge)
-   - OPTION B (better): Subscribe to data_source_rows changes via Supabase realtime
-   - On change: re-resolve bindings, re-render affected blocks
-
-6. PLAYER: Offline fallback
-   - Cache resolved data in IndexedDB alongside content
-   - Show stale data with optional "Last updated" indicator
-```
-
-### Flow 2: RSS Feed Widget
+### Widget: Design-Time to Runtime
 
 ```
-1. ADMIN: User adds RSS feed widget in Scene Editor
-   - Enters feed URL, selects layout (ticker/list/cards)
-   - Config stored in block.props
+DESIGN TIME (Layout Editor)
+  User selects widget type from LeftSidebar
+    |
+    v
+  createElement({type: 'widget', widgetType: 'menu-board', props: {...}})
+    |
+    v
+  LayoutEditorCanvas renders LayoutElementRenderer (mock preview)
+  LayoutPropertiesPanel renders WidgetControls (config UI)
+    |
+    v
+  Save layout JSON to Supabase (layouts.elements or scenes.design_json)
 
-2. BACKEND: RSS feed proxy (NEW Supabase Edge Function)
-   - Fetches RSS/Atom feed XML
-   - Parses to JSON (title, link, description, pubDate, image)
-   - Caches in rss_feed_items table (NEW)
-   - Runs on schedule OR on-demand when player requests
-
-3. PLAYER: Fetches cached feed items from rss_feed_items table
-   - No direct RSS fetch (avoids CORS, works offline)
-   - Polls on refreshMinutes interval from widget config
-   - Renders via RssFeedRenderer component (NEW)
-
-4. PLAYER: Offline fallback
-   - IndexedDB cache of last-known feed items
+RUNTIME (Player)
+  Player fetches layout/scene from Supabase (or IndexedDB cache)
+    |
+    v
+  SceneRenderer wraps in DataRefreshProvider(orchestrator)
+    |
+    v
+  SceneBlock detects type='widget', renders SceneWidgetRenderer
+    |
+    v
+  SceneWidgetRenderer routes to MenuBoardWidget by widgetType
+    |
+    v
+  MenuBoardWidget calls useWidgetData('menu-board:${id}', fetchFn, 5min)
+    |
+    v
+  Orchestrator: register -> immediate fetch -> tick loop every 10s checks interval
+    |
+    v
+  Widget receives { data, lastFetchedAt, isLoading } -> renders menu content
 ```
 
-### Flow 3: Weather Widget (Enhanced)
+### Video: S3 to Player
 
 ```
-1. ADMIN: User adds weather widget in Scene Editor
-   - Selects location, units, style
-   - Config stored in block.props
-
-2. CURRENT APPROACH (sufficient for v1):
-   - weatherService.js fetches from OpenWeatherMap directly
-   - 30-min in-memory cache prevents excessive API calls
-   - Works on player (browser-based, no CORS issues with OWM)
-
-3. ENHANCED APPROACH (for v2 if needed):
-   - Edge Function fetches weather per tenant's configured locations
-   - Caches in weather_cache table
-   - Player reads from cache, never calls external API
-   - Better for constrained devices (WebOS, Tizen)
-
-4. PLAYER: Renders via enhanced WeatherWidget component
-   - Shows live temp, conditions, optional forecast
-   - Refreshes on 30-min interval
+Upload: Media Library -> S3 bucket -> CloudFront CDN URL stored in media table
+    |
+    v
+Design: Layout editor -> Add video element -> URL from media library
+    |
+    v
+Save: layout.elements includes {type: 'video', props: {url, autoplay, loop, muted}}
+    |
+    v
+Offline Cache: offlineService.fetchAndCacheScene downloads video blob to IndexedDB
+    |
+    v
+Player: SceneBlock renders <video> tag
+  - Online: src={cloudfront_url}
+  - Offline: src={IndexedDB blob URL via getCachedMediaUrl}
 ```
 
-### Flow 4: Countdown Widget
+### Portrait Mode: Configuration to Display
 
 ```
-1. ADMIN: User adds countdown widget in Scene Editor
-   - Sets target date/time, display format, label
-
-2. PLAYER: Pure client-side rendering
-   - No backend needed -- just calculates time remaining
-   - requestAnimationFrame or 1-second interval for live countdown
-   - Shows "completed" message when target reached
-
-3. OFFLINE: Works perfectly offline
-   - Only needs device clock (which is the one dependency)
-   - Consider timezone: store target in UTC, convert to device timezone
+Admin: ScreensPage -> Screen settings -> orientation: 'portrait'
+  OR: ScreenGroupDetailPage -> Settings -> default_orientation: 'portrait'
+    |
+    v
+Database: tv_devices.orientation = 'portrait'
+    |
+    v
+Player: ViewPage fetches device settings
+  - Checks layout aspectRatio vs device orientation
+  - Applies CSS rotation if mismatch
+  - Content renders at correct aspect ratio
+    |
+    v
+Display: Physical screen (landscape hardware) shows portrait content rotated 90deg
 ```
-
-### Flow 5: Social Feed Widget
-
-```
-1. ADMIN: User connects social account (existing OAuth flow)
-   - socialFeedSyncService syncs posts every 20 minutes
-   - Posts cached in social_feeds table
-
-2. ADMIN: User adds social_feed widget in Scene Editor
-   - Selects account, layout, display options
-   - Creates social_feed_settings entry
-
-3. PLAYER: SocialFeedRenderer (existing) fetches from social_feeds table
-   - Already works with cached data only
-   - Just needs to be wired into WidgetElement switch statement
-
-4. PLAYER: Refresh
-   - social_feed_settings.auto_refresh_minutes controls poll interval
-   - Supabase subscription on social_feeds table for push updates
-```
-
----
-
-## Player Refresh Orchestrator (NEW - Critical Component)
-
-The player needs a unified refresh mechanism for all dynamic content. Currently `dataFeedScheduler` only runs in the admin browser tab.
-
-### Design: PlayerDataOrchestrator
-
-```javascript
-// src/services/playerDataOrchestrator.js
-
-class PlayerDataOrchestrator {
-  constructor(screenId, designJson) {
-    this.screenId = screenId;
-    this.designJson = designJson;
-    this.refreshTimers = new Map();    // widgetId -> intervalId
-    this.subscriptions = [];            // Supabase channel unsubscribers
-    this.cache = new Map();             // widgetId -> { data, fetchedAt }
-    this.listeners = new Set();         // onChange callbacks
-  }
-
-  // Start all refresh loops based on widget configs in designJson
-  start() {
-    const widgets = this.extractDynamicWidgets(this.designJson);
-
-    for (const widget of widgets) {
-      // Set up polling based on widget type
-      const interval = this.getRefreshInterval(widget);
-      if (interval > 0) {
-        this.refreshTimers.set(widget.id, setInterval(
-          () => this.refreshWidget(widget),
-          interval
-        ));
-      }
-
-      // Set up realtime subscription for push updates
-      this.setupRealtimeSubscription(widget);
-    }
-  }
-
-  getRefreshInterval(widget) {
-    switch (widget.widgetType) {
-      case 'data_table':
-      case 'data':
-        return (widget.props.refreshMinutes || 5) * 60 * 1000;
-      case 'rss_feed':
-        return (widget.props.refreshMinutes || 15) * 60 * 1000;
-      case 'weather':
-        return 30 * 60 * 1000; // 30 minutes
-      case 'social_feed':
-        return (widget.props.autoRefreshMinutes || 20) * 60 * 1000;
-      case 'countdown':
-        return 0; // Client-side only, no server refresh
-      case 'clock':
-      case 'date':
-        return 0; // Client-side only
-      default:
-        return 0;
-    }
-  }
-
-  setupRealtimeSubscription(widget) {
-    if (widget.widgetType === 'data_table' || widget.widgetType === 'data') {
-      const unsub = subscribeToDataSource(widget.props.dataSourceId, () => {
-        this.refreshWidget(widget);
-      });
-      this.subscriptions.push(unsub);
-    }
-  }
-
-  stop() {
-    this.refreshTimers.forEach(timer => clearInterval(timer));
-    this.subscriptions.forEach(unsub => unsub());
-  }
-}
-```
-
-### Refresh Strategy by Widget Type
-
-| Widget Type | Refresh Method | Default Interval | Push Updates? |
-|-------------|---------------|------------------|---------------|
-| `data_table` | Poll DB + Realtime subscription | 5 min | YES (data_source_rows changes) |
-| `data` (bound text) | Poll DB + Realtime subscription | 5 min | YES (data_source_rows changes) |
-| `rss_feed` | Poll DB (Edge Function refreshes cache) | 15 min | NO (poll only) |
-| `weather` | Direct API call with cache | 30 min | NO (poll only) |
-| `social_feed` | Poll DB + Realtime subscription | 20 min | YES (social_feeds changes) |
-| `countdown` | Client-side timer | N/A (1s tick) | NO |
-| `clock` | Client-side timer | N/A (1s tick) | NO |
-| `date` | Client-side timer | N/A (1min tick) | NO |
-
----
-
-## New Components Needed
-
-### New Services
-
-| Service | File | Purpose |
-|---------|------|---------|
-| RSS Feed Service | `src/services/rssFeedService.js` | Fetch, parse, cache RSS/Atom feeds |
-| Player Data Orchestrator | `src/services/playerDataOrchestrator.js` | Unified refresh management for all dynamic widgets on player |
-
-### New Supabase Edge Function
-
-| Function | Purpose |
-|----------|---------|
-| `rss-feed-proxy` | CORS-safe RSS/Atom fetching and caching |
-
-### New DB Migration
-
-| Table | Purpose |
-|-------|---------|
-| `rss_feed_configs` | Feed URL, poll interval, max items per tenant |
-| `rss_feed_items` | Cached parsed RSS items (title, link, description, image, pubDate) |
-
-### New UI Components
-
-| Component | File | Purpose |
-|-----------|------|---------|
-| RssFeedRenderer | `src/components/player/RssFeedRenderer.jsx` | Render RSS as ticker/list/cards |
-| CountdownRenderer | `src/components/player/CountdownRenderer.jsx` | Countdown timer display |
-| DataTableRenderer | `src/components/player/DataTableRenderer.jsx` | Render data source as styled table |
-| EnhancedWeatherRenderer | `src/components/player/WeatherRenderer.jsx` | Full weather widget (not just mock) |
-
-### Modified Components
-
-| Component | File | Changes |
-|-----------|------|---------|
-| LayoutElementRenderer | `src/components/layout-editor/LayoutElementRenderer.jsx` | Add `social_feed`, `rss_feed`, `countdown`, `data_table` cases to WidgetElement switch |
-| EditorCanvas | `src/components/scene-editor/EditorCanvas.jsx` | Wire up data refresh for preview |
-| PropertiesPanel | `src/components/scene-editor/PropertiesPanel.jsx` | Add widget-specific config panels for each new type |
-| sceneDesignService | `src/services/sceneDesignService.js` | Add factory functions for new widget types |
-| realtimeService | `src/services/realtimeService.js` | Add `subscribeToDataSourceUpdates` for player |
-| playerService | `src/services/playerService.js` | Include data source IDs in player content payload |
 
 ---
 
 ## Patterns to Follow
 
-### Pattern 1: Widget Block Extension
+### Pattern 1: Widget Registration Checklist
+**What:** Every new widget MUST touch these files in order.
+**When:** Adding any new widget type.
 
-Follow the existing `createWidgetBlock` pattern. All widget blocks use `type: 'widget'` with a `widgetType` discriminator. Config goes in `props`.
+```
+1. types.js          -- Add to WidgetType union, add Props typedef, add to createWidgetElement defaults
+2. LeftSidebar.jsx   -- Add to WIDGET_ITEMS array (icon, label, widgetType)
+3. LayoutElementRenderer.jsx -- Add case in WidgetElement switch (mock preview)
+4. LayoutPropertiesPanel.jsx -- Add config section in WidgetControls (or extend widgetTypes grid)
+5. New*Widget.jsx (player)   -- Create live player component with useWidgetData
+6. SceneRenderer.jsx          -- Add case in SceneWidgetRenderer switch
+7. widgets/index.js           -- Export from barrel file
+```
+
+### Pattern 2: Orchestrator Integration for Data Widgets
+**What:** Widgets needing external data use `useWidgetData` for coordinated fetching.
+**When:** Widget fetches from API, database, or external source.
 
 ```javascript
-// sceneDesignService.js - add new factory functions
-export function createRssFeedBlock(options = {}) {
-  return {
-    id: generateBlockId(),
-    type: 'widget',
-    widgetType: 'rss_feed',
-    x: options.x ?? 0,
-    y: options.y ?? 0.9,
-    width: options.width ?? 1,
-    height: options.height ?? 0.1,
-    layer: options.layer ?? 10,
-    props: {
-      feedUrl: options.feedUrl || '',
-      layout: options.layout || 'ticker',
-      maxItems: options.maxItems || 10,
-      refreshMinutes: options.refreshMinutes || 15,
-      ...options.props,
-    },
-  };
+// In your widget component
+const sourceKey = `widget-type:${uniqueIdentifier}`;
+const fetchFn = useCallback(async () => {
+  // Fetch data from API/Supabase
+  return data;
+}, [dependencies]);
+
+// cacheFn is optional -- for IndexedDB offline caching
+const cacheFn = useCallback(async (data) => {
+  await cacheToIndexedDB(sourceKey, data);
+}, [sourceKey]);
+
+const { data, lastFetchedAt, isLoading, error } = useWidgetData(
+  sourceKey,
+  fetchFn,
+  intervalMs, // e.g., 5 * 60 * 1000 for 5 minutes
+  cacheFn
+);
+```
+
+### Pattern 3: Editor Mock Preview
+**What:** Editor shows a visual approximation without live data.
+**When:** Any widget that fetches runtime data.
+
+```javascript
+// In LayoutElementRenderer.jsx WidgetElement switch
+case 'menu-board':
+  return <MenuBoardMock props={props} />;
+
+// Mock shows placeholder data representing the visual structure
+function MenuBoardMock({ props }) {
+  return (
+    <div className="w-full h-full bg-gray-900 p-2 rounded">
+      <div className="text-xs font-bold text-amber-400 mb-1">MENU</div>
+      <div className="space-y-0.5">
+        <div className="flex justify-between text-[8px] text-white">
+          <span>Item Name</span><span className="text-green-400">$9.99</span>
+        </div>
+        {/* ... more placeholder rows */}
+      </div>
+    </div>
+  );
 }
 ```
-
-**Why:** Consistent with existing widget infrastructure. Editor, renderer, and properties panel all dispatch on `widgetType`.
-
-### Pattern 2: Server-Cached External Data
-
-For any external API data (RSS, weather, social), the flow should be:
-
-1. Server/Edge Function fetches external data
-2. Data cached in Supabase table with timestamp
-3. Player reads from Supabase table (never external API directly)
-4. Realtime subscription or polling for freshness
-
-```javascript
-// Edge Function: supabase/functions/rss-feed-proxy/index.ts
-import { createClient } from '@supabase/supabase-js';
-
-Deno.serve(async (req) => {
-  const { feedUrl, feedConfigId } = await req.json();
-
-  // Fetch and parse RSS
-  const response = await fetch(feedUrl);
-  const xml = await response.text();
-  const items = parseRSS(xml); // XML -> JSON
-
-  // Cache in DB
-  const supabase = createClient(/* ... */);
-  await supabase.from('rss_feed_items')
-    .upsert(items.map(item => ({
-      feed_config_id: feedConfigId,
-      guid: item.guid,
-      title: item.title,
-      link: item.link,
-      description: item.description,
-      image_url: item.imageUrl,
-      published_at: item.pubDate,
-    })), { onConflict: 'feed_config_id,guid' });
-
-  return new Response(JSON.stringify({ count: items.length }));
-});
-```
-
-**Why:** Avoids CORS issues on player devices (WebOS/Tizen browsers may block cross-origin requests). Enables offline mode. Centralizes rate limiting. One fetch serves all players showing the same feed.
-
-### Pattern 3: Stale-While-Revalidate on Player
-
-The player should always show the last-known data immediately, then refresh in the background.
-
-```javascript
-// In player widget renderer
-const [data, setData] = useState(null);
-
-useEffect(() => {
-  // 1. Show cached data immediately
-  const cached = getCachedContent(`widget-${widgetId}`);
-  if (cached) setData(cached);
-
-  // 2. Fetch fresh data in background
-  fetchFreshData(widgetId).then(fresh => {
-    setData(fresh);
-    cacheContent(`widget-${widgetId}`, fresh);
-  });
-}, [widgetId]);
-```
-
-**Why:** Digital signage screens should never show loading spinners. Stale data is better than no data. The `dataBindingResolver` already implements this pattern (returns stale cache on fetch error).
-
-### Pattern 4: Composition Over New Block Types
-
-Do NOT create new top-level block types. Use `type: 'widget'` with `widgetType` variants. This keeps the editor's drag-drop, resize, layering, and snapping logic unchanged.
-
-**Why:** The EditorCanvas, PropertiesPanel, and LayoutElementRenderer all dispatch on `block.type`. Adding a new `type` would require changes in 10+ places. Adding a new `widgetType` requires changes in exactly 3 places: WidgetElement switch, PropertiesPanel widget section, and the widget palette.
 
 ---
 
 ## Anti-Patterns to Avoid
 
-### Anti-Pattern 1: Player Calling External APIs Directly
+### Anti-Pattern 1: Widget Fetching Outside Orchestrator
+**What:** Making direct `fetch()` or Supabase calls inside a widget's render/effect without `useWidgetData`.
+**Why bad:** Defeats deduplication. Two instances of the same weather widget would make separate API calls. No coordinated refresh timing.
+**Instead:** Always use `useWidgetData(sourceKey, fetchFn, intervalMs)`. The orchestrator deduplicates by `sourceKey`.
 
-**What:** Player fetches RSS/weather/social data directly from external APIs.
-**Why bad:** CORS failures on WebOS/Tizen. Rate limit hits from N players. No offline support. API keys exposed to client.
-**Instead:** All external data goes through server-side caching. Player reads only from Supabase.
+### Anti-Pattern 2: Heavy Assets in Editor Preview
+**What:** Loading actual video files, making API calls, or rendering complex SVGs in the editor mock.
+**Why bad:** Layout editor has many elements. Heavy previews cause editor lag. Videos auto-playing in the editor would be disruptive.
+**Instead:** Use lightweight mock previews. Video element shows a poster frame or placeholder with a play icon. Weather widget shows static "72F" text.
 
-### Anti-Pattern 2: Separate Content Pipelines Per Widget Type
+### Anti-Pattern 3: Non-Fractional Positioning
+**What:** Storing element positions as pixel values instead of 0-1 fractions.
+**Why bad:** Existing system uses fractional positions (`x: 0.35, y: 0.45, width: 0.3, height: 0.1`). Mixing pixel and fractional values breaks cross-resolution rendering. Portrait and landscape would render differently.
+**Instead:** All positions are 0-1 fractions of canvas dimensions. The canvas applies them as percentages.
 
-**What:** Each widget type has its own page, service, DB schema, and rendering pipeline.
-**Why bad:** Duplicated infrastructure. Inconsistent behavior. Hard to add new widget types later.
-**Instead:** Use the existing block/widget pattern. All widgets live in scene `design_json` blocks. All server-cached data flows through standardized tables. The renderer dispatches on `widgetType`.
-
-### Anti-Pattern 3: Global Polling Intervals
-
-**What:** One global refresh interval for all dynamic content on a screen.
-**Why bad:** Weather needs 30-min refresh, RSS needs 15-min, data tables might need 1-min. A single interval either wastes bandwidth or shows stale data.
-**Instead:** Per-widget `refreshMinutes` in props. The PlayerDataOrchestrator manages independent timers per widget.
-
-### Anti-Pattern 4: Storing Widget Data in design_json
-
-**What:** Embedding actual RSS items or weather data inside the slide's `design_json`.
-**Why bad:** `design_json` bloats. Every refresh requires updating the scene. Breaks real-time subscriptions (scene update != data update). Violates separation of config vs data.
-**Instead:** `design_json` stores widget CONFIG (feed URL, data source ID, location). Actual DATA lives in purpose-built tables. Player fetches data at render time.
-
-### Anti-Pattern 5: Real-Time for Everything
-
-**What:** Using Supabase realtime subscriptions for weather and RSS updates.
-**Why bad:** Weather and RSS updates are infrequent and don't benefit from sub-second latency. Each subscription consumes a WebSocket channel. Players already use several channels.
-**Instead:** Use realtime only for data_source_rows and social_feeds (where user edits should reflect immediately). Use polling for weather and RSS (which update on fixed server-side intervals anyway).
+### Anti-Pattern 4: Client-Side API Key Exposure for Menu Boards
+**What:** Embedding external API keys in widget props that get stored in layout JSON.
+**Why bad:** Layout JSON is visible to anyone with Supabase access. API keys leak.
+**Instead:** Menu board data lives in Supabase tables (server-side). If external APIs are needed, use Edge Functions as proxies (like the existing RSS proxy pattern).
 
 ---
 
 ## Scalability Considerations
 
-| Concern | At 100 screens | At 10K screens | At 100K screens |
-|---------|---------------|----------------|-----------------|
-| Weather API calls | Direct API OK (100 locations, 30-min cache) | Need server-side cache (deduplicate by location) | Must use Edge Function cache; batch by location |
-| RSS feed fetching | Direct via Edge Function per feed | Deduplicate: one fetch per unique URL regardless of screen count | Rate limit external RSS servers; aggressive cache TTLs |
-| Data source polling | Supabase realtime works fine | Channel fan-out concern; consider broadcast channel | Move to pg_notify with fan-out service |
-| Social feed sync | socialFeedSyncService handles well | Needs server-side scheduler (not browser-based) | Dedicated worker process for sync |
-| Offline cache size | ~1MB per screen in IndexedDB | Same per screen | Same; add cache eviction policies |
-
-### Key Scaling Decision: Where Does Sync Run?
-
-Currently `dataFeedScheduler` and `socialFeedSyncService` run in the admin's browser tab. This works for small deployments but fails when:
-- Admin tab is closed
-- Multiple admin tabs create duplicate syncs
-- Need guaranteed sync timing
-
-**Recommendation for this milestone:** Keep browser-based sync for now. Add the RSS Edge Function as the first server-side sync. Plan migration of all sync to Supabase Edge Functions or pg_cron in a future milestone.
+| Concern | At 100 screens | At 10K screens | At 1M screens |
+|---------|---------------|----------------|---------------|
+| Weather API calls | In-memory cache sufficient | Need server-side cache/proxy Edge Function | Mandatory: proxy with shared cache per location |
+| Menu board data | Direct Supabase queries fine | Add cache header, CDN for menu JSON | Dedicated menu API with edge caching |
+| Video storage | S3 + CloudFront handles it | CloudFront caching critical | Multi-region CDN, adaptive bitrate |
+| Screen groups | Simple queries sufficient | Index on tags array, materialized view | Partition by tenant_id |
+| Portrait rotation | CSS transform works | Same | Same (client-side only) |
+| QR code generation | Client-side SVG fast | Same | Same (no server dependency) |
 
 ---
 
-## Integration Map: New vs Modified
+## Build Order (Dependency-Aware)
 
-```
-NEW FILES:
-  src/services/rssFeedService.js          -- RSS fetch, parse, cache
-  src/services/playerDataOrchestrator.js  -- Player refresh management
-  src/components/player/RssFeedRenderer.jsx
-  src/components/player/CountdownRenderer.jsx
-  src/components/player/DataTableRenderer.jsx
-  src/components/player/WeatherRenderer.jsx
-  supabase/functions/rss-feed-proxy/index.ts
-  supabase/migrations/XXX_rss_feed_tables.sql
+The recommended build order considers:
+- Features with zero new dependencies should come first
+- Features that MODIFY existing files should come before features that create NEW files
+- The menu board widget (most complex, new table) should come last
 
-MODIFIED FILES:
-  src/components/layout-editor/LayoutElementRenderer.jsx  -- Add widget cases
-  src/components/scene-editor/EditorCanvas.jsx            -- Wire data preview
-  src/components/scene-editor/PropertiesPanel.jsx         -- Widget config panels
-  src/services/sceneDesignService.js                      -- Widget factory fns
-  src/services/realtimeService.js                         -- Data source subs
-  src/services/playerService.js                           -- Include data refs
-  src/config/appCatalog.js                                -- New app entries
+### Phase Structure Recommendation
 
-UNCHANGED (already complete):
-  src/services/dataSourceService.js       -- Fully functional
-  src/services/dataBindingResolver.js     -- Fully functional
-  src/services/dataFeedScheduler.js       -- Fully functional
-  src/services/googleSheetsService.js     -- Fully functional
-  src/services/weatherService.js          -- Functional (enhance later)
-  src/services/socialFeedSyncService.js   -- Fully functional
-  src/components/player/SocialFeedRenderer.jsx -- Fully functional
-  src/pages/DataSourcesPage.jsx           -- Fully functional
-```
+**Phase A: Clock/Date Enhancement + QR Enhancement**
+- Rationale: Purely additive to existing widgets. No new database tables. No new player components.
+- Touches: `types.js`, `LayoutElementRenderer.jsx`, `LayoutPropertiesPanel.jsx`, `ClockWidget.jsx`, `DateWidget.jsx`, `QRCodeWidget.jsx`
+- Risk: LOW -- extending existing patterns
+
+**Phase B: Weather Widget Enhancement**
+- Rationale: Extends existing widget with forecast mode. weatherService already has forecast API.
+- Touches: Same editor files + `WeatherWidget.jsx`
+- Risk: LOW -- data source already exists
+
+**Phase C: Video Playback in Layouts**
+- Rationale: Adds new element type. LeftSidebar already handles video detection. ZonePlayer already plays video.
+- Touches: `types.js` (new type), `LayoutElementRenderer.jsx` (new case), `LayoutPropertiesPanel.jsx` (new controls), `SceneRenderer.jsx` (new block type)
+- Risk: MEDIUM -- cross-platform autoplay behavior needs testing on WebOS/Tizen
+
+**Phase D: Portrait Mode**
+- Rationale: Layout editor already supports portrait. Needs DB column + player CSS rotation.
+- Touches: Database migration, screen settings UI, `ViewPage.jsx` rotation logic
+- Risk: MEDIUM -- CSS rotation math across different screen hardware
+
+**Phase E: Screen Groups/Tags Enhancement**
+- Rationale: Groups already work. Tags column already exists. This is UI enhancement.
+- Touches: `ScreenGroupsPage`, `ScreenGroupDetailPage`, possibly schedule/campaign editors
+- Risk: LOW -- existing infrastructure
+
+**Phase F: Menu Board Widget**
+- Rationale: Most complex. Needs new database table, new widget component, new editor controls.
+- Touches: New Supabase table + migration, new widget files, all editor registration points
+- Risk: MEDIUM -- new data model, menu editing UX complexity
+- Depends on: Phase A-C patterns established (widget registration pattern proven with simpler widgets)
 
 ---
 
-## Suggested Build Order
+## New Files to Create
 
-Based on dependency analysis:
+| File | Feature | Purpose |
+|------|---------|---------|
+| `src/player/components/widgets/MenuBoardWidget.jsx` | Menu Board | Live menu board renderer |
+| `src/components/scene-editor/MenuBoardWidgetControls.jsx` | Menu Board | Editor config for menu boards |
+| `src/pages/MenuBoardsPage.jsx` | Menu Board | Menu board management CRUD page |
+| `src/services/menuBoardService.js` | Menu Board | Supabase CRUD for menu_boards table |
+| `supabase/migrations/NNNN_menu_boards.sql` | Menu Board | Table creation + RLS |
+| `supabase/migrations/NNNN_device_orientation.sql` | Portrait | Add orientation columns |
 
-1. **Data Table Widget** (lowest risk, highest existing foundation)
-   - Depends on: dataSourceService (done), dataBindingResolver (done)
-   - New: DataTableRenderer, widget factory, editor panel, WidgetElement case
-   - Why first: Most infrastructure already exists. Validates the widget extension pattern.
+## Existing Files to Modify
 
-2. **Countdown Widget** (zero backend dependencies)
-   - Depends on: nothing external
-   - New: CountdownRenderer, widget factory, editor panel
-   - Why second: Pure client-side. Quick win. No backend work.
-
-3. **Enhanced Weather Widget** (small enhancement)
-   - Depends on: weatherService (done)
-   - New: WeatherRenderer with live API calls, widget config panel
-   - Why third: Service exists, just needs proper rendering.
-
-4. **Social Feed Widget Integration** (wiring only)
-   - Depends on: SocialFeedRenderer (done), socialFeedSyncService (done)
-   - New: Wire into WidgetElement, add config panel
-   - Why fourth: All infrastructure exists. Just connecting pieces.
-
-5. **RSS Feed Widget** (most new infrastructure)
-   - Depends on: NEW Edge Function, NEW DB tables, NEW service
-   - New: Everything from proxy to renderer
-   - Why fifth: Most greenfield work. Riskiest. Needs the most testing.
-
-6. **Player Data Orchestrator** (integration layer)
-   - Depends on: All widgets above being functional
-   - New: Unified refresh management, realtime subscriptions
-   - Why last: This is the glue. Build it after individual widgets work.
+| File | Features | Changes |
+|------|----------|---------|
+| `src/components/layout-editor/types.js` | All widgets, Video | New types, factory functions |
+| `src/components/layout-editor/LayoutElementRenderer.jsx` | All widgets, Video | New switch cases for video + menu-board |
+| `src/components/layout-editor/LayoutPropertiesPanel.jsx` | All widgets, Video | New config sections (clock format, QR logo, video controls, menu board picker) |
+| `src/components/layout-editor/LeftSidebar.jsx` | Menu Board | Add to WIDGET_ITEMS |
+| `src/player/components/SceneRenderer.jsx` | Menu Board, Video | New switch cases in SceneWidgetRenderer + SceneBlock |
+| `src/player/components/widgets/index.js` | Menu Board | Export new widget |
+| `src/player/components/widgets/WeatherWidget.jsx` | Weather | Forecast + detailed render modes |
+| `src/player/components/widgets/ClockWidget.jsx` | Clock | 24h, seconds, analog, timezone |
+| `src/player/components/widgets/DateWidget.jsx` | Date | Format options |
+| `src/player/components/widgets/QRCodeWidget.jsx` | QR | Logo, error correction, dynamic URL |
+| `src/player/pages/ViewPage.jsx` | Portrait | CSS rotation logic |
+| `src/pages/ScreenGroupsPage.jsx` | Tags | Tag filtering UI |
+| `src/pages/ScreenGroupDetailPage.jsx` | Tags | Tag management UI |
+| `src/services/screenGroupService.js` | Tags | Tag autocomplete RPC |
+| `src/player/components/LayoutRenderer.jsx` | Portrait | Aspect ratio from layout |
 
 ---
 
 ## Sources
 
-- **Codebase analysis:** All findings come from reading the actual BizScreen source code
-  - `src/services/dataSourceService.js` - 1286 lines, complete CRUD + bindings + realtime
-  - `src/services/dataBindingResolver.js` - 398 lines, caching + resolution + player utilities
-  - `src/services/dataFeedScheduler.js` - 431 lines, scheduler with events + retry
-  - `src/services/googleSheetsService.js` - 517 lines, fetch + sync + change detection
-  - `src/services/weatherService.js` - 479 lines, OWM API + forecast + cache
-  - `src/services/socialFeedSyncService.js` - 445 lines, multi-provider sync
-  - `src/services/playerService.js` - 869 lines, offline cache + commands + backoff
-  - `src/services/realtimeService.js` - 333 lines, device + content subscriptions
-  - `src/components/player/SocialFeedRenderer.jsx` - 427 lines, 5 layout modes
-  - `src/components/layout-editor/LayoutElementRenderer.jsx` - 247 lines, widget dispatch
-  - `src/services/sceneDesignService.js` - block model with widget blocks
-  - `supabase/migrations/077_dynamic_data_sources.sql` - data source schema
-  - `supabase/migrations/078_realtime_data_feeds.sql` - sync infrastructure
-  - `supabase/migrations/081_social_media_feeds.sql` - social feed schema
-- **Confidence:** HIGH - all claims verified against actual source code, not assumptions
+- **Codebase analysis** (HIGH confidence): All findings based on direct reading of source files
+- `src/components/layout-editor/types.js` -- Type system and widget factory pattern
+- `src/components/layout-editor/LayoutElementRenderer.jsx` -- Widget rendering dispatch (5 widget types: clock, date, weather, qr, data)
+- `src/components/layout-editor/LayoutPropertiesPanel.jsx` -- Widget config UI pattern with WidgetControls
+- `src/components/layout-editor/LeftSidebar.jsx` -- Widget catalog (WIDGET_ITEMS), video type detection in handleAddImage
+- `src/components/layout-editor/LayoutEditorCanvas.jsx` -- Fractional positioning, canvasSize prop, aspect ratio calculation
+- `src/components/layout-editor/TopToolbar.jsx` -- Orientation dropdown with portrait presets
+- `src/config/yodeckTheme.js` -- YODECK_ORIENTATIONS including 9:16, 3:4
+- `src/player/components/SceneRenderer.jsx` -- Player widget rendering + DataRefreshProvider + orchestrator integration
+- `src/player/hooks/useWidgetData.js` -- Data fetch hook with orchestrator-aware deduplication
+- `src/player/hooks/useDataRefreshOrchestrator.js` -- Central tick loop (10s), registry, subscriber counting, jitter
+- `src/player/components/widgets/*.jsx` -- 8 existing widget implementations (Clock, Date, Weather, QR, DataTable, RssTicker, RssCard, SocialFeed)
+- `src/player/components/ZonePlayer.jsx` -- Video playback in zone layout (autoPlay, muted, playsInline, onEnded)
+- `src/player/components/AppRenderer.jsx` -- Full-screen apps including DataTableApp (menu pattern)
+- `src/services/weatherService.js` -- OpenWeatherMap with getWeather, getWeatherForecast, getWeatherByCoords, 30-min LRU cache
+- `src/services/screenGroupService.js` -- Screen group CRUD, tags array, publish/unpublish scenes, language settings
+- `src/player/cacheService.js` -- IndexedDB v3: scenes, media, deviceState, offlineQueue, dataSources, rssFeeds stores
+- `src/player/offlineService.js` -- Offline sync: fetchAndCacheScene, service worker, event queue
+- `package.json` -- Confirms qrcode.react v4.2.0 already installed
+- qrcode.react `imageSettings` prop (MEDIUM confidence, from training data): Logo overlay support with excavate option
