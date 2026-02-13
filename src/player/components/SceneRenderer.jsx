@@ -29,6 +29,7 @@ import { DataTableWidget } from './widgets/DataTableWidget.jsx';
 import { RssTickerWidget } from './widgets/RssTickerWidget.jsx';
 import { RssCardWidget } from './widgets/RssCardWidget.jsx';
 import { SocialFeedWidget } from './widgets/SocialFeedWidget.jsx';
+import { CountdownWidget } from './widgets/CountdownWidget.jsx';
 
 /**
  * Scene Block - Renders individual blocks in a scene slide
@@ -156,6 +157,9 @@ function SceneWidgetRenderer({ widgetType, props }) {
 
     case 'social-feed':
       return <SocialFeedWidget props={safeProps} />;
+
+    case 'countdown':
+      return <CountdownWidget props={safeProps} />;
 
     default:
       return (
