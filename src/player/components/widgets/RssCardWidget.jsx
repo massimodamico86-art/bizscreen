@@ -2,12 +2,11 @@
 // Article card layout widget for rendering RSS feed items on player screens
 // Supports grid and carousel layouts with image, title, description, and date
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchRssFeed } from '../../../services/rssFeedService';
 import { cacheRssFeed, getCachedRssFeed } from '../../cacheService';
-import { createScopedLogger } from '../../../services/loggingService.js';
-
-const logger = createScopedLogger('RssCardWidget');
+import { useWidgetData } from '../../hooks/useWidgetData.js';
+import { SyncStatusIndicator } from './SyncStatusIndicator.jsx';
 
 /**
  * RssCardWidget - Renders RSS feed items as article cards
@@ -43,107 +42,67 @@ export function RssCardWidget({ props = {} }) {
   const [items, setItems] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [failedImages, setFailedImages] = useState(new Set());
-  const itemsRef = useRef([]);
+  const [dataFadeOpacity, setDataFadeOpacity] = useState(1);
+  const dataVersion = useRef(0);
 
-  // Keep itemsRef in sync with state
-  useEffect(() => {
-    itemsRef.current = items;
-  }, [items]);
-
-  // Initial data load
-  useEffect(() => {
-    if (!feedUrl) return;
-
-    let cancelled = false;
-
-    async function loadFeed() {
-      try {
-        const result = await fetchRssFeed(feedUrl);
-        if (!cancelled && result?.items) {
-          setItems(result.items);
-          setCurrentIndex(0);
-          setFailedImages(new Set());
-          // Cache for offline use
-          cacheRssFeed(feedUrl, result).catch((err) => {
-            logger.warn('Failed to cache RSS feed', { error: err });
-          });
-        }
-      } catch (err) {
-        logger.warn('Failed to fetch RSS feed, trying cache', { error: err });
-        // Silent fallback to cached data
-        try {
-          const cached = await getCachedRssFeed(feedUrl);
-          if (!cancelled && cached?.items) {
-            setItems(cached.items);
-            setCurrentIndex(0);
-            setFailedImages(new Set());
-          }
-        } catch (cacheErr) {
-          logger.warn('Failed to get cached RSS feed', { error: cacheErr });
-        }
-      }
-    }
-
-    loadFeed();
-
-    return () => {
-      cancelled = true;
-    };
+  // Orchestrator integration
+  const sourceKey = feedUrl ? `rss-feed:${feedUrl}` : null;
+  const fetchFnCb = useCallback(async () => {
+    const result = await fetchRssFeed(feedUrl);
+    return result;
   }, [feedUrl]);
+  const cacheFnCb = useCallback(async (_key, data) => {
+    await cacheRssFeed(feedUrl, data);
+  }, [feedUrl]);
+  const { data: orchestratorData, lastFetchedAt } = useWidgetData(sourceKey, fetchFnCb, refreshIntervalMinutes * 60 * 1000, cacheFnCb);
 
-  // Refresh timer
+  // Offline cache fallback
   useEffect(() => {
-    if (!feedUrl || !refreshIntervalMinutes) return;
+    if (!feedUrl || orchestratorData) return;
+    let cancelled = false;
+    getCachedRssFeed(feedUrl).then(cached => {
+      if (!cancelled && cached?.items && !orchestratorData) setItems(cached.items);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [feedUrl, orchestratorData]);
 
-    const intervalMs = refreshIntervalMinutes * 60 * 1000;
+  // Reset failedImages when new data arrives
+  useEffect(() => {
+    if (orchestratorData?.items) setFailedImages(new Set());
+  }, [orchestratorData]);
 
-    const interval = setInterval(async () => {
-      try {
-        const result = await fetchRssFeed(feedUrl);
-        if (result?.items) {
-          setItems(result.items);
-          setCurrentIndex(0);
-          setFailedImages(new Set());
-          cacheRssFeed(feedUrl, result).catch((err) => {
-            logger.warn('Failed to cache on refresh', { error: err });
-          });
-        }
-      } catch (err) {
-        logger.warn('Refresh failed, keeping current data', { error: err });
-        // On refresh failure, try cache if we have no data yet
-        if (itemsRef.current.length === 0) {
-          try {
-            const cached = await getCachedRssFeed(feedUrl);
-            if (cached?.items) {
-              setItems(cached.items);
-            }
-          } catch (cacheErr) {
-            logger.warn('Cache fallback failed on refresh', { error: cacheErr });
-          }
-        }
-      }
-    }, intervalMs);
+  // Data refresh fade transition (200ms opacity dip on subsequent fetches)
+  useEffect(() => {
+    if (!orchestratorData) return;
+    dataVersion.current += 1;
+    if (dataVersion.current <= 1) return; // Skip first load
+    setDataFadeOpacity(0);
+    const timeout = setTimeout(() => {
+      setDataFadeOpacity(1);
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [orchestratorData]);
 
-    return () => clearInterval(interval);
-  }, [feedUrl, refreshIntervalMinutes]);
+  // Use orchestrator data with local cache fallback
+  const activeItems = orchestratorData?.items || items;
 
   // Carousel rotation timer
   useEffect(() => {
-    if (layout !== 'carousel' || items.length === 0 || !cardRotateSeconds) return;
+    if (layout !== 'carousel' || activeItems.length === 0 || !cardRotateSeconds) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % Math.min(items.length, maxCards));
+      setCurrentIndex((prev) => (prev + 1) % Math.min(activeItems.length, maxCards));
     }, cardRotateSeconds * 1000);
 
     return () => clearInterval(interval);
-  }, [layout, items.length, cardRotateSeconds, maxCards]);
+  }, [layout, activeItems.length, cardRotateSeconds, maxCards]);
 
   // No items: render nothing (silent)
-  if (items.length === 0) {
+  if (activeItems.length === 0) {
     return null;
   }
 
-  const visibleItems = items.slice(0, maxCards);
+  const visibleItems = activeItems.slice(0, maxCards);
 
   const handleImageError = (imageUrl) => {
     setFailedImages((prev) => new Set(prev).add(imageUrl));
@@ -247,48 +206,58 @@ export function RssCardWidget({ props = {} }) {
     const safeIndex = currentIndex < visibleItems.length ? currentIndex : 0;
 
     return (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          backgroundColor,
-          fontFamily: 'system-ui, sans-serif',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        {visibleItems.map((item, index) => (
-          renderCard(item, index, {
-            position: 'absolute',
-            top: 0,
-            left: 0,
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <div
+          style={{
             width: '100%',
             height: '100%',
-            opacity: index === safeIndex ? 1 : 0,
-            transition: 'opacity 0.5s ease-in-out',
-            pointerEvents: index === safeIndex ? 'auto' : 'none',
-          })
-        ))}
+            backgroundColor,
+            fontFamily: 'system-ui, sans-serif',
+            position: 'relative',
+            overflow: 'hidden',
+            opacity: dataFadeOpacity,
+            transition: 'opacity 0.2s ease-in-out',
+          }}
+        >
+          {visibleItems.map((item, index) => (
+            renderCard(item, index, {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              opacity: index === safeIndex ? 1 : 0,
+              transition: 'opacity 0.5s ease-in-out',
+              pointerEvents: index === safeIndex ? 'auto' : 'none',
+            })
+          ))}
+        </div>
+        <SyncStatusIndicator lastRefreshedAt={lastFetchedAt} />
       </div>
     );
   }
 
   // Grid layout (default)
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        backgroundColor,
-        fontFamily: 'system-ui, sans-serif',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '0.75rem',
-        overflow: 'hidden',
-        padding: '0.5rem',
-      }}
-    >
-      {visibleItems.map((item, index) => renderCard(item, index))}
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundColor,
+          fontFamily: 'system-ui, sans-serif',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '0.75rem',
+          overflow: 'hidden',
+          padding: '0.5rem',
+          opacity: dataFadeOpacity,
+          transition: 'opacity 0.2s ease-in-out',
+        }}
+      >
+        {visibleItems.map((item, index) => renderCard(item, index))}
+      </div>
+      <SyncStatusIndicator lastRefreshedAt={lastFetchedAt} />
     </div>
   );
 }

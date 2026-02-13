@@ -2,12 +2,11 @@
 // Scrolling news ticker widget for rendering RSS feed items on player screens
 // GPU-accelerated CSS transform animation with seamless loop
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchRssFeed } from '../../../services/rssFeedService';
 import { cacheRssFeed, getCachedRssFeed } from '../../cacheService';
-import { createScopedLogger } from '../../../services/loggingService.js';
-
-const logger = createScopedLogger('RssTickerWidget');
+import { useWidgetData } from '../../hooks/useWidgetData.js';
+import { SyncStatusIndicator } from './SyncStatusIndicator.jsx';
 
 /**
  * RssTickerWidget - Renders RSS feed items as a horizontally scrolling ticker
@@ -35,87 +34,34 @@ export function RssTickerWidget({ props = {} }) {
   const [items, setItems] = useState([]);
   const [duration, setDuration] = useState(0);
   const contentRef = useRef(null);
-  const itemsRef = useRef([]);
 
-  // Keep itemsRef in sync with state
-  useEffect(() => {
-    itemsRef.current = items;
-  }, [items]);
-
-  // Initial data load
-  useEffect(() => {
-    if (!feedUrl) return;
-
-    let cancelled = false;
-
-    async function loadFeed() {
-      try {
-        const result = await fetchRssFeed(feedUrl);
-        if (!cancelled && result?.items) {
-          setItems(result.items);
-          // Cache for offline use
-          cacheRssFeed(feedUrl, result).catch((err) => {
-            logger.warn('Failed to cache RSS feed', { error: err });
-          });
-        }
-      } catch (err) {
-        logger.warn('Failed to fetch RSS feed, trying cache', { error: err });
-        // Silent fallback to cached data
-        try {
-          const cached = await getCachedRssFeed(feedUrl);
-          if (!cancelled && cached?.items) {
-            setItems(cached.items);
-          }
-        } catch (cacheErr) {
-          logger.warn('Failed to get cached RSS feed', { error: cacheErr });
-        }
-      }
-    }
-
-    loadFeed();
-
-    return () => {
-      cancelled = true;
-    };
+  // Orchestrator integration
+  const sourceKey = feedUrl ? `rss-feed:${feedUrl}` : null;
+  const fetchFnCb = useCallback(async () => {
+    const result = await fetchRssFeed(feedUrl);
+    return result;
   }, [feedUrl]);
+  const cacheFnCb = useCallback(async (_key, data) => {
+    await cacheRssFeed(feedUrl, data);
+  }, [feedUrl]);
+  const { data: orchestratorData, lastFetchedAt } = useWidgetData(sourceKey, fetchFnCb, refreshIntervalMinutes * 60 * 1000, cacheFnCb);
 
-  // Refresh timer
+  // Offline cache fallback
   useEffect(() => {
-    if (!feedUrl || !refreshIntervalMinutes) return;
+    if (!feedUrl || orchestratorData) return;
+    let cancelled = false;
+    getCachedRssFeed(feedUrl).then(cached => {
+      if (!cancelled && cached?.items && !orchestratorData) setItems(cached.items);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [feedUrl, orchestratorData]);
 
-    const intervalMs = refreshIntervalMinutes * 60 * 1000;
-
-    const interval = setInterval(async () => {
-      try {
-        const result = await fetchRssFeed(feedUrl);
-        if (result?.items) {
-          setItems(result.items);
-          cacheRssFeed(feedUrl, result).catch((err) => {
-            logger.warn('Failed to cache on refresh', { error: err });
-          });
-        }
-      } catch (err) {
-        logger.warn('Refresh failed, keeping current data', { error: err });
-        // On refresh failure, try cache if we have no data yet
-        if (itemsRef.current.length === 0) {
-          try {
-            const cached = await getCachedRssFeed(feedUrl);
-            if (cached?.items) {
-              setItems(cached.items);
-            }
-          } catch (cacheErr) {
-            logger.warn('Cache fallback failed on refresh', { error: cacheErr });
-          }
-        }
-      }
-    }, intervalMs);
-
-    return () => clearInterval(interval);
-  }, [feedUrl, refreshIntervalMinutes]);
+  // Use orchestrator data with local cache fallback
+  const activeItems = orchestratorData?.items || items;
 
   // Calculate animation duration based on content width
   useEffect(() => {
-    if (!contentRef.current || items.length === 0) {
+    if (!contentRef.current || activeItems.length === 0) {
       setDuration(0);
       return;
     }
@@ -131,78 +77,81 @@ export function RssTickerWidget({ props = {} }) {
     });
 
     return () => cancelAnimationFrame(raf);
-  }, [items, speed]);
+  }, [activeItems, speed]);
 
   // No items: render nothing (silent)
-  if (items.length === 0) {
+  if (activeItems.length === 0) {
     return null;
   }
 
   // Duplicate items for seamless loop
-  const tickerItems = [...items, ...items];
+  const tickerItems = [...activeItems, ...activeItems];
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-        backgroundColor,
-        display: 'flex',
-        alignItems: 'center',
-        fontFamily: 'system-ui, sans-serif',
-      }}
-    >
-      <style>{`
-        @keyframes ticker-scroll {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .rss-ticker-content {
-            animation: none !important;
-          }
-        }
-      `}</style>
-
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div
-        ref={contentRef}
-        className="rss-ticker-content"
         style={{
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden',
+          backgroundColor,
           display: 'flex',
-          whiteSpace: 'nowrap',
-          willChange: 'transform',
-          animation: duration > 0
-            ? `ticker-scroll ${duration}s linear infinite`
-            : 'none',
+          alignItems: 'center',
+          fontFamily: 'system-ui, sans-serif',
         }}
       >
-        {tickerItems.map((item, index) => (
-          <span key={`${item.title}-${index}`} style={{ display: 'flex', alignItems: 'center' }}>
-            <span
-              style={{
-                padding: '0 2rem',
-                color: textColor,
-                fontSize,
-              }}
-            >
-              {item.title}
-            </span>
-            {index < tickerItems.length - 1 && (
+        <style>{`
+          @keyframes ticker-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .rss-ticker-content {
+              animation: none !important;
+            }
+          }
+        `}</style>
+
+        <div
+          ref={contentRef}
+          className="rss-ticker-content"
+          style={{
+            display: 'flex',
+            whiteSpace: 'nowrap',
+            willChange: 'transform',
+            animation: duration > 0
+              ? `ticker-scroll ${duration}s linear infinite`
+              : 'none',
+          }}
+        >
+          {tickerItems.map((item, index) => (
+            <span key={`${item.title}-${index}`} style={{ display: 'flex', alignItems: 'center' }}>
               <span
                 style={{
-                  opacity: 0.4,
-                  padding: '0 1rem',
+                  padding: '0 2rem',
                   color: textColor,
                   fontSize,
                 }}
               >
-                {separator}
+                {item.title}
               </span>
-            )}
-          </span>
-        ))}
+              {index < tickerItems.length - 1 && (
+                <span
+                  style={{
+                    opacity: 0.4,
+                    padding: '0 1rem',
+                    color: textColor,
+                    fontSize,
+                  }}
+                >
+                  {separator}
+                </span>
+              )}
+            </span>
+          ))}
+        </div>
       </div>
+      <SyncStatusIndicator lastRefreshedAt={lastFetchedAt} />
     </div>
   );
 }

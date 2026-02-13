@@ -21,6 +21,8 @@ import {
   subscribeToDataSource,
 } from '../../services/dataSourceService';
 import { useLogger } from '../../hooks/useLogger.js';
+import { DataRefreshProvider } from '../contexts/DataRefreshContext.jsx';
+import { useDataRefreshOrchestrator } from '../hooks/useDataRefreshOrchestrator.js';
 import { ClockWidget } from './widgets/ClockWidget.jsx';
 import { DateWidget } from './widgets/DateWidget.jsx';
 import { WeatherWidget } from './widgets/WeatherWidget.jsx';
@@ -186,6 +188,7 @@ function SceneWidgetRenderer({ widgetType, props }) {
  */
 export function SceneRenderer({ scene, _screenId, _tenantId }) {
   const logger = useLogger('SceneRenderer');
+  const orchestrator = useDataRefreshOrchestrator();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [_isPreloading, setIsPreloading] = useState(false);
   const [resolvedBlocksMap, setResolvedBlocksMap] = useState(new Map());
@@ -395,55 +398,57 @@ export function SceneRenderer({ scene, _screenId, _tenantId }) {
   const transitionStyles = getSlideTransitionStyles(design.transition);
 
   return (
-    <div style={{
-      position: 'relative',
-      width: '100%',
-      height: '100%',
-      overflow: 'hidden',
-      ...backgroundStyle,
-      ...transitionStyles
-    }}>
-      {/* Inject animation keyframes */}
-      <style>{ANIMATION_KEYFRAMES}</style>
+    <DataRefreshProvider value={orchestrator}>
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        ...backgroundStyle,
+        ...transitionStyles
+      }}>
+        {/* Inject animation keyframes */}
+        <style>{ANIMATION_KEYFRAMES}</style>
 
-      {sortedBlocks.map((block) => (
-        <SceneBlock
-          key={block.id}
-          block={{
-            ...block,
-            // Inject resolved content from data binding
-            resolvedContent: resolvedBlocksMap.get(block.id) || block.resolvedContent,
-          }}
-          slideIndex={currentSlideIndex}
-        />
-      ))}
+        {sortedBlocks.map((block) => (
+          <SceneBlock
+            key={block.id}
+            block={{
+              ...block,
+              // Inject resolved content from data binding
+              resolvedContent: resolvedBlocksMap.get(block.id) || block.resolvedContent,
+            }}
+            slideIndex={currentSlideIndex}
+          />
+        ))}
 
-      {/* Slide progress indicators */}
-      {slides.length > 1 && (
-        <div style={{
-          position: 'absolute',
-          bottom: '1rem',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: '0.5rem',
-          opacity: 0.6
-        }}>
-          {slides.slice(0, Math.min(slides.length, 10)).map((_, idx) => (
-            <div
-              key={idx}
-              style={{
-                width: idx === currentSlideIndex ? '1.5rem' : '0.5rem',
-                height: '0.5rem',
-                borderRadius: '0.25rem',
-                backgroundColor: idx === currentSlideIndex ? '#3b82f6' : '#fff',
-                transition: 'all 0.3s ease'
-              }}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+        {/* Slide progress indicators */}
+        {slides.length > 1 && (
+          <div style={{
+            position: 'absolute',
+            bottom: '1rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: '0.5rem',
+            opacity: 0.6
+          }}>
+            {slides.slice(0, Math.min(slides.length, 10)).map((_, idx) => (
+              <div
+                key={idx}
+                style={{
+                  width: idx === currentSlideIndex ? '1.5rem' : '0.5rem',
+                  height: '0.5rem',
+                  borderRadius: '0.25rem',
+                  backgroundColor: idx === currentSlideIndex ? '#3b82f6' : '#fff',
+                  transition: 'all 0.3s ease'
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </DataRefreshProvider>
   );
 }
 

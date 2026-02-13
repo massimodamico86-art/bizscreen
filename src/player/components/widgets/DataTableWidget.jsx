@@ -2,12 +2,11 @@
 // Data table widget for rendering tabular data from a data source on player screens
 // Supports auto-pagination, column filtering, and brand theme inheritance
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { getDataSource, formatValue } from '../../../services/dataSourceService';
 import { cacheDataSource, getCachedDataSource } from '../../cacheService';
-import { createScopedLogger } from '../../../services/loggingService.js';
-
-const logger = createScopedLogger('DataTableWidget');
+import { useWidgetData } from '../../hooks/useWidgetData.js';
+import { SyncStatusIndicator } from './SyncStatusIndicator.jsx';
 
 /**
  * DataTableWidget - Renders tabular data with headers, alternating rows, and auto-pagination
@@ -48,93 +47,60 @@ export function DataTableWidget({ props = {} }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [displayedPage, setDisplayedPage] = useState(0);
   const [opacity, setOpacity] = useState(1);
+  const [dataFadeOpacity, setDataFadeOpacity] = useState(1);
   const dataRef = useRef(null);
   const isFirstRender = useRef(true);
+  const dataVersion = useRef(0);
 
-  // Keep dataRef in sync with state
+  // Orchestrator integration
+  const sourceKey = dataSourceId ? `data-source:${dataSourceId}` : null;
+  const fetchFn = useCallback(async () => {
+    const result = await getDataSource(dataSourceId);
+    return result;
+  }, [dataSourceId]);
+  const cacheFn = useCallback(async (_key, data) => {
+    await cacheDataSource(dataSourceId, data);
+  }, [dataSourceId]);
+  const { data: orchestratorData, lastFetchedAt } = useWidgetData(sourceKey, fetchFn, refreshIntervalMinutes * 60 * 1000, cacheFn);
+
+  // Offline cache fallback
   useEffect(() => {
-    dataRef.current = data;
-  }, [data]);
-
-  // Initial data load
-  useEffect(() => {
-    if (!dataSourceId) return;
-
+    if (!dataSourceId || orchestratorData) return;
     let cancelled = false;
+    getCachedDataSource(dataSourceId).then(cached => {
+      if (!cancelled && cached && !orchestratorData) setData(cached);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [dataSourceId, orchestratorData]);
 
-    async function loadData() {
-      try {
-        const result = await getDataSource(dataSourceId);
-        if (!cancelled && result) {
-          if (result.rows?.length !== dataRef.current?.rows?.length) {
-            setCurrentPage(0);
-          }
-          setData(result);
-          // Cache for offline use
-          cacheDataSource(dataSourceId, result).catch((err) => {
-            logger.warn('Failed to cache data source', { error: err });
-          });
-        }
-      } catch (err) {
-        logger.warn('Failed to fetch data source, trying cache', { error: err });
-        // Silent fallback to cached data
-        try {
-          const cached = await getCachedDataSource(dataSourceId);
-          if (!cancelled && cached) {
-            if (cached.rows?.length !== dataRef.current?.rows?.length) {
-              setCurrentPage(0);
-            }
-            setData(cached);
-          }
-        } catch (cacheErr) {
-          logger.warn('Failed to get cached data source', { error: cacheErr });
-        }
+  // Use orchestrator data with local cache fallback
+  const activeData = orchestratorData || data;
+
+  // Keep dataRef in sync
+  useEffect(() => {
+    dataRef.current = activeData;
+  }, [activeData]);
+
+  // Smart page reset when row count changes
+  useEffect(() => {
+    if (orchestratorData && dataRef.current) {
+      if (orchestratorData.rows?.length !== dataRef.current.rows?.length) {
+        setCurrentPage(0);
       }
     }
+  }, [orchestratorData]);
 
-    loadData();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [dataSourceId]);
-
-  // Refresh timer
+  // Data refresh fade transition (200ms opacity dip on subsequent fetches)
   useEffect(() => {
-    if (!dataSourceId || !refreshIntervalMinutes) return;
-
-    const intervalMs = refreshIntervalMinutes * 60 * 1000;
-
-    const interval = setInterval(async () => {
-      try {
-        const result = await getDataSource(dataSourceId);
-        if (result) {
-          if (result.rows?.length !== dataRef.current?.rows?.length) {
-            setCurrentPage(0);
-          }
-          setData(result);
-          cacheDataSource(dataSourceId, result).catch((err) => {
-            logger.warn('Failed to cache on refresh', { error: err });
-          });
-        }
-      } catch (err) {
-        logger.warn('Refresh failed, keeping current data', { error: err });
-        // On refresh failure, try cache if we have no data yet
-        if (!dataRef.current) {
-          try {
-            const cached = await getCachedDataSource(dataSourceId);
-            if (cached) {
-              setData(cached);
-            }
-          } catch (cacheErr) {
-            logger.warn('Cache fallback failed on refresh', { error: cacheErr });
-          }
-        }
-      }
-    }, intervalMs);
-
-    return () => clearInterval(interval);
-  }, [dataSourceId, refreshIntervalMinutes]);
+    if (!orchestratorData) return;
+    dataVersion.current += 1;
+    if (dataVersion.current <= 1) return; // Skip first load
+    setDataFadeOpacity(0);
+    const timeout = setTimeout(() => {
+      setDataFadeOpacity(1);
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [orchestratorData]);
 
   // Fade transition when page changes
   useEffect(() => {
@@ -152,8 +118,8 @@ export function DataTableWidget({ props = {} }) {
   }, [currentPage]);
 
   // Compute visible fields
-  const fields = data?.fields || [];
-  const rows = data?.rows || [];
+  const fields = activeData?.fields || [];
+  const rows = activeData?.rows || [];
 
   const visibleFields = (() => {
     // Start with column order or source order
@@ -189,11 +155,12 @@ export function DataTableWidget({ props = {} }) {
   }, [totalPages, pageIntervalSeconds]);
 
   // No data or no fields: render nothing (silent)
-  if (!data || visibleFields.length === 0) {
+  if (!activeData || visibleFields.length === 0) {
     return null;
   }
 
   return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
     <div
       style={{
         width: '100%',
@@ -202,6 +169,8 @@ export function DataTableWidget({ props = {} }) {
         flexDirection: 'column',
         fontFamily: 'system-ui, sans-serif',
         overflow: 'hidden',
+        opacity: dataFadeOpacity,
+        transition: 'opacity 0.2s ease-in-out',
       }}
     >
       {/* Header row */}
@@ -332,6 +301,8 @@ export function DataTableWidget({ props = {} }) {
           {currentPage + 1} / {totalPages}
         </div>
       )}
+    </div>
+    <SyncStatusIndicator lastRefreshedAt={lastFetchedAt} />
     </div>
   );
 }
