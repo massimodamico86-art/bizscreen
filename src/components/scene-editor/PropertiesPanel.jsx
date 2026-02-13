@@ -30,6 +30,7 @@ import {
   Sparkles,
   Square,
   Table2,
+  Timer,
   Type,
   X,
 } from 'lucide-react';
@@ -45,6 +46,7 @@ import { useLogger } from '../../hooks/useLogger.js';
 import { DataTableWidgetControls } from './DataTableWidgetControls';
 import { RssWidgetControls } from './RssWidgetControls';
 import { SocialFeedWidgetControls } from './SocialFeedWidgetControls';
+import { CountdownWidgetControls } from './CountdownWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -652,6 +654,7 @@ function WidgetControls({ block, onUpdate }) {
     { key: 'rss-ticker', icon: Rss, label: 'News Ticker' },
     { key: 'rss-card', icon: Newspaper, label: 'News Cards' },
     { key: 'social-feed', icon: Share2, label: 'Social Feed' },
+    { key: 'countdown', icon: Timer, label: 'Countdown' },
   ];
 
   const props = block.props || {};
@@ -849,6 +852,14 @@ function WidgetControls({ block, onUpdate }) {
       {/* Social Feed Widget Controls */}
       {widgetType === 'social-feed' && (
         <SocialFeedWidgetControls
+          props={props}
+          onPropChange={handlePropChange}
+        />
+      )}
+
+      {/* Countdown Widget Controls */}
+      {widgetType === 'countdown' && (
+        <CountdownWidgetControls
           props={props}
           onPropChange={handlePropChange}
         />
