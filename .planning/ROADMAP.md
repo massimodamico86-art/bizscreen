@@ -10,6 +10,7 @@
 - [x] **v2.4 Tech Debt Zero** — Phases 42-45 (shipped 2026-02-10)
 - [x] **v3.0 Creative Experience** — Phases 46-50 (shipped 2026-02-11)
 - [x] **v3.1 Data-Driven Screens** — Phases 51-55 (shipped 2026-02-13)
+- [ ] **v3.2 Display Toolkit** — Phases 56-62 (in progress)
 
 ## Phase History
 
@@ -44,6 +45,147 @@ All milestones shipped successfully.
 
 </details>
 
+## v3.2 Display Toolkit
+
+**Milestone Goal:** Make BizScreen versatile enough for any vertical by providing the display building blocks every signage deployment needs -- weather, video, screen groups, portrait mode, enhanced widgets, and menu boards.
+
+### Phases
+
+- [ ] **Phase 56: Widget Registry + Clock/Date** — Centralized widget registry and timezone-aware clock/date widgets
+- [ ] **Phase 57: QR Code Enhancement** — WiFi QR codes, error correction, brand logo overlay, import fix
+- [ ] **Phase 58: Weather Security + Enhancement** — Server-side API key proxy, forecast mode, offline caching
+- [ ] **Phase 59: Video Playback** — HTML5 video in layout zones with HLS adaptive streaming
+- [ ] **Phase 60: Screen Groups & Tags** — Tag management, filtering, bulk operations, group content push
+- [ ] **Phase 61: Portrait Mode** — Per-screen orientation, portrait canvas, CSS rotation, portrait templates
+- [ ] **Phase 62: Menu Board Widget** — Structured menu CRUD, themed rendering, auto-pagination, realtime updates
+
+### Phase Details
+
+#### Phase 56: Widget Registry + Clock/Date
+**Goal**: Users see accurate, timezone-aware clocks and dates on their screens, and the codebase has a single widget registry that all rendering paths share
+**Depends on**: Nothing (first phase, establishes patterns for all subsequent widget work)
+**Requirements**: INFRA-01, INFRA-02, CLOCK-01, CLOCK-02, CLOCK-03, CLOCK-04, CLOCK-05, CLOCK-06
+**Success Criteria** (what must be TRUE):
+  1. Adding a new widget type requires registering in ONE place (the registry), not editing 3+ switch statements
+  2. Switching a zone's widget type in the editor resets properties to the new type's defaults (no stale props from previous type)
+  3. User can configure a clock widget with timezone, 12h/24h format, seconds toggle, and analog style -- and the player renders it using the screen's assigned timezone (not browser timezone)
+  4. User can place a combined clock+date widget in a layout zone that shows both time and date together
+**Plans**: TBD
+
+Plans:
+- [ ] 56-01: Widget registry refactor
+- [ ] 56-02: Clock/date widget enhancements
+
+#### Phase 57: QR Code Enhancement
+**Goal**: Users can generate any QR code type they need -- URLs, WiFi credentials, plain text -- with brand customization and reliable rendering
+**Depends on**: Phase 56 (widget registry pattern)
+**Requirements**: QR-01, QR-02, QR-03, QR-04, QR-05
+**Success Criteria** (what must be TRUE):
+  1. User can select QR type (URL, WiFi, plain text) from a dropdown in the layout editor sidebar and the QR code renders correctly for each type
+  2. User can configure a WiFi QR code with SSID, password, and encryption type that mobile devices can scan to auto-connect
+  3. User can add a brand logo to the QR code center, which automatically sets error correction to H for scan reliability
+  4. QR code widget renders without crashing on deployed players (QRCodeSVG import bug fixed)
+**Plans**: TBD
+
+Plans:
+- [ ] 57-01: QR code types, error correction, and import fix
+- [ ] 57-02: WiFi QR config UI and brand logo overlay
+
+#### Phase 58: Weather Security + Enhancement
+**Goal**: Weather data displays securely on screens with forecast capability and offline resilience, with no API keys exposed in the client bundle
+**Depends on**: Phase 56 (widget registry)
+**Requirements**: WTHR-01, WTHR-02, WTHR-03, WTHR-04
+**Success Criteria** (what must be TRUE):
+  1. Weather data is fetched through a server-side Edge Function proxy -- the OpenWeatherMap API key never appears in client JavaScript
+  2. User can configure a weather widget in forecast mode showing multi-day forecast (not just current conditions)
+  3. Weather widget displays times formatted to the screen's assigned timezone
+  4. When a player goes offline, weather widget shows cached data from IndexedDB with a "last updated" indicator
+**Plans**: TBD
+
+Plans:
+- [ ] 58-01: Weather proxy Edge Function and client migration
+- [ ] 58-02: Forecast mode, timezone, and offline caching
+
+#### Phase 59: Video Playback
+**Goal**: Users can add video content to their screen layouts with reliable autoplay and adaptive streaming support
+**Depends on**: Phase 56 (widget registry)
+**Requirements**: VIDEO-01, VIDEO-02, VIDEO-03, VIDEO-04, VIDEO-05
+**Success Criteria** (what must be TRUE):
+  1. User can add an MP4 video as an element in a layout zone and it autoplays muted and loops in the player
+  2. User can use HLS (.m3u8) URLs for adaptive bitrate streaming that adjusts to network conditions
+  3. Video elements show a static poster frame in the editor (no autoplay in editor)
+  4. When a video stalls on a player, the existing stuck detection system recovers playback automatically
+**Plans**: TBD
+
+Plans:
+- [ ] 59-01: Video element in layout zones with autoplay/loop
+- [ ] 59-02: HLS streaming integration and stuck detection
+
+#### Phase 60: Screen Groups & Tags
+**Goal**: Users can organize screens with tags and push content to groups of screens efficiently
+**Depends on**: Nothing (independent of widget phases, can execute in parallel)
+**Requirements**: GROUP-01, GROUP-02, GROUP-03, GROUP-04, GROUP-05
+**Success Criteria** (what must be TRUE):
+  1. User can add and remove tags on screen groups using a chip-style UI
+  2. User can filter the screen groups list by tag to find specific groups quickly
+  3. User can push a playlist to all screens in a group with one action
+  4. User can select multiple screen groups and perform bulk actions (delete, tag, assign content)
+**Plans**: TBD
+
+Plans:
+- [ ] 60-01: Tag management UI and filtering
+- [ ] 60-02: Group content push and bulk operations
+
+#### Phase 61: Portrait Mode
+**Goal**: Users can deploy screens in portrait orientation with properly oriented content and templates
+**Depends on**: Phase 56 (widget registry for portrait widget rendering)
+**Requirements**: PORT-01, PORT-02, PORT-03, PORT-04, PORT-05
+**Success Criteria** (what must be TRUE):
+  1. User can set a screen's orientation to portrait in screen settings, and the system stores this per device
+  2. User can design content in the layout editor using a portrait (9:16) canvas
+  3. When portrait content plays on a landscape-mounted device (or vice versa), the player applies CSS rotation to display it correctly
+  4. At least 3 portrait-oriented templates are available in the template marketplace
+  5. User sees a warning when scheduling portrait content to a landscape screen (and vice versa)
+**Plans**: TBD
+
+Plans:
+- [ ] 61-01: Screen orientation setting and portrait canvas
+- [ ] 61-02: Player CSS rotation and orientation mismatch warning
+- [ ] 61-03: Portrait templates
+
+#### Phase 62: Menu Board Widget
+**Goal**: Users can create and manage structured menu boards that render beautifully on screens with real-time updates
+**Depends on**: Phase 56 (widget registry), Phase 61 (portrait mode -- menu boards often run portrait)
+**Requirements**: MENU-01, MENU-02, MENU-03, MENU-04, MENU-05, MENU-06, MENU-07, MENU-08, MENU-09
+**Success Criteria** (what must be TRUE):
+  1. User can create a menu board with categories and items (name, description, price, image) and reorder them via drag-and-drop
+  2. Menu board renders as a themed widget on screen with category headers, item names, prices, descriptions, and dietary/allergen badges
+  3. Menu board supports multiple price columns (e.g., Small/Medium/Large) and auto-paginates long menus with smooth transitions
+  4. User can toggle item availability on/off without deleting, and changes appear on screen in near-real-time via Supabase Realtime
+  5. Menu board formats currency according to the tenant's locale setting
+**Plans**: TBD
+
+Plans:
+- [ ] 62-01: Menu board schema, CRUD, and editor integration
+- [ ] 62-02: Menu board player widget with rendering and pagination
+- [ ] 62-03: Realtime updates, dietary tags, and locale formatting
+
+## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
+(Phase 60 is independent and can parallel with 57-59 if needed)
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 56. Widget Registry + Clock/Date | v3.2 | 0/2 | Not started | - |
+| 57. QR Code Enhancement | v3.2 | 0/2 | Not started | - |
+| 58. Weather Security + Enhancement | v3.2 | 0/2 | Not started | - |
+| 59. Video Playback | v3.2 | 0/2 | Not started | - |
+| 60. Screen Groups & Tags | v3.2 | 0/2 | Not started | - |
+| 61. Portrait Mode | v3.2 | 0/3 | Not started | - |
+| 62. Menu Board Widget | v3.2 | 0/3 | Not started | - |
+
 ## Progress Summary
 
 | Milestone | Phases | Plans | Status | Shipped |
@@ -56,8 +198,9 @@ All milestones shipped successfully.
 | v2.4 Tech Debt Zero | 42-45 | 11 | Complete | 2026-02-10 |
 | v3.0 Creative Experience | 46-50 | 10 | Complete | 2026-02-11 |
 | v3.1 Data-Driven Screens | 51-55 | 15 | Complete | 2026-02-13 |
+| v3.2 Display Toolkit | 56-62 | 0/16 | In progress | - |
 
-**Total:** 55 phases complete, 195 plans executed | 8 milestones shipped
+**Total:** 55 phases complete + 7 planned, 195 plans executed + 16 planned | 8 milestones shipped, 1 in progress
 
 ---
-*Last updated: 2026-02-13 — v3.1 Data-Driven Screens milestone archived.*
+*Last updated: 2026-02-13 -- v3.2 Display Toolkit roadmap created.*

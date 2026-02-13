@@ -103,53 +103,53 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLOCK-01 | — | Pending |
-| CLOCK-02 | — | Pending |
-| CLOCK-03 | — | Pending |
-| CLOCK-04 | — | Pending |
-| CLOCK-05 | — | Pending |
-| CLOCK-06 | — | Pending |
-| WTHR-01 | — | Pending |
-| WTHR-02 | — | Pending |
-| WTHR-03 | — | Pending |
-| WTHR-04 | — | Pending |
-| QR-01 | — | Pending |
-| QR-02 | — | Pending |
-| QR-03 | — | Pending |
-| QR-04 | — | Pending |
-| QR-05 | — | Pending |
-| VIDEO-01 | — | Pending |
-| VIDEO-02 | — | Pending |
-| VIDEO-03 | — | Pending |
-| VIDEO-04 | — | Pending |
-| VIDEO-05 | — | Pending |
-| PORT-01 | — | Pending |
-| PORT-02 | — | Pending |
-| PORT-03 | — | Pending |
-| PORT-04 | — | Pending |
-| PORT-05 | — | Pending |
-| GROUP-01 | — | Pending |
-| GROUP-02 | — | Pending |
-| GROUP-03 | — | Pending |
-| GROUP-04 | — | Pending |
-| GROUP-05 | — | Pending |
-| MENU-01 | — | Pending |
-| MENU-02 | — | Pending |
-| MENU-03 | — | Pending |
-| MENU-04 | — | Pending |
-| MENU-05 | — | Pending |
-| MENU-06 | — | Pending |
-| MENU-07 | — | Pending |
-| MENU-08 | — | Pending |
-| MENU-09 | — | Pending |
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
+| INFRA-01 | Phase 56 | Pending |
+| INFRA-02 | Phase 56 | Pending |
+| CLOCK-01 | Phase 56 | Pending |
+| CLOCK-02 | Phase 56 | Pending |
+| CLOCK-03 | Phase 56 | Pending |
+| CLOCK-04 | Phase 56 | Pending |
+| CLOCK-05 | Phase 56 | Pending |
+| CLOCK-06 | Phase 56 | Pending |
+| QR-01 | Phase 57 | Pending |
+| QR-02 | Phase 57 | Pending |
+| QR-03 | Phase 57 | Pending |
+| QR-04 | Phase 57 | Pending |
+| QR-05 | Phase 57 | Pending |
+| WTHR-01 | Phase 58 | Pending |
+| WTHR-02 | Phase 58 | Pending |
+| WTHR-03 | Phase 58 | Pending |
+| WTHR-04 | Phase 58 | Pending |
+| VIDEO-01 | Phase 59 | Pending |
+| VIDEO-02 | Phase 59 | Pending |
+| VIDEO-03 | Phase 59 | Pending |
+| VIDEO-04 | Phase 59 | Pending |
+| VIDEO-05 | Phase 59 | Pending |
+| GROUP-01 | Phase 60 | Pending |
+| GROUP-02 | Phase 60 | Pending |
+| GROUP-03 | Phase 60 | Pending |
+| GROUP-04 | Phase 60 | Pending |
+| GROUP-05 | Phase 60 | Pending |
+| PORT-01 | Phase 61 | Pending |
+| PORT-02 | Phase 61 | Pending |
+| PORT-03 | Phase 61 | Pending |
+| PORT-04 | Phase 61 | Pending |
+| PORT-05 | Phase 61 | Pending |
+| MENU-01 | Phase 62 | Pending |
+| MENU-02 | Phase 62 | Pending |
+| MENU-03 | Phase 62 | Pending |
+| MENU-04 | Phase 62 | Pending |
+| MENU-05 | Phase 62 | Pending |
+| MENU-06 | Phase 62 | Pending |
+| MENU-07 | Phase 62 | Pending |
+| MENU-08 | Phase 62 | Pending |
+| MENU-09 | Phase 62 | Pending |
 
 **Coverage:**
 - v3.2 requirements: 41 total
-- Mapped to phases: 0
-- Unmapped: 41 (pending roadmap creation)
+- Mapped to phases: 41
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-13*
-*Last updated: 2026-02-13 after initial definition*
+*Last updated: 2026-02-13 after roadmap creation (traceability complete)*
