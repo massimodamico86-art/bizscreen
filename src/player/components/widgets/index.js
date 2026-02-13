@@ -9,3 +9,4 @@ export { DataTableWidget } from './DataTableWidget.jsx';
 export { RssTickerWidget } from './RssTickerWidget.jsx';
 export { RssCardWidget } from './RssCardWidget.jsx';
 export { SocialFeedWidget } from './SocialFeedWidget.jsx';
+export { SyncStatusIndicator } from './SyncStatusIndicator.jsx';
