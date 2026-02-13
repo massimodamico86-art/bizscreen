@@ -113,10 +113,11 @@ Plans:
   2. Countdown displays correctly when the screen is in a different timezone than the user who configured it
   3. User can set a recurring daily countdown (e.g., "Happy Hour starts in...") that resets every day
   4. User can configure the date/time display format per locale and see the formatted output on screen
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 54-01: TBD
+- [ ] 54-01-PLAN.md — Player CountdownWidget + SceneRenderer wiring
+- [ ] 54-02-PLAN.md — Editor CountdownWidgetControls + PropertiesPanel/EditorCanvas/LivePreviewWindow
 
 #### Phase 55: Player Data Orchestrator & Polish
 **Goal**: All dynamic widgets on a screen are managed by a unified refresh orchestrator with smooth transitions, auto-pagination for large datasets, image rendering from URL fields, and a visible sync status indicator
