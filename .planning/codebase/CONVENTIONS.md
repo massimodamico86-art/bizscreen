@@ -1,219 +1,191 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-02-12
+**Analysis Date:** 2026-02-13
 
 ## Naming Patterns
 
 **Files:**
-- Components: PascalCase with `.jsx` extension - `FeedbackWidget.jsx`, `StatCard.jsx`
-- Services: camelCase with `.js` extension - `screenService.js`, `playlistService.js`
-- Pages: PascalCase with `Page.jsx` suffix - `LoginPage.jsx`, `SignupPage.jsx`
-- Hooks: camelCase with `use` prefix - `useLogger.js`, `useAuth.test.js`
-- Tests: Same name as source with `.test.js` or `.spec.js` - `cacheService.test.js`, `auth.spec.js`
-- Config: camelCase or kebab-case - `featureFlags.js`, `eslint.config.js`
+- React components: PascalCase with `.jsx` extension - `AuthContext.jsx`, `DashboardPage.jsx`
+- Services: camelCase with `.js` extension - `authService.js`, `loggingService.js`
+- Utilities: camelCase with `.js` extension - `formatters.js`, `sanitize.js`
+- Test files: Match source name with `.test.js` or `.spec.js` - `alertEngineService.test.js`, `dashboard.spec.js`
+- Barrel exports: `index.js` or `index.jsx` depending on content type
 
 **Functions:**
-- Components: PascalCase - `FeedbackWidget`, `StatCard`
-- Service functions: camelCase - `fetchScreens`, `updateScreen`, `createPlaylist`
-- Hooks: camelCase with `use` prefix - `useLogger`, `useAuth`
-- Event handlers: `handle` prefix - `handleSubmit`, `handleClick`
+- Components: PascalCase - `function AuthProvider()`, `function SafeHTML()`
+- Regular functions: camelCase - `function formatDate()`, `function signUp()`
+- Exported service functions: camelCase - `export async function raiseAlert()`, `export function getBranding()`
 
 **Variables:**
-- Constants: UPPER_SNAKE_CASE - `ACTIONS`, `RESOURCE_TYPES`, `FeedbackTypes`
-- Regular variables: camelCase - `screenData`, `isLoading`, `errorMessage`
-- React state: camelCase - `isOpen`, `setIsOpen`
-- Boolean flags: `is`, `has`, `should` prefix - `isLoading`, `hasError`, `shouldRetry`
+- Local variables: camelCase - `const userProfile`, `let retryCount`
+- Constants: SCREAMING_SNAKE_CASE - `const AUTH_STATUS`, `const ALERT_TYPES`
+- React hooks results: camelCase with destructuring - `const [user, setUser] = useState(null)`
 
 **Types:**
-- Interfaces/Types: Not used (JavaScript, not TypeScript)
-- Enums: Object with UPPER_SNAKE_CASE keys - `FeedbackTypes.BUG`
+- JSDoc type definitions use PascalCase - `@typedef {Object} BrandingContextValue`
+- Enum-like objects use SCREAMING_SNAKE_CASE keys - `ALERT_STATUSES.OPEN`
 
 ## Code Style
 
 **Formatting:**
-- No Prettier config detected - formatting relies on ESLint auto-fix
-- Indentation: 2 spaces (implicit from codebase)
-- Semicolons: Consistently used at statement ends
-- Quotes: Single quotes for strings, double quotes in JSX
-- Line length: No enforced limit
+- No automated formatter detected (no `.prettierrc` or Prettier config found)
+- Indentation: 2 spaces (consistent across all files)
+- Line length: No enforced limit (manual formatting)
+- Semicolons: Consistently used at end of statements
+- Quotes: Single quotes for strings (`'string'`), double quotes in JSX attributes (`className="class"`)
+- Trailing commas: Used in multi-line objects and arrays
 
 **Linting:**
-- Tool: ESLint 9.x with flat config (`eslint.config.js`)
-- Config: `eslint.config.js` with multiple context-specific rule sets
-- Auto-fix: Available via `npm run lint`
-- Enforcement: Error level for most rules (blocks commits via lint-staged)
-
-**Key ESLint Rules:**
-- `no-console`: Error (allows `console.warn`, `console.error` only)
-- `unused-imports/no-unused-imports`: Error (auto-fixable)
-- `unused-imports/no-unused-vars`: Error (allows `_` prefix for intentionally unused)
-- `no-undef`: Error
-- `react/jsx-uses-react`: Error (ensures JSX element detection)
-- `react/jsx-uses-vars`: Error (prevents false unused var warnings)
-- `react/prop-types`: Off (deprecated in React 19+)
-- `jsdoc/require-jsdoc`: Off (not enforced)
+- Tool: ESLint 9 with flat config (`eslint.config.js`)
+- Plugins: `react`, `react-hooks`, `react-refresh`, `unused-imports`, `jsdoc`
+- Key rules enforced at error level:
+  - `no-console: error` (except `console.warn` and `console.error`)
+  - `unused-imports/no-unused-imports: error` (auto-fixable)
+  - `unused-imports/no-unused-vars: error` (ignores `_` prefix)
+  - `react/jsx-uses-react: error`
+  - `react/jsx-uses-vars: error`
+  - `no-undef: error`
+- PropTypes disabled - not used in this codebase (React 19+)
+- JSDoc enforcement disabled - too impractical for codebase size
+- Pre-commit hook via Husky + lint-staged runs `eslint --fix` on staged files
 
 ## Import Organization
 
 **Order:**
-1. External libraries (React, third-party packages)
-2. Internal modules (services, utils, hooks)
-3. Relative imports (components, assets)
-4. No path aliases detected
-
-**Pattern:**
-```javascript
-// External
-import { useState, useCallback } from 'react';
-import { createPortal } from 'react-dom';
-import { Bug, Check, X } from 'lucide-react';
-
-// Services/utilities
-import { submitQuickFeedback } from '../services/feedbackService';
-import { useLogger } from '../hooks/useLogger.js';
-
-// Components
-import StatCard from './StatCard';
-```
+1. React imports - `import { useState, useEffect } from 'react'`
+2. Third-party libraries - `import { supabase } from '@supabase/supabase-js'`
+3. Absolute imports from `src/` - `import { useAuth } from '../contexts/AuthContext'`
+4. Relative imports - `import { formatDate } from '../utils/formatters'`
+5. CSS/asset imports (if any)
 
 **Path Aliases:**
-- None detected - uses relative imports (`../`, `../../`)
+- No path aliases configured
+- All imports use relative paths (`../`, `../../`) from current file location
+- Services typically imported from `../services/` or `../../services/`
+- Components from `../components/` or relative paths
+
+**Import Style:**
+- Named imports preferred - `import { createClient } from '@supabase/supabase-js'`
+- Default imports for React components - `import AuthRetryBanner from '../components/AuthRetryBanner'`
+- Namespace imports for utilities - `import * as analytics from '../../services/playerAnalyticsService'`
 
 ## Error Handling
 
 **Patterns:**
-- Async functions: Try-catch with error throwing
-- Service layer: Throws errors to caller
-- Component layer: Error state variables
+- Try-catch blocks wrap all async operations in services
+- Errors logged using scoped logger: `logger.error('Operation failed', { error, context })`
+- Functions return error objects: `return { data: null, error: error.message }`
+- React components use Error Boundaries for rendering errors
+- No throwing errors to callers - always return `{ data, error }` tuple
 
-**Example from `screenService.js`:**
+**Service Layer Example:**
 ```javascript
-export async function fetchScreens({ search = '', limit = 100 } = {}) {
-  const { data, error } = await query;
-  if (error) throw error;
-  return data || [];
+export async function signUp({ email, password }) {
+  try {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      return { user: null, error: error.message };
+    }
+    logger.info('User signed up successfully', { userId: data.user.id });
+    return { user: data.user, error: null };
+  } catch (error) {
+    logger.error('Signup failed', { error });
+    return { user: null, error: error.message };
+  }
 }
 ```
 
-**Supabase Pattern:**
-- All database operations return `{ data, error }`
-- Check error and throw if present
-- Return data or fallback value
+**Component Error Handling:**
+- Use `ErrorBoundary` component from `src/components/ErrorBoundary.jsx`
+- Wrap top-level routes and critical sections
+- Fallback UI shows "Something Went Wrong" message
 
 ## Logging
 
-**Framework:** Custom scoped logger (`loggingService.js`)
+**Framework:** Custom logging service (`src/services/loggingService.js`)
 
 **Patterns:**
-```javascript
-import { createScopedLogger } from './loggingService.js';
-const logger = createScopedLogger('ScreenService');
-
-// Or in components via hook
-import { useLogger } from '../hooks/useLogger.js';
-const logger = useLogger('FeedbackWidget');
-```
-
-**Levels:**
-- `logger.trace()` - Detailed debugging
-- `logger.debug()` - Debug information
-- `logger.info()` - General information
-- `logger.warn()` - Warnings
-- `logger.error()` - Errors
-- `logger.fatal()` - Critical failures
+- Create scoped logger at module top: `const logger = createScopedLogger('ComponentName')`
+- Use appropriate log levels:
+  - `logger.trace()` - Detailed debugging (typically disabled)
+  - `logger.debug()` - Development debugging
+  - `logger.info()` - Notable events, user actions
+  - `logger.warn()` - Warnings, non-critical issues
+  - `logger.error()` - Errors, exceptions
+  - `logger.fatal()` - Critical failures
+- Always include context object: `logger.error('Failed to load', { error, userId })`
+- React components use `useLogger` hook: `const logger = useLogger('MyComponent')`
 
 **Console Usage:**
-- Direct `console.log()` forbidden in source (ESLint error)
-- Allowed in tests, scripts, config files
-- `console.warn()` and `console.error()` allowed everywhere
+- Direct `console.log` is blocked by ESLint (`no-console: error`)
+- Use logger service instead
+- Exceptions: `console.warn` and `console.error` allowed for compatibility
 
 ## Comments
 
 **When to Comment:**
-- File-level JSDoc headers for purpose/context
+- JSDoc headers for public APIs and exported functions
 - Complex business logic requiring explanation
-- TODO/FIXME for known issues
-- Not required for simple, self-explanatory code
+- TODO/FIXME markers for known issues (rare - only 2 found in codebase)
+- File headers documenting purpose of modules
+- Phase markers in tests linking to planning docs
 
-**JSDoc:**
-- Not enforced (`jsdoc/require-jsdoc: off`)
-- Used sparingly for complex functions
-- Parameter documentation optional
-
-**Example from `screenService.js`:**
-```javascript
-/**
- * Fetch all screens for the current user
- */
-export async function fetchScreens({ search = '', limit = 100 } = {}) {
-```
+**JSDoc/TSDoc:**
+- Used for service functions and complex utilities
+- Not enforced on all functions (ESLint rule disabled)
+- Format:
+  ```javascript
+  /**
+   * Brief description
+   * @param {string} userId - Description
+   * @returns {Promise<{data: object|null, error: string|null}>}
+   */
+  ```
+- Type hints use JSDoc syntax in `.js` files: `@typedef`, `@param`, `@returns`
 
 **Inline Comments:**
-- Used to explain non-obvious logic
-- Prefer descriptive code over comments
+- Explain "why" not "what"
+- Clarify non-obvious logic
+- Mark intentional deviations from patterns
 
 ## Function Design
 
 **Size:**
-- No enforced limit
-- Generally focused on single responsibility
-- Service functions: 10-50 lines typical
-- Component functions: 50-200 lines typical
+- Functions under 100 lines preferred
+- Service functions 20-50 lines typical
+- Complex operations broken into helper functions
+- Test files can be longer (500+ lines acceptable for comprehensive coverage)
 
 **Parameters:**
-- Prefer object parameters for multiple options: `fetchScreens({ search, limit })`
-- Use destructuring with defaults: `{ search = '', limit = 100 } = {}`
-- Avoid positional parameters beyond 2-3 arguments
+- Use object destructuring for multiple parameters: `function signUp({ email, password, fullName })`
+- Optional parameters with defaults: `function formatDate(dateString, options = {})`
+- Named parameters preferred over positional for clarity
 
 **Return Values:**
-- Services: Return data directly or throw errors
-- Async functions: Return promises
-- Components: Return JSX
-
-**Async/Await:**
-- Preferred over `.then()` chains
-- Used consistently in service layer
+- Services return `{ data, error }` tuple consistently
+- React components return JSX or `null`
+- Predicates return boolean: `function isEmergencyExpired()`
+- Async functions always return Promise
 
 ## Module Design
 
 **Exports:**
-- Named exports preferred: `export async function fetchScreens()`
-- Default exports for React components: `export default StatCard`
-- Avoid mixing default + named exports in same file
-
-**File Organization:**
-- Imports at top
-- Constants/helpers after imports
-- Main logic/component function
-- Helper functions after main
-- Export at bottom (for default exports)
+- Named exports preferred: `export function raiseAlert()`, `export const ALERT_TYPES`
+- Default exports for React components: `export default function DashboardPage()`
+- Barrel files re-export related modules: `export { BackgroundMusicSelector } from './BackgroundMusicSelector'`
 
 **Barrel Files:**
-- Not used - direct imports preferred
-- Example: `import { fetchScreens } from '../services/screenService'`
+- Used for component groups: `src/components/listings/index.js`
+- Simplify imports: `import { BackgroundMusicSelector } from '../components/listings'`
+- Named exports only in barrel files
 
-## React Patterns
-
-**Component Declaration:**
-- Function components only (no class components detected)
-- Named function declarations or arrow functions
-- Export default for components: `export default function LoginPage()`
-
-**Hooks:**
-- Custom hooks in `src/hooks/` directory
-- Prefix with `use`: `useLogger`, `useAuth`
-- Follow Rules of Hooks (enforced by `react-hooks/recommended`)
-
-**Props:**
-- Destructure in function signature: `function StatCard({ title, value, icon })`
-- Use `...props` for pass-through: `{ title, value, ...props }`
-- No PropTypes (deprecated in React 19+)
-
-**State Management:**
-- `useState` for local state
-- Context for shared state (`AuthContext`, `BrandingContext`)
-- No Redux or external state library
+**Module Structure:**
+- Imports at top
+- Constants after imports
+- Helper functions before main exports
+- Main exports at bottom
+- No circular dependencies (broken with mocks in tests)
 
 ---
 
-*Convention analysis: 2026-02-12*
+*Convention analysis: 2026-02-13*
