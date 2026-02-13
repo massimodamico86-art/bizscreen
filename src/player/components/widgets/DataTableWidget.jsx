@@ -259,9 +259,42 @@ export function DataTableWidget({ props = {} }) {
             >
               {visibleFields.map((field) => {
                 const rawValue = row.values?.[field.name];
+                const dataType = field.data_type || field.dataType;
+
+                // Render image_url fields as actual images
+                if (dataType === 'image_url' && rawValue) {
+                  return (
+                    <div
+                      key={field.name}
+                      style={{
+                        flex: 1,
+                        padding: '0 0.5rem',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <img
+                        src={rawValue}
+                        alt=""
+                        style={{
+                          maxHeight: '100%',
+                          maxWidth: '100%',
+                          objectFit: 'contain',
+                          display: 'block',
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  );
+                }
+
                 const displayValue = formatValue(
                   rawValue,
-                  field.data_type || field.dataType,
+                  dataType,
                   field.format_options || field.formatOptions
                 );
 
