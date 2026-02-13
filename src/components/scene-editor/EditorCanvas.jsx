@@ -23,6 +23,7 @@ import {
   Share2,
   Square,
   Table2,
+  Timer,
   Type,
 } from 'lucide-react';
 import {
@@ -57,6 +58,7 @@ const WIDGET_ICONS = {
   'rss-ticker': Rss,
   'rss-card': Newspaper,
   'social-feed': Share2,
+  countdown: Timer,
 };
 
 export default function EditorCanvas({
@@ -641,6 +643,31 @@ export default function EditorCanvas({
                 <div className="text-center text-gray-500 mt-0.5" style={{ fontSize: 'inherit' }}>Social Feed</div>
               </div>
             );
+
+          case 'countdown': {
+            const countdownTextColor = props.textColor || '#ffffff';
+            return (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-1"
+                style={{ fontSize: 'clamp(0.3rem, 0.8vw, 0.5rem)' }}>
+                {props.label && (
+                  <div className="text-gray-400 text-center truncate w-full px-1"
+                    style={{ fontSize: 'inherit' }}>
+                    {props.label}
+                  </div>
+                )}
+                <div className="flex gap-1">
+                  {['12', '05', '30', '45'].map((v, i) => (
+                    <div key={i} className="bg-gray-700/50 rounded px-0.5 text-center">
+                      <div style={{ color: countdownTextColor, fontSize: 'clamp(0.4rem, 1vw, 0.7rem)', fontWeight: '600' }}>{v}</div>
+                      <div className="text-gray-500" style={{ fontSize: 'clamp(0.2rem, 0.4vw, 0.3rem)' }}>
+                        {['D', 'H', 'M', 'S'][i]}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          }
 
           default: {
             const WidgetIcon = WIDGET_ICONS[widgetType] || Clock;

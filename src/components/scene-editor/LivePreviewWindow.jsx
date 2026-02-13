@@ -35,6 +35,7 @@ import { DataTableWidget } from '../../player/components/widgets/DataTableWidget
 import { RssTickerWidget } from '../../player/components/widgets/RssTickerWidget.jsx';
 import { RssCardWidget } from '../../player/components/widgets/RssCardWidget.jsx';
 import { SocialFeedWidget } from '../../player/components/widgets/SocialFeedWidget.jsx';
+import { CountdownWidget } from '../../player/components/widgets/CountdownWidget.jsx';
 
 /**
  * Main LivePreviewWindow component
@@ -534,6 +535,9 @@ function PreviewWidget({ widgetType, props = {} }) {
 
     case 'social-feed':
       return <SocialFeedWidget props={props} />;
+
+    case 'countdown':
+      return <CountdownWidget props={props} />;
 
     default:
       return (
