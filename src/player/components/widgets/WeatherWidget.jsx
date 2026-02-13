@@ -1,8 +1,9 @@
 // src/player/components/widgets/WeatherWidget.jsx
 // Weather widget component extracted from Player.jsx SceneWidgetRenderer
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import { getWeather } from '../../../services/weatherService.js';
-import { useLogger } from '../../../hooks/useLogger.js';
+import { useWidgetData } from '../../hooks/useWidgetData.js';
+import { SyncStatusIndicator } from './SyncStatusIndicator.jsx';
 
 // Size mappings for weather display
 const sizeMap = {
@@ -59,10 +60,6 @@ function FallbackIcon({ size = 24, accentColor }) {
  * @param {number} props.customFontSize - Custom font size in pixels (used when size='custom')
  */
 export function WeatherWidget({ props = {} }) {
-  const logger = useLogger('WeatherWidget');
-  const [weather, setWeather] = useState(null);
-  const [weatherLoading, setWeatherLoading] = useState(true);
-
   // Extract props with defaults
   const location = props.location || 'Miami, FL';
   const units = props.units || 'imperial';
@@ -72,50 +69,78 @@ export function WeatherWidget({ props = {} }) {
   const size = props.size || 'medium';
   const customFontSize = props.customFontSize;
 
-  // Fetch weather data with 10-minute auto-refresh
-  useEffect(() => {
-    const fetchWeatherData = async () => {
-      setWeatherLoading(true);
-      try {
-        const data = await getWeather(location, units);
-        setWeather(data);
-      } catch (err) {
-        logger.error('Failed to fetch weather', { error: err, location, units });
-      } finally {
-        setWeatherLoading(false);
-      }
-    };
-
-    // Fetch immediately
-    fetchWeatherData();
-
-    // Set up 10-minute refresh interval
-    const weatherInterval = setInterval(fetchWeatherData, 10 * 60 * 1000);
-    return () => clearInterval(weatherInterval);
-  }, [location, units, logger]);
+  // Orchestrator integration
+  const sourceKey = `weather:${location}:${units}`;
+  const fetchFn = useCallback(async () => {
+    const data = await getWeather(location, units);
+    return data;
+  }, [location, units]);
+  const { data: weatherData, lastFetchedAt, isLoading: orchestratorLoading } = useWidgetData(sourceKey, fetchFn, 10 * 60 * 1000, null);
 
   // Use fetched weather data, or fallback values while loading
-  const displayTemp = weather?.tempFormatted || (units === 'metric' ? '22C' : '72F');
-  const displayLocation = weather?.city || location.split(',')[0];
-  const weatherIcon = weather?.iconUrl;
-  const weatherDescription = weather?.description || 'Partly Cloudy';
+  const displayTemp = weatherData?.tempFormatted || (units === 'metric' ? '22C' : '72F');
+  const displayLocation = weatherData?.city || location.split(',')[0];
+  const weatherIcon = weatherData?.iconUrl;
+  const weatherDescription = weatherData?.description || 'Partly Cloudy';
 
   // Loading indicator style
-  const loadingOpacity = weatherLoading ? 0.6 : 1;
+  const loadingOpacity = orchestratorLoading ? 0.6 : 1;
 
   // Card style - vertical layout with background
   if (style === 'card') {
     return (
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(0,0,0,0.3)',
+          borderRadius: '12px',
+          padding: '8px',
+          fontFamily: 'system-ui, sans-serif',
+          opacity: loadingOpacity,
+          transition: 'opacity 0.3s ease',
+        }}>
+          {/* Weather Icon - from API or fallback */}
+          {weatherIcon ? (
+            <img
+              src={weatherIcon}
+              alt={weatherDescription}
+              style={{ width: 48, height: 48, marginBottom: '4px' }}
+            />
+          ) : (
+            <div style={{ marginBottom: '4px' }}>
+              <FallbackIcon size={32} accentColor={accentColor} />
+            </div>
+          )}
+          <div style={{ color: textColor, fontSize: getFontSize(size, customFontSize, 'temp'), fontWeight: '600' }}>
+            {displayTemp}
+          </div>
+          <div style={{ color: textColor, opacity: 0.8, fontSize: getFontSize(size, customFontSize, 'secondary') }}>
+            {weatherDescription}
+          </div>
+          <div style={{ color: textColor, opacity: 0.6, fontSize: getFontSize(size, customFontSize, 'secondary') }}>
+            {displayLocation}
+          </div>
+        </div>
+        <SyncStatusIndicator lastRefreshedAt={lastFetchedAt} />
+      </div>
+    );
+  }
+
+  // Minimal style (default) - horizontal layout
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div style={{
         width: '100%',
         height: '100%',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'rgba(0,0,0,0.3)',
-        borderRadius: '12px',
-        padding: '8px',
+        gap: '8px',
         fontFamily: 'system-ui, sans-serif',
         opacity: loadingOpacity,
         transition: 'opacity 0.3s ease',
@@ -125,57 +150,21 @@ export function WeatherWidget({ props = {} }) {
           <img
             src={weatherIcon}
             alt={weatherDescription}
-            style={{ width: 48, height: 48, marginBottom: '4px' }}
+            style={{ width: 36, height: 36 }}
           />
         ) : (
-          <div style={{ marginBottom: '4px' }}>
-            <FallbackIcon size={32} accentColor={accentColor} />
-          </div>
+          <FallbackIcon size={24} accentColor={accentColor} />
         )}
-        <div style={{ color: textColor, fontSize: getFontSize(size, customFontSize, 'temp'), fontWeight: '600' }}>
-          {displayTemp}
-        </div>
-        <div style={{ color: textColor, opacity: 0.8, fontSize: getFontSize(size, customFontSize, 'secondary') }}>
-          {weatherDescription}
-        </div>
-        <div style={{ color: textColor, opacity: 0.6, fontSize: getFontSize(size, customFontSize, 'secondary') }}>
-          {displayLocation}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={{ color: textColor, fontSize: getFontSize(size, customFontSize, 'temp'), fontWeight: '600', lineHeight: 1 }}>
+            {displayTemp}
+          </span>
+          <span style={{ color: textColor, opacity: 0.7, fontSize: getFontSize(size, customFontSize, 'secondary'), lineHeight: 1 }}>
+            {displayLocation}
+          </span>
         </div>
       </div>
-    );
-  }
-
-  // Minimal style (default) - horizontal layout
-  return (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '8px',
-      fontFamily: 'system-ui, sans-serif',
-      opacity: loadingOpacity,
-      transition: 'opacity 0.3s ease',
-    }}>
-      {/* Weather Icon - from API or fallback */}
-      {weatherIcon ? (
-        <img
-          src={weatherIcon}
-          alt={weatherDescription}
-          style={{ width: 36, height: 36 }}
-        />
-      ) : (
-        <FallbackIcon size={24} accentColor={accentColor} />
-      )}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={{ color: textColor, fontSize: getFontSize(size, customFontSize, 'temp'), fontWeight: '600', lineHeight: 1 }}>
-          {displayTemp}
-        </span>
-        <span style={{ color: textColor, opacity: 0.7, fontSize: getFontSize(size, customFontSize, 'secondary'), lineHeight: 1 }}>
-          {displayLocation}
-        </span>
-      </div>
+      <SyncStatusIndicator lastRefreshedAt={lastFetchedAt} />
     </div>
   );
 }
