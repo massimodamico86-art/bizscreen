@@ -46,7 +46,10 @@ export function DataTableWidget({ props = {} }) {
 
   const [data, setData] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [displayedPage, setDisplayedPage] = useState(0);
+  const [opacity, setOpacity] = useState(1);
   const dataRef = useRef(null);
+  const isFirstRender = useRef(true);
 
   // Keep dataRef in sync with state
   useEffect(() => {
@@ -63,8 +66,10 @@ export function DataTableWidget({ props = {} }) {
       try {
         const result = await getDataSource(dataSourceId);
         if (!cancelled && result) {
+          if (result.rows?.length !== dataRef.current?.rows?.length) {
+            setCurrentPage(0);
+          }
           setData(result);
-          setCurrentPage(0);
           // Cache for offline use
           cacheDataSource(dataSourceId, result).catch((err) => {
             logger.warn('Failed to cache data source', { error: err });
@@ -76,8 +81,10 @@ export function DataTableWidget({ props = {} }) {
         try {
           const cached = await getCachedDataSource(dataSourceId);
           if (!cancelled && cached) {
+            if (cached.rows?.length !== dataRef.current?.rows?.length) {
+              setCurrentPage(0);
+            }
             setData(cached);
-            setCurrentPage(0);
           }
         } catch (cacheErr) {
           logger.warn('Failed to get cached data source', { error: cacheErr });
@@ -102,8 +109,10 @@ export function DataTableWidget({ props = {} }) {
       try {
         const result = await getDataSource(dataSourceId);
         if (result) {
+          if (result.rows?.length !== dataRef.current?.rows?.length) {
+            setCurrentPage(0);
+          }
           setData(result);
-          setCurrentPage(0);
           cacheDataSource(dataSourceId, result).catch((err) => {
             logger.warn('Failed to cache on refresh', { error: err });
           });
@@ -127,6 +136,21 @@ export function DataTableWidget({ props = {} }) {
     return () => clearInterval(interval);
   }, [dataSourceId, refreshIntervalMinutes]);
 
+  // Fade transition when page changes
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      setDisplayedPage(currentPage);
+      return;
+    }
+    setOpacity(0);
+    const timeout = setTimeout(() => {
+      setDisplayedPage(currentPage);
+      setOpacity(1);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [currentPage]);
+
   // Compute visible fields
   const fields = data?.fields || [];
   const rows = data?.rows || [];
@@ -149,8 +173,8 @@ export function DataTableWidget({ props = {} }) {
   // Pagination
   const totalPages = Math.max(1, Math.ceil(rows.length / rowsPerPage));
   const pageRows = rows.slice(
-    currentPage * rowsPerPage,
-    (currentPage + 1) * rowsPerPage
+    displayedPage * rowsPerPage,
+    (displayedPage + 1) * rowsPerPage
   );
 
   // Pagination timer
@@ -211,7 +235,7 @@ export function DataTableWidget({ props = {} }) {
       )}
 
       {/* Data rows */}
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, opacity, transition: 'opacity 0.3s ease-in-out' }}>
         {pageRows.map((row, rowIndex) => {
           const isEven = rowIndex % 2 === 0;
           const rowBg = alternateRowColors
