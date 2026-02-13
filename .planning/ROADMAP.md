@@ -50,7 +50,7 @@ All milestones shipped successfully.
 - [x] **Phase 51: Data Source Widget Pipeline** — Foundation for rendering Google Sheets and CSV data on screens (completed 2026-02-12)
 - [x] **Phase 52: RSS & External Data Proxy** — Server-side feed fetching with player rendering (completed 2026-02-12)
 - [x] **Phase 53: Social Feed & Content Moderation** — Wire existing social components into layout zones with moderation (completed 2026-02-12)
-- [ ] **Phase 54: Countdown Widget & Utilities** — Timezone-aware countdown timer and locale-based formatting
+- [x] **Phase 54: Countdown Widget & Utilities** — Timezone-aware countdown timer and locale-based formatting (completed 2026-02-12)
 - [ ] **Phase 55: Player Data Orchestrator & Polish** — Unified refresh management, pagination, transitions, and status indicators
 
 ### Phase Details
@@ -116,8 +116,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 54-01-PLAN.md — Player CountdownWidget + SceneRenderer wiring
-- [ ] 54-02-PLAN.md — Editor CountdownWidgetControls + PropertiesPanel/EditorCanvas/LivePreviewWindow
+- [x] 54-01-PLAN.md — Player CountdownWidget + SceneRenderer wiring
+- [x] 54-02-PLAN.md — Editor CountdownWidgetControls + PropertiesPanel/EditorCanvas/LivePreviewWindow
 
 #### Phase 55: Player Data Orchestrator & Polish
 **Goal**: All dynamic widgets on a screen are managed by a unified refresh orchestrator with smooth transitions, auto-pagination for large datasets, image rendering from URL fields, and a visible sync status indicator
@@ -148,7 +148,7 @@ Plans:
 | v3.0 Creative Experience | 46-50 | 10 | Complete | 2026-02-11 |
 | v3.1 Data-Driven Screens | 51-55 | 6+ | In progress | - |
 
-**Total:** 53 phases complete, 194 plans executed | 7 milestones shipped | 1 milestone in progress
+**Total:** 54 phases complete, 196 plans executed | 7 milestones shipped | 1 milestone in progress
 
 ### v3.1 Phase Progress
 
@@ -157,8 +157,8 @@ Plans:
 | 51. Data Source Widget Pipeline | 3/3 | ✓ Complete | 2026-02-12 |
 | 52. RSS & External Data Proxy | 3/3 | ✓ Complete | 2026-02-12 |
 | 53. Social Feed & Content Moderation | 4/4 | ✓ Complete | 2026-02-12 |
-| 54. Countdown Widget & Utilities | 0/TBD | Not started | - |
+| 54. Countdown Widget & Utilities | 2/2 | ✓ Complete | 2026-02-12 |
 | 55. Player Data Orchestrator & Polish | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-12 — Phase 53 complete (4/4 plans). Phase 54 next.*
+*Last updated: 2026-02-12 — Phase 54 complete (2/2 plans). Phase 55 next.*
