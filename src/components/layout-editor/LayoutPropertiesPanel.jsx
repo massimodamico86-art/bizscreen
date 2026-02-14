@@ -7,23 +7,21 @@
 
 import { useState } from 'react';
 import {
-  Type,
-  Image,
-  Square,
-  Clock,
-  Calendar,
-  CloudSun,
-  QrCode,
-  Bold,
-  AlignLeft,
   AlignCenter,
+  AlignLeft,
   AlignRight,
+  Bold,
+  Clock,
   Edit3,
-  MapPin,
-  Link,
+  Image,
   Layers,
+  Link,
+  MapPin,
+  Square,
+  Type,
 } from 'lucide-react';
 import { Button } from '../../design-system';
+import { getWidgetTypes, getWidgetDefaults } from '../../widgets/registry.js';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -265,12 +263,12 @@ function ImageControls({ element, onUpdate, onEditImage }) {
 function WidgetControls({ element, onUpdate, onPropsUpdate }) {
   const { widgetType = 'clock', props = {} } = element;
 
-  const widgetTypes = [
-    { key: 'clock', icon: Clock, label: 'Clock' },
-    { key: 'date', icon: Calendar, label: 'Date' },
-    { key: 'weather', icon: CloudSun, label: 'Weather' },
-    { key: 'qr', icon: QrCode, label: 'QR Code' },
-  ];
+  const widgetTypes = getWidgetTypes();
+
+  function handleTypeChange(newType) {
+    // Reset props to new type's defaults to avoid stale props from previous type (INFRA-02)
+    onUpdate({ widgetType: newType, props: getWidgetDefaults(newType) });
+  }
 
   return (
     <div className="p-4 border-b border-gray-800 space-y-4">
@@ -282,7 +280,7 @@ function WidgetControls({ element, onUpdate, onPropsUpdate }) {
               key={key}
               variant="ghost"
               size="sm"
-              onClick={() => onUpdate({ widgetType: key })}
+              onClick={() => handleTypeChange(key)}
               className={`flex items-center gap-1 ${widgetType === key ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
             >
               <Icon className="w-3.5 h-3.5" />

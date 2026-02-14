@@ -10,6 +10,8 @@
 // The pattern: {...defaults, ...overrides, props: {...props, ...overrides?.props}}
 // ensures both shallow and deep properties are properly merged.
 
+import { getWidgetDefaults } from '../../widgets/registry.js';
+
 /**
  * @typedef {'text' | 'image' | 'widget' | 'shape'} ElementType
  */
@@ -299,15 +301,7 @@ export function createImageElement(url, overrides = {}) {
  * @returns {WidgetElement} New widget element
  */
 export function createWidgetElement(widgetType, overrides = {}) {
-  const defaultProps = {
-    clock: { textColor: '#ffffff', format: '12h', showSeconds: false },
-    date: { textColor: '#ffffff', format: 'short' },
-    weather: { textColor: '#ffffff', location: 'Miami, FL', units: 'imperial', style: 'minimal' },
-    qr: { url: 'https://example.com', fgColor: '#000000', bgColor: '#ffffff', cornerRadius: 8 },
-    data: { dataSourceId: '', field: '', rowIndex: 0, textColor: '#ffffff', fontSize: 24 },
-    countdown: { textColor: '#ffffff', targetDate: '', label: '' },
-    ticker: { textColor: '#ffffff', items: [], speed: 'medium' },
-  };
+  const widgetDefaults = getWidgetDefaults(widgetType);
 
   return {
     id: generateElementId('widget'),
@@ -320,10 +314,10 @@ export function createWidgetElement(widgetType, overrides = {}) {
     },
     layer: 1,
     locked: false,
-    props: defaultProps[widgetType] || {},
+    props: widgetDefaults,
     ...overrides,
     props: {
-      ...defaultProps[widgetType],
+      ...widgetDefaults,
       ...overrides?.props,
     },
     position: {

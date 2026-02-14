@@ -14,30 +14,41 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import {
+  ArrowLeft,
+  ArrowRight,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Circle,
+  Crown,
+  Diamond,
+  FileText,
+  Filter,
+  Folder,
+  FolderOpen,
+  Globe,
+  Hexagon,
+  Home,
   Image,
-  Type,
   LayoutGrid,
   ListVideo,
-  Settings,
-  Clock,
-  Calendar,
-  CloudSun,
-  QrCode,
-  Database,
-  Square,
-  Circle,
-  Video,
+  Loader2,
+  Lock,
+  Minus,
   Music,
-  FileText,
-  Globe,
+  Pentagon,
+  Plus,
+  RefreshCw,
+  Search,
+  Settings,
+  Sparkles,
+  Square,
   Star,
   Triangle,
-  Hexagon,
-  Pentagon,
-  Diamond,
-  ArrowRight,
-  ArrowLeft,
-  Minus,
+  Type,
+  Upload,
+  Video,
+  X,
 } from 'lucide-react';
 import { useMedia } from '../../hooks/useMedia';
 import { useMediaFolders } from '../../hooks/useMediaFolders';
@@ -47,6 +58,7 @@ import {
   YODECK_SHAPES,
   YODECK_TEXT_STYLES,
 } from '../../config/yodeckTheme';
+import { getWidgetTypes, getWidgetDefaults } from '../../widgets/registry.js';
 
 const SIDEBAR_TABS = [
   { id: 'media', icon: Image, label: 'Media' },
@@ -57,13 +69,13 @@ const SIDEBAR_TABS = [
   { id: 'settings', icon: Settings, label: 'Settings' },
 ];
 
-const WIDGET_ITEMS = [
-  { id: 'clock', icon: Clock, label: 'Clock', widgetType: 'clock', description: 'Display current time' },
-  { id: 'date', icon: Calendar, label: 'Date', widgetType: 'date', description: 'Display current date' },
-  { id: 'weather', icon: CloudSun, label: 'Weather', widgetType: 'weather', description: 'Weather forecast' },
-  { id: 'qr', icon: QrCode, label: 'QR Code', widgetType: 'qr', description: 'Custom QR code' },
-  { id: 'data', icon: Database, label: 'Data Widget', widgetType: 'data', description: 'Dynamic data display' },
-];
+// Widget items derived from centralized registry
+const WIDGET_ITEMS = getWidgetTypes().map(({ key, icon, label }) => ({
+  id: key,
+  icon,
+  label,
+  widgetType: key,
+}));
 
 // Shape icons mapping
 const SHAPE_ICONS = {
@@ -107,7 +119,7 @@ export default function LeftSidebar({
         y: 0.5 - DEFAULT_ELEMENT_SIZE.widget.height / 2,
         ...DEFAULT_ELEMENT_SIZE.widget,
       },
-      props: getDefaultWidgetProps(widgetType),
+      props: getWidgetDefaults(widgetType),
       layer: 1,
     });
   };
@@ -978,19 +990,4 @@ function SettingsTabContent({
   );
 }
 
-function getDefaultWidgetProps(widgetType) {
-  switch (widgetType) {
-    case 'clock':
-      return { textColor: '#ffffff', format: '12h', showSeconds: false };
-    case 'date':
-      return { textColor: '#ffffff', format: 'short' };
-    case 'weather':
-      return { textColor: '#ffffff', location: 'Miami, FL', units: 'imperial', style: 'minimal' };
-    case 'qr':
-      return { url: '', label: '', fgColor: '#000000', bgColor: '#ffffff', cornerRadius: 8 };
-    case 'data':
-      return { textColor: '#ffffff', fontSize: 24, field: 'value' };
-    default:
-      return {};
-  }
-}
+// getDefaultWidgetProps removed -- now uses getWidgetDefaults from registry

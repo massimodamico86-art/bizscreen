@@ -9,6 +9,7 @@
 
 import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService';
+import { getWidgetDefaults } from '../widgets/registry.js';
 
 const logger = createScopedLogger('SceneDesignService');
 
@@ -616,17 +617,18 @@ export function createImageBlock(options = {}) {
  * @returns {Object} Widget block
  */
 export function createWidgetBlock(options = {}) {
+  const widgetType = options.widgetType || 'clock';
   return {
     id: generateBlockId(),
     type: 'widget',
-    widgetType: options.widgetType || 'clock',
+    widgetType,
     x: options.x ?? 0.8,
     y: options.y ?? 0.85,
     width: options.width ?? 0.15,
     height: options.height ?? 0.1,
     layer: options.layer ?? 10,
     props: {
-      style: options.style || 'minimal',
+      ...getWidgetDefaults(widgetType),
       ...options.props,
     },
   };

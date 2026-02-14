@@ -8,7 +8,9 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '../../supabase';
-import { loggingService } from '../../services/loggingService.js';
+import { createScopedLogger } from '../../services/loggingService.js';
+
+const loggingService = createScopedLogger('Player');
 import { Heart, MessageCircle, Star } from 'lucide-react';
 
 /**

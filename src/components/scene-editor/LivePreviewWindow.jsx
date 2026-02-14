@@ -31,11 +31,7 @@ import {
   ANIMATION_KEYFRAMES,
 } from '../../services/sceneDesignService';
 import { preloadSlide } from '../../services/mediaPreloader';
-import { DataTableWidget } from '../../player/components/widgets/DataTableWidget';
-import { RssTickerWidget } from '../../player/components/widgets/RssTickerWidget.jsx';
-import { RssCardWidget } from '../../player/components/widgets/RssCardWidget.jsx';
-import { SocialFeedWidget } from '../../player/components/widgets/SocialFeedWidget.jsx';
-import { CountdownWidget } from '../../player/components/widgets/CountdownWidget.jsx';
+import { getWidgetComponent } from '../../widgets/registry.js';
 
 /**
  * Main LivePreviewWindow component
@@ -456,107 +452,36 @@ function PreviewBlock({ block }) {
 }
 
 /**
- * PreviewWidget - Renders widget blocks (clock, date, etc.)
+ * PreviewWidget - Renders widget blocks using the centralized widget registry.
+ * Uses the actual widget components (ClockWidget, DateWidget, etc.) for accurate
+ * TV preview rendering instead of inline duplicates.
  * @param root0
  * @param root0.widgetType
  * @param root0.props
  */
 function PreviewWidget({ widgetType, props = {} }) {
-  const [time, setTime] = useState(new Date());
+  const WidgetComp = getWidgetComponent(widgetType);
 
-  useEffect(() => {
-    const interval = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const formatTime = () => {
-    return time.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
-  const formatDate = () => {
-    return time.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  switch (widgetType) {
-    case 'clock':
-      return (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: props.textColor || '#ffffff',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: 'clamp(1rem, 5vw, 3rem)',
-            fontWeight: '300',
-          }}
-        >
-          {formatTime()}
-        </div>
-      );
-
-    case 'date':
-      return (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: props.textColor || '#94a3b8',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: 'clamp(0.75rem, 2vw, 1.5rem)',
-            fontWeight: '400',
-          }}
-        >
-          {formatDate()}
-        </div>
-      );
-
-    case 'data-table':
-      return <DataTableWidget props={props} />;
-
-    case 'rss-ticker':
-      return <RssTickerWidget props={props} />;
-
-    case 'rss-card':
-      return <RssCardWidget props={props} />;
-
-    case 'social-feed':
-      return <SocialFeedWidget props={props} />;
-
-    case 'countdown':
-      return <CountdownWidget props={props} />;
-
-    default:
-      return (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'rgba(0,0,0,0.3)',
-            color: '#64748b',
-            fontSize: '0.75rem',
-          }}
-        >
-          {widgetType || 'Widget'}
-        </div>
-      );
+  if (WidgetComp) {
+    return <WidgetComp props={props} />;
   }
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'rgba(0,0,0,0.3)',
+        color: '#64748b',
+        fontSize: '0.75rem',
+      }}
+    >
+      {widgetType || 'Widget'}
+    </div>
+  );
 }
 
 /**

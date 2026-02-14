@@ -11,29 +11,22 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
-  Calendar,
   ChevronDown,
   Clock,
-  CloudSun,
   Database,
   Grid3X3,
   Image,
   Layers,
   Link,
   MapPin,
-  Newspaper,
   Palette,
   Play,
-  QrCode,
-  Rss,
-  Share2,
   Sparkles,
   Square,
-  Table2,
-  Timer,
   Type,
   X,
 } from 'lucide-react';
+import { getWidgetTypes, getWidgetDefaults } from '../../widgets/registry.js';
 import { Button } from '../../design-system';
 import {
   ANIMATION_TYPES,
@@ -645,23 +638,14 @@ function ShapeControls({ block, onUpdate }) {
 // ===========================================
 
 function WidgetControls({ block, onUpdate }) {
-  const widgetTypes = [
-    { key: 'clock', icon: Clock, label: 'Clock' },
-    { key: 'date', icon: Calendar, label: 'Date' },
-    { key: 'weather', icon: CloudSun, label: 'Weather' },
-    { key: 'qr', icon: QrCode, label: 'QR Code' },
-    { key: 'data-table', icon: Table2, label: 'Data Table' },
-    { key: 'rss-ticker', icon: Rss, label: 'News Ticker' },
-    { key: 'rss-card', icon: Newspaper, label: 'News Cards' },
-    { key: 'social-feed', icon: Share2, label: 'Social Feed' },
-    { key: 'countdown', icon: Timer, label: 'Countdown' },
-  ];
+  const widgetTypes = getWidgetTypes();
 
   const props = block.props || {};
   const widgetType = block.widgetType || 'clock';
 
   function handleTypeChange(newType) {
-    onUpdate({ widgetType: newType });
+    // Reset props to new type's defaults to avoid stale props from previous type (INFRA-02)
+    onUpdate({ widgetType: newType, props: getWidgetDefaults(newType) });
   }
 
   function handlePropChange(key, value) {

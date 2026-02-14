@@ -11,21 +11,16 @@
 
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import {
-  Calendar,
   Clock,
   CloudSun,
   Database,
   Image,
   Move,
-  Newspaper,
-  QrCode,
-  Rss,
   Share2,
   Square,
-  Table2,
-  Timer,
   Type,
 } from 'lucide-react';
+import { WIDGET_REGISTRY } from '../../widgets/registry.js';
 import {
   calculateSnapPosition,
   findAlignmentGuides,
@@ -48,18 +43,7 @@ const BLOCK_ICONS = {
   widget: Clock,
 };
 
-// Widget type icons
-const WIDGET_ICONS = {
-  clock: Clock,
-  date: Calendar,
-  weather: CloudSun,
-  qr: QrCode,
-  'data-table': Table2,
-  'rss-ticker': Rss,
-  'rss-card': Newspaper,
-  'social-feed': Share2,
-  countdown: Timer,
-};
+// Widget type icons are derived from WIDGET_REGISTRY (imported above)
 
 export default function EditorCanvas({
   design,
@@ -670,7 +654,8 @@ export default function EditorCanvas({
           }
 
           default: {
-            const WidgetIcon = WIDGET_ICONS[widgetType] || Clock;
+            const registryEntry = WIDGET_REGISTRY[widgetType];
+            const WidgetIcon = registryEntry?.icon || Square;
             return (
               <div
                 className="w-full h-full flex items-center justify-center rounded-lg border"

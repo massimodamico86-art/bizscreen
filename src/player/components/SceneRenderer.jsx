@@ -23,15 +23,7 @@ import {
 import { useLogger } from '../../hooks/useLogger.js';
 import { DataRefreshProvider } from '../contexts/DataRefreshContext.jsx';
 import { useDataRefreshOrchestrator } from '../hooks/useDataRefreshOrchestrator.js';
-import { ClockWidget } from './widgets/ClockWidget.jsx';
-import { DateWidget } from './widgets/DateWidget.jsx';
-import { WeatherWidget } from './widgets/WeatherWidget.jsx';
-import { QRCodeWidget } from './widgets/QRCodeWidget.jsx';
-import { DataTableWidget } from './widgets/DataTableWidget.jsx';
-import { RssTickerWidget } from './widgets/RssTickerWidget.jsx';
-import { RssCardWidget } from './widgets/RssCardWidget.jsx';
-import { SocialFeedWidget } from './widgets/SocialFeedWidget.jsx';
-import { CountdownWidget } from './widgets/CountdownWidget.jsx';
+import { getWidgetComponent } from '../../widgets/registry.js';
 
 /**
  * Scene Block - Renders individual blocks in a scene slide
@@ -132,53 +124,28 @@ function SceneBlock({ block, _slideIndex }) {
  * Scene Widget Renderer - Renders widgets (clock, date, weather, qr) in scene blocks
  * Uses extracted widget components from player/components/widgets/
  */
-function SceneWidgetRenderer({ widgetType, props }) {
+function SceneWidgetRenderer({ widgetType, props, timezone }) {
   const safeProps = props || {};
+  const WidgetComp = getWidgetComponent(widgetType);
 
-  switch (widgetType) {
-    case 'clock':
-      return <ClockWidget props={safeProps} />;
-
-    case 'date':
-      return <DateWidget props={safeProps} />;
-
-    case 'weather':
-      return <WeatherWidget props={safeProps} />;
-
-    case 'qr':
-      return <QRCodeWidget props={safeProps} />;
-
-    case 'data-table':
-      return <DataTableWidget props={safeProps} />;
-
-    case 'rss-ticker':
-      return <RssTickerWidget props={safeProps} />;
-
-    case 'rss-card':
-      return <RssCardWidget props={safeProps} />;
-
-    case 'social-feed':
-      return <SocialFeedWidget props={safeProps} />;
-
-    case 'countdown':
-      return <CountdownWidget props={safeProps} />;
-
-    default:
-      return (
-        <div style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'rgba(0,0,0,0.3)',
-          color: '#64748b',
-          fontSize: '0.75rem',
-        }}>
-          {widgetType || 'Widget'}
-        </div>
-      );
+  if (WidgetComp) {
+    return <WidgetComp props={safeProps} timezone={timezone} />;
   }
+
+  return (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'rgba(0,0,0,0.3)',
+      color: '#64748b',
+      fontSize: '0.75rem',
+    }}>
+      {widgetType || 'Widget'}
+    </div>
+  );
 }
 
 /**
