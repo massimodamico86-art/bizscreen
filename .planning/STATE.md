@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-13)
 
 ## Current Position
 
-Phase: 56 of 62 (Widget Registry + Clock/Date)
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-02-14 -- Completed 56-01 Widget Registry
+Phase: 56 of 62 (Widget Registry + Clock/Date) -- COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-02-14 -- Completed 56-02 Clock/Date Enhancements
 
-Progress: [#_______________] 6% (1/16 plans)
+Progress: [##______________] 12% (2/16 plans)
 
 ## Milestones Shipped
 
@@ -41,6 +41,7 @@ Progress: [#_______________] 6% (1/16 plans)
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 56 | 01 | 8min | 2 | 12 |
+| 56 | 02 | 4min | 2 | 7 |
 
 ## Accumulated Context
 
@@ -50,19 +51,23 @@ Progress: [#_______________] 6% (1/16 plans)
 - **56-01**: EditorCanvas keeps inline mock previews (editor-specific) but derives icon/label from registry
 - **56-01**: LivePreviewWindow now uses actual widget components instead of duplicated inline implementations
 - **56-01**: LayoutElementRenderer removes 5 inline widget implementations in favor of registry lookup
+- **56-02**: Duplicate resolveTimezone helper in each widget (~5 lines) instead of shared import to avoid cross-component coupling
+- **56-02**: Use Intl.DateTimeFormat.formatToParts for analog clock hand positioning instead of TZDate
+- **56-02**: Date format default changed from 'short' to 'long' in registry to match original widget behavior
+- **56-02**: Added clock/date controls to LayoutPropertiesPanel for editor consistency
 
 ### Blockers/Concerns
 
 - Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)
 - QR code widget has missing import causing player crash (QR-05 addresses in Phase 57)
-- Clock widgets use browser timezone instead of screen timezone (CLOCK-06 addresses in Phase 56)
+- ~~Clock widgets use browser timezone instead of screen timezone (CLOCK-06 addresses in Phase 56)~~ RESOLVED in 56-02
 
 ## Session Continuity
 
 Last session: 2026-02-14
-Stopped at: Completed 56-01-PLAN.md (Widget Registry)
+Stopped at: Completed 56-02-PLAN.md (Clock/Date Enhancements) -- Phase 56 complete
 Resume file: None
-Next: `/gsd:execute-phase 56` (plan 02 remaining)
+Next: `/gsd:plan-phase 57` (QR Widget Enhancements)
 
 ---
-*Updated: 2026-02-14 -- 56-01 Widget Registry complete.*
+*Updated: 2026-02-14 -- Phase 56 Widget Registry + Clock/Date complete.*
