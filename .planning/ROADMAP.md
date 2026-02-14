@@ -70,11 +70,11 @@ All milestones shipped successfully.
   2. Switching a zone's widget type in the editor resets properties to the new type's defaults (no stale props from previous type)
   3. User can configure a clock widget with timezone, 12h/24h format, seconds toggle, and analog style -- and the player renders it using the screen's assigned timezone (not browser timezone)
   4. User can place a combined clock+date widget in a layout zone that shows both time and date together
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 56-01: Widget registry refactor
-- [ ] 56-02: Clock/date widget enhancements
+- [ ] 56-01-PLAN.md — Widget registry refactor (centralize 9 duplication sites into single registry, fix stale props on type switch)
+- [ ] 56-02-PLAN.md — Clock/date widget enhancements (timezone, format, seconds, analog, combined clock+date widget)
 
 #### Phase 57: QR Code Enhancement
 **Goal**: Users can generate any QR code type they need -- URLs, WiFi credentials, plain text -- with brand customization and reliable rendering
@@ -203,4 +203,4 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 **Total:** 55 phases complete + 7 planned, 195 plans executed + 16 planned | 8 milestones shipped, 1 in progress
 
 ---
-*Last updated: 2026-02-13 -- v3.2 Display Toolkit roadmap created.*
+*Last updated: 2026-02-13 -- Phase 56 plans created.*
