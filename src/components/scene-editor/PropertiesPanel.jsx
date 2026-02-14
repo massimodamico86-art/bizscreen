@@ -27,6 +27,7 @@ import {
   X,
 } from 'lucide-react';
 import { getWidgetTypes, getWidgetDefaults } from '../../widgets/registry.js';
+import { TIMEZONE_OPTIONS } from '../../services/locationService.js';
 import { Button } from '../../design-system';
 import {
   ANIMATION_TYPES,
@@ -677,8 +678,8 @@ function WidgetControls({ block, onUpdate }) {
         </div>
       </div>
 
-      {/* Clock / Date / Weather Size Controls */}
-      {(widgetType === 'clock' || widgetType === 'date' || widgetType === 'weather') && (
+      {/* Clock / Date / Clock-Date / Weather Size Controls */}
+      {(widgetType === 'clock' || widgetType === 'date' || widgetType === 'clock-date' || widgetType === 'weather') && (
         <>
           <div>
             <label className="block text-xs text-gray-500 mb-1.5">Size</label>
@@ -710,6 +711,126 @@ function WidgetControls({ block, onUpdate }) {
               />
             </div>
           )}
+        </>
+      )}
+
+      {/* Clock / Clock-Date Controls */}
+      {(widgetType === 'clock' || widgetType === 'clock-date') && (
+        <>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Timezone</label>
+            <select
+              value={props.timezone || 'screen'}
+              onChange={(e) => handlePropChange('timezone', e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+            >
+              <option value="screen">Screen timezone (auto)</option>
+              {TIMEZONE_OPTIONS.map(tz => (
+                <option key={tz.value} value={tz.value}>{tz.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Time Format</label>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handlePropChange('format', '12h')}
+                className={`flex-1 ${props.format !== '24h' ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
+              >
+                12h
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handlePropChange('format', '24h')}
+                className={`flex-1 ${props.format === '24h' ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
+              >
+                24h
+              </Button>
+            </div>
+          </div>
+          <label className="flex items-center justify-between cursor-pointer">
+            <span className="text-xs text-gray-500">Show Seconds</span>
+            <button
+              onClick={() => handlePropChange('showSeconds', !props.showSeconds)}
+              className={`relative w-9 h-5 rounded-full transition-colors ${
+                props.showSeconds ? 'bg-blue-600' : 'bg-gray-600'
+              }`}
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
+                  props.showSeconds ? 'translate-x-4' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </label>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Style</label>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handlePropChange('style', 'digital')}
+                className={`flex-1 ${props.style !== 'analog' ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
+              >
+                Digital
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handlePropChange('style', 'analog')}
+                className={`flex-1 ${props.style === 'analog' ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
+              >
+                Analog
+              </Button>
+            </div>
+          </div>
+          {props.style === 'analog' && (
+            <div>
+              <label className="block text-xs text-gray-500 mb-1.5">Accent Color</label>
+              <input
+                type="color"
+                value={props.accentColor || '#3b82f6'}
+                onChange={(e) => handlePropChange('accentColor', e.target.value)}
+                className="w-full h-8 cursor-pointer rounded border border-gray-700"
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Date / Clock-Date Date Format Controls */}
+      {(widgetType === 'date' || widgetType === 'clock-date') && (
+        <>
+          {widgetType === 'date' && (
+            <div>
+              <label className="block text-xs text-gray-500 mb-1.5">Timezone</label>
+              <select
+                value={props.timezone || 'screen'}
+                onChange={(e) => handlePropChange('timezone', e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+              >
+                <option value="screen">Screen timezone (auto)</option>
+                {TIMEZONE_OPTIONS.map(tz => (
+                  <option key={tz.value} value={tz.value}>{tz.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Date Format</label>
+            <select
+              value={widgetType === 'clock-date' ? (props.dateFormat || 'short') : (props.format || 'long')}
+              onChange={(e) => handlePropChange(widgetType === 'clock-date' ? 'dateFormat' : 'format', e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+            >
+              <option value="long">Long (Thursday, January 23)</option>
+              <option value="short">Short (Jan 23, 2025)</option>
+              <option value="numeric">Numeric (1/23/2025)</option>
+            </select>
+          </div>
         </>
       )}
 

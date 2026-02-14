@@ -36,6 +36,7 @@ import {
   RssCardWidget,
   SocialFeedWidget,
   CountdownWidget,
+  ClockDateWidget,
 } from '../player/components/widgets/index.js';
 
 /**
@@ -56,6 +57,9 @@ export const WIDGET_REGISTRY = {
       textColor: '#ffffff',
       format: '12h',
       showSeconds: false,
+      timezone: 'screen',
+      style: 'digital',
+      accentColor: '#3b82f6',
       size: 'medium',
     },
   },
@@ -66,7 +70,24 @@ export const WIDGET_REGISTRY = {
     label: 'Date',
     defaultProps: {
       textColor: '#ffffff',
-      format: 'short',
+      format: 'long',
+      timezone: 'screen',
+      size: 'medium',
+    },
+  },
+
+  'clock-date': {
+    component: ClockDateWidget,
+    icon: Clock,
+    label: 'Clock + Date',
+    defaultProps: {
+      textColor: '#ffffff',
+      format: '12h',
+      showSeconds: false,
+      dateFormat: 'short',
+      timezone: 'screen',
+      style: 'digital',
+      accentColor: '#3b82f6',
       size: 'medium',
     },
   },

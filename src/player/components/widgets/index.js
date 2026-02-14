@@ -10,4 +10,5 @@ export { RssTickerWidget } from './RssTickerWidget.jsx';
 export { RssCardWidget } from './RssCardWidget.jsx';
 export { SocialFeedWidget } from './SocialFeedWidget.jsx';
 export { CountdownWidget } from './CountdownWidget.jsx';
+export { ClockDateWidget } from './ClockDateWidget.jsx';
 export { SyncStatusIndicator } from './SyncStatusIndicator.jsx';
