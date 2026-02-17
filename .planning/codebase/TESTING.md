@@ -1,348 +1,447 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-02-13
+**Analysis Date:** 2026-02-17
 
 ## Test Framework
 
-**Runner:**
-- Vitest 4.0.14 for unit and integration tests
-- Playwright 1.57.0 for E2E tests
-- Config: `vitest.config.js` and `playwright.config.js`
+**Runner (Unit/Integration):**
+- Vitest 4.x
+- Config: `vitest.config.js`
+- Environment: jsdom (browser simulation)
+- Setup file: `tests/setup.js` (runs before every test file)
+
+**Runner (E2E):**
+- Playwright 1.57+
+- Config: `playwright.config.js`
+- Base URL: `http://localhost:5173` (Vite dev server)
 
 **Assertion Library:**
-- Vitest built-in `expect` for unit tests
-- Testing Library matchers extended via `@testing-library/jest-dom`
-- Playwright `expect` for E2E assertions
+- Vitest built-in `expect` + `@testing-library/jest-dom` matchers (extended in setup)
+- Available: `toBeInTheDocument()`, `toBeVisible()`, `toBeDisabled()`, `toHaveValue()`, etc.
+
+**Component Testing:**
+- `@testing-library/react` — `render`, `screen`, `waitFor`, `fireEvent`
+- `@testing-library/user-event` — available but `fireEvent` is more commonly used in practice
+- `renderHook` from `@testing-library/react` for hook tests
 
 **Run Commands:**
 ```bash
-npm test                    # Run all unit tests
+npm test                    # Run all unit + integration tests (vitest run)
 npm run test:watch          # Watch mode
-npm run test:coverage       # With coverage report
-npm run test:unit           # Unit tests only (tests/unit)
-npm run test:integration    # Integration tests only (tests/integration)
-npm run test:e2e            # E2E tests (Playwright)
-npm run test:e2e:ui         # E2E with Playwright UI
-npm run test:e2e:headed     # E2E with visible browser
-npm run test:all            # All tests (unit + E2E)
-npm run test:ci             # CI pipeline (seeds test user)
+npm run test:unit           # Unit tests only (tests/unit/)
+npm run test:integration    # Integration tests only (tests/integration/)
+npm run test:coverage       # Run with V8 coverage report
+npm run test:e2e            # Run E2E tests with Playwright
+npm run test:e2e:ui         # Playwright interactive UI mode
+npm run test:e2e:headed     # Run E2E in headed browser mode
+npm run test:all            # Unit + E2E (sequential)
+npm run test:ci             # Unit + seed CI user + E2E (for CI pipelines)
 ```
 
 ## Test File Organization
 
 **Location:**
-- Unit tests: `tests/unit/**/*.test.js` or `*.test.jsx`
-- Integration tests: `tests/integration/**/*.test.js`
-- E2E tests: `tests/e2e/**/*.spec.js`
-- Test setup: `tests/setup.js` (runs before all tests)
+- Separate `tests/` directory — NOT co-located with source files
+- Unit tests mirror `src/` structure under `tests/unit/`
+- E2E tests in flat `tests/e2e/` directory
+- Integration tests in `tests/integration/`
 
 **Naming:**
-- Unit/integration: `{module}.test.js` matches source file
-- E2E: `{feature}.spec.js` describes user flow
-- Examples:
-  - `tests/unit/services/alertEngineService.test.js` → `src/services/alertEngineService.js`
-  - `tests/unit/security/SafeHTML.test.jsx` → `src/security/SafeHTML.jsx`
-  - `tests/e2e/dashboard.spec.js` → Dashboard feature
+- Unit test files: `{subject}.test.js` or `{subject}.test.jsx`
+- E2E test files: `{feature}.spec.js` (Playwright convention)
+- Setup/helpers: `setup.js`, `helpers.js`
 
 **Structure:**
 ```
 tests/
-├── setup.js                      # Global test setup
+├── setup.js                          # Global Vitest setup (runs before each file)
+├── mocks/                            # Shared mock modules
+│   ├── supabase.js                   # Configurable Supabase mock for player tests
+│   ├── loggingService.js             # Logger mock (also in setup.js globally)
+│   └── api/                          # API-level mocks
 ├── unit/
-│   ├── services/
-│   │   ├── alertEngineService.test.js
-│   │   └── dataBindingResolver.test.js
-│   ├── security/
-│   │   ├── SafeHTML.test.jsx
-│   │   └── sanitize.test.js
-│   └── components/
-│       └── ScreenGroupSettingsTab.test.jsx
+│   ├── services/                     # Service layer tests (most numerous)
+│   ├── components/                   # Component tests
+│   ├── hooks/                        # Hook tests
+│   ├── pages/                        # Page-level component tests
+│   │   └── hooks/                    # Page-specific hook tests
+│   ├── config/                       # Config and constants tests
+│   ├── security/                     # Security utility tests
+│   ├── utils/                        # Utility function tests
+│   ├── api/                          # API function tests
+│   ├── player/                       # Player component tests
+│   └── logging.test.js               # Logging/PII tests
 ├── integration/
-│   └── (integration tests here)
-└── e2e/
-    ├── auth.setup.js             # E2E auth setup
-    ├── helpers.js                # E2E helper functions
-    ├── dashboard.spec.js
-    ├── media.spec.js
-    └── alerts-center.spec.js
+│   └── api/                          # Integration tests (analytics, billing, campaigns, etc.)
+├── e2e/
+│   ├── auth.setup.js                 # Playwright auth setup (runs first, saves session)
+│   ├── helpers.js                    # Shared E2E helpers
+│   ├── fixtures/
+│   │   └── index.js                  # Custom Playwright fixtures
+│   └── *.spec.js                     # E2E test files per feature
+└── utils/                            # Test utility helpers
 ```
 
 ## Test Structure
 
-**Suite Organization:**
+**Suite Organization (unit tests):**
 ```javascript
+/**
+ * Playlist Service Unit Tests
+ * Phase 6: Tests for playlist service operations
+ */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-describe('ModuleName functionName', () => {
+// ALL vi.mock() calls before any imports of the module under test
+vi.mock('../../../src/supabase', () => ({ ... }));
+vi.mock('../../../src/services/activityLogService', () => ({ ... }));
+
+describe('playlistService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('success cases', () => {
-    it('performs expected operation', async () => {
-      // Arrange
-      const input = 'test';
-
-      // Act
-      const result = await functionName(input);
-
-      // Assert
-      expect(result).toBe('expected');
-    });
+  describe('API function exports', () => {
+    it('exports all required playlist CRUD functions', async () => { ... });
   });
 
-  describe('error cases', () => {
-    it('handles errors gracefully', async () => {
-      // Test error scenarios
-    });
+  describe('deletePlaylistSafely', () => {
+    it('returns success false with IN_USE code when playlist is in use', async () => { ... });
+    it('returns error when getPlaylistUsage fails', async () => { ... });
   });
+});
+
+// Additional top-level describe blocks for distinct scenarios are common
+describe('playlistService defaults', () => {
+  it('createPlaylist has sensible defaults', async () => { ... });
+});
+```
+
+**Component Test Pattern:**
+```javascript
+// 1. Define mocks at module level
+const mockUseAuth = vi.fn();
+vi.mock('../../../src/contexts/AuthContext', () => ({
+  useAuth: () => mockUseAuth(),
+}));
+
+// 2. Create render helper with required providers
+const renderDashboard = (props = {}) => {
+  const defaultProps = { setCurrentPage: vi.fn(), showToast: vi.fn(), ...props };
+  return render(
+    <BrowserRouter>
+      <DashboardPage {...defaultProps} />
+    </BrowserRouter>
+  );
+};
+
+// 3. Set up defaults in beforeEach
+beforeEach(() => {
+  vi.clearAllMocks();
+  mockUseAuth.mockReturnValue({ user: mockUser });
+  mockGetDashboardStats.mockResolvedValue(createMockStats());
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+```
+
+**Hook Test Pattern:**
+```javascript
+import { renderHook } from '@testing-library/react';
+import { useAdminAccess } from '../../../src/hooks/useAdmin';
+
+it('returns isSuperAdmin true for super_admin role', () => {
+  mockUseAuth.mockReturnValue({ userProfile: { role: 'super_admin' }, loading: false });
+  const { result } = renderHook(() => useAdminAccess());
+  expect(result.current.isSuperAdmin).toBe(true);
+});
+
+// Testing hook reactivity
+it('updates when auth context changes', async () => {
+  const { result, rerender } = renderHook(() => useAdminAccess());
+  mockUseAuth.mockReturnValue({ userProfile: { role: 'super_admin' }, loading: false });
+  rerender();
+  expect(result.current.isSuperAdmin).toBe(true);
 });
 ```
 
 **Patterns:**
-- Nested `describe` blocks organize related tests
-- Top-level `describe` per module or function
-- Sub-`describe` for feature groups (constants, error handling, edge cases)
-- `beforeEach` for setup/mocking reset
-- `it` statements describe expected behavior in plain English
-- Arrange-Act-Assert pattern (AAA) in test bodies
-
-**Component Tests:**
-```jsx
-import { render, screen } from '@testing-library/react';
-import { SafeHTML } from '../../../src/security/SafeHTML.jsx';
-
-describe('SafeHTML', () => {
-  it('renders clean HTML correctly', () => {
-    render(<SafeHTML html="<b>bold text</b>" />);
-    expect(screen.getByText('bold text')).toBeInTheDocument();
-  });
-
-  it('strips XSS payloads', () => {
-    const { container } = render(<SafeHTML html='<script>alert("xss")</script>' />);
-    expect(container.querySelector('script')).toBeNull();
-  });
-});
-```
-
-**E2E Tests:**
-```javascript
-import { test, expect } from '@playwright/test';
-import { loginAndPrepare, waitForPageReady } from './helpers.js';
-
-test.describe('Dashboard Loading', () => {
-  test('dashboard loads successfully after login', async ({ page }) => {
-    await loginAndPrepare(page, {
-      email: process.env.TEST_USER_EMAIL,
-      password: process.env.TEST_USER_PASSWORD,
-    });
-
-    await waitForPageReady(page);
-    await expect(page).toHaveURL(/\/app/);
-  });
-});
-```
+- `beforeEach`: always calls `vi.clearAllMocks()` at minimum
+- `afterEach`: calls `vi.restoreAllMocks()` in component tests (less common in service tests)
+- `waitFor`: used for async state updates in component tests
+- `fireEvent`: preferred over `userEvent` in this codebase for interaction simulation
+- Dynamic imports inside tests: `const { fn } = await import('../../../src/services/service')` — used to get fresh module after mocks are set up
 
 ## Mocking
 
-**Framework:** Vitest `vi.mock()` and `vi.fn()`
+**Framework:** Vitest's `vi` API (equivalent to Jest's `jest`)
 
-**Patterns:**
+**Global mocks in `tests/setup.js` (applied to ALL tests):**
+- `loggingService.js` — fully mocked to break circular import with supabase
+- `window.matchMedia` — browser API stub
+- `ResizeObserver` — browser API stub
+- `IntersectionObserver` — browser API stub
+- `URL.createObjectURL` / `URL.revokeObjectURL` — browser API stub
+- `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` — env var stubs with valid-format values
+
+**Supabase mock pattern (repeated per test file):**
 ```javascript
-// Module mocking (must be hoisted before imports)
 vi.mock('../../../src/supabase', () => ({
   supabase: {
-    from: vi.fn(() => createChainableMock()),
     auth: {
-      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-123' } } }),
+      getUser: vi.fn().mockResolvedValue({
+        data: { user: { id: 'test-user-id' } },
+      }),
     },
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      ilike: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: {}, error: null }),
+    })),
+    rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
   },
 }));
+```
 
-// Chainable mock for Supabase query builder
+**Chainable mock pattern (for complex Supabase queries):**
+```javascript
 const createChainableMock = (finalValue = { data: null, error: null }) => {
   const chain = {};
-  const methods = ['select', 'insert', 'update', 'eq', 'is', 'in', 'order', 'limit'];
+  const methods = ['select', 'insert', 'update', 'eq', 'is', 'in', 'order', 'limit', 'range'];
   methods.forEach((method) => {
     chain[method] = vi.fn(() => chain);
   });
   chain.single = vi.fn().mockResolvedValue(finalValue);
   return chain;
 };
+vi.mock('../../../src/supabase', () => ({
+  supabase: { from: vi.fn(() => createChainableMock()) },
+}));
+```
 
-// Import after mocking
-import { raiseAlert } from '../../../src/services/alertEngineService';
-import { supabase } from '../../../src/supabase';
+**Per-test mock overrides:**
+```javascript
+// Override a specific call with once()
+supabase.rpc.mockResolvedValueOnce({ data: { is_in_use: true }, error: null });
+
+// Chain multiple return values
+mockGetDashboardStats
+  .mockRejectedValueOnce(new Error('First error'))
+  .mockResolvedValueOnce(createMockStats());
+
+// Override from() to return specific chain
+supabase.from.mockReturnValue({
+  update: mockUpdate,
+  eq: mockEq,
+  select: mockSelect,
+  single: mockSingle,
+});
 ```
 
 **What to Mock:**
-- Supabase client - always mocked in unit tests to avoid real DB calls
-- External services - API clients, third-party SDKs
-- Logging service - globally mocked in `tests/setup.js` to break circular dependencies
-- Browser APIs - `window.matchMedia`, `ResizeObserver`, `IntersectionObserver`
-- File operations - `URL.createObjectURL`, `URL.revokeObjectURL`
+- `src/supabase` — always mocked in unit tests (would hit real DB otherwise)
+- `src/services/loggingService.js` — always mocked globally (circular import issue)
+- `src/contexts/AuthContext` — mock `useAuth` return value per test
+- Dependent services (e.g., `activityLogService`, `permissionsService`) — mock to isolate unit under test
+- Browser globals not in jsdom — `matchMedia`, `ResizeObserver`, `IntersectionObserver`
 
 **What NOT to Mock:**
-- Pure utility functions - test actual implementations
-- React hooks (except in specific isolation tests)
-- Constants and enums
-- Simple formatters and validators
+- Pure utility functions being tested (`formatDate`, `sanitizeHTML`, etc.) — test real implementation
+- The module under test itself
+- Simple constants or type definitions
 
 ## Fixtures and Factories
 
-**Test Data:**
+**Test Data Pattern — static objects + factory functions:**
 ```javascript
-// Inline fixture objects in tests
-const mockAlerts = [
-  { id: '1', title: 'Alert 1', status: 'open' },
-  { id: '2', title: 'Alert 2', status: 'open' },
-];
+// src/__fixtures__/playlists.js
+export const mockPlaylist = {
+  id: 'playlist-123',
+  name: 'Test Playlist',
+  description: null,
+  owner_id: 'user-123',
+  tenant_id: 'tenant-123',
+  shuffle: false,
+  default_duration: 10,
+  transition_effect: 'fade',
+  items: [mockPlaylistItem],
+};
 
-// Reusable fixture in setup
-const existingAlert = {
-  id: 'alert-1',
-  type: ALERT_TYPES.DEVICE_OFFLINE,
-  severity: ALERT_SEVERITIES.WARNING,
-  meta: { minutes_offline: 15 },
-  occurrences: 1,
-  created_at: new Date().toISOString(),
+export function createMockPlaylist(overrides = {}) {
+  return { ...mockPlaylist, ...overrides };
+}
+```
+
+**In-file factory functions (component tests):**
+```javascript
+const createMockStats = (overrides = {}) => ({
+  screens: { total: 5, online: 3, offline: 2, ...overrides.screens },
+  playlists: { total: 8, ...overrides.playlists },
+  media: { total: 25, images: 15, videos: 8, apps: 2, ...overrides.media },
+});
+
+const createMockScreens = (count = 3) => {
+  return Array.from({ length: count }, (_, i) => ({
+    id: `screen-${i}`,
+    device_name: `Test Screen ${i + 1}`,
+    isOnline: i % 2 === 0,
+  }));
 };
 ```
 
 **Location:**
-- Fixtures defined inline within test files
-- No separate fixtures directory detected
-- E2E helpers in `tests/e2e/helpers.js` provide reusable functions
+- Shared fixtures: `src/__fixtures__/` (imported by tests via `../../../src/__fixtures__/`)
+  - `src/__fixtures__/playlists.js`
+  - `src/__fixtures__/screens.js`
+  - `src/__fixtures__/schedules.js`
+  - `src/__fixtures__/index.js` (barrel re-export)
+- Test-local factories: defined inline at top of each test file (not extracted unless used in multiple files)
+- Shared Supabase mock: `tests/mocks/supabase.js` (configurable, used for Player tests)
 
 ## Coverage
 
-**Requirements:**
-- Thresholds currently set to 0% (explicitly documented as temporary)
-- Comment in `vitest.config.js`: "TODO: Raise thresholds as more tests are added"
-- Coverage tracked but not enforced in CI
+**Requirements:** Thresholds set to 0 — no minimum enforced (comment in vitest.config.js: "TODO: Raise thresholds as more tests are added")
+
+**Provider:** V8 (`@vitest/coverage-v8`)
+
+**Output formats:** text (terminal), JSON, HTML
 
 **View Coverage:**
 ```bash
-npm run test:coverage
-# Opens coverage/index.html
+npm run test:coverage         # Generates coverage/ directory
+open coverage/index.html      # View HTML report
 ```
 
-**Configuration:**
-- Provider: V8
-- Reporters: text, json, html
-- Output: `./coverage/`
-- Includes: `src/**/*.{js,jsx}`
-- Excludes: `src/main.jsx`, `src/supabase.js`, `node_modules/**`, `tests/**`
+**Included:** `src/**/*.{js,jsx}`
+
+**Excluded from coverage:**
+- `src/main.jsx`
+- `src/supabase.js`
+- `node_modules/**`
+- `tests/**`
 
 ## Test Types
 
-**Unit Tests:**
-- Scope: Single function or component in isolation
-- Location: `tests/unit/`
-- Mocking: Heavy mocking of dependencies
-- Example: `alertEngineService.test.js` - tests individual alert functions with mocked Supabase
+**Unit Tests (`tests/unit/`):**
+- Scope: single service function, component render, or hook return value
+- Supabase always mocked; dependent services always mocked
+- Tests verify: exports exist, functions throw correctly, state updates, render output
+- ~40 service test files, multiple component/hook/page test files
 
-**Integration Tests:**
-- Scope: Multiple modules working together
-- Location: `tests/integration/`
-- Mocking: Minimal mocking, test real interactions
-- Example: (Directory exists but limited tests observed)
+**Integration Tests (`tests/integration/api/`):**
+- Files: `analytics.test.js`, `billing.test.js`, `campaigns.test.js`, `content-resolution.test.js`, `multitenancy.test.js`, `screens.test.js`
+- Scope: multi-service interactions; may still mock Supabase but test higher-level flows
 
-**E2E Tests:**
-- Scope: Full user workflows in real browser
-- Location: `tests/e2e/`
-- Framework: Playwright with 3 browser projects (chromium, chromium-admin, chromium-superadmin)
-- Auth: Pre-authenticated via storage state (`playwright/.auth/*.json`)
-- Setup: `auth.setup.js` runs first to authenticate and save sessions
-- Pattern: Test real user interactions, no mocking
+**E2E Tests (`tests/e2e/`):**
+- Framework: Playwright
+- Browsers: Chromium only (Firefox/WebKit commented out)
+- Auth: 3 roles — `chromium` (client), `chromium-admin`, `chromium-superadmin`
+- Session reuse: `playwright/.auth/{role}.json` storage state (created by `auth.setup.js`)
+- Timeouts: 60s test, 15s action, 30s navigation, 10s assertion
+- Screenshots/video captured on failure/retry
 
 ## Common Patterns
 
-**Async Testing:**
+**Async Loading Tests (component):**
 ```javascript
-it('performs async operation', async () => {
-  const result = await raiseAlert({
-    type: ALERT_TYPES.DEVICE_OFFLINE,
-    severity: ALERT_SEVERITIES.WARNING,
+it('shows loading state on initial load', async () => {
+  let resolveStats;
+  const statsPromise = new Promise((resolve) => { resolveStats = resolve; });
+  mockGetDashboardStats.mockReturnValue(statsPromise);
+
+  renderDashboard();
+  expect(screen.getByText('Loading...')).toBeInTheDocument();
+
+  resolveStats(createMockStats());
+  await waitFor(() => {
+    expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+  });
+});
+```
+
+**Error Testing (service):**
+```javascript
+it('requires authentication', async () => {
+  supabase.auth.getUser.mockResolvedValueOnce({ data: { user: null } });
+  const { createPlaylist } = await import('../../../src/services/playlistService');
+  await expect(createPlaylist({ name: 'Test' })).rejects.toThrow('User must be authenticated');
+});
+```
+
+**Timer Testing (service with intervals):**
+```javascript
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+afterEach(() => {
+  vi.useRealTimers();
+});
+it('debounces sync calls', async () => {
+  vi.advanceTimersByTime(300);
+  // assert after timer fires
+});
+```
+
+**E2E Navigation Pattern:**
+```javascript
+import { test, expect } from '@playwright/test';
+import { loginAndPrepare, navigateToSection, waitForPageReady } from './helpers.js';
+
+test.describe('Screens Page', () => {
+  test.beforeEach(async ({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
   });
 
-  expect(result.alertId).toBe('alert-123');
+  test('loads with correct header', async ({ page }) => {
+    await loginAndPrepare(page);
+    await navigateToSection(page, 'screens');
+    await expect(page.locator('h1:has-text("Screens")')).toBeVisible({ timeout: 10000 });
+  });
 });
 ```
 
-**Error Testing:**
+**E2E Role-Conditional Tests:**
 ```javascript
-it('handles errors gracefully', async () => {
-  mockFrom.mockImplementation(() => ({
-    update: vi.fn(() => ({
-      eq: vi.fn().mockResolvedValue({ error: new Error('Update failed') }),
-    })),
-  }));
-
-  const result = await acknowledgeAlert('alert-123');
-
-  expect(result).toBe(false);
+test.beforeEach(async ({}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Client-only test');
 });
+// OR
+test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
 ```
 
-**Component Testing with User Events:**
-```jsx
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-
-it('handles user interaction', async () => {
-  const user = userEvent.setup();
-  render(<MyComponent />);
-
-  await user.click(screen.getByRole('button'));
-
-  expect(screen.getByText('Clicked')).toBeInTheDocument();
-});
-```
-
-**E2E Page Interactions:**
+**E2E Custom Fixtures:**
 ```javascript
-test('user can navigate to dashboard', async ({ page }) => {
-  await loginAndPrepare(page);
-  await waitForPageReady(page);
+// Use freshPage for unauthenticated flows
+import { test, expect } from './fixtures/index.js';
 
-  const playlistsCard = page.getByText('Playlists', { exact: true });
-  await expect(playlistsCard).toBeVisible();
-  await playlistsCard.click();
+test('unauthenticated test', async ({ freshPage }) => {
+  await freshPage.goto('/auth/login');
+});
 
-  await expect(page.locator('main')).toBeVisible();
+// Use authenticatedPage for pre-authenticated tests
+test('authenticated test', async ({ authenticatedPage }) => {
+  await authenticatedPage.goto('/app/settings');
 });
 ```
 
-**Comprehensive Test Coverage:**
+**Export Smoke Tests (common service test pattern):**
 ```javascript
-// Tests organized by feature with clear sections
-describe('alertEngineService', () => {
-  // ============================================================================
-  // CONSTANTS TESTS
-  // ============================================================================
-  describe('constants', () => { /* ... */ });
-
-  // ============================================================================
-  // RAISE ALERT TESTS
-  // ============================================================================
-  describe('raiseAlert', () => { /* ... */ });
-
-  // ============================================================================
-  // RATE LIMITING TESTS
-  // ============================================================================
-  describe('rate limiting', () => { /* ... */ });
+it('exports all required playlist CRUD functions', async () => {
+  const playlistService = await import('../../../src/services/playlistService');
+  expect(typeof playlistService.fetchPlaylists).toBe('function');
+  expect(typeof playlistService.createPlaylist).toBe('function');
+  // etc.
 });
 ```
-
-**Global Test Setup (`tests/setup.js`):**
-- Mocks `loggingService` globally to prevent circular dependency
-- Extends Vitest expect with Testing Library matchers
-- Cleans up after each test via `afterEach(cleanup)`
-- Mocks environment variables (Supabase URL/key)
-- Mocks browser APIs (matchMedia, ResizeObserver, IntersectionObserver)
-- Stubs `URL.createObjectURL` and `URL.revokeObjectURL`
 
 ---
 
-*Testing analysis: 2026-02-13*
+*Testing analysis: 2026-02-17*

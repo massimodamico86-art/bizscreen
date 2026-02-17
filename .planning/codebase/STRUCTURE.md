@@ -1,406 +1,548 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-02-13
+**Analysis Date:** 2026-02-17
 
 ## Directory Layout
 
 ```
-bizscreen/
-├── src/                    # Application source code
-│   ├── pages/             # Top-level page components (lazy-loaded)
-│   ├── components/        # Reusable UI components by domain
-│   ├── contexts/          # React Context providers (auth, branding, i18n, emergency)
-│   ├── services/          # Business logic and data access (100+ modules)
-│   ├── hooks/             # Custom React hooks (feature flags, media, layout, logger)
-│   ├── router/            # Route definitions and auth guards
-│   ├── auth/              # Authentication pages and layout
-│   ├── marketing/         # Public marketing pages (home, pricing, features)
-│   ├── player/            # TV player subsystem (offline-capable)
-│   │   ├── pages/         # Player pages (ViewPage, PairPage)
-│   │   ├── components/    # Player-specific components (ZonePlayer, SceneRenderer, widgets)
-│   │   ├── hooks/         # Player hooks (usePlayerContent, usePlayerHeartbeat, etc.)
-│   │   ├── contexts/      # Player contexts (DataRefreshContext)
-│   │   ├── cacheService.js       # IndexedDB caching for offline playback
-│   │   └── offlineService.js     # Offline content management
-│   ├── layouts/           # Layout wrapper components (Layout1-4)
-│   ├── utils/             # Utility functions and helpers
-│   ├── config/            # Configuration (plans, features, app catalog, env)
-│   ├── design-system/     # UI primitives and design tokens
-│   ├── i18n/              # Internationalization and locale files
-│   ├── security/          # Security utilities (sanitization, XSS prevention)
-│   ├── legacy/            # Legacy code being phased out
-│   ├── templates/         # Content templates
-│   ├── types/             # Type definitions (JSDoc patterns)
-│   ├── api/               # API utilities (GDPR handlers)
-│   ├── __fixtures__/      # Test fixtures and mock data
-│   ├── main.jsx           # Application entry point
-│   ├── App.jsx            # Main app shell with role-based routing
-│   ├── Player.jsx         # Player routing entry point
-│   ├── TV.jsx             # Legacy TV player entry point
-│   ├── ScaledStage.jsx    # Canvas scaling utility
-│   ├── supabase.js        # Supabase client initialization
-│   ├── getConfig.js       # TV config fetching helper
-│   └── index.css          # Global styles (Tailwind imports)
-├── tests/                 # Test files (unit, integration, e2e)
-│   ├── e2e/              # Playwright E2E tests
-│   ├── unit/             # Vitest unit tests
-│   ├── integration/      # Integration tests
-│   ├── mocks/            # MSW mock handlers
-│   ├── utils/            # Test utilities
-│   └── load/             # Load tests (k6)
-├── supabase/              # Database schema and functions
-│   ├── migrations/        # SQL migration files (numbered, sequential)
-│   ├── functions/         # Edge functions (RSS proxy, Unsplash proxy)
-│   └── snippets/          # Reusable SQL snippets
-├── public/                # Static assets (favicon, robots.txt)
-├── docs/                  # Documentation (architecture, admin panel, licensing)
-├── scripts/               # Build and utility scripts
-├── android-tv-player/     # Android TV player app (Kotlin/Java)
-├── yodeck-capture/        # Yodeck layout capture tool (Puppeteer)
-├── playwright/            # Playwright test configuration and auth state
-├── .planning/             # GSD planning and phase documents
-│   ├── phases/            # Phase execution records
-│   ├── codebase/          # Codebase analysis documents
-│   └── PROJECT.md         # Project overview
-├── dist/                  # Build output (generated)
-├── vite.config.js         # Vite build configuration
-├── package.json           # Dependencies and scripts
-├── tailwind.config.js     # Tailwind CSS configuration
-├── eslint.config.js       # ESLint rules
-├── playwright.config.js   # Playwright E2E test config
-├── vitest.config.js       # Vitest unit test config
-└── index.html             # HTML entry point
+bizscreen/                         # Project root
+├── src/                           # All application source code
+│   ├── main.jsx                   # React entry point, observability init
+│   ├── App.jsx                    # Admin app shell (nav, currentPage state)
+│   ├── Player.jsx                 # TV player entry (routes /player/*)
+│   ├── TV.jsx                     # Legacy TV player (routes /tv/*)
+│   ├── ScaledStage.jsx            # Shared scaled-canvas utility
+│   ├── supabase.js                # Supabase client singleton
+│   ├── getConfig.js               # Legacy config helper for TV.jsx
+│   ├── index.css                  # Global CSS / Tailwind base
+│   │
+│   ├── router/                    # URL routing
+│   │   └── AppRouter.jsx          # All routes: marketing, auth, app, player
+│   │
+│   ├── contexts/                  # React global contexts
+│   │   ├── AuthContext.jsx        # User session, profile, auth state machine
+│   │   ├── BrandingContext.jsx    # White-label branding, impersonation
+│   │   └── EmergencyContext.jsx   # Emergency broadcast banner state
+│   │
+│   ├── config/                    # App-wide constants and configuration
+│   │   ├── plans.js               # Plan tiers, Feature enum, resource limits
+│   │   ├── featureFlags.js        # Flag resolution logic, GLOBAL_FLAGS
+│   │   ├── appCatalog.js          # Digital signage app definitions
+│   │   ├── env.js                 # Environment variable wrappers
+│   │   └── yodeckTheme.js         # Brand theme tokens
+│   │
+│   ├── services/                  # Data access and business logic (90+ files)
+│   │   ├── index.js               # Barrel re-exports for commonly used services
+│   │   ├── loggingService.js      # Structured logging, createScopedLogger factory
+│   │   ├── featureFlagService.js  # Feature flag DB fetch, cache, evaluation
+│   │   ├── mediaService.js        # Media asset CRUD
+│   │   ├── playlistService.js     # Playlist CRUD
+│   │   ├── scheduleService.js     # Schedule CRUD and content priority logic
+│   │   ├── screenService.js       # Screen CRUD
+│   │   ├── playerService.js       # Player content fetch, heartbeat, offline cache
+│   │   ├── realtimeService.js     # Supabase realtime channel management
+│   │   ├── playbackTrackingService.js # Scene/slide analytics tracking
+│   │   ├── approvalService.js     # Content review workflow
+│   │   ├── permissionsService.js  # Role-based permission checks
+│   │   ├── brandingService.js     # Tenant branding fetch
+│   │   ├── tenantService.js       # Tenant/impersonation management
+│   │   ├── analyticsService.js    # Analytics data queries
+│   │   ├── campaignService.js     # Campaign CRUD
+│   │   ├── sceneService.js        # Scene and slide CRUD
+│   │   ├── layoutService.js       # Layout zone configuration CRUD
+│   │   ├── templateService.js     # Template marketplace CRUD
+│   │   ├── authService.js         # Auth actions (invite, MFA)
+│   │   ├── billingService.js      # Trial/plan management
+│   │   ├── dataSourceService.js   # External data source connections
+│   │   ├── dataBindingResolver.js # Scene block data binding resolution
+│   │   ├── dataFeedScheduler.js   # Scheduled data feed polling
+│   │   ├── rssFeedService.js      # RSS feed fetch + parse
+│   │   ├── weatherService.js      # OpenWeather API integration
+│   │   ├── unsplashProxyService.js # Unsplash image search proxy
+│   │   ├── cloudinaryService.js   # Cloudinary upload helper
+│   │   ├── s3UploadService.js     # AWS S3 presigned URL upload
+│   │   ├── rateLimitService.js    # Client-side rate limiting
+│   │   ├── cacheService.js        # Generic cache utilities
+│   │   ├── notificationDispatcherService.js # Notification delivery
+│   │   ├── emergencyService.js    # Emergency broadcast management
+│   │   ├── gdprService.js         # GDPR consent/compliance
+│   │   ├── gdprDeletionService.js # GDPR data deletion
+│   │   ├── securityService.js     # Security event logging
+│   │   ├── svgTemplateService.js  # SVG template CRUD
+│   │   ├── sceneDesignService.js  # Scene block animation/style helpers
+│   │   ├── mediaPreloader.js      # Preload next slides' media assets
+│   │   ├── errorTrackingService.js # Error event tracking helpers
+│   │   ├── webVitalsService.js    # Core Web Vitals monitoring
+│   │   ├── healthService.js       # Health check monitoring
+│   │   └── social/                # Social media platform services
+│   │       ├── instagramService.js
+│   │       ├── facebookService.js
+│   │       ├── googleReviewsService.js
+│   │       └── tiktokService.js
+│   │
+│   ├── hooks/                     # Shared custom hooks
+│   │   ├── useFeatureFlag.jsx     # Feature flag hooks + FeatureFlagProvider
+│   │   ├── useLogger.js           # Scoped logger hook wrapper
+│   │   ├── useMedia.js            # Media library data hook
+│   │   ├── useLayout.js           # Layout data hook
+│   │   ├── useLayoutTemplates.js  # Layout template data hook
+│   │   ├── useMediaQuery.js       # Responsive breakpoints hook
+│   │   ├── useS3Upload.jsx        # S3 presigned upload hook
+│   │   ├── useCloudinaryUpload.js # Cloudinary upload hook
+│   │   ├── useUnifiedOnboarding.js # Onboarding state machine hook
+│   │   ├── useAdmin.js            # Admin data hook
+│   │   ├── useAuditLogs.js        # Audit log data hook
+│   │   ├── useDataCache.js        # Generic data caching hook
+│   │   ├── useMediaFolders.js     # Media folder management hook
+│   │   ├── useMediaPlayback.js    # Media preview playback hook
+│   │   ├── usePlayerMetrics.js    # Player analytics hook
+│   │   └── usePrefetch.js         # Route prefetching hook
+│   │
+│   ├── pages/                     # Full-page view components (70+)
+│   │   ├── DashboardPage.jsx
+│   │   ├── MediaLibraryPage.jsx
+│   │   ├── PlaylistsPage.jsx
+│   │   ├── PlaylistEditorPage.jsx
+│   │   ├── ScenesPage.jsx
+│   │   ├── SceneEditorPage.jsx
+│   │   ├── SceneDetailPage.jsx
+│   │   ├── SchedulesPage.jsx
+│   │   ├── ScheduleEditorPage.jsx
+│   │   ├── ScreensPage.jsx
+│   │   ├── ScreenGroupsPage.jsx
+│   │   ├── ScreenGroupDetailPage.jsx
+│   │   ├── LayoutsPage.jsx
+│   │   ├── LayoutEditorPage.jsx
+│   │   ├── CampaignsPage.jsx
+│   │   ├── CampaignEditorPage.jsx
+│   │   ├── TemplatesPage.jsx
+│   │   ├── SvgTemplateGalleryPage.jsx
+│   │   ├── SvgEditorPage.jsx
+│   │   ├── TemplateMarketplacePage.jsx
+│   │   ├── DesignEditorPage.jsx    # Polotno-based design editor
+│   │   ├── AppsPage.jsx
+│   │   ├── DataSourcesPage.jsx
+│   │   ├── ContentAssistantPage.jsx # AI assistant
+│   │   ├── AnalyticsPage.jsx
+│   │   ├── AnalyticsDashboardPage.jsx
+│   │   ├── ContentPerformancePage.jsx
+│   │   ├── ContentDetailAnalyticsPage.jsx
+│   │   ├── ReviewInboxPage.jsx
+│   │   ├── AlertsCenterPage.jsx
+│   │   ├── TeamPage.jsx
+│   │   ├── ClientsPage.jsx
+│   │   ├── SettingsPage.jsx
+│   │   ├── AccountPlanPage.jsx
+│   │   ├── BrandingSettingsPage.jsx
+│   │   ├── WhiteLabelSettingsPage.jsx
+│   │   ├── EnterpriseSecurityPage.jsx
+│   │   ├── ResellerDashboardPage.jsx
+│   │   ├── ResellerBillingPage.jsx
+│   │   ├── SuperAdminDashboardPage.jsx
+│   │   ├── AdminDashboardPage.jsx
+│   │   ├── PairDevicePage.jsx
+│   │   ├── PublicPreviewPage.jsx
+│   │   ├── Admin/                 # Super-admin pages
+│   │   │   ├── AdminTenantsListPage.jsx
+│   │   │   ├── AdminTenantDetailPage.jsx
+│   │   │   ├── AdminAuditLogsPage.jsx
+│   │   │   ├── AdminSystemEventsPage.jsx
+│   │   │   ├── AdminTemplatesPage.jsx
+│   │   │   └── AdminEditTemplatePage.jsx
+│   │   ├── LayoutEditor/          # Multi-zone layout editor pages
+│   │   │   ├── YodeckLayoutEditorPage.jsx
+│   │   │   └── LayoutPreviewPage.jsx
+│   │   ├── LayoutTemplates/
+│   │   │   └── LayoutTemplatesPage.jsx
+│   │   ├── components/            # Sub-components co-located with pages
+│   │   │   ├── CampaignEditorComponents.jsx
+│   │   │   ├── PlaylistEditorComponents.jsx
+│   │   │   ├── ScreensComponents.jsx
+│   │   │   └── FeatureFlagsComponents.jsx
+│   │   ├── dashboard/             # Dashboard section sub-components
+│   │   │   ├── DashboardSections.jsx
+│   │   │   └── OnboardingCards.jsx
+│   │   └── hooks/                 # Page-specific hooks
+│   │       └── (page-scoped hooks)
+│   │
+│   ├── components/                # Feature-scoped shared components
+│   │   ├── ErrorBoundary.jsx      # Top-level error boundary
+│   │   ├── FeatureGate.jsx        # Feature flag gate component
+│   │   ├── Toast.jsx              # Toast notification
+│   │   ├── FeedbackWidget.jsx     # In-app feedback
+│   │   ├── AnnouncementBanner.jsx # System announcement banner
+│   │   ├── PolotnoEditor.jsx      # Polotno design editor wrapper
+│   │   ├── Admin/                 # Admin-specific components
+│   │   ├── analytics/             # Analytics chart/card components
+│   │   ├── apps/                  # App config modals
+│   │   ├── brand/                 # Brand theme preview components
+│   │   ├── campaigns/             # Campaign UI components
+│   │   ├── compliance/            # GDPR compliance components
+│   │   ├── dashboard/             # Dashboard widgets
+│   │   ├── data-sources/          # Data source picker/preview
+│   │   ├── feature-flags/         # Feature flag debug UI
+│   │   ├── layout/                # Shell layout (Header, MobileNav)
+│   │   ├── layout-editor/         # Zone layout editor components
+│   │   ├── listings/              # Listing card/management components
+│   │   ├── media/                 # Media library components
+│   │   ├── modals/                # Shared modal components
+│   │   ├── notifications/         # Notification bell/center components
+│   │   ├── onboarding/            # Onboarding flow components
+│   │   ├── player/                # Player preview component
+│   │   ├── scene-editor/          # Scene/slide editor panels and canvas
+│   │   ├── scenes/                # Scene list components
+│   │   ├── schedules/             # Schedule builder components
+│   │   ├── screens/               # Screen card/status components
+│   │   ├── security/              # Security audit components
+│   │   ├── svg-editor/            # SVG editor toolbar/panels
+│   │   ├── tables/                # Shared data table components
+│   │   ├── templates/             # Template gallery/preview components
+│   │   ├── translations/          # Translation dashboard components
+│   │   ├── WeatherWall/           # Weather wall app component
+│   │   └── welcome/               # Welcome/onboarding modal
+│   │
+│   ├── design-system/             # Primitive UI components
+│   │   └── components/
+│   │       ├── Button.jsx
+│   │       ├── Alert.jsx
+│   │       ├── Badge.jsx
+│   │       ├── Card.jsx
+│   │       ├── Modal.jsx
+│   │       ├── PageLayout.jsx
+│   │       ├── EmptyState.jsx
+│   │       ├── FilterChips.jsx
+│   │       ├── SearchBar.jsx
+│   │       ├── Tabs.jsx
+│   │       ├── FormElements.jsx
+│   │       ├── Illustrations.jsx
+│   │       ├── PageTransition.jsx
+│   │       └── TemplateCard.jsx
+│   │
+│   ├── player/                    # TV player subsystem (separate runtime)
+│   │   ├── pages/
+│   │   │   └── ViewPage.jsx       # Main playback orchestrator
+│   │   ├── components/
+│   │   │   ├── AppRenderer.jsx    # Widget/app type router
+│   │   │   ├── LayoutRenderer.jsx # Multi-zone layout grid
+│   │   │   ├── SceneRenderer.jsx  # Slide/block/transition renderer
+│   │   │   ├── ZonePlayer.jsx     # Zone-level playlist player
+│   │   │   ├── PairPage.jsx       # OTP device pairing page
+│   │   │   ├── PairingScreen.jsx  # Pairing UI screen
+│   │   │   ├── PinEntry.jsx       # PIN entry component
+│   │   │   └── widgets/           # Widget implementations
+│   │   │       ├── ClockWidget.jsx
+│   │   │       ├── DateWidget.jsx
+│   │   │       ├── ClockDateWidget.jsx
+│   │   │       ├── WeatherWidget.jsx
+│   │   │       ├── QRCodeWidget.jsx
+│   │   │       ├── RssTickerWidget.jsx
+│   │   │       ├── RssCardWidget.jsx
+│   │   │       ├── SocialFeedWidget.jsx
+│   │   │       ├── CountdownWidget.jsx
+│   │   │       ├── DataTableWidget.jsx
+│   │   │       └── index.js       # Barrel export for all widgets
+│   │   ├── hooks/
+│   │   │   ├── usePlayerContent.js    # Content loading, offline, polling
+│   │   │   ├── usePlayerHeartbeat.js  # Heartbeat RPC loop
+│   │   │   ├── usePlayerCommands.js   # Device command handling
+│   │   │   ├── usePlayerPlayback.js   # Playlist advance/timing logic
+│   │   │   ├── useKioskMode.js        # Kiosk PIN lock logic
+│   │   │   ├── useStuckDetection.js   # Stuck slide watchdog
+│   │   │   ├── useTapSequence.js      # Secret tap sequence detector
+│   │   │   ├── useWidgetData.js       # Widget data fetch hook
+│   │   │   └── useDataRefreshOrchestrator.js # Batched widget data orchestrator
+│   │   ├── contexts/
+│   │   │   └── DataRefreshContext.jsx # Context for orchestrator
+│   │   ├── offlineService.js      # Offline mode initialization
+│   │   └── cacheService.js        # Player-side IndexedDB cache
+│   │
+│   ├── widgets/                   # Widget registry (editor + player shared)
+│   │   └── registry.js            # WIDGET_REGISTRY, getWidgetComponent()
+│   │
+│   ├── auth/                      # Auth flow pages
+│   │   ├── LoginPage.jsx
+│   │   ├── SignupPage.jsx
+│   │   ├── ResetPasswordPage.jsx
+│   │   ├── UpdatePasswordPage.jsx
+│   │   ├── AuthCallbackPage.jsx
+│   │   └── AcceptInvitePage.jsx
+│   │
+│   ├── marketing/                 # Public marketing pages
+│   │   ├── MarketingLayout.jsx    # Marketing page shell
+│   │   ├── HomePage.jsx
+│   │   ├── PricingPage.jsx
+│   │   └── FeaturesPage.jsx
+│   │
+│   ├── i18n/                      # Internationalization
+│   │   ├── I18nContext.jsx        # I18n context and provider
+│   │   ├── i18nConfig.js          # Locale config, date/number formats
+│   │   ├── index.js               # useTranslation hook export
+│   │   └── locales/
+│   │       └── en.json            # English message catalog
+│   │
+│   ├── security/                  # Security utilities
+│   │   ├── sanitize.js            # DOMPurify wrapper, SANITIZE_CONFIG
+│   │   ├── SafeHTML.jsx           # Safe HTML render component
+│   │   └── errorMessages.js       # User-facing error message strings
+│   │
+│   ├── utils/                     # Pure utility functions
+│   │   ├── observability.js       # initObservability() - init all monitoring
+│   │   ├── errorTracking.jsx      # Sentry integration, SentryRoutes export
+│   │   ├── formatters.js          # Date/number/currency formatting
+│   │   ├── pii.js                 # PII redaction for logging
+│   │   ├── safeStringify.js       # Circular-safe JSON stringify
+│   │   ├── supabaseErrorInterceptor.js # Sentry breadcrumbs for Supabase calls
+│   │   ├── seo.js                 # SEO meta tag helpers
+│   │   └── mediaMigration.js      # Media URL migration helpers
+│   │
+│   ├── types/                     # TypeScript-style type documentation
+│   │   └── media.js               # Media type constants/interfaces
+│   │
+│   ├── legacy/                    # Deprecated code kept for backwards compat
+│   │   ├── pages/                 # Older page implementations
+│   │   ├── components/
+│   │   │   └── listings/          # Legacy listing components
+│   │   ├── hooks/                 # Legacy hook implementations
+│   │   ├── data/                  # Legacy static data
+│   │   └── utils/                 # Legacy utility functions
+│   │
+│   ├── layouts/                   # Legacy TV layout templates
+│   │   ├── Layout1.jsx
+│   │   ├── Layout2.jsx
+│   │   ├── Layout3.jsx
+│   │   ├── Layout4.jsx
+│   │   └── index.js
+│   │
+│   ├── templates/                 # Static template assets
+│   │   └── restaurant-menu-template.json
+│   │
+│   └── __fixtures__/              # Shared test fixture factories
+│       ├── index.js
+│       ├── playlists.js
+│       ├── schedules.js
+│       └── screens.js
+│
+├── tests/                         # All test code
+│   ├── setup.js                   # Vitest global test setup
+│   ├── mocks/                     # Shared mock implementations
+│   ├── utils/                     # Test utility helpers
+│   ├── unit/                      # Unit tests (mirroring src structure)
+│   ├── integration/               # Integration tests
+│   │   └── api/                   # API integration tests
+│   ├── e2e/                       # Playwright E2E tests
+│   │   ├── auth.setup.js          # Auth state setup for E2E
+│   │   ├── helpers.js             # Shared E2E helper functions
+│   │   ├── fixtures/              # E2E test fixtures
+│   │   └── *.spec.js              # Feature-scoped E2E specs
+│   ├── load/                      # Load test scripts
+│   ├── logging.test.js            # Logging service tests
+│   └── (unit test files)
+│
+├── supabase/                      # Supabase backend
+│   ├── migrations/                # SQL migration files
+│   ├── functions/                 # Edge functions
+│   │   ├── rss-proxy/             # RSS feed proxy edge function
+│   │   ├── unsplash-proxy/        # Unsplash search proxy edge function
+│   │   └── _shared/               # Shared edge function utilities
+│   ├── tests/                     # DB-level tests
+│   └── snippets/                  # SQL utility snippets
+│
+├── playwright/                    # Playwright configuration
+├── scripts/                       # Build/maintenance scripts
+├── public/                        # Static assets served at root
+├── android-tv-player/             # Android TV native player app
+├── yodeck-capture/                # Yodeck screen capture integration
+├── _api-disabled/                 # Disabled API routes (preserved)
+├── load-tests/                    # k6 load test scripts
+├── docs/                          # Project documentation
+│
+├── index.html                     # Vite HTML entry point
+├── vite.config.js                 # Vite + Sentry + S3 presign API plugin
+├── tailwind.config.js             # Tailwind CSS configuration
+├── postcss.config.js              # PostCSS configuration
+├── eslint.config.js               # ESLint flat config
+├── playwright.config.js           # Playwright E2E configuration
+├── vitest.config.js               # Vitest unit test configuration
+└── package.json                   # Dependencies and npm scripts
 ```
 
 ## Directory Purposes
 
-**src/pages:**
-- Purpose: Top-level page components mapped to routes
-- Contains: 70+ page components (DashboardPage, PlaylistEditorPage, CampaignEditorPage, etc.)
-- Key files: `src/pages/DashboardPage.jsx`, `src/pages/PlaylistEditorPage.jsx`, `src/pages/LayoutEditorPage.jsx`, `src/pages/SceneEditorPage.jsx`, `src/pages/MediaLibraryPage.jsx`, `src/pages/ScreensPage.jsx`, `src/pages/CampaignsPage.jsx`
-- Pattern: Default export, lazy-loaded via `React.lazy()`, accept navigation callbacks (`onNavigate`, `setCurrentPage`), receive `showToast` for notifications
-- Subdirectories: `Admin/` (admin-specific pages like AdminTenantDetailPage), `LayoutEditor/` (Yodeck layout editor pages), `LayoutTemplates/` (template gallery)
+**`src/services/`:**
+- Purpose: All Supabase queries, external API calls, and business logic. No React imports.
+- Contains: 90+ named-export async function modules. Each file is one domain (e.g., media, schedule, screen).
+- Key files: `loggingService.js` (used by everything), `playerService.js`, `featureFlagService.js`, `approvalService.js`
 
-**src/components:**
-- Purpose: Reusable UI components organized by domain
-- Contains: Subdirectories per feature area with 200+ components
-- Key files: `src/components/layout/Header.jsx`, `src/components/FeatureGate.jsx`, `src/components/ErrorBoundary.jsx`, `src/components/Toast.jsx`, `src/components/AnnouncementBanner.jsx`
-- Subfolders: `analytics/`, `apps/`, `brand/`, `campaigns/`, `dashboard/`, `data-sources/`, `feature-flags/`, `layout/`, `layout-editor/`, `listings/`, `media/`, `modals/`, `notifications/`, `onboarding/`, `player/`, `scene-editor/`, `scenes/`, `schedules/`, `screens/`, `security/`, `svg-editor/`, `tables/`, `templates/`, `translations/`, `welcome/`, `compliance/`, `Admin/`, `WeatherWall/`
-- Pattern: Components export as named or default, use context hooks for global state, accept props for customization
+**`src/components/`:**
+- Purpose: Reusable UI components organized by feature domain
+- Contains: Feature subdirectories (`campaigns/`, `media/`, `schedules/`, etc.) each with domain-specific components
+- Key distinction from pages: Components are reusable building blocks; pages are full-view containers
 
-**src/services:**
-- Purpose: Business logic and data access layer
-- Contains: 100+ service modules, each handling a specific domain
-- Key files: `src/services/playlistService.js`, `src/services/mediaService.js`, `src/services/campaignService.js`, `src/services/scheduleService.js`, `src/services/screenService.js`, `src/services/authService.js`, `src/services/loggingService.js`, `src/services/billingService.js`, `src/services/dataSourceService.js`, `src/services/playerAnalyticsService.js`
-- Pattern: Export async functions with JSDoc typing, use `createScopedLogger('ServiceName')` for logging, throw descriptive errors, include rate limiting checks, RLS-aware queries
-- Examples: `accountPlanService.js`, `activityLogService.js`, `adminService.js`, `alertEngineService.js`, `analyticsService.js`, `apiTokenService.js`, `approvalService.js`, `assistantService.js`, `auditService.js`, `autoTaggingService.js`, `brandAiService.js`, `brandThemeService.js`, `brandingService.js`, `cacheService.js`, `canvaService.js`, `clientService.js`, `complianceService.js`, `contentAnalyticsService.js`, `dashboardService.js`, `dataBindingResolver.js`, `dataFeedScheduler.js`, `daypartService.js`, `demoService.js`, `deviceScreenshotService.js`, `deviceSyncService.js`, `domainService.js`, `emailService.js`, and 70+ more
+**`src/design-system/components/`:**
+- Purpose: Primitive, domain-agnostic UI components (the component library)
+- Contains: `Button`, `Modal`, `Alert`, `Card`, `PageLayout`, `EmptyState`, `FilterChips`, `SearchBar`, `Tabs`
+- Use these in preference to ad-hoc HTML when building new UI
 
-**src/contexts:**
-- Purpose: Global state management via React Context
-- Contains: AuthContext, BrandingContext, EmergencyContext, I18nContext, DataRefreshContext
-- Key files: `src/contexts/AuthContext.jsx`, `src/contexts/BrandingContext.jsx`, `src/contexts/EmergencyContext.jsx`
-- Pattern: `createContext()` + custom hook (e.g., `useAuth`), provider wraps app in `main.jsx`, manages side effects in `useEffect`, exposes state and actions
+**`src/player/`:**
+- Purpose: Self-contained TV player subsystem; runs at `/player/*`
+- Contains: Pages, components, hooks, contexts all specific to playback runtime
+- Note: Intentionally isolated — player code does not import from `src/pages/` or `src/components/`
 
-**src/hooks:**
-- Purpose: Custom reusable React hooks
-- Contains: 17 custom hooks for common patterns
-- Key files: `src/hooks/useFeatureFlag.jsx`, `src/hooks/useLogger.js`, `src/hooks/useMedia.js`, `src/hooks/useLayout.js`, `src/hooks/usePlayerMetrics.js`, `src/hooks/useAdmin.js`, `src/hooks/useAuditLogs.js`, `src/hooks/useDataCache.js`, `src/hooks/useS3Upload.jsx`, `src/hooks/useMediaQuery.js`, `src/hooks/useUnifiedOnboarding.js`
-- Pattern: Prefix with `use`, return state and handlers, encapsulate side effects, use dependencies array correctly
+**`src/widgets/registry.js`:**
+- Purpose: Single source of truth for all widget types
+- Used by both the scene editor (admin) and the player renderer
 
-**src/player:**
-- Purpose: Offline-capable TV player subsystem
-- Contains: Player pages, hooks, components, offline service, cache service, contexts
-- Key files: `src/player/pages/ViewPage.jsx`, `src/player/offlineService.js`, `src/player/cacheService.js`, `src/player/hooks/usePlayerContent.js`, `src/player/hooks/usePlayerHeartbeat.js`, `src/player/hooks/usePlayerPlayback.js`, `src/player/hooks/useDataRefreshOrchestrator.js`, `src/player/components/SceneRenderer.jsx`, `src/player/components/ZonePlayer.jsx`, `src/player/components/AppRenderer.jsx`, `src/player/contexts/DataRefreshContext.jsx`
-- Subdirectories: `pages/` (ViewPage), `hooks/` (player-specific hooks), `components/` (player UI components + widgets subfolder)
-- Widget components: `src/player/components/widgets/WeatherWidget.jsx`, `ClockWidget.jsx`, `DateWidget.jsx`, `QRCodeWidget.jsx`, `DataTableWidget.jsx`, `RssTickerWidget.jsx`, `RssCardWidget.jsx`, `SocialFeedWidget.jsx`, `CountdownWidget.jsx`, `SyncStatusIndicator.jsx`
-- Pattern: Isolated subsystem with own routing, IndexedDB for caching, data refresh orchestration, offline-first
+**`src/legacy/`:**
+- Purpose: Deprecated code kept for backwards compatibility
+- Do NOT add new code here; migrate away from these over time
 
-**src/router:**
-- Purpose: Route definitions and navigation guards
-- Contains: AppRouter with lazy-loaded routes, auth guards
-- Key files: `src/router/AppRouter.jsx`
-- Pattern: React Router v7 with lazy loading, `RequireAuth` wrapper for protected routes, `PublicRoute` wrapper redirects authenticated users, Sentry-wrapped routes for error tracking
+**`src/layouts/`:**
+- Purpose: Legacy layout templates used by `TV.jsx` (the `/tv/*` route)
+- Do NOT add new layouts here; new layouts use the zone-based layout system in `src/services/layoutService.js`
 
-**src/auth:**
-- Purpose: Authentication UI and flows
-- Contains: Login, signup, password reset, OAuth callback pages, auth layout
-- Key files: `src/auth/LoginPage.jsx`, `src/auth/SignupPage.jsx`, `src/auth/ResetPasswordPage.jsx`, `src/auth/UpdatePasswordPage.jsx`, `src/auth/AcceptInvitePage.jsx`, `src/auth/AuthCallbackPage.jsx`, `src/auth/AuthLayout.jsx`
-- Pattern: Forms with validation, call authService functions, redirect on success
+**`tests/e2e/`:**
+- Purpose: Playwright end-to-end tests covering all major user flows
+- Generated: No; committed: Yes
+- Files named `*.spec.js` following Playwright convention
 
-**src/marketing:**
-- Purpose: Public marketing website pages
-- Contains: Home, pricing, features pages with marketing layout
-- Key files: `src/marketing/HomePage.jsx`, `src/marketing/PricingPage.jsx`, `src/marketing/FeaturesPage.jsx`, `src/marketing/MarketingLayout.jsx`
-- Pattern: Static content with animations (Framer Motion), SEO optimized, lazy loaded
-
-**src/design-system:**
-- Purpose: Reusable UI primitives and design tokens
-- Contains: Button, Modal, Alert, SearchBar, FilterChips, EmptyState, CreateLayoutModal components
-- Key files: `src/design-system/components/Button.jsx`, `src/design-system/components/Alert.jsx`, `src/design-system/components/SearchBar.jsx`, `src/design-system/components/EmptyState.jsx`
-- Pattern: Token-based theming with CSS variables, Tailwind utility classes, consistent API
-
-**src/utils:**
-- Purpose: Utility functions and helpers
-- Contains: Observability, error tracking, formatting, validation utilities
-- Key files: `src/utils/observability.js`, `src/utils/errorTracking.jsx`, `src/utils/errorMessages.js`, `src/utils/supabaseErrorInterceptor.js`, `src/utils/formatters.js`, `src/utils/pii.js`, `src/utils/safeStringify.js`, `src/utils/seo.js`
-- Pattern: Pure functions, initialization functions for side effects, exported utilities
-
-**src/config:**
-- Purpose: Application configuration
-- Contains: Plan definitions, feature flags, app catalog, environment settings
-- Key files: `src/config/plans.js`, `src/config/featureFlags.js`, `src/config/appCatalog.js`, `src/config/env.js`, `src/config/yodeckTheme.js`
-- Pattern: Export constants, enums, and configuration objects, no runtime state
-
-**src/i18n:**
-- Purpose: Internationalization
-- Contains: I18nContext, translation utilities, locale JSON files
-- Key files: `src/i18n/I18nContext.jsx`, `src/i18n/locales/en.json`
-- Pattern: Context provider with `useTranslation()` hook, JSON locale files with nested keys
-
-**src/security:**
-- Purpose: Security utilities
-- Contains: HTML sanitization, XSS prevention
-- Key files: `src/security/sanitizeHtml.js`, `src/security/index.js`
-- Pattern: Wrapper around DOMPurify, security-focused utilities
-
-**src/layouts:**
-- Purpose: Layout wrapper components for TV displays
-- Contains: Layout1-4 components for different screen configurations
-- Key files: `src/layouts/Layout1.jsx`, `src/layouts/Layout2.jsx`, `src/layouts/Layout3.jsx`, `src/layouts/Layout4.jsx`, `src/layouts/index.js`
-- Pattern: Functional layouts with zone configuration, used by TV player
-
-**src/legacy:**
-- Purpose: Deprecated code being phased out
-- Contains: Old pages and components from pre-Yodeck architecture
-- Key files: `src/legacy/pages/FAQsPage.jsx`, `src/legacy/pages/ReferPage.jsx`, `src/legacy/pages/SetupPage.jsx`, `src/legacy/pages/SubscriptionPage.jsx`, `src/legacy/pages/UsersPage.jsx`
-- Note: Avoid adding new code here, refactor/remove over time
-
-**supabase/migrations:**
-- Purpose: Database schema evolution
-- Contains: 100+ SQL migration files (001_initial_schema.sql, 014_yodeck_phase1_media_playlists.sql, etc.)
-- Pattern: Numbered sequentially with descriptive names, applied in order, idempotent where possible
-- Key migrations: Initial schema, RLS policies, feature flags, media library, playlists, schedules, screens, campaigns, analytics, billing
-
-**tests/**
-- Purpose: Test files across all test types
-- Contains: E2E (Playwright), unit (Vitest), integration tests, mocks
-- Key files: `tests/e2e/dashboard.spec.js`, `tests/e2e/playlists.spec.js`, `tests/unit/services/playlistService.test.js`, `tests/mocks/supabase.js`
-- Subdirectories: `e2e/` (Playwright specs), `unit/` (Vitest tests), `integration/` (API tests), `mocks/` (MSW handlers), `utils/` (test helpers), `load/` (k6 load tests)
-- Pattern: Co-located with source or in dedicated test directories, use MSW for API mocking
+**`supabase/migrations/`:**
+- Purpose: Ordered SQL migration files applied to the Supabase database
+- Generated: No (manually authored); committed: Yes
 
 ## Key File Locations
 
 **Entry Points:**
-- `index.html`: HTML entry point, Vite script injection point
-- `src/main.jsx`: React root, provider setup, observability initialization
-- `src/App.jsx`: Main app shell with role-based routing and UI layout
-- `src/Player.jsx`: Player routing (`/player`, `/player/view`)
-- `src/TV.jsx`: Legacy TV player routing (`/tv?otp=...`)
+- `src/main.jsx`: Browser entry; React root, observability init, provider tree
+- `src/router/AppRouter.jsx`: URL route declarations and guards
+- `src/App.jsx`: Admin app shell (nav, currentPage dispatch)
+- `src/Player.jsx`: TV player router
+- `src/TV.jsx`: Legacy TV player
 
 **Configuration:**
-- `package.json`: Dependencies (React 19, Supabase, Vite, Playwright, Vitest) and npm scripts
-- `vite.config.js`: Vite build config with code splitting, Sentry plugin, API routes plugin, source maps
-- `tailwind.config.js`: Tailwind CSS theme configuration with custom colors
-- `eslint.config.js`: ESLint rules (React hooks, unused imports, JSDoc)
-- `playwright.config.js`: E2E test configuration with auth state reuse
-- `vitest.config.js`: Unit test configuration with jsdom environment
-- `.env.example`: Environment variable template
+- `src/config/plans.js`: Plan tiers and Feature enum — import `Feature` from here
+- `src/config/featureFlags.js`: Flag resolution logic
+- `src/config/env.js`: Environment variable helpers
+- `vite.config.js`: Build config + dev S3 presign API plugin
+- `tailwind.config.js`: Tailwind customizations
 
 **Core Logic:**
-- `src/supabase.js`: Supabase client initialization with PKCE auth and error instrumentation
-- `src/contexts/AuthContext.jsx`: Authentication state management with retry logic
-- `src/services/loggingService.js`: Structured logging with scoped loggers
-- `src/utils/observability.js`: Sentry, logging, web vitals initialization
-- `src/router/AppRouter.jsx`: Route definitions and auth guards
-- `src/getConfig.js`: TV player config fetching helper
+- `src/supabase.js`: Supabase singleton client (import this, never create new clients)
+- `src/services/loggingService.js`: `createScopedLogger` — use in every new service/hook
+- `src/widgets/registry.js`: Widget type registry — add new widgets here
+- `src/contexts/AuthContext.jsx`: User session and profile
+- `src/hooks/useFeatureFlag.jsx`: Feature flag hooks + `FeatureFlagProvider`
+- `src/components/FeatureGate.jsx`: Declarative feature gating component
 
 **Testing:**
-- `tests/e2e/dashboard.spec.js`: Dashboard E2E tests
-- `tests/e2e/playlists.spec.js`: Playlist management E2E tests
-- `tests/unit/services/playlistService.test.js`: Playlist service unit tests
-- `tests/mocks/supabase.js`: Supabase client mock
-- `playwright/.auth/user.json`: Authenticated state for E2E tests
-
-**Documentation:**
-- `PROJECT_SUMMARY.md`: High-level project overview
-- `docs/ARCHITECTURE.md`: Architecture documentation
-- `docs/ADMIN_PANEL.md`: Admin panel documentation
-- `docs/LICENSING.md`: Licensing system documentation
-- `docs/yodeck-ui-reference.md`: Yodeck UI migration reference
-- `CHANGELOG.md`: Version history
-- `PRODUCTION_RUNBOOK.md`: Production operations guide
+- `vitest.config.js`: Unit test config
+- `playwright.config.js`: E2E test config
+- `tests/setup.js`: Global test setup
+- `tests/mocks/`: Shared mock implementations
+- `src/__fixtures__/`: Test fixture factories
+- `tests/e2e/helpers.js`: Shared E2E helper functions
+- `tests/e2e/auth.setup.js`: Auth state for E2E
 
 ## Naming Conventions
 
 **Files:**
-- Pages: PascalCase with `Page` suffix (e.g., `DashboardPage.jsx`, `PlaylistEditorPage.jsx`)
-- Components: PascalCase (e.g., `Header.jsx`, `FeatureGate.jsx`, `AnnouncementBanner.jsx`)
-- Services: camelCase with `Service` suffix (e.g., `playlistService.js`, `authService.js`, `mediaService.js`)
-- Hooks: camelCase with `use` prefix (e.g., `useFeatureFlag.jsx`, `useAuth.js`, `useLogger.js`)
-- Utilities: camelCase (e.g., `observability.js`, `errorTracking.jsx`, `formatters.js`)
-- Contexts: PascalCase with `Context` suffix (e.g., `AuthContext.jsx`, `BrandingContext.jsx`)
-- Config: camelCase (e.g., `plans.js`, `featureFlags.js`, `appCatalog.js`)
+- Pages: `PascalCase` with `Page` suffix — `DashboardPage.jsx`, `PlaylistEditorPage.jsx`
+- Services: `camelCase` with `Service.js` suffix — `mediaService.js`, `scheduleService.js`
+- Hooks: `camelCase` with `use` prefix — `useFeatureFlag.jsx`, `usePlayerContent.js`
+- Components: `PascalCase` — `FeatureGate.jsx`, `AnnouncementBanner.jsx`
+- Contexts: `PascalCase` with `Context.jsx` suffix — `AuthContext.jsx`, `BrandingContext.jsx`
+- Utilities: `camelCase` — `observability.js`, `formatters.js`, `pii.js`
+- Config: `camelCase` — `plans.js`, `featureFlags.js`, `env.js`
+- E2E tests: `kebab-case.spec.js` — `playlists.spec.js`, `content-pipeline.spec.js`
 
 **Directories:**
-- Lowercase with hyphens for multi-word (e.g., `layout-editor/`, `scene-editor/`, `data-sources/`)
-- Lowercase single word where possible (e.g., `pages/`, `services/`, `hooks/`, `utils/`)
-- PascalCase for special directories (e.g., `Admin/`, `WeatherWall/`)
-
-**Variables:**
-- Components: PascalCase (e.g., `const Header = () => {}`, `const FeatureGate = ({ feature }) => {}`)
-- Functions: camelCase (e.g., `function fetchPlaylists() {}`, `async function updateMedia() {}`)
-- Constants: UPPER_SNAKE_CASE (e.g., `const API_VERSION = 'v1'`, `const MAX_FILE_SIZE = 100`)
-- React hooks: camelCase with `use` prefix (e.g., `const useAuth = () => {}`)
-- Private functions: camelCase with `_` prefix (e.g., `const _logger = createScopedLogger()`)
-
-**Types (JSDoc):**
-- Type definitions: `@typedef {Object} TypeName`
-- Exported types at top of service files
-- PascalCase for type names (e.g., `@typedef {Object} Playlist`, `@typedef {Object} MediaAsset`)
-- Property documentation: `@property {type} name - description`
-
-**Database:**
-- Tables: snake_case plural (e.g., `media_assets`, `playlists`, `screen_devices`)
-- Columns: snake_case (e.g., `owner_id`, `created_at`, `sort_order`)
-- RPC functions: snake_case (e.g., `pair_tv_device`, `get_player_content`, `player_heartbeat`)
-- Migrations: numbered with description (e.g., `001_initial_schema.sql`, `014_yodeck_phase1_media_playlists.sql`)
+- Feature domains: `kebab-case` — `scene-editor/`, `layout-editor/`, `data-sources/`
+- Admin sub-pages: `PascalCase` — `src/pages/Admin/`
+- Editor sub-pages: `PascalCase` — `src/pages/LayoutEditor/`
 
 ## Where to Add New Code
 
 **New Feature Page:**
 - Primary code: `src/pages/NewFeaturePage.jsx`
-- Tests: `tests/e2e/new-feature.spec.js` (E2E) and/or `tests/unit/pages/NewFeaturePage.test.jsx` (unit)
-- Route: Add lazy import to `src/App.jsx` in `pages` object and add navigation item if needed
-- Pattern: Export default component, accept `showToast`, `onNavigate`, lazy-loaded
+- Sub-components: `src/components/new-feature/` directory
+- Service: `src/services/newFeatureService.js`
+- Hook: `src/hooks/useNewFeature.js`
+- Tests: `tests/e2e/new-feature.spec.js` (E2E), `tests/unit/services/newFeatureService.test.js` (unit)
+- Register in: `src/App.jsx` (lazy import + pages map entry + nav item if needed)
 
-**New Component:**
-- Domain-specific: `src/components/{domain}/NewComponent.jsx` (e.g., `src/components/campaigns/`, `src/components/media/`)
-- Reusable across features: `src/design-system/components/NewComponent.jsx`
-- Player-specific: `src/player/components/NewComponent.jsx`
-- Widget: `src/player/components/widgets/NewWidget.jsx`
-- Pattern: Named or default export, accept props, use context hooks
+**New Widget Type:**
+- Widget component: `src/player/components/widgets/NewWidget.jsx`
+- Export from: `src/player/components/widgets/index.js`
+- Register in: `src/widgets/registry.js` (one entry with `component`, `icon`, `label`, `defaultProps`)
+- Editor controls: `src/components/scene-editor/NewWidgetControls.jsx`
 
 **New Service:**
 - Implementation: `src/services/newFeatureService.js`
-- Pattern: Export async functions with JSDoc, use `createScopedLogger('NewFeatureService')`, include error handling, rate limiting if needed
-- Tests: `tests/unit/services/newFeatureService.test.js`
-- Usage: Import in components/hooks/contexts
+- Pattern: Named exports of async functions, `createScopedLogger('NewFeatureService')` at top
+- Add to barrel: `src/services/index.js` if widely used
 
-**New Hook:**
-- Implementation: `src/hooks/useNewFeature.js` (app-level) or `src/player/hooks/useNewFeature.js` (player-specific)
-- Pattern: Prefix with `use`, return state and handlers, use dependency array, handle cleanup
-- Tests: `tests/unit/hooks/useNewFeature.test.js`
+**New Supabase Migration:**
+- File: `supabase/migrations/NNN_description.sql`
+- Naming: Prefix with next sequential number
 
 **New Context:**
-- Implementation: `src/contexts/NewContext.jsx`
-- Pattern: `createContext()` + custom hook, provider wraps app or subsystem, manages side effects
-- Usage: Add provider to `src/main.jsx` or relevant component
+- File: `src/contexts/NewFeatureContext.jsx`
+- Pattern: Follow `AuthContext.jsx` — `createContext`, provider component, `useNewFeature` hook with guard
+- Mount in: `src/main.jsx` provider tree
+
+**New Design System Primitive:**
+- Implementation: `src/design-system/components/NewPrimitive.jsx`
+- Keep domain-agnostic (no business logic)
 
 **Utilities:**
-- Shared helpers: `src/utils/newUtility.js`
-- Security utilities: `src/security/newSecurityUtil.js`
-- Player utilities: `src/player/newPlayerUtil.js`
-- Pattern: Pure functions, well-documented, unit tested
-
-**Database Changes:**
-- Schema: Create new migration `supabase/migrations/NNN_description.sql` (increment number)
-- RPC functions: Add to migration file or create dedicated function migration
-- Pattern: Numbered sequentially, descriptive name, include rollback if possible, test locally first
-
-**Configuration:**
-- Feature flags: Add to `src/config/featureFlags.js`
-- Plans/tiers: Update `src/config/plans.js` (Feature enum, PlanConfig)
-- Apps/widgets: Add to `src/config/appCatalog.js`
-- Environment: Add to `src/config/env.js` and `.env.example`
-
-**Player Widget:**
-- Implementation: `src/player/components/widgets/NewWidget.jsx`
-- Pattern: Use `useWidgetData` hook, implement `dataFetcher` function, show `SyncStatusIndicator`, cache data
-- Config: Add to `src/config/appCatalog.js` widget definitions
-- Renderer: Add case to `SceneRenderer.jsx` widget registry
+- Shared helpers with no React: `src/utils/`
+- Shared helpers with React: `src/hooks/`
 
 ## Special Directories
 
-**src/legacy:**
-- Purpose: Deprecated code being phased out
+**`src/legacy/`:**
+- Purpose: Deprecated code — listing management, older page implementations
 - Generated: No
 - Committed: Yes
-- Note: Contains pre-Yodeck UI components and pages. Avoid adding new code here. Refactor or remove over time. Code here may not follow current conventions.
+- Use: Read-only reference; migrate away from; do not add new code here
 
-**dist:**
-- Purpose: Vite build output
-- Generated: Yes (via `npm run build`)
-- Committed: No (.gitignore)
-- Note: Production bundle with minified JS/CSS, deployed to hosting
+**`src/__fixtures__/`:**
+- Purpose: Shared test data factories (playlists, schedules, screens)
+- Generated: No; Committed: Yes
+- Use: Import in unit/integration tests for consistent test data
 
-**node_modules:**
-- Purpose: NPM dependencies
-- Generated: Yes (via `npm install`)
-- Committed: No (.gitignore)
+**`dist/`:**
+- Purpose: Production build output
+- Generated: Yes (by `vite build`)
+- Committed: No (in `.gitignore`)
 
-**playwright-report:**
-- Purpose: Playwright HTML test reports
-- Generated: Yes (via `npm run test:e2e`)
-- Committed: No (.gitignore)
-- Note: View in browser to see test results with screenshots
+**`coverage/`:**
+- Purpose: Test coverage reports
+- Generated: Yes (by vitest)
+- Committed: No
 
-**test-results:**
-- Purpose: Playwright test artifacts (screenshots, traces, videos)
-- Generated: Yes (during test runs)
-- Committed: No (.gitignore)
+**`playwright-report/`:**
+- Purpose: Playwright test HTML reports
+- Generated: Yes
+- Committed: No (currently has staged deletions)
 
-**coverage:**
-- Purpose: Vitest code coverage reports (Istanbul format)
-- Generated: Yes (via `npm run test:coverage`)
-- Committed: No (.gitignore)
+**`perf-reports/`:**
+- Purpose: Bundle analyzer reports (`rollup-plugin-visualizer` output)
+- Generated: Yes
+- Committed: No
 
-**src/__fixtures__:**
-- Purpose: Mock data for tests and development
-- Generated: No
-- Committed: Yes
-- Files: `playlists.js`, `schedules.js`, `screens.js`, `index.js` (barrel export)
-- Usage: Import in tests and dev tools
+**`supabase/functions/`:**
+- Purpose: Deno-based Supabase Edge Functions deployed to Supabase infrastructure
+- Contains: `rss-proxy` (RSS feed proxy), `unsplash-proxy` (image search proxy), `_shared` (utilities)
+- Generated: No; Committed: Yes
 
-**android-tv-player:**
-- Purpose: Native Android TV player app (alternative to web player)
-- Generated: No (hand-written Kotlin/Java)
-- Committed: Yes
-- Pattern: Standard Android project structure with Gradle build
-- Note: Separate codebase, communicates with backend via same APIs
+**`android-tv-player/`:**
+- Purpose: Android TV native player application (separate tech stack)
+- Generated: No; Committed: Yes
 
-**yodeck-capture:**
-- Purpose: Tool to capture Yodeck layouts for migration analysis
-- Generated: No
-- Committed: Yes
-- Pattern: Node.js script with Puppeteer for browser automation
-- Note: Used during Yodeck UI migration, not part of production app
-
-**.planning:**
-- Purpose: GSD (Get Shit Done) planning documents and phase execution records
-- Generated: Yes (by GSD commands: `/gsd:plan-phase`, `/gsd:execute-phase`, `/gsd:map-codebase`)
-- Committed: Yes
-- Structure: `phases/` (phase plans and execution logs), `codebase/` (codebase analysis docs), `PROJECT.md` (project summary)
-- Note: Reference documents for development workflow, updated by GSD commands
-
-**supabase/snippets:**
-- Purpose: Reusable SQL snippets for development
-- Generated: No
-- Committed: Yes
-- Note: Helper queries for testing and debugging, not part of migrations
-
-**playwright/.auth:**
-- Purpose: Authenticated session state for E2E tests
-- Generated: Yes (via auth setup script)
-- Committed: No (.gitignore)
-- Note: Speeds up E2E tests by reusing authenticated session
-
-**scripts:**
-- Purpose: Build and utility scripts
-- Generated: No
-- Committed: Yes
-- Files: E2E gate script, CI test seeding, sitemap generation, load test runners, Polotno build
-- Pattern: Node.js or shell scripts, run via npm scripts
+**`.planning/`:**
+- Purpose: GSD planning documents — milestones, phase plans, codebase analysis
+- Generated: No; Committed: Yes
 
 ---
 
-*Structure analysis: 2026-02-13*
+*Structure analysis: 2026-02-17*

@@ -1,136 +1,117 @@
 # Technology Stack
 
-**Analysis Date:** 2026-02-13
+**Analysis Date:** 2026-02-17
 
 ## Languages
 
 **Primary:**
-- JavaScript (ES2024) - All application code
-- JSX - React components
+- JavaScript (ES2024) - All application code, services, components, hooks
+- JSX - React component templates throughout `src/`
 
 **Secondary:**
-- SQL - Supabase database migrations (`supabase/migrations/`)
-- HTML/CSS - Templates and styling
+- SQL - Supabase migrations and RLS policies in `supabase/migrations/`
+- CSS - Global styles in `src/index.css`, Tailwind utility classes
 
 ## Runtime
 
 **Environment:**
-- Node.js v25.0.0
-- Browser (ES2024 modules)
+- Node.js v25.0.0 (active on this machine)
+- ESM modules (`"type": "module"` in `package.json`)
 
 **Package Manager:**
-- npm 11.6.2
+- npm
 - Lockfile: `package-lock.json` present
 
 ## Frameworks
 
 **Core:**
-- React 19.1.1 - UI framework
-- React Router 7.9.5 - Client-side routing
-- Vite 7.1.7 - Build tool and dev server
-- Tailwind CSS 3.4.18 - Utility-first CSS framework
+- React 19.1.1 - UI framework; used with StrictMode, createRoot, React 19 error hooks
+- React Router DOM 7.9.5 - Client-side routing via `src/router/AppRouter.jsx`
+- Tailwind CSS 3.4.18 - Utility-first CSS; configured in `tailwind.config.js` with custom brand colors, spacing, and shadows
 
 **Testing:**
-- Vitest 4.0.14 - Unit/integration test runner
-- Playwright 1.57.0 - E2E testing
-- @testing-library/react 16.3.0 - Component testing utilities
-- MSW 2.12.3 - API mocking
+- Vitest 4.0.14 - Unit and integration test runner; configured in `vitest.config.js` with jsdom environment
+- Playwright 1.57.0 - E2E tests in `tests/e2e/`; multi-role auth setup (client, admin, superadmin)
+- Testing Library (React 16.3.0, DOM 10.4.1, user-event 14.6.1) - Component testing utilities
+- MSW 2.12.3 - Service worker mocking for integration tests
 
 **Build/Dev:**
-- Vite 7.1.7 - Dev server, HMR, production builds
-- ESLint 9.36.0 - Linting
-- PostCSS 8.5.6 - CSS processing
-- Autoprefixer 10.4.21 - CSS vendor prefixing
-- Terser 5.46.0 - Production minification
-- Husky 9.1.7 - Git hooks
-- lint-staged 16.2.7 - Pre-commit linting
+- Vite 7.1.7 - Dev server and build tool; configured in `vite.config.js`
+- Terser 5.46.0 - Production minification with `drop_console` and `drop_debugger`
+- PostCSS 8.5.6 + Autoprefixer 10.4.21 - CSS processing; configured in `postcss.config.js`
+- Husky 9.1.7 + lint-staged 16.2.7 - Pre-commit hooks; runs ESLint fix on staged `*.{js,jsx}` files
+- rollup-plugin-visualizer 6.0.5 - Bundle analysis; outputs to `perf-reports/bundle-stats.html`
 
 ## Key Dependencies
 
 **Critical:**
-- @supabase/supabase-js 2.80.0 - Database client and authentication
-- @aws-sdk/client-s3 3.946.0 - S3 media storage client
-- @aws-sdk/s3-request-presigner 3.946.0 - Presigned upload URLs
-- stripe 20.0.0 - Payment processing
-- resend 6.8.0 - Transactional email delivery
+- `@supabase/supabase-js` 2.80.0 - Primary backend client; all database, auth, realtime, and edge function calls route through `src/supabase.js`
+- `stripe` 20.0.0 - Billing integration (server-side usage in billing routes)
+- `@sentry/react` 10.36.0 - Error tracking and performance monitoring; initialized in `src/main.jsx` before React renders
 
-**Infrastructure:**
-- @sentry/react 10.36.0 - Error tracking and monitoring
-- @sentry/vite-plugin 4.9.0 - Source map upload for error resolution
-- web-vitals 5.1.0 - Performance monitoring
+**Canvas/Design:**
+- `fabric` 6.9.0 - SVG/canvas editor used in `src/components/svg-editor/`
+- `polotno` 2.33.2 - Layout editor library used in `src/components/layout-editor/` and `src/pages/LayoutEditor/`
+- `html2canvas` 1.4.1 - Screenshot/thumbnail generation; used in `src/services/screenshotService.js`
 
-**UI/Canvas Libraries:**
-- polotno 2.33.2 - Scene editor (canvas-based design tool)
-- fabric 6.9.0 - Canvas manipulation library
-- framer-motion 12.23.24 - Animation library
-- lucide-react 0.548.0 - Icon library
-- @smastrom/react-rating 1.5.0 - Star rating component
-- canvas-confetti 1.9.4 - Celebration effects
-- html2canvas 1.4.1 - Screenshot generation
-- qrcode 1.5.4 / qrcode.react 4.2.0 - QR code generation for TV pairing
+**UI Utilities:**
+- `framer-motion` 12.23.24 - Animations; chunked separately for lazy loading
+- `lucide-react` 0.548.0 - Icon library; chunked separately (large, rarely changes)
+- `@dnd-kit/core` 6.3.1 + `@dnd-kit/utilities` 3.2.2 - Drag-and-drop
+- `@smastrom/react-rating` 1.5.0 - Star rating component
 
-**Data Utilities:**
-- date-fns 4.1.0 - Date manipulation
-- @date-fns/tz 1.4.1 - Timezone support
-- ical.js 2.2.1 - Calendar/scheduling
-- uuid 13.0.0 - Unique ID generation
-- idb 8.0.3 - IndexedDB wrapper for client-side caching
-- isomorphic-dompurify 2.35.0 - XSS sanitization
+**Data/Utilities:**
+- `date-fns` 4.1.0 + `@date-fns/tz` 1.4.1 - Date manipulation and timezone support
+- `ical.js` 2.2.1 - iCal/calendar parsing for schedule features
+- `idb` 8.0.3 - IndexedDB wrapper; used in player offline cache (`src/player/cacheService.js`, `src/player/offlineService.js`)
+- `uuid` 13.0.0 - UUID generation for media keys and IDs
+- `qrcode` 1.5.4 + `qrcode.react` 4.2.0 - QR code generation for screen pairing
+- `resend` 6.8.0 - Email sending; used in `src/services/emailService.js`
+- `isomorphic-dompurify` 2.35.0 - XSS sanitization for RSS feed content
 
-**Drag & Drop:**
-- @dnd-kit/core 6.3.1 - Drag and drop primitives
-- @dnd-kit/utilities 3.2.2 - DnD utilities
+**AWS SDK:**
+- `@aws-sdk/client-s3` 3.946.0 - S3 file uploads
+- `@aws-sdk/s3-request-presigner` 3.946.0 - Presigned URL generation; implemented as Vite dev middleware in `vite.config.js`
 
-**Dev Tools:**
-- rollup-plugin-visualizer 6.0.5 - Bundle size analysis
-- @vitest/coverage-v8 4.0.14 - Test coverage reports
-- jsdom 27.3.0 - DOM simulation for tests
-- dotenv 17.2.3 - Environment variable loading
-- patch-package 8.0.1 - NPM package patching
+**Observability:**
+- `web-vitals` 5.1.0 - Core Web Vitals collection; reported via `src/services/webVitalsService.js`
+
+**Dev-only:**
+- `pg` 8.17.2 - PostgreSQL client for CI seeding scripts (`scripts/seed-ci-test-user.cjs`)
+- `dotenv` 17.2.3 - Env loading in config files and scripts
 
 ## Configuration
 
 **Environment:**
-- Configured via `.env` files (`.env`, `.env.local`, `.env.example`)
-- Vite loads `VITE_*` prefixed variables for client-side access
-- Non-prefixed vars available in dev server (e.g., AWS credentials)
-
-**Required Environment Variables:**
-- `VITE_SUPABASE_URL` - Supabase project URL
-- `VITE_SUPABASE_ANON_KEY` - Supabase public API key
-- `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BUCKET` - S3 media storage
-- `VITE_OPENWEATHER_API_KEY` - Weather widget data
-- `VITE_RESEND_API_KEY` - Email notifications
-
-**Optional Environment Variables:**
-- `VITE_SENTRY_DSN` - Error tracking
-- `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` - Source map upload
-- `AWS_CLOUDFRONT_URL` - CDN for media delivery
-- `VITE_DEVICE_TOKEN` - TV device pairing
-- `ANTHROPIC_API_KEY` - AI-powered SVG auto-tagging
+- Vite env vars prefixed with `VITE_` are exposed to the browser
+- Required vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+- Production-required: `VITE_STRIPE_PUBLISHABLE_KEY`, `VITE_CLOUDINARY_CLOUD_NAME`
+- Centralized validation in `src/config/env.js` with `validateEnv()` — throws in production on missing required vars
+- Server-side vars (no `VITE_` prefix): `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `AWS_S3_BUCKET`, `AWS_CLOUDFRONT_URL`, `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`
+- Env files present: `.env`, `.env.local`, `.env.example`
 
 **Build:**
-- `vite.config.js` - Vite configuration, custom API route middleware, bundle optimization
-- `vitest.config.js` - Test configuration
-- `playwright.config.js` - E2E test configuration
-- `eslint.config.js` - Flat config format (ESLint 9.x)
-- `tailwind.config.js` - Tailwind customization (brand colors, spacing)
-- `postcss.config.js` - PostCSS plugins
+- `vite.config.js` - Main build config; defines manual chunks for `vendor-react`, `vendor-supabase`, `vendor-icons`, `vendor-motion`, `vendor-qrcode`
+- Source maps: `hidden` mode (not served publicly; uploaded to Sentry)
+- Chunk size warning limit: 600KB
+- `tailwind.config.js` - Brand color palette (primary: `#F26F26`), status colors, Inter font family
+- `eslint.config.js` - Flat config format; enforces no-console (error), unused-imports (error), unused-vars (error)
 
 ## Platform Requirements
 
 **Development:**
-- Node.js 25.x (no `.nvmrc` file present)
-- npm 11.x
-- Modern browser with ES2024 support
+- Node.js (v25+ active; no `.nvmrc` pinned version)
+- npm for package management
+- `.env.local` for local environment overrides
+- Vite dev server at `http://localhost:5173`
 
 **Production:**
-- Serverless hosting (Vite SPA output)
-- HTTPS required (Supabase, webhooks, S3)
-- PostgreSQL database (via Supabase)
-- S3-compatible storage
-- CDN recommended (CloudFront)
+- Deployed to Vercel (configured via `vercel.json`)
+- SPA routing via catch-all rewrite: all paths → `/index.html`
+- Aggressive long-term caching headers for assets, fonts, JS, CSS (1 year immutable)
+- CSP headers configured inline in `vercel.json`
+- HSTS, X-Frame-Options: DENY, X-Content-Type-Options: nosniff enforced
 
 ---
 
-*Stack analysis: 2026-02-13*
+*Stack analysis: 2026-02-17*

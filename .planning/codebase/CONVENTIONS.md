@@ -1,191 +1,191 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-02-13
+**Analysis Date:** 2026-02-17
 
 ## Naming Patterns
 
 **Files:**
-- React components: PascalCase with `.jsx` extension - `AuthContext.jsx`, `DashboardPage.jsx`
-- Services: camelCase with `.js` extension - `authService.js`, `loggingService.js`
-- Utilities: camelCase with `.js` extension - `formatters.js`, `sanitize.js`
-- Test files: Match source name with `.test.js` or `.spec.js` - `alertEngineService.test.js`, `dashboard.spec.js`
-- Barrel exports: `index.js` or `index.jsx` depending on content type
+- React pages: PascalCase with `Page` suffix → `CampaignsPage.jsx`, `SchedulesPage.jsx`
+- React components: PascalCase → `StatCard.jsx`, `AnnouncementBanner.jsx`
+- Hooks: camelCase with `use` prefix → `useMedia.js`, `useAdmin.js`, `useLogger.js`
+- Services: camelCase with `Service` suffix → `playlistService.js`, `mediaService.js`
+- Contexts: PascalCase with `Context` suffix → `AuthContext.jsx`, `BrandingContext.jsx`
+- Utils: camelCase descriptive → `formatters.js`, `errorMessages.js`, `safeStringify.js`
+- Config files: camelCase → `featureFlags.js`, `plans.js`
+- Test files: mirror source path with `.test.js` / `.test.jsx` suffix
+
+**Directories:**
+- `src/pages/` - Route-level page components (PascalCase subdirs allowed: `src/pages/Admin/`)
+- `src/components/` - Reusable UI components grouped by domain (kebab-case subdirs: `layout-editor/`, `svg-editor/`)
+- `src/services/` - Business logic and API calls (flat, no subdirs)
+- `src/hooks/` - Custom React hooks (flat)
+- `src/contexts/` - React context providers (flat)
+- `src/design-system/` - Design system primitives (separate from `src/components/`)
 
 **Functions:**
-- Components: PascalCase - `function AuthProvider()`, `function SafeHTML()`
-- Regular functions: camelCase - `function formatDate()`, `function signUp()`
-- Exported service functions: camelCase - `export async function raiseAlert()`, `export function getBranding()`
+- React components: PascalCase → `const CampaignsPage = ({ showToast }) => { ... }`
+- Service functions: camelCase verbs → `fetchPlaylists`, `createPlaylist`, `deletePlaylistSafely`
+- Event handlers: `handle` prefix → `handleDelete`, `handleActivate`, `handleSave`
+- Data loaders: `load` prefix → `loadCampaigns`, `loadData`
+- Boolean state: `is`/`has`/`show`/`can` prefix → `isLoading`, `hasMore`, `showToast`, `canEdit`
 
 **Variables:**
-- Local variables: camelCase - `const userProfile`, `let retryCount`
-- Constants: SCREAMING_SNAKE_CASE - `const AUTH_STATUS`, `const ALERT_TYPES`
-- React hooks results: camelCase with destructuring - `const [user, setUser] = useState(null)`
+- State variables: camelCase noun → `campaigns`, `loading`, `search`, `statusFilter`
+- Constants (module-scope): SCREAMING_SNAKE_CASE → `CAMPAIGN_STATUS`, `MEDIA_TYPES`, `APPROVAL_STATUS`
+- Logger instances: `logger` (hook-created) or `_logger` (service-level, underscore prefix when unused in ESLint)
+- Prefixed underscore `_` for intentionally unused variables per ESLint config: `_result`, `_logger`
 
-**Types:**
-- JSDoc type definitions use PascalCase - `@typedef {Object} BrandingContextValue`
-- Enum-like objects use SCREAMING_SNAKE_CASE keys - `ALERT_STATUSES.OPEN`
+**Types/Enums:**
+- Enum-like objects: SCREAMING_SNAKE_CASE keys, string values → `{ DRAFT: 'draft', ACTIVE: 'active' }`
+- JSDoc typedefs for complex objects (services only): `@typedef {Object} Playlist`
 
 ## Code Style
 
 **Formatting:**
-- No automated formatter detected (no `.prettierrc` or Prettier config found)
-- Indentation: 2 spaces (consistent across all files)
-- Line length: No enforced limit (manual formatting)
-- Semicolons: Consistently used at end of statements
-- Quotes: Single quotes for strings (`'string'`), double quotes in JSX attributes (`className="class"`)
-- Trailing commas: Used in multi-line objects and arrays
+- No Prettier config detected — formatting enforced by ESLint rules only
+- Indentation: 2 spaces (observed throughout codebase)
+- Quotes: single quotes for JS strings; double quotes only inside JSX attribute values
+- Trailing commas: used in multi-line objects and arrays
 
 **Linting:**
-- Tool: ESLint 9 with flat config (`eslint.config.js`)
-- Plugins: `react`, `react-hooks`, `react-refresh`, `unused-imports`, `jsdoc`
-- Key rules enforced at error level:
-  - `no-console: error` (except `console.warn` and `console.error`)
-  - `unused-imports/no-unused-imports: error` (auto-fixable)
-  - `unused-imports/no-unused-vars: error` (ignores `_` prefix)
-  - `react/jsx-uses-react: error`
-  - `react/jsx-uses-vars: error`
-  - `no-undef: error`
-- PropTypes disabled - not used in this codebase (React 19+)
-- JSDoc enforcement disabled - too impractical for codebase size
-- Pre-commit hook via Husky + lint-staged runs `eslint --fix` on staged files
+- Tool: ESLint v9 with flat config (`eslint.config.js`)
+- Plugins: `eslint-plugin-react-hooks`, `eslint-plugin-unused-imports`, `eslint-plugin-react`, `eslint-plugin-jsdoc`
+- Key enforced rules (error level, blocks commits via lint-staged):
+  - `no-console` — only `console.warn` and `console.error` allowed (exceptions: test files, scripts, loggingService)
+  - `unused-imports/no-unused-imports` — unused imports auto-removed on commit
+  - `unused-imports/no-unused-vars` — prefix unused vars with `_` to suppress
+  - `react/jsx-uses-vars` — prevents false positives on JSX component names
+  - `no-undef` — undefined variables caught at lint time
+- PropTypes disabled (`react/prop-types: 'off'`) — not used in this React 19 codebase
+- JSDoc enforcement disabled (`jsdoc/require-jsdoc: 'off'`) — JSDoc used selectively, not mandated
+- Pre-commit hook: `npx lint-staged` runs `eslint --fix` on staged `*.{js,jsx}` files
 
 ## Import Organization
 
-**Order:**
-1. React imports - `import { useState, useEffect } from 'react'`
-2. Third-party libraries - `import { supabase } from '@supabase/supabase-js'`
-3. Absolute imports from `src/` - `import { useAuth } from '../contexts/AuthContext'`
-4. Relative imports - `import { formatDate } from '../utils/formatters'`
-5. CSS/asset imports (if any)
+**Observed Order (no enforced auto-sort, but consistent pattern):**
+1. React and router imports → `import { useState, useEffect } from 'react'`
+2. Third-party libraries → `import { Calendar, Plus } from 'lucide-react'`
+3. Design system → `import { Button, Card, Badge } from '../design-system'`
+4. Internal components → `import TemplatePickerModal from '../components/campaigns/TemplatePickerModal'`
+5. Hooks → `import { useLogger } from '../hooks/useLogger.js'`
+6. Services → `import { fetchCampaigns } from '../services/campaignService'`
+7. Contexts → `import { useAuth } from '../contexts/AuthContext'`
+8. Utils/config → `import { formatDate } from '../utils/formatters'`
 
 **Path Aliases:**
-- No path aliases configured
-- All imports use relative paths (`../`, `../../`) from current file location
-- Services typically imported from `../services/` or `../../services/`
-- Components from `../components/` or relative paths
+- None detected — all imports use relative paths (`../`, `../../`, `../../../`)
+- Test files use deep relative paths: `../../../src/services/playlistService`
 
-**Import Style:**
-- Named imports preferred - `import { createClient } from '@supabase/supabase-js'`
-- Default imports for React components - `import AuthRetryBanner from '../components/AuthRetryBanner'`
-- Namespace imports for utilities - `import * as analytics from '../../services/playerAnalyticsService'`
+**File Extensions:**
+- `.js` extension required on service imports in some files: `import { ... } from '../hooks/useLogger.js'`
+- Inconsistent — `.jsx` sometimes omitted, `.js` sometimes explicit; no enforced rule
 
 ## Error Handling
 
-**Patterns:**
-- Try-catch blocks wrap all async operations in services
-- Errors logged using scoped logger: `logger.error('Operation failed', { error, context })`
-- Functions return error objects: `return { data: null, error: error.message }`
-- React components use Error Boundaries for rendering errors
-- No throwing errors to callers - always return `{ data, error }` tuple
+**Service Layer Pattern:**
+- Services throw errors directly (via Supabase's `if (error) throw error` pattern)
+- No custom error class hierarchy — native `Error` objects thrown
+- Validation errors thrown explicitly: `throw new Error('User must be authenticated')`
 
-**Service Layer Example:**
-```javascript
-export async function signUp({ email, password }) {
-  try {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      return { user: null, error: error.message };
+**Page/Component Pattern:**
+- Async operations wrapped in `try/catch/finally`:
+  ```javascript
+  const loadCampaigns = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchCampaigns({ status: statusFilter, search });
+      setCampaigns(data);
+    } catch (error) {
+      logger.error('Error loading campaigns:', error);
+      showToast?.('Error loading campaigns', 'error');
+    } finally {
+      setLoading(false);
     }
-    logger.info('User signed up successfully', { userId: data.user.id });
-    return { user: data.user, error: null };
-  } catch (error) {
-    logger.error('Signup failed', { error });
-    return { user: null, error: error.message };
-  }
-}
-```
+  };
+  ```
+- `showToast` called with `(message, 'error')` for failures, `(message)` or `(message, 'success')` for success
+- Optional chaining on `showToast`: `showToast?.('message', 'error')` — prop may not always be passed
+- Error message pattern: `'Error <doing thing>: ' + error.message`
 
-**Component Error Handling:**
-- Use `ErrorBoundary` component from `src/components/ErrorBoundary.jsx`
-- Wrap top-level routes and critical sections
-- Fallback UI shows "Something Went Wrong" message
+**Safe Return Pattern (services returning result objects):**
+- Complex deletions return `{ success: false, code: 'IN_USE', usage: {...} }` instead of throwing
+- Used when caller needs structured error data: `deletePlaylistSafely`
 
 ## Logging
 
-**Framework:** Custom logging service (`src/services/loggingService.js`)
+**Framework:** `loggingService.js` — custom structured logging service with scoped loggers
 
-**Patterns:**
-- Create scoped logger at module top: `const logger = createScopedLogger('ComponentName')`
-- Use appropriate log levels:
-  - `logger.trace()` - Detailed debugging (typically disabled)
-  - `logger.debug()` - Development debugging
-  - `logger.info()` - Notable events, user actions
-  - `logger.warn()` - Warnings, non-critical issues
-  - `logger.error()` - Errors, exceptions
-  - `logger.fatal()` - Critical failures
-- Always include context object: `logger.error('Failed to load', { error, userId })`
-- React components use `useLogger` hook: `const logger = useLogger('MyComponent')`
+**Service-level logging:**
+```javascript
+import { createScopedLogger } from './loggingService';
+const _logger = createScopedLogger('PlaylistService');
+```
 
-**Console Usage:**
-- Direct `console.log` is blocked by ESLint (`no-console: error`)
-- Use logger service instead
-- Exceptions: `console.warn` and `console.error` allowed for compatibility
+**Component/page-level logging:**
+```javascript
+import { useLogger } from '../hooks/useLogger.js';
+const logger = useLogger('CampaignsPage');
+```
+
+**Log levels used:** `logger.error()`, `logger.warn()`, `logger.debug()`, `logger.info()`
+
+**When to log:**
+- `logger.error()` — all catch blocks in pages/components, before calling `showToast`
+- `logger.debug()` — lifecycle events, data loading steps
+- `logger.info()` — significant state changes (less common in components)
+- No `console.log` in source — ESLint blocks it; use logger
 
 ## Comments
 
 **When to Comment:**
-- JSDoc headers for public APIs and exported functions
-- Complex business logic requiring explanation
-- TODO/FIXME markers for known issues (rare - only 2 found in codebase)
-- File headers documenting purpose of modules
-- Phase markers in tests linking to planning docs
-
-**JSDoc/TSDoc:**
-- Used for service functions and complex utilities
-- Not enforced on all functions (ESLint rule disabled)
-- Format:
+- Module-level JSDoc block on every service file: `@module services/playlistService`
+- JSDoc on exported service functions with non-obvious parameters:
   ```javascript
   /**
-   * Brief description
-   * @param {string} userId - Description
-   * @returns {Promise<{data: object|null, error: string|null}>}
+   * Fetch all playlists for the current user
+   * @param {Object} [options] - Query options
+   * @param {string} [options.search=''] - Filter by name
+   * @returns {Promise<Playlist[]>}
+   * @throws {Error} If database query fails
    */
   ```
-- Type hints use JSDoc syntax in `.js` files: `@typedef`, `@param`, `@returns`
+- Inline comments for non-obvious logic: `// eslint-disable-next-line react-hooks/exhaustive-deps -- mount/filter`
+- Section comments in complex files: `// ============= Section Name =============`
+- Phase references in tests: `// Phase 6: Tests for playlist service operations`
 
-**Inline Comments:**
-- Explain "why" not "what"
-- Clarify non-obvious logic
-- Mark intentional deviations from patterns
+**JSDoc/TSDoc:**
+- Used selectively on service functions and shared utilities
+- `@typedef` blocks for complex data shapes (services only, not components)
+- NOT required on all functions — enforcement disabled in ESLint
+- Component prop types not documented with JSDoc (PropTypes disabled, no TypeScript)
 
 ## Function Design
 
-**Size:**
-- Functions under 100 lines preferred
-- Service functions 20-50 lines typical
-- Complex operations broken into helper functions
-- Test files can be longer (500+ lines acceptable for comprehensive coverage)
+**Size:** Large page components are accepted (100–300+ lines); extracted sub-components when reused
 
 **Parameters:**
-- Use object destructuring for multiple parameters: `function signUp({ email, password, fullName })`
-- Optional parameters with defaults: `function formatDate(dateString, options = {})`
-- Named parameters preferred over positional for clarity
+- Destructured props in components: `const CampaignsPage = ({ showToast }) => { ... }`
+- Options object with defaults for service functions: `fetchPlaylists({ search = '', limit = 100 } = {})`
+- Callback props always named: `onUpdate`, `showToast`, `onClose`
 
 **Return Values:**
-- Services return `{ data, error }` tuple consistently
-- React components return JSX or `null`
-- Predicates return boolean: `function isEmergencyExpired()`
-- Async functions always return Promise
+- Services: return data directly or throw (no `{ data, error }` wrapper in service layer — that's unwrapped from Supabase)
+- Complex mutation results: `{ success, code, usage, error }` object when callers need structured info
+- Hooks: return named object `{ assets, isLoading, error, filters, setFilters, loadMore }`
 
 ## Module Design
 
 **Exports:**
-- Named exports preferred: `export function raiseAlert()`, `export const ALERT_TYPES`
-- Default exports for React components: `export default function DashboardPage()`
-- Barrel files re-export related modules: `export { BackgroundMusicSelector } from './BackgroundMusicSelector'`
+- Services: named exports only (no default export)
+- React components: default export (single component per file)
+- Hooks: named exports (`export function useMedia()`)
+- Constants: named exports alongside functions in same service file
 
 **Barrel Files:**
-- Used for component groups: `src/components/listings/index.js`
-- Simplify imports: `import { BackgroundMusicSelector } from '../components/listings'`
-- Named exports only in barrel files
-
-**Module Structure:**
-- Imports at top
-- Constants after imports
-- Helper functions before main exports
-- Main exports at bottom
-- No circular dependencies (broken with mocks in tests)
+- `src/design-system/index.js` — exports all design system components (used widely)
+- `src/__fixtures__/index.js` — re-exports all fixture factories for tests
+- `src/components/` subdirectories sometimes have index files, but not universally
 
 ---
 
-*Convention analysis: 2026-02-13*
+*Convention analysis: 2026-02-17*

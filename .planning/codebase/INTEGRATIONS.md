@@ -1,201 +1,242 @@
 # External Integrations
 
-**Analysis Date:** 2026-02-13
+**Analysis Date:** 2026-02-17
 
 ## APIs & External Services
 
-**Supabase (Backend-as-a-Service):**
-- Database operations and authentication
-  - SDK/Client: `@supabase/supabase-js` (2.80.0)
+**Backend-as-a-Service:**
+- Supabase - Primary backend for database, auth, realtime, storage, and edge functions
+  - SDK/Client: `@supabase/supabase-js` 2.80.0; singleton client in `src/supabase.js`
   - Auth: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
-  - Implementation: `src/supabase.js`, `src/utils/supabaseErrorInterceptor.js`
-  - Features: OAuth 2.0 PKCE flow, auto-refresh tokens, persistent sessions
-  - Context: `src/contexts/AuthContext.jsx`
+  - PKCE flow enabled; auto-refresh tokens; session persisted to localStorage
+  - Instrumented with error interceptor: `src/utils/supabaseErrorInterceptor.js` (auto-sends breadcrumbs to Sentry)
 
-**AWS S3 (File Storage):**
-- Media uploads via presigned URLs
-  - SDK/Client: `@aws-sdk/client-s3` (3.946.0), `@aws-sdk/s3-request-presigner` (3.946.0)
-  - Auth: `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BUCKET`
-  - Optional: `AWS_CLOUDFRONT_URL` - CDN for media delivery
-  - Implementation: `vite.config.js` (dev server middleware at `/api/media/presign`)
-  - Organization: `/{folder}/{mediaType}/{uuid}.{extension}`
-  - Supported types: Images (jpeg, png, gif, webp, svg), videos (mp4, webm, quicktime), audio (mpeg, wav, ogg), documents (pdf, docx, pptx, xlsx)
+**Payment Processing:**
+- Stripe - Subscription billing and checkout
+  - SDK: `stripe` 20.0.0 (server-side), `VITE_STRIPE_PUBLISHABLE_KEY` (client-side key only)
+  - Client: `src/services/billingService.js` — calls internal API routes `/api/billing/checkout` and `/api/billing/portal` which proxy to Stripe
+  - Auth: `VITE_STRIPE_PUBLISHABLE_KEY` (client); server-side Stripe secret key via non-VITE env var
 
-**Stripe (Payment Processing):**
-- Subscription management and billing
-  - SDK/Client: `stripe` (20.0.0)
-  - Implementation: `src/services/billingService.js`, `src/services/accountPlanService.js`
-  - Pages: `src/pages/AccountPlanPage.jsx`, `src/pages/ResellerBillingPage.jsx`
+**Error Tracking:**
+- Sentry - Exception tracking, performance monitoring, session replay
+  - SDK: `@sentry/react` 10.36.0; Vite plugin `@sentry/vite-plugin` 4.9.0 for source map upload
+  - Implementation: `src/utils/errorTracking.jsx`; initialized via `src/utils/observability.js` before React renders
+  - Source maps uploaded at build time and deleted from `dist/` afterward
+  - Auth: `VITE_SENTRY_DSN`, `VITE_SENTRY_DEBUG`, `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`
 
-**Resend (Email Service):**
-- Transactional emails and alert notifications
-  - SDK/Client: `resend` (6.8.0)
+**Email:**
+- Resend - Transactional email for alert notifications
+  - SDK: `resend` 6.8.0
+  - Implementation: `src/services/emailService.js`
+  - From address: `alerts@bizscreen.com`
   - Auth: `VITE_RESEND_API_KEY`
-  - Implementation: `src/services/emailService.js`, `src/services/notificationDispatcherService.js`
-  - From: `alerts@bizscreen.com`
-  - Features: HTML email templates, alert severity badges
 
-**Sentry (Error Tracking):**
-- Error monitoring and performance tracing
-  - SDK/Client: `@sentry/react` (10.36.0), `@sentry/vite-plugin` (4.9.0)
-  - Auth: `VITE_SENTRY_DSN`, `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`
-  - Implementation: `src/utils/errorTracking.jsx`
-  - Features: React error boundaries, session replay (prod only), source map upload, performance monitoring (10% sample rate)
-  - Integrations: React Router v7 tracing, replay integration
-  - Pluggable provider: Falls back to console logging if Sentry unavailable
-
-**OpenWeatherMap (Weather API):**
-- Weather data for weather widgets
+**Weather Data:**
+- OpenWeatherMap - Current weather for weather widget in player
+  - Implementation: `src/services/weatherService.js`; 30-minute in-memory cache with 50-entry limit; falls back to mock data when key not set
+  - Endpoint: `https://api.openweathermap.org/data/2.5/weather`
   - Auth: `VITE_OPENWEATHER_API_KEY`
-  - Implementation: `src/services/weatherService.js`
-  - Endpoint: `https://api.openweathermap.org/data/2.5/weather` and `/forecast`
-  - Caching: 30-minute in-memory cache, 50-entry LRU cache
-  - Features: Current weather, 5-day forecast, coordinates or city name lookup, mock data fallback
 
-**Anthropic (AI):**
-- AI-powered SVG auto-tagging (server-side only)
-  - Auth: `ANTHROPIC_API_KEY`
-  - Note: Referenced in `.env.example`, falls back to rule-based tagging if not configured
+**Photo Library:**
+- Unsplash - Stock photo search for media insertion
+  - Implementation: proxied through Supabase Edge Function `unsplash-proxy` (API key kept server-side)
+  - Client: `src/services/unsplashProxyService.js`
+  - TOS compliance: hotlinks to Unsplash CDN, tracks downloads
+
+**Design Import:**
+- Canva Connect API - OAuth-based design import from Canva
+  - Implementation: `src/services/canvaService.js`; PKCE OAuth flow; tokens stored in localStorage
+  - Callback route: `/auth/canva/callback` (see `src/pages/CanvaCallbackPage.jsx`)
+  - Auth: `VITE_CANVA_CLIENT_ID`
+
+**Spreadsheet Data:**
+- Google Sheets API v4 - Read-only data binding for dynamic content
+  - Implementation: `src/services/googleSheetsService.js`; reads public sheets via API key
+  - Endpoint: `https://sheets.googleapis.com/v4/spreadsheets`
+  - Auth: `VITE_GOOGLE_API_KEY`
+
+**Generative AI:**
+- AI content generation (provider not named in source) - Powers content assistant, plan generation, and scene suggestions
+  - Implementation: `src/services/assistantService.js`; calls internal API routes `/api/assistant/plan` and `/api/assistant/content`
+  - Feature-flagged via `VITE_ENABLE_AI`
+  - Scene AI currently deterministic (`src/services/sceneAiService.js`); comment notes "can be wired to real LLM later"
 
 ## Data Storage
 
 **Databases:**
-- Supabase PostgreSQL
-  - Connection: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
-  - Client: `@supabase/supabase-js` with Row Level Security (RLS)
-  - Migrations: `supabase/migrations/` (139 SQL migration files)
-  - Schema includes: Users, tenants, screens, campaigns, media, playlists, schedules, layouts, scenes, data sources, webhooks, audit logs
+- Supabase (PostgreSQL) - All application data
+  - Connection: `VITE_SUPABASE_URL`
+  - Client: `@supabase/supabase-js` via `src/supabase.js`
+  - Migrations: `supabase/migrations/`
+  - RLS (Row-Level Security) enforced; SCIM provisioning via stored procedures (`scim_list_users`)
+  - Realtime subscriptions for device commands via `src/services/realtimeService.js`
 
 **File Storage:**
-- AWS S3 with optional CloudFront CDN
-  - Primary: Direct browser uploads via presigned URLs
-  - Fallback: Cloudinary mentioned in `src/supabase.js` (optional)
-  - Path structure: `/uploads/{mediaType}/{uuid}.{ext}`
+- AWS S3 - Primary media file storage (images, video, audio, documents)
+  - SDK: `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`
+  - Upload flow: presigned URL generated server-side at `/api/media/presign` → client uploads directly to S3
+  - In dev: presign endpoint implemented as Vite middleware in `vite.config.js`
+  - Bucket: `bizscreen-media` (override via `AWS_S3_BUCKET`)
+  - Auth: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`
+  - Service: `src/services/s3UploadService.js`
 
-**Caching:**
-- IndexedDB (client-side offline storage)
-  - Implementation: `idb` package (8.0.3)
-  - Usage: `src/player/cacheService.js` for offline player capability
-- In-memory caching
-  - Weather data: 30-minute TTL, 50-entry max
-  - Implementation: `src/services/weatherService.js`
+- Cloudinary - Layout editor image uploads (blob/base64 from canvas)
+  - Implementation: `src/services/cloudinaryService.js`; unsigned upload preset
+  - Upload endpoint: `https://api.cloudinary.com/v1_1/{cloud}/image/upload`
+  - Folder: `bizscreen/layouts`
+  - Auth: `VITE_CLOUDINARY_CLOUD_NAME`, `VITE_CLOUDINARY_UPLOAD_PRESET`
+
+**CDN:**
+- AWS CloudFront - CDN in front of S3 for media delivery
+  - URL override: `AWS_CLOUDFRONT_URL` (falls back to direct S3 URL)
+
+**Client-Side Caching:**
+- IndexedDB (via `idb` 8.0.3) - Player offline caching
+  - Implementation: `src/player/cacheService.js`, `src/player/offlineService.js`
+  - Used by TV player (`src/player/pages/ViewPage.jsx`) for offline content playback
 
 ## Authentication & Identity
 
 **Auth Provider:**
-- Supabase Auth
-  - Implementation: OAuth 2.0 PKCE flow
-  - Features: Email/password, OAuth providers, auto-refresh tokens, persistent sessions
-  - Context: `src/contexts/AuthContext.jsx`
-  - Service: `src/services/authService.js`
-  - Error handling: `src/utils/supabaseErrorInterceptor.js`
+- Supabase Auth - Email/password and social OAuth
+  - Implementation: `src/services/authService.js`, `src/contexts/AuthContext.jsx`
+  - Flow: PKCE; session auto-refreshed; detects session in URL for magic links
+  - Email confirmation redirect: `${window.location.origin}/auth/callback`
 
-**SSO/SCIM:**
-- Custom SSO and SCIM implementation
-  - Implementation: `src/services/ssoService.js`, `src/services/scimService.js`
-  - Page: `src/pages/EnterpriseSecurityPage.jsx`
+**MFA:**
+- Supabase MFA (TOTP) - Google Authenticator, Authy, 1Password
+  - Implementation: `src/services/mfaService.js`
+  - Uses `supabase.auth.mfa.*` APIs
+
+**SSO:**
+- OIDC and SAML via Supabase SSO - Enterprise identity provider support
+  - Implementation: `src/services/ssoService.js`
+  - Supported providers: Okta, Azure AD, and any OIDC/SAML IdP
+  - Config stored in `sso_providers` table
+
+**SCIM Provisioning:**
+- SCIM 2.0 - Automated user provisioning from enterprise IdPs
+  - Implementation: `src/services/scimService.js`
+  - Uses Supabase RPC `scim_list_users`
+
+## Social Media Integrations
+
+**Instagram:**
+- Instagram Basic Display API / Graph API (business accounts)
+  - Implementation: `src/services/social/instagramService.js`
+  - OAuth callback: `/auth/callback/instagram`
+  - Auth: `VITE_INSTAGRAM_APP_ID`, `VITE_INSTAGRAM_APP_SECRET`, `VITE_INSTAGRAM_REDIRECT_URI`
+
+**Facebook:**
+- Facebook Graph API v18.0 - Page posts
+  - Implementation: `src/services/social/facebookService.js`
+  - OAuth callback: `/auth/callback/facebook`
+  - Scopes: `pages_show_list`, `pages_read_engagement`, `pages_read_user_content`
+  - Auth: `VITE_FACEBOOK_APP_ID`, `VITE_FACEBOOK_APP_SECRET`, `VITE_FACEBOOK_REDIRECT_URI`
+
+**TikTok:**
+- TikTok API v2 - Video listing
+  - Implementation: `src/services/social/tiktokService.js`
+  - OAuth callback: `/auth/callback/tiktok`
+  - Auth: `VITE_TIKTOK_CLIENT_KEY`, `VITE_TIKTOK_CLIENT_SECRET`, `VITE_TIKTOK_REDIRECT_URI`
+
+**Google Reviews:**
+- Google Places API + Google My Business API
+  - Implementation: `src/services/social/googleReviewsService.js`
+  - OAuth callback: `/auth/callback/google`
+  - Auth: `VITE_GOOGLE_CLIENT_ID`, `VITE_GOOGLE_CLIENT_SECRET`, `VITE_GOOGLE_PLACES_API_KEY`, `VITE_GOOGLE_REDIRECT_URI`
 
 ## Monitoring & Observability
 
 **Error Tracking:**
-- Sentry.io
-  - Environment: Local/staging/production aware
-  - Sampling: 100% errors, 10% performance traces (prod), 10% session replay (prod), 100% error replay
-  - Features: PII scrubbing, email redaction, header sanitization
-  - Ignored errors: Network failures, browser extensions, resize observer loops, CORS errors
+- Sentry - Primary error and performance monitoring
+  - Pluggable: controlled by `VITE_ERROR_TRACKING_PROVIDER` (values: `console`, `sentry`)
+  - React error hooks wired in `src/main.jsx` for uncaught, caught, and recoverable errors
+  - Router instrumentation enabled via `createRoutesFromChildren` / `matchRoutes`
 
-**Logs:**
-- Structured logging service
-  - Implementation: `src/services/loggingService.js`
-  - Levels: debug, info, warn, error
-  - Context: Scoped loggers with userId, tenantId
+**Logging:**
+- Custom structured logging service: `src/services/loggingService.js`
+  - Log levels: trace, debug, info, warn, error, fatal
+  - Production: logs batched (20 entries) and flushed every 10s; 10% sampling rate
+  - Remote log endpoint: `VITE_LOG_ENDPOINT` (optional; batched HTTP POST)
+  - PII redaction applied before any remote log send: `src/utils/pii.js`
 
-**Performance:**
-- Web Vitals
-  - Package: `web-vitals` (5.1.0)
+**Web Vitals:**
+- `web-vitals` 5.1.0 - CLS, FID, LCP, TTFB, FCP collection
   - Implementation: `src/services/webVitalsService.js`
-  - Metrics: CLS, FID, FCP, LCP, TTFB
+  - Optional analytics endpoint: `VITE_ANALYTICS_ENDPOINT`
 
-**Health Checks:**
-- Application health endpoint
-  - Endpoint: `/api/health` (returns `{"status": "ok"}`)
-  - Implementation: `vite.config.js` middleware
+**Load Testing:**
+- k6 - Load tests in `load-tests/` for auth burst, heartbeat, playlist resolution
+  - Run scripts: `npm run load-test:heartbeat`, `npm run load-test:playlist`
+
+## Content Feeds
+
+**RSS/Atom:**
+- RSS proxy via Supabase Edge Function `rss-proxy`
+  - Implementation (client): `src/services/rssFeedService.js`
+  - Edge function handles parsing, XSS sanitization, DB-backed caching with TTL, ETag support
+  - Location: `supabase/functions/rss-proxy/`
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- Serverless (Vite SPA build output)
-  - Static files with client-side routing
-  - HTTPS required for Supabase, webhooks, S3
+- Vercel - Production deployment
+  - Config: `vercel.json`
+  - SPA routing rewrite, long-term asset caching, security headers (CSP, HSTS, X-Frame-Options)
 
 **CI Pipeline:**
-- GitHub Actions (implied by test setup)
-  - E2E: Playwright with auth state persistence
-  - Unit/Integration: Vitest with coverage
-  - Load tests: k6 (mentioned in `package.json` scripts)
-
-**Build Process:**
-- Vite production build
-  - Minification: Terser (drops console.log, console.debug)
-  - Source maps: Hidden (uploaded to Sentry)
-  - Manual chunks: React, Supabase, icons, motion, QR code
-  - Analysis: `rollup-plugin-visualizer` → `perf-reports/bundle-stats.html`
-
-## Environment Configuration
-
-**Required env vars:**
-- `VITE_SUPABASE_URL` - Supabase project URL
-- `VITE_SUPABASE_ANON_KEY` - Supabase public API key
-- `AWS_REGION` - AWS region (e.g., us-east-1)
-- `AWS_ACCESS_KEY_ID` - AWS access key
-- `AWS_SECRET_ACCESS_KEY` - AWS secret key
-- `AWS_S3_BUCKET` - S3 bucket name
-- `VITE_OPENWEATHER_API_KEY` - OpenWeatherMap API key
-- `VITE_RESEND_API_KEY` - Resend email API key
-
-**Optional env vars:**
-- `AWS_CLOUDFRONT_URL` - CloudFront CDN URL
-- `VITE_SENTRY_DSN` - Sentry error tracking DSN
-- `VITE_ERROR_TRACKING_PROVIDER` - Error tracking provider (console or sentry)
-- `VITE_ERROR_TRACKING_ENABLED` - Enable/disable error tracking
-- `VITE_APP_VERSION` - App version for release tracking
-- `VITE_DEVICE_TOKEN` - TV device pairing token
-- `ANTHROPIC_API_KEY` - Anthropic AI API key (server-side)
-- `VITE_CLOUDINARY_CLOUD_NAME` - Cloudinary cloud name
-- `VITE_CLOUDINARY_UPLOAD_PRESET` - Cloudinary upload preset
-- `VITE_LOG_ENDPOINT` - Remote logging endpoint
-- `VITE_ANALYTICS_ENDPOINT` - Analytics endpoint for Web Vitals
-
-**Test credentials:**
-- `TEST_SUPERADMIN_EMAIL`, `TEST_SUPERADMIN_PASSWORD` - Super admin test user
-- `TEST_ADMIN_EMAIL`, `TEST_ADMIN_PASSWORD` - Admin test user
-- `TEST_CLIENT_EMAIL`, `TEST_CLIENT_PASSWORD` - Client test user
-- `TEST_USER_EMAIL`, `TEST_USER_PASSWORD` - Standard test user
-
-**Secrets location:**
-- `.env` file present (gitignored)
-- `.env.local` file present (gitignored)
-- `.env.example` - Template with documentation (committed)
+- Not detected (no `.github/workflows/` or CI config found)
+- `npm run test:ci` script: runs unit tests → seeds CI test user → runs E2E tests
 
 ## Webhooks & Callbacks
 
 **Incoming:**
-- Webhook endpoint management
-  - Implementation: `src/services/webhookService.js`
-  - Available events: device.online, device.offline, campaign.activated/deactivated/ended, content.approved/rejected, playlist.updated, layout.updated, media.uploaded
-  - Features: Retry logic (5 attempts with exponential backoff), delivery history, dead letter queue, signature verification
-  - Validation: HTTPS only, blocks localhost/private IPs
+- Stripe webhooks - Likely handled by server-side billing routes (not visible in frontend source)
 
 **Outgoing:**
-- User-configured webhook endpoints
-  - Implementation: `src/services/webhookService.js`
-  - Secret generation: `whsec_` prefix with 32-byte random hex
+- User-configurable webhook endpoints via `src/services/webhookService.js`
+  - Events: device.online, device.offline, campaign.activated/deactivated/ended, content.approved/rejected, playlist.updated, layout.updated, media.uploaded
+  - Retry logic: 5 attempts with exponential backoff (30s, 60s, 120s, 240s, 480s)
+  - Dead letter queue for exhausted retries
+  - Delivery history tracked in Supabase
 
-**OAuth Callbacks:**
-- Supabase Auth callback handler
-  - Route: `/auth/callback` (handled by Supabase SDK)
-  - Implementation: `src/auth/AuthCallbackPage.jsx`
+## Supabase Edge Functions
+
+**Deployed functions** (in `supabase/functions/`):
+- `rss-proxy` - RSS/Atom feed fetching, parsing, and caching
+- `unsplash-proxy` - Unsplash photo search (keeps API key server-side)
+
+## Environment Configuration
+
+**Required env vars (all environments):**
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+**Required env vars (production only):**
+- `VITE_STRIPE_PUBLISHABLE_KEY`
+- `VITE_CLOUDINARY_CLOUD_NAME`
+
+**Optional env vars (features degrade gracefully when missing):**
+- `VITE_OPENWEATHER_API_KEY` - Weather widget falls back to mock data
+- `VITE_CLOUDINARY_UPLOAD_PRESET` - Layout image upload disabled
+- `VITE_RESEND_API_KEY` - Email alerts disabled
+- `VITE_SENTRY_DSN` + `VITE_ERROR_TRACKING_PROVIDER=sentry` - Falls back to console logging
+- `VITE_GOOGLE_API_KEY` - Google Sheets data binding disabled
+- `VITE_CANVA_CLIENT_ID` - Canva import disabled
+- `VITE_INSTAGRAM_APP_ID` / `VITE_FACEBOOK_APP_ID` / `VITE_TIKTOK_CLIENT_KEY` / `VITE_GOOGLE_CLIENT_ID` - Social feed integrations disabled
+- `VITE_ENABLE_AI=true` - AI content assistant disabled
+- `VITE_LOG_ENDPOINT` - Remote logging disabled
+- `VITE_ANALYTICS_ENDPOINT` - Web vitals reporting disabled
+
+**Server-side vars (not exposed to browser):**
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `AWS_S3_BUCKET`, `AWS_CLOUDFRONT_URL`
+- `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`
+
+**Secrets location:**
+- `.env.local` for local development (gitignored)
+- Vercel dashboard Environment Variables for production deployment
 
 ---
 
-*Integration audit: 2026-02-13*
+*Integration audit: 2026-02-17*
