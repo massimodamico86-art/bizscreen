@@ -56,7 +56,7 @@ All milestones shipped successfully.
 - [x] **Phase 58: Weather Security + Enhancement** — Server-side API key proxy, forecast mode, offline caching (completed 2026-02-18)
 - [x] **Phase 59: Video Playback** — HTML5 video in layout zones with HLS adaptive streaming (completed 2026-02-18)
 - [x] **Phase 60: Screen Groups & Tags** — Tag management, filtering, bulk operations, group content push (completed 2026-02-18)
-- [ ] **Phase 61: Portrait Mode** — Per-screen orientation, portrait canvas, CSS rotation, portrait templates
+- [x] **Phase 61: Portrait Mode** — Per-screen orientation, portrait canvas, CSS rotation, portrait templates (completed 2026-02-18)
 - [ ] **Phase 62: Menu Board Widget** — Structured menu CRUD, themed rendering, auto-pagination, realtime updates
 
 ### Phase Details
@@ -146,7 +146,7 @@ Plans:
   3. When portrait content plays on a landscape-mounted device (or vice versa), the player applies CSS rotation to display it correctly
   4. At least 3 portrait-oriented templates are available in the template marketplace
   5. User sees a warning when scheduling portrait content to a landscape screen (and vice versa)
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 61-01-PLAN.md — Screen orientation setting, RPC updates, and portrait template seeding
@@ -182,7 +182,7 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 | 58. Weather Security + Enhancement | v3.2 | Complete    | 2026-02-18 | - |
 | 59. Video Playback | v3.2 | Complete    | 2026-02-18 | - |
 | 60. Screen Groups & Tags | v3.2 | Complete    | 2026-02-18 | - |
-| 61. Portrait Mode | v3.2 | 0/2 | Not started | - |
+| 61. Portrait Mode | v3.2 | Complete    | 2026-02-18 | - |
 | 62. Menu Board Widget | v3.2 | 0/3 | Not started | - |
 
 ## Progress Summary
