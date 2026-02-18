@@ -115,11 +115,11 @@ Plans:
   2. User can use HLS (.m3u8) URLs for adaptive bitrate streaming that adjusts to network conditions
   3. Video elements show a static poster frame in the editor (no autoplay in editor)
   4. When a video stalls on a player, the existing stuck detection system recovers playback automatically
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 59-01: Video element in layout zones with autoplay/loop
-- [ ] 59-02: HLS streaming integration and stuck detection
+- [ ] 59-01-PLAN.md — Video element type, editor rendering (poster frame + play overlay), properties panel, SceneRenderer video case
+- [ ] 59-02-PLAN.md — VideoPlayer component with hls.js HLS streaming, error recovery, stall detection, wire into renderer and scene
 
 #### Phase 60: Screen Groups & Tags
 **Goal**: Users can organize screens with tags and push content to groups of screens efficiently
