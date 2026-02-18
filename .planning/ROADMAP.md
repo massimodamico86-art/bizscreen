@@ -146,12 +146,11 @@ Plans:
   3. When portrait content plays on a landscape-mounted device (or vice versa), the player applies CSS rotation to display it correctly
   4. At least 3 portrait-oriented templates are available in the template marketplace
   5. User sees a warning when scheduling portrait content to a landscape screen (and vice versa)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 61-01: Screen orientation setting and portrait canvas
-- [ ] 61-02: Player CSS rotation and orientation mismatch warning
-- [ ] 61-03: Portrait templates
+- [ ] 61-01-PLAN.md — Screen orientation setting, RPC updates, and portrait template seeding
+- [ ] 61-02-PLAN.md — Player CSS rotation and orientation mismatch warnings
 
 #### Phase 62: Menu Board Widget
 **Goal**: Users can create and manage structured menu boards that render beautifully on screens with real-time updates
@@ -183,7 +182,7 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 | 58. Weather Security + Enhancement | v3.2 | Complete    | 2026-02-18 | - |
 | 59. Video Playback | v3.2 | Complete    | 2026-02-18 | - |
 | 60. Screen Groups & Tags | v3.2 | Complete    | 2026-02-18 | - |
-| 61. Portrait Mode | v3.2 | 0/3 | Not started | - |
+| 61. Portrait Mode | v3.2 | 0/2 | Not started | - |
 | 62. Menu Board Widget | v3.2 | 0/3 | Not started | - |
 
 ## Progress Summary
