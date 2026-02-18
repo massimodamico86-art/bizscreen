@@ -1,5 +1,6 @@
 import { Image, Video, Play } from 'lucide-react';
 import { getWidgetComponent } from '../../widgets/registry.js';
+import VideoPlayer from '../../player/components/VideoPlayer.jsx';
 
 /**
  * LayoutElementRenderer
@@ -122,22 +123,18 @@ function VideoElement({ props, isPreview }) {
     );
   }
 
-  // Preview/Player mode: render actual <video> element with autoplay
-  // HLS support will be added in Plan 59-02 via VideoPlayer component.
-  // For now, render a basic <video> tag for MP4 playback.
-  const { autoplay = true, loop = true, muted = true } = props;
+  // Preview/Player mode: use VideoPlayer for MP4 + HLS + stall recovery
   return (
-    <div className="w-full h-full overflow-hidden" style={{ borderRadius: `${borderRadius}px`, opacity }}>
-      <video
-        src={url}
-        autoPlay={autoplay}
-        muted={muted}
-        loop={loop}
-        playsInline
-        poster={posterUrl || undefined}
-        style={{ width: '100%', height: '100%', objectFit: fit }}
-      />
-    </div>
+    <VideoPlayer
+      url={url}
+      fit={fit}
+      borderRadius={borderRadius}
+      opacity={opacity}
+      loop={props.loop}
+      muted={props.muted}
+      autoplay={props.autoplay}
+      posterUrl={posterUrl}
+    />
   );
 }
 

@@ -6,6 +6,7 @@ export { SceneRenderer } from './SceneRenderer.jsx';
 export { LayoutRenderer } from './LayoutRenderer.jsx';
 export { ZonePlayer } from './ZonePlayer.jsx';
 export { AppRenderer } from './AppRenderer.jsx';
+export { default as VideoPlayer } from './VideoPlayer.jsx';
 
 // Page components
 export { PairPage } from './PairPage.jsx';

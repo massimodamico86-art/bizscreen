@@ -24,6 +24,7 @@ import { useLogger } from '../../hooks/useLogger.js';
 import { DataRefreshProvider } from '../contexts/DataRefreshContext.jsx';
 import { useDataRefreshOrchestrator } from '../hooks/useDataRefreshOrchestrator.js';
 import { getWidgetComponent } from '../../widgets/registry.js';
+import VideoPlayer from './VideoPlayer.jsx';
 
 /**
  * Scene Block - Renders individual blocks in a scene slide
@@ -100,31 +101,31 @@ function SceneBlock({ block, _slideIndex, timezone }) {
 
     case 'video':
       return (
-        <div style={{
-          ...baseStyle,
-          borderRadius: `${props?.borderRadius || 0}px`,
-          backgroundColor: '#1e293b',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
+        <div style={baseStyle}>
           {props?.url ? (
-            <video
-              src={props.url}
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster={props?.posterUrl || undefined}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: props?.fit || 'cover',
-                borderRadius: `${props?.borderRadius || 0}px`,
-              }}
+            <VideoPlayer
+              url={props.url}
+              fit={props?.fit || 'cover'}
+              borderRadius={props?.borderRadius || 0}
+              opacity={props?.opacity ?? 1}
+              loop={props?.loop !== false}
+              muted={props?.muted !== false}
+              autoplay
+              posterUrl={props?.posterUrl}
             />
           ) : (
-            <div style={{ color: '#64748b', fontSize: '0.875rem' }}>No video</div>
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#1e293b',
+              color: '#64748b',
+              fontSize: '0.875rem',
+            }}>
+              No video
+            </div>
           )}
         </div>
       );
