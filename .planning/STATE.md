@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.2 Display Toolkit -- Phase 61 (Portrait Mode)
+**Current focus:** v3.2 Display Toolkit -- Phase 62 (Menu Board Widget)
 
 ## Current Position
 
-Phase: 61 of 62 (Portrait Mode)
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-02-18 - Completed 61-02-PLAN.md (Portrait Mode UI & Player)
+Phase: 62 of 62 (Menu Board Widget)
+Plan: 1 of 3 in current phase
+Status: In Progress
+Last activity: 2026-02-18 - Completed 62-01-PLAN.md (Menu Board Schema & Service)
 
-Progress: [############____] 75% (12/16 plans)
+Progress: [#############___] 81% (13/16 plans)
 
 ## Milestones Shipped
 
@@ -52,6 +52,7 @@ Progress: [############____] 75% (12/16 plans)
 | 60 | 02 | 4min | 2 | 3 |
 | 61 | 01 | 3min | 2 | 4 |
 | 61 | 02 | 3min | 2 | 4 |
+| 62 | 01 | 3min | 2 | 4 |
 
 ## Accumulated Context
 
@@ -100,6 +101,10 @@ Progress: [############____] 75% (12/16 plans)
 - **61-02**: No rotation for playlist-only mode since playlists lack inherent aspect_ratio
 - **61-02**: ScheduleEditorPage uses inline Alert for portrait advisory since target screen orientation is unknown
 
+- **62-01**: Reuse existing update_updated_at_column() trigger function from migration 040 for menu board tables
+- **62-01**: Grant SELECT to anon role for player-side read-only access to menu board tables
+- **62-01**: RLS policies use join-based EXISTS subqueries for categories/items (tenant check via menu_boards parent)
+
 ### Blockers/Concerns
 
 - ~~Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)~~ RESOLVED in 58-01
@@ -115,9 +120,9 @@ Progress: [############____] 75% (12/16 plans)
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 61-02-PLAN.md (Portrait Mode UI & Player)
+Stopped at: Completed 62-01-PLAN.md (Menu Board Schema & Service)
 Resume file: None
-Next: Phase 62 (next phase in v3.2 Display Toolkit)
+Next: 62-02-PLAN.md (Menu Board Editor UI)
 
 ---
-*Updated: 2026-02-18 -- Phase 61 complete (Portrait Mode). Player CSS rotation, OrientationMismatchWarning component, EditScreenModal and ScheduleEditorPage mismatch warnings done.*
+*Updated: 2026-02-18 -- Phase 62 Plan 01 complete. Menu board schema (3 tables, RLS, Realtime) and menuBoardService.js with CRUD, reorder, dietary tags, currency formatting.*
