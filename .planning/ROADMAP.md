@@ -85,11 +85,11 @@ Plans:
   2. User can configure a WiFi QR code with SSID, password, and encryption type that mobile devices can scan to auto-connect
   3. User can add a brand logo to the QR code center, which automatically sets error correction to H for scan reliability
   4. QR code widget renders without crashing on deployed players (QRCodeSVG import bug fixed)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 57-01: QR code types, error correction, and import fix
-- [ ] 57-02: WiFi QR config UI and brand logo overlay
+- [ ] 57-01-PLAN.md — Fix QRCodeSVG import bug, add multi-type QR support (URL/WiFi/Text), error correction control, color customization, extract QRCodeWidgetControls
+- [ ] 57-02-PLAN.md — Brand logo overlay with auto-H error correction, wire QRCodeWidgetControls into layout editor, update type definitions
 
 #### Phase 58: Weather Security + Enhancement
 **Goal**: Weather data displays securely on screens with forecast capability and offline resilience, with no API keys exposed in the client bundle
