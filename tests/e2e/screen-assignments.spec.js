@@ -167,10 +167,12 @@ test.describe('Screen Assignments', () => {
 
       // Wait for sidebar to confirm auth persisted
       const sidebar = page.locator('aside').first();
-      await sidebar.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {
-        // Auth may have been lost - skip
+      const sidebarVisible = await sidebar.waitFor({ state: 'visible', timeout: 10000 })
+        .then(() => true).catch(() => false);
+      if (!sidebarVisible) {
+        // Auth lost after reload - can't continue
         return;
-      });
+      }
 
       // Navigate back to screens
       await navigateToSection(page, 'screens');

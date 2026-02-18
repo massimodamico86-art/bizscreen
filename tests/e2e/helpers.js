@@ -46,6 +46,14 @@ export async function loginAndPrepare(page, options = {}) {
     return;
   }
 
+  if (authResolved === 'unknown') {
+    // Fallback: check URL - if still on /app, likely authenticated
+    if (page.url().includes('/app')) {
+      await dismissAnyModals(page);
+      return;
+    }
+  }
+
   // Not authenticated - perform full login flow
   const email = options.email || process.env.TEST_USER_EMAIL;
   const password = options.password || process.env.TEST_USER_PASSWORD;
