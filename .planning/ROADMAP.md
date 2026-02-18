@@ -54,7 +54,7 @@ All milestones shipped successfully.
 - [x] **Phase 56: Widget Registry + Clock/Date** — Centralized widget registry and timezone-aware clock/date widgets (completed 2026-02-13)
 - [x] **Phase 57: QR Code Enhancement** — WiFi QR codes, error correction, brand logo overlay, import fix (completed 2026-02-18)
 - [x] **Phase 58: Weather Security + Enhancement** — Server-side API key proxy, forecast mode, offline caching (completed 2026-02-18)
-- [ ] **Phase 59: Video Playback** — HTML5 video in layout zones with HLS adaptive streaming
+- [x] **Phase 59: Video Playback** — HTML5 video in layout zones with HLS adaptive streaming (completed 2026-02-18)
 - [ ] **Phase 60: Screen Groups & Tags** — Tag management, filtering, bulk operations, group content push
 - [ ] **Phase 61: Portrait Mode** — Per-screen orientation, portrait canvas, CSS rotation, portrait templates
 - [ ] **Phase 62: Menu Board Widget** — Structured menu CRUD, themed rendering, auto-pagination, realtime updates
@@ -115,7 +115,7 @@ Plans:
   2. User can use HLS (.m3u8) URLs for adaptive bitrate streaming that adjusts to network conditions
   3. Video elements show a static poster frame in the editor (no autoplay in editor)
   4. When a video stalls on a player, the existing stuck detection system recovers playback automatically
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 59-01-PLAN.md — Video element type, editor rendering (poster frame + play overlay), properties panel, SceneRenderer video case
@@ -181,7 +181,7 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 | 56. Widget Registry + Clock/Date | v3.2 | 2/2 | Complete | 2026-02-13 |
 | 57. QR Code Enhancement | v3.2 | Complete    | 2026-02-18 | - |
 | 58. Weather Security + Enhancement | v3.2 | Complete    | 2026-02-18 | - |
-| 59. Video Playback | v3.2 | 0/2 | Not started | - |
+| 59. Video Playback | v3.2 | Complete    | 2026-02-18 | - |
 | 60. Screen Groups & Tags | v3.2 | 0/2 | Not started | - |
 | 61. Portrait Mode | v3.2 | 0/3 | Not started | - |
 | 62. Menu Board Widget | v3.2 | 0/3 | Not started | - |
