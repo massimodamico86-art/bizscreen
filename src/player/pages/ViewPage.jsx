@@ -384,6 +384,31 @@ export function ViewPage() {
     navigate('/player', { replace: true });
   };
 
+  // Determine if content needs rotation based on device vs content orientation
+  const getRotationStyle = (deviceOrientation, contentAspectRatio) => {
+    const deviceIsPortrait = deviceOrientation === 'portrait';
+    // Content is portrait if height > width (9:16, 3:4)
+    const contentIsPortrait = contentAspectRatio && ['9:16', '3:4'].includes(contentAspectRatio);
+
+    // No rotation needed if orientations match, or if no aspect_ratio info available
+    if (!contentAspectRatio || deviceIsPortrait === contentIsPortrait) {
+      return null;
+    }
+
+    // Rotation needed: rotate 90deg and swap dimensions
+    return {
+      transform: 'rotate(90deg)',
+      transformOrigin: 'center center',
+      width: '100vh',
+      height: '100vw',
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      marginTop: '-50vw',
+      marginLeft: '-50vh',
+    };
+  };
+
   // Check if we have any content to display
   // RPC returns 'mode' field (playlist or layout)
   const contentMode = content?.mode || content?.type;
@@ -667,6 +692,10 @@ export function ViewPage() {
   // Layout mode - render multi-zone layout
   // New format uses 'type' instead of 'mode', 'screen' instead of 'device'
   if (content.type === 'layout') {
+    const deviceOrientation = content.device?.orientation || content.screen?.orientation || 'landscape';
+    const contentAspectRatio = content.layout?.aspect_ratio || content.layout?.aspectRatio;
+    const rotationStyle = getRotationStyle(deviceOrientation, contentAspectRatio);
+
     return (
       <div
         ref={contentContainerRef}
@@ -677,13 +706,25 @@ export function ViewPage() {
           overflow: 'hidden'
         }}
       >
-        <LayoutRenderer
-          layout={content.layout}
-          timezone={content.screen?.timezone}
-          screenId={localStorage.getItem(STORAGE_KEYS.screenId)}
-          tenantId={content.screen?.tenant_id}
-          campaignId={content.campaign?.id}
-        />
+        {rotationStyle ? (
+          <div style={rotationStyle}>
+            <LayoutRenderer
+              layout={content.layout}
+              timezone={content.screen?.timezone}
+              screenId={localStorage.getItem(STORAGE_KEYS.screenId)}
+              tenantId={content.screen?.tenant_id}
+              campaignId={content.campaign?.id}
+            />
+          </div>
+        ) : (
+          <LayoutRenderer
+            layout={content.layout}
+            timezone={content.screen?.timezone}
+            screenId={localStorage.getItem(STORAGE_KEYS.screenId)}
+            tenantId={content.screen?.tenant_id}
+            campaignId={content.campaign?.id}
+          />
+        )}
 
         {/* Connection status indicator */}
         {connectionStatus !== 'connected' && (
