@@ -52,7 +52,7 @@ All milestones shipped successfully.
 ### Phases
 
 - [x] **Phase 56: Widget Registry + Clock/Date** — Centralized widget registry and timezone-aware clock/date widgets (completed 2026-02-13)
-- [ ] **Phase 57: QR Code Enhancement** — WiFi QR codes, error correction, brand logo overlay, import fix
+- [x] **Phase 57: QR Code Enhancement** — WiFi QR codes, error correction, brand logo overlay, import fix (completed 2026-02-18)
 - [ ] **Phase 58: Weather Security + Enhancement** — Server-side API key proxy, forecast mode, offline caching
 - [ ] **Phase 59: Video Playback** — HTML5 video in layout zones with HLS adaptive streaming
 - [ ] **Phase 60: Screen Groups & Tags** — Tag management, filtering, bulk operations, group content push
@@ -85,7 +85,7 @@ Plans:
   2. User can configure a WiFi QR code with SSID, password, and encryption type that mobile devices can scan to auto-connect
   3. User can add a brand logo to the QR code center, which automatically sets error correction to H for scan reliability
   4. QR code widget renders without crashing on deployed players (QRCodeSVG import bug fixed)
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 57-01-PLAN.md — Fix QRCodeSVG import bug, add multi-type QR support (URL/WiFi/Text), error correction control, color customization, extract QRCodeWidgetControls
@@ -179,7 +179,7 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 56. Widget Registry + Clock/Date | v3.2 | 2/2 | Complete | 2026-02-13 |
-| 57. QR Code Enhancement | v3.2 | 0/2 | Not started | - |
+| 57. QR Code Enhancement | v3.2 | Complete    | 2026-02-18 | - |
 | 58. Weather Security + Enhancement | v3.2 | 0/2 | Not started | - |
 | 59. Video Playback | v3.2 | 0/2 | Not started | - |
 | 60. Screen Groups & Tags | v3.2 | 0/2 | Not started | - |
