@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-13)
 ## Current Position
 
 Phase: 59 of 62 (Video Playback)
-Plan: 1 of 2 in current phase
-Status: In Progress
-Last activity: 2026-02-18 - Completed 59-01-PLAN.md (Video Element Type)
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-02-18 - Completed 59-02-PLAN.md (Video Player Component with HLS)
 
-Progress: [######__________] 44% (7/16 plans)
+Progress: [#######_________] 50% (8/16 plans)
 
 ## Milestones Shipped
 
@@ -47,6 +47,7 @@ Progress: [######__________] 44% (7/16 plans)
 | 58 | 01 | 4min | 2 | 6 |
 | 58 | 02 | 5min | 2 | 8 |
 | 59 | 01 | 4min | 2 | 6 |
+| 59 | 02 | 4min | 2 | 5 |
 
 ## Accumulated Context
 
@@ -76,6 +77,9 @@ Progress: [######__________] 44% (7/16 plans)
 - **59-01**: Dual-mode rendering via isPreview prop: editor shows poster frame with play icon overlay, preview/player shows actual <video> tag
 - **59-01**: Basic <video> tag for MP4 in preview/player; HLS support deferred to Plan 59-02
 - **59-01**: Pass thumbnail_url from media library as posterUrl for video elements
+- **59-02**: hls.js light build (hls.light.min.js) for smaller bundle -- full build not needed for digital signage playback
+- **59-02**: Per-element stall detection inside VideoPlayer rather than extending useStuckDetection, because layouts have multiple independent video zones
+- **59-02**: eslint-disable for video.currentTime self-assign -- intentional seek pattern for stall recovery
 
 ### Blockers/Concerns
 
@@ -92,9 +96,9 @@ Progress: [######__________] 44% (7/16 plans)
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 59-01-PLAN.md (Video Element Type)
+Stopped at: Completed 59-02-PLAN.md (Video Player Component with HLS)
 Resume file: None
-Next: 59-02-PLAN.md (Video Player Component with HLS support)
+Next: Phase 60 (next phase in v3.2 Display Toolkit)
 
 ---
-*Updated: 2026-02-18 -- Phase 59 Plan 01 complete (Video Element Type).*
+*Updated: 2026-02-18 -- Phase 59 complete (Video Playback). Plan 02 complete (Video Player Component with HLS).*
