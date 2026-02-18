@@ -108,7 +108,7 @@ test.describe('Content Pipeline', () => {
 
   test.describe('Screens', () => {
     test('can access screens page', async ({ page }) => {
-      await page.getByRole('button', { name: /screens/i }).click();
+      await page.getByRole('button', { name: /screens/i }).first().click();
 
       // Use heading role to avoid matching sidebar button
       const mainContent = page.locator('main');
@@ -116,7 +116,7 @@ test.describe('Content Pipeline', () => {
     });
 
     test('shows screen pairing option', async ({ page }) => {
-      await page.getByRole('button', { name: /screens/i }).click();
+      await page.getByRole('button', { name: /screens/i }).first().click();
 
       // Should have an add/pair screen button (use first() as there may be multiple)
       const addButton = page.getByRole('button', { name: /add.*screen|pair/i }).first();

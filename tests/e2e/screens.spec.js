@@ -259,7 +259,7 @@ test.describe('Screen Error Handling', () => {
   test('Add Screen modal can be closed', async ({ page }) => {
     await navigateToSection(page, 'screens');
 
-    // Open Add Screen modal (exact match to avoid "Add Screen →" link)
+    // Open Add Screen modal (exact match to avoid "Add Screen ->" link)
     const addButton = page.getByRole('button', { name: 'Add Screen', exact: true });
     await addButton.click();
 
@@ -267,14 +267,13 @@ test.describe('Screen Error Handling', () => {
     const dialog = page.locator('[role="dialog"]');
     await expect(dialog).toBeVisible({ timeout: 3000 });
 
-    // Close via Cancel button, X button, Close modal, or Done button
-    const cancelButton = page.getByRole('button', { name: /cancel/i });
-    const closeButton = page.locator('[aria-label="Close"]').first();
-    const closeModalButton = page.locator('[aria-label="Close modal"]').first();
-    const doneButton = page.getByRole('button', { name: /done/i });
-    const closeControl = cancelButton.or(closeButton).or(closeModalButton).or(doneButton);
-    await expect(closeControl).toBeVisible({ timeout: 3000 });
-    await closeControl.click();
+    // Wait for modal animation to complete
+    await page.waitForTimeout(500);
+
+    // Close via the Close modal button from the design-system Modal component
+    const closeModalBtn = dialog.locator('[aria-label="Close modal"]');
+    await expect(closeModalBtn).toBeVisible({ timeout: 3000 });
+    await closeModalBtn.click();
 
     // Modal should be closed
     await dialog.waitFor({ state: 'hidden', timeout: 3000 });
