@@ -10,7 +10,8 @@
  */
 
 import { useState } from 'react';
-import { Link, QrCode, Type, Wifi, AlertTriangle, Palette, Eye, EyeOff } from 'lucide-react';
+import { Link, QrCode, Type, Wifi, AlertTriangle, Palette, Eye, EyeOff, Image as ImageIcon, Info } from 'lucide-react';
+import { useBranding } from '../../contexts/BrandingContext.jsx';
 
 /**
  * Calculate relative luminance from a hex color string.
@@ -43,6 +44,8 @@ function contrastRatio(hex1, hex2) {
  * @param {Function} root0.onPropChange - Callback to update a single prop
  */
 export function QRCodeWidgetControls({ props, onPropChange }) {
+  const { branding } = useBranding();
+
   const qrType = props.qrType || 'url';
   const url = props.url || '';
   const text = props.text || '';
@@ -56,8 +59,19 @@ export function QRCodeWidgetControls({ props, onPropChange }) {
   const cornerRadius = props.cornerRadius ?? 8;
   const label = props.label || '';
   const textColor = props.textColor || '#ffffff';
+  const logoEnabled = props.logoEnabled || false;
+  const logoUrl = props.logoUrl || '';
 
   const [showPassword, setShowPassword] = useState(false);
+  const [logoPreviewError, setLogoPreviewError] = useState(false);
+
+  // When logo toggle is turned on, pre-fill with tenant brand logo if available
+  const handleLogoToggle = (enabled) => {
+    onPropChange('logoEnabled', enabled);
+    if (enabled && !props.logoUrl && branding?.logoUrl) {
+      onPropChange('logoUrl', branding.logoUrl);
+    }
+  };
 
   // URL validation (soft hint, not blocking)
   const urlLooksInvalid = qrType === 'url' && url.length > 0 && !/^https?:\/\//.test(url);
@@ -230,17 +244,22 @@ export function QRCodeWidgetControls({ props, onPropChange }) {
           {['L', 'M', 'Q', 'H'].map((level) => (
             <button
               key={level}
-              onClick={() => onPropChange('errorCorrection', level)}
+              onClick={() => !logoEnabled && onPropChange('errorCorrection', level)}
               className={`flex-1 text-xs py-1.5 rounded font-medium ${
-                errorCorrection === level
+                (logoEnabled ? level === 'H' : errorCorrection === level)
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 text-gray-300'
+                  : logoEnabled
+                    ? 'bg-gray-700 text-gray-500 opacity-50 cursor-not-allowed'
+                    : 'bg-gray-700 text-gray-300'
               }`}
             >
               {level}
             </button>
           ))}
         </div>
+        {logoEnabled && (
+          <p className="text-xs text-blue-500 mt-1">(Auto: H with logo)</p>
+        )}
       </div>
 
       {/* Color Pickers */}
@@ -274,6 +293,68 @@ export function QRCodeWidgetControls({ props, onPropChange }) {
           Low contrast may affect scanning reliability
         </p>
       )}
+
+      {/* Brand Logo */}
+      <div>
+        <label className="block text-xs font-medium text-gray-400 mb-1">
+          <ImageIcon className="w-3 h-3 inline mr-1" />
+          Brand Logo
+        </label>
+        <label className="flex items-center justify-between cursor-pointer">
+          <span className="text-xs text-gray-400">Add brand logo</span>
+          <button
+            type="button"
+            onClick={() => handleLogoToggle(!logoEnabled)}
+            className={`relative w-9 h-5 rounded-full transition-colors ${
+              logoEnabled ? 'bg-blue-600' : 'bg-gray-600'
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
+                logoEnabled ? 'translate-x-4' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </label>
+        {logoEnabled && (
+          <div className="mt-2 space-y-2">
+            <p className="flex items-center gap-1 text-xs text-blue-500">
+              <Info className="w-3 h-3 inline" />
+              Error correction automatically set to H for scan reliability
+            </p>
+            <input
+              type="text"
+              value={logoUrl}
+              onChange={(e) => {
+                onPropChange('logoUrl', e.target.value);
+                setLogoPreviewError(false);
+              }}
+              placeholder="https://example.com/logo.png"
+              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white w-full"
+            />
+            <p className="text-xs text-gray-500">
+              {branding?.logoUrl && logoUrl === branding.logoUrl ? (
+                <span className="text-green-500">Using your brand logo</span>
+              ) : (
+                'Enter your logo image URL'
+              )}
+            </p>
+            {logoUrl && !logoPreviewError && (
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded bg-gray-700 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={logoUrl}
+                    alt="Logo preview"
+                    className="w-full h-full object-contain"
+                    onError={() => setLogoPreviewError(true)}
+                  />
+                </div>
+                <span className="text-xs text-gray-500">Preview</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Corner Radius */}
       <div>

@@ -80,6 +80,8 @@ function QRPlaceholder({ fgColor }) {
  * @param {string} props.qrFgColor - QR code foreground color (default: '#000000')
  * @param {string} props.qrBgColor - QR code background color (default: '#ffffff')
  * @param {string} props.textColor - Label text color (default: '#ffffff')
+ * @param {boolean} props.logoEnabled - Enable brand logo overlay (default: false)
+ * @param {string} props.logoUrl - Logo image URL (default: '')
  */
 export function QRCodeWidget({ props = {} }) {
   const qrType = props.qrType || 'url';
@@ -90,6 +92,11 @@ export function QRCodeWidget({ props = {} }) {
   const qrFgColor = props.qrFgColor || '#000000';
   const qrBgColor = props.qrBgColor || '#ffffff';
   const textColor = props.textColor || '#ffffff';
+  const logoEnabled = props.logoEnabled || false;
+  const logoUrl = props.logoUrl || '';
+
+  // Force error correction to H when logo is enabled for scan reliability
+  const effectiveErrorCorrection = logoEnabled && logoUrl ? 'H' : (errorCorrection || 'M');
 
   const qrValue = generateQRValue(props);
 
@@ -121,9 +128,15 @@ export function QRCodeWidget({ props = {} }) {
           <QRCodeSVG
             value={qrValue}
             size={256}
-            level={errorCorrection}
+            level={effectiveErrorCorrection}
             fgColor={qrFgColor}
             bgColor={qrBgColor}
+            imageSettings={logoEnabled && logoUrl ? {
+              src: logoUrl,
+              height: 40,
+              width: 40,
+              excavate: true,
+            } : undefined}
             style={{
               width: '100%',
               height: '100%',
