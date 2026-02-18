@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.2 Display Toolkit -- Phase 57 (QR Code Enhancement)
+**Current focus:** v3.2 Display Toolkit -- Phase 58 (Weather Security Enhancement)
 
 ## Current Position
 
-Phase: 57 of 62 (QR Code Enhancement) -- COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-02-17 -- Completed 57-02 Logo Overlay & Layout Editor QR Integration
+Phase: 58 of 62 (Weather Security Enhancement)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-17 -- Completed 58-01 Weather Proxy Edge Function
 
-Progress: [###_____________] 25% (4/16 plans)
+Progress: [####____________] 31% (5/16 plans)
 
 ## Milestones Shipped
 
@@ -44,6 +44,7 @@ Progress: [###_____________] 25% (4/16 plans)
 | 56 | 02 | 4min | 2 | 7 |
 | 57 | 01 | 4min | 2 | 5 |
 | 57 | 02 | 3min | 2 | 4 |
+| 58 | 01 | 4min | 2 | 6 |
 
 ## Accumulated Context
 
@@ -63,19 +64,22 @@ Progress: [###_____________] 25% (4/16 plans)
 - **57-02**: Logo overlay uses fixed 40x40 with excavate:true at size=256 (~15% coverage) for brand visibility vs scan reliability
 - **57-02**: Logo toggle auto-fills tenant brand logo URL from BrandingContext when logoUrl is empty
 - **57-02**: Layout editor QR controls replaced with shared QRCodeWidgetControls using adapter pattern for prop interface
+- **58-01**: Dual auth in weather-proxy: accept both user JWTs and anon key to support unauthenticated player devices
+- **58-01**: Client-side in-memory cache preserved as optimization layer (30min TTL) on top of server-side DB cache (15min TTL)
+- **58-01**: Removed VITE_OPENWEATHER_API_KEY from supabase.js since it is no longer a client-side variable
 
 ### Blockers/Concerns
 
-- Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)
+- ~~Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)~~ RESOLVED in 58-01
 - ~~QR code widget has missing import causing player crash (QR-05 addresses in Phase 57)~~ RESOLVED in 57-01
 - ~~Clock widgets use browser timezone instead of screen timezone (CLOCK-06 addresses in Phase 56)~~ RESOLVED in 56-02
 
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 57-02-PLAN.md (Logo Overlay & Layout Editor QR Integration)
+Stopped at: Completed 58-01-PLAN.md (Weather Proxy Edge Function)
 Resume file: None
-Next: Phase 58 (Weather Widget Enhancement)
+Next: 58-02-PLAN.md (Weather Widget UI Enhancement)
 
 ---
-*Updated: 2026-02-17 -- Phase 57 QR Code Enhancement complete (both plans).*
+*Updated: 2026-02-17 -- Phase 58 Plan 01 Weather Proxy Edge Function complete.*
