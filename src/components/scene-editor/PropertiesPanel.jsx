@@ -17,7 +17,6 @@ import {
   Grid3X3,
   Image,
   Layers,
-  Link,
   MapPin,
   Palette,
   Play,
@@ -41,6 +40,7 @@ import { DataTableWidgetControls } from './DataTableWidgetControls';
 import { RssWidgetControls } from './RssWidgetControls';
 import { SocialFeedWidgetControls } from './SocialFeedWidgetControls';
 import { CountdownWidgetControls } from './CountdownWidgetControls.jsx';
+import { QRCodeWidgetControls } from './QRCodeWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -897,43 +897,10 @@ function WidgetControls({ block, onUpdate }) {
 
       {/* QR Code Controls */}
       {widgetType === 'qr' && (
-        <>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5">
-              <Link className="w-3 h-3 inline mr-1" />
-              URL
-            </label>
-            <input
-              type="text"
-              value={props.url || ''}
-              onChange={(e) => handlePropChange('url', e.target.value)}
-              placeholder="https://example.com"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Label</label>
-            <input
-              type="text"
-              value={props.label || ''}
-              onChange={(e) => handlePropChange('label', e.target.value)}
-              placeholder="Scan me!"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Corner Radius</label>
-            <input
-              type="range"
-              value={props.cornerRadius || 8}
-              onChange={(e) => handlePropChange('cornerRadius', parseInt(e.target.value))}
-              min={0}
-              max={24}
-              className="w-full"
-            />
-            <div className="text-xs text-gray-500 text-right">{props.cornerRadius || 8}px</div>
-          </div>
-        </>
+        <QRCodeWidgetControls
+          props={props}
+          onPropChange={handlePropChange}
+        />
       )}
 
       {/* Data Table Controls */}
