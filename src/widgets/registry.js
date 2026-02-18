@@ -24,6 +24,7 @@ import {
   Newspaper,
   Share2,
   Timer,
+  UtensilsCrossed,
 } from 'lucide-react';
 
 import {
@@ -32,6 +33,7 @@ import {
   WeatherWidget,
   QRCodeWidget,
   DataTableWidget,
+  MenuBoardWidget,
   RssTickerWidget,
   RssCardWidget,
   SocialFeedWidget,
@@ -138,6 +140,22 @@ export const WIDGET_REGISTRY = {
       dataSourceId: '',
       textColor: '#ffffff',
       fontSize: 16,
+    },
+  },
+
+  'menu-board': {
+    component: MenuBoardWidget,
+    icon: UtensilsCrossed,
+    label: 'Menu Board',
+    defaultProps: {
+      menuBoardId: '',
+      theme: 'dark',
+      textColor: '#ffffff',
+      accentColor: '#f59e0b',
+      showImages: true,
+      showDescriptions: true,
+      pageIntervalSeconds: 10,
+      currencyCode: 'USD',
     },
   },
 
