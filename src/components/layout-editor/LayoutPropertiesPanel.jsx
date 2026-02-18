@@ -15,7 +15,6 @@ import {
   Edit3,
   Image,
   Layers,
-  Link,
   MapPin,
   Square,
   Type,
@@ -23,6 +22,7 @@ import {
 import { Button } from '../../design-system';
 import { getWidgetTypes, getWidgetDefaults } from '../../widgets/registry.js';
 import { TIMEZONE_OPTIONS } from '../../services/locationService.js';
+import { QRCodeWidgetControls } from '../scene-editor/QRCodeWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -451,31 +451,10 @@ function WidgetControls({ element, onUpdate, onPropsUpdate }) {
       )}
 
       {widgetType === 'qr' && (
-        <>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5">
-              <Link className="w-3 h-3 inline mr-1" />
-              URL
-            </label>
-            <input
-              type="text"
-              value={props.url || ''}
-              onChange={(e) => onPropsUpdate({ url: e.target.value })}
-              placeholder="https://example.com"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Label</label>
-            <input
-              type="text"
-              value={props.label || ''}
-              onChange={(e) => onPropsUpdate({ label: e.target.value })}
-              placeholder="Scan me!"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
-            />
-          </div>
-        </>
+        <QRCodeWidgetControls
+          props={props}
+          onPropChange={(key, value) => onPropsUpdate({ [key]: value })}
+        />
       )}
 
       <ColorPicker

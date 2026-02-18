@@ -17,7 +17,7 @@ import { getWidgetDefaults } from '../../widgets/registry.js';
  */
 
 /**
- * @typedef {'clock' | 'date' | 'weather' | 'qr' | 'data' | 'countdown' | 'ticker'} WidgetType
+ * @typedef {'clock' | 'date' | 'clock-date' | 'weather' | 'qr' | 'data' | 'data-table' | 'rss-ticker' | 'rss-card' | 'social-feed' | 'countdown'} WidgetType
  */
 
 /**
@@ -88,11 +88,21 @@ import { getWidgetDefaults } from '../../widgets/registry.js';
 
 /**
  * @typedef {Object} WidgetQRProps
- * @property {string} url - QR code URL
- * @property {string} [label] - Optional label
- * @property {string} [fgColor='#000000'] - QR foreground color
- * @property {string} [bgColor='#ffffff'] - QR background color
+ * @property {'url' | 'wifi' | 'text'} [qrType='url'] - QR content type
+ * @property {string} [url] - URL to encode (for url type)
+ * @property {string} [text] - Plain text to encode (for text type)
+ * @property {string} [ssid] - WiFi network name (for wifi type)
+ * @property {string} [password] - WiFi password (for wifi type)
+ * @property {'WPA' | 'nopass'} [encryption='WPA'] - WiFi encryption type
+ * @property {boolean} [hiddenNetwork=false] - Hidden WiFi network flag
+ * @property {string} [label] - Optional display label
+ * @property {'L' | 'M' | 'Q' | 'H'} [errorCorrection='M'] - Error correction level
+ * @property {string} [qrFgColor='#000000'] - QR foreground color
+ * @property {string} [qrBgColor='#ffffff'] - QR background color
  * @property {number} [cornerRadius=8] - Corner radius
+ * @property {string} [textColor='#ffffff'] - Label text color
+ * @property {boolean} [logoEnabled=false] - Enable brand logo overlay
+ * @property {string} [logoUrl=''] - Logo image URL
  */
 
 /**
