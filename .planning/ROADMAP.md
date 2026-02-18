@@ -53,7 +53,7 @@ All milestones shipped successfully.
 
 - [x] **Phase 56: Widget Registry + Clock/Date** — Centralized widget registry and timezone-aware clock/date widgets (completed 2026-02-13)
 - [x] **Phase 57: QR Code Enhancement** — WiFi QR codes, error correction, brand logo overlay, import fix (completed 2026-02-18)
-- [ ] **Phase 58: Weather Security + Enhancement** — Server-side API key proxy, forecast mode, offline caching
+- [x] **Phase 58: Weather Security + Enhancement** — Server-side API key proxy, forecast mode, offline caching (completed 2026-02-18)
 - [ ] **Phase 59: Video Playback** — HTML5 video in layout zones with HLS adaptive streaming
 - [ ] **Phase 60: Screen Groups & Tags** — Tag management, filtering, bulk operations, group content push
 - [ ] **Phase 61: Portrait Mode** — Per-screen orientation, portrait canvas, CSS rotation, portrait templates
@@ -100,7 +100,7 @@ Plans:
   2. User can configure a weather widget in forecast mode showing multi-day forecast (not just current conditions)
   3. Weather widget displays times formatted to the screen's assigned timezone
   4. When a player goes offline, weather widget shows cached data from IndexedDB with a "last updated" indicator
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 58-01-PLAN.md — Weather proxy Edge Function, cache table, weatherProxyService client, and migration of weatherService/geolocationService/WeatherWall to proxy
@@ -180,7 +180,7 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 |-------|-----------|----------------|--------|-----------|
 | 56. Widget Registry + Clock/Date | v3.2 | 2/2 | Complete | 2026-02-13 |
 | 57. QR Code Enhancement | v3.2 | Complete    | 2026-02-18 | - |
-| 58. Weather Security + Enhancement | v3.2 | 0/2 | Not started | - |
+| 58. Weather Security + Enhancement | v3.2 | Complete    | 2026-02-18 | - |
 | 59. Video Playback | v3.2 | 0/2 | Not started | - |
 | 60. Screen Groups & Tags | v3.2 | 0/2 | Not started | - |
 | 61. Portrait Mode | v3.2 | 0/3 | Not started | - |
