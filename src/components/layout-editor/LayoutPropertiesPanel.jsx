@@ -414,6 +414,27 @@ function WidgetControls({ element, onUpdate, onPropsUpdate }) {
       {widgetType === 'weather' && (
         <>
           <div>
+            <label className="block text-xs text-gray-500 mb-1.5">Mode</label>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onPropsUpdate({ mode: 'current' })}
+                className={`flex-1 ${props.mode !== 'forecast' ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
+              >
+                Current
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onPropsUpdate({ mode: 'forecast' })}
+                className={`flex-1 ${props.mode === 'forecast' ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
+              >
+                Forecast
+              </Button>
+            </div>
+          </div>
+          <div>
             <label className="block text-xs text-gray-500 mb-1.5">
               <MapPin className="w-3 h-3 inline mr-1" />
               Location

@@ -29,7 +29,7 @@ import { getWidgetComponent } from '../../widgets/registry.js';
  * Scene Block - Renders individual blocks in a scene slide
  * Supports data-bound text blocks with resolvedContent
  */
-function SceneBlock({ block, _slideIndex }) {
+function SceneBlock({ block, _slideIndex, timezone }) {
   const { type, x, y, width, height, layer, props, widgetType, animation, resolvedContent } = block;
 
   // Get animation styles from block.animation
@@ -111,7 +111,7 @@ function SceneBlock({ block, _slideIndex }) {
     case 'widget':
       return (
         <div style={baseStyle}>
-          <SceneWidgetRenderer widgetType={widgetType} props={props} />
+          <SceneWidgetRenderer widgetType={widgetType} props={props} timezone={timezone} />
         </div>
       );
 
@@ -153,7 +153,7 @@ function SceneWidgetRenderer({ widgetType, props, timezone }) {
  * Supports text, image, shape, and widget blocks
  * Phase 6: Added media preloading for smooth transitions
  */
-export function SceneRenderer({ scene, _screenId, _tenantId }) {
+export function SceneRenderer({ scene, _screenId, _tenantId, timezone }) {
   const logger = useLogger('SceneRenderer');
   const orchestrator = useDataRefreshOrchestrator();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -386,6 +386,7 @@ export function SceneRenderer({ scene, _screenId, _tenantId }) {
               resolvedContent: resolvedBlocksMap.get(block.id) || block.resolvedContent,
             }}
             slideIndex={currentSlideIndex}
+            timezone={timezone}
           />
         ))}
 

@@ -101,6 +101,8 @@ export const WIDGET_REGISTRY = {
       location: 'Miami, FL',
       units: 'imperial',
       style: 'minimal',
+      mode: 'current',
+      timezone: 'screen',
       size: 'medium',
     },
   },

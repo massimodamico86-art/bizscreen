@@ -481,7 +481,29 @@ export default function EditorCanvas({
               </div>
             );
 
-          case 'weather':
+          case 'weather': {
+            const weatherMode = props.mode || 'current';
+
+            // Forecast mode preview
+            if (weatherMode === 'forecast') {
+              const mockDays = units === 'metric'
+                ? [{ d: 'Mon', h: '24', l: '18' }, { d: 'Tue', h: '26', l: '19' }, { d: 'Wed', h: '22', l: '16' }, { d: 'Thu', h: '25', l: '20' }, { d: 'Fri', h: '23', l: '17' }]
+                : [{ d: 'Mon', h: '72', l: '65' }, { d: 'Tue', h: '75', l: '68' }, { d: 'Wed', h: '70', l: '62' }, { d: 'Thu', h: '74', l: '67' }, { d: 'Fri', h: '71', l: '64' }];
+              return (
+                <div className="w-full h-full flex items-center justify-center gap-1 p-1">
+                  {mockDays.map((day, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center justify-center gap-0.5 min-w-0">
+                      <span style={{ color: textColor, fontSize: getFontSize('weatherSecondary', '0.5rem'), fontWeight: '500', opacity: 0.8 }}>{day.d}</span>
+                      <CloudSun className="w-3.5 h-3.5" style={{ color: accentColor }} />
+                      <span style={{ color: textColor, fontSize: getFontSize('weatherSecondary', '0.5rem'), fontWeight: '600', lineHeight: 1 }}>{day.h}°</span>
+                      <span style={{ color: textColor, fontSize: getFontSize('weatherSecondary', '0.5rem'), opacity: 0.6, lineHeight: 1 }}>{day.l}°</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+
+            // Current mode preview (existing)
             return style === 'card' ? (
               <div
                 className="w-full h-full flex flex-col items-center justify-center rounded-lg p-2"
@@ -500,6 +522,7 @@ export default function EditorCanvas({
                 </div>
               </div>
             );
+          }
 
           case 'qr': {
             const qrFgColor = props.qrFgColor || '#000000';

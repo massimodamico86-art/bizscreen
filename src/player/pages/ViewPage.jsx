@@ -40,6 +40,8 @@ import {
   useStuckDetection,
 } from '../hooks';
 import { AppRenderer } from '../components/AppRenderer';
+import { SceneRenderer } from '../components/SceneRenderer.jsx';
+import { LayoutRenderer } from '../components/LayoutRenderer.jsx';
 
 // Module-level logger for utility functions
 const retryLogger = createScopedLogger('Player:retry');
@@ -550,6 +552,7 @@ export function ViewPage() {
           scene={content.scene}
           screenId={localStorage.getItem(STORAGE_KEYS.screenId)}
           tenantId={content.screen?.tenant_id}
+          timezone={content.screen?.timezone}
         />
 
         {/* Connection status indicator */}
