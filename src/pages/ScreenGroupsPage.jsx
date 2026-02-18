@@ -13,6 +13,10 @@ import {
   Trash2,
   Check,
   ChevronRight,
+  ListMusic,
+  Loader2,
+  Tag,
+  X,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -40,8 +44,11 @@ import {
   getUnassignedScreens,
   assignScreensToGroup,
   removeScreensFromGroup,
-  unpublishSceneFromGroup
+  unpublishSceneFromGroup,
+  bulkDeleteScreenGroups,
+  bulkAddTagsToGroups,
 } from '../services/screenGroupService';
+import PushPlaylistModal from '../components/screens/PushPlaylistModal';
 import TagChipInput from '../components/screens/TagChipInput';
 import { fetchLocations } from '../services/locationService';
 import { canEditScreens } from '../services/permissionsService';
@@ -70,6 +77,14 @@ const ScreenGroupsPage = ({ showToast }) => {
   // Menu state
   const [openMenuId, setOpenMenuId] = useState(null);
 
+  // Bulk selection state
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isTagging, setIsTagging] = useState(false);
+  const [showPushModal, setShowPushModal] = useState(false);
+  const [showBulkTagModal, setShowBulkTagModal] = useState(false);
+  const [bulkTagInput, setBulkTagInput] = useState([]);
+
   // Permissions
   const canEdit = canEditScreens(user);
 
@@ -77,6 +92,18 @@ const ScreenGroupsPage = ({ showToast }) => {
     loadData();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- mount/filter change
   }, [locationFilter, tagFilter]);
+
+  // Selection helpers
+  const toggleSelection = (id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const selectAll = () => setSelectedIds(new Set(filteredGroups.map(g => g.id)));
+  const deselectAll = () => setSelectedIds(new Set());
 
   const loadData = async () => {
     try {
@@ -98,6 +125,7 @@ const ScreenGroupsPage = ({ showToast }) => {
       setGroups(filtered);
       setLocations(locationsData);
       setAvailableTags(tagsData);
+      setSelectedIds(new Set());
     } catch (error) {
       logger.error('Failed to load screen groups', { error });
       showToast?.('Error loading screen groups', 'error');
@@ -150,6 +178,42 @@ const ScreenGroupsPage = ({ showToast }) => {
     setSelectedGroup(group);
     setShowAssignModal(true);
     setOpenMenuId(null);
+  };
+
+  // Bulk action handlers
+  const handleBulkDelete = async () => {
+    const count = selectedIds.size;
+    if (!confirm(`Delete ${count} screen group(s)? Screens will be unassigned but not deleted.`)) return;
+
+    setIsDeleting(true);
+    try {
+      await bulkDeleteScreenGroups([...selectedIds]);
+      showToast?.(`${count} group(s) deleted`);
+      setSelectedIds(new Set());
+      loadData();
+    } catch (error) {
+      logger.error('Bulk delete failed', { error });
+      showToast?.('Error deleting groups: ' + error.message, 'error');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleBulkTag = async () => {
+    setIsTagging(true);
+    try {
+      await bulkAddTagsToGroups([...selectedIds], bulkTagInput);
+      showToast?.(`Tags added to ${selectedIds.size} group(s)`);
+      setShowBulkTagModal(false);
+      setBulkTagInput([]);
+      setSelectedIds(new Set());
+      loadData();
+    } catch (error) {
+      logger.error('Bulk tag failed', { error });
+      showToast?.('Error adding tags: ' + error.message, 'error');
+    } finally {
+      setIsTagging(false);
+    }
   };
 
   // Close menu when clicking outside
@@ -240,6 +304,17 @@ const ScreenGroupsPage = ({ showToast }) => {
               <table className="w-full" role="table" aria-label={t('screenGroups.tableLabel', 'Screen groups table')}>
                 <thead>
                   <tr className="border-b border-gray-200 text-left text-sm text-gray-500">
+                    <th scope="col" className="p-4 w-12">
+                      {canEdit && (
+                        <input
+                          type="checkbox"
+                          checked={filteredGroups.length > 0 && selectedIds.size === filteredGroups.length}
+                          onChange={() => selectedIds.size === filteredGroups.length ? deselectAll() : selectAll()}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          aria-label={t('common.selectAll', 'Select all')}
+                        />
+                      )}
+                    </th>
                     <th scope="col" className="p-4 font-medium">{t('screenGroups.name', 'NAME')}</th>
                     <th scope="col" className="p-4 font-medium">{t('screenGroups.location', 'LOCATION')}</th>
                     <th scope="col" className="p-4 font-medium">{t('screenGroups.screens', 'SCREENS')}</th>
@@ -251,6 +326,17 @@ const ScreenGroupsPage = ({ showToast }) => {
                 <tbody>
                   {filteredGroups.map(group => (
                     <tr key={group.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="p-4 w-12">
+                        {canEdit && (
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.has(group.id)}
+                            onChange={() => toggleSelection(group.id)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            aria-label={t('common.selectItem', 'Select {{name}}', { name: group.name })}
+                          />
+                        )}
+                      </td>
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center" aria-hidden="true">
@@ -354,6 +440,18 @@ const ScreenGroupsPage = ({ showToast }) => {
                                   {t('screenGroups.manageScreens', 'Manage Screens')}
                                 </button>
                                 <button
+                                  onClick={() => {
+                                    setSelectedGroup(group);
+                                    setShowPushModal(true);
+                                    setOpenMenuId(null);
+                                  }}
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                  role="menuitem"
+                                >
+                                  <ListMusic size={14} aria-hidden="true" />
+                                  {t('screenGroups.pushPlaylist', 'Push Playlist')}
+                                </button>
+                                <button
                                   onClick={() => handleDelete(group.id)}
                                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
                                   role="menuitem"
@@ -442,6 +540,84 @@ const ScreenGroupsPage = ({ showToast }) => {
             showToast={showToast}
             t={t}
           />
+        )}
+
+        {/* Push Playlist Modal */}
+        {showPushModal && selectedGroup && (
+          <PushPlaylistModal
+            group={selectedGroup}
+            onClose={() => { setShowPushModal(false); setSelectedGroup(null); }}
+            onPush={loadData}
+            showToast={showToast}
+          />
+        )}
+
+        {/* Bulk Tag Modal */}
+        {showBulkTagModal && (
+          <Modal open={true} onClose={() => { setShowBulkTagModal(false); setBulkTagInput([]); }} size="sm">
+            <ModalHeader>
+              <ModalTitle>{t('screenGroups.addTagsToGroups', 'Add Tags to {{count}} Group(s)', { count: selectedIds.size })}</ModalTitle>
+            </ModalHeader>
+            <ModalContent>
+              <p className="text-sm text-gray-500 mb-3">
+                {t('screenGroups.bulkTagHint', 'Tags will be added to existing tags (not replaced).')}
+              </p>
+              <TagChipInput tags={bulkTagInput} onChange={setBulkTagInput} placeholder={t('screenGroups.tagPlaceholder', 'Type and press Enter...')} />
+            </ModalContent>
+            <ModalFooter>
+              <Button variant="secondary" onClick={() => { setShowBulkTagModal(false); setBulkTagInput([]); }}>
+                {t('common.cancel', 'Cancel')}
+              </Button>
+              <Button onClick={handleBulkTag} loading={isTagging} disabled={bulkTagInput.length === 0}>
+                {t('screenGroups.addTags', 'Add Tags')}
+              </Button>
+            </ModalFooter>
+          </Modal>
+        )}
+
+        {/* Floating Bulk Action Bar */}
+        {selectedIds.size > 0 && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
+            <div className="bg-blue-600 text-white rounded-xl shadow-2xl px-4 py-3 flex items-center gap-4">
+              {/* Selection count */}
+              <div className="flex items-center gap-2 pr-4 border-r border-blue-500">
+                <span className="text-sm font-medium">{selectedIds.size} selected</span>
+              </div>
+
+              {/* Select/Deselect all */}
+              <button onClick={() => selectedIds.size === filteredGroups.length ? deselectAll() : selectAll()}
+                className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-blue-100 hover:text-white hover:bg-blue-500 rounded transition-colors"
+                disabled={isDeleting || isTagging}>
+                {selectedIds.size === filteredGroups.length ? 'Deselect All' : `Select All (${filteredGroups.length})`}
+              </button>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-1 pl-2 border-l border-blue-500">
+                {/* Bulk Tag */}
+                <button onClick={() => setShowBulkTagModal(true)}
+                  disabled={isDeleting || isTagging}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm hover:bg-blue-500 rounded transition-colors disabled:opacity-50"
+                  title="Add Tags">
+                  {isTagging ? <Loader2 size={16} className="animate-spin" /> : <Tag size={16} />}
+                  <span className="hidden sm:inline">Tag</span>
+                </button>
+
+                {/* Bulk Delete */}
+                <button onClick={handleBulkDelete}
+                  disabled={isDeleting || isTagging}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-500 hover:bg-red-600 rounded transition-colors disabled:opacity-50"
+                  title="Delete">
+                  {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                  <span className="hidden sm:inline">Delete</span>
+                </button>
+              </div>
+
+              {/* Close */}
+              <button onClick={deselectAll} className="ml-2 p-1.5 hover:bg-blue-500 rounded transition-colors" title="Clear selection">
+                <X size={18} />
+              </button>
+            </div>
+          </div>
         )}
       </PageContent>
     </PageLayout>
