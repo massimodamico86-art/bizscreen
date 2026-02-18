@@ -15,6 +15,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { SNAP_THRESHOLD } from './types';
 import { YODECK_GRID, YODECK_COLORS } from '../../config/yodeckTheme';
+import { Move } from 'lucide-react';
+import LayoutElementRenderer from './LayoutElementRenderer.jsx';
 
 /**
  * Calculate snap position for element alignment
@@ -398,7 +400,7 @@ export default function LayoutEditorCanvas({
               onMouseDown={(e) => handleDragStart(e, element.id)}
               onDoubleClick={(e) => handleElementDoubleClick(e, element.id)}
             >
-              <LayoutElementRenderer element={element} />
+              <LayoutElementRenderer element={element} isPreview={isPreviewMode} />
 
               {/* Selection overlay with resize handles - Yodeck white square style (hidden in preview mode) */}
               {isSelected && !element.locked && !isPreviewMode && (

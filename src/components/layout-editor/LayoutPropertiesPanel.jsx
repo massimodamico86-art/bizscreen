@@ -15,6 +15,7 @@ import {
   Edit3,
   Image,
   Layers,
+  Video,
   MapPin,
   Square,
   Type,
@@ -82,6 +83,9 @@ export default function LayoutPropertiesPanel({
         {element.type === 'image' && (
           <ImageControls element={element} onUpdate={handlePropsUpdate} onEditImage={onEditImage} />
         )}
+        {element.type === 'video' && (
+          <VideoControls element={element} onUpdate={handlePropsUpdate} />
+        )}
         {element.type === 'widget' && (
           <WidgetControls element={element} onUpdate={handleUpdate} onPropsUpdate={handlePropsUpdate} />
         )}
@@ -101,6 +105,7 @@ function ElementTypeIcon({ type }) {
   const icons = {
     text: Type,
     image: Image,
+    video: Video,
     shape: Square,
     widget: Clock,
   };
@@ -255,6 +260,111 @@ function ImageControls({ element, onUpdate, onEditImage }) {
           className="w-full"
         />
         <div className="text-xs text-gray-500 text-right">{Math.round((props.opacity ?? 1) * 100)}%</div>
+      </div>
+    </div>
+  );
+}
+
+// Video controls
+function VideoControls({ element, onUpdate }) {
+  const props = element.props || {};
+
+  return (
+    <div className="p-4 border-b border-gray-800 space-y-4">
+      <div>
+        <label className="block text-xs text-gray-500 mb-1.5">Video URL</label>
+        <input
+          type="url"
+          value={props.url || ''}
+          onChange={(e) => onUpdate({ url: e.target.value })}
+          placeholder="https://... (.mp4 or .m3u8)"
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+        />
+      </div>
+
+      <div>
+        <label className="block text-xs text-gray-500 mb-1.5">Poster Image URL</label>
+        <input
+          type="url"
+          value={props.posterUrl || ''}
+          onChange={(e) => onUpdate({ posterUrl: e.target.value })}
+          placeholder="https://... (thumbnail shown in editor)"
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+        />
+      </div>
+
+      <div>
+        <label className="block text-xs text-gray-500 mb-1.5">Fit</label>
+        <div className="flex gap-1">
+          {['cover', 'contain', 'fill'].map((fit) => (
+            <Button
+              key={fit}
+              variant="ghost"
+              size="sm"
+              onClick={() => onUpdate({ fit })}
+              className={props.fit === fit ? 'bg-gray-700 text-white' : 'text-gray-400'}
+            >
+              {fit}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-xs text-gray-500 mb-1.5">Corner Radius</label>
+        <input
+          type="range"
+          value={props.borderRadius || 0}
+          onChange={(e) => onUpdate({ borderRadius: parseInt(e.target.value) })}
+          min={0}
+          max={50}
+          className="w-full"
+        />
+        <div className="text-xs text-gray-500 text-right">{props.borderRadius || 0}px</div>
+      </div>
+
+      <div>
+        <label className="block text-xs text-gray-500 mb-1.5">Opacity</label>
+        <input
+          type="range"
+          value={(props.opacity ?? 1) * 100}
+          onChange={(e) => onUpdate({ opacity: parseInt(e.target.value) / 100 })}
+          min={0}
+          max={100}
+          className="w-full"
+        />
+        <div className="text-xs text-gray-500 text-right">{Math.round((props.opacity ?? 1) * 100)}%</div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-xs text-gray-500">Playback</label>
+        <label className="flex items-center gap-2 text-sm text-gray-300">
+          <input
+            type="checkbox"
+            checked={props.autoplay !== false}
+            onChange={(e) => onUpdate({ autoplay: e.target.checked })}
+            className="rounded border-gray-600"
+          />
+          Autoplay
+        </label>
+        <label className="flex items-center gap-2 text-sm text-gray-300">
+          <input
+            type="checkbox"
+            checked={props.loop !== false}
+            onChange={(e) => onUpdate({ loop: e.target.checked })}
+            className="rounded border-gray-600"
+          />
+          Loop
+        </label>
+        <label className="flex items-center gap-2 text-sm text-gray-300">
+          <input
+            type="checkbox"
+            checked={props.muted !== false}
+            onChange={(e) => onUpdate({ muted: e.target.checked })}
+            className="rounded border-gray-600"
+          />
+          Muted
+        </label>
       </div>
     </div>
   );

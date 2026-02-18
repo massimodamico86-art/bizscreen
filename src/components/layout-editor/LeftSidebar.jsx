@@ -207,7 +207,7 @@ export default function LeftSidebar({
         opacity: 1,
         mediaId: metadata.mediaId || null,
         name: metadata.name || null,
-        ...(isVideo && { autoplay: true, loop: true, muted: true }),
+        ...(isVideo && { autoplay: true, loop: true, muted: true, posterUrl: metadata.thumbnail_url || '' }),
       },
       layer: 1,
     });
@@ -402,6 +402,7 @@ function MediaTabContent({ onAddImage, onOpenLibrary }) {
         width: asset.width,
         height: asset.height,
         type: asset.type,
+        thumbnail_url: asset.thumbnail_url || '',
       });
     }
   }, [onAddImage]);

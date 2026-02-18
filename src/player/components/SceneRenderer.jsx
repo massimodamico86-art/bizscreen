@@ -98,6 +98,37 @@ function SceneBlock({ block, _slideIndex, timezone }) {
         </div>
       );
 
+    case 'video':
+      return (
+        <div style={{
+          ...baseStyle,
+          borderRadius: `${props?.borderRadius || 0}px`,
+          backgroundColor: '#1e293b',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          {props?.url ? (
+            <video
+              src={props.url}
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={props?.posterUrl || undefined}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: props?.fit || 'cover',
+                borderRadius: `${props?.borderRadius || 0}px`,
+              }}
+            />
+          ) : (
+            <div style={{ color: '#64748b', fontSize: '0.875rem' }}>No video</div>
+          )}
+        </div>
+      );
+
     case 'shape':
       return (
         <div style={{
