@@ -13,7 +13,7 @@
 import { getWidgetDefaults } from '../../widgets/registry.js';
 
 /**
- * @typedef {'text' | 'image' | 'widget' | 'shape'} ElementType
+ * @typedef {'text' | 'image' | 'video' | 'widget' | 'shape'} ElementType
  */
 
 /**
@@ -52,6 +52,18 @@ import { getWidgetDefaults } from '../../widgets/registry.js';
  * @property {number} [borderRadius=0] - Border radius in pixels
  * @property {number} [opacity=1] - Opacity (0-1)
  * @property {string} [alt] - Alt text for accessibility
+ */
+
+/**
+ * @typedef {Object} VideoElementProps
+ * @property {string} url - Video URL (MP4 or .m3u8)
+ * @property {string} [posterUrl] - Poster/thumbnail image URL for editor preview
+ * @property {'cover' | 'contain' | 'fill'} [fit='cover'] - Object fit mode
+ * @property {number} [borderRadius=0] - Border radius in pixels
+ * @property {number} [opacity=1] - Opacity (0-1)
+ * @property {boolean} [autoplay=true] - Autoplay in player
+ * @property {boolean} [loop=true] - Loop playback
+ * @property {boolean} [muted=true] - Muted playback
  */
 
 /**
@@ -137,6 +149,10 @@ import { getWidgetDefaults } from '../../widgets/registry.js';
  */
 
 /**
+ * @typedef {BaseElement & { type: 'video', props: VideoElementProps }} VideoElement
+ */
+
+/**
  * @typedef {BaseElement & { type: 'widget', widgetType: WidgetType, props: WidgetProps }} WidgetElement
  */
 
@@ -145,7 +161,7 @@ import { getWidgetDefaults } from '../../widgets/registry.js';
  */
 
 /**
- * @typedef {TextElement | ImageElement | WidgetElement | ShapeElement} LayoutElement
+ * @typedef {TextElement | ImageElement | VideoElement | WidgetElement | ShapeElement} LayoutElement
  */
 
 /**
@@ -178,6 +194,7 @@ import { getWidgetDefaults } from '../../widgets/registry.js';
 export const DEFAULT_ELEMENT_SIZE = {
   text: { width: 0.3, height: 0.1 },
   image: { width: 0.25, height: 0.25 },
+  video: { width: 0.4, height: 0.3 },
   widget: { width: 0.15, height: 0.1 },
   shape: { width: 0.15, height: 0.15 },
 };
@@ -299,6 +316,54 @@ export function createImageElement(url, overrides = {}) {
       x: 0.375,
       y: 0.375,
       ...DEFAULT_ELEMENT_SIZE.image,
+      ...overrides?.position,
+    },
+  };
+}
+
+/**
+ * Create a new video element
+ * @param {string} url - Video URL
+ * @param {Partial<VideoElement>} overrides - Element overrides
+ * @returns {VideoElement} New video element
+ */
+export function createVideoElement(url, overrides = {}) {
+  return {
+    id: generateElementId('video'),
+    type: 'video',
+    position: {
+      x: 0.3,
+      y: 0.35,
+      ...DEFAULT_ELEMENT_SIZE.video,
+    },
+    layer: 1,
+    locked: false,
+    props: {
+      url,
+      posterUrl: '',
+      fit: 'cover',
+      borderRadius: 0,
+      opacity: 1,
+      autoplay: true,
+      loop: true,
+      muted: true,
+    },
+    ...overrides,
+    props: {
+      url,
+      posterUrl: '',
+      fit: 'cover',
+      borderRadius: 0,
+      opacity: 1,
+      autoplay: true,
+      loop: true,
+      muted: true,
+      ...overrides?.props,
+    },
+    position: {
+      x: 0.3,
+      y: 0.35,
+      ...DEFAULT_ELEMENT_SIZE.video,
       ...overrides?.position,
     },
   };
