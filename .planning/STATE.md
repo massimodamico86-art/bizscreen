@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.2 Display Toolkit -- Phase 60 (Screen Groups & Tags)
+**Current focus:** v3.2 Display Toolkit -- Phase 61 (Portrait Mode)
 
 ## Current Position
 
-Phase: 60 of 62 (Screen Groups & Tags)
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-02-18 - Completed 60-02-PLAN.md (Playlist Push & Bulk Operations)
+Phase: 61 of 62 (Portrait Mode)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-18 - Completed 61-01-PLAN.md (Portrait Mode Data Layer)
 
-Progress: [#########_______] 62% (10/16 plans)
+Progress: [##########______] 68% (11/16 plans)
 
 ## Milestones Shipped
 
@@ -50,6 +50,7 @@ Progress: [#########_______] 62% (10/16 plans)
 | 59 | 02 | 4min | 2 | 5 |
 | 60 | 01 | 3min | 2 | 4 |
 | 60 | 02 | 4min | 2 | 3 |
+| 61 | 01 | 3min | 2 | 4 |
 
 ## Accumulated Context
 
@@ -89,6 +90,10 @@ Progress: [#########_______] 62% (10/16 plans)
 - **60-02**: Inline bulk action bar instead of reusing media BulkActionBar -- media version has media-specific actions (Move, Download, Add to Playlist)
 - **60-02**: Bulk tag uses additive union (merge with existing tags, deduplicate) rather than replace
 
+- **61-01**: 7 device object blocks updated in get_resolved_player_content (all return paths include orientation)
+- **61-01**: Portrait templates use percent-based zone positioning matching existing layout_zones pattern
+- **61-01**: orientation column defaults to 'landscape' with CHECK constraint for data integrity
+
 ### Blockers/Concerns
 
 - ~~Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)~~ RESOLVED in 58-01
@@ -104,9 +109,9 @@ Progress: [#########_______] 62% (10/16 plans)
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 60-02-PLAN.md (Playlist Push & Bulk Operations) -- Phase 60 complete
+Stopped at: Completed 61-01-PLAN.md (Portrait Mode Data Layer)
 Resume file: None
-Next: Phase 61 (next phase in v3.2 Display Toolkit)
+Next: 61-02-PLAN.md (Portrait Mode UI & Player)
 
 ---
-*Updated: 2026-02-18 -- Phase 60 complete (Screen Groups & Tags). Both plans (Tag Management UI & Filtering, Playlist Push & Bulk Operations) done.*
+*Updated: 2026-02-18 -- Phase 61 plan 01 complete (Portrait Mode Data Layer). Orientation column, RPC updates, portrait templates, and EditScreenModal selector done.*
