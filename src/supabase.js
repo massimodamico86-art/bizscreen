@@ -9,8 +9,7 @@ import { instrumentSupabaseClient } from './utils/supabaseErrorInterceptor.js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Optional environment variables
-const openWeatherApiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+// Optional environment variables (weather API key is now server-side only)
 const cloudinaryCloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const cloudinaryUploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
@@ -41,7 +40,6 @@ if (supabaseAnonKey.length < 20) {
 
 // Log warnings for missing optional environment variables
 const missingOptional = [];
-if (!openWeatherApiKey) missingOptional.push('VITE_OPENWEATHER_API_KEY');
 if (!cloudinaryCloudName) missingOptional.push('VITE_CLOUDINARY_CLOUD_NAME');
 if (!cloudinaryUploadPreset) missingOptional.push('VITE_CLOUDINARY_UPLOAD_PRESET');
 

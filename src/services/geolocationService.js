@@ -1,4 +1,5 @@
 import { createScopedLogger } from './loggingService.js';
+import { fetchGeocode, fetchReverseGeocode } from './weatherProxyService.js';
 
 const logger = createScopedLogger('GeolocationService');
 
@@ -6,9 +7,8 @@ const logger = createScopedLogger('GeolocationService');
  * Geolocation Service
  *
  * Provides location detection and reverse geocoding for Weather Wall app.
+ * All OpenWeatherMap geocoding calls route through the weather-proxy Edge Function.
  */
-
-const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
 /**
  * Get current device location using browser Geolocation API
@@ -53,31 +53,14 @@ export async function getCurrentLocation() {
 }
 
 /**
- * Reverse geocode coordinates to city name using OpenWeatherMap API
+ * Reverse geocode coordinates to city name using weather-proxy Edge Function
  * @param {number} lat - Latitude
  * @param {number} lon - Longitude
  * @returns {Promise<{city: string, country: string, fullName: string}>}
  */
 export async function reverseGeocode(lat, lon) {
-  if (!OPENWEATHER_API_KEY) {
-    // Return mock data if no API key
-    return {
-      city: 'Unknown',
-      country: 'Location',
-      fullName: 'Unknown Location',
-    };
-  }
-
   try {
-    const response = await fetch(
-      `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${OPENWEATHER_API_KEY}`
-    );
-
-    if (!response.ok) {
-      throw new Error('Reverse geocoding failed');
-    }
-
-    const data = await response.json();
+    const data = await fetchReverseGeocode(lat, lon);
 
     if (!data || data.length === 0) {
       return {
@@ -107,38 +90,14 @@ export async function reverseGeocode(lat, lon) {
 }
 
 /**
- * Search for locations by name using OpenWeatherMap Geocoding API
+ * Search for locations by name using weather-proxy Edge Function
  * @param {string} query - Location search query
  * @param {number} limit - Max results (default 5)
  * @returns {Promise<Array<{name: string, lat: number, lon: number, country: string, state?: string}>>}
  */
 export async function searchLocations(query, limit = 5) {
-  if (!OPENWEATHER_API_KEY) {
-    // Return mock data if no API key
-    return [
-      {
-        name: query,
-        lat: 40.7128,
-        lon: -74.006,
-        country: 'US',
-        state: 'New York',
-        fullName: `${query}, US`,
-      },
-    ];
-  }
-
   try {
-    const response = await fetch(
-      `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
-        query
-      )}&limit=${limit}&appid=${OPENWEATHER_API_KEY}`
-    );
-
-    if (!response.ok) {
-      throw new Error('Location search failed');
-    }
-
-    const data = await response.json();
+    const data = await fetchGeocode(query, limit);
 
     return data.map((loc) => ({
       name: loc.name,

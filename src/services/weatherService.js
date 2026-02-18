@@ -1,16 +1,15 @@
 import { createScopedLogger } from './loggingService.js';
+import { fetchCurrentWeather, fetchWeatherForecast } from './weatherProxyService.js';
 
 const logger = createScopedLogger('WeatherService');
 
 /**
- * Weather Service - OpenWeatherMap API Integration
- * Fetches current weather data for a given city
+ * Weather Service - Server-side Proxy Integration
+ * Fetches current weather data through the weather-proxy Edge Function.
+ * The OpenWeatherMap API key is kept server-side and never exposed to the client.
  */
 
-const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
-const OPENWEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5';
-
-// Cache weather data to avoid excessive API calls
+// Cache weather data to avoid excessive proxy calls
 const weatherCache = new Map();
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
 const MAX_CACHE_SIZE = 50; // Limit cache to 50 entries to prevent memory issues
@@ -24,12 +23,6 @@ const MAX_CACHE_SIZE = 50; // Limit cache to 50 entries to prevent memory issues
 export async function getWeather(city, units = 'imperial') {
   if (!city || city.trim() === '') {
     return null;
-  }
-
-  // Check if API key is configured
-  if (!OPENWEATHER_API_KEY) {
-    logger.warn('OpenWeatherMap API key not configured. Set VITE_OPENWEATHER_API_KEY in .env file.');
-    return getMockWeatherData(city, units);
   }
 
   // Check cache first
@@ -48,22 +41,7 @@ export async function getWeather(city, units = 'imperial') {
   }
 
   try {
-    const response = await fetch(
-      `${OPENWEATHER_BASE_URL}/weather?q=${encodeURIComponent(city)}&units=${units}&appid=${OPENWEATHER_API_KEY}`
-    );
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        logger.error(`City not found: ${city}`);
-      } else if (response.status === 401) {
-        logger.error('Invalid OpenWeatherMap API key');
-      } else {
-        logger.error(`Weather API error: ${response.status}`);
-      }
-      return getMockWeatherData(city, units);
-    }
-
-    const data = await response.json();
+    const data = await fetchCurrentWeather(city, { units });
     const weatherData = formatWeatherData(data, units);
 
     // Implement cache size limit using LRU strategy
@@ -93,7 +71,7 @@ export async function getWeather(city, units = 'imperial') {
  * Format OpenWeatherMap API response into our data structure
  */
 function formatWeatherData(apiData, units) {
-  const tempUnit = units === 'metric' ? '°C' : '°F';
+  const tempUnit = units === 'metric' ? '\u00B0C' : '\u00B0F';
 
   return {
     temp: Math.round(apiData.main.temp),
@@ -116,10 +94,10 @@ function formatWeatherData(apiData, units) {
 }
 
 /**
- * Get mock weather data (for development or when API key is not configured)
+ * Get mock weather data (for development or when proxy is unavailable)
  */
 function getMockWeatherData(city, units) {
-  const tempUnit = units === 'metric' ? '°C' : '°F';
+  const tempUnit = units === 'metric' ? '\u00B0C' : '\u00B0F';
   const mockTemp = units === 'metric' ? 24 : 75;
 
   return {
@@ -192,27 +170,27 @@ if (typeof window !== 'undefined') {
  */
 export function getWeatherEmoji(iconCode) {
   const iconMap = {
-    '01d': '☀️',  // clear sky day
-    '01n': '🌙',  // clear sky night
-    '02d': '⛅',  // few clouds day
-    '02n': '☁️',  // few clouds night
-    '03d': '☁️',  // scattered clouds
-    '03n': '☁️',  // scattered clouds
-    '04d': '☁️',  // broken clouds
-    '04n': '☁️',  // broken clouds
-    '09d': '🌧️',  // shower rain
-    '09n': '🌧️',  // shower rain
-    '10d': '🌦️',  // rain day
-    '10n': '🌧️',  // rain night
-    '11d': '⛈️',  // thunderstorm
-    '11n': '⛈️',  // thunderstorm
-    '13d': '❄️',  // snow
-    '13n': '❄️',  // snow
-    '50d': '🌫️',  // mist
-    '50n': '🌫️',  // mist
+    '01d': '\u2600\uFE0F',  // clear sky day
+    '01n': '\uD83C\uDF19',  // clear sky night
+    '02d': '\u26C5',  // few clouds day
+    '02n': '\u2601\uFE0F',  // few clouds night
+    '03d': '\u2601\uFE0F',  // scattered clouds
+    '03n': '\u2601\uFE0F',  // scattered clouds
+    '04d': '\u2601\uFE0F',  // broken clouds
+    '04n': '\u2601\uFE0F',  // broken clouds
+    '09d': '\uD83C\uDF27\uFE0F',  // shower rain
+    '09n': '\uD83C\uDF27\uFE0F',  // shower rain
+    '10d': '\uD83C\uDF26\uFE0F',  // rain day
+    '10n': '\uD83C\uDF27\uFE0F',  // rain night
+    '11d': '\u26C8\uFE0F',  // thunderstorm
+    '11n': '\u26C8\uFE0F',  // thunderstorm
+    '13d': '\u2744\uFE0F',  // snow
+    '13n': '\u2744\uFE0F',  // snow
+    '50d': '\uD83C\uDF2B\uFE0F',  // mist
+    '50n': '\uD83C\uDF2B\uFE0F',  // mist
   };
 
-  return iconMap[iconCode] || '🌤️';
+  return iconMap[iconCode] || '\uD83C\uDF24\uFE0F';
 }
 
 /**
@@ -227,11 +205,6 @@ export function getWeatherEmoji(iconCode) {
 export async function getWeatherByCoords(lat, lon, options = {}) {
   const { units = 'metric', lang = 'en' } = options;
 
-  if (!OPENWEATHER_API_KEY) {
-    logger.warn('OpenWeatherMap API key not configured');
-    return getMockWeatherData('Location', units);
-  }
-
   const cacheKey = `coords-${lat.toFixed(2)}-${lon.toFixed(2)}-${units}-${lang}`;
   const cached = weatherCache.get(cacheKey);
 
@@ -240,16 +213,7 @@ export async function getWeatherByCoords(lat, lon, options = {}) {
   }
 
   try {
-    const response = await fetch(
-      `${OPENWEATHER_BASE_URL}/weather?lat=${lat}&lon=${lon}&units=${units}&lang=${lang}&appid=${OPENWEATHER_API_KEY}`
-    );
-
-    if (!response.ok) {
-      logger.error(`Weather API error: ${response.status}`);
-      return getMockWeatherData('Location', units);
-    }
-
-    const data = await response.json();
+    const data = await fetchCurrentWeather(null, { lat, lon, units });
     const weatherData = formatWeatherData(data, units);
 
     // Cache management
@@ -279,10 +243,6 @@ export async function getWeatherByCoords(lat, lon, options = {}) {
 export async function getWeatherForecast(city, options = {}) {
   const { units = 'metric', lang = 'en' } = options;
 
-  if (!OPENWEATHER_API_KEY) {
-    return getMockForecast(units);
-  }
-
   const cacheKey = `forecast-${city}-${units}-${lang}`;
   const cached = weatherCache.get(cacheKey);
 
@@ -293,23 +253,15 @@ export async function getWeatherForecast(city, options = {}) {
   try {
     // Check if city is coordinates
     const coordMatch = city.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
-    let url;
+    let proxyOptions = { units, lang };
 
     if (coordMatch) {
       const lat = parseFloat(coordMatch[1]);
       const lon = parseFloat(coordMatch[2]);
-      url = `${OPENWEATHER_BASE_URL}/forecast?lat=${lat}&lon=${lon}&units=${units}&lang=${lang}&appid=${OPENWEATHER_API_KEY}`;
-    } else {
-      url = `${OPENWEATHER_BASE_URL}/forecast?q=${encodeURIComponent(city)}&units=${units}&lang=${lang}&appid=${OPENWEATHER_API_KEY}`;
+      proxyOptions = { ...proxyOptions, lat, lon };
     }
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      return getMockForecast(units);
-    }
-
-    const data = await response.json();
+    const data = await fetchWeatherForecast(coordMatch ? null : city, proxyOptions);
     const forecast = formatForecastData(data, units);
 
     weatherCache.set(cacheKey, {
@@ -328,7 +280,7 @@ export async function getWeatherForecast(city, options = {}) {
  * Format forecast API response - group by day and get daily summary
  */
 function formatForecastData(apiData, units) {
-  const tempUnit = units === 'metric' ? '°C' : '°F';
+  const tempUnit = units === 'metric' ? '\u00B0C' : '\u00B0F';
   const dailyData = {};
 
   // Group forecasts by day
@@ -387,7 +339,7 @@ function formatForecastData(apiData, units) {
  * Get mock forecast data
  */
 function getMockForecast(units) {
-  const tempUnit = units === 'metric' ? '°C' : '°F';
+  const tempUnit = units === 'metric' ? '\u00B0C' : '\u00B0F';
   const baseTemp = units === 'metric' ? 20 : 68;
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
   const conditions = ['Clear', 'Clouds', 'Rain', 'Clear', 'Clouds'];
