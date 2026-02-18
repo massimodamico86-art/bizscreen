@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.2 Display Toolkit -- Phase 58 (Weather Security Enhancement)
+**Current focus:** v3.2 Display Toolkit -- Phase 59 (Video Playback)
 
 ## Current Position
 
-Phase: 58 of 62 (Weather Security Enhancement)
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-02-18 - Completed quick task 43: Fix 17 remaining Playwright e2e test failures
+Phase: 59 of 62 (Video Playback)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-18 - Completed 59-01-PLAN.md (Video Element Type)
 
-Progress: [#####___________] 37% (6/16 plans)
+Progress: [######__________] 44% (7/16 plans)
 
 ## Milestones Shipped
 
@@ -46,6 +46,7 @@ Progress: [#####___________] 37% (6/16 plans)
 | 57 | 02 | 3min | 2 | 4 |
 | 58 | 01 | 4min | 2 | 6 |
 | 58 | 02 | 5min | 2 | 8 |
+| 59 | 01 | 4min | 2 | 6 |
 
 ## Accumulated Context
 
@@ -72,6 +73,10 @@ Progress: [#####___________] 37% (6/16 plans)
 - **58-02**: Store weather cache as cacheEntry.data to handle both object (current) and array (forecast) formats
 - **58-02**: displayData = weatherData || offlineData pattern matches RssCardWidget offline fallback
 
+- **59-01**: Dual-mode rendering via isPreview prop: editor shows poster frame with play icon overlay, preview/player shows actual <video> tag
+- **59-01**: Basic <video> tag for MP4 in preview/player; HLS support deferred to Plan 59-02
+- **59-01**: Pass thumbnail_url from media library as posterUrl for video elements
+
 ### Blockers/Concerns
 
 - ~~Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)~~ RESOLVED in 58-01
@@ -86,10 +91,10 @@ Progress: [#####___________] 37% (6/16 plans)
 
 ## Session Continuity
 
-Last session: 2026-02-17
-Stopped at: Completed 58-02-PLAN.md (Weather Widget UI Enhancement)
+Last session: 2026-02-18
+Stopped at: Completed 59-01-PLAN.md (Video Element Type)
 Resume file: None
-Next: Phase 59 (next phase in v3.2 Display Toolkit)
+Next: 59-02-PLAN.md (Video Player Component with HLS support)
 
 ---
-*Updated: 2026-02-17 -- Phase 58 complete (Weather Security Enhancement).*
+*Updated: 2026-02-18 -- Phase 59 Plan 01 complete (Video Element Type).*
