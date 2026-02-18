@@ -55,7 +55,7 @@ All milestones shipped successfully.
 - [x] **Phase 57: QR Code Enhancement** — WiFi QR codes, error correction, brand logo overlay, import fix (completed 2026-02-18)
 - [x] **Phase 58: Weather Security + Enhancement** — Server-side API key proxy, forecast mode, offline caching (completed 2026-02-18)
 - [x] **Phase 59: Video Playback** — HTML5 video in layout zones with HLS adaptive streaming (completed 2026-02-18)
-- [ ] **Phase 60: Screen Groups & Tags** — Tag management, filtering, bulk operations, group content push
+- [x] **Phase 60: Screen Groups & Tags** — Tag management, filtering, bulk operations, group content push (completed 2026-02-18)
 - [ ] **Phase 61: Portrait Mode** — Per-screen orientation, portrait canvas, CSS rotation, portrait templates
 - [ ] **Phase 62: Menu Board Widget** — Structured menu CRUD, themed rendering, auto-pagination, realtime updates
 
@@ -130,7 +130,7 @@ Plans:
   2. User can filter the screen groups list by tag to find specific groups quickly
   3. User can push a playlist to all screens in a group with one action
   4. User can select multiple screen groups and perform bulk actions (delete, tag, assign content)
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 60-01-PLAN.md — Tag management UI (TagChipInput, GroupFormModal tags field, FilterChips tag filter, GIN index migration)
@@ -182,7 +182,7 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 | 57. QR Code Enhancement | v3.2 | Complete    | 2026-02-18 | - |
 | 58. Weather Security + Enhancement | v3.2 | Complete    | 2026-02-18 | - |
 | 59. Video Playback | v3.2 | Complete    | 2026-02-18 | - |
-| 60. Screen Groups & Tags | v3.2 | 0/2 | Not started | - |
+| 60. Screen Groups & Tags | v3.2 | Complete    | 2026-02-18 | - |
 | 61. Portrait Mode | v3.2 | 0/3 | Not started | - |
 | 62. Menu Board Widget | v3.2 | 0/3 | Not started | - |
 
