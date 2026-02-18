@@ -1,6 +1,43 @@
 // src/player/components/widgets/QRCodeWidget.jsx
 // QR Code widget component extracted from Player.jsx SceneWidgetRenderer
 
+import { QRCodeSVG } from 'qrcode.react';
+
+/**
+ * Escape special characters in WiFi QR string fields.
+ * Characters ; : \ " , must be backslash-escaped per the WiFi QR spec.
+ */
+function escapeWifiField(value) {
+  if (!value) return '';
+  return value.replace(/([\\;:,"])/g, '\\$1');
+}
+
+/**
+ * Generate the QR code value string based on the qrType prop.
+ *
+ * @param {Object} props - Widget props
+ * @returns {string} The string to encode in the QR code
+ */
+function generateQRValue(props) {
+  const qrType = props.qrType || 'url';
+
+  switch (qrType) {
+    case 'url':
+      return props.url || '';
+    case 'wifi': {
+      const encryption = props.encryption || 'WPA';
+      const ssid = escapeWifiField(props.ssid || '');
+      const password = escapeWifiField(props.password || '');
+      const hidden = props.hiddenNetwork ? 'true' : '';
+      return `WIFI:T:${encryption};S:${ssid};P:${password};H:${hidden};;`;
+    }
+    case 'text':
+      return props.text || '';
+    default:
+      return props.url || props.text || '';
+  }
+}
+
 /**
  * QRPlaceholder - Decorative placeholder shown when no URL is provided
  */
@@ -28,7 +65,14 @@ function QRPlaceholder({ fgColor }) {
  * QRCodeWidget - Displays a QR code with optional label
  *
  * @param {Object} props - Widget props
- * @param {string} props.url - URL to encode in QR code
+ * @param {Object} props - Widget props
+ * @param {string} props.qrType - QR content type: 'url' | 'wifi' | 'text' (default: 'url')
+ * @param {string} props.url - URL to encode (when qrType is 'url')
+ * @param {string} props.text - Plain text to encode (when qrType is 'text')
+ * @param {string} props.ssid - WiFi network name (when qrType is 'wifi')
+ * @param {string} props.password - WiFi password (when qrType is 'wifi')
+ * @param {string} props.encryption - WiFi encryption: 'WPA' | 'nopass' (default: 'WPA')
+ * @param {boolean} props.hiddenNetwork - WiFi hidden network flag (default: false)
  * @param {string} props.label - Optional label text below QR code
  * @param {number} props.cornerRadius - Border radius in pixels (default: 8)
  * @param {string} props.errorCorrection - Error correction level: 'L' | 'M' | 'Q' | 'H' (default: 'M')
@@ -38,14 +82,16 @@ function QRPlaceholder({ fgColor }) {
  * @param {string} props.textColor - Label text color (default: '#ffffff')
  */
 export function QRCodeWidget({ props = {} }) {
+  const qrType = props.qrType || 'url';
   const cornerRadius = props.cornerRadius || 8;
   const label = props.label || '';
-  const url = props.url || '';
   const errorCorrection = props.errorCorrection || 'M';
   const qrScale = Math.min(2, Math.max(0.5, props.qrScale || 1.0));
   const qrFgColor = props.qrFgColor || '#000000';
   const qrBgColor = props.qrBgColor || '#ffffff';
   const textColor = props.textColor || '#ffffff';
+
+  const qrValue = generateQRValue(props);
 
   return (
     <div style={{
@@ -71,9 +117,9 @@ export function QRCodeWidget({ props = {} }) {
         justifyContent: 'center',
         overflow: 'hidden',
       }}>
-        {url ? (
+        {qrValue ? (
           <QRCodeSVG
-            value={url}
+            value={qrValue}
             size={256}
             level={errorCorrection}
             fgColor={qrFgColor}
@@ -90,7 +136,7 @@ export function QRCodeWidget({ props = {} }) {
         )}
       </div>
       {/* Label */}
-      {(label || url) && (
+      {(label || qrValue) && (
         <div style={{
           marginTop: '4px',
           color: textColor,
@@ -101,7 +147,17 @@ export function QRCodeWidget({ props = {} }) {
           whiteSpace: 'nowrap',
           maxWidth: '100%',
         }}>
-          {label || (url.length > 25 ? url.slice(0, 25) + '...' : url)}
+          {label || (() => {
+            switch (qrType) {
+              case 'wifi':
+                return props.ssid || 'WiFi';
+              case 'text':
+                return (props.text || '').length > 25 ? (props.text || '').slice(0, 25) + '...' : (props.text || '');
+              case 'url':
+              default:
+                return (props.url || '').length > 25 ? (props.url || '').slice(0, 25) + '...' : (props.url || '');
+            }
+          })()}
         </div>
       )}
     </div>

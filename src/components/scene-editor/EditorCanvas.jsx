@@ -20,6 +20,7 @@ import {
   Square,
   Type,
 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { WIDGET_REGISTRY } from '../../widgets/registry.js';
 import {
   calculateSnapPosition,
@@ -439,7 +440,6 @@ export default function EditorCanvas({
         const style = props.style || 'minimal';
         const cornerRadius = props.cornerRadius || 8;
         const label = props.label || '';
-        const url = props.url || '';
 
         // Size mappings for clock/date/weather
         const sizeMap = {
@@ -505,8 +505,24 @@ export default function EditorCanvas({
             const qrFgColor = props.qrFgColor || '#000000';
             const qrBgColor = props.qrBgColor || '#ffffff';
             const errorCorrection = props.errorCorrection || 'M';
+            const qrType = props.qrType || 'url';
 
-            // Placeholder pattern for when URL is empty
+            // Generate QR value based on type (mirrors QRCodeWidget logic)
+            const generateQRValue = (p) => {
+              const escapeWifi = (v) => (v || '').replace(/([\\;:,"])/g, '\\$1');
+              switch (p.qrType || 'url') {
+                case 'url': return p.url || '';
+                case 'wifi': {
+                  const enc = p.encryption || 'WPA';
+                  return `WIFI:T:${enc};S:${escapeWifi(p.ssid || '')};P:${escapeWifi(p.password || '')};H:${p.hiddenNetwork ? 'true' : ''};;`;
+                }
+                case 'text': return p.text || '';
+                default: return p.url || p.text || '';
+              }
+            };
+            const qrValue = generateQRValue(props);
+
+            // Placeholder pattern for when QR value is empty
             const QRPlaceholder = () => (
               <div className="w-full h-full grid grid-cols-5 grid-rows-5 gap-0.5">
                 {[0,1,2,3,4,5,6,7,8,10,14,15,16,17,18,19,20,21,22,24].map(i => (
@@ -517,6 +533,22 @@ export default function EditorCanvas({
                 ))}
               </div>
             );
+
+            // Type-appropriate label fallback
+            const getLabelFallback = () => {
+              switch (qrType) {
+                case 'wifi': return props.ssid || '';
+                case 'text': {
+                  const t = props.text || '';
+                  return t.length > 20 ? t.slice(0, 20) + '...' : t;
+                }
+                case 'url':
+                default: {
+                  const u = props.url || '';
+                  return u.length > 20 ? u.slice(0, 20) + '...' : u;
+                }
+              }
+            };
 
             return (
               <div className="w-full h-full flex flex-col items-center justify-center p-1">
@@ -530,9 +562,9 @@ export default function EditorCanvas({
                     padding: '4px',
                   }}
                 >
-                  {url ? (
+                  {qrValue ? (
                     <QRCodeSVG
-                      value={url}
+                      value={qrValue}
                       size={128}
                       level={errorCorrection}
                       fgColor={qrFgColor}
@@ -548,12 +580,12 @@ export default function EditorCanvas({
                     <QRPlaceholder />
                   )}
                 </div>
-                {(label || url) && (
+                {(label || qrValue) && (
                   <span
                     className="mt-1 text-center truncate w-full"
                     style={{ color: textColor, fontSize: '0.5rem' }}
                   >
-                    {label || (url.length > 20 ? url.slice(0, 20) + '...' : url)}
+                    {label || getLabelFallback()}
                   </span>
                 )}
               </div>
