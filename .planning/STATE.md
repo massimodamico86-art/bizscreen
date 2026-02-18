@@ -54,6 +54,7 @@ Progress: [################] 100% (16/16 plans)
 | 61 | 02 | 3min | 2 | 4 |
 | 62 | 01 | 3min | 2 | 4 |
 | 62 | 03 | 12min | 2 | 3 |
+| Phase 62 P02 | 14min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -109,6 +110,9 @@ Progress: [################] 100% (16/16 plans)
 - **62-03**: Realtime events trigger full re-fetch via refreshTrigger counter in useWidgetData key rather than granular state patching
 - **62-03**: Inline DietaryBadge component within MenuBoardWidget (player-specific, too small for separate file)
 - **62-03**: Clamped page via useEffect instead of inline setState during render to avoid React anti-pattern
+- [Phase 62]: Immediate-save CRUD for menu board editor: each user action calls service immediately with optimistic local state update
+- [Phase 62]: Nested DndContext for item reordering within each CategorySection, separate from category-level DndContext in editor modal
+- [Phase 62]: Create mode requires saving board first before adding categories/items (board ID needed for FK relationships)
 
 ### Blockers/Concerns
 
