@@ -11,31 +11,31 @@
  */
 import { useState, useEffect } from 'react';
 import {
-  Plus,
-  Monitor,
-  MoreVertical,
-  Trash2,
-  Edit,
-  RefreshCw,
-  Play,
-  Copy,
-  Loader2,
-  CheckCircle,
-  Info,
-  ExternalLink,
   AlertTriangle,
-  Zap,
   BarChart3,
+  CheckCircle,
   Clock,
-  TrendingUp,
-  Image,
-  Power,
-  RotateCcw,
-  HardDrive,
-  Lock,
-  Unlock,
+  Copy,
+  Edit,
+  ExternalLink,
   Eye,
   Globe,
+  HardDrive,
+  Image,
+  Info,
+  Loader2,
+  Lock,
+  Monitor,
+  MoreVertical,
+  Play,
+  Plus,
+  Power,
+  RefreshCw,
+  RotateCcw,
+  Trash2,
+  TrendingUp,
+  Unlock,
+  Zap,
 } from 'lucide-react';
 import { SUPPORTED_LOCALES } from '../../i18n/i18nConfig';
 import { formatLimitDisplay } from '../../services/limitsService';
@@ -840,6 +840,7 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
   const [playlistId, setPlaylistId] = useState(screen?.assigned_playlist_id || '');
   const [layoutId, setLayoutId] = useState(screen?.assigned_layout_id || '');
   const [displayLanguage, setDisplayLanguage] = useState(screen?.display_language || 'en');
+  const [orientation, setOrientation] = useState(screen?.orientation || 'landscape');
 
   useEffect(() => {
     if (screen) {
@@ -849,6 +850,7 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
       setPlaylistId(screen.assigned_playlist_id || '');
       setLayoutId(screen.assigned_layout_id || '');
       setDisplayLanguage(screen.display_language || 'en');
+      setOrientation(screen.orientation || 'landscape');
     }
   }, [screen]);
 
@@ -864,6 +866,7 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
       playlistId: playlistId || null,
       layoutId: layoutId || null,
       displayLanguage: displayLanguage,
+      orientation: orientation,
     });
   };
 
@@ -917,6 +920,20 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
                     {locale.nativeName} ({locale.name})
                   </option>
                 ))}
+              </Select>
+            </FormField>
+            <FormField
+              label={
+                <Inline gap="xs" align="center">
+                  <Monitor size={14} className="text-blue-500" />
+                  <span>Screen Orientation</span>
+                </Inline>
+              }
+              hint="Set to match how the screen is physically mounted"
+            >
+              <Select value={orientation} onChange={(e) => setOrientation(e.target.value)}>
+                <option value="landscape">Landscape (horizontal)</option>
+                <option value="portrait">Portrait (vertical)</option>
               </Select>
             </FormField>
             <hr className="border-gray-200" />
