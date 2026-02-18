@@ -100,11 +100,11 @@ Plans:
   2. User can configure a weather widget in forecast mode showing multi-day forecast (not just current conditions)
   3. Weather widget displays times formatted to the screen's assigned timezone
   4. When a player goes offline, weather widget shows cached data from IndexedDB with a "last updated" indicator
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 58-01: Weather proxy Edge Function and client migration
-- [ ] 58-02: Forecast mode, timezone, and offline caching
+- [ ] 58-01-PLAN.md — Weather proxy Edge Function, cache table, weatherProxyService client, and migration of weatherService/geolocationService/WeatherWall to proxy
+- [ ] 58-02-PLAN.md — Forecast mode rendering, screen timezone formatting, IndexedDB offline caching, editor controls
 
 #### Phase 59: Video Playback
 **Goal**: Users can add video content to their screen layouts with reliable autoplay and adaptive streaming support
