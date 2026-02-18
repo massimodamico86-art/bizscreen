@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.2 Display Toolkit -- Phase 59 (Video Playback)
+**Current focus:** v3.2 Display Toolkit -- Phase 60 (Screen Groups & Tags)
 
 ## Current Position
 
-Phase: 59 of 62 (Video Playback)
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-02-18 - Completed 59-02-PLAN.md (Video Player Component with HLS)
+Phase: 60 of 62 (Screen Groups & Tags)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-18 - Completed 60-01-PLAN.md (Tag Management UI & Filtering)
 
-Progress: [#######_________] 50% (8/16 plans)
+Progress: [########________] 56% (9/16 plans)
 
 ## Milestones Shipped
 
@@ -48,6 +48,7 @@ Progress: [#######_________] 50% (8/16 plans)
 | 58 | 02 | 5min | 2 | 8 |
 | 59 | 01 | 4min | 2 | 6 |
 | 59 | 02 | 4min | 2 | 5 |
+| 60 | 01 | 3min | 2 | 4 |
 
 ## Accumulated Context
 
@@ -81,6 +82,9 @@ Progress: [#######_________] 50% (8/16 plans)
 - **59-02**: Per-element stall detection inside VideoPlayer rather than extending useStuckDetection, because layouts have multiple independent video zones
 - **59-02**: eslint-disable for video.currentTime self-assign -- intentional seek pattern for stall recovery
 
+- **60-01**: Client-side tag filtering on RPC results because fetchScreenGroupsWithScenes uses an RPC that doesn't support .contains(); screen_groups is <100 rows per tenant
+- **60-01**: Tags normalized to lowercase and deduplicated on input in TagChipInput component
+
 ### Blockers/Concerns
 
 - ~~Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)~~ RESOLVED in 58-01
@@ -96,9 +100,9 @@ Progress: [#######_________] 50% (8/16 plans)
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 59-02-PLAN.md (Video Player Component with HLS)
+Stopped at: Completed 60-01-PLAN.md (Tag Management UI & Filtering)
 Resume file: None
-Next: Phase 60 (next phase in v3.2 Display Toolkit)
+Next: 60-02-PLAN.md (next plan in Phase 60)
 
 ---
-*Updated: 2026-02-18 -- Phase 59 complete (Video Playback). Plan 02 complete (Video Player Component with HLS).*
+*Updated: 2026-02-18 -- Phase 60 in progress (Screen Groups & Tags). Plan 01 complete (Tag Management UI & Filtering).*
