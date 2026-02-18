@@ -15,7 +15,7 @@ import { createScopedLogger } from '../services/loggingService.js';
 const logger = createScopedLogger('CacheService');
 
 const DB_NAME = 'bizscreen-player-cache';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 // Store names
 const STORES = {
@@ -25,6 +25,7 @@ const STORES = {
   OFFLINE_QUEUE: 'offlineQueue',
   DATA_SOURCES: 'dataSources',
   RSS_FEEDS: 'rssFeeds',
+  WEATHER: 'weather',
 };
 
 // Cache limits for LRU eviction
@@ -95,6 +96,13 @@ async function initDB() {
       if (oldVersion < 3) {
         if (!db.objectStoreNames.contains(STORES.RSS_FEEDS)) {
           db.createObjectStore(STORES.RSS_FEEDS, { keyPath: 'feedUrl' });
+        }
+      }
+
+      // Weather data store (added in v4)
+      if (oldVersion < 4) {
+        if (!db.objectStoreNames.contains(STORES.WEATHER)) {
+          db.createObjectStore(STORES.WEATHER, { keyPath: 'cacheKey' });
         }
       }
     },
@@ -413,6 +421,50 @@ export async function getCachedRssFeed(feedUrl) {
   }
 
   return entry || null;
+}
+
+// ============================================================================
+// WEATHER CACHING
+// ============================================================================
+
+/**
+ * Cache weather data for offline playback
+ * @param {string} cacheKey - Weather cache key (e.g., "weather:current:Miami, FL:imperial")
+ * @param {object} data - Weather data (current conditions or forecast array)
+ * @returns {Promise<void>}
+ */
+export async function cacheWeatherData(cacheKey, data) {
+  if (!cacheKey || !data) return;
+
+  const db = await getDB();
+
+  const cacheEntry = {
+    cacheKey,
+    data,
+    cachedAt: Date.now(),
+  };
+
+  await db.put(STORES.WEATHER, cacheEntry);
+  logger.debug('[CacheService] Cached weather data:', cacheKey);
+}
+
+/**
+ * Get cached weather data
+ * @param {string} cacheKey - Weather cache key
+ * @returns {Promise<object|null>} Cached weather data or null
+ */
+export async function getCachedWeatherData(cacheKey) {
+  if (!cacheKey) return null;
+
+  const db = await getDB();
+  const entry = await db.get(STORES.WEATHER, cacheKey);
+
+  if (entry) {
+    logger.debug('[CacheService] Retrieved cached weather data:', cacheKey);
+    return entry.data;
+  }
+
+  return null;
 }
 
 // ============================================================================

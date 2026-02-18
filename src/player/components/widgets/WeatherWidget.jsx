@@ -1,7 +1,8 @@
 // src/player/components/widgets/WeatherWidget.jsx
 // Weather widget component extracted from Player.jsx SceneWidgetRenderer
-import { useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getWeather, getWeatherForecast } from '../../../services/weatherService.js';
+import { cacheWeatherData, getCachedWeatherData } from '../../cacheService';
 import { useWidgetData } from '../../hooks/useWidgetData.js';
 import { SyncStatusIndicator } from './SyncStatusIndicator.jsx';
 
@@ -105,14 +106,34 @@ export function WeatherWidget({ props = {}, timezone }) {
     const data = await getWeather(location, units);
     return data;
   }, [location, units, mode]);
-  const { data: weatherData, lastFetchedAt, isLoading: orchestratorLoading } = useWidgetData(sourceKey, fetchFn, 10 * 60 * 1000, null);
+  const cacheFnCb = useCallback(async (_key, data) => {
+    await cacheWeatherData(sourceKey, data);
+  }, [sourceKey]);
+  const { data: weatherData, lastFetchedAt, isLoading: orchestratorLoading } = useWidgetData(sourceKey, fetchFn, 10 * 60 * 1000, cacheFnCb);
+
+  // Offline cache fallback
+  const [offlineData, setOfflineData] = useState(null);
+
+  useEffect(() => {
+    if (weatherData) return; // Already have live data
+    let cancelled = false;
+    getCachedWeatherData(sourceKey).then(cached => {
+      if (!cancelled && cached && !weatherData) {
+        setOfflineData(cached);
+      }
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [sourceKey, weatherData]);
+
+  // Use live data with offline fallback
+  const displayData = weatherData || offlineData;
 
   // Loading indicator style
   const loadingOpacity = orchestratorLoading ? 0.6 : 1;
 
   // Forecast mode rendering
   if (mode === 'forecast') {
-    const forecastData = Array.isArray(weatherData) ? weatherData.slice(0, forecastDays) : [];
+    const forecastData = Array.isArray(displayData) ? displayData.slice(0, forecastDays) : [];
 
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -198,10 +219,10 @@ export function WeatherWidget({ props = {}, timezone }) {
 
   // Current mode rendering
   // Use fetched weather data, or fallback values while loading
-  const displayTemp = weatherData?.tempFormatted || (units === 'metric' ? '22C' : '72F');
-  const displayLocation = weatherData?.city || location.split(',')[0];
-  const weatherIcon = weatherData?.iconUrl;
-  const weatherDescription = weatherData?.description || 'Partly Cloudy';
+  const displayTemp = displayData?.tempFormatted || (units === 'metric' ? '22C' : '72F');
+  const displayLocation = displayData?.city || location.split(',')[0];
+  const weatherIcon = displayData?.iconUrl;
+  const weatherDescription = displayData?.description || 'Partly Cloudy';
 
   // Card style - vertical layout with background
   if (style === 'card') {
