@@ -57,7 +57,7 @@ All milestones shipped successfully.
 - [x] **Phase 59: Video Playback** — HTML5 video in layout zones with HLS adaptive streaming (completed 2026-02-18)
 - [x] **Phase 60: Screen Groups & Tags** — Tag management, filtering, bulk operations, group content push (completed 2026-02-18)
 - [x] **Phase 61: Portrait Mode** — Per-screen orientation, portrait canvas, CSS rotation, portrait templates (completed 2026-02-18)
-- [ ] **Phase 62: Menu Board Widget** — Structured menu CRUD, themed rendering, auto-pagination, realtime updates
+- [x] **Phase 62: Menu Board Widget** — Structured menu CRUD, themed rendering, auto-pagination, realtime updates (completed 2026-02-18)
 
 ### Phase Details
 
@@ -162,7 +162,7 @@ Plans:
   3. Menu board supports multiple price columns (e.g., Small/Medium/Large) and auto-paginates long menus with smooth transitions
   4. User can toggle item availability on/off without deleting, and changes appear on screen in near-real-time via Supabase Realtime
   5. Menu board formats currency according to the tenant's locale setting
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 62-01-PLAN.md — Database schema (3 tables + RLS) + menuBoardService.js (CRUD, reorder, realtime, dietary tags, currency formatting) + @dnd-kit/sortable
@@ -183,7 +183,7 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 | 59. Video Playback | v3.2 | Complete    | 2026-02-18 | - |
 | 60. Screen Groups & Tags | v3.2 | Complete    | 2026-02-18 | - |
 | 61. Portrait Mode | v3.2 | Complete    | 2026-02-18 | - |
-| 62. Menu Board Widget | v3.2 | 0/3 | Planned | - |
+| 62. Menu Board Widget | v3.2 | Complete    | 2026-02-18 | - |
 
 ## Progress Summary
 
