@@ -49,6 +49,7 @@
     "date-fns": "^4.1.0",
     "fabric": "^6.9.0",
     "framer-motion": "^12.23.24",
+    "hls.js": "^1.6.15",
     "html2canvas": "^1.4.1",
     "ical.js": "^2.2.1",
     "idb": "^8.0.3",
