@@ -130,11 +130,11 @@ Plans:
   2. User can filter the screen groups list by tag to find specific groups quickly
   3. User can push a playlist to all screens in a group with one action
   4. User can select multiple screen groups and perform bulk actions (delete, tag, assign content)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 60-01: Tag management UI and filtering
-- [ ] 60-02: Group content push and bulk operations
+- [ ] 60-01-PLAN.md — Tag management UI (TagChipInput, GroupFormModal tags field, FilterChips tag filter, GIN index migration)
+- [ ] 60-02-PLAN.md — Group content push and bulk operations (PushPlaylistModal, bulk selection, bulk delete, bulk tag)
 
 #### Phase 61: Portrait Mode
 **Goal**: Users can deploy screens in portrait orientation with properly oriented content and templates
