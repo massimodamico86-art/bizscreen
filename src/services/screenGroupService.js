@@ -428,6 +428,89 @@ export async function fetchScreenGroupsWithScenesByTag(tag) {
   return groups.filter(g => g.tags?.includes(tag));
 }
 
+/**
+ * Push a playlist to all screens in a group
+ * Sets assigned_playlist_id on all devices in the group and marks them for refresh
+ * @param {string} groupId - Screen group ID
+ * @param {string} playlistId - Playlist ID to push (or falsy to clear)
+ * @returns {Promise<{devicesUpdated: number}>}
+ */
+export async function pushPlaylistToGroup(groupId, playlistId) {
+  if (!groupId) throw new Error('Group ID is required');
+
+  const { data, error } = await supabase
+    .from('tv_devices')
+    .update({
+      assigned_playlist_id: playlistId || null,
+      needs_refresh: true,
+      updated_at: new Date().toISOString()
+    })
+    .eq('screen_group_id', groupId)
+    .select('id');
+
+  if (error) throw error;
+
+  const devicesUpdated = data?.length || 0;
+  logger.info('Pushed playlist to group', { groupId, playlistId, devicesUpdated });
+  return { devicesUpdated };
+}
+
+/**
+ * Bulk delete multiple screen groups
+ * Unassigns all screens from the groups first, then deletes the groups
+ * @param {string[]} groupIds - Array of group IDs to delete
+ * @returns {Promise<{deletedCount: number}>}
+ */
+export async function bulkDeleteScreenGroups(groupIds) {
+  if (!groupIds || groupIds.length === 0) throw new Error('At least one group ID is required');
+
+  // Unassign all screens from these groups
+  await supabase
+    .from('tv_devices')
+    .update({ screen_group_id: null })
+    .in('screen_group_id', groupIds);
+
+  // Delete the groups
+  const { error } = await supabase
+    .from('screen_groups')
+    .delete()
+    .in('id', groupIds);
+
+  if (error) throw error;
+  return { deletedCount: groupIds.length };
+}
+
+/**
+ * Bulk add tags to multiple screen groups (additive/union, not replace)
+ * @param {string[]} groupIds - Array of group IDs
+ * @param {string[]} newTags - Tags to add
+ * @returns {Promise<{updatedCount: number}>}
+ */
+export async function bulkAddTagsToGroups(groupIds, newTags) {
+  if (!groupIds || groupIds.length === 0) throw new Error('At least one group ID is required');
+  if (!newTags || newTags.length === 0) throw new Error('At least one tag is required');
+
+  const normalizedTags = newTags.map(t => t.trim().toLowerCase()).filter(Boolean);
+
+  // Fetch current tags for all target groups
+  const { data: groups, error: fetchError } = await supabase
+    .from('screen_groups')
+    .select('id, tags')
+    .in('id', groupIds);
+
+  if (fetchError) throw fetchError;
+
+  // Update each group with merged tags
+  const updates = (groups || []).map(g => {
+    const existing = g.tags || [];
+    const merged = [...new Set([...existing, ...normalizedTags])];
+    return supabase.from('screen_groups').update({ tags: merged }).eq('id', g.id);
+  });
+
+  await Promise.all(updates);
+  return { updatedCount: groupIds.length };
+}
+
 export default {
   fetchScreenGroups,
   fetchScreenGroupsWithScenes,
@@ -448,4 +531,7 @@ export default {
   updateGroupLanguage,
   fetchAllGroupTags,
   fetchScreenGroupsWithScenesByTag,
+  pushPlaylistToGroup,
+  bulkDeleteScreenGroups,
+  bulkAddTagsToGroups,
 };
