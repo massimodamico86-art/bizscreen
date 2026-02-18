@@ -396,6 +396,38 @@ export async function updateGroupLanguage(groupId, settings) {
   return data;
 }
 
+/**
+ * Fetch all distinct tags across screen groups for the current tenant
+ * Flattens and deduplicates client-side since tags is a TEXT[] column
+ * @returns {Promise<string[]>} Sorted unique array of tag strings
+ */
+export async function fetchAllGroupTags() {
+  const { data, error } = await supabase
+    .from('screen_groups')
+    .select('tags');
+
+  if (error) throw error;
+
+  const allTags = (data || [])
+    .flatMap(row => row.tags || [])
+    .filter(Boolean);
+
+  return [...new Set(allTags)].sort();
+}
+
+/**
+ * Fetch screen groups with scene info, filtered by tag
+ * Uses fetchScreenGroupsWithScenes RPC then filters client-side
+ * (RPC doesn't support .contains(), and screen_groups is typically <100 rows)
+ * @param {string} tag - Tag to filter by
+ * @returns {Promise<Array>} Filtered screen groups with scene info
+ */
+export async function fetchScreenGroupsWithScenesByTag(tag) {
+  const groups = await fetchScreenGroupsWithScenes();
+  if (!tag) return groups;
+  return groups.filter(g => g.tags?.includes(tag));
+}
+
 export default {
   fetchScreenGroups,
   fetchScreenGroupsWithScenes,
@@ -414,4 +446,6 @@ export default {
   publishSceneToMultipleGroups,
   getGroupActiveScene,
   updateGroupLanguage,
+  fetchAllGroupTags,
+  fetchScreenGroupsWithScenesByTag,
 };
