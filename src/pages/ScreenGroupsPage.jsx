@@ -21,6 +21,7 @@ import {
   Card,
   Button,
   EmptyState,
+  FilterChips,
   Modal,
   ModalHeader,
   ModalTitle,
@@ -31,6 +32,7 @@ import { useTranslation } from '../i18n';
 
 import {
   fetchScreenGroupsWithScenes,
+  fetchAllGroupTags,
   createScreenGroup,
   updateScreenGroup,
   deleteScreenGroup,
@@ -40,6 +42,7 @@ import {
   removeScreensFromGroup,
   unpublishSceneFromGroup
 } from '../services/screenGroupService';
+import TagChipInput from '../components/screens/TagChipInput';
 import { fetchLocations } from '../services/locationService';
 import { canEditScreens } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
@@ -54,6 +57,8 @@ const ScreenGroupsPage = ({ showToast }) => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
+  const [tagFilter, setTagFilter] = useState('all');
+  const [availableTags, setAvailableTags] = useState([]);
 
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -71,22 +76,28 @@ const ScreenGroupsPage = ({ showToast }) => {
   useEffect(() => {
     loadData();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- mount/filter change
-  }, [locationFilter]);
+  }, [locationFilter, tagFilter]);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      const [groupsData, locationsData] = await Promise.all([
+      const [groupsData, locationsData, tagsData] = await Promise.all([
         fetchScreenGroupsWithScenes(),
-        fetchLocations()
+        fetchLocations(),
+        fetchAllGroupTags()
       ]);
       // Filter by location if needed
       let filtered = groupsData;
       if (locationFilter) {
-        filtered = groupsData.filter(g => g.location_id === locationFilter);
+        filtered = filtered.filter(g => g.location_id === locationFilter);
+      }
+      // Filter by tag if needed
+      if (tagFilter !== 'all') {
+        filtered = filtered.filter(g => g.tags?.includes(tagFilter));
       }
       setGroups(filtered);
       setLocations(locationsData);
+      setAvailableTags(tagsData);
     } catch (error) {
       logger.error('Failed to load screen groups', { error });
       showToast?.('Error loading screen groups', 'error');
@@ -192,6 +203,20 @@ const ScreenGroupsPage = ({ showToast }) => {
             ))}
           </select>
         </div>
+
+        {/* Tag Filter Chips */}
+        {availableTags.length > 0 && (
+          <div className="mb-4">
+            <FilterChips
+              options={[
+                { id: 'all', label: 'All Tags' },
+                ...availableTags.map(tag => ({ id: tag, label: tag }))
+              ]}
+              selected={tagFilter}
+              onChange={setTagFilter}
+            />
+          </div>
+        )}
 
         {/* Content */}
         {loading ? (
@@ -428,6 +453,7 @@ function GroupFormModal({ group, locations, onClose, onSave, saving, t }) {
   const [name, setName] = useState(group?.name || '');
   const [description, setDescription] = useState(group?.description || '');
   const [locationId, setLocationId] = useState(group?.location_id || '');
+  const [tags, setTags] = useState(group?.tags || []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -435,7 +461,8 @@ function GroupFormModal({ group, locations, onClose, onSave, saving, t }) {
     onSave({
       name: name.trim(),
       description: description.trim(),
-      locationId: locationId || null
+      locationId: locationId || null,
+      tags
     });
   };
 
@@ -493,6 +520,16 @@ function GroupFormModal({ group, locations, onClose, onSave, saving, t }) {
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('screenGroups.tags', 'Tags')}
+            </label>
+            <TagChipInput tags={tags} onChange={setTags} placeholder={t('screenGroups.tagPlaceholder', 'Type and press Enter...')} />
+            <p className="text-xs text-gray-500 mt-1">
+              {t('screenGroups.tagHint', 'Press Enter or comma to add a tag')}
+            </p>
           </div>
         </form>
       </ModalContent>
