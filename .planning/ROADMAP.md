@@ -162,12 +162,12 @@ Plans:
   3. Menu board supports multiple price columns (e.g., Small/Medium/Large) and auto-paginates long menus with smooth transitions
   4. User can toggle item availability on/off without deleting, and changes appear on screen in near-real-time via Supabase Realtime
   5. Menu board formats currency according to the tenant's locale setting
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 62-01: Menu board schema, CRUD, and editor integration
-- [ ] 62-02: Menu board player widget with rendering and pagination
-- [ ] 62-03: Realtime updates, dietary tags, and locale formatting
+- [ ] 62-01-PLAN.md — Database schema (3 tables + RLS) + menuBoardService.js (CRUD, reorder, realtime, dietary tags, currency formatting) + @dnd-kit/sortable
+- [ ] 62-02-PLAN.md — MenuBoardEditorModal with DnD reordering, dietary tag picker, price columns, availability toggle + MenuBoardsPage + App.jsx navigation
+- [ ] 62-03-PLAN.md — MenuBoardWidget player component with themed rendering, auto-pagination, Realtime subscriptions, locale-aware currency + widget registry
 
 ## Progress
 
@@ -183,7 +183,7 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 | 59. Video Playback | v3.2 | Complete    | 2026-02-18 | - |
 | 60. Screen Groups & Tags | v3.2 | Complete    | 2026-02-18 | - |
 | 61. Portrait Mode | v3.2 | Complete    | 2026-02-18 | - |
-| 62. Menu Board Widget | v3.2 | 0/3 | Not started | - |
+| 62. Menu Board Widget | v3.2 | 0/3 | Planned | - |
 
 ## Progress Summary
 
