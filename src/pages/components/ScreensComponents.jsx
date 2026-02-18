@@ -42,6 +42,7 @@ import { formatLimitDisplay } from '../../services/limitsService';
 import { formatDuration, getUptimeColor, DATE_RANGES } from '../../services/analyticsService';
 import YodeckEmptyState from '../../components/YodeckEmptyState';
 import { PlayerStatusBadge, getPlayerStatus } from '../../components/screens/PlayerStatusBadge';
+import { OrientationMismatchWarning } from '../../components/schedules/OrientationMismatchWarning';
 
 // Design system imports
 import {
@@ -966,6 +967,17 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
                   <option key={layout.id} value={layout.id}>{layout.name}</option>
                 ))}
               </Select>
+              {layoutId && (() => {
+                const selectedLayout = layouts?.find(l => l.id === layoutId);
+                const layoutOrientation = selectedLayout?.aspect_ratio && ['9:16', '3:4'].includes(selectedLayout.aspect_ratio) ? 'portrait' : 'landscape';
+                return (
+                  <OrientationMismatchWarning
+                    contentOrientation={layoutOrientation}
+                    screenOrientation={orientation}
+                    contentType="layout"
+                  />
+                );
+              })()}
             </FormField>
             {screen.otp_code && (
               <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">

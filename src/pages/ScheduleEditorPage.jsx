@@ -1,5 +1,19 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-
+import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowLeft,
+  Badge,
+  Calendar,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Info,
+  Plus,
+  RefreshCw,
+  Trash2,
+  Users,
+} from 'lucide-react';
 
 import {
   fetchScheduleWithEntriesResolved,
@@ -20,6 +34,7 @@ import {
 } from '../components/schedules';
 import { requiresApproval } from '../services/permissionsService.js';
 import { APPROVAL_STATUS, getApprovalStatusConfig } from '../services/approvalService.js';
+import { Alert } from '../design-system/components/Alert';
 
 // Yodeck-style repeat options
 const REPEAT_OPTIONS = [
@@ -255,7 +270,7 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
   const loadContentOptions = async () => {
     const [playlistsResult, layoutsResult, scenesResult] = await Promise.all([
       supabase.from('playlists').select('id, name, approval_status').order('name'),
-      supabase.from('layouts').select('id, name').order('name'),
+      supabase.from('layouts').select('id, name, aspect_ratio').order('name'),
       supabase.from('scenes').select('id, name, approval_status').eq('is_active', true).order('name')
     ]);
     setPlaylists(playlistsResult.data || []);
@@ -766,6 +781,26 @@ const ScheduleEditorPage = ({ scheduleId, showToast, onNavigate }) => {
 
           {/* Scheduled Events */}
           <div className="flex-1 overflow-auto">
+            {/* Portrait content advisory (PORT-05) */}
+            {entries.some(entry => {
+              if ((entry.content_type || entry.target_type) === 'layout') {
+                const layout = layouts.find(l => l.id === (entry.content_id || entry.target_id));
+                return layout?.aspect_ratio && ['9:16', '3:4'].includes(layout.aspect_ratio);
+              }
+              return false;
+            }) && (
+              <div className="px-4 pt-4">
+                <Alert variant="warning">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle size={16} className="flex-shrink-0" />
+                    <span className="text-sm">
+                      This schedule includes portrait-oriented content. Ensure target screens have their orientation set to <strong>portrait</strong> in screen settings.
+                    </span>
+                  </div>
+                </Alert>
+              </div>
+            )}
+
             <div className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium text-gray-900">Scheduled Events</h4>
