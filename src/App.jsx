@@ -15,6 +15,7 @@ import {
   Monitor,
   Music,
   UserCheck,
+  UtensilsCrossed,
   Video,
   X,
 } from 'lucide-react';
@@ -107,6 +108,7 @@ const SvgTemplateGalleryPage = lazy(() => import('./pages/SvgTemplateGalleryPage
 const SvgEditorPage = lazy(() => import('./pages/SvgEditorPage'));
 const SecurityDashboardPage = lazy(() => import('./pages/SecurityDashboardPage'));
 const TranslationDashboardPage = lazy(() => import('./pages/TranslationDashboardPage'));
+const MenuBoardsPage = lazy(() => import('./pages/MenuBoardsPage'));
 
 // Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
 /**
@@ -426,6 +428,7 @@ function BizScreenAppInner() {
     { id: 'templates', label: t('nav.templates', 'Templates'), icon: LayoutTemplate },
     { id: 'schedules', label: t('nav.schedules', 'Schedules'), icon: Calendar },
     { id: 'screens', label: t('nav.screens', 'Screens'), icon: Monitor },
+    { id: 'menu-boards', label: t('nav.menuBoards', 'Menu Boards'), icon: UtensilsCrossed },
   ];
 
   // Loading fallback component
@@ -513,6 +516,7 @@ function BizScreenAppInner() {
     'svg-templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'security': <Suspense fallback={<PageLoader />}><SecurityDashboardPage /></Suspense>,
     'translations': <Suspense fallback={<PageLoader />}><TranslationDashboardPage showToast={showToast} /></Suspense>,
+    'menu-boards': <Suspense fallback={<PageLoader />}><MenuBoardsPage showToast={showToast} /></Suspense>,
   };
 
   // Show Canva OAuth callback page
