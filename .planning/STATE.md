@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-13)
 ## Current Position
 
 Phase: 60 of 62 (Screen Groups & Tags)
-Plan: 1 of 2 in current phase
-Status: In Progress
-Last activity: 2026-02-18 - Completed 60-01-PLAN.md (Tag Management UI & Filtering)
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-02-18 - Completed 60-02-PLAN.md (Playlist Push & Bulk Operations)
 
-Progress: [########________] 56% (9/16 plans)
+Progress: [#########_______] 62% (10/16 plans)
 
 ## Milestones Shipped
 
@@ -49,6 +49,7 @@ Progress: [########________] 56% (9/16 plans)
 | 59 | 01 | 4min | 2 | 6 |
 | 59 | 02 | 4min | 2 | 5 |
 | 60 | 01 | 3min | 2 | 4 |
+| 60 | 02 | 4min | 2 | 3 |
 
 ## Accumulated Context
 
@@ -85,6 +86,9 @@ Progress: [########________] 56% (9/16 plans)
 - **60-01**: Client-side tag filtering on RPC results because fetchScreenGroupsWithScenes uses an RPC that doesn't support .contains(); screen_groups is <100 rows per tenant
 - **60-01**: Tags normalized to lowercase and deduplicated on input in TagChipInput component
 
+- **60-02**: Inline bulk action bar instead of reusing media BulkActionBar -- media version has media-specific actions (Move, Download, Add to Playlist)
+- **60-02**: Bulk tag uses additive union (merge with existing tags, deduplicate) rather than replace
+
 ### Blockers/Concerns
 
 - ~~Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)~~ RESOLVED in 58-01
@@ -100,9 +104,9 @@ Progress: [########________] 56% (9/16 plans)
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 60-01-PLAN.md (Tag Management UI & Filtering)
+Stopped at: Completed 60-02-PLAN.md (Playlist Push & Bulk Operations) -- Phase 60 complete
 Resume file: None
-Next: 60-02-PLAN.md (next plan in Phase 60)
+Next: Phase 61 (next phase in v3.2 Display Toolkit)
 
 ---
-*Updated: 2026-02-18 -- Phase 60 in progress (Screen Groups & Tags). Plan 01 complete (Tag Management UI & Filtering).*
+*Updated: 2026-02-18 -- Phase 60 complete (Screen Groups & Tags). Both plans (Tag Management UI & Filtering, Playlist Push & Bulk Operations) done.*
