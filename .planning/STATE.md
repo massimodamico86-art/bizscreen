@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-13)
 Phase: 58 of 62 (Weather Security Enhancement)
 Plan: 2 of 2 in current phase
 Status: Phase Complete
-Last activity: 2026-02-17 -- Completed 58-02 Weather Widget UI Enhancement
+Last activity: 2026-02-18 - Completed quick task 43: Fix 17 remaining Playwright e2e test failures
 
 Progress: [#####___________] 37% (6/16 plans)
 
@@ -77,6 +77,12 @@ Progress: [#####___________] 37% (6/16 plans)
 - ~~Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)~~ RESOLVED in 58-01
 - ~~QR code widget has missing import causing player crash (QR-05 addresses in Phase 57)~~ RESOLVED in 57-01
 - ~~Clock widgets use browser timezone instead of screen timezone (CLOCK-06 addresses in Phase 56)~~ RESOLVED in 56-02
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 43 | Fix 17 remaining Playwright e2e test failures | 2026-02-18 | cab3395 | [43-fix-17-remaining-playwright-e2e-test-fai](./quick/43-fix-17-remaining-playwright-e2e-test-fai/) |
 
 ## Session Continuity
 
