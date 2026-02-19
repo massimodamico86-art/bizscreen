@@ -1,482 +1,432 @@
-# Domain Pitfalls: Display Toolkit Features
+# Domain Pitfalls: Player Hardening Features
 
-**Domain:** Adding weather, video playback, screen groups/tags, portrait mode, clock/date, QR code, and menu board widgets to existing digital signage platform
-**Researched:** 2026-02-13
-**Scope:** BizScreen -- React 19, Supabase, S3/CloudFront, 5-device-type player with offline/IndexedDB support
+**Domain:** Adding screenshot capture, auto-recovery, content verification, diagnostic telemetry, and alert tuning to existing digital signage player
+**Researched:** 2026-02-19
+**Scope:** BizScreen -- React player running in browser/webview across 5 platforms (web, Android, iOS, WebOS, Tizen), Supabase backend with RLS, existing 30s heartbeat, IndexedDB offline cache, S3/CloudFront media, Sentry error monitoring, html2canvas screenshot capture
+**Confidence:** MEDIUM -- Based on deep codebase analysis and domain expertise; web search unavailable for verification of platform-specific claims
 
 ---
 
 ## Critical Pitfalls
 
-Mistakes that cause rewrites, player crashes on deployed devices, or data leaks.
+Mistakes that cause player downtime on deployed devices, data loss, or cascading failures across the fleet.
 
 ---
 
-### Pitfall 1: Weather API Key Exposed on Player Devices
+### Pitfall 1: Auto-Recovery Infinite Restart Loop
 
-**What goes wrong:** The current `weatherService.js` reads `VITE_OPENWEATHER_API_KEY` from `import.meta.env`, which means the key is bundled into the client JavaScript. On a web/Android/iOS player, anyone can open DevTools or decompile and extract the key. For a multi-tenant SaaS, one compromised player leaks the key for all tenants.
+**What goes wrong:** The existing `useStuckDetection.js` calls `window.location.reload()` when the page is inactive for 5 minutes (`maxNoActivityMs: 300000`). If the root cause of inactivity is a persistent error (bad content JSON, corrupt cache, unreachable Supabase endpoint), the page reloads, hits the same error, goes inactive again, and reloads indefinitely. On low-power signage hardware (WebOS, Tizen), this creates a visible reload flash every 5 minutes and exhausts device memory as each reload leaks browser resources that the constrained garbage collector cannot reclaim.
 
-**Why it happens:** The weather widget was initially built for the CMS editor preview (where tenant users are authenticated). When the same code runs on anonymous player devices, the key ships in the bundle.
+**Why it happens:** The current `onPageStuck` callback in `ViewPage.jsx` (line 186) does a hard reload with zero state tracking:
+```javascript
+onPageStuck: () => {
+  logger.warn('Player inactive for too long, reloading...');
+  window.location.reload();
+}
+```
+There is no mechanism to detect that the reload is happening repeatedly, no exponential backoff between reloads, and no fallback behavior after N failed recovery attempts.
 
 **Consequences:**
-- API key abuse: third parties can exhaust your OpenWeatherMap quota, causing all weather widgets across all tenants to fail.
-- Key revocation forces all deployed players to go offline for weather until a new build is pushed.
-- Violates OpenWeatherMap ToS (keys must not be exposed in client code).
+- **Visible flashing:** Customer sees white screen flashing every 5 minutes on their lobby display.
+- **Memory exhaustion:** WebOS LG panels and older Tizen Samsung displays have 512MB-1GB RAM. Each reload without proper cleanup fragments memory. After 10-20 cycles, the browser process is killed by the OS watchdog, leaving a black screen until manual power cycle.
+- **Heartbeat spam:** Each reload sends an immediate heartbeat (line 95 of `usePlayerHeartbeat.js`), content fetch, screenshot check, PIN hash fetch, and analytics init. A fleet of 100 devices in a restart loop generates 100 concurrent bursts every 5 minutes against Supabase.
+- **Alert storm:** Each restart cycle triggers device_offline -> device_online transitions, flooding the alerts table and notification system.
 
 **Prevention:**
-- Create a `weather-proxy` Supabase Edge Function following the exact pattern already established by `rss-proxy/index.ts`. The edge function holds the API key server-side, caches responses in a `weather_cache` table (just like `rss_feed_cache`), and returns sanitized JSON.
-- The existing `WeatherWidget.jsx` already fetches via `getWeather()` -- swap the direct OpenWeatherMap call for an edge function invocation. Player devices call the proxy with their screen JWT.
-- Cache weather data server-side with 15-30 minute TTL (weather does not change more frequently than this). This also reduces API calls from N-devices-per-location to 1-call-per-location.
+- Track restart count in `localStorage` with a timestamp. Before executing `window.location.reload()`, check: if more than 3 reloads in the last 30 minutes, stop reloading and display a static "device needs attention" screen instead.
+- Implement exponential backoff between reloads: 5 min, 10 min, 20 min, capped at 60 min.
+- On recovery after multiple failures, clear IndexedDB cache before reloading (the cached content may be the cause).
+- Add a `recovery_attempts` counter to the heartbeat payload so the dashboard shows which devices are in a restart loop.
 
 **Detection:**
-- Grep for `VITE_OPENWEATHER_API_KEY` in the built bundle. If present, the key is exposed.
-- Monitor OpenWeatherMap dashboard for unexpected call volume.
+- `localStorage.getItem('player_restart_count')` exists and is > 3.
+- Dashboard shows a device alternating between online/offline every few minutes.
+- Sentry shows repeated `Player inactive for too long, reloading...` warnings from the same device.
 
-**Phase assignment:** Must be addressed in the Weather Widget phase, before any player deployment.
+**Phase assignment:** Must be the first thing addressed in the auto-recovery phase. All other recovery features depend on not having an infinite loop as the foundation.
 
 ---
 
-### Pitfall 2: Video Autoplay Blocked on WebOS/Tizen/iOS Differently
+### Pitfall 2: html2canvas Fails Silently on WebOS and Tizen
 
-**What goes wrong:** The current `ZonePlayer.jsx` uses `<video autoPlay muted playsInline>`, which works in Chrome desktop and Android WebView. But WebOS (LG signage), Tizen (Samsung), and iOS each have different autoplay policies:
-- **iOS Safari/WKWebView**: Requires `muted` AND `playsInline` AND a user gesture (first video only) in some contexts. Low-power mode throttles video playback entirely.
-- **Tizen**: Some Samsung SSSP models require videos to be under specific resolutions/codecs (H.264 Main Profile only, no B-frames) or the decoder silently fails.
-- **WebOS**: LG signage panels sometimes require `webOS.mediaCapabilities` API to check codec support before attempting playback. HTML5 video may freeze after 24-48 hours due to memory leaks in the built-in browser.
+**What goes wrong:** The existing `screenshotService.js` uses `html2canvas` to capture the DOM. On WebOS (LG signage) and Tizen (Samsung signage), `html2canvas` frequently fails or produces blank/corrupt images because:
 
-**Why it happens:** Developers test on Chrome, where autoplay is lenient. They never test on actual signage hardware. The `onError` handler in `ZonePlayer.jsx` calls `advanceToNext`, but `error` events do not always fire -- sometimes the video just silently stalls.
+1. **WebGL/Canvas limitations:** WebOS 3.x-5.x and Tizen 3.x-5.x have incomplete Canvas 2D implementations. `html2canvas` uses `CanvasRenderingContext2D.drawImage()` to composite layers, but the hardware-accelerated canvas on these platforms sometimes returns empty pixel data for cross-origin images (even with `useCORS: true`).
+2. **Memory pressure during capture:** `html2canvas` clones the entire DOM, creates an offscreen canvas at the configured scale (currently 0.5x), and composites all elements. On a device playing 1080p video with 512MB RAM, this operation can trigger an out-of-memory kill of the canvas context, returning a blank canvas that converts to a tiny (200-500 byte) JPEG.
+3. **Video frames not captured:** `html2canvas` cannot capture the current frame of a `<video>` element. The screenshot shows everything except the video, which appears as a black rectangle. For a signage player where video is the primary content, this makes screenshots useless for diagnostics.
+
+**Why it happens:** The current code (line 40-50 of `screenshotService.js`) passes `allowTaint: true` and `useCORS: true` but does not handle the case where the canvas is blank or undersized. The `captureScreenshot` function returns whatever blob `canvas.toBlob` produces, even if it is effectively empty.
 
 **Consequences:**
-- Black screen on deployed signage hardware. The worst UX possible for a signage product.
-- Customer reports "screen is blank" but the player thinks it is playing.
-- The existing `useStuckDetection.js` checks `videoRef.current.currentTime` but only triggers after 30 seconds of stall, which is too slow for customer perception.
+- Dashboard shows "last screenshot" that is a black rectangle or a blank white image, providing zero diagnostic value.
+- Operators waste time investigating "broken screens" that are actually working fine -- the screenshot just did not capture properly.
+- After 2 consecutive failures, `screenshotService.js` raises a `DEVICE_SCREENSHOT_FAILED` alert (line 201), creating noise for a problem that is not actually a device failure but a capture limitation.
+- Screenshot storage fills with useless blank images consuming Supabase Storage quota.
 
 **Prevention:**
-- Implement a codec compatibility check at player startup: detect device type from user agent, maintain a codec support map, and transcode or warn at upload time.
-- Add a `canplaythrough` event listener. If the event does not fire within 5 seconds, treat it as a playback failure and advance to next content.
-- For WebOS and Tizen, implement a periodic memory cleanup: destroy and recreate video elements between plays instead of reusing `src` attribute changes. This prevents the 24-48 hour memory leak.
-- Set the stuck detection threshold to 10 seconds (down from 30) for video content specifically.
-- Add a fallback poster: if video fails to play, show the thumbnail image for the video's duration, then advance.
+- **Validate screenshot before upload:** After `canvas.toBlob()`, check the blob size. A valid 1920x1080 JPEG at 0.5x scale (960x540) should be 30KB-200KB. If the blob is under 5KB, it is almost certainly blank. Discard and skip rather than upload.
+- **Capture video frames separately:** Use `videoElement.captureStream()` or draw the video frame directly onto a canvas with `ctx.drawImage(videoRef.current, 0, 0)` before compositing with the html2canvas output. This requires merging two canvases: one from html2canvas (UI layer) and one from the video element.
+- **Platform-specific fallback:** On WebOS and Tizen, skip html2canvas entirely and use the native WebOS `window.PalmSystem?.screenCapture()` or Tizen `tizen.systeminfo` screenshot APIs if available. These capture the actual display output including video frames.
+- **Reduce capture frequency on constrained devices:** Detect device type from user agent. On WebOS/Tizen, only capture screenshots on explicit admin request (`needs_screenshot_update` flag), never on a timer. On web/Android/iOS, periodic capture is safe.
+- **Add a minimum size check to the existing `cleanupOldScreenshots`** so it also purges screenshots under 5KB.
 
 **Detection:**
-- The existing `useStuckDetection.js` hook with `maxVideoStallMs: 30000` is the detection mechanism. Lower it and add `canplaythrough` timeout.
-- Player diagnostics should report `videoElement.error?.code` and `videoElement.readyState` to the heartbeat.
+- Query `device-screenshots` storage for files under 5KB -- these are blank captures.
+- Screenshot age is always stale on WebOS/Tizen devices even though the device is online and responding to heartbeats.
 
-**Phase assignment:** Video Playback phase. Must test on at least one WebOS and one Tizen device.
+**Phase assignment:** Screenshot hardening phase. Must address before enabling periodic screenshots fleet-wide, or the alert system will be overwhelmed with false positives.
 
 ---
 
-### Pitfall 3: Portrait Mode Breaks All Existing Layouts
+### Pitfall 3: Telemetry Volume Overwhelms Supabase Database
 
-**What goes wrong:** The existing `EditorCanvas.jsx` hardcodes `aspect-video` (16:9) via `className="relative aspect-video w-full"`. The `SceneRenderer.jsx` assumes blocks use percentage-based positioning within a 16:9 frame. Adding portrait mode (9:16) requires every component that touches canvas rendering to understand orientation -- but there is no `orientation` field in the scene/design JSON schema.
+**What goes wrong:** The player already sends telemetry on multiple overlapping timers:
+- **Heartbeat** every 30s (`usePlayerHeartbeat.js` -> `updateDeviceStatus` RPC)
+- **Content polling** every 30s (`usePlayerContent.js` line 307 -> `getResolvedContent` RPC + `player_heartbeat` RPC)
+- **Device refresh check** every heartbeat (`checkDeviceRefreshStatus` -> direct `tv_devices` query)
+- **Command polling** (realtime WebSocket with polling fallback at 10s)
+- **Playback tracking** flushes every 30s (`playbackTrackingService.js` CONFIG.FLUSH_INTERVAL_MS)
+- **Data refresh orchestrator** ticks every 10s (`useDataRefreshOrchestrator.js`)
+- **PIN hash fetch** every 30s in kiosk mode (line 209 of `ViewPage.jsx`)
 
-**Why it happens:** Portrait mode is not just a CSS transform. The block positioning system uses percentage coordinates (x, y, width, height as 0-1 values relative to canvas), which are orientation-agnostic in theory. But visual proportions break: a block at position (0.1, 0.1) with size (0.3, 0.1) looks very different in 9:16 vs 16:9 because the canvas physical dimensions flip.
+Adding diagnostic telemetry (device metrics like CPU, memory, temperature, network stats) on top of this creates a situation where each device makes **8-12 Supabase calls every 30 seconds**. For a fleet of 500 devices, that is **8,000-12,000 requests per minute** against the database. Supabase Pro plan includes pooled connections (25 direct, 200 via Supavisor), and this volume will exhaust the connection pool, causing timeouts for both player devices AND admin dashboard users.
+
+**Why it happens:** Each feature was added incrementally by different phases. The heartbeat, content polling, device refresh check, and command polling all evolved independently with their own timers. Nobody audited the total request volume per device per minute.
 
 **Consequences:**
-- Existing scenes created in 16:9 look stretched or compressed when displayed in portrait.
-- Users design in the editor (which is always 16:9 currently) but the player renders in portrait, causing layout mismatch.
-- Template library designed for 16:9 becomes useless for portrait screens without redesign.
+- **Connection pool exhaustion:** Supabase connection pool timeouts cascade -- when one request hangs, the next request queues, and within 60s the entire pool is blocked. Admin users see "connection timeout" when trying to load the dashboard.
+- **Database CPU saturation:** Each `get_resolved_player_content` RPC joins 5+ tables. At 500 devices x 2 calls/min = 1,000 complex queries/min. This competes with admin CRUD operations.
+- **Supabase billing spike:** Supabase bills on database compute time and bandwidth. Telemetry is read-heavy (heartbeats update one row then read back), and at fleet scale the egress costs multiply.
+- **Battery drain on Android/iOS players:** Frequent network calls prevent the device from entering low-power mode, draining battery on tablet-based signage.
 
 **Prevention:**
-- Add an `orientation` field to the scene/design JSON schema: `{ orientation: '16:9' | '9:16' | '4:3' | '1:1' }` with default `'16:9'` for backward compatibility.
-- The `EditorCanvas` must dynamically set its aspect ratio based on `design.orientation || '16:9'`.
-- Do NOT apply CSS `transform: rotate(90deg)` to make portrait work. This approach causes mouse hit-testing to break in the editor and font rendering to degrade on low-powered signage hardware. Instead, change the canvas container's `aspectRatio` CSS property.
-- In the player, `LayoutRenderer.jsx` uses `position: absolute` with percentage-based zones. Portrait layouts need the container to be 9:16, and zones should be recomputed for the new dimensions. Do not rotate the entire player output.
-- Create separate portrait templates rather than auto-converting landscape ones.
+- **Consolidate into a single heartbeat RPC:** Create one `player_heartbeat_v2` RPC that accepts a JSONB payload containing: device status, content hash, metrics snapshot, screenshot status, and recent playback events. Call it every 30s. Kill the separate content poll, device refresh check, and PIN hash fetch timers.
+- **Batch telemetry writes:** Instead of flushing playback events every 30s, accumulate locally and flush every 5 minutes (or when the queue hits 50 events). The existing `playbackTrackingService.js` already has this pattern but the `FLUSH_INTERVAL_MS` of 30s is too aggressive for fleet scale.
+- **Use Supabase realtime channels instead of polling:** The existing realtime subscription for commands (`subscribeToDeviceCommands`) is correct. Extend this pattern to content updates and screenshot requests, eliminating 2 polling endpoints per device.
+- **Add server-side telemetry aggregation:** Instead of storing raw heartbeats, use a PostgreSQL function that updates an `device_metrics_hourly` rollup table. Only keep the last 24h of raw heartbeats; aggregate older data into hourly/daily summaries.
+- **Implement adaptive polling intervals:** If the device has not had a content change in 30 minutes, back off content polling to every 5 minutes. Resume 30s polling on realtime event or on admin dashboard visit.
 
 **Detection:**
-- If `design.orientation` is undefined, the system must default to landscape. Log a warning when a scene is displayed on a portrait-configured screen without an orientation field.
-- On the screen management page, show a mismatch warning when a landscape-designed scene is assigned to a portrait-configured screen.
+- Supabase dashboard shows sustained database CPU > 50% during business hours.
+- `pg_stat_activity` shows more than 20 concurrent connections from the `anon` role (player devices).
+- Player logs show increasing `Heartbeat error` or `Polling error` entries.
+- Admin dashboard becomes sluggish during peak device hours.
 
-**Phase assignment:** Portrait Mode phase. Must come AFTER basic layout/scene changes are stable, as it touches EditorCanvas, SceneRenderer, LayoutRenderer, and LayoutEditorCanvas.
+**Phase assignment:** Telemetry phase must consolidate the heartbeat BEFORE adding new diagnostic metrics. Adding metrics to the existing fragmented polling architecture will make this pitfall materialize immediately.
 
 ---
 
-### Pitfall 4: Missing tenant_id on New Database Tables
+### Pitfall 4: Content Verification Blocks Playback on Slow Networks
 
-**What goes wrong:** New tables for widget configurations, screen group tags, or menu board items are created without `tenant_id` or without proper RLS policies. In a multi-tenant system with Row Level Security, this means:
-- Data leaks: one tenant can see another tenant's menu items or weather locations.
-- Write failures: INSERT operations fail silently because RLS blocks them.
-- Orphaned data: if tenant_id is a FK but the cascade is wrong, deleting a tenant leaves orphaned rows.
+**What goes wrong:** Content verification (checking that media files are complete, not corrupted, and match server checksums) is added as a synchronous step before playback. The existing `checkSceneNeedsUpdate` in `offlineService.js` already calls the `check_if_scene_changed` RPC, but adding full media verification (downloading and checking checksums for all media in a playlist) on every content change can take 10-60 seconds on slow networks or with large playlists (20+ items, 100MB+ total media).
 
-**Why it happens:** The developer focuses on the feature logic and copies a table structure from a tutorial or template that does not assume multi-tenancy. The existing codebase is consistent (every table has `tenant_id` with `REFERENCES public.profiles(id) ON DELETE CASCADE`), but a new developer or AI generating SQL might miss this.
+During this verification window, the screen shows either a loading spinner or the previous content (which may be outdated). If verification fails (network timeout, checksum mismatch on one item), the question becomes: play the unverified content, or show nothing?
+
+**Why it happens:** Developers implement verification as a blocking pre-condition because it feels "safe" -- never play content that has not been verified. But signage has a different correctness priority than other software: **showing slightly stale content is always better than showing nothing**. A blank screen in a restaurant or hotel lobby is worse than showing yesterday's menu.
 
 **Consequences:**
-- Security breach: GDPR/CCPA violation if one tenant's data is exposed to another.
-- Silent data corruption: operations succeed in dev (where RLS is sometimes disabled) but fail in production.
-- The existing RLS pattern (`tenant_id = auth.uid() OR is_super_admin() OR (is_admin() AND tenant_id IN (SELECT client_id FROM get_my_client_ids()))`) must be applied consistently.
+- **Extended blank screen windows:** On 3G/4G-connected signage (common in outdoor and retail), verification of a 20-item playlist with video takes 30-60 seconds. The screen is blank during this time, multiple times per day when content updates.
+- **Verification failure = no content:** If even one media file fails checksum, strict verification rejects the entire content set. The player falls back to cache, but if the cache was already cleared (e.g., by a `clear_cache` command), the screen goes blank.
+- **Memory pressure from parallel downloads:** Verifying by downloading all media into memory (even just for checksum) on a 512MB WebOS device can OOM the browser process.
 
 **Prevention:**
-- Create a migration template/checklist for every new table:
-  1. `tenant_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE`
-  2. `ENABLE ROW LEVEL SECURITY`
-  3. Four policies: SELECT, INSERT (WITH CHECK), UPDATE (USING), DELETE (USING) -- all using the standard tenant check pattern from `026_screen_groups_and_campaigns.sql`.
-  4. `GRANT SELECT, INSERT, UPDATE, DELETE ON [table] TO authenticated`
-  5. Index on `tenant_id`
-- Run a pre-deploy verification query: `SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename NOT IN (SELECT tablename FROM pg_catalog.pg_policies WHERE schemaname = 'public')` -- any table without policies is a red flag.
-- For tables that are accessed by the player (anonymous context), use `SECURITY DEFINER` functions with explicit tenant validation inside the function, following the pattern in `get_player_content`.
+- **Never block playback for verification.** Always play content immediately (from cache or fresh fetch), then verify in the background. If verification finds issues, log them and flag the specific items, but continue playing.
+- **Verify lazily per-item:** Verify each media item just before it plays (e.g., during the previous item's display duration). If verification fails, skip to the next item and alert.
+- **Use streaming checksums:** Instead of downloading the entire file to verify, use HTTP Range requests to check the first 64KB and last 64KB of each file. This catches truncated downloads (the most common corruption) without downloading the whole file.
+- **Separate "can play" from "verified":** Content enters a `playable` state immediately on successful fetch. Verification upgrades it to `verified` state. The player always plays `playable` content. The dashboard shows verification status as an informational indicator, not a blocker.
+- **Implement progressive verification:** Check the most important items first (currently playing item, next 3 items in playlist). Defer verification of items further in the queue.
 
 **Detection:**
-- Migration review must check for `tenant_id` and RLS policies.
-- E2E test: create data as Tenant A, verify Tenant B cannot see it.
+- Player logs show "Loading content..." for > 10 seconds between content transitions.
+- Users report blank screens during content updates.
+- Playback tracking shows gaps in scene playback events correlating with content change timestamps.
 
-**Phase assignment:** Every phase that creates new tables. This is a cross-cutting concern.
+**Phase assignment:** Content verification phase. The architecture decision (blocking vs. background) must be made at the start of this phase. Getting this wrong requires a rewrite.
 
 ---
 
-### Pitfall 5: QR Code Widget Missing Import on Player Bundle
+### Pitfall 5: Multi-Tenant Alert Noise Makes Alerts Useless
 
-**What goes wrong:** The `QRCodeWidget.jsx` at line 75 references `<QRCodeSVG>` but does NOT have an `import { QRCodeSVG } from 'qrcode.react'` statement at the top of the file. The component will throw a ReferenceError at runtime when a QR code widget with a URL is rendered in the player.
+**What goes wrong:** The existing alert system (`alertEngineService.js`) already has rate limiting (5 alerts per device per minute) and coalescing (dedup open alerts). But adding screenshot failure alerts, content verification failure alerts, auto-recovery alerts, and telemetry gap alerts to the existing device_offline, cache_stale, and sync_failed alerts creates an alert volume where operators stop checking them entirely.
 
-**Why it happens:** The widget was extracted from inline rendering in `EditorCanvas.jsx` where `QRCodeSVG` was available in scope (or assumed to be a global). During extraction, the import was missed.
+The current escalation rules (line 308-331 of `alertEngineService.js`) auto-escalate to CRITICAL after specific thresholds (30 min offline, 5 screenshot failures, etc.), but there is no mechanism to suppress low-value alerts when a higher-value alert already explains the root cause. For example: a device goes offline, which simultaneously triggers `device_offline`, `device_screenshot_failed` (because screenshots cannot be uploaded), `device_cache_stale` (because cache cannot be refreshed), and `data_source_sync_failed` (because RSS/weather cannot be fetched). One root cause produces 4+ alerts.
 
-**Consequences:**
-- Player crashes with `ReferenceError: QRCodeSVG is not defined` when displaying any QR code widget with a URL value.
-- The fallback `QRPlaceholder` renders for empty URLs, masking the bug in editor testing (where URLs are often empty during design).
-- This is a runtime error on deployed signage hardware with no developer console.
-
-**Prevention:**
-- Add the missing import: `import { QRCodeSVG } from 'qrcode.react';` to `QRCodeWidget.jsx`.
-- The editor's `EditorCanvas.jsx` has the same issue at line 550 -- `QRCodeSVG` is referenced but never imported.
-- Add a build-time lint rule or test that renders each widget type with non-empty props to catch undefined component references.
-
-**Detection:**
-- Unit test: render `<QRCodeWidget props={{ url: 'https://example.com' }} />` -- it will throw immediately.
-- The current test mocks (`vi.mock('qrcode.react', () => ({ QRCodeSVG: () => null }))`) mask this bug.
-
-**Phase assignment:** QR Code Widget phase. Fix immediately as part of widget hardening.
-
----
-
-### Pitfall 6: Clock/Date Widget Shows Wrong Timezone on Player
-
-**What goes wrong:** The current `ClockWidget.jsx` uses `new Date().toLocaleTimeString('en-US', ...)` which renders the clock in the browser's local timezone. But signage player hardware may be configured in UTC, or the business wants the clock to show the screen's assigned timezone (e.g., a New York restaurant's screen deployed with a media player whose OS timezone is set to UTC).
-
-**Why it happens:** `toLocaleTimeString()` without a `timeZone` option uses the system's local timezone. The player already receives `timezone` from the server (`screen.timezone` in `getPlayerContent`), but the `ClockWidget` and `DateWidget` components do not accept or use this parameter.
+**Why it happens:** Each alert type was added by a different feature phase with its own raise/resolve logic. The alertEngineService handles dedup within a single alert type (coalescing), but does not correlate across alert types. Adding 3-5 new alert types for hardening features multiplies the cross-type correlation problem.
 
 **Consequences:**
-- Clock shows wrong time. For a restaurant or hotel lobby, this is immediately visible and destroys credibility.
-- The editor preview (running on the user's laptop) shows the correct time, so the bug is invisible until deployment.
+- **Alert fatigue:** Operators see 20 open alerts, most of which are symptoms of 2 root causes. They stop checking.
+- **Real issues hidden:** A genuine content verification failure (corrupt media file) is buried among a flood of screenshot and telemetry alerts.
+- **Notification spam:** The `dispatchAlertNotifications` function sends emails for new CRITICAL alerts. If a fleet-wide network outage triggers 500 device_offline + 500 screenshot_failed + 500 cache_stale alerts, that is up to 1,500 notification emails.
+- **Database growth:** The alerts table grows unbounded. With 500 devices generating 5+ alert types each, the coalescing index (`idx_alerts_coalesce`) becomes a bottleneck because it must check for existing open alerts across 6 columns.
 
 **Prevention:**
-- Thread the screen's `timezone` value through to widget props: `SceneRenderer -> SceneWidgetRenderer -> ClockWidget`. The timezone is already available in the player content payload.
-- Use `toLocaleTimeString('en-US', { timeZone: props.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone, ... })` to respect the configured timezone.
-- Add a "Timezone" selector in the widget PropertiesPanel controls, defaulting to "Screen timezone" (which resolves at player runtime).
-- The `DateWidget` has the identical issue and needs the same fix.
+- **Implement root cause correlation:** When a device is offline, suppress all other alerts for that device. The `device_offline` alert is the root cause; screenshot, cache, and sync failures are expected consequences. Auto-resolve these symptom alerts when they are raised while a `device_offline` alert is already open.
+- **Add alert grouping/hierarchy:** Define parent-child relationships between alert types. `device_offline` is a parent of `device_screenshot_failed`, `device_cache_stale`, and `data_source_sync_failed` for the same device. The dashboard shows the parent alert with a count of suppressed children.
+- **Implement fleet-level dedup:** If more than 30% of devices in a screen group simultaneously go offline, raise a single "Network outage in [group]" alert instead of N individual device_offline alerts.
+- **Add auto-close TTL:** Alerts in `open` status for more than 7 days are automatically archived/closed. Stale alerts provide no value and clutter the dashboard.
+- **Tier notification channels by severity:** CRITICAL = email + in-app. WARNING = in-app only. INFO = dashboard only (no notification). Currently all levels dispatch through the same path.
 
 **Detection:**
-- Deploy a player on hardware with UTC timezone, assign a scene with a clock widget. If the time is wrong, the bug is confirmed.
-- The `SyncStatusIndicator` already shows last refresh time -- compare it to the clock widget output.
+- Dashboard shows > 10 open alerts for the same device, all with similar timestamps.
+- Operators report ignoring alerts or disabling email notifications.
+- `alerts` table has > 10,000 rows within the first month.
 
-**Phase assignment:** Clock/Date Widget phase. Low effort to fix but high impact.
+**Phase assignment:** Alert tuning should be a dedicated sub-phase that happens AFTER all new alert types are defined but BEFORE enabling them in production. Shipping noisy alerts is worse than shipping no alerts.
 
 ---
 
 ## Moderate Pitfalls
 
-### Pitfall 7: Weather Widget Offline Behavior is Stale-Forever
-
-**What goes wrong:** The `WeatherWidget.jsx` registers with the orchestrator using a 10-minute interval (`10 * 60 * 1000`). When the player goes offline, the orchestrator's fetch fails, the error is caught, and the widget displays the last successfully fetched data. But the widget shows no indication of staleness. After hours offline, the weather display shows yesterday's temperature with no visual indicator.
-
-**Prevention:**
-- The `SyncStatusIndicator` component already exists and is rendered by `WeatherWidget`. However, it should visually distinguish between "refreshed 5 minutes ago" (normal) and "refreshed 6 hours ago" (stale). Add a threshold: if `lastFetchedAt` is more than 30 minutes old, show an amber/red indicator.
-- When offline AND cached data is older than the configured interval, the widget should fall back to an intentionally vague display: "Weather: --" or show the last-known temp with a "Last updated" timestamp.
-- Use the orchestrator's `cacheFn` parameter (already supported but not used by WeatherWidget) to persist weather data to IndexedDB via `cacheContent()` from `playerService.js`, so even after a player restart offline, weather data survives.
-
-**Phase assignment:** Weather Widget phase.
+Issues that cause degraded functionality, poor UX, or maintenance burden, but not outright failures.
 
 ---
 
-### Pitfall 8: Screen Groups/Tags Cascade Deletes Can Orphan Content Assignments
+### Pitfall 6: Screenshot Storage Costs Grow Linearly and Are Never Cleaned at Fleet Scale
 
-**What goes wrong:** The existing `screen_groups` table uses `ON DELETE SET NULL` for `tv_devices.screen_group_id`. But campaigns target screen groups via `campaign_targets.target_id`. If a screen group is deleted while a campaign references it, the campaign target becomes orphaned (pointing to a UUID that no longer exists, since `campaign_targets.target_id` has no FK constraint on `screen_groups.id` -- the FK is polymorphic based on `target_type`).
+**What goes wrong:** The existing `cleanupOldScreenshots` function (line 227 of `screenshotService.js`) keeps the last 5 screenshots per device. With 500 devices, that is 2,500 files. But the function is called by the player device itself on every screenshot capture, using `supabase.storage.list()` which is an expensive operation at scale. More importantly, if a device goes offline permanently (removed, replaced, lost), its screenshots are never cleaned up because the cleanup runs on the device.
+
+**Why it happens:** Storage cleanup was designed for a small fleet (< 50 devices). The per-device cleanup approach does not account for decommissioned devices or storage growth over time.
 
 **Prevention:**
-- Add a `BEFORE DELETE` trigger on `screen_groups` that either:
-  a) Prevents deletion if active campaigns reference the group, or
-  b) Cascades the deletion to remove `campaign_targets` rows where `target_type = 'screen_group' AND target_id = OLD.id`.
-- The UI should warn before deleting a screen group: "This group is targeted by N active campaigns. Removing it will affect those campaigns."
-- When adding tags/filter-based targeting (dynamic groups), consider that tags are ephemeral -- a screen can be un-tagged at any time, which changes campaign targeting without any explicit action.
+- Implement server-side cleanup: a Supabase Edge Function or cron job that runs daily, listing all screenshot folders and deleting files older than 7 days AND files from devices that have been offline for > 30 days.
+- Remove the per-device cleanup from the screenshot capture path (it adds latency and API calls to an already expensive operation).
+- Set a Supabase Storage lifecycle policy on the `device-screenshots` bucket to auto-delete files older than 30 days.
+- Track screenshot storage usage per tenant in the `usage_quotas` system (migration 056) and alert when approaching limits.
 
-**Phase assignment:** Screen Groups/Tags phase.
+**Detection:**
+- Supabase Storage dashboard shows `device-screenshots` bucket growing by > 1GB/month.
+- `supabase.storage.list()` calls start timing out for devices with many screenshots.
+
+**Phase assignment:** Screenshot phase. Add server-side cleanup alongside periodic capture, not as an afterthought.
 
 ---
 
-### Pitfall 9: Menu Board Widget Data Schema is Deceptively Complex
+### Pitfall 7: Stuck Detection Recovery Creates Visible Content Glitches
 
-**What goes wrong:** A menu board seems simple (items + prices + categories), but real-world menu boards need:
-- Multiple price columns (sizes: S/M/L, or meal vs. a la carte)
-- Item availability toggling (86'd items in restaurant lingo)
-- Category ordering and sub-categories
-- Dietary icons/labels (vegan, gluten-free, allergens)
-- Currency formatting per tenant locale
-- Item images (optional, thumbnail-sized)
-- Time-based pricing (happy hour, lunch specials)
+**What goes wrong:** The current video stuck recovery in `ViewPage.jsx` (line 177) resets the video to the beginning and calls `.play()`:
+```javascript
+onVideoStuck: () => {
+  videoRef.current.currentTime = 0;
+  videoRef.current.play().catch(...);
+}
+```
+For page-level stuck recovery (line 186), it does a full page reload. Both approaches create a visible disruption: the video visibly restarts from the beginning, or the screen flashes white during reload. On a 4K lobby display, this is jarring.
 
-Building a simple `{name, price, category}` schema leads to an immediate rewrite when the first restaurant tenant needs sizes or allergen labels.
+**Why it happens:** Recovery prioritizes getting back to a working state as fast as possible, which is correct. But it does not consider minimizing the visual disruption of the recovery.
 
 **Prevention:**
-- Design the `menu_board_items` table with:
-  ```sql
-  id UUID PRIMARY KEY,
-  tenant_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  menu_board_id UUID NOT NULL REFERENCES menu_boards(id) ON DELETE CASCADE,
-  category TEXT NOT NULL,
-  category_order INT DEFAULT 0,
-  name TEXT NOT NULL,
-  description TEXT,
-  prices JSONB DEFAULT '[]', -- [{label: 'Regular', amount: 9.99}, {label: 'Large', amount: 12.99}]
-  tags TEXT[] DEFAULT '{}', -- ['vegan', 'gluten-free', 'spicy']
-  image_url TEXT,
-  is_available BOOLEAN DEFAULT true,
-  sort_order INT DEFAULT 0,
-  ```
-- Use JSONB for prices to handle variable price columns without schema changes.
-- The widget renderer should gracefully handle items with 0, 1, or multiple prices.
-- Currency formatting should use the tenant's locale or an explicit currency setting on the menu board, not hardcode `$`.
+- For video stuck: instead of resetting to `currentTime = 0`, skip to the next playlist item. A stuck video is likely a codec or memory issue with that specific file; replaying it will likely get stuck again.
+- For page stuck: instead of `window.location.reload()`, try a soft recovery first: re-mount the content components via React state change. Only escalate to a full reload if the soft recovery does not resolve within 10 seconds.
+- Add a "recovery in progress" overlay: a simple black screen with the logo shown for 1-2 seconds during recovery, which looks intentional rather than broken.
+- On WebOS and Tizen, perform recovery by destroying and recreating the video element rather than reloading the page. These platforms leak memory on reload, making the problem worse.
 
-**Phase assignment:** Menu Board Widget phase. Needs research into what competitors (Yodeck, Rise Vision, ScreenCloud) offer for menu boards.
+**Detection:**
+- Playback tracking shows gaps of 1-3 seconds in scene playback that correlate with stuck detection logs.
+- Users report "the screen blinks sometimes."
+
+**Phase assignment:** Auto-recovery phase, when implementing the tiered recovery strategy.
 
 ---
 
-### Pitfall 10: Widget Type Switching Loses Configuration
+### Pitfall 8: IndexedDB Quota Exceeded on Constrained Devices When Adding Diagnostic Data
 
-**What goes wrong:** In `WidgetControls` within `PropertiesPanel.jsx`, changing the `widgetType` via `handleTypeChange(newType)` calls `onUpdate({ widgetType: newType })`. This preserves the old widget's props. When switching from "weather" (which has `location`, `units`, `style`) to "clock" (which has `size`, `textColor`), the stale weather props remain in the block JSON. This causes:
-- Bloated scene JSON with irrelevant properties.
-- Potential confusion when switching back (old values reappear unexpectedly).
-- For widgets that share prop names with different semantics (e.g., `style` means 'minimal'|'card' for weather but could mean something else for a future widget), cross-contamination occurs.
+**What goes wrong:** The existing `cacheService.js` allocates 500MB for media and 100MB for scenes (line 32-41). Adding diagnostic telemetry storage (device metrics history, screenshot queue for offline sync, error logs, content verification results) to IndexedDB pushes total storage demand toward or past the browser's IndexedDB quota. On WebOS (typically 50-100MB total quota for web storage) and Tizen (varies by model, 50-500MB), this can exceed the platform limit even without considering the existing 600MB media/scene allocation (which works because LRU eviction prevents actual usage from reaching the limit).
+
+**Why it happens:** The `CACHE_LIMITS` in `cacheService.js` define soft limits enforced by JavaScript LRU eviction, not hard limits from the browser. The actual browser quota on constrained devices is much lower than the sum of configured limits. Adding new stores to IndexedDB adds entries that the existing eviction logic does not manage.
+
+**Consequences:**
+- `QuotaExceededError` thrown by IndexedDB, caught or uncaught, which can corrupt the database or prevent new entries.
+- On some WebOS versions, exceeding quota causes the entire IndexedDB to become read-only until the app is restarted.
+- Offline mode breaks: the player cannot cache new content because IndexedDB is full of diagnostic data.
 
 **Prevention:**
-- When `handleTypeChange` is called, reset props to the new widget type's defaults:
-  ```js
-  function handleTypeChange(newType) {
-    const defaults = WIDGET_DEFAULTS[newType] || {};
-    onUpdate({ widgetType: newType, props: { textColor: block.props?.textColor, ...defaults } });
-  }
-  ```
-- Preserve only universal props (textColor, size) and clear type-specific props.
-- Define `WIDGET_DEFAULTS` as a const map for each widget type.
+- **Add diagnostic data to a separate IndexedDB database** with its own size limit (e.g., 10MB). This prevents diagnostic data from competing with content cache.
+- **Implement global quota awareness:** Before writing, check `navigator.storage.estimate()` (where available) and compare remaining quota against the write size. Skip the write if quota is low.
+- **Prioritize content cache over diagnostic cache:** If storage is tight, clear diagnostic data first, then old screenshots, then stale content. Never evict currently-playing content.
+- **On WebOS/Tizen, reduce diagnostic storage to in-memory only** with periodic flush to server. Do not persist diagnostic data locally on constrained devices.
+- **Size the existing `CACHE_LIMITS` dynamically:** Detect available storage at startup and set limits proportionally instead of using hardcoded 500MB/100MB values.
 
-**Phase assignment:** Any widget phase. Should be fixed early as it affects the editor experience for all new widgets.
+**Detection:**
+- Player logs show "QuotaExceededError" or "Failed to cache content" errors.
+- Devices lose offline capability even though they were previously caching successfully.
+
+**Phase assignment:** Telemetry phase. Must be considered when designing the local telemetry storage schema.
 
 ---
 
-### Pitfall 11: Multiple Widgets of Same Type Create Redundant Fetches
+### Pitfall 9: Supabase RLS Bypass via Player Screenshot/Telemetry Endpoints
 
-**What goes wrong:** The `useWidgetData` hook registers with the orchestrator using `sourceKey`. The `WeatherWidget` constructs its key as `weather:${location}:${units}`. If two weather widgets on the same slide have the same location and units, the orchestrator correctly deduplicates (subscriber count increments). But if they have DIFFERENT locations (e.g., "Miami, FL" and "New York, NY"), the orchestrator treats them as separate sources -- which is correct, but the 10-second tick loop will fire both fetches in the same tick, potentially hitting API rate limits.
+**What goes wrong:** The player runs as the `anon` role (anonymous Supabase key). The existing `store_device_screenshot` and `update_device_status` functions use `SECURITY DEFINER` to bypass RLS, which is correct. But adding new telemetry endpoints (device metrics, content verification results, error reports) as `SECURITY DEFINER` functions without proper input validation allows any client with the public anon key to write arbitrary data to any device's records.
+
+The existing `store_device_screenshot` (migration 075, line 69) takes a `p_device_id` and `p_screenshot_url` but does NOT verify that the caller is actually that device. Anyone with the public Supabase anon key can call `store_device_screenshot('any-device-id', 'https://evil.com/image.jpg')` and overwrite another device's screenshot.
+
+**Why it happens:** `SECURITY DEFINER` functions run as the function owner (typically `postgres`), bypassing all RLS policies. This is necessary for player devices (which are anonymous), but it means the function itself must implement access control. The existing functions trust the device ID passed by the caller without verification.
+
+**Consequences:**
+- **Data poisoning:** An attacker (or a misconfigured device) writes false telemetry data for other devices, making the diagnostic dashboard unreliable.
+- **Screenshot spoofing:** Replace another tenant's device screenshot with an arbitrary image.
+- **Alert manipulation:** If telemetry endpoints can clear device status flags, an attacker could suppress alerts for offline devices.
+- **Cross-tenant data leak:** If telemetry endpoints return data (like the `update_device_status` function returns `needs_screenshot_update`), a device can poll another device's status.
 
 **Prevention:**
-- The orchestrator already has `JITTER_MAX_MS = 30_000` for initial stagger. This helps, but when N different-location weather widgets exist, they can all fire simultaneously after the jitter period.
-- Add a `maxConcurrentFetches` limit to the orchestrator (e.g., 2 at a time). The existing tick loop iterates over all entries; change it to queue fetches and limit concurrent execution.
-- For weather specifically, the server-side proxy (when implemented per Pitfall 1) can batch multiple locations in a single request.
+- **Implement device authentication tokens:** After OTP pairing, issue a per-device JWT or API key stored in `localStorage`. All player RPC calls must include this token. The `SECURITY DEFINER` function validates the token against the `tv_devices` table before executing.
+- **Alternatively, use a lightweight device session:** On pairing, store a random `device_secret` in both `tv_devices.device_secret_hash` (server) and `localStorage` (device). Each RPC validates `p_device_secret` against the hash. This avoids full JWT infrastructure.
+- **At minimum, validate device ownership in existing functions:** The `store_device_screenshot` function should verify that the device exists and belongs to a valid tenant. Add `PERFORM 1 FROM tv_devices WHERE id = p_device_id` and raise an exception if not found.
+- **Rate-limit SECURITY DEFINER functions:** Add a `last_api_call_at` column to `tv_devices` and reject calls more frequent than 1/second to prevent brute-force scanning of device IDs.
 
-**Phase assignment:** Weather Widget phase (immediate) and Orchestrator Enhancement (if needed based on widget count).
+**Detection:**
+- Supabase logs show `store_device_screenshot` or `update_device_status` calls with device IDs that do not match the geographic origin IP.
+- Screenshot URLs in `tv_devices.last_screenshot_url` point to external domains.
+
+**Phase assignment:** Must be addressed before any new telemetry endpoints are added. Retrofitting authentication onto existing functions is easier than doing it for all endpoints at once.
 
 ---
 
-### Pitfall 12: Video in Scene Blocks Does Not Exist Yet
+### Pitfall 10: Recovery and Telemetry Timers Pile Up After Multiple Hot Reloads
 
-**What goes wrong:** The existing scene editor supports block types: `text`, `image`, `shape`, `widget`. There is no `video` block type. Video playback currently only exists as a playlist item in `ZonePlayer.jsx` and `ViewPage.jsx`. Adding video as a scene block (e.g., a background video or a video element within a designed scene) requires adding an entirely new block type with its own:
-- PropertiesPanel controls (source URL, autoplay, loop, muted, fit mode)
-- EditorCanvas preview (thumbnail or first frame, not autoplay in editor)
-- LivePreviewWindow rendering (actual video playback)
-- SceneRenderer player rendering (with offline caching considerations)
-- Stuck detection integration
+**What goes wrong:** The player uses multiple `setInterval` timers:
+- Heartbeat: 30s (`usePlayerHeartbeat.js` line 96)
+- Content poll: 30s (`usePlayerContent.js` line 307)
+- Stuck detection: 10s (`useStuckDetection.js` line 103)
+- Data refresh: 10s (`useDataRefreshOrchestrator.js`)
+- PIN hash fetch: 30s (`ViewPage.jsx` line 209)
+- Playback tracking flush: 30s (`playbackTrackingService.js`)
 
-Developers might try to reuse the playlist video code, but scene block video has fundamentally different requirements (positioned within a layout, potentially with other elements overlaid, looping as background).
+React effects clean these up on unmount, but the `initOfflineService()`, `initTracking()`, and `analytics.initSession()` calls in `ViewPage.jsx` run at the module level or in effects without proper idempotency guards. If the ViewPage component re-mounts (which happens on hot module replacement during development, React Strict Mode double-mounting, or after a soft recovery that re-renders the route), listeners and timers can double up.
 
-**Prevention:**
-- Define `video` as a new block type alongside `text`, `image`, `shape`, `widget`.
-- In the editor, show a thumbnail/poster frame with a play button overlay (do NOT autoplay video in the editor -- it kills performance when editing).
-- In the player (`SceneBlock`), render `<video>` with `autoPlay muted loop playsInline` for background videos, and `autoPlay muted playsInline` (no loop) for timed videos that should advance the slide.
-- Video blocks need a `loop` prop: `true` = loop continuously (background video), `false` = play once then show last frame or advance slide.
-- Cache the video blob to IndexedDB via `offlineService.js` for offline playback. Videos are large -- implement size limits (e.g., max 100MB per video in cache).
+The `offlineService.js` uses module-level state (`isOfflineMode`, `lastHeartbeatSuccess`, `offlineListeners`), which persists across component re-mounts. The `offlineListeners` array (line 79) accumulates duplicate listeners on each mount because the `addOfflineListener` is called but the returned cleanup function is not called on unmount.
 
-**Phase assignment:** Video Playback phase. Consider if video is a new block type or handled through the existing playlist/zone system.
-
----
-
-### Pitfall 13: EditorCanvas and SceneRenderer Are Diverging Renderers
-
-**What goes wrong:** The codebase has THREE places where scene blocks are rendered:
-1. `EditorCanvas.jsx` (`renderBlockContent` function) -- mock/interactive preview in the editor
-2. `LivePreviewWindow.jsx` (`PreviewBlock` and `PreviewWidget` functions) -- pixel-accurate preview
-3. `SceneRenderer.jsx` (`SceneBlock` and `SceneWidgetRenderer` functions) -- actual player rendering
-
-Each has its own switch statement for widget types. When a new widget is added, it must be added to ALL THREE renderers. Currently, the widget lists are already slightly out of sync (e.g., `CountdownWidget` was added to all three, but the rendering code varies). Each addition risks drift.
+**Why it happens:** Mixing module-level singletons (`offlineService.js`, `playbackTrackingService.js`) with React component lifecycle creates cleanup gaps. Adding more timers for telemetry and recovery makes this worse.
 
 **Prevention:**
-- Create a shared `WIDGET_REGISTRY` constant that maps widget types to their components:
-  ```js
-  export const WIDGET_REGISTRY = {
-    clock: { editor: ClockEditorPreview, player: ClockWidget, icon: Clock, label: 'Clock' },
-    weather: { editor: WeatherEditorPreview, player: WeatherWidget, icon: CloudSun, label: 'Weather' },
-    // ...
-  };
-  ```
-- Each renderer imports the registry and looks up the component by type, eliminating the switch statement duplication.
-- New widgets are added in one place (the registry), and all three renderers automatically pick them up.
-- The `WidgetControls` in `PropertiesPanel.jsx` already has a `widgetTypes` array at line 648 -- this should also derive from the registry.
+- **Make all service initializations idempotent:** `initOfflineService()` should check `if (initialized) return` at the top. Same for `initTracking()`.
+- **Use a single player lifecycle manager:** Create a `PlayerLifecycleManager` singleton that owns all timers and listeners. The React component calls `.start()` on mount and `.stop()` on unmount. The manager internally deduplicates.
+- **Add timer auditing:** In development mode, track all active `setInterval` IDs. Warn in console if more than expected number of timers are running. This catches the double-mount problem immediately.
+- **For new telemetry timers:** Do not add new `setInterval` calls. Instead, piggyback on the existing heartbeat interval. The heartbeat callback already runs every 30s; add telemetry collection to it rather than creating a parallel timer.
 
-**Phase assignment:** Should be done BEFORE adding any new widget types. First phase that adds a widget should refactor to registry pattern.
+**Detection:**
+- DevTools Performance panel shows increasing timer count over time.
+- `offlineListeners` array length grows beyond 1-2 entries.
+- Heartbeat logs show duplicate entries with the same timestamp.
 
----
-
-### Pitfall 14: Menu Board Widget Font Sizing for TV Display
-
-**What goes wrong:** Menu board content is viewed on TVs from 10-30 feet away. If the widget uses standard web font sizes or responsive `clamp()` values designed for desktop/tablet viewing, the text will be unreadable on a 55" TV mounted 15 feet away. The existing widgets use `clamp(0.3rem, 0.7vw, 0.5rem)` which is appropriate for scene block widgets that are small overlay elements, but a menu board is often full-screen.
-
-**Prevention:**
-- Menu board text minimum size should be 24px (item names) and 18px (descriptions) at 1920x1080 resolution. This translates to roughly 1.25rem and 0.94rem at 16px root.
-- Category headers should be at least 32px.
-- Prices should be the most prominent text on the board (at least 28px).
-- The widget should have explicit font size controls in PropertiesPanel rather than relying on the generic "size: small/medium/large" pattern.
-- Test readability at 1920x1080 displayed on a monitor from 10+ feet away.
-
-**Phase assignment:** Menu Board Widget phase.
+**Phase assignment:** Should be addressed early as a foundation cleanup before adding new timers/listeners.
 
 ---
 
 ## Minor Pitfalls
 
-### Pitfall 15: QR Code Widget Minimum Size for Scannability
-
-**What goes wrong:** QR codes have a minimum physical size to be scannable by phone cameras. At 1920x1080, a QR code widget block sized at 10% width (192px) might be too small to scan reliably, especially with high error correction levels that make the QR pattern denser. The editor does not warn about this.
-
-**Prevention:**
-- Add a minimum size warning in the PropertiesPanel when the QR code block is smaller than 15% of canvas width/height.
-- Set error correction to 'M' by default (not 'H') -- high error correction makes the QR denser and harder to scan at small sizes.
-- The `qrScale` prop (currently 0.5-2.0 range) should default to 1.0 and the editor should show a "may be too small to scan" warning below 0.7.
-
-**Phase assignment:** QR Code Widget phase.
+Issues that cause annoyances, technical debt, or minor UX problems.
 
 ---
 
-### Pitfall 16: Screen Group Tag Queries Without Indexes
+### Pitfall 11: Screenshot Capture Blocks the UI Thread
 
-**What goes wrong:** The existing `screen_groups` table has a `tags TEXT[] DEFAULT '{}'` column. If filtering screens by tag (e.g., "show all screens tagged 'lobby'"), the query `WHERE 'lobby' = ANY(tags)` does not use the standard B-tree index on the `tags` column. PostgreSQL requires a GIN index for array containment operators.
+**What goes wrong:** `html2canvas` runs synchronously on the main thread. For complex scenes with many DOM elements (scene editor with 20+ layers, data tables, RSS tickers), capture can take 500ms-2s. During this time, video playback stutters, animations freeze, and CSS transitions jump.
 
 **Prevention:**
-- Add a GIN index on the tags column: `CREATE INDEX idx_screen_groups_tags ON screen_groups USING GIN (tags);`
-- Similarly, if tags are added to `tv_devices` for dynamic grouping: `CREATE INDEX idx_tv_devices_tags ON tv_devices USING GIN (tags);`
-- Use the `@>` operator for tag matching (which uses GIN indexes): `WHERE tags @> ARRAY['lobby']` instead of `WHERE 'lobby' = ANY(tags)`.
+- Run screenshot capture on a `requestIdleCallback` boundary so it only executes when the browser is idle.
+- Reduce capture scale further on constrained devices (0.25x instead of 0.5x).
+- Add a `screenshot-ignore` class to animated/video elements (the existing `ignoreElements` filter at line 48 of `screenshotService.js` already supports this -- ensure all animated widgets use it).
+- Consider using `OffscreenCanvas` in a Web Worker for the compositing step (available in Chrome 69+, which covers all target platforms except some older WebOS versions).
 
-**Phase assignment:** Screen Groups/Tags phase.
+**Phase assignment:** Screenshot phase optimization, not blocking for initial implementation.
 
 ---
 
-### Pitfall 17: Clock Widget Interval Leak on Slide Transitions
+### Pitfall 12: Content Hash Comparison is Unreliable for Change Detection
 
-**What goes wrong:** `ClockWidget.jsx` creates a `setInterval(..., 1000)` in a `useEffect`. When the scene advances to the next slide and the clock widget unmounts, the cleanup function clears the interval. But during the slide transition animation (which can last 700-1500ms per `SlideTransitionControls`), both the old and new slide may be mounted simultaneously (for crossfade/overlap transitions). This means two clock intervals run in parallel during transitions.
+**What goes wrong:** The existing `generateContentHash` in `playerService.js` (line 348) uses a simple djb2-style hash of `JSON.stringify(content)`. This hash is:
+1. Not collision-resistant (32-bit integer space = high collision probability with many content variants).
+2. Order-dependent: `{a:1, b:2}` hashes differently than `{b:2, a:1}`, but both represent the same content.
+3. Includes transient fields: timestamps, server-generated IDs, and other metadata that change on every fetch even when the actual content is identical.
+
+For content verification, relying on this hash means frequent false positives (content appears changed when it has not) and occasional false negatives (content actually changed but hash collides).
 
 **Prevention:**
-- This is a minor issue (intervals are cleaned up correctly by React's effect cleanup, and two 1-second intervals for 1.5 seconds is negligible).
-- However, for widgets that do heavier work on their interval (weather fetches, RSS re-renders), this overlap during transitions can cause visible flickering as data refreshes mid-transition.
-- Solution: Use `requestAnimationFrame` for visual-only updates (clock display) and debounce data fetches to ignore fetches that occur during the transition window.
+- Use a canonical hash: sort object keys before stringifying, exclude transient fields (timestamps, IDs), and use SHA-256 (available via `crypto.subtle.digest`) instead of djb2.
+- Better: have the server compute and return a `content_hash` column on playlists/scenes (the existing `content_hash` in `scene_slides` is a good pattern). Compare server-provided hashes rather than computing client-side.
 
-**Phase assignment:** Clock/Date Widget phase. Low priority.
+**Phase assignment:** Content verification phase prerequisite.
 
 ---
 
-### Pitfall 18: Portrait Mode Content in Landscape Canvas During Scheduling
+### Pitfall 13: Device Metrics Collection Varies Wildly Across Platforms
 
-**What goes wrong:** The scheduling system (`schedule_entries`) assigns content to screens without awareness of orientation. A portrait-designed scene can be scheduled to a landscape screen (and vice versa). The player will render it but it will look wrong (stretched, letterboxed, or cropped depending on implementation).
+**What goes wrong:** Collecting CPU usage, memory usage, temperature, and network stats for diagnostic telemetry requires different APIs on each platform:
+- **Web (Chrome):** `navigator.deviceMemory`, `navigator.connection`, Performance APIs. No CPU or temperature.
+- **Android WebView:** Requires a JavaScript bridge to native code. `window.Android?.getSystemStats()` pattern. Must be added to the APK.
+- **iOS WKWebView:** Similar native bridge requirement. Much more restricted than Android.
+- **WebOS:** `webOS.service.request("luna://com.webos.service.tv.systemproperty/getSystemInfo", ...)` for some metrics. Available in LG signage mode only.
+- **Tizen:** `tizen.systeminfo.getPropertyValue("CPU", ...)` for CPU, `tizen.systeminfo.getPropertyValue("MEMORY", ...)` for memory. Requires Tizen privilege declarations.
+
+Building a telemetry system that assumes uniform metric availability across all platforms will either fail silently on half the fleet or require extensive platform-specific code.
 
 **Prevention:**
-- Add an `orientation` column to `scenes`, `layouts`, and `tv_devices` tables.
-- When creating a schedule entry or campaign target, validate that the content orientation matches the target screen orientation. Show a warning in the UI if mismatched.
-- The player should handle mismatches gracefully: letterbox (add black bars) rather than stretch.
+- Define a `DeviceCapabilities` interface that each platform adapter reports. Start with the intersection of what is available everywhere (memory pressure, network type, error counts) and treat platform-specific metrics (CPU %, temperature) as optional extensions.
+- Use the user agent to detect the platform at player startup and load the appropriate metrics collector module.
+- Accept that web players will have the least metrics and Android/WebOS/Tizen players will have the most. Design the telemetry dashboard to gracefully show "N/A" for unavailable metrics rather than showing misleading zeros.
 
-**Phase assignment:** Portrait Mode phase. Depends on orientation being a first-class field in the schema.
+**Phase assignment:** Telemetry phase. This is an architecture decision that must be made upfront to avoid per-platform rewrites.
 
 ---
 
-### Pitfall 19: Menu Board Price Updates Without Realtime Push
+### Pitfall 14: Existing `usePlayerHeartbeat` Does Not Distinguish Intentional Restarts from Crashes
 
-**What goes wrong:** Menu board items stored in the database are fetched by the player periodically. If a restaurant changes a price at 11:30 AM, the player might not reflect the change until the next poll (which could be 5-10 minutes later via the orchestrator). For a menu board, stale pricing is a legal/compliance issue in some jurisdictions.
+**What goes wrong:** When a device restarts (due to auto-recovery, admin command, OOM kill, or power cycle), the heartbeat resumes immediately. From the server's perspective, there is a gap in heartbeats followed by normal operation. There is no telemetry indicating WHY the restart happened or whether it was intentional (admin-triggered reboot command) vs. unintentional (crash + auto-restart).
 
-**Prevention:**
-- Use the existing Supabase Realtime subscription pattern (already in `SceneRenderer.jsx` via `subscribeToDataSource`) to push menu board changes immediately.
-- The menu board widget should register with the orchestrator for periodic refresh (as backup) AND subscribe to Realtime for instant updates.
-- The `DataRefreshContext` already supports this dual approach: the orchestrator handles scheduled refreshes while Realtime triggers immediate re-fetches.
-
-**Phase assignment:** Menu Board Widget phase.
-
----
-
-### Pitfall 20: Weather Widget Location Geocoding Ambiguity
-
-**What goes wrong:** The current `getWeather()` function accepts a free-text city name (e.g., "Springfield"). OpenWeatherMap's geocoding returns the most popular match, which may not be the user's intended city (there are 34 Springfields in the US). The user types "Springfield" expecting Springfield, IL but gets Springfield, MA.
+**Why it happens:** The existing command handling reports results for intentional restarts (`reportCommandResult(commandId, true)` at line 59 of `usePlayerCommands.js`), but the restart happens via `setTimeout(() => window.location.reload(), 500)`, and if the page unloads before the report is sent, the command result is lost.
 
 **Prevention:**
-- Use OpenWeatherMap's Geocoding API to show an autocomplete/disambiguation dropdown in the PropertiesPanel when the user types a location.
-- Store the resolved `lat,lon` coordinates in the widget props, not just the city name string. This eliminates ambiguity at display time.
-- The existing `getWeatherByCoords()` function already supports coordinate-based lookups.
+- Store restart reason in `localStorage` before restarting: `localStorage.setItem('last_restart_reason', JSON.stringify({reason: 'admin_reboot', commandId, timestamp}))`. On next boot, read this and include it in the first heartbeat.
+- For crash restarts (where no `last_restart_reason` exists), report the restart as "unplanned" in the first heartbeat. Check if the previous session ended with a `beforeunload` event (store a `clean_shutdown` flag).
+- Track restart frequency per device: if a device has > 3 unplanned restarts per hour, flag it for investigation.
 
-**Phase assignment:** Weather Widget phase. Can be deferred to a polish pass if initial implementation uses unambiguous city names (e.g., "Springfield, IL, US").
+**Phase assignment:** Auto-recovery phase, integrated with the restart loop prevention from Pitfall 1.
 
 ---
 
 ## Phase-Specific Warnings
 
-| Phase Topic | Likely Pitfall | Mitigation | Severity |
-|---|---|---|---|
-| Weather Widget | API key exposure (P1) | Build weather-proxy Edge Function first | CRITICAL |
-| Weather Widget | Offline staleness (P7) | Add cacheFn to orchestrator registration, stale indicator | MODERATE |
-| Weather Widget | Location ambiguity (P20) | Store lat/lon, not city name | MINOR |
-| Weather Widget | Concurrent fetch rate limits (P11) | Server-side proxy batching, orchestrator concurrency limit | MODERATE |
-| Video Playback | Cross-platform autoplay (P2) | Codec checks, canplaythrough timeout, poster fallback | CRITICAL |
-| Video Playback | Scene block type missing (P12) | Define video block type, editor vs player rendering | MODERATE |
-| Screen Groups/Tags | Cascade delete orphans (P8) | Before-delete trigger, UI warning | MODERATE |
-| Screen Groups/Tags | Tag query performance (P16) | GIN index on TEXT[] columns | MINOR |
-| Portrait Mode | Breaks existing layouts (P3) | Add orientation to schema, change canvas aspect ratio | CRITICAL |
-| Portrait Mode | Scheduling mismatch (P18) | Orientation validation on assignment | MODERATE |
-| Clock/Date Widget | Wrong timezone (P6) | Thread screen timezone to widget props | CRITICAL |
-| Clock/Date Widget | Interval leak during transitions (P17) | Use requestAnimationFrame for visual updates | MINOR |
-| QR Code Widget | Missing import crashes player (P5) | Add qrcode.react import, add render test | CRITICAL |
-| QR Code Widget | Too small to scan (P15) | Minimum size warning in editor | MINOR |
-| Menu Board Widget | Schema complexity (P9) | JSONB prices, tags array, availability toggle | MODERATE |
-| Menu Board Widget | Font sizing for TV (P14) | Explicit size controls, test at viewing distance | MODERATE |
-| Menu Board Widget | Stale pricing (P19) | Realtime subscription for instant updates | MODERATE |
-| All Widget Phases | Missing tenant_id (P4) | Migration checklist, pre-deploy RLS verification | CRITICAL |
-| All Widget Phases | Renderer divergence (P13) | Widget registry pattern before adding new types | MODERATE |
-| All Widget Phases | Widget type switching (P10) | Reset props to defaults on type change | MINOR |
+| Phase Topic | Likely Pitfall | Mitigation |
+|---|---|---|
+| Screenshot Capture | html2canvas blank on WebOS/Tizen (Pitfall 2) | Validate blob size before upload; platform-specific capture fallbacks |
+| Screenshot Capture | Storage costs grow unbounded (Pitfall 6) | Server-side cleanup cron; lifecycle policies on storage bucket |
+| Screenshot Capture | UI thread blocking (Pitfall 11) | requestIdleCallback; reduce scale on constrained devices |
+| Auto-Recovery | Infinite restart loop (Pitfall 1) | localStorage restart counter; exponential backoff; static fallback screen |
+| Auto-Recovery | Visible glitches during recovery (Pitfall 7) | Skip-to-next instead of replay; soft recovery before hard reload |
+| Auto-Recovery | No restart reason tracking (Pitfall 14) | localStorage reason tracking; unplanned restart detection |
+| Content Verification | Blocking playback (Pitfall 4) | Background verification only; never block; play-then-verify |
+| Content Verification | Unreliable hash comparison (Pitfall 12) | Server-provided SHA-256 hashes; canonical serialization |
+| Telemetry | Database overwhelm (Pitfall 3) | Consolidate into single heartbeat RPC; batch writes; adaptive polling |
+| Telemetry | IndexedDB quota exceeded (Pitfall 8) | Separate diagnostic database; dynamic limits; priority eviction |
+| Telemetry | Timer accumulation (Pitfall 10) | Idempotent init; single lifecycle manager; piggyback on existing heartbeat |
+| Telemetry | Cross-platform metric variance (Pitfall 13) | DeviceCapabilities interface; optional metrics; graceful N/A |
+| Alerts | Alert noise and fatigue (Pitfall 5) | Root cause correlation; parent-child hierarchy; fleet-level dedup |
+| All Phases | RLS bypass via anon endpoints (Pitfall 9) | Device authentication token; input validation in SECURITY DEFINER functions |
 
-## Integration Risks Specific to BizScreen
+---
 
-### Risk: Orchestrator Tick Loop Overload with 7 New Widget Types
+## Anti-Patterns Specific to Cross-Platform Player Hardening
 
-The current `useDataRefreshOrchestrator` ticks every 10 seconds and iterates all registered sources. With existing widgets (RSS, social feed, data table, weather) plus 7 new sources (potentially 15-20 active registrations per scene), the tick loop becomes a performance concern on low-powered signage hardware.
+### Anti-Pattern: "Works in Chrome, Ship It"
+Every feature must be tested on at least Chrome (web), one Android WebView device, and one WebOS or Tizen panel before shipping. The gap between Chrome's capabilities and a 2019 LG WebOS browser is enormous. Allocate 30% of each phase's time for cross-platform testing and workarounds.
 
-**Mitigation:** The tick loop is O(n) with n = registered sources, and each iteration is a simple timestamp comparison (no I/O). This is fine for 20-50 sources. The real concern is concurrent fetches triggered by the tick -- add a `maxConcurrentFetches` guard.
+### Anti-Pattern: "More Timers = More Monitoring"
+Do not add new `setInterval` calls for each hardening feature. Each timer is a potential memory leak, a source of timer drift, and a contributor to connection pool pressure. The heartbeat is the single metronome; all other periodic operations should piggyback on it.
 
-### Risk: IndexedDB Storage Quota on Low-End Devices
+### Anti-Pattern: "Fail Closed for Safety"
+In server software, failing closed (deny by default) is correct. In signage players, failing closed means a blank screen. Every verification, check, and validation must have a "play anyway" fallback. The worst thing a signage player can do is show nothing.
 
-Adding video caching, weather caching, and menu board caching to IndexedDB pushes storage requirements. WebOS devices typically allow 50-100MB for IndexedDB. Android WebView allows more (based on device storage), but some embedded signage players have very limited storage.
+### Anti-Pattern: "Collect Everything, Filter Later"
+Telemetry that sends raw data and plans to "filter on the server" always overwhelms the database before filtering is implemented. Design the collection to be minimal and aggregated from day one. Collect counts and rates, not raw events.
 
-**Mitigation:** Implement a cache eviction strategy based on content priority: video caches are evicted first (they are largest and can be re-fetched), followed by weather (small, refreshes frequently), followed by menu boards (small, critical for display).
+### Anti-Pattern: "Same Alert for Every Device"
+500 devices losing connectivity simultaneously due to a network outage should produce 1 alert, not 500. Fleet-level deduplication is not a nice-to-have; it is essential for operational sanity.
 
-### Risk: Design JSON Schema Growth
-
-Each new widget type adds props to the `design_json` JSONB column on scenes. The column is not validated server-side. Malformed or oversized JSON can cause player rendering errors.
-
-**Mitigation:** Add a JSON schema validation function (or at minimum a max size check) in the scene save flow. The design JSON for a single slide should not exceed 100KB. Log a warning if it exceeds 50KB.
+---
 
 ## Sources
 
-- BizScreen codebase analysis (primary source, all findings verified against actual code):
-  - `/Users/massimodamico/bizscreen/src/services/weatherService.js` -- API key exposure pattern
-  - `/Users/massimodamico/bizscreen/src/player/components/widgets/QRCodeWidget.jsx` -- missing import
-  - `/Users/massimodamico/bizscreen/src/player/components/widgets/ClockWidget.jsx` -- timezone handling
-  - `/Users/massimodamico/bizscreen/src/player/components/widgets/WeatherWidget.jsx` -- orchestrator integration
-  - `/Users/massimodamico/bizscreen/src/player/hooks/useDataRefreshOrchestrator.js` -- tick loop architecture
-  - `/Users/massimodamico/bizscreen/src/components/scene-editor/EditorCanvas.jsx` -- 16:9 hardcoding
-  - `/Users/massimodamico/bizscreen/src/player/components/SceneRenderer.jsx` -- renderer pattern
-  - `/Users/massimodamico/bizscreen/src/player/components/ZonePlayer.jsx` -- video playback pattern
-  - `/Users/massimodamico/bizscreen/supabase/migrations/026_screen_groups_and_campaigns.sql` -- RLS pattern
-  - `/Users/massimodamico/bizscreen/supabase/functions/rss-proxy/index.ts` -- Edge Function proxy pattern
-  - `/Users/massimodamico/bizscreen/src/player/offlineService.js` -- offline caching architecture
-
-- Confidence levels:
-  - Pitfalls 1, 3, 4, 5, 6, 10, 13: HIGH -- verified directly in code
-  - Pitfalls 2, 7, 8, 9, 11, 12, 14: MEDIUM -- based on code patterns and digital signage domain knowledge
-  - Pitfalls 15, 16, 17, 18, 19, 20: MEDIUM -- based on domain experience, not verified with external sources (WebSearch unavailable)
+- **Codebase analysis (HIGH confidence):** Direct reading of `screenshotService.js`, `usePlayerHeartbeat.js`, `useStuckDetection.js`, `offlineService.js`, `cacheService.js`, `alertEngineService.js`, `playerService.js`, `deviceSyncService.js`, `ViewPage.jsx`, `usePlayerContent.js`, `usePlayerCommands.js`, `useDataRefreshOrchestrator.js`, `playbackTrackingService.js`
+- **Schema analysis (HIGH confidence):** Direct reading of Supabase migrations 075 (screenshots), 082 (alerts), 096 (diagnostics), 072 (heartbeat)
+- **Domain expertise (MEDIUM confidence):** Cross-platform WebView behavior, IndexedDB quotas on smart TV platforms, html2canvas limitations on constrained hardware, signage industry patterns for fleet management and telemetry. These claims are based on training data and could not be verified with current web search due to tool unavailability. Platform-specific quota numbers and API availability should be validated against current device documentation during implementation.
