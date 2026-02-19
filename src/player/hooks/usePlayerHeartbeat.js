@@ -33,6 +33,59 @@ const STORAGE_KEYS = {
 const PLAYER_VERSION = '1.2.0';
 
 /**
+ * Collect device telemetry metrics from browser APIs.
+ * Each API call is individually try-catch wrapped so one failure
+ * never prevents other metrics from being collected.
+ * Returns whatever metrics the browser supports — partial results are fine.
+ *
+ * @returns {Promise<Object>} Metrics snapshot with collected_at timestamp
+ */
+async function collectDeviceMetrics() {
+  const metrics = { collected_at: new Date().toISOString() };
+
+  // Memory: navigator.deviceMemory (Chrome/Edge, approximate RAM in GB)
+  try {
+    if (navigator.deviceMemory) {
+      metrics.memory_gb = navigator.deviceMemory;
+    }
+  } catch { /* API not available */ }
+
+  // JS Heap: performance.memory (Chrome/Edge only, non-standard)
+  try {
+    if (performance.memory) {
+      metrics.js_heap_used_mb = Math.round(performance.memory.usedJSHeapSize / (1024 * 1024));
+      metrics.js_heap_total_mb = Math.round(performance.memory.totalJSHeapSize / (1024 * 1024));
+      metrics.js_heap_limit_mb = Math.round(performance.memory.jsHeapSizeLimit / (1024 * 1024));
+    }
+  } catch { /* API not available */ }
+
+  // Storage: navigator.storage.estimate() (Chrome/Edge/Firefox/Safari 17+)
+  try {
+    if (navigator.storage?.estimate) {
+      const est = await navigator.storage.estimate();
+      metrics.storage_used_mb = Math.round((est.usage || 0) / (1024 * 1024));
+      metrics.storage_quota_mb = Math.round((est.quota || 0) / (1024 * 1024));
+      metrics.storage_percent = est.quota ? Math.round((est.usage / est.quota) * 100) : null;
+    }
+  } catch { /* API not available */ }
+
+  // Network: navigator.connection (Chrome/Edge/Opera)
+  try {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn) {
+      metrics.network_type = conn.effectiveType;  // '4g', '3g', '2g', 'slow-2g'
+      metrics.network_downlink = conn.downlink;    // Mbps estimate
+      metrics.network_rtt = conn.rtt;              // Round-trip time in ms
+    }
+  } catch { /* API not available */ }
+
+  // Always available
+  metrics.online = navigator.onLine;
+
+  return metrics;
+}
+
+/**
  * Custom hook for managing device heartbeat and screenshot capture
  *
  * @param {string} screenId - Screen UUID from localStorage
@@ -51,8 +104,9 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
 
     const sendBeat = async () => {
       try {
+        const metrics = await collectDeviceMetrics();
         const contentHash = localStorage.getItem(STORAGE_KEYS.contentHash);
-        const statusResult = await updateDeviceStatus(screenId, PLAYER_VERSION, contentHash);
+        const statusResult = await updateDeviceStatus(screenId, PLAYER_VERSION, contentHash, metrics);
         lastActivityRef.current = Date.now();
 
         // Check if screenshot is requested

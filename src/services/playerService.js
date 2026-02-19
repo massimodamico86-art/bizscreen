@@ -197,20 +197,22 @@ export async function reportCommandResult(commandId, success = true, errorMessag
 }
 
 /**
- * Update device status (extended heartbeat with version info)
+ * Update device status (extended heartbeat with version info and telemetry)
  * @param {string} screenId - The screen UUID
  * @param {string} playerVersion - Current player version
  * @param {string} cachedContentHash - Hash of cached content
+ * @param {Object|null} metrics - Device telemetry metrics (memory, storage, network) as JSONB
  * @returns {Promise<{needs_screenshot_update: boolean}|null>} Status response or null on error
  */
-export async function updateDeviceStatus(screenId, playerVersion = null, cachedContentHash = null) {
+export async function updateDeviceStatus(screenId, playerVersion = null, cachedContentHash = null, metrics = null) {
   if (!screenId) return null;
 
   try {
     const { data, error } = await supabase.rpc('update_device_status', {
       p_device_id: screenId,
       p_player_version: playerVersion,
-      p_cached_content_hash: cachedContentHash
+      p_cached_content_hash: cachedContentHash,
+      p_metrics: metrics,
     });
 
     if (error) {
