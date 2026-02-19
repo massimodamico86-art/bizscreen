@@ -2,7 +2,7 @@
 
 ## What This Is
 
-BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, display live data from Google Sheets/CSV/RSS feeds/social media on screens, and monitor device status remotely. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices with data-driven widget orchestration.
+BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, display live data from Google Sheets/CSV/RSS feeds/social media on screens, play video content with HLS adaptive streaming, manage screen groups with tags, deploy screens in portrait or landscape orientation, display structured menu boards with realtime updates, and monitor device status remotely. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices with a centralized widget registry orchestrating 12+ widget types.
 
 ## Core Value
 
@@ -129,20 +129,30 @@ These capabilities shipped and are production-verified:
 - ✓ Unified data refresh orchestrator managing per-widget timers with deduplication — v3.1
 - ✓ No API keys exposed in client-side player bundle — v3.1
 
+**v3.2 Display Toolkit (2026-02-19):**
+- ✓ Centralized widget registry replacing 9 duplication sites with single-file registration — v3.2
+- ✓ Widget type switching resets props to new type's defaults — v3.2
+- ✓ Timezone-aware clock widget with 12h/24h, seconds toggle, analog SVG style — v3.2
+- ✓ Combined clock+date widget — v3.2
+- ✓ Clock/date/weather widgets use screen's assigned timezone — v3.2
+- ✓ QR code multi-type (URL/WiFi/text) with error correction and brand logo overlay — v3.2
+- ✓ Weather proxy Edge Function hiding API key server-side — v3.2
+- ✓ Weather forecast mode with multi-day layout — v3.2
+- ✓ Weather offline caching via IndexedDB — v3.2
+- ✓ Video playback in layout zones with HLS adaptive streaming (hls.js) — v3.2
+- ✓ Per-element video stall detection and recovery — v3.2
+- ✓ Screen group tag management with GIN-indexed filtering — v3.2
+- ✓ Playlist push to screen groups and bulk operations — v3.2
+- ✓ Per-screen portrait/landscape orientation with CSS rotation mismatch handling — v3.2
+- ✓ 3 portrait templates seeded (Info Board, Menu Strip, Social Wall) — v3.2
+- ✓ Orientation mismatch warnings in editor and scheduler — v3.2
+- ✓ Menu board CRUD with drag-and-drop reordering (@dnd-kit/sortable) — v3.2
+- ✓ Menu board widget with themed rendering, auto-pagination, Supabase Realtime — v3.2
+- ✓ Dietary/allergen tags and locale-aware currency formatting — v3.2
+
 ### Active
 
-## Current Milestone: v3.2 Display Toolkit
-
-**Goal:** Make BizScreen versatile enough for any vertical by providing the display building blocks every signage deployment needs.
-
-**Target features:**
-- Weather widget — live weather conditions & forecast on screen
-- Video playback — basic HTML5 MP4 in playlists and layout zones
-- Screen groups — hierarchical groups (folders) + flexible tags, push content to groups
-- Portrait mode — per-screen rotation setting, layout orientation adaptation
-- Clock & date widget — analog/digital clock, timezone-aware
-- QR code widget — dynamic QR code generation from URL/text
-- Menu board widget — structured menu items (name, price, description, category)
+(No active requirements — next milestone not yet planned)
 
 ### Out of Scope
 
@@ -161,9 +171,9 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (post v3.1):**
+**Current State (post v3.2):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- ~185,700 lines of JavaScript/JSX/CSS in src/
+- ~190,784 lines of JavaScript/JSX/CSS in src/
 - Unified onboarding flow (feature flag removed, unconditional)
 - Test suite: 2,079 unit tests, 1,191 E2E tests (all skips categorized and documented)
 - ESLint: zero warnings, zero errors, all rules at error level with pre-commit enforcement
@@ -175,11 +185,15 @@ These capabilities shipped and are production-verified:
 - Pre-commit hooks enforce ESLint at error level on all commits
 - Fabric.js SVG editor with stock asset panels (Unsplash proxy, Iconify icons, My Media)
 - Framer Motion animations throughout template gallery and editor (cardLift, scaleTap, stagger)
-- Unsplash proxy Edge Function with database cache and per-tenant rate limiting
-- RSS proxy Edge Function with sanitize-html and 15-min cache TTL
-- 5 data-driven widget types: DataTable, RssTicker, RssCard, SocialFeed, Countdown
+- 3 Edge Function proxies: Unsplash (stock photos), RSS (news feeds), Weather (OpenWeatherMap)
+- Centralized widget registry at `src/widgets/registry.js` with 12 widget types
+- 12 widget types: clock, date, clock-date, weather, qr, data-table, menu-board, rss-ticker, rss-card, social-feed, countdown, data-legacy
+- Video playback with hls.js light build for HLS adaptive streaming
+- Screen groups with tag management and GIN-indexed filtering
+- Portrait/landscape orientation with CSS rotation mismatch handling
+- Menu board CRUD with @dnd-kit/sortable and Supabase Realtime subscriptions
+- IndexedDB v4 with dataSources, rssFeeds, and WEATHER stores for offline caching
 - Unified data refresh orchestrator with per-widget timers, deduplication, and sync status
-- IndexedDB v3 with dataSources and rssFeeds stores for offline data caching
 - Best-of-3 E2E gate script in CI (90% threshold)
 - `src/__fixtures__/` shared test data pattern adopted (3 service tests)
 
@@ -187,7 +201,8 @@ These capabilities shipped and are production-verified:
 - ~900 E2E tests skipped (intentional: ~800 project-specific multi-project pattern, remainder categorized with SKIP REASON documentation)
 - Sentry alert environment set to "all" (will narrow to "production" once environment auto-creates)
 - Unsplash offline caching: TOS may conflict with offline player requirement (needs clarification before production use)
-- CountdownWidget not exported from barrel file (direct imports work, consistency fix only)
+- ZonePlayer.jsx handles legacy content types only — element-based layouts use separate pipeline (pre-existing architectural split)
+- WidgetType JSDoc typedef missing 'menu-board' (documentation-only gap, runtime works)
 
 **Codebase Mapping:**
 - `.planning/codebase/ARCHITECTURE.md` — system design
@@ -264,6 +279,20 @@ These capabilities shipped and are production-verified:
 | Dual-page state for fade transitions | currentPage vs displayedPage prevents content flash | ✓ Good — smooth pagination |
 | Orchestrator version state for re-renders | useMemo in useWidgetData triggers consumer updates | ✓ Good — efficient reactivity |
 | 200ms fade on DataTable/RssCard refresh only | Bulk content swaps need transition; tickers/social skip | ✓ Good — appropriate per widget |
+| Widget registry as single source of truth | Eliminates 9 duplication sites; one-file registration | ✓ Good — all 12 types in registry |
+| Duplicate resolveTimezone per widget | Avoids cross-component coupling; ~5 lines each | ✓ Good — simple, independent |
+| Intl.DateTimeFormat.formatToParts for analog clock | No TZDate dependency for hand positioning | ✓ Good — accurate angles |
+| Dual auth in weather-proxy Edge Function | JWTs for admin, anon key for unauthenticated players | ✓ Good — both paths work |
+| Client-side in-memory cache + server DB cache | 30min client / 15min server TTL layers | ✓ Good — reduced API calls |
+| hls.js light build for video streaming | Smaller bundle; full build not needed for signage | ✓ Good — HLS works |
+| Per-element stall detection in VideoPlayer | Layouts have multiple independent video zones | ✓ Good — independent recovery |
+| Client-side tag filtering on RPC results | <100 rows per tenant; RPC doesn't support .contains() | ✓ Good — fast enough |
+| CSS rotation wraps entire LayoutRenderer | Not individual elements; per anti-pattern guidance | ✓ Good — clean rotation |
+| No rotation for playlist-only mode | Playlists lack inherent aspect_ratio | ✓ Good — correct behavior |
+| Immediate-save CRUD for menu board editor | Each action calls service with optimistic local state | ✓ Good — responsive editing |
+| Nested DndContext for item reordering | Separate from category-level DndContext | ✓ Good — independent sorting |
+| Realtime re-fetch via refreshTrigger counter | Simpler than granular state patching | ✓ Good — reliable sync |
+| Browser timezone as editor preview default | Layouts are screen-agnostic; no inherent screen timezone | ✓ Good — reasonable default |
 
 ---
-*Last updated: 2026-02-13 after v3.2 Display Toolkit milestone started*
+*Last updated: 2026-02-19 after v3.2 Display Toolkit milestone*

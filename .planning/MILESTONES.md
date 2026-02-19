@@ -283,3 +283,40 @@
 
 ---
 
+
+## v3.2 Display Toolkit (Shipped: 2026-02-19)
+
+**Delivered:** Complete display toolkit making BizScreen versatile enough for any vertical — centralized widget registry, timezone-aware clock/date/weather widgets, QR codes with branding, video playback with HLS streaming, screen groups with tags, portrait mode, and structured menu boards with realtime updates.
+
+**Phases completed:** 56-63 (8 phases, 16 plans)
+
+**Key accomplishments:**
+
+- Centralized widget registry at `src/widgets/registry.js` replacing 9 duplication sites with single-file widget registration and automatic prop reset on type switch
+- Timezone-aware clock/date/weather widgets using screen-assigned timezone via Intl.DateTimeFormat, with analog SVG clock, forecast mode, and IndexedDB offline caching
+- QR code multi-type support (URL/WiFi/text) with error correction control, brand logo overlay, color customization, and QRCodeSVG import fix
+- Weather proxy Edge Function hiding OpenWeatherMap API key server-side, with database cache and dual auth (JWT + anon key for players)
+- Video playback with hls.js light build for HLS adaptive streaming, per-element stall detection, and poster frame editing in layout zones
+- Screen groups with chip-style tag management, GIN-indexed filtering, playlist push to groups, and bulk operations (delete, tag, assign)
+- Portrait mode with per-screen orientation, CSS rotation for mismatch playback, 3 portrait templates, and orientation warnings in editor/scheduler
+- Menu board widget with structured CRUD, @dnd-kit/sortable drag-and-drop, themed rendering, auto-pagination, Supabase Realtime updates, dietary tags, and locale-aware currency formatting
+
+**Stats:**
+
+- 124 files modified (+19,956 / -2,586 lines)
+- 83 commits over 6 days (2026-02-13 → 2026-02-19)
+- 8 phases, 16 plans
+- ~190,784 lines of JavaScript/JSX/CSS
+
+**Git range:** `0844ad2` → `7a37b4b`
+
+**Tech debt accepted:**
+
+- ZonePlayer.jsx handles legacy zone/playlist/media content types only — Yodeck-style element-based layouts use separate rendering pipeline (pre-existing architectural split)
+- WidgetType JSDoc typedef missing 'menu-board' — runtime registry works correctly, documentation-only gap
+- Scene mode in ViewPage does not apply portrait CSS rotation — scenes lack orientation metadata (by design per Phase 61-02)
+
+**What's next:** Next milestone planning
+
+---
+
