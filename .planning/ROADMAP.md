@@ -178,7 +178,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Layout editor preview renders clock/weather widgets using the screen's assigned timezone (not just the element-saved timezone)
   2. PinEntry component is properly imported in ViewPage, eliminating the runtime crash when kiosk-mode exit is triggered
-**Plans:** TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 63-01-PLAN.md — Thread timezone through layout/scene editor preview pipelines + fix PinEntry import
 
 ## Progress
 
