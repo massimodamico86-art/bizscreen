@@ -8,7 +8,7 @@
  * - Verify assignment persists
  */
 import { test, expect } from '@playwright/test';
-import { loginAndPrepare, navigateToSection } from './helpers.js';
+import { loginAndPrepare, navigateToSection, assertAppReady } from './helpers.js';
 
 test.describe('Screen Assignments', () => {
   // Only run on chromium (client) project - admin/superadmin have different dashboard
@@ -22,6 +22,7 @@ test.describe('Screen Assignments', () => {
       email: process.env.TEST_CLIENT_EMAIL,
       password: process.env.TEST_CLIENT_PASSWORD
     });
+    await assertAppReady(page, test);
   });
 
   test('can navigate to screens page', async ({ page }) => {

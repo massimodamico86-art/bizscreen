@@ -11,6 +11,7 @@
  */
 /* eslint-disable no-empty-pattern */
 import { test, expect } from '@playwright/test';
+import { assertAppReady } from './helpers.js';
 
 test.describe('Admin Panel', () => {
   // Only run on chromium-superadmin project
@@ -28,6 +29,7 @@ test.describe('Admin Panel', () => {
     // Storage state already has auth - just navigate to the app
     await page.goto('/app');
     await page.waitForLoadState('networkidle');
+    await assertAppReady(page, test);
   });
 
   test('shows Admin Panel navigation item for super admin', async ({ page }) => {
@@ -112,6 +114,7 @@ test.describe('Admin Panel - Tenant Detail', () => {
     // Storage state already has auth - navigate to app then admin panel
     await page.goto('/app');
     await page.waitForLoadState('networkidle');
+    await assertAppReady(page, test);
 
     // Navigate to admin panel
     await page.getByRole('button', { name: /tenant management/i }).click();
@@ -251,6 +254,7 @@ test.describe('Super Admin Dashboard - Admin Tools', () => {
     // Storage state already has auth - just navigate to the app
     await page.goto('/app');
     await page.waitForLoadState('networkidle');
+    await assertAppReady(page, test);
   });
 
   test('shows Super Admin Dashboard for super admin users', async ({ page }) => {

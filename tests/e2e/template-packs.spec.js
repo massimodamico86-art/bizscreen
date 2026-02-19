@@ -7,6 +7,7 @@
  * - Verify playlists and layouts are created
  */
 import { test, expect } from '@playwright/test';
+import { assertAppReady } from './helpers.js';
 
 test.describe('Template Packs', () => {
   // Only run on chromium (client) project - requires client storage state
@@ -50,6 +51,8 @@ test.describe('Template Packs', () => {
       await page.keyboard.press('Escape');
       await dialog.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
     }
+
+    await assertAppReady(page, test);
   });
 
   test.afterEach(async ({ page }, testInfo) => {
