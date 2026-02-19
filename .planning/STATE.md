@@ -59,9 +59,9 @@ Full decision log in PROJECT.md Key Decisions table.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: v4.0 roadmap created, ready to plan Phase 64
-Resume file: None
+Stopped at: Phase 64 context gathered
+Resume file: .planning/phases/64-telemetry-pipeline-offline-detection/64-CONTEXT.md
 Next: `/gsd:plan-phase 64`
 
 ---
-*Updated: 2026-02-19 -- v4.0 Player Hardening roadmap created*
+*Updated: 2026-02-19 -- Phase 64 context gathered*
