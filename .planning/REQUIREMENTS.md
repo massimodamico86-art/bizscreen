@@ -46,7 +46,7 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ### Enhanced Recovery
 
-- **RECV-04**: Multi-stage recovery escalation (soft refresh → hard reload → cached fallback → static error screen)
+- **RECV-04**: Multi-stage recovery escalation (soft refresh -> hard reload -> cached fallback -> static error screen)
 - **RECV-05**: Recovery incident reports visible on screen detail page with timeline
 
 ### Enhanced Telemetry
@@ -71,9 +71,9 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Feature | Reason |
 |---------|--------|
-| Screenshot history timeline | User wants latest only — keep it simple |
+| Screenshot history timeline | User wants latest only -- keep it simple |
 | Fleet monitoring dashboard | Alert-driven monitoring preferred over dashboard watching |
-| SHA-256 content hashing on player | Too expensive on Tizen/WebOS hardware — use HTTP HEAD instead |
+| SHA-256 content hashing on player | Too expensive on Tizen/WebOS hardware -- use HTTP HEAD instead |
 | Service worker watchdog | Needs device testing on smart TVs, defer to future milestone |
 | Real-time streaming telemetry | Time-series data bloat; JSONB snapshot on heartbeat sufficient |
 | Per-device screenshot interval config | Fixed 5-min default sufficient for v4.0 |
@@ -84,30 +84,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCRN-01 | — | Pending |
-| SCRN-02 | — | Pending |
-| SCRN-03 | — | Pending |
-| SCRN-04 | — | Pending |
-| RECV-01 | — | Pending |
-| RECV-02 | — | Pending |
-| RECV-03 | — | Pending |
-| VERI-01 | — | Pending |
-| VERI-02 | — | Pending |
-| VERI-03 | — | Pending |
-| VERI-04 | — | Pending |
-| TELM-01 | — | Pending |
-| TELM-02 | — | Pending |
-| ALRT-01 | — | Pending |
-| ALRT-02 | — | Pending |
-| ALRT-03 | — | Pending |
-| ALRT-04 | — | Pending |
-| ALRT-05 | — | Pending |
+| SCRN-01 | Phase 65 | Pending |
+| SCRN-02 | Phase 65 | Pending |
+| SCRN-03 | Phase 65 | Pending |
+| SCRN-04 | Phase 65 | Pending |
+| RECV-01 | Phase 66 | Pending |
+| RECV-02 | Phase 66 | Pending |
+| RECV-03 | Phase 66 | Pending |
+| VERI-01 | Phase 67 | Pending |
+| VERI-02 | Phase 67 | Pending |
+| VERI-03 | Phase 67 | Pending |
+| VERI-04 | Phase 67 | Pending |
+| TELM-01 | Phase 64 | Pending |
+| TELM-02 | Phase 64 | Pending |
+| ALRT-01 | Phase 64 | Pending |
+| ALRT-02 | Phase 64 | Pending |
+| ALRT-03 | Phase 68 | Pending |
+| ALRT-04 | Phase 68 | Pending |
+| ALRT-05 | Phase 68 | Pending |
 
 **Coverage:**
 - v4.0 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-19*
-*Last updated: 2026-02-19 after initial definition*
+*Last updated: 2026-02-19 after roadmap creation*

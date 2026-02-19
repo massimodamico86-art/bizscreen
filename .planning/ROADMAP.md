@@ -11,6 +11,7 @@
 - [x] **v3.0 Creative Experience** — Phases 46-50 (shipped 2026-02-11)
 - [x] **v3.1 Data-Driven Screens** — Phases 51-55 (shipped 2026-02-13)
 - [x] **v3.2 Display Toolkit** — Phases 56-63 (shipped 2026-02-19)
+- [ ] **v4.0 Player Hardening** — Phases 64-68 (in progress)
 
 ## Phase History
 
@@ -48,6 +49,106 @@ All milestones shipped successfully.
 
 </details>
 
+## Phases
+
+**Phase Numbering:**
+- Integer phases (64, 65, 66): Planned milestone work
+- Decimal phases (64.1, 64.2): Urgent insertions (marked with INSERTED)
+
+- [ ] **Phase 64: Telemetry Pipeline & Offline Detection** - Device diagnostics on heartbeat, server-side heartbeat evaluator, automated offline alerts
+- [ ] **Phase 65: Screenshot Enhancement** - Auto-capture on interval, display on screen detail page, on-demand capture, event-triggered screenshots
+- [ ] **Phase 66: Auto-Recovery** - Stuck/blank detection with progressive recovery, crash counter safety, cached fallback content
+- [ ] **Phase 67: Content Verification** - Player reports content version, server detects mismatch, auto-retry sync, play-then-verify pattern
+- [ ] **Phase 68: Alert Wiring & Notifications** - Recovery events generate alerts, in-app notification bell, email alerts for critical issues
+
+## Phase Details
+
+### Phase 64: Telemetry Pipeline & Offline Detection
+**Goal**: Operators can see device health metrics and get automatically alerted when screens go offline
+**Depends on**: Nothing (first phase of v4.0)
+**Requirements**: TELM-01, TELM-02, ALRT-01, ALRT-02
+**Success Criteria** (what must be TRUE):
+  1. Player sends memory, storage, and network metrics to the server on every heartbeat cycle
+  2. User can view latest device diagnostics (memory, storage, network) on the screen detail page
+  3. Server automatically raises an offline alert when a device stops sending heartbeats
+  4. Server automatically resolves the offline alert when the device resumes heartbeats
+**Plans**: TBD
+
+Plans:
+- [ ] 64-01: TBD
+- [ ] 64-02: TBD
+
+### Phase 65: Screenshot Enhancement
+**Goal**: Operators can see what their screens are actually displaying without visiting the physical location
+**Depends on**: Phase 64 (heartbeat infrastructure for screenshot timing, alert events for SCRN-04)
+**Requirements**: SCRN-01, SCRN-02, SCRN-03, SCRN-04
+**Success Criteria** (what must be TRUE):
+  1. Player automatically captures a screenshot every 5 minutes while content is playing
+  2. User sees the latest screenshot with a timestamp on the screen detail page
+  3. User can click a button to request an immediate screenshot and see the result
+  4. Player captures an additional screenshot when an alert event fires (e.g., after recovering from offline)
+**Plans**: TBD
+
+Plans:
+- [ ] 65-01: TBD
+- [ ] 65-02: TBD
+
+### Phase 66: Auto-Recovery
+**Goal**: Screens self-heal from blank/frozen/crashed states without operator intervention
+**Depends on**: Phase 64 (telemetry pipeline for reporting recovery state to server)
+**Requirements**: RECV-01, RECV-02, RECV-03
+**Success Criteria** (what must be TRUE):
+  1. Player detects a blank screen or frozen content and automatically reloads to restore playback
+  2. When a reload fails to restore playback, the player falls back to displaying cached content
+  3. Player stops attempting recovery after 6 failed restarts and displays a static fallback screen (prevents infinite restart loops)
+**Plans**: TBD
+
+Plans:
+- [ ] 66-01: TBD
+- [ ] 66-02: TBD
+
+### Phase 67: Content Verification
+**Goal**: Operators can trust that screens are displaying the correct published content, not stale versions
+**Depends on**: Phase 64 (heartbeat carries content version), Phase 66 (recovery path for verification failures)
+**Requirements**: VERI-01, VERI-02, VERI-03, VERI-04
+**Success Criteria** (what must be TRUE):
+  1. Player reports a content version identifier to the server on every heartbeat
+  2. Server detects when a player's reported content version differs from the currently published version
+  3. Player automatically retries content sync when the server signals a version mismatch
+  4. Content verification runs after playback starts and never interrupts or delays active content display
+**Plans**: TBD
+
+Plans:
+- [ ] 67-01: TBD
+- [ ] 67-02: TBD
+
+### Phase 68: Alert Wiring & Notifications
+**Goal**: Operators are proactively notified of all screen issues through in-app and email channels
+**Depends on**: Phase 64 (offline alerts), Phase 66 (recovery events), Phase 67 (content mismatch events)
+**Requirements**: ALRT-03, ALRT-04, ALRT-05
+**Success Criteria** (what must be TRUE):
+  1. Recovery events (crash detection, auto-reload, fallback activation) automatically generate alerts in the system
+  2. User sees all device alerts in a notification bell with history (newest first)
+  3. User receives email notification when a critical event occurs (device offline, recovery exhausted)
+**Plans**: TBD
+
+Plans:
+- [ ] 68-01: TBD
+- [ ] 68-02: TBD
+
+## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 64 → 65 → 66 → 67 → 68
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 64. Telemetry Pipeline & Offline Detection | 0/TBD | Not started | - |
+| 65. Screenshot Enhancement | 0/TBD | Not started | - |
+| 66. Auto-Recovery | 0/TBD | Not started | - |
+| 67. Content Verification | 0/TBD | Not started | - |
+| 68. Alert Wiring & Notifications | 0/TBD | Not started | - |
+
 ## Progress Summary
 
 | Milestone | Phases | Plans | Status | Shipped |
@@ -61,8 +162,9 @@ All milestones shipped successfully.
 | v3.0 Creative Experience | 46-50 | 10 | Complete | 2026-02-11 |
 | v3.1 Data-Driven Screens | 51-55 | 15 | Complete | 2026-02-13 |
 | v3.2 Display Toolkit | 56-63 | 16 | Complete | 2026-02-19 |
+| v4.0 Player Hardening | 64-68 | TBD | In progress | - |
 
 **Total:** 63 phases complete, 211 plans executed | 9 milestones shipped
 
 ---
-*Last updated: 2026-02-19 — v3.2 Display Toolkit shipped*
+*Last updated: 2026-02-19 -- v4.0 Player Hardening roadmap created*

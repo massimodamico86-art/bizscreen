@@ -5,14 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v4.0 Player Hardening
+**Current focus:** Phase 64 — Telemetry Pipeline & Offline Detection
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-19 — Milestone v4.0 started
+Phase: 64 — first of 5 in v4.0 Player Hardening (Phases 64-68)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-02-19 — v4.0 roadmap created
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Milestones Shipped
 
@@ -43,7 +45,9 @@ Full decision log in PROJECT.md Key Decisions table.
 
 ### Blockers/Concerns
 
-No open blockers.
+- Phase 64: Confirm pg_cron availability on current Supabase plan (Edge Function cron is fallback)
+- Phase 67: Verify CloudFront CDN TTL/invalidation timing for content verification grace period
+- Phase 68: Verify which notification_preferences columns are actively wired in notificationDispatcherService.js
 
 ### Quick Tasks Completed
 
@@ -55,9 +59,9 @@ No open blockers.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Defining v4.0 Player Hardening requirements
+Stopped at: v4.0 roadmap created, ready to plan Phase 64
 Resume file: None
-Next: Define requirements → create roadmap
+Next: `/gsd:plan-phase 64`
 
 ---
-*Updated: 2026-02-19 -- Milestone v4.0 Player Hardening started*
+*Updated: 2026-02-19 -- v4.0 Player Hardening roadmap created*
