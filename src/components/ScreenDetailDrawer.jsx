@@ -1,25 +1,28 @@
 import { useState, useEffect } from 'react';
 import {
-  Target,
+  Activity,
+  AlertCircle,
+  ArrowRight,
   Calendar,
+  CheckCircle,
+  Clock,
+  Cpu,
+  ExternalLink,
+  HardDrive,
+  Image,
   Layout,
   ListVideo,
-  AlertCircle,
-  Monitor,
-  Wifi,
-  WifiOff,
-  RefreshCw,
-  X,
   Loader2,
   MapPin,
-  Users,
-  Clock,
-  CheckCircle,
-  ArrowRight,
+  Monitor,
   Play,
-  Image,
+  RefreshCw,
+  Target,
   TrendingUp,
-  ExternalLink,
+  Users,
+  Wifi,
+  WifiOff,
+  X,
 } from 'lucide-react';
 import { Badge, Button } from '../design-system';
 
@@ -30,9 +33,24 @@ import {
   formatLastSeen,
   formatUptime,
   getUptimeColor,
-  getPreviewInfo
+  getPreviewInfo,
+  getMetricStatus,
+  formatMetricValue,
+  getJsHeapPercent
 } from '../services/screenDiagnosticsService';
 import { useLogger } from '../hooks/useLogger.js';
+
+const MetricCard = ({ label, value, icon: Icon, metricStatus }) => (
+  <div className={`bg-gray-50 rounded-lg p-3 border-l-4 ${metricStatus.borderColor}`} title={metricStatus.tooltip || ''}>
+    <div className="flex items-center gap-2 text-gray-500 text-xs mb-1">
+      <Icon size={12} />
+      {label}
+    </div>
+    <p className={`font-medium text-sm ${value === 'N/A' ? 'text-gray-400' : 'text-gray-900'}`}>
+      {value}
+    </p>
+  </div>
+);
 
 const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
   const logger = useLogger('ScreenDetailDrawer');
@@ -46,6 +64,18 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- prop change
   }, [screen?.id]);
+
+  // Auto-refresh diagnostics every 30 seconds while drawer is open
+  useEffect(() => {
+    if (!screen?.id || loading) return;
+
+    const refreshInterval = setInterval(() => {
+      loadDiagnostics();
+    }, 30000);
+
+    return () => clearInterval(refreshInterval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen?.id, loading]);
 
   const loadDiagnostics = async () => {
     try {
@@ -203,6 +233,67 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
                     </p>
                   </div>
                 </div>
+              </div>
+
+              {/* Section: Device Health */}
+              <div className="p-4 space-y-3">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                  Device Health
+                </h3>
+
+                {/* Offline Banner — shown when device is offline */}
+                {!screenInfo.is_online && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2">
+                    <WifiOff size={16} className="text-red-500 flex-shrink-0" />
+                    <span className="font-medium text-red-800 text-sm">Device Offline</span>
+                    <span className="text-red-600 text-xs ml-auto">
+                      Last seen {formatLastSeen(screenInfo.last_seen_at)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Metrics Grid — grayed out when offline */}
+                <div className={`grid grid-cols-2 gap-3 ${!screenInfo.is_online ? 'opacity-60' : ''}`}>
+                  {/* Memory */}
+                  <MetricCard
+                    label="Memory"
+                    value={formatMetricValue('memory', screenInfo.device_metrics)}
+                    icon={Cpu}
+                    metricStatus={getMetricStatus('memory_gb', screenInfo.device_metrics?.memory_gb)}
+                  />
+                  {/* JS Heap */}
+                  <MetricCard
+                    label="JS Heap"
+                    value={formatMetricValue('js_heap', screenInfo.device_metrics)}
+                    icon={Activity}
+                    metricStatus={getMetricStatus('js_heap_percent', getJsHeapPercent(screenInfo.device_metrics))}
+                  />
+                  {/* Storage */}
+                  <MetricCard
+                    label="Storage"
+                    value={formatMetricValue('storage', screenInfo.device_metrics)}
+                    icon={HardDrive}
+                    metricStatus={getMetricStatus('storage_percent', screenInfo.device_metrics?.storage_percent)}
+                  />
+                  {/* Network */}
+                  <MetricCard
+                    label="Network"
+                    value={formatMetricValue('network', screenInfo.device_metrics)}
+                    icon={Wifi}
+                    metricStatus={getMetricStatus('network_type', screenInfo.device_metrics?.network_type)}
+                  />
+                </div>
+
+                {/* Online indicator */}
+                {screenInfo.device_metrics?.online !== undefined && (
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div className={`w-2 h-2 rounded-full ${screenInfo.device_metrics.online ? 'bg-green-400' : 'bg-red-400'}`} />
+                    <span>{screenInfo.device_metrics.online ? 'Browser reports online' : 'Browser reports offline'}</span>
+                    {screenInfo.device_metrics?.collected_at && (
+                      <span className="ml-auto">Updated {formatLastSeen(screenInfo.device_metrics.collected_at)}</span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Section 2: Content Source */}
