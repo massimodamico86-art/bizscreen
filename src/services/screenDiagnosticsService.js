@@ -202,3 +202,109 @@ export function getPreviewInfo(resolvedContent) {
     items: items || [],
   };
 }
+
+// ============================================
+// Device Metric Helpers (Phase 64 Plan 03)
+// ============================================
+
+/**
+ * Get status colors for a given status level
+ * @param {string} status - healthy, warning, critical, unknown
+ * @param {string} tooltip - Tooltip text
+ * @returns {Object} Status info with color classes
+ */
+function getStatusColors(status, tooltip) {
+  const map = {
+    healthy: { status: 'healthy', color: 'text-green-600', borderColor: 'border-green-400', tooltip },
+    warning: { status: 'warning', color: 'text-yellow-600', borderColor: 'border-yellow-400', tooltip },
+    critical: { status: 'critical', color: 'text-red-600', borderColor: 'border-red-400', tooltip },
+    unknown: { status: 'unknown', color: 'text-gray-400', borderColor: 'border-gray-300', tooltip: 'Data not available' },
+  };
+  return map[status] || map.unknown;
+}
+
+/**
+ * Evaluate a device metric against thresholds and return status + colors
+ * @param {string} metric - Metric key (js_heap_percent, storage_percent, network_downlink, network_type)
+ * @param {*} value - Metric value
+ * @returns {Object} { status, color, borderColor, tooltip }
+ */
+export function getMetricStatus(metric, value) {
+  if (value === null || value === undefined) {
+    return { status: 'unknown', color: 'text-gray-400', borderColor: 'border-gray-300', tooltip: 'Data not available' };
+  }
+
+  const thresholds = {
+    js_heap_percent: { warning: 70, critical: 85, unit: '%', warnMsg: 'JS Heap usage is above 70%', critMsg: 'JS Heap usage is above 85% — risk of out-of-memory' },
+    storage_percent: { warning: 70, critical: 90, unit: '%', warnMsg: 'Storage usage is above 70%', critMsg: 'Storage usage is above 90% — may prevent caching' },
+    network_downlink: { warning: 5, critical: 1, unit: 'Mbps', inverted: true, warnMsg: 'Network speed below 5 Mbps', critMsg: 'Network speed below 1 Mbps — may struggle with media' },
+    network_type: { values: { '4g': 'healthy', '3g': 'warning', '2g': 'critical', 'slow-2g': 'critical' } },
+  };
+
+  const config = thresholds[metric];
+  if (!config) {
+    return { status: 'healthy', color: 'text-green-600', borderColor: 'border-green-400', tooltip: '' };
+  }
+
+  // Enum-based threshold (network_type)
+  if (config.values) {
+    const status = config.values[value] || 'healthy';
+    return getStatusColors(status, '');
+  }
+
+  // Numeric threshold (inverted = lower is worse, e.g., downlink)
+  if (config.inverted) {
+    if (value < config.critical) return getStatusColors('critical', config.critMsg);
+    if (value < config.warning) return getStatusColors('warning', config.warnMsg);
+    return getStatusColors('healthy', '');
+  }
+
+  // Numeric threshold (higher is worse, e.g., heap %)
+  if (value > config.critical) return getStatusColors('critical', config.critMsg);
+  if (value > config.warning) return getStatusColors('warning', config.warnMsg);
+  return getStatusColors('healthy', '');
+}
+
+/**
+ * Format a device metric value for display
+ * @param {string} metric - Metric category (memory, js_heap, storage, network)
+ * @param {Object} metrics - Raw device_metrics object
+ * @returns {string} Formatted display value
+ */
+export function formatMetricValue(metric, metrics) {
+  if (!metrics) return 'N/A';
+
+  switch (metric) {
+    case 'memory':
+      if (metrics.memory_gb) return `${metrics.memory_gb} GB`;
+      return 'N/A';
+    case 'js_heap':
+      if (metrics.js_heap_used_mb != null && metrics.js_heap_limit_mb) {
+        const pct = Math.round((metrics.js_heap_used_mb / metrics.js_heap_limit_mb) * 100);
+        return `${metrics.js_heap_used_mb} / ${metrics.js_heap_limit_mb} MB (${pct}%)`;
+      }
+      return 'N/A';
+    case 'storage':
+      if (metrics.storage_percent != null) return `${metrics.storage_percent}% used`;
+      if (metrics.storage_used_mb != null) return `${metrics.storage_used_mb} MB`;
+      return 'N/A';
+    case 'network': {
+      const parts = [];
+      if (metrics.network_type) parts.push(metrics.network_type.toUpperCase());
+      if (metrics.network_downlink != null) parts.push(`${metrics.network_downlink} Mbps`);
+      return parts.length > 0 ? parts.join(' / ') : 'N/A';
+    }
+    default:
+      return 'N/A';
+  }
+}
+
+/**
+ * Compute JS heap usage percentage for threshold evaluation
+ * @param {Object} metrics - Raw device_metrics object
+ * @returns {number|null} Percentage (0-100) or null if unavailable
+ */
+export function getJsHeapPercent(metrics) {
+  if (!metrics?.js_heap_used_mb || !metrics?.js_heap_limit_mb) return null;
+  return Math.round((metrics.js_heap_used_mb / metrics.js_heap_limit_mb) * 100);
+}
