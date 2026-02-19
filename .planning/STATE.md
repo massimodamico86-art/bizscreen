@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone
+**Current focus:** v4.0 Player Hardening
 
 ## Current Position
 
-Phase: None (between milestones)
-Plan: N/A
-Status: Milestone v3.2 Display Toolkit shipped
-Last activity: 2026-02-19 - Completed v3.2 milestone archival
-
-Progress: All phases complete through v3.2
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-19 — Milestone v4.0 started
 
 ## Milestones Shipped
 
@@ -57,9 +55,9 @@ No open blockers.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: v3.2 Display Toolkit milestone archived
+Stopped at: Defining v4.0 Player Hardening requirements
 Resume file: None
-Next: `/gsd:new-milestone` to plan next milestone
+Next: Define requirements → create roadmap
 
 ---
-*Updated: 2026-02-19 -- v3.2 Display Toolkit milestone shipped and archived*
+*Updated: 2026-02-19 -- Milestone v4.0 Player Hardening started*

@@ -152,7 +152,17 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-(No active requirements — next milestone not yet planned)
+## Current Milestone: v4.0 Player Hardening
+
+**Goal:** Give operators full visibility into screen health and make the player self-healing — screenshots, auto-recovery, content verification, diagnostic telemetry, and alert-driven monitoring.
+
+**Target features:**
+- Periodic player screenshots viewable on screen detail page
+- Auto-recovery from blank screens, crashes, and stale content
+- Content version verification (player confirms correct published version)
+- Device diagnostic telemetry (CPU, memory, storage, network)
+- In-app alert notifications for all screen issues
+- Email alerts for critical issues (offline, crash, content mismatch)
 
 ### Out of Scope
 
@@ -295,4 +305,4 @@ These capabilities shipped and are production-verified:
 | Browser timezone as editor preview default | Layouts are screen-agnostic; no inherent screen timezone | ✓ Good — reasonable default |
 
 ---
-*Last updated: 2026-02-19 after v3.2 Display Toolkit milestone*
+*Last updated: 2026-02-19 after v4.0 Player Hardening milestone start*
