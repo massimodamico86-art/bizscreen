@@ -72,11 +72,12 @@ All milestones shipped successfully.
   2. User can view latest device diagnostics (memory, storage, network) on the screen detail page
   3. Server automatically raises an offline alert when a device stops sending heartbeats
   4. Server automatically resolves the offline alert when the device resumes heartbeats
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 64-01: TBD
-- [ ] 64-02: TBD
+- [ ] 64-01-PLAN.md — Telemetry pipeline: migration for device_metrics column, extend heartbeat RPC, collect browser metrics in player
+- [ ] 64-02-PLAN.md — Offline detection & alerts: pg_cron evaluator, severity escalation, dual-path auto-resolve
+- [ ] 64-03-PLAN.md — Diagnostics UI: Device Health section in ScreenDetailDrawer with metric cards and offline banner
 
 ### Phase 65: Screenshot Enhancement
 **Goal**: Operators can see what their screens are actually displaying without visiting the physical location
