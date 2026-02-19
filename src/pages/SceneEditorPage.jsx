@@ -10,7 +10,26 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Loader2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  Badge,
+  Check,
+  Clock,
+  Database,
+  Edit3,
+  Eye,
+  Image,
+  Loader2,
+  MonitorPlay,
+  Redo2,
+  Sparkles,
+  Square,
+  Trash2,
+  Tv,
+  Type,
+  Undo2,
+  Wand2,
+} from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
 import { fetchScene, saveSceneWithApproval } from '../services/sceneService';
@@ -700,6 +719,7 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
                   brandTheme={activeTheme}
                   autoPlay={true}
                   onClose={() => setEditorMode('edit')}
+                  timezone={Intl.DateTimeFormat().resolvedOptions().timeZone}
                 />
               </div>
             </div>
@@ -753,6 +773,7 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
               autoPlay={false}
               showSafeZone={false}
               onClose={() => setShowPreviewPanel(false)}
+              timezone={Intl.DateTimeFormat().resolvedOptions().timeZone}
             />
           </div>
         )}

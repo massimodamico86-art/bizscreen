@@ -50,6 +50,7 @@ export default function LivePreviewWindow({
   _brandTheme,
   showSafeZone = false,
   autoPlay = false,
+  timezone,
 }) {
   const [currentIndex, setCurrentIndex] = useState(activeSlideIndex);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
@@ -218,6 +219,7 @@ export default function LivePreviewWindow({
             design={design}
             slideIndex={currentIndex}
             showSafeZone={showSafeZoneOverlay}
+            timezone={timezone}
           />
         </div>
       </div>
@@ -286,7 +288,7 @@ export default function LivePreviewWindow({
  * @param root0.slideIndex
  * @param root0.showSafeZone
  */
-function PreviewRenderer({ design, _slideIndex, showSafeZone }) {
+function PreviewRenderer({ design, _slideIndex, showSafeZone, timezone }) {
   // Background style
   const backgroundStyle = useMemo(() => {
     const bg = design.background || {};
@@ -345,7 +347,7 @@ function PreviewRenderer({ design, _slideIndex, showSafeZone }) {
 
       {/* Render blocks */}
       {sortedBlocks.map((block, index) => (
-        <PreviewBlock key={block.id || index} block={block} />
+        <PreviewBlock key={block.id || index} block={block} timezone={timezone} />
       ))}
 
       {/* Safe zone overlay */}
@@ -359,7 +361,7 @@ function PreviewRenderer({ design, _slideIndex, showSafeZone }) {
  * @param root0
  * @param root0.block
  */
-function PreviewBlock({ block }) {
+function PreviewBlock({ block, timezone }) {
   const { type, x = 0, y = 0, width = 0.5, height = 0.2, layer = 1, props = {}, widgetType, animation } = block;
 
   // Get animation styles
@@ -442,7 +444,7 @@ function PreviewBlock({ block }) {
     case 'widget':
       return (
         <div style={baseStyle}>
-          <PreviewWidget widgetType={widgetType} props={props} />
+          <PreviewWidget widgetType={widgetType} props={props} timezone={timezone} />
         </div>
       );
 
@@ -459,11 +461,11 @@ function PreviewBlock({ block }) {
  * @param root0.widgetType
  * @param root0.props
  */
-function PreviewWidget({ widgetType, props = {} }) {
+function PreviewWidget({ widgetType, props = {}, timezone }) {
   const WidgetComp = getWidgetComponent(widgetType);
 
   if (WidgetComp) {
-    return <WidgetComp props={props} />;
+    return <WidgetComp props={props} timezone={timezone} />;
   }
 
   return (
@@ -547,12 +549,12 @@ function SafeZoneOverlay() {
  * @param root0.design
  * @param root0.className
  */
-export function InlinePreview({ design, className = '' }) {
+export function InlinePreview({ design, className = '', timezone }) {
   if (!design) return null;
 
   return (
     <div className={`relative aspect-video bg-black rounded overflow-hidden ${className}`}>
-      <PreviewRenderer design={design} slideIndex={0} showSafeZone={false} />
+      <PreviewRenderer design={design} slideIndex={0} showSafeZone={false} timezone={timezone} />
     </div>
   );
 }
