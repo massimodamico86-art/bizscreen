@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-19)
 ## Current Position
 
 Phase: 64 — first of 5 in v4.0 Player Hardening (Phases 64-68)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: Executing
-Last activity: 2026-02-19 — Plan 01 (heartbeat telemetry pipeline) complete
+Last activity: 2026-02-19 — Plan 02 (offline detection cron) complete
 
-Progress: [███░░░░░░░] 33%
+Progress: [██████░░░░] 67%
 
 ## Milestones Shipped
 
@@ -40,6 +40,7 @@ Progress: [███░░░░░░░] 33%
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 64 | 01 | 2min | 2 | 3 |
+| 64 | 02 | 2min | 1 | 1 |
 
 ## Accumulated Context
 
@@ -50,6 +51,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - **64-01:** Metrics collected in hook file (not playerService) -- browser APIs are player-specific
 - **64-01:** Each browser API call individually try-catch wrapped for graceful degradation
 - **64-01:** DROP old function signature before CREATE OR REPLACE to avoid PostgreSQL overload conflict
+- **64-02:** Dual-path alert resolution (instant heartbeat + periodic cron sweep) for reliability
+- **64-02:** ON CONFLICT upsert for alert coalescing eliminates race conditions vs SELECT-then-INSERT
+- **64-02:** Severity escalation at SQL level so cron job is fully autonomous
 
 ### Blockers/Concerns
 
@@ -67,9 +71,9 @@ Full decision log in PROJECT.md Key Decisions table.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed 64-01-PLAN.md
-Resume file: .planning/phases/64-telemetry-pipeline-offline-detection/64-01-SUMMARY.md
-Next: `/gsd:execute-phase 64` (Plan 02)
+Stopped at: Completed 64-02-PLAN.md
+Resume file: .planning/phases/64-telemetry-pipeline-offline-detection/64-02-SUMMARY.md
+Next: `/gsd:execute-phase 64` (Plan 03)
 
 ---
-*Updated: 2026-02-19 -- Phase 64 Plan 01 complete*
+*Updated: 2026-02-19 -- Phase 64 Plan 02 complete*
