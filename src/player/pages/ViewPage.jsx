@@ -42,6 +42,7 @@ import {
 import { AppRenderer } from '../components/AppRenderer';
 import { SceneRenderer } from '../components/SceneRenderer.jsx';
 import { LayoutRenderer } from '../components/LayoutRenderer.jsx';
+import { PinEntry } from '../components/PinEntry.jsx';
 
 // Module-level logger for utility functions
 const retryLogger = createScopedLogger('Player:retry');

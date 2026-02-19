@@ -10,7 +10,7 @@ import VideoPlayer from '../../player/components/VideoPlayer.jsx';
  */
 
 
-export default function LayoutElementRenderer({ element, isPreview = false }) {
+export default function LayoutElementRenderer({ element, isPreview = false, timezone }) {
   const { type, props = {} } = element;
 
   switch (type) {
@@ -21,7 +21,7 @@ export default function LayoutElementRenderer({ element, isPreview = false }) {
     case 'video':
       return <VideoElement props={props} isPreview={isPreview} />;
     case 'widget':
-      return <WidgetElement element={element} />;
+      return <WidgetElement element={element} timezone={timezone} />;
     default:
       return (
         <div className="w-full h-full bg-gray-700 rounded flex items-center justify-center">
@@ -138,13 +138,13 @@ function VideoElement({ props, isPreview }) {
   );
 }
 
-function WidgetElement({ element }) {
+function WidgetElement({ element, timezone }) {
   const { widgetType = 'clock', props = {} } = element;
 
   const WidgetComp = getWidgetComponent(widgetType);
 
   if (WidgetComp) {
-    return <WidgetComp props={props} timezone={element.timezone} />;
+    return <WidgetComp props={props} timezone={timezone} />;
   }
 
   return (

@@ -17,6 +17,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLayout } from '../../hooks/useLayout';
 import { YODECK_COLORS } from '../../config/yodeckTheme';
+import {
+  AlertCircle,
+  ArrowLeft,
+  Edit,
+  Loader2,
+  Maximize,
+  Minimize,
+  Monitor,
+} from 'lucide-react';
 
 export default function LayoutPreviewPage({ layoutId, showToast, onNavigate }) {
   // Use the layout hook to fetch layout data
@@ -191,6 +200,7 @@ export default function LayoutPreviewPage({ layoutId, showToast, onNavigate }) {
             showGrid={false}
             smartGuidesEnabled={false}
             mode="preview"
+            timezone={Intl.DateTimeFormat().resolvedOptions().timeZone}
           />
         </div>
       </div>

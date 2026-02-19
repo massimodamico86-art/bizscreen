@@ -16,6 +16,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 
 
 import { useLayout } from '../../hooks/useLayout';
+import { AlertCircle, Loader2 } from 'lucide-react';
 
 // History state for undo/redo
 const MAX_HISTORY = 50;
@@ -488,6 +489,7 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
             showGrid={showGrid}
             smartGuidesEnabled={smartGuidesEnabled}
             canvasSize={canvasSize}
+            timezone={Intl.DateTimeFormat().resolvedOptions().timeZone}
             onDoubleClick={(elementId) => {
               const element = layout?.elements?.find((el) => el.id === elementId);
               if (element?.type === 'image') {

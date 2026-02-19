@@ -13,6 +13,7 @@
  */
 
 import { useEffect, useCallback } from 'react';
+import { ExternalLink } from 'lucide-react';
 
 export default function LayoutPreviewModal({
   isOpen,
@@ -115,6 +116,7 @@ export default function LayoutPreviewModal({
                 showGrid={false}
                 smartGuidesEnabled={false}
                 mode="preview"
+                timezone={Intl.DateTimeFormat().resolvedOptions().timeZone}
               />
             ) : (
               <div className="w-full h-full bg-gray-900 flex items-center justify-center">

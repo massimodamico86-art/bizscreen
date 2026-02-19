@@ -144,6 +144,7 @@ export default function LayoutEditorCanvas({
   onDoubleClick,
   mode = 'edit', // 'edit' | 'preview'
   canvasSize = { width: 1920, height: 1080 }, // Canvas dimensions
+  timezone,
 }) {
   // Calculate aspect ratio from canvas size
   const aspectRatio = canvasSize.width / canvasSize.height;
@@ -400,7 +401,7 @@ export default function LayoutEditorCanvas({
               onMouseDown={(e) => handleDragStart(e, element.id)}
               onDoubleClick={(e) => handleElementDoubleClick(e, element.id)}
             >
-              <LayoutElementRenderer element={element} isPreview={isPreviewMode} />
+              <LayoutElementRenderer element={element} isPreview={isPreviewMode} timezone={timezone} />
 
               {/* Selection overlay with resize handles - Yodeck white square style (hidden in preview mode) */}
               {isSelected && !element.locked && !isPreviewMode && (
