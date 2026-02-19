@@ -10,7 +10,7 @@
 - [x] **v2.4 Tech Debt Zero** — Phases 42-45 (shipped 2026-02-10)
 - [x] **v3.0 Creative Experience** — Phases 46-50 (shipped 2026-02-11)
 - [x] **v3.1 Data-Driven Screens** — Phases 51-55 (shipped 2026-02-13)
-- [ ] **v3.2 Display Toolkit** — Phases 56-62 (in progress)
+- [ ] **v3.2 Display Toolkit** — Phases 56-63 (in progress)
 
 ## Phase History
 
@@ -58,6 +58,7 @@ All milestones shipped successfully.
 - [x] **Phase 60: Screen Groups & Tags** — Tag management, filtering, bulk operations, group content push (completed 2026-02-18)
 - [x] **Phase 61: Portrait Mode** — Per-screen orientation, portrait canvas, CSS rotation, portrait templates (completed 2026-02-18)
 - [x] **Phase 62: Menu Board Widget** — Structured menu CRUD, themed rendering, auto-pagination, realtime updates (completed 2026-02-18)
+- [ ] **Phase 63: Editor Preview Polish + PinEntry Fix** — Editor timezone threading, PinEntry import fix (gap closure)
 
 ### Phase Details
 
@@ -169,11 +170,21 @@ Plans:
 - [ ] 62-02-PLAN.md — MenuBoardEditorModal with DnD reordering, dietary tag picker, price columns, availability toggle + MenuBoardsPage + App.jsx navigation
 - [ ] 62-03-PLAN.md — MenuBoardWidget player component with themed rendering, auto-pagination, Realtime subscriptions, locale-aware currency + widget registry
 
+#### Phase 63: Editor Preview Polish + PinEntry Fix
+**Goal**: Editor widget previews show accurate timezone-aware rendering, and pre-existing PinEntry crash bug is fixed
+**Depends on**: Phase 56 (widget registry), Phase 61 (portrait mode PinEntry context)
+**Requirements**: Gap closure — CLOCK-06, WTHR-03 (integration quality), PinEntry tech debt
+**Gap Closure:** Closes integration gaps from v3.2 audit
+**Success Criteria** (what must be TRUE):
+  1. Layout editor preview renders clock/weather widgets using the screen's assigned timezone (not just the element-saved timezone)
+  2. PinEntry component is properly imported in ViewPage, eliminating the runtime crash when kiosk-mode exit is triggered
+**Plans:** TBD
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
-(Phase 60 is independent and can parallel with 57-59 if needed)
+Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62 -> 63
+(Phase 63 is gap closure from milestone audit)
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -184,6 +195,7 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 | 60. Screen Groups & Tags | v3.2 | Complete    | 2026-02-18 | - |
 | 61. Portrait Mode | v3.2 | Complete    | 2026-02-18 | - |
 | 62. Menu Board Widget | v3.2 | Complete    | 2026-02-18 | - |
+| 63. Editor Preview Polish + PinEntry Fix | v3.2 | Pending | — | — |
 
 ## Progress Summary
 
@@ -197,9 +209,9 @@ Phases execute in numeric order: 56 -> 57 -> 58 -> 59 -> 60 -> 61 -> 62
 | v2.4 Tech Debt Zero | 42-45 | 11 | Complete | 2026-02-10 |
 | v3.0 Creative Experience | 46-50 | 10 | Complete | 2026-02-11 |
 | v3.1 Data-Driven Screens | 51-55 | 15 | Complete | 2026-02-13 |
-| v3.2 Display Toolkit | 56-62 | 2/16 | In progress | - |
+| v3.2 Display Toolkit | 56-63 | 16/17+ | In progress | - |
 
-**Total:** 56 phases complete + 6 planned, 197 plans executed + 14 planned | 8 milestones shipped, 1 in progress
+**Total:** 62 phases complete + 1 planned, 211 plans executed + TBD planned | 8 milestones shipped, 1 in progress
 
 ---
 *Last updated: 2026-02-13 -- Phase 56 complete.*
