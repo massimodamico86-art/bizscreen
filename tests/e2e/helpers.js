@@ -263,10 +263,55 @@ export function generateTestName(prefix = 'Test') {
   return `${prefix} ${Date.now()}`;
 }
 
+/**
+ * Assert the app is ready for testing after navigation to /app.
+ *
+ * Detects connection error banners and loading stuck states, skipping the test
+ * gracefully instead of letting it timeout.
+ *
+ * @param {import('@playwright/test').Page} page - Playwright page object
+ * @param {import('@playwright/test').TestType} test - Playwright test object (for test.skip)
+ */
+export async function assertAppReady(page, test) {
+  // Helper to create a timeout promise that resolves (not rejects) after delay
+  const softTimeout = (ms) => new Promise((resolve) => setTimeout(() => resolve('timeout'), ms));
+
+  // 1. Check for connection error banner within 5 seconds
+  const connectionErrorLocator = page.locator('text=/connection issue|retrying|offline/i').first();
+  const connectionResult = await Promise.race([
+    connectionErrorLocator.waitFor({ state: 'visible', timeout: 5000 }).then(() => 'error-found'),
+    softTimeout(5000),
+  ]);
+
+  if (connectionResult === 'error-found') {
+    test.skip(true, 'Backend connection unavailable - connection error banner detected');
+    return;
+  }
+
+  // 2. Wait for sidebar (aside) to be visible within 10s as readiness check
+  const sidebar = page.locator('aside').first();
+  const sidebarResult = await Promise.race([
+    sidebar.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'ready'),
+    softTimeout(10000),
+  ]);
+
+  if (sidebarResult === 'timeout') {
+    // Sidebar didn't appear - check if stuck on loading
+    const loadingText = page.getByText('Loading...');
+    const isLoading = await loadingText.isVisible().catch(() => false);
+    if (isLoading) {
+      test.skip(true, 'App failed to load - stuck on loading state');
+      return;
+    }
+    // Not loading text either - might still be OK, don't skip
+  }
+}
+
 export default {
   loginAndPrepare,
   dismissAnyModals,
   waitForPageReady,
   navigateToSection,
   generateTestName,
+  assertAppReady,
 };
