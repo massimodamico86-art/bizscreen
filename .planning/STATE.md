@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-13)
 Phase: 62 of 62 (Menu Board Widget)
 Plan: 3 of 3 in current phase
 Status: Phase Complete
-Last activity: 2026-02-18 - Completed 62-03-PLAN.md (Menu Board Player Widget)
+Last activity: 2026-02-19 - Completed quick task 44: Fix 4 failing Playwright e2e tests
 
 Progress: [################] 100% (16/16 plans)
 
@@ -135,4 +135,4 @@ Resume file: None
 Next: v3.2 Display Toolkit milestone complete (all 16 plans across phases 56-62 executed)
 
 ---
-*Updated: 2026-02-18 -- Phase 62 Plan 03 complete. MenuBoardWidget player component with themed rendering, auto-pagination, Supabase Realtime, dietary badges, currency formatting. Widget registered in registry for all editor/player paths. Phase 62 and v3.2 Display Toolkit milestone fully complete.*
+*Updated: 2026-02-19 -- Quick task 44: Fixed 4 failing Playwright e2e tests. Performance test auth bug fixed (removed manual login, uses storage state). Added assertAppReady helper for connection-timeout resilience in screen-assignments, template-packs, and admin tests.*
