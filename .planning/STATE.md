@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v3.2 Display Toolkit -- Phase 62 (Menu Board Widget)
+**Current focus:** v3.2 Display Toolkit -- Phase 63 (Editor Preview Polish & PinEntry Fix)
 
 ## Current Position
 
-Phase: 62 of 62 (Menu Board Widget)
-Plan: 3 of 3 in current phase
+Phase: 63 of 63 (Editor Preview Polish & PinEntry Fix)
+Plan: 1 of 1 in current phase
 Status: Phase Complete
-Last activity: 2026-02-19 - Completed quick task 44: Fix 4 failing Playwright e2e tests
+Last activity: 2026-02-19 - Completed 63-01: Editor preview timezone threading and PinEntry import fix
 
-Progress: [################] 100% (16/16 plans)
+Progress: [#################] 100% (17/17 plans)
 
 ## Milestones Shipped
 
@@ -55,6 +55,7 @@ Progress: [################] 100% (16/16 plans)
 | 62 | 01 | 3min | 2 | 4 |
 | 62 | 03 | 12min | 2 | 3 |
 | Phase 62 P02 | 14min | 2 tasks | 6 files |
+| 63 | 01 | 8min | 2 | 8 |
 
 ## Accumulated Context
 
@@ -114,6 +115,10 @@ Progress: [################] 100% (16/16 plans)
 - [Phase 62]: Nested DndContext for item reordering within each CategorySection, separate from category-level DndContext in editor modal
 - [Phase 62]: Create mode requires saving board first before adding categories/items (board ID needed for FK relationships)
 
+- **63-01**: Browser timezone (Intl.DateTimeFormat) as editor preview default -- layouts are screen-agnostic, no inherent screen timezone
+- **63-01**: No widget component modifications -- timezone prop reaches widgets through threaded chain, existing resolveTimezone handles priority
+- **63-01**: No shared resolveTimezone module -- per Phase 56 decision to keep duplicated helpers in each widget
+
 ### Blockers/Concerns
 
 - ~~Weather API key currently exposed client-side (WTHR-01 addresses in Phase 58)~~ RESOLVED in 58-01
@@ -130,9 +135,9 @@ Progress: [################] 100% (16/16 plans)
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed quick task 44 (Fix 4 failing Playwright e2e tests)
+Stopped at: Completed 63-01-PLAN.md (Editor Preview Polish & PinEntry Fix)
 Resume file: None
-Next: v3.2 Display Toolkit milestone complete (all 16 plans across phases 56-62 executed)
+Next: v3.2 Display Toolkit milestone complete (all 17 plans across phases 56-63 executed, including gap closure)
 
 ---
-*Updated: 2026-02-19 -- Quick task 44: Fixed 4 failing Playwright e2e tests. Performance test auth bug fixed (removed manual login, uses storage state). Added assertAppReady helper for connection-timeout resilience in screen-assignments, template-packs, and admin tests.*
+*Updated: 2026-02-19 -- Phase 63-01: Threaded browser timezone through layout editor and scene editor preview pipelines. Fixed PinEntry import in ViewPage for kiosk mode exit. Closes CLOCK-06, WTHR-03, PinEntry-FIX gaps.*
