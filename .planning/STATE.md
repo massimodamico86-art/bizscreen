@@ -5,14 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v6.0 Functional Completeness
+**Current focus:** v6.0 Functional Completeness — Phase 72 (Bug Fixes & Stability)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-20 — Milestone v6.0 started
+Phase: 72 of 79 (Bug Fixes & Stability)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-02-20 — v6.0 roadmap created (8 phases, 31 requirements)
+
+Progress: [░░░░░░░░░░] 0% (v6.0)
 
 ## Milestones Shipped
 
@@ -45,7 +47,8 @@ Full decision log in PROJECT.md Key Decisions table.
 
 ### Blockers/Concerns
 
-None — all milestones shipped.
+- Orphaned test file: `tests/unit/services/gdprDeletionService.test.js` imports deleted service (from v5.0)
+- Tech debt: duplicate legacy player_heartbeat RPC, wrong lastActivityRef in ViewPage (from v4.0)
 
 ### Quick Tasks Completed
 
@@ -57,9 +60,9 @@ None — all milestones shipped.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: v6.0 milestone defining requirements
+Stopped at: v6.0 roadmap created
 Resume file: N/A
-Next: Define requirements and create roadmap for v6.0
+Next: `/gsd:plan-phase 72` (Bug Fixes & Stability)
 
 ---
-*Updated: 2026-02-20 — v6.0 Functional Completeness started*
+*Updated: 2026-02-20 -- v6.0 roadmap created*

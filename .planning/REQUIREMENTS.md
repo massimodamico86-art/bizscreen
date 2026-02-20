@@ -74,43 +74,43 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EDIT-01 | — | Pending |
-| EDIT-02 | — | Pending |
-| EDIT-03 | — | Pending |
-| EDIT-04 | — | Pending |
-| EDIT-05 | — | Pending |
-| EDIT-06 | — | Pending |
-| EDIT-07 | — | Pending |
-| EDIT-08 | — | Pending |
-| EDIT-09 | — | Pending |
-| EDIT-10 | — | Pending |
-| CLOUD-01 | — | Pending |
-| CLOUD-02 | — | Pending |
-| CLOUD-03 | — | Pending |
-| CLOUD-04 | — | Pending |
-| CLOUD-05 | — | Pending |
-| FEAT-01 | — | Pending |
-| FEAT-02 | — | Pending |
-| FEAT-03 | — | Pending |
-| FEAT-04 | — | Pending |
-| FEAT-05 | — | Pending |
-| FEAT-06 | — | Pending |
-| FEAT-07 | — | Pending |
-| ADMN-01 | — | Pending |
-| ADMN-02 | — | Pending |
-| ADMN-03 | — | Pending |
-| ADMN-04 | — | Pending |
-| ADMN-05 | — | Pending |
-| ADMN-06 | — | Pending |
-| BUGF-01 | — | Pending |
-| BUGF-02 | — | Pending |
-| BUGF-03 | — | Pending |
+| EDIT-01 | Phase 73 | Pending |
+| EDIT-02 | Phase 73 | Pending |
+| EDIT-03 | Phase 74 | Pending |
+| EDIT-04 | Phase 74 | Pending |
+| EDIT-05 | Phase 74 | Pending |
+| EDIT-06 | Phase 73 | Pending |
+| EDIT-07 | Phase 73 | Pending |
+| EDIT-08 | Phase 73 | Pending |
+| EDIT-09 | Phase 73 | Pending |
+| EDIT-10 | Phase 73 | Pending |
+| CLOUD-01 | Phase 75 | Pending |
+| CLOUD-02 | Phase 75 | Pending |
+| CLOUD-03 | Phase 75 | Pending |
+| CLOUD-04 | Phase 75 | Pending |
+| CLOUD-05 | Phase 75 | Pending |
+| FEAT-01 | Phase 79 | Pending |
+| FEAT-02 | Phase 77 | Pending |
+| FEAT-03 | Phase 77 | Pending |
+| FEAT-04 | Phase 77 | Pending |
+| FEAT-05 | Phase 77 | Pending |
+| FEAT-06 | Phase 78 | Pending |
+| FEAT-07 | Phase 78 | Pending |
+| ADMN-01 | Phase 76 | Pending |
+| ADMN-02 | Phase 76 | Pending |
+| ADMN-03 | Phase 76 | Pending |
+| ADMN-04 | Phase 76 | Pending |
+| ADMN-05 | Phase 76 | Pending |
+| ADMN-06 | Phase 76 | Pending |
+| BUGF-01 | Phase 72 | Pending |
+| BUGF-02 | Phase 72 | Pending |
+| BUGF-03 | Phase 72 | Pending |
 
 **Coverage:**
 - v6.0 requirements: 31 total
-- Mapped to phases: 0
-- Unmapped: 31 (pending roadmap creation)
+- Mapped to phases: 31
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-20*
-*Last updated: 2026-02-20 after initial definition*
+*Last updated: 2026-02-20 after roadmap creation*
