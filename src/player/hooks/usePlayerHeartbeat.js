@@ -82,6 +82,16 @@ async function collectDeviceMetrics() {
     }
   } catch { /* API not available */ }
 
+  // Recovery state (Phase 66): report crash counter if device is in recovery
+  try {
+    const crashCount = parseInt(localStorage.getItem('player_recovery_count') || '0', 10);
+    if (crashCount > 0) {
+      metrics.recovery_crash_count = crashCount;
+      metrics.recovery_phase = localStorage.getItem('player_recovery_phase') || 'unknown';
+      metrics.recovery_last_at = localStorage.getItem('player_last_recovery_at');
+    }
+  } catch { /* localStorage not available */ }
+
   // Always available
   metrics.online = navigator.onLine;
 
