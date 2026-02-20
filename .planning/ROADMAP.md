@@ -131,11 +131,11 @@ Plans:
   1. Recovery events (crash detection, auto-reload, fallback activation) automatically generate alerts in the system
   2. User sees all device alerts in a notification bell with history (newest first)
   3. User receives email notification when a critical event occurs (device offline, recovery exhausted)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 68-01: TBD
-- [ ] 68-02: TBD
+- [ ] 68-01-PLAN.md — Recovery alert pipeline: migration for new alert types, heartbeat recovery detection in SQL, Postgres notification trigger, email wiring with critical-only gate
+- [ ] 68-02-PLAN.md — UI updates: recovery alert icons/labels in NotificationBell and AlertsCenterPage, structured detail rendering for recovery metadata
 
 ## Progress
 
