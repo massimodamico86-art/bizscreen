@@ -88,11 +88,11 @@ Plans:
   2. User sees the latest screenshot with a timestamp on the screen detail page
   3. User can click a button to request an immediate screenshot and see the result
   4. Player captures an additional screenshot when an alert event fires (e.g., after recovering from offline)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 65-01: TBD
-- [ ] 65-02: TBD
+- [ ] 65-01-PLAN.md — Player-side screenshot triggers: periodic 5-min auto-capture, offline recovery capture, initial content load capture
+- [ ] 65-02-PLAN.md — Dashboard screenshot UI: extend diagnostics RPC with screenshot fields, add Latest Screenshot section with Capture Now button to ScreenDetailDrawer
 
 ### Phase 66: Auto-Recovery
 **Goal**: Screens self-heal from blank/frozen/crashed states without operator intervention
