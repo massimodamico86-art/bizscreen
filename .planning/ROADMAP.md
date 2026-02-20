@@ -71,7 +71,10 @@ All milestones shipped successfully.
   3. User can select a social-feed widget in a layout zone and configure its feed source and hashtag filter
   4. User can select countdown, menu-board, or clock-date widgets in layout zones and configure their type-specific properties
   5. Changing widget type in a layout zone resets properties to the new type's defaults (existing registry behavior preserved)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 69-01-PLAN.md — Integrate existing scene-editor controls for data-table, RSS, social-feed, countdown
+- [ ] 69-02-PLAN.md — Create menu-board controls, add clock-date size control
 
 ### Phase 70: Screen & Scene Controls
 **Goal**: Users can manage menu board appearance in scene editor, set screen orientation, and assign device language -- all from the UI without manual database edits
@@ -100,7 +103,7 @@ All milestones shipped successfully.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 69. Layout Editor Widget Parity | v5.0 | 0/TBD | Not started | - |
+| 69. Layout Editor Widget Parity | v5.0 | 0/2 | Planned | - |
 | 70. Screen & Scene Controls | v5.0 | 0/TBD | Not started | - |
 | 71. Cleanup & Notification Gaps | v5.0 | 0/TBD | Not started | - |
 
