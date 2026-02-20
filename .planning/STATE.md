@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-19)
 ## Current Position
 
 Phase: 66 — third of 5 in v4.0 Player Hardening (Phases 64-68)
-Plan: 1 of 2 complete
-Status: In Progress
-Last activity: 2026-02-20 — Plan 01 (auto-recovery core infrastructure) complete
+Plan: 2 of 2 complete
+Status: Phase Complete
+Last activity: 2026-02-20 — Plan 02 (ViewPage integration and RecoveryFallbackScreen) complete
 
-Progress: [█████-----] 50%
+Progress: [██████████] 100%
 
 ## Milestones Shipped
 
@@ -45,6 +45,7 @@ Progress: [█████-----] 50%
 | 65 | 01 | 2min | 2 | 1 |
 | Phase 65 P02 | 2min | 2 tasks | 2 files |
 | 66 | 01 | 3min | 2 | 4 |
+| 66 | 02 | 2min | 1 | 2 |
 
 ## Accumulated Context
 
@@ -70,6 +71,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - **66-01:** mountTimeRef removed from useAutoRecovery since blank detection lives in useStuckDetection
 - **66-01:** Recovery metrics only in heartbeat when crashCount > 0 to avoid polluting normal telemetry
 - **66-01:** Blank screen detection uses 10s grace + 3 consecutive checks (30s) to prevent false positives
+- **66-02:** isExhausted check placed before loading state check so exhausted devices never show spinner
+- **66-02:** screenshotInProgressRef gates onPageStuck and onBlankScreen but not onVideoStuck (video restart is non-destructive)
 
 ### Blockers/Concerns
 
@@ -87,9 +90,9 @@ Full decision log in PROJECT.md Key Decisions table.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 66-01-PLAN.md
-Resume file: .planning/phases/66-auto-recovery/66-01-SUMMARY.md
-Next: 66-02-PLAN.md (ViewPage integration and RecoveryFallbackScreen)
+Stopped at: Completed 66-02-PLAN.md (Phase 66 complete)
+Resume file: .planning/phases/66-auto-recovery/66-02-SUMMARY.md
+Next: Phase 67 planning
 
 ---
-*Updated: 2026-02-20 -- Phase 66 Plan 01 complete*
+*Updated: 2026-02-20 -- Phase 66 complete (2/2 plans)*
