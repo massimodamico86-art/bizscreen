@@ -102,11 +102,11 @@ Plans:
   1. Player detects a blank screen or frozen content and automatically reloads to restore playback
   2. When a reload fails to restore playback, the player falls back to displaying cached content
   3. Player stops attempting recovery after 6 failed restarts and displays a static fallback screen (prevents infinite restart loops)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 66-01: TBD
-- [ ] 66-02: TBD
+- [ ] 66-01-PLAN.md — Core recovery infrastructure: useAutoRecovery hook with crash counter, extend useStuckDetection with blank screen detection, add recovery state to heartbeat telemetry
+- [ ] 66-02-PLAN.md — ViewPage wiring and fallback UI: create RecoveryFallbackScreen, wire useAutoRecovery into ViewPage, connect all detection signals to progressive recovery
 
 ### Phase 67: Content Verification
 **Goal**: Operators can trust that screens are displaying the correct published content, not stale versions
