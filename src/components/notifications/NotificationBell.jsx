@@ -7,14 +7,15 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  AlertTriangle,
   AlertCircle,
+  AlertTriangle,
   Bell,
-  Monitor,
   Calendar,
   Database,
-  Share2,
   ExternalLink,
+  Monitor,
+  RefreshCw,
+  Share2,
 } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import {
@@ -39,6 +40,8 @@ const TYPE_ICONS = {
   [ALERT_TYPES.CONTENT_EXPIRED]: AlertTriangle,
   [ALERT_TYPES.STORAGE_QUOTA_WARNING]: AlertTriangle,
   [ALERT_TYPES.API_RATE_LIMIT]: AlertCircle,
+  [ALERT_TYPES.DEVICE_RECOVERY]: RefreshCw,
+  [ALERT_TYPES.DEVICE_RECOVERY_EXHAUSTED]: AlertTriangle,
 };
 
 // Map severity to colors
