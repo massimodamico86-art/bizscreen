@@ -13,10 +13,18 @@
  */
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
-
-
 import { useLayout } from '../../hooks/useLayout';
 import { AlertCircle, Loader2 } from 'lucide-react';
+import {
+  TopToolbar,
+  LeftSidebar,
+  LayoutEditorCanvas,
+  LayoutPropertiesPanel,
+  PixieEditorModal,
+  LayoutPreviewModal,
+} from '../../components/layout-editor';
+import InsertContentModal from '../../components/modals/InsertContentModal';
+import { Button } from '../../design-system';
 
 // History state for undo/redo
 const MAX_HISTORY = 50;
