@@ -36,6 +36,8 @@ const ALERT_CATEGORIES = {
       ALERT_TYPES.DEVICE_SCREENSHOT_FAILED,
       ALERT_TYPES.DEVICE_CACHE_STALE,
       ALERT_TYPES.DEVICE_ERROR,
+      ALERT_TYPES.DEVICE_RECOVERY,
+      ALERT_TYPES.DEVICE_RECOVERY_EXHAUSTED,
     ],
   },
   schedule: {
@@ -65,6 +67,8 @@ const TYPE_LABELS = {
   [ALERT_TYPES.DEVICE_SCREENSHOT_FAILED]: 'Screenshot capture fails',
   [ALERT_TYPES.DEVICE_CACHE_STALE]: 'Device cache becomes stale',
   [ALERT_TYPES.DEVICE_ERROR]: 'Device errors',
+  [ALERT_TYPES.DEVICE_RECOVERY]: 'Device recovers from failure',
+  [ALERT_TYPES.DEVICE_RECOVERY_EXHAUSTED]: 'Device recovery attempts exhausted',
   [ALERT_TYPES.SCHEDULE_MISSING_SCENE]: 'Schedule references missing scene',
   [ALERT_TYPES.SCHEDULE_CONFLICT]: 'Schedule conflicts',
   [ALERT_TYPES.DATA_SOURCE_SYNC_FAILED]: 'Data source sync fails',
