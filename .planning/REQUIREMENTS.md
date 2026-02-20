@@ -61,30 +61,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LEDT-01 | — | Pending |
-| LEDT-02 | — | Pending |
-| LEDT-03 | — | Pending |
-| LEDT-04 | — | Pending |
-| LEDT-05 | — | Pending |
-| LEDT-06 | — | Pending |
-| LEDT-07 | — | Pending |
-| SEDT-01 | — | Pending |
-| SCRN-01 | — | Pending |
-| SCRN-02 | — | Pending |
-| NOTF-01 | — | Pending |
-| NOTF-02 | — | Pending |
-| CLEAN-01 | — | Pending |
-| CLEAN-02 | — | Pending |
-| CLEAN-03 | — | Pending |
-| CLEAN-04 | — | Pending |
-| CLEAN-05 | — | Pending |
-| CLEAN-06 | — | Pending |
+| LEDT-01 | Phase 69 | Pending |
+| LEDT-02 | Phase 69 | Pending |
+| LEDT-03 | Phase 69 | Pending |
+| LEDT-04 | Phase 69 | Pending |
+| LEDT-05 | Phase 69 | Pending |
+| LEDT-06 | Phase 69 | Pending |
+| LEDT-07 | Phase 69 | Pending |
+| SEDT-01 | Phase 70 | Pending |
+| SCRN-01 | Phase 70 | Pending |
+| SCRN-02 | Phase 70 | Pending |
+| NOTF-01 | Phase 71 | Pending |
+| NOTF-02 | Phase 71 | Pending |
+| CLEAN-01 | Phase 71 | Pending |
+| CLEAN-02 | Phase 71 | Pending |
+| CLEAN-03 | Phase 71 | Pending |
+| CLEAN-04 | Phase 71 | Pending |
+| CLEAN-05 | Phase 71 | Pending |
+| CLEAN-06 | Phase 71 | Pending |
 
 **Coverage:**
 - v5.0 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-20*
-*Last updated: 2026-02-20 after initial definition*
+*Last updated: 2026-02-20 after roadmap creation*

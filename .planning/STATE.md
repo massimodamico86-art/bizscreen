@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone
+**Current focus:** v5.0 UI Completeness -- Phase 69 Layout Editor Widget Parity
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 69 (1 of 3 in v5.0) — Layout Editor Widget Parity
 Plan: —
-Status: Defining requirements
-Last activity: 2026-02-20 — Milestone v5.0 started
+Status: Ready to plan
+Last activity: 2026-02-20 — v5.0 roadmap created (3 phases, 18 requirements)
 
 Progress: [░░░░░░░░░░] 0% (v5.0 UI Completeness)
 
@@ -43,12 +43,11 @@ Progress: [░░░░░░░░░░] 0% (v5.0 UI Completeness)
 ### Decisions
 
 Full decision log in PROJECT.md Key Decisions table.
-v4.0 decisions archived to `.planning/milestones/v4.0-ROADMAP.md`.
+No new v5.0 decisions yet.
 
 ### Blockers/Concerns
 
-- Confirm pg_cron availability on current Supabase plan (Edge Function cron is fallback)
-- Verify CloudFront CDN TTL/invalidation timing for content verification grace period
+None for v5.0. All requirements target existing UI files with established patterns.
 
 ### Quick Tasks Completed
 
@@ -60,9 +59,9 @@ v4.0 decisions archived to `.planning/milestones/v4.0-ROADMAP.md`.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: v4.0 milestone archived
+Stopped at: v5.0 roadmap created
 Resume file: N/A
-Next: `/gsd:new-milestone` to start next milestone
+Next: `/gsd:plan-phase 69`
 
 ---
-*Updated: 2026-02-20 -- v5.0 UI Completeness milestone started*
+*Updated: 2026-02-20 -- v5.0 roadmap created*

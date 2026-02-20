@@ -12,6 +12,7 @@
 - [x] **v3.1 Data-Driven Screens** — Phases 51-55 (shipped 2026-02-13)
 - [x] **v3.2 Display Toolkit** — Phases 56-63 (shipped 2026-02-19)
 - [x] **v4.0 Player Hardening** — Phases 64-68 (shipped 2026-02-20)
+- [ ] **v5.0 UI Completeness** — Phases 69-71 (in progress)
 
 ## Phase History
 
@@ -52,6 +53,57 @@ All milestones shipped successfully.
 
 </details>
 
+## Phases
+
+- [ ] **Phase 69: Layout Editor Widget Parity** - All 12 widget types configurable from layout editor zone properties
+- [ ] **Phase 70: Screen & Scene Controls** - Menu board scene controls, screen orientation, and device language assignment
+- [ ] **Phase 71: Cleanup & Notification Gaps** - Recovery alert notification settings and dead code removal
+
+## Phase Details
+
+### Phase 69: Layout Editor Widget Parity
+**Goal**: Users can configure every widget type directly from the layout editor, eliminating the gap where 7 widget types had no property controls in LayoutPropertiesPanel
+**Depends on**: Nothing (first phase of v5.0)
+**Requirements**: LEDT-01, LEDT-02, LEDT-03, LEDT-04, LEDT-05, LEDT-06, LEDT-07
+**Success Criteria** (what must be TRUE):
+  1. User can select a data-table widget in a layout zone and configure its data source, columns, theme, and refresh interval
+  2. User can select an RSS widget (ticker or card) in a layout zone and configure its feed URL, display style, and refresh interval
+  3. User can select a social-feed widget in a layout zone and configure its feed source and hashtag filter
+  4. User can select countdown, menu-board, or clock-date widgets in layout zones and configure their type-specific properties
+  5. Changing widget type in a layout zone resets properties to the new type's defaults (existing registry behavior preserved)
+**Plans**: TBD
+
+### Phase 70: Screen & Scene Controls
+**Goal**: Users can manage menu board appearance in scene editor, set screen orientation, and assign device language -- all from the UI without manual database edits
+**Depends on**: Phase 69
+**Requirements**: SEDT-01, SCRN-01, SCRN-02
+**Success Criteria** (what must be TRUE):
+  1. User can select a menu board widget element in the scene editor and configure which menu board to display and its visual appearance
+  2. User can set a screen to portrait or landscape orientation from the screen edit UI and see the change reflected on the device
+  3. User can assign a language to a screen from the screen edit UI, controlling which language variant of content the device receives
+**Plans**: TBD
+
+### Phase 71: Cleanup & Notification Gaps
+**Goal**: Close the last two notification settings gaps and remove dead code that clutters the codebase
+**Depends on**: Nothing (independent of Phases 69-70)
+**Requirements**: NOTF-01, NOTF-02, CLEAN-01, CLEAN-02, CLEAN-03, CLEAN-04, CLEAN-05, CLEAN-06
+**Success Criteria** (what must be TRUE):
+  1. User can enable/disable device_recovery alerts from the notification settings page
+  2. User can enable/disable device_recovery_exhausted alerts from the notification settings page
+  3. The 6 unused service/hook files (gdprDeletionService, geolocationService, demoContentService, dataFeedScheduler, scimService, usePrefetch) no longer exist in the codebase
+  4. No import references to the deleted files remain anywhere in the codebase
+**Plans**: TBD
+
+## Progress
+
+**Execution Order:** 69 -> 70 -> 71 (71 can run in parallel with 69-70 if desired)
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 69. Layout Editor Widget Parity | v5.0 | 0/TBD | Not started | - |
+| 70. Screen & Scene Controls | v5.0 | 0/TBD | Not started | - |
+| 71. Cleanup & Notification Gaps | v5.0 | 0/TBD | Not started | - |
+
 ## Progress Summary
 
 | Milestone | Phases | Plans | Status | Shipped |
@@ -66,8 +118,9 @@ All milestones shipped successfully.
 | v3.1 Data-Driven Screens | 51-55 | 15 | Complete | 2026-02-13 |
 | v3.2 Display Toolkit | 56-63 | 16 | Complete | 2026-02-19 |
 | v4.0 Player Hardening | 64-68 | 11 | Complete | 2026-02-20 |
+| v5.0 UI Completeness | 69-71 | TBD | In progress | - |
 
-**Total:** 68 phases complete, 222 plans executed | 10 milestones shipped
+**Total:** 68 phases complete, 222 plans executed | 10 milestones shipped | v5.0 in progress
 
 ---
-*Last updated: 2026-02-20 -- v4.0 Player Hardening shipped*
+*Last updated: 2026-02-20 -- v5.0 UI Completeness roadmap created*
