@@ -4,6 +4,7 @@ import {
   AlertCircle,
   ArrowRight,
   Calendar,
+  Camera,
   CheckCircle,
   Clock,
   Cpu,
@@ -38,6 +39,7 @@ import {
   formatMetricValue,
   getJsHeapPercent
 } from '../services/screenDiagnosticsService';
+import { requestDeviceScreenshot } from '../services/deviceScreenshotService';
 import { useLogger } from '../hooks/useLogger.js';
 
 const MetricCard = ({ label, value, icon: Icon, metricStatus }) => (
@@ -57,6 +59,7 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
   const [diagnostics, setDiagnostics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [screenshotRequesting, setScreenshotRequesting] = useState(false);
 
   useEffect(() => {
     if (screen?.id) {
@@ -89,6 +92,21 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
       showToast?.('Error loading screen diagnostics', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRequestScreenshot = async () => {
+    try {
+      setScreenshotRequesting(true);
+      await requestDeviceScreenshot(screen.id);
+      showToast?.('Screenshot requested. It will appear within 30 seconds.', 'success');
+      // Refresh diagnostics after a short delay to pick up the pending state
+      setTimeout(() => loadDiagnostics(), 3000);
+    } catch (err) {
+      logger.error('Failed to request screenshot', { error: err, screenId: screen.id });
+      showToast?.('Failed to request screenshot', 'error');
+    } finally {
+      setScreenshotRequesting(false);
     }
   };
 
@@ -292,6 +310,53 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
                     {screenInfo.device_metrics?.collected_at && (
                       <span className="ml-auto">Updated {formatLastSeen(screenInfo.device_metrics.collected_at)}</span>
                     )}
+                  </div>
+                )}
+              </div>
+
+              {/* Section: Latest Screenshot */}
+              <div className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    Latest Screenshot
+                  </h3>
+                  <button
+                    onClick={handleRequestScreenshot}
+                    disabled={screenshotRequesting || screenInfo.needs_screenshot_update}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {screenshotRequesting || screenInfo.needs_screenshot_update ? (
+                      <><Loader2 size={12} className="animate-spin" /> Requesting...</>
+                    ) : (
+                      <><Camera size={12} /> Capture Now</>
+                    )}
+                  </button>
+                </div>
+
+                {screenInfo.last_screenshot_url ? (
+                  <div className="rounded-lg overflow-hidden border border-gray-200">
+                    <img
+                      src={screenInfo.last_screenshot_url}
+                      alt="Latest device screenshot"
+                      className="w-full aspect-video object-contain bg-gray-900"
+                    />
+                    <div className="p-2 bg-gray-50 flex items-center justify-between text-xs text-gray-500">
+                      <span>Captured {formatLastSeen(screenInfo.last_screenshot_at)}</span>
+                      <a
+                        href={screenInfo.last_screenshot_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        <ExternalLink size={12} />
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-gray-100 rounded-lg p-6 text-center">
+                    <Image size={32} className="mx-auto text-gray-400 mb-2" />
+                    <p className="text-gray-500 text-sm">No screenshot available</p>
+                    <p className="text-gray-400 text-xs mt-1">Click "Capture Now" to take one</p>
                   </div>
                 )}
               </div>
