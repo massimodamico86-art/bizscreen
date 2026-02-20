@@ -24,6 +24,8 @@ import { Button } from '../../design-system';
 import { getWidgetTypes, getWidgetDefaults } from '../../widgets/registry.js';
 import { TIMEZONE_OPTIONS } from '../../services/locationService.js';
 import { QRCodeWidgetControls } from '../scene-editor/QRCodeWidgetControls.jsx';
+import { DataTableWidgetControls } from '../scene-editor/DataTableWidgetControls.jsx';
+import { RssWidgetControls } from '../scene-editor/RssWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -583,6 +585,22 @@ function WidgetControls({ element, onUpdate, onPropsUpdate }) {
 
       {widgetType === 'qr' && (
         <QRCodeWidgetControls
+          props={props}
+          onPropChange={(key, value) => onPropsUpdate({ [key]: value })}
+        />
+      )}
+
+      {widgetType === 'data-table' && (
+        <DataTableWidgetControls
+          props={props}
+          onPropChange={(key, value) => onPropsUpdate({ [key]: value })}
+          onMultiPropChange={onPropsUpdate}
+        />
+      )}
+
+      {(widgetType === 'rss-ticker' || widgetType === 'rss-card') && (
+        <RssWidgetControls
+          widgetType={widgetType}
           props={props}
           onPropChange={(key, value) => onPropsUpdate({ [key]: value })}
         />
