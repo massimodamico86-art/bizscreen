@@ -102,6 +102,7 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
   const screenshotInProgressRef = useRef(false);
   const lastActivityRef = useRef(Date.now());
   const lastScreenshotTimeRef = useRef(0);
+  const wasOfflineRef = useRef(false);
 
   useEffect(() => {
     if (!screenId) return;
@@ -112,6 +113,25 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
         const contentHash = localStorage.getItem(STORAGE_KEYS.contentHash);
         const statusResult = await updateDeviceStatus(screenId, PLAYER_VERSION, contentHash, metrics);
         lastActivityRef.current = Date.now();
+
+        // Recovery screenshot: device was offline, now heartbeat succeeded
+        if (wasOfflineRef.current) {
+          logger.info('Device recovered from offline, capturing recovery screenshot');
+          wasOfflineRef.current = false;
+          if (!screenshotInProgressRef.current && contentContainerRef?.current) {
+            screenshotInProgressRef.current = true;
+            try {
+              const container = contentContainerRef.current;
+              await captureAndUploadScreenshot(screenId, container);
+              lastScreenshotTimeRef.current = Date.now();
+              await cleanupOldScreenshots(screenId, 5);
+            } catch (recoveryErr) {
+              logger.error('Recovery screenshot capture failed', { error: recoveryErr });
+            } finally {
+              screenshotInProgressRef.current = false;
+            }
+          }
+        }
 
         // Check if screenshot is requested (on-demand capture)
         if (statusResult?.needs_screenshot_update && !screenshotInProgressRef.current) {
@@ -169,6 +189,8 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
         }
       } catch (err) {
         logger.error('Heartbeat error', { error: err });
+        // Mark device as offline so next successful heartbeat triggers recovery screenshot
+        wasOfflineRef.current = true;
       }
     };
 
@@ -187,5 +209,6 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
     heartbeatRef,
     screenshotInProgressRef,
     lastActivityRef,
+    lastScreenshotTimeRef,
   };
 }
