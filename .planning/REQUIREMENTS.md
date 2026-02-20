@@ -1,0 +1,90 @@
+# Requirements: BizScreen
+
+**Defined:** 2026-02-20
+**Core Value:** Screens reliably display the right content at the right time, even when offline
+
+## v5.0 Requirements
+
+Requirements for UI Completeness milestone. Each maps to roadmap phases.
+
+### Layout Editor
+
+- [ ] **LEDT-01**: User can configure data-table widget properties in layout editor zones
+- [ ] **LEDT-02**: User can configure rss-ticker widget properties in layout editor zones
+- [ ] **LEDT-03**: User can configure rss-card widget properties in layout editor zones
+- [ ] **LEDT-04**: User can configure social-feed widget properties in layout editor zones
+- [ ] **LEDT-05**: User can configure countdown widget properties in layout editor zones
+- [ ] **LEDT-06**: User can configure menu-board widget properties in layout editor zones
+- [ ] **LEDT-07**: User can configure clock-date widget properties in layout editor zones
+
+### Scene Editor
+
+- [ ] **SEDT-01**: User can select which menu board to display and configure appearance in scene editor widget controls
+
+### Screen Settings
+
+- [ ] **SCRN-01**: User can set screen orientation (portrait/landscape) from the screen edit UI
+- [ ] **SCRN-02**: User can assign a language to a screen/device for content delivery
+
+### Notifications
+
+- [ ] **NOTF-01**: User can enable/disable device_recovery alerts in notification settings
+- [ ] **NOTF-02**: User can enable/disable device_recovery_exhausted alerts in notification settings
+
+### Dead Code Cleanup
+
+- [ ] **CLEAN-01**: Remove unused gdprDeletionService.js
+- [ ] **CLEAN-02**: Remove unused geolocationService.js
+- [ ] **CLEAN-03**: Remove unused demoContentService.js
+- [ ] **CLEAN-04**: Remove unused dataFeedScheduler.js
+- [ ] **CLEAN-05**: Remove unused scimService.js
+- [ ] **CLEAN-06**: Remove unused usePrefetch.js hook
+
+## Future Requirements
+
+None — this milestone is scoped to closing existing UI gaps.
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Screenshot history/comparison | Low severity gap; current single-screenshot view adequate |
+| Alert export (CSV/PDF) | Nice-to-have; not a parity gap |
+| Device CPU/temperature metrics | Not captured by player; browser APIs don't expose these |
+| Role/permission management UI | Admin feature; existing role checks adequate |
+| Test email button in notification settings | Polish; not a parity gap |
+| Browser/push notifications | New feature, not a gap |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| LEDT-01 | — | Pending |
+| LEDT-02 | — | Pending |
+| LEDT-03 | — | Pending |
+| LEDT-04 | — | Pending |
+| LEDT-05 | — | Pending |
+| LEDT-06 | — | Pending |
+| LEDT-07 | — | Pending |
+| SEDT-01 | — | Pending |
+| SCRN-01 | — | Pending |
+| SCRN-02 | — | Pending |
+| NOTF-01 | — | Pending |
+| NOTF-02 | — | Pending |
+| CLEAN-01 | — | Pending |
+| CLEAN-02 | — | Pending |
+| CLEAN-03 | — | Pending |
+| CLEAN-04 | — | Pending |
+| CLEAN-05 | — | Pending |
+| CLEAN-06 | — | Pending |
+
+**Coverage:**
+- v5.0 requirements: 18 total
+- Mapped to phases: 0
+- Unmapped: 18
+
+---
+*Requirements defined: 2026-02-20*
+*Last updated: 2026-02-20 after initial definition*
