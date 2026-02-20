@@ -9,11 +9,11 @@ Requirements for UI Completeness milestone. Each maps to roadmap phases.
 
 ### Layout Editor
 
-- [ ] **LEDT-01**: User can configure data-table widget properties in layout editor zones
-- [ ] **LEDT-02**: User can configure rss-ticker widget properties in layout editor zones
-- [ ] **LEDT-03**: User can configure rss-card widget properties in layout editor zones
-- [ ] **LEDT-04**: User can configure social-feed widget properties in layout editor zones
-- [ ] **LEDT-05**: User can configure countdown widget properties in layout editor zones
+- [x] **LEDT-01**: User can configure data-table widget properties in layout editor zones
+- [x] **LEDT-02**: User can configure rss-ticker widget properties in layout editor zones
+- [x] **LEDT-03**: User can configure rss-card widget properties in layout editor zones
+- [x] **LEDT-04**: User can configure social-feed widget properties in layout editor zones
+- [x] **LEDT-05**: User can configure countdown widget properties in layout editor zones
 - [ ] **LEDT-06**: User can configure menu-board widget properties in layout editor zones
 - [ ] **LEDT-07**: User can configure clock-date widget properties in layout editor zones
 
@@ -61,11 +61,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LEDT-01 | Phase 69 | Pending |
-| LEDT-02 | Phase 69 | Pending |
-| LEDT-03 | Phase 69 | Pending |
-| LEDT-04 | Phase 69 | Pending |
-| LEDT-05 | Phase 69 | Pending |
+| LEDT-01 | Phase 69 | Complete |
+| LEDT-02 | Phase 69 | Complete |
+| LEDT-03 | Phase 69 | Complete |
+| LEDT-04 | Phase 69 | Complete |
+| LEDT-05 | Phase 69 | Complete |
 | LEDT-06 | Phase 69 | Pending |
 | LEDT-07 | Phase 69 | Pending |
 | SEDT-01 | Phase 70 | Pending |
