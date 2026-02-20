@@ -38,11 +38,13 @@ import {
   usePlayerPlayback,
   useTapSequence,
   useStuckDetection,
+  useAutoRecovery,
 } from '../hooks';
 import { AppRenderer } from '../components/AppRenderer';
 import { SceneRenderer } from '../components/SceneRenderer.jsx';
 import { LayoutRenderer } from '../components/LayoutRenderer.jsx';
 import { PinEntry } from '../components/PinEntry.jsx';
+import { RecoveryFallbackScreen } from '../components/RecoveryFallbackScreen.jsx';
 
 // Module-level logger for utility functions
 const retryLogger = createScopedLogger('Player:retry');
@@ -165,26 +167,52 @@ export function ViewPage() {
   );
 
   // Heartbeat hook - handles device status updates and screenshots
-  usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef);
+  const { screenshotInProgressRef } = usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef);
+
+  // Auto-recovery hook - progressive recovery with crash counter
+  const { isExhausted, crashCount, triggerRecovery } = useAutoRecovery({
+    screenId,
+    contentContainerRef,
+    loadContentRef,
+    loading,
+    content,
+  });
 
   // Stuck detection hook - monitors video and page activity
   useStuckDetection({
     videoRef,
     lastVideoTimeRef,
     lastActivityRef,
+    contentContainerRef,
+    loading,
     onVideoStuck: () => {
       logger.warn('Video stuck detected, attempting recovery...');
       try {
         videoRef.current.currentTime = 0;
-        videoRef.current.play().catch(err => logger.error('Video play failed', { error: err }));
+        videoRef.current.play().catch(err => {
+          logger.error('Video play failed', { error: err });
+          triggerRecovery('video_stuck');
+        });
       } catch (err) {
         logger.error('Video recovery failed', { error: err });
-        advanceToNextRef.current?.();
+        triggerRecovery('video_stuck');
       }
     },
     onPageStuck: () => {
-      logger.warn('Player inactive for too long, reloading...');
-      window.location.reload();
+      if (screenshotInProgressRef.current) {
+        logger.debug('Screenshot in progress, deferring recovery by one cycle');
+        return;
+      }
+      logger.warn('Player inactive for too long, triggering recovery...');
+      triggerRecovery('page_inactive');
+    },
+    onBlankScreen: () => {
+      if (screenshotInProgressRef.current) {
+        logger.debug('Screenshot in progress, deferring blank screen recovery');
+        return;
+      }
+      logger.warn('Blank screen detected, triggering recovery...');
+      triggerRecovery('blank_screen');
     },
   });
 
@@ -416,6 +444,17 @@ export function ViewPage() {
   const hasContent = contentMode === 'layout'
     ? (content.layout && content.layout.zones?.length > 0)
     : (items.length > 0);
+
+  // Recovery exhausted - show static fallback screen
+  if (isExhausted) {
+    return (
+      <RecoveryFallbackScreen
+        screenId={screenId}
+        screenName={content?.screen?.name}
+        crashCount={crashCount}
+      />
+    );
+  }
 
   // Loading state
   if (loading) {
