@@ -84,6 +84,7 @@ Plans:
   1. User can select a menu board widget element in the scene editor and configure which menu board to display and its visual appearance
   2. User can set a screen to portrait or landscape orientation from the screen edit UI and see the change reflected on the device
   3. User can assign a language to a screen from the screen edit UI, controlling which language variant of content the device receives
+**Gap Closure:** Also fixes YodeckLayoutEditorPage.jsx missing imports (integration gap from v5.0 audit)
 **Plans**: TBD
 
 ### Phase 71: Cleanup & Notification Gaps
