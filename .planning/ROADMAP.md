@@ -103,7 +103,7 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 69. Layout Editor Widget Parity | 2/2 | Complete   | 2026-02-20 | - |
+| 69. Layout Editor Widget Parity | 2/2 | Complete    | 2026-02-20 | - |
 | 70. Screen & Scene Controls | v5.0 | 0/TBD | Not started | - |
 | 71. Cleanup & Notification Gaps | v5.0 | 0/TBD | Not started | - |
 
