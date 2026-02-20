@@ -22,8 +22,8 @@ Requirements for player hardening milestone. Each maps to roadmap phases.
 
 ### Content Verification
 
-- [ ] **VERI-01**: Player reports content version identifier on each heartbeat
-- [ ] **VERI-02**: Server detects content version mismatch between published and player-reported versions
+- [x] **VERI-01**: Player reports content version identifier on each heartbeat
+- [x] **VERI-02**: Server detects content version mismatch between published and player-reported versions
 - [ ] **VERI-03**: Player auto-retries content sync when server signals version mismatch
 - [ ] **VERI-04**: Content verification never blocks active playback (play-then-verify pattern)
 
@@ -91,8 +91,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RECV-01 | Phase 66 | Complete |
 | RECV-02 | Phase 66 | Complete |
 | RECV-03 | Phase 66 | Complete |
-| VERI-01 | Phase 67 | Pending |
-| VERI-02 | Phase 67 | Pending |
+| VERI-01 | Phase 67 | Complete |
+| VERI-02 | Phase 67 | Complete |
 | VERI-03 | Phase 67 | Pending |
 | VERI-04 | Phase 67 | Pending |
 | TELM-01 | Phase 64 | Pending |

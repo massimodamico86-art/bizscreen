@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 66 — Auto-Recovery
+**Current focus:** Phase 67 — Content Verification
 
 ## Current Position
 
-Phase: 66 — third of 5 in v4.0 Player Hardening (Phases 64-68)
-Plan: 2 of 2 complete
-Status: Phase Complete
-Last activity: 2026-02-20 — Plan 02 (ViewPage integration and RecoveryFallbackScreen) complete
+Phase: 67 — fourth of 5 in v4.0 Player Hardening (Phases 64-68)
+Plan: 1 of 2 complete
+Status: In Progress
+Last activity: 2026-02-20 — Plan 01 (Content version reporting and mismatch detection pipeline) complete
 
-Progress: [██████████] 100%
+Progress: [█████-----] 50%
 
 ## Milestones Shipped
 
@@ -46,6 +46,7 @@ Progress: [██████████] 100%
 | Phase 65 P02 | 2min | 2 tasks | 2 files |
 | 66 | 01 | 3min | 2 | 4 |
 | 66 | 02 | 2min | 1 | 2 |
+| 67 | 01 | 14min | 2 | 4 |
 
 ## Accumulated Context
 
@@ -73,6 +74,10 @@ Full decision log in PROJECT.md Key Decisions table.
 - **66-01:** Blank screen detection uses 10s grace + 3 consecutive checks (30s) to prevent false positives
 - **66-02:** isExhausted check placed before loading state check so exhausted devices never show spinner
 - **66-02:** screenshotInProgressRef gates onPageStuck and onBlankScreen but not onVideoStuck (video restart is non-destructive)
+- **67-01:** Scene version resolution joins scenes table to produce underlying content type (layout/playlist), not generic scene identifier
+- **67-01:** Version string uses lightweight ID-based format (mode:source:contentId) per REQUIREMENTS.md Tizen/WebOS constraint
+- **67-01:** Mismatch suppressed during needs_refresh window (status='pending') preventing false positives after publish
+- **67-01:** onMismatchDetected callback approach keeps heartbeat hook stateless for mismatch handling
 
 ### Blockers/Concerns
 
@@ -90,9 +95,9 @@ Full decision log in PROJECT.md Key Decisions table.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 66-02-PLAN.md (Phase 66 complete)
-Resume file: .planning/phases/66-auto-recovery/66-02-SUMMARY.md
-Next: Phase 67 planning
+Stopped at: Completed 67-01-PLAN.md
+Resume file: .planning/phases/67-content-verification/67-01-SUMMARY.md
+Next: 67-02-PLAN.md (transition-aware re-sync, dashboard mismatch warning)
 
 ---
-*Updated: 2026-02-20 -- Phase 66 complete (2/2 plans)*
+*Updated: 2026-02-20 -- Phase 67 Plan 01 complete (1/2 plans)*
