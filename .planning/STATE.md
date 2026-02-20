@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v5.0 UI Completeness -- Phase 69 Layout Editor Widget Parity
+**Current focus:** v5.0 UI Completeness -- Phase 70 Screen & Scene Controls
 
 ## Current Position
 
-Phase: 69 (1 of 3 in v5.0) — Layout Editor Widget Parity
-Plan: 02 of 2 complete (phase complete)
-Status: Phase 69 complete
-Last activity: 2026-02-20 — Completed 69-02 (menu-board controls & widget parity)
+Phase: 70 (2 of 3 in v5.0) — Screen & Scene Controls
+Plan: 01 of 1 complete (phase complete)
+Status: Phase 70 complete
+Last activity: 2026-02-20 — Completed 70-01 (screen scene controls & YodeckLayoutEditorPage imports)
 
-Progress: [███░░░░░░░] 33% (v5.0 UI Completeness)
+Progress: [██████░░░░] 67% (v5.0 UI Completeness)
 
 ## Milestones Shipped
 
@@ -33,9 +33,9 @@ Progress: [███░░░░░░░] 33% (v5.0 UI Completeness)
 
 ## Performance Metrics
 
-**Cumulative (v1 through v4.0):**
-- Total plans executed: 225
-- Total phases: 69 completed
+**Cumulative (v1 through v4.0 + v5.0 progress):**
+- Total plans executed: 226
+- Total phases: 70 completed
 - Total milestones: 10 shipped
 
 ## Accumulated Context
@@ -47,6 +47,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - Reuse scene-editor widget controls in layout editor via import + prop adapter pattern (69-01)
 - Follow scene-editor control component pattern for MenuBoardWidgetControls with fetchMenuBoards integration (69-02)
 - Add size control to all 4 widgets with size in registry defaultProps, not just clock-date (69-02)
+- Reused existing MenuBoardWidgetControls from 69-02 with same {props, onPropChange} interface for scene editor (70-01)
+- SCRN-01 and SCRN-02 confirmed complete end-to-end -- no code changes needed (70-01)
 
 ### Blockers/Concerns
 
@@ -62,9 +64,9 @@ None for v5.0. All requirements target existing UI files with established patter
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 69-02-PLAN.md (phase 69 complete)
+Stopped at: Completed 70-01-PLAN.md (phase 70 complete)
 Resume file: N/A
-Next: Execute phase 70
+Next: Execute phase 71
 
 ---
-*Updated: 2026-02-20 -- Completed phase 69 Layout Editor Widget Parity (all 2 plans)*
+*Updated: 2026-02-20 -- Completed phase 70 Screen & Scene Controls (1 plan)*

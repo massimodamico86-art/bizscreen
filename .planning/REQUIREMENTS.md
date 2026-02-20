@@ -19,12 +19,12 @@ Requirements for UI Completeness milestone. Each maps to roadmap phases.
 
 ### Scene Editor
 
-- [ ] **SEDT-01**: User can select which menu board to display and configure appearance in scene editor widget controls
+- [x] **SEDT-01**: User can select which menu board to display and configure appearance in scene editor widget controls
 
 ### Screen Settings
 
-- [ ] **SCRN-01**: User can set screen orientation (portrait/landscape) from the screen edit UI
-- [ ] **SCRN-02**: User can assign a language to a screen/device for content delivery
+- [x] **SCRN-01**: User can set screen orientation (portrait/landscape) from the screen edit UI
+- [x] **SCRN-02**: User can assign a language to a screen/device for content delivery
 
 ### Notifications
 
@@ -68,9 +68,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LEDT-05 | Phase 69 | Complete |
 | LEDT-06 | Phase 69 | Complete |
 | LEDT-07 | Phase 69 | Complete |
-| SEDT-01 | Phase 70 | Pending |
-| SCRN-01 | Phase 70 | Pending |
-| SCRN-02 | Phase 70 | Pending |
+| SEDT-01 | Phase 70 | Complete |
+| SCRN-01 | Phase 70 | Complete |
+| SCRN-02 | Phase 70 | Complete |
 | NOTF-01 | Phase 71 | Pending |
 | NOTF-02 | Phase 71 | Pending |
 | CLEAN-01 | Phase 71 | Pending |
