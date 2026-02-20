@@ -43,6 +43,7 @@ Progress: [█████-----] 50%
 | 64 | 02 | 2min | 1 | 1 |
 | 64 | 03 | 2min | 2 | 3 |
 | 65 | 01 | 2min | 2 | 1 |
+| Phase 65 P02 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - **65-01:** All screenshot timing within heartbeat sendBeat() cycle -- no separate setInterval
 - **65-01:** Recovery detection via wasOfflineRef set in catch block, cleared on successful heartbeat
 - **65-01:** Initial capture fires naturally because lastScreenshotTimeRef starts at 0
+- [Phase 65]: 65-02: Screenshot fields flow through existing get_screen_diagnostics RPC (no additional API call)
+- [Phase 65]: 65-02: Capture Now button disables on both local requesting state and server needs_screenshot_update flag
+- [Phase 65]: 65-02: 3-second delayed refresh after capture request picks up pending state before 30-second auto-refresh cycle
 
 ### Blockers/Concerns
 
