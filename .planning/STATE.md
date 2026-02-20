@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v5.0 UI Completeness -- Phase 70 Screen & Scene Controls
+**Current focus:** v5.0 UI Completeness -- Phase 71 Cleanup & Notification Gaps
 
 ## Current Position
 
-Phase: 70 (2 of 3 in v5.0) — Screen & Scene Controls
-Plan: 01 of 1 complete (phase complete)
-Status: Phase 70 complete
-Last activity: 2026-02-20 — Completed 70-01 (screen scene controls & YodeckLayoutEditorPage imports)
+Phase: 71 (3 of 3 in v5.0) — Cleanup & Notification Gaps
+Plan: 02 of 2 complete
+Status: Executing phase 71
+Last activity: 2026-02-20 — Completed 71-02 (delete 6 unused dead code files)
 
-Progress: [██████░░░░] 67% (v5.0 UI Completeness)
+Progress: [████████░░] 83% (v5.0 UI Completeness)
 
 ## Milestones Shipped
 
@@ -34,7 +34,7 @@ Progress: [██████░░░░] 67% (v5.0 UI Completeness)
 ## Performance Metrics
 
 **Cumulative (v1 through v4.0 + v5.0 progress):**
-- Total plans executed: 226
+- Total plans executed: 227
 - Total phases: 70 completed
 - Total milestones: 10 shipped
 
@@ -49,6 +49,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - Add size control to all 4 widgets with size in registry defaultProps, not just clock-date (69-02)
 - Reused existing MenuBoardWidgetControls from 69-02 with same {props, onPropChange} interface for scene editor (70-01)
 - SCRN-01 and SCRN-02 confirmed complete end-to-end -- no code changes needed (70-01)
+- Verified zero importers via codebase-wide grep before deleting 6 dead code files (71-02)
 
 ### Blockers/Concerns
 
@@ -64,9 +65,9 @@ None for v5.0. All requirements target existing UI files with established patter
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 70-01-PLAN.md (phase 70 complete)
+Stopped at: Completed 71-02-PLAN.md
 Resume file: N/A
-Next: Execute phase 71
+Next: Continue phase 71 (plan 01 remaining)
 
 ---
-*Updated: 2026-02-20 -- Completed phase 70 Screen & Scene Controls (1 plan)*
+*Updated: 2026-02-20 -- Completed 71-02 dead code deletion (6 files removed)*

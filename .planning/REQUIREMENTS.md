@@ -33,12 +33,12 @@ Requirements for UI Completeness milestone. Each maps to roadmap phases.
 
 ### Dead Code Cleanup
 
-- [ ] **CLEAN-01**: Remove unused gdprDeletionService.js
-- [ ] **CLEAN-02**: Remove unused geolocationService.js
-- [ ] **CLEAN-03**: Remove unused demoContentService.js
-- [ ] **CLEAN-04**: Remove unused dataFeedScheduler.js
-- [ ] **CLEAN-05**: Remove unused scimService.js
-- [ ] **CLEAN-06**: Remove unused usePrefetch.js hook
+- [x] **CLEAN-01**: Remove unused gdprDeletionService.js
+- [x] **CLEAN-02**: Remove unused geolocationService.js
+- [x] **CLEAN-03**: Remove unused demoContentService.js
+- [x] **CLEAN-04**: Remove unused dataFeedScheduler.js
+- [x] **CLEAN-05**: Remove unused scimService.js
+- [x] **CLEAN-06**: Remove unused usePrefetch.js hook
 
 ## Future Requirements
 
@@ -73,12 +73,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCRN-02 | Phase 70 | Complete |
 | NOTF-01 | Phase 71 | Pending |
 | NOTF-02 | Phase 71 | Pending |
-| CLEAN-01 | Phase 71 | Pending |
-| CLEAN-02 | Phase 71 | Pending |
-| CLEAN-03 | Phase 71 | Pending |
-| CLEAN-04 | Phase 71 | Pending |
-| CLEAN-05 | Phase 71 | Pending |
-| CLEAN-06 | Phase 71 | Pending |
+| CLEAN-01 | Phase 71 | Complete |
+| CLEAN-02 | Phase 71 | Complete |
+| CLEAN-03 | Phase 71 | Complete |
+| CLEAN-04 | Phase 71 | Complete |
+| CLEAN-05 | Phase 71 | Complete |
+| CLEAN-06 | Phase 71 | Complete |
 
 **Coverage:**
 - v5.0 requirements: 18 total
