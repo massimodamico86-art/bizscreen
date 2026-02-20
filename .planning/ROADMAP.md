@@ -117,11 +117,11 @@ Plans:
   2. Server detects when a player's reported content version differs from the currently published version
   3. Player automatically retries content sync when the server signals a version mismatch
   4. Content verification runs after playback starts and never interrupts or delays active content display
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 67-01: TBD
-- [ ] 67-02: TBD
+- [ ] 67-01-PLAN.md — Content version pipeline: migration for verification columns, extended heartbeat RPC with version comparison, player content version computation and reporting
+- [ ] 67-02-PLAN.md — Player re-sync and dashboard UI: useContentVerification hook with transition-aware retry, mismatch warning in ScreenDetailDrawer with Force Sync button
 
 ### Phase 68: Alert Wiring & Notifications
 **Goal**: Operators are proactively notified of all screen issues through in-app and email channels
