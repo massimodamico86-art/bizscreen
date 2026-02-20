@@ -357,3 +357,37 @@
 
 ---
 
+
+## v5.0 UI Completeness (Shipped: 2026-02-20)
+
+**Delivered:** Closed every gap between backend capabilities and UI exposure — all 12 widget types fully configurable from both layout editor and scene editor, recovery alert types added to notification settings, and 6 unused service/hook dead code files removed.
+
+**Phases completed:** 69-71 (3 phases, 5 plans, 8 tasks)
+
+**Key accomplishments:**
+
+- Integrated 7 scene-editor widget controls (data-table, rss-ticker, rss-card, social-feed, countdown, menu-board, clock-date size) into layout editor via prop adapter pattern
+- Created MenuBoardWidgetControls component with board selector, theme toggle, accent color, display options, page interval, currency override
+- Added menu board widget controls to scene editor PropertiesPanel, closing the last widget type gap
+- Resolved 8 missing component imports in YodeckLayoutEditorPage
+- Verified screen orientation (SCRN-01) and display language (SCRN-02) end-to-end — no code changes needed
+- Added device_recovery and device_recovery_exhausted alert toggles to notification settings
+- Deleted 6 unused service/hook files (1,716 LOC removed): gdprDeletionService, geolocationService, demoContentService, dataFeedScheduler, scimService, usePrefetch
+
+**Stats:**
+
+- 11 src files modified (+244 / -1,718 lines, net -1,474 LOC)
+- 18 commits over 1 day (2026-02-20)
+- 3 phases, 5 plans
+- ~190,380 lines of JavaScript/JSX/CSS
+
+**Git range:** `4634b8c` → `a022bce`
+
+**Tech debt accepted:**
+
+- Orphaned test file: `tests/unit/services/gdprDeletionService.test.js` imports deleted `gdprDeletionService.js` (will fail at import time — delete the test file)
+
+**What's next:** Next milestone planning
+
+---
+

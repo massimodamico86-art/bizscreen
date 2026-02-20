@@ -2,7 +2,7 @@
 
 ## What This Is
 
-BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, display live data from Google Sheets/CSV/RSS feeds/social media on screens, play video content with HLS adaptive streaming, manage screen groups with tags, deploy screens in portrait or landscape orientation, display structured menu boards with realtime updates, and monitor device health with diagnostic telemetry, screenshots, and alert-driven notifications. The player self-heals from blank/frozen/crashed states, verifies it is displaying the correct published content, and reports device metrics on every heartbeat cycle. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices with a centralized widget registry orchestrating 12+ widget types.
+BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, display live data from Google Sheets/CSV/RSS feeds/social media on screens, play video content with HLS adaptive streaming, manage screen groups with tags, deploy screens in portrait or landscape orientation, display structured menu boards with realtime updates, and monitor device health with diagnostic telemetry, screenshots, and alert-driven notifications. The player self-heals from blank/frozen/crashed states, verifies it is displaying the correct published content, and reports device metrics on every heartbeat cycle. All 12 widget types are fully configurable from both the layout editor and scene editor. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices with a centralized widget registry orchestrating 12 widget types.
 
 ## Core Value
 
@@ -170,19 +170,17 @@ These capabilities shipped and are production-verified:
 - ✓ In-app notification bell with alert history — v4.0
 - ✓ Email alerts for critical issues (device offline, recovery exhausted) — v4.0
 
+**v5.0 UI Completeness (2026-02-20):**
+- ✓ All 12 widget types configurable from layout editor zone properties — v5.0
+- ✓ Menu board widget controls in scene editor (board selector, theme, accent color) — v5.0
+- ✓ Screen orientation and display language verified end-to-end — v5.0
+- ✓ Device recovery and recovery exhausted alert toggles in notification settings — v5.0
+- ✓ 6 unused service/hook dead code files removed (1,716 LOC) — v5.0
+- ✓ YodeckLayoutEditorPage missing component imports resolved — v5.0
+
 ### Active
 
-## Current Milestone: v5.0 UI Completeness
-
-**Goal:** Close every gap between backend capabilities and UI exposure — every feature reachable from the interface.
-
-**Target features:**
-- Layout Editor widget parity (all 12 widget types configurable)
-- Menu Board widget editor controls in scene editor
-- Screen orientation setting UI
-- Device language assignment UI
-- Recovery alert types in notification settings
-- Dead code cleanup (6 unused services/hooks)
+(No active requirements — define next milestone with `/gsd:new-milestone`)
 
 ### Out of Scope
 
@@ -201,9 +199,9 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (post v4.0):**
+**Current State (post v5.0):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- ~191,854 lines of JavaScript/JSX/CSS in src/
+- ~190,380 lines of JavaScript/JSX/CSS in src/ (net reduction from dead code cleanup)
 - Unified onboarding flow (feature flag removed, unconditional)
 - Test suite: 2,079 unit tests, 1,191 E2E tests (all skips categorized and documented)
 - ESLint: zero warnings, zero errors, all rules at error level with pre-commit enforcement
@@ -233,6 +231,8 @@ These capabilities shipped and are production-verified:
 - Offline detection: pg_cron evaluator with 5-min threshold, severity escalation, dual-path resolution
 - Alert pipeline: Postgres trigger for in-app notifications, critical-only email via Resend
 - 5 alert types: device_offline, content_mismatch, device_recovery, device_recovery_exhausted, plus generic
+- All 12 widget types have complete property controls in both layout editor and scene editor
+- All notification alert types configurable in settings (including recovery alerts added in v5.0)
 
 **Technical Debt (Minimal):**
 - ~900 E2E tests skipped (intentional: ~800 project-specific multi-project pattern, remainder categorized with SKIP REASON documentation)
@@ -351,6 +351,11 @@ These capabilities shipped and are production-verified:
 | Recovery alerts detected at SQL level in heartbeat | Player may be in recovery loop, can't rely on JS dispatch | ✓ Good — server-authoritative |
 | Postgres AFTER INSERT trigger for notifications | Handles ALL alert types reliably without JS coordination | ✓ Good — database-authoritative |
 | Email restricted to critical severity only | Prevents alert fatigue per ALRT-05 requirement | ✓ Good — appropriate filtering |
+| Reuse scene-editor controls in layout editor via prop adapter | Zero new component code for 5 widget types | ✓ Good — DRY, consistent UI |
+| onPropChange adapter bridging scene/layout editor | Single-prop callback to object-based update | ✓ Good — clean interface |
+| Size control for all 4 widgets with size in defaultProps | Consistent behavior across clock/date/weather | ✓ Good — uniform UX |
+| Verify zero importers before dead code deletion | Safety check prevents breaking changes | ✓ Good — no regressions |
+| SCRN-01/SCRN-02 confirmed complete, no changes needed | End-to-end verification vs unnecessary code | ✓ Good — avoided wasted work |
 
 ---
-*Last updated: 2026-02-20 after v5.0 UI Completeness milestone started*
+*Last updated: 2026-02-20 after v5.0 UI Completeness milestone*
