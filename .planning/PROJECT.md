@@ -2,7 +2,7 @@
 
 ## What This Is
 
-BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, display live data from Google Sheets/CSV/RSS feeds/social media on screens, play video content with HLS adaptive streaming, manage screen groups with tags, deploy screens in portrait or landscape orientation, display structured menu boards with realtime updates, and monitor device status remotely. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices with a centralized widget registry orchestrating 12+ widget types.
+BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, display live data from Google Sheets/CSV/RSS feeds/social media on screens, play video content with HLS adaptive streaming, manage screen groups with tags, deploy screens in portrait or landscape orientation, display structured menu boards with realtime updates, and monitor device health with diagnostic telemetry, screenshots, and alert-driven notifications. The player self-heals from blank/frozen/crashed states, verifies it is displaying the correct published content, and reports device metrics on every heartbeat cycle. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices with a centralized widget registry orchestrating 12+ widget types.
 
 ## Core Value
 
@@ -150,19 +150,29 @@ These capabilities shipped and are production-verified:
 - ✓ Menu board widget with themed rendering, auto-pagination, Supabase Realtime — v3.2
 - ✓ Dietary/allergen tags and locale-aware currency formatting — v3.2
 
+**v4.0 Player Hardening (2026-02-20):**
+- ✓ Player reports device metrics (memory, storage, network) on every heartbeat — v4.0
+- ✓ User views device diagnostics on screen detail page with color-coded status — v4.0
+- ✓ Server detects offline devices and raises alert with severity escalation — v4.0
+- ✓ Server auto-resolves offline alert when device resumes heartbeats — v4.0
+- ✓ Player auto-captures screenshot every 5 minutes while content is playing — v4.0
+- ✓ User views latest screenshot on screen detail page — v4.0
+- ✓ User requests on-demand screenshot from screen detail page — v4.0
+- ✓ Player captures screenshot on alert events (offline recovery, crash detection) — v4.0
+- ✓ Player detects blank/frozen screen and auto-reloads to restore playback — v4.0
+- ✓ Player falls back to cached content when reload fails — v4.0
+- ✓ Crash counter prevents infinite restart loops (max 6, then static fallback) — v4.0
+- ✓ Player reports content version identifier on each heartbeat — v4.0
+- ✓ Server detects content version mismatch between published and player-reported — v4.0
+- ✓ Player auto-retries content sync on version mismatch — v4.0
+- ✓ Content verification never blocks active playback (play-then-verify) — v4.0
+- ✓ Recovery events generate alerts in the system — v4.0
+- ✓ In-app notification bell with alert history — v4.0
+- ✓ Email alerts for critical issues (device offline, recovery exhausted) — v4.0
+
 ### Active
 
-## Current Milestone: v4.0 Player Hardening
-
-**Goal:** Give operators full visibility into screen health and make the player self-healing — screenshots, auto-recovery, content verification, diagnostic telemetry, and alert-driven monitoring.
-
-**Target features:**
-- Periodic player screenshots viewable on screen detail page
-- Auto-recovery from blank screens, crashes, and stale content
-- Content version verification (player confirms correct published version)
-- Device diagnostic telemetry (CPU, memory, storage, network)
-- In-app alert notifications for all screen issues
-- Email alerts for critical issues (offline, crash, content mismatch)
+(No active milestone — use `/gsd:new-milestone` to start next)
 
 ### Out of Scope
 
@@ -181,9 +191,9 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (post v3.2):**
+**Current State (post v4.0):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- ~190,784 lines of JavaScript/JSX/CSS in src/
+- ~191,854 lines of JavaScript/JSX/CSS in src/
 - Unified onboarding flow (feature flag removed, unconditional)
 - Test suite: 2,079 unit tests, 1,191 E2E tests (all skips categorized and documented)
 - ESLint: zero warnings, zero errors, all rules at error level with pre-commit enforcement
@@ -206,6 +216,13 @@ These capabilities shipped and are production-verified:
 - Unified data refresh orchestrator with per-widget timers, deduplication, and sync status
 - Best-of-3 E2E gate script in CI (90% threshold)
 - `src/__fixtures__/` shared test data pattern adopted (3 service tests)
+- Player self-healing: blank/frozen/crash detection with progressive recovery (reload → cached → static fallback)
+- Content version verification: player reports version on heartbeat, server detects mismatch, auto-retry sync
+- Device telemetry: memory, storage, network metrics on 30s heartbeat with Device Health UI
+- Screenshot auto-capture: 5-min periodic, recovery trigger, on-demand with dashboard preview
+- Offline detection: pg_cron evaluator with 5-min threshold, severity escalation, dual-path resolution
+- Alert pipeline: Postgres trigger for in-app notifications, critical-only email via Resend
+- 5 alert types: device_offline, content_mismatch, device_recovery, device_recovery_exhausted, plus generic
 
 **Technical Debt (Minimal):**
 - ~900 E2E tests skipped (intentional: ~800 project-specific multi-project pattern, remainder categorized with SKIP REASON documentation)
@@ -213,6 +230,10 @@ These capabilities shipped and are production-verified:
 - Unsplash offline caching: TOS may conflict with offline player requirement (needs clarification before production use)
 - ZonePlayer.jsx handles legacy content types only — element-based layouts use separate pipeline (pre-existing architectural split)
 - WidgetType JSDoc typedef missing 'menu-board' (documentation-only gap, runtime works)
+- Duplicate legacy player_heartbeat RPC in usePlayerContent (should remove; usePlayerHeartbeat now owns all reporting)
+- ViewPage passes wrong lastActivityRef to useStuckDetection (content-level instead of playback-level)
+- Dead code path for mode === 'scene' in computeContentVersion (unreachable)
+- Extra checkDeviceRefreshStatus RPC per heartbeat cycle (optimization: return from update_device_status)
 
 **Codebase Mapping:**
 - `.planning/codebase/ARCHITECTURE.md` — system design
@@ -303,6 +324,23 @@ These capabilities shipped and are production-verified:
 | Nested DndContext for item reordering | Separate from category-level DndContext | ✓ Good — independent sorting |
 | Realtime re-fetch via refreshTrigger counter | Simpler than granular state patching | ✓ Good — reliable sync |
 | Browser timezone as editor preview default | Layouts are screen-agnostic; no inherent screen timezone | ✓ Good — reasonable default |
+| Metrics in hook file not playerService | Browser APIs are player-specific | ✓ Good — clean separation |
+| Individual try-catch per browser API call | Graceful degradation if one API unavailable | ✓ Good — robust on all platforms |
+| DROP old function before CREATE OR REPLACE | Avoids PostgreSQL overload conflict on signature change | ✓ Good — clean migration |
+| Dual-path alert resolution (heartbeat + cron) | Instant resolve on heartbeat, sweep catches edge cases | ✓ Good — reliable detection |
+| ON CONFLICT upsert for alert coalescing | Eliminates race conditions vs SELECT-then-INSERT | ✓ Good — atomic operations |
+| SQL-level severity escalation in cron | Fully autonomous cron job, no application code needed | ✓ Good — self-contained |
+| Screenshot timing within heartbeat sendBeat | No separate setInterval; piggybacks on existing 30s cycle | ✓ Good — efficient |
+| Recovery detection via wasOfflineRef | Set in catch block, cleared on successful heartbeat | ✓ Good — minimal state |
+| Blank screen: 10s grace + 3 consecutive checks | 30s total prevents false positives during transitions | ✓ Good — avoids flapping |
+| Recovery metrics only when crashCount > 0 | Avoids polluting normal telemetry with zero values | ✓ Good — clean data |
+| Lightweight ID-based content version (mode:source:contentId) | Tizen/WebOS constraint precludes SHA-256 hashing | ✓ Good — fast computation |
+| Mismatch suppressed during needs_refresh window | Prevents false positives immediately after publish | ✓ Good — no ghost alerts |
+| verifiedAdvanceToNext wrapper at ViewPage level | All playlist transition paths go through verification | ✓ Good — single gate |
+| All verification state uses refs not useState | Avoids player re-renders during mismatch handling | ✓ Good — no visual glitch |
+| Recovery alerts detected at SQL level in heartbeat | Player may be in recovery loop, can't rely on JS dispatch | ✓ Good — server-authoritative |
+| Postgres AFTER INSERT trigger for notifications | Handles ALL alert types reliably without JS coordination | ✓ Good — database-authoritative |
+| Email restricted to critical severity only | Prevents alert fatigue per ALRT-05 requirement | ✓ Good — appropriate filtering |
 
 ---
-*Last updated: 2026-02-19 after v4.0 Player Hardening milestone start*
+*Last updated: 2026-02-20 after v4.0 Player Hardening milestone*

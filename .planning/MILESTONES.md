@@ -320,3 +320,40 @@
 
 ---
 
+
+## v4.0 Player Hardening (Shipped: 2026-02-20)
+
+**Delivered:** Full player health visibility and self-healing — device telemetry on heartbeat, automated offline detection with severity escalation, periodic screenshot capture with on-demand trigger, auto-recovery from blank/frozen/crashed screens, content version verification with mismatch detection and auto-retry, and alert-driven monitoring through in-app notifications and critical email alerts.
+
+**Phases completed:** 64-68 (5 phases, 11 plans)
+
+**Key accomplishments:**
+
+- Device telemetry pipeline: memory, storage, network metrics piggybacked on every 30s heartbeat with Device Health UI cards and color-coded status borders
+- Automated offline detection: pg_cron evaluator with 5-minute threshold, severity escalation (info/warning/critical), dual-path alert resolution (instant + sweep)
+- Screenshot auto-capture: 5-minute periodic interval, offline recovery trigger, initial content load capture, on-demand Capture Now button with dashboard preview
+- Auto-recovery: blank screen detection (10s grace + 3 consecutive checks), progressive recovery (reload → cached content → static fallback), crash counter safety (max 6 restarts)
+- Content version verification: lightweight ID-based version on heartbeat, server-side mismatch detection, transition-aware auto-retry sync, play-then-verify pattern
+- Alert wiring: recovery events generate alerts at SQL level, Postgres trigger for reliable in-app notifications, critical-only email gate via Resend
+
+**Stats:**
+
+- 52 files modified (+8,639 / -103 lines)
+- 20 feat commits over 2 days (2026-02-19 → 2026-02-20)
+- 5 phases, 11 plans
+- ~191,854 lines of JavaScript/JSX/CSS
+
+**Git range:** `b634f1e` → `9b5e88e`
+
+**Tech debt accepted:**
+
+- High: Duplicate legacy player_heartbeat RPC in usePlayerContent runs alongside update_device_status (remove sendHeartbeat call)
+- Medium: ViewPage passes wrong lastActivityRef to useStuckDetection (use playback hook's ref)
+- Info: Dead code path for mode === 'scene' in computeContentVersion (unreachable)
+- Info: Redundant !statusResult?.needs_refresh guard in usePlayerHeartbeat (always true)
+- Info: Extra checkDeviceRefreshStatus RPC per heartbeat cycle (optimization opportunity)
+
+**What's next:** Next milestone planning
+
+---
+
