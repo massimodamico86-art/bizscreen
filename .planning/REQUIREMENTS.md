@@ -14,8 +14,8 @@ Requirements for UI Completeness milestone. Each maps to roadmap phases.
 - [x] **LEDT-03**: User can configure rss-card widget properties in layout editor zones
 - [x] **LEDT-04**: User can configure social-feed widget properties in layout editor zones
 - [x] **LEDT-05**: User can configure countdown widget properties in layout editor zones
-- [ ] **LEDT-06**: User can configure menu-board widget properties in layout editor zones
-- [ ] **LEDT-07**: User can configure clock-date widget properties in layout editor zones
+- [x] **LEDT-06**: User can configure menu-board widget properties in layout editor zones
+- [x] **LEDT-07**: User can configure clock-date widget properties in layout editor zones
 
 ### Scene Editor
 
@@ -66,8 +66,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LEDT-03 | Phase 69 | Complete |
 | LEDT-04 | Phase 69 | Complete |
 | LEDT-05 | Phase 69 | Complete |
-| LEDT-06 | Phase 69 | Pending |
-| LEDT-07 | Phase 69 | Pending |
+| LEDT-06 | Phase 69 | Complete |
+| LEDT-07 | Phase 69 | Complete |
 | SEDT-01 | Phase 70 | Pending |
 | SCRN-01 | Phase 70 | Pending |
 | SCRN-02 | Phase 70 | Pending |

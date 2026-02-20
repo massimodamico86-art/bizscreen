@@ -55,7 +55,7 @@ All milestones shipped successfully.
 
 ## Phases
 
-- [ ] **Phase 69: Layout Editor Widget Parity** - All 12 widget types configurable from layout editor zone properties
+- [x] **Phase 69: Layout Editor Widget Parity** - All 12 widget types configurable from layout editor zone properties (completed 2026-02-20)
 - [ ] **Phase 70: Screen & Scene Controls** - Menu board scene controls, screen orientation, and device language assignment
 - [ ] **Phase 71: Cleanup & Notification Gaps** - Recovery alert notification settings and dead code removal
 
@@ -103,7 +103,7 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 69. Layout Editor Widget Parity | 1/2 | In Progress|  | - |
+| 69. Layout Editor Widget Parity | 2/2 | Complete   | 2026-02-20 | - |
 | 70. Screen & Scene Controls | v5.0 | 0/TBD | Not started | - |
 | 71. Cleanup & Notification Gaps | v5.0 | 0/TBD | Not started | - |
 
