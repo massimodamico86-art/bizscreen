@@ -9,21 +9,21 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 import {
-  AlertTriangle,
   AlertCircle,
+  AlertTriangle,
   Bell,
-  Monitor,
   Calendar,
-  Database,
-  Share2,
-  Eye,
-  Settings,
-  RefreshCw,
-  Filter,
   Check,
-  X,
-  ExternalLink,
   CheckCheck,
+  Database,
+  ExternalLink,
+  Eye,
+  Filter,
+  Monitor,
+  RefreshCw,
+  Settings,
+  Share2,
+  X,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -51,6 +51,8 @@ const TYPE_LABELS = {
   [ALERT_TYPES.CONTENT_EXPIRED]: 'Content Expired',
   [ALERT_TYPES.STORAGE_QUOTA_WARNING]: 'Storage Warning',
   [ALERT_TYPES.API_RATE_LIMIT]: 'API Rate Limit',
+  [ALERT_TYPES.DEVICE_RECOVERY]: 'Device Recovery',
+  [ALERT_TYPES.DEVICE_RECOVERY_EXHAUSTED]: 'Recovery Exhausted',
 };
 
 // Alert type icons
@@ -66,6 +68,8 @@ const TYPE_ICONS = {
   [ALERT_TYPES.CONTENT_EXPIRED]: AlertTriangle,
   [ALERT_TYPES.STORAGE_QUOTA_WARNING]: AlertTriangle,
   [ALERT_TYPES.API_RATE_LIMIT]: AlertCircle,
+  [ALERT_TYPES.DEVICE_RECOVERY]: RefreshCw,
+  [ALERT_TYPES.DEVICE_RECOVERY_EXHAUSTED]: AlertTriangle,
 };
 
 // Severity styles
@@ -747,6 +751,43 @@ function AlertDetailModal({ alert, onClose, onAcknowledge, onResolve, onNavigate
               </p>
             </div>
           </div>
+
+          {/* Recovery-specific meta fields */}
+          {(alert.type === 'device_recovery' || alert.type === 'device_recovery_exhausted') && alert.meta && (
+            <div>
+              <h4 className="text-sm font-medium text-gray-500 mb-2">
+                {t('alerts.recoveryDetails', 'Recovery Details')}
+              </h4>
+              <div className="grid grid-cols-2 gap-3 bg-gray-50 rounded-lg p-3">
+                {alert.meta.crash_count != null && (
+                  <div>
+                    <span className="text-xs text-gray-500">{t('alerts.crashCount', 'Crash Count')}</span>
+                    <p className="text-sm font-medium text-gray-900">{alert.meta.crash_count}/6</p>
+                  </div>
+                )}
+                {alert.meta.recovery_phase && (
+                  <div>
+                    <span className="text-xs text-gray-500">{t('alerts.recoveryPhase', 'Recovery Phase')}</span>
+                    <p className="text-sm font-medium text-gray-900">{alert.meta.recovery_phase}</p>
+                  </div>
+                )}
+                {alert.meta.device_name && (
+                  <div>
+                    <span className="text-xs text-gray-500">{t('alerts.deviceName', 'Device')}</span>
+                    <p className="text-sm font-medium text-gray-900">{alert.meta.device_name}</p>
+                  </div>
+                )}
+                {alert.meta.last_recovery_at && (
+                  <div>
+                    <span className="text-xs text-gray-500">{t('alerts.lastRecovery', 'Last Recovery')}</span>
+                    <p className="text-sm font-medium text-gray-900">
+                      {new Date(alert.meta.last_recovery_at).toLocaleString()}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Related items */}
           {(alert.device || alert.scene || alert.schedule || alert.data_source) && (
