@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 67 — Content Verification
+**Current focus:** Phase 68 — Alert Wiring & Notifications
 
 ## Current Position
 
-Phase: 67 — fourth of 5 in v4.0 Player Hardening (Phases 64-68)
-Plan: 2 of 2 complete
-Status: Complete
-Last activity: 2026-02-20 — Plan 02 (Transition-aware re-sync and dashboard mismatch warning) complete
+Phase: 68 — fifth of 5 in v4.0 Player Hardening (Phases 64-68)
+Plan: 1 of 2 complete
+Status: In Progress
+Last activity: 2026-02-20 — Plan 01 (Recovery alert types, heartbeat detection, notification trigger) complete
 
-Progress: [██████████] 100%
+Progress: [█████-----] 50%
 
 ## Milestones Shipped
 
@@ -48,6 +48,7 @@ Progress: [██████████] 100%
 | 66 | 02 | 2min | 1 | 2 |
 | 67 | 01 | 14min | 2 | 4 |
 | 67 | 02 | 3min | 2 | 5 |
+| 68 | 01 | 3min | 2 | 3 |
 
 ## Accumulated Context
 
@@ -83,12 +84,17 @@ Full decision log in PROJECT.md Key Decisions table.
 - **67-02:** All verification state uses refs (not useState) to avoid player re-renders during mismatch handling
 - **67-02:** Auto-reset on content identity change handles reload through any path without explicit coordination
 - **67-02:** Force Sync sets content_version_status='pending' for immediate UI feedback, not just needs_refresh
+- **68-01:** Recovery alerts detected at SQL level in update_device_status because player may be in recovery loop
+- **68-01:** Auto-resolve checks for ABSENCE of recovery metrics (not zero value) per Phase 66 decision
+- **68-01:** Postgres AFTER INSERT trigger on alerts handles ALL in-app notifications for reliability
+- **68-01:** Email restricted to critical severity only (ALRT-05) via severity gate in queueEmailNotification
+- **68-01:** Unique constraint on notifications (user_id, alert_id, channel) prevents trigger/JS dispatch duplicates
 
 ### Blockers/Concerns
 
 - Phase 64: Confirm pg_cron availability on current Supabase plan (Edge Function cron is fallback)
 - Phase 67: Verify CloudFront CDN TTL/invalidation timing for content verification grace period
-- Phase 68: Verify which notification_preferences columns are actively wired in notificationDispatcherService.js
+- Phase 68: ~~Verify which notification_preferences columns are actively wired~~ RESOLVED: all columns (channel_email, channel_in_app, min_severity, types_whitelist/blacklist, quiet_hours) are actively used
 
 ### Quick Tasks Completed
 
@@ -100,9 +106,9 @@ Full decision log in PROJECT.md Key Decisions table.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 67-02-PLAN.md
-Resume file: .planning/phases/67-content-verification/67-02-SUMMARY.md
-Next: Phase 68 planning (alerts)
+Stopped at: Completed 68-01-PLAN.md
+Resume file: .planning/phases/68-alert-wiring-notifications/68-01-SUMMARY.md
+Next: Phase 68 Plan 02 (UI updates for recovery alert types)
 
 ---
-*Updated: 2026-02-20 -- Phase 67 complete (2/2 plans)*
+*Updated: 2026-02-20 -- Phase 68 plan 01 complete (1/2 plans)*

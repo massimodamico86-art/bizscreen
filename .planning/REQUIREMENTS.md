@@ -36,9 +36,9 @@ Requirements for player hardening milestone. Each maps to roadmap phases.
 
 - [ ] **ALRT-01**: Server automatically detects devices that stop sending heartbeats and raises offline alert
 - [ ] **ALRT-02**: Server auto-resolves offline alert when device resumes heartbeats
-- [ ] **ALRT-03**: Recovery events (crash detection, auto-reload, fallback activation) generate alerts
-- [ ] **ALRT-04**: User receives in-app notifications for all device alerts (bell icon with history)
-- [ ] **ALRT-05**: User receives email notification for critical alerts (device offline, recovery exhausted)
+- [x] **ALRT-03**: Recovery events (crash detection, auto-reload, fallback activation) generate alerts
+- [x] **ALRT-04**: User receives in-app notifications for all device alerts (bell icon with history)
+- [x] **ALRT-05**: User receives email notification for critical alerts (device offline, recovery exhausted)
 
 ## Future Requirements
 
@@ -99,9 +99,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TELM-02 | Phase 64 | Pending |
 | ALRT-01 | Phase 64 | Pending |
 | ALRT-02 | Phase 64 | Pending |
-| ALRT-03 | Phase 68 | Pending |
-| ALRT-04 | Phase 68 | Pending |
-| ALRT-05 | Phase 68 | Pending |
+| ALRT-03 | Phase 68 | Complete |
+| ALRT-04 | Phase 68 | Complete |
+| ALRT-05 | Phase 68 | Complete |
 
 **Coverage:**
 - v4.0 requirements: 18 total
