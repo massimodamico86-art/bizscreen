@@ -32,6 +32,9 @@ const STORAGE_KEYS = {
 // Player version for heartbeats
 const PLAYER_VERSION = '1.2.0';
 
+// Periodic screenshot capture interval (5 minutes)
+const SCREENSHOT_INTERVAL = 5 * 60 * 1000; // 5 minutes
+
 /**
  * Collect device telemetry metrics from browser APIs.
  * Each API call is individually try-catch wrapped so one failure
@@ -98,6 +101,7 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
   const heartbeatRef = useRef(null);
   const screenshotInProgressRef = useRef(false);
   const lastActivityRef = useRef(Date.now());
+  const lastScreenshotTimeRef = useRef(0);
 
   useEffect(() => {
     if (!screenId) return;
@@ -109,7 +113,7 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
         const statusResult = await updateDeviceStatus(screenId, PLAYER_VERSION, contentHash, metrics);
         lastActivityRef.current = Date.now();
 
-        // Check if screenshot is requested
+        // Check if screenshot is requested (on-demand capture)
         if (statusResult?.needs_screenshot_update && !screenshotInProgressRef.current) {
           logger.info('Screenshot requested, capturing...');
           screenshotInProgressRef.current = true;
@@ -119,8 +123,31 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
             logger.info('Screenshot captured and uploaded');
             // Clean up old screenshots (keep last 5)
             await cleanupOldScreenshots(screenId, 5);
+            // Reset periodic timer so we don't capture again immediately
+            lastScreenshotTimeRef.current = Date.now();
           } catch (screenshotErr) {
             logger.error('Screenshot capture failed', { error: screenshotErr });
+          } finally {
+            screenshotInProgressRef.current = false;
+          }
+        }
+
+        // Periodic screenshot capture (every 5 minutes)
+        const timeSinceLastScreenshot = Date.now() - lastScreenshotTimeRef.current;
+        if (
+          timeSinceLastScreenshot >= SCREENSHOT_INTERVAL &&
+          !screenshotInProgressRef.current &&
+          contentContainerRef?.current
+        ) {
+          logger.info('Periodic screenshot capture (5-min interval)');
+          screenshotInProgressRef.current = true;
+          try {
+            const container = contentContainerRef.current;
+            await captureAndUploadScreenshot(screenId, container);
+            lastScreenshotTimeRef.current = Date.now();
+            await cleanupOldScreenshots(screenId, 5);
+          } catch (periodicErr) {
+            logger.error('Periodic screenshot capture failed', { error: periodicErr });
           } finally {
             screenshotInProgressRef.current = false;
           }
