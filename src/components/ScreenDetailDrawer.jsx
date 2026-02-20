@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Activity,
   AlertCircle,
+  AlertTriangle,
   ArrowRight,
   Calendar,
   Camera,
@@ -37,7 +38,8 @@ import {
   getPreviewInfo,
   getMetricStatus,
   formatMetricValue,
-  getJsHeapPercent
+  getJsHeapPercent,
+  forceDeviceSync,
 } from '../services/screenDiagnosticsService';
 import { requestDeviceScreenshot } from '../services/deviceScreenshotService';
 import { useLogger } from '../hooks/useLogger.js';
@@ -267,6 +269,33 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
                     <span className="text-red-600 text-xs ml-auto">
                       Last seen {formatLastSeen(screenInfo.last_seen_at)}
                     </span>
+                  </div>
+                )}
+
+                {/* Content Verification Warning -- only shown on mismatch */}
+                {screenInfo?.content_version_status === 'mismatched' && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-center gap-2">
+                    <AlertTriangle size={16} className="text-yellow-600 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <span className="font-medium text-yellow-800 text-sm">Content Mismatch</span>
+                      <p className="text-yellow-700 text-xs mt-0.5">
+                        Screen is displaying different content than expected. Auto-sync pending.
+                      </p>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await forceDeviceSync(screenInfo.id);
+                          showToast?.('Sync requested — screen will update shortly');
+                        } catch (err) {
+                          logger.error('Force sync failed:', err);
+                          showToast?.('Failed to request sync', 'error');
+                        }
+                      }}
+                      className="text-xs text-yellow-700 hover:text-yellow-900 px-2 py-1 rounded bg-yellow-100 hover:bg-yellow-200 whitespace-nowrap flex-shrink-0"
+                    >
+                      Force Sync
+                    </button>
                   </div>
                 )}
 

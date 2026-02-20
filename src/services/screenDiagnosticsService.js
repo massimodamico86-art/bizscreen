@@ -204,6 +204,30 @@ export function getPreviewInfo(resolvedContent) {
 }
 
 // ============================================
+// Content Verification Helpers (Phase 67 Plan 02)
+// ============================================
+
+/**
+ * Force a content sync on a specific device by setting needs_refresh flag.
+ * The player will reload content on its next heartbeat cycle.
+ * Also transitions content_version_status to 'pending' so the mismatch
+ * warning clears immediately in the operator dashboard.
+ *
+ * @param {string} deviceId - The device UUID
+ * @returns {Promise<void>}
+ */
+export async function forceDeviceSync(deviceId) {
+  const { error } = await supabase
+    .from('tv_devices')
+    .update({
+      needs_refresh: true,
+      content_version_status: 'pending',
+    })
+    .eq('id', deviceId);
+  if (error) throw error;
+}
+
+// ============================================
 // Device Metric Helpers (Phase 64 Plan 03)
 // ============================================
 
