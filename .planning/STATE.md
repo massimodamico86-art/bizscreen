@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 64 — Telemetry Pipeline & Offline Detection
+**Current focus:** Phase 65 — Screenshot Enhancement
 
 ## Current Position
 
-Phase: 64 — first of 5 in v4.0 Player Hardening (Phases 64-68)
-Plan: 3 of 3 complete
-Status: Phase Complete
-Last activity: 2026-02-19 — Plan 03 (device health UI) complete
+Phase: 65 — second of 5 in v4.0 Player Hardening (Phases 64-68)
+Plan: 1 of 2 complete
+Status: In Progress
+Last activity: 2026-02-19 — Plan 01 (player heartbeat screenshot triggers) complete
 
-Progress: [██████████] 100%
+Progress: [█████-----] 50%
 
 ## Milestones Shipped
 
@@ -42,6 +42,7 @@ Progress: [██████████] 100%
 | 64 | 01 | 2min | 2 | 3 |
 | 64 | 02 | 2min | 1 | 1 |
 | 64 | 03 | 2min | 2 | 3 |
+| 65 | 01 | 2min | 2 | 1 |
 
 ## Accumulated Context
 
@@ -58,6 +59,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - **64-03:** Metric cards use border-l-4 color coding (green/yellow/red/gray) instead of gauges for compact display
 - **64-03:** 30-second polling interval matches heartbeat cycle for fresh data on each refresh
 - **64-03:** Offline banner and grayed-out stale metrics follow locked user decisions from CONTEXT.md
+- **65-01:** All screenshot timing within heartbeat sendBeat() cycle -- no separate setInterval
+- **65-01:** Recovery detection via wasOfflineRef set in catch block, cleared on successful heartbeat
+- **65-01:** Initial capture fires naturally because lastScreenshotTimeRef starts at 0
 
 ### Blockers/Concerns
 
@@ -75,9 +79,9 @@ Full decision log in PROJECT.md Key Decisions table.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed 64-03-PLAN.md (Phase 64 complete)
-Resume file: .planning/phases/64-telemetry-pipeline-offline-detection/64-03-SUMMARY.md
-Next: Phase 65 planning
+Stopped at: Completed 65-01-PLAN.md
+Resume file: .planning/phases/65-screenshot-enhancement/65-01-SUMMARY.md
+Next: 65-02-PLAN.md (screenshot UI in ScreenDetailDrawer)
 
 ---
-*Updated: 2026-02-19 -- Phase 64 Plan 03 complete (phase complete)*
+*Updated: 2026-02-19 -- Phase 65 Plan 01 complete*
