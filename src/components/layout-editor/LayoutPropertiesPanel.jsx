@@ -28,6 +28,7 @@ import { DataTableWidgetControls } from '../scene-editor/DataTableWidgetControls
 import { RssWidgetControls } from '../scene-editor/RssWidgetControls.jsx';
 import { SocialFeedWidgetControls } from '../scene-editor/SocialFeedWidgetControls.jsx';
 import { CountdownWidgetControls } from '../scene-editor/CountdownWidgetControls.jsx';
+import { MenuBoardWidgetControls } from '../scene-editor/MenuBoardWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -622,11 +623,37 @@ function WidgetControls({ element, onUpdate, onPropsUpdate }) {
         />
       )}
 
+      {widgetType === 'menu-board' && (
+        <MenuBoardWidgetControls
+          props={props}
+          onPropChange={(key, value) => onPropsUpdate({ [key]: value })}
+        />
+      )}
+
       <ColorPicker
         label="Text Color"
         value={props.textColor || '#ffffff'}
         onChange={(color) => onPropsUpdate({ textColor: color })}
       />
+
+      {(widgetType === 'clock' || widgetType === 'date' || widgetType === 'clock-date' || widgetType === 'weather') && (
+        <div>
+          <label className="block text-xs text-gray-500 mb-1.5">Size</label>
+          <div className="flex gap-1">
+            {['small', 'medium', 'large'].map((size) => (
+              <Button
+                key={size}
+                variant="ghost"
+                size="sm"
+                onClick={() => onPropsUpdate({ size })}
+                className={`flex-1 capitalize ${(props.size || 'medium') === size ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
+              >
+                {size}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
