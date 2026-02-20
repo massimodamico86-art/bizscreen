@@ -197,14 +197,15 @@ export async function reportCommandResult(commandId, success = true, errorMessag
 }
 
 /**
- * Update device status (extended heartbeat with version info and telemetry)
+ * Update device status (extended heartbeat with version info, telemetry, and content verification)
  * @param {string} screenId - The screen UUID
  * @param {string} playerVersion - Current player version
  * @param {string} cachedContentHash - Hash of cached content
  * @param {Object|null} metrics - Device telemetry metrics (memory, storage, network) as JSONB
- * @returns {Promise<{needs_screenshot_update: boolean}|null>} Status response or null on error
+ * @param {string|null} contentVersion - Canonical content version string for server-side verification
+ * @returns {Promise<{needs_screenshot_update: boolean, content_mismatch: boolean, expected_content_version: string|null}|null>} Status response or null on error
  */
-export async function updateDeviceStatus(screenId, playerVersion = null, cachedContentHash = null, metrics = null) {
+export async function updateDeviceStatus(screenId, playerVersion = null, cachedContentHash = null, metrics = null, contentVersion = null) {
   if (!screenId) return null;
 
   try {
@@ -213,6 +214,7 @@ export async function updateDeviceStatus(screenId, playerVersion = null, cachedC
       p_player_version: playerVersion,
       p_cached_content_hash: cachedContentHash,
       p_metrics: metrics,
+      p_content_version: contentVersion,
     });
 
     if (error) {
@@ -340,6 +342,45 @@ export async function clearCache() {
   } catch (err) {
     logger.error('Failed to clear cache', { error: err });
   }
+}
+
+/**
+ * Compute a canonical content version string from resolved player content.
+ * This lightweight identifier is reported to the server for version verification.
+ * The server independently computes the expected version and compares.
+ *
+ * Format: "{mode}:{source}:{primaryContentId}" with optional campaign suffix
+ * Examples:
+ *   "playlist:assigned_playlist:550e8400-e29b-41d4-a716-446655440000"
+ *   "layout:campaign:660e8400-e29b-41d4-a716-446655440001:c770e8400..."
+ *   "scene:device_override:880e8400-e29b-41d4-a716-446655440003"
+ *
+ * @param {Object} content - Resolved content from get_resolved_player_content
+ * @returns {string|null} Version string or null if no content
+ */
+export function computeContentVersion(content) {
+  if (!content) return null;
+
+  const mode = content.mode || content.type || 'unknown';
+  const source = content.source || 'unknown';
+
+  // Primary content ID depends on mode
+  let contentId = 'none';
+  if (mode === 'layout' && content.layout?.id) {
+    contentId = content.layout.id;
+  } else if (mode === 'playlist') {
+    contentId = content.playlist?.id || content.items?.[0]?.id || 'none';
+  } else if (mode === 'scene' && content.scene?.id) {
+    contentId = content.scene.id;
+  } else if (content.content_id) {
+    // Emergency and other modes that return content_id directly
+    contentId = content.content_id;
+  }
+
+  // Include campaign ID if present (affects content selection)
+  const campaignSuffix = content.campaign?.id ? `:c${content.campaign.id}` : '';
+
+  return `${mode}:${source}:${contentId}${campaignSuffix}`;
 }
 
 /**

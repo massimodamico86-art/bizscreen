@@ -88,6 +88,9 @@ BEGIN
   -- Compute expected content version using the content resolution priority chain.
   -- This mirrors get_resolved_player_content resolution order:
   --   Emergency > Campaign > Device Scene > Group Scene > Layout > Playlist
+  -- IMPORTANT: Scene resolution produces the underlying content type (layout/playlist)
+  -- with the scene's source (device_override/group_override), matching what the player
+  -- receives from get_resolved_player_content.
 
   SELECT
     CASE
@@ -101,13 +104,17 @@ BEGIN
       WHEN ac.campaign_id IS NOT NULL
       THEN ac.content_type || ':campaign:' || ac.content_id || ':c' || ac.campaign_id
 
-      -- Device scene override
-      WHEN d.active_scene_id IS NOT NULL
-      THEN 'scene:device_override:' || d.active_scene_id
+      -- Device scene override (resolves to layout or playlist via scene)
+      WHEN d.active_scene_id IS NOT NULL AND ds.layout_id IS NOT NULL
+      THEN 'layout:device_override:' || ds.layout_id
+      WHEN d.active_scene_id IS NOT NULL AND ds.primary_playlist_id IS NOT NULL
+      THEN 'playlist:device_override:' || ds.primary_playlist_id
 
-      -- Group scene override
-      WHEN sg.active_scene_id IS NOT NULL
-      THEN 'scene:group_override:' || sg.active_scene_id
+      -- Group scene override (resolves to layout or playlist via scene)
+      WHEN sg.active_scene_id IS NOT NULL AND gs.layout_id IS NOT NULL
+      THEN 'layout:group_override:' || gs.layout_id
+      WHEN sg.active_scene_id IS NOT NULL AND gs.primary_playlist_id IS NOT NULL
+      THEN 'playlist:group_override:' || gs.primary_playlist_id
 
       -- Assigned layout
       WHEN d.assigned_layout_id IS NOT NULL
@@ -124,6 +131,8 @@ BEGIN
   FROM tv_devices d
   LEFT JOIN profiles p ON p.id = d.tenant_id
   LEFT JOIN screen_groups sg ON sg.id = d.screen_group_id
+  LEFT JOIN scenes ds ON ds.id = d.active_scene_id AND ds.is_active = true
+  LEFT JOIN scenes gs ON gs.id = sg.active_scene_id AND gs.is_active = true
   LEFT JOIN LATERAL get_active_campaign_for_screen(d.id, NOW()) ac ON true
   WHERE d.id = p_device_id;
 

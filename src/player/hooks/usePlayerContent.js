@@ -17,6 +17,7 @@ import {
   cacheContent,
   getCachedContent,
   calculateBackoff,
+  computeContentVersion,
 } from '../../services/playerService';
 import { createScopedLogger } from '../../services/loggingService.js';
 
@@ -118,6 +119,7 @@ export function usePlayerContent(screenId, navigate) {
   const pollRef = useRef(null);
   const lastActivityRef = useRef(Date.now());
   const loadContentRef = useRef(null);
+  const contentVersionRef = useRef(null);
 
   /**
    * Load content with retry support and offline fallback
@@ -166,6 +168,9 @@ export function usePlayerContent(screenId, navigate) {
         campaignId: data.campaign?.id,
       };
       localStorage.setItem(STORAGE_KEYS.contentHash, JSON.stringify(contentHashObj));
+
+      // Compute canonical content version for server-side verification
+      contentVersionRef.current = computeContentVersion(data);
 
       // Cache content for offline use
       try {
@@ -284,6 +289,9 @@ export function usePlayerContent(screenId, navigate) {
           }
 
           localStorage.setItem(STORAGE_KEYS.contentHash, newHash);
+
+          // Update content version for verification
+          contentVersionRef.current = computeContentVersion(newContent);
         }
 
         // Also send heartbeat
@@ -352,5 +360,6 @@ export function usePlayerContent(screenId, navigate) {
     // Refs (for use by other hooks)
     loadContentRef,
     lastActivityRef,
+    contentVersionRef,
   };
 }

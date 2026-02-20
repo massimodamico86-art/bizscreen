@@ -104,9 +104,13 @@ async function collectDeviceMetrics() {
  * @param {string} screenId - Screen UUID from localStorage
  * @param {React.RefObject} loadContentRef - Ref to loadContent function for refresh
  * @param {React.RefObject} contentContainerRef - Ref to content container for screenshots
+ * @param {Object} [options] - Additional options
+ * @param {React.RefObject} [options.contentVersionRef] - Ref to current content version string
+ * @param {Function} [options.onMismatchDetected] - Callback when content mismatch is detected (expectedVersion, reportedVersion)
  * @returns {Object} Heartbeat refs
  */
-export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef) {
+export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef, options = {}) {
+  const { contentVersionRef, onMismatchDetected } = options;
   const logger = useLogger('usePlayerHeartbeat');
   const heartbeatRef = useRef(null);
   const screenshotInProgressRef = useRef(false);
@@ -121,8 +125,16 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
       try {
         const metrics = await collectDeviceMetrics();
         const contentHash = localStorage.getItem(STORAGE_KEYS.contentHash);
-        const statusResult = await updateDeviceStatus(screenId, PLAYER_VERSION, contentHash, metrics);
+        const contentVersion = contentVersionRef?.current || null;
+        const statusResult = await updateDeviceStatus(screenId, PLAYER_VERSION, contentHash, metrics, contentVersion);
         lastActivityRef.current = Date.now();
+
+        // Check for content mismatch signal from server
+        // Only trigger callback when mismatch is true and needs_refresh is not also true
+        // (to avoid double-triggering: needs_refresh already triggers a reload)
+        if (statusResult?.content_mismatch && !statusResult?.needs_refresh) {
+          onMismatchDetected?.(statusResult.expected_content_version, contentVersion);
+        }
 
         // Recovery screenshot: device was offline, now heartbeat succeeded
         if (wasOfflineRef.current) {
@@ -213,7 +225,7 @@ export function usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef
         clearInterval(heartbeatRef.current);
       }
     };
-  }, [screenId, logger, loadContentRef, contentContainerRef]);
+  }, [screenId, logger, loadContentRef, contentContainerRef, contentVersionRef, onMismatchDetected]);
 
   return {
     heartbeatRef,
