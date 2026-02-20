@@ -41,6 +41,7 @@ import { RssWidgetControls } from './RssWidgetControls';
 import { SocialFeedWidgetControls } from './SocialFeedWidgetControls';
 import { CountdownWidgetControls } from './CountdownWidgetControls.jsx';
 import { QRCodeWidgetControls } from './QRCodeWidgetControls.jsx';
+import { MenuBoardWidgetControls } from './MenuBoardWidgetControls';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -953,6 +954,14 @@ function WidgetControls({ block, onUpdate }) {
       {/* Countdown Widget Controls */}
       {widgetType === 'countdown' && (
         <CountdownWidgetControls
+          props={props}
+          onPropChange={handlePropChange}
+        />
+      )}
+
+      {/* Menu Board Widget Controls */}
+      {widgetType === 'menu-board' && (
+        <MenuBoardWidgetControls
           props={props}
           onPropChange={handlePropChange}
         />
