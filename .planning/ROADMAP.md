@@ -98,7 +98,10 @@ Plans:
   2. User can enable/disable device_recovery_exhausted alerts from the notification settings page
   3. The 6 unused service/hook files (gdprDeletionService, geolocationService, demoContentService, dataFeedScheduler, scimService, usePrefetch) no longer exist in the codebase
   4. No import references to the deleted files remain anywhere in the codebase
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 71-01-PLAN.md — Add device_recovery and device_recovery_exhausted toggles to NotificationSettingsPage
+- [ ] 71-02-PLAN.md — Delete 6 unused service/hook files (dead code removal)
 
 ## Progress
 
@@ -108,7 +111,7 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 69. Layout Editor Widget Parity | 2/2 | Complete    | 2026-02-20 | - |
 | 70. Screen & Scene Controls | 1/1 | Complete    | 2026-02-20 | - |
-| 71. Cleanup & Notification Gaps | v5.0 | 0/TBD | Not started | - |
+| 71. Cleanup & Notification Gaps | v5.0 | 0/2 | Not started | - |
 
 ## Progress Summary
 
