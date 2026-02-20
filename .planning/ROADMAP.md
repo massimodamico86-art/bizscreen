@@ -85,7 +85,9 @@ Plans:
   2. User can set a screen to portrait or landscape orientation from the screen edit UI and see the change reflected on the device
   3. User can assign a language to a screen from the screen edit UI, controlling which language variant of content the device receives
 **Gap Closure:** Also fixes YodeckLayoutEditorPage.jsx missing imports (integration gap from v5.0 audit)
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 70-01-PLAN.md — Scene editor menu-board controls, YodeckLayoutEditorPage import fix, screen settings verification
 
 ### Phase 71: Cleanup & Notification Gaps
 **Goal**: Close the last two notification settings gaps and remove dead code that clutters the codebase
@@ -105,7 +107,7 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 69. Layout Editor Widget Parity | 2/2 | Complete    | 2026-02-20 | - |
-| 70. Screen & Scene Controls | v5.0 | 0/TBD | Not started | - |
+| 70. Screen & Scene Controls | v5.0 | 0/1 | Not started | - |
 | 71. Cleanup & Notification Gaps | v5.0 | 0/TBD | Not started | - |
 
 ## Progress Summary
