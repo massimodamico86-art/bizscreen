@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 
 ## Current Position
 
-Phase: None — between milestones
-Plan: N/A
-Status: v4.0 Player Hardening shipped
-Last activity: 2026-02-20 — Milestone v4.0 archived
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-20 — Milestone v5.0 started
 
-Progress: [██████████] 100% (v4.0 complete)
+Progress: [░░░░░░░░░░] 0% (v5.0 UI Completeness)
 
 ## Milestones Shipped
 
@@ -65,4 +65,4 @@ Resume file: N/A
 Next: `/gsd:new-milestone` to start next milestone
 
 ---
-*Updated: 2026-02-20 -- v4.0 Player Hardening shipped*
+*Updated: 2026-02-20 -- v5.0 UI Completeness milestone started*

@@ -172,7 +172,17 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-(No active milestone — use `/gsd:new-milestone` to start next)
+## Current Milestone: v5.0 UI Completeness
+
+**Goal:** Close every gap between backend capabilities and UI exposure — every feature reachable from the interface.
+
+**Target features:**
+- Layout Editor widget parity (all 12 widget types configurable)
+- Menu Board widget editor controls in scene editor
+- Screen orientation setting UI
+- Device language assignment UI
+- Recovery alert types in notification settings
+- Dead code cleanup (6 unused services/hooks)
 
 ### Out of Scope
 
@@ -343,4 +353,4 @@ These capabilities shipped and are production-verified:
 | Email restricted to critical severity only | Prevents alert fatigue per ALRT-05 requirement | ✓ Good — appropriate filtering |
 
 ---
-*Last updated: 2026-02-20 after v4.0 Player Hardening milestone*
+*Last updated: 2026-02-20 after v5.0 UI Completeness milestone started*
