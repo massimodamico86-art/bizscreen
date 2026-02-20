@@ -1,0 +1,116 @@
+# Requirements: BizScreen
+
+**Defined:** 2026-02-20
+**Core Value:** Screens reliably display the right content at the right time, even when offline
+
+## v6.0 Requirements
+
+Requirements for Functional Completeness milestone. Every interactive UI element performs its intended action — no dead buttons, no console errors, no placeholder behavior.
+
+### SVG Editor
+
+- [ ] **EDIT-01**: User can add/edit hyperlinks on text objects in SVG editor
+- [ ] **EDIT-02**: User can open element settings panel for text objects in SVG editor
+- [ ] **EDIT-03**: User can set precise position/alignment for image objects in SVG editor
+- [ ] **EDIT-04**: User can crop image objects in SVG editor
+- [ ] **EDIT-05**: User can replace an image with another image in SVG editor
+- [ ] **EDIT-06**: User can add/edit hyperlinks on image objects in SVG editor
+- [ ] **EDIT-07**: User can open element settings panel for image objects in SVG editor
+- [ ] **EDIT-08**: User can access expanded options menu for any selected object in SVG editor
+- [ ] **EDIT-09**: User can lock/unlock aspect ratio when resizing any object in SVG editor
+- [ ] **EDIT-10**: User can click hyperlinks attached to objects to open URLs
+
+### Cloud Media Integrations
+
+- [ ] **CLOUD-01**: User can connect and import media from Google Drive via OAuth
+- [ ] **CLOUD-02**: User can connect and import media from Dropbox via OAuth
+- [ ] **CLOUD-03**: User can connect and import media from OneDrive via OAuth
+- [ ] **CLOUD-04**: User can connect and import media from SharePoint via OAuth
+- [ ] **CLOUD-05**: User can connect and import media from Google Photos via OAuth
+
+### New Features
+
+- [ ] **FEAT-01**: User can generate a complete layout from a text prompt via AI Designer
+- [ ] **FEAT-02**: User can upload video files in carousel media manager
+- [ ] **FEAT-03**: User can add upcoming events to property details
+- [ ] **FEAT-04**: User can browse and insert graphics from library in layout editor sidebar
+- [ ] **FEAT-05**: User can view media and playlist timeline analytics on content detail page
+- [ ] **FEAT-06**: User can update payment method from subscription/billing page
+- [ ] **FEAT-07**: User can edit app configuration from apps page
+
+### Admin & Enterprise
+
+- [ ] **ADMN-01**: User can navigate to plan upgrade from enterprise security upsell screen
+- [ ] **ADMN-02**: User can configure password minimum length policy in enterprise security
+- [ ] **ADMN-03**: User can configure password complexity requirements in enterprise security
+- [ ] **ADMN-04**: User can configure session timeout duration in enterprise security
+- [ ] **ADMN-05**: User can configure JWT token expiry in enterprise security
+- [ ] **ADMN-06**: User can delete all tenant data from enterprise security page
+
+### Bug Fixes
+
+- [ ] **BUGF-01**: BrandingSettingsPage X icon renders without runtime error
+- [ ] **BUGF-02**: Notification email dispatcher correctly fetches user email addresses
+- [ ] **BUGF-03**: Device status RPC errors are logged and handled properly in App.jsx
+
+## Future Requirements
+
+None — all identified issues scoped into v6.0.
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| RTL language support (Hebrew, Arabic) | Requires complete UI/content mirroring |
+| CJK languages | Font/rendering complexity, special testing required |
+| User template marketplace (buy/sell) | Complex moderation/payment system |
+| Conditional scheduling triggers | High complexity, not related to functional completeness |
+| Per-viewer personalization | Privacy concerns |
+| Mobile native apps | Web player covers all platforms |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| EDIT-01 | — | Pending |
+| EDIT-02 | — | Pending |
+| EDIT-03 | — | Pending |
+| EDIT-04 | — | Pending |
+| EDIT-05 | — | Pending |
+| EDIT-06 | — | Pending |
+| EDIT-07 | — | Pending |
+| EDIT-08 | — | Pending |
+| EDIT-09 | — | Pending |
+| EDIT-10 | — | Pending |
+| CLOUD-01 | — | Pending |
+| CLOUD-02 | — | Pending |
+| CLOUD-03 | — | Pending |
+| CLOUD-04 | — | Pending |
+| CLOUD-05 | — | Pending |
+| FEAT-01 | — | Pending |
+| FEAT-02 | — | Pending |
+| FEAT-03 | — | Pending |
+| FEAT-04 | — | Pending |
+| FEAT-05 | — | Pending |
+| FEAT-06 | — | Pending |
+| FEAT-07 | — | Pending |
+| ADMN-01 | — | Pending |
+| ADMN-02 | — | Pending |
+| ADMN-03 | — | Pending |
+| ADMN-04 | — | Pending |
+| ADMN-05 | — | Pending |
+| ADMN-06 | — | Pending |
+| BUGF-01 | — | Pending |
+| BUGF-02 | — | Pending |
+| BUGF-03 | — | Pending |
+
+**Coverage:**
+- v6.0 requirements: 31 total
+- Mapped to phases: 0
+- Unmapped: 31 (pending roadmap creation)
+
+---
+*Requirements defined: 2026-02-20*
+*Last updated: 2026-02-20 after initial definition*
