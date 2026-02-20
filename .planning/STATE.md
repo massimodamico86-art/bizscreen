@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 65 — Screenshot Enhancement
+**Current focus:** Phase 66 — Auto-Recovery
 
 ## Current Position
 
-Phase: 65 — second of 5 in v4.0 Player Hardening (Phases 64-68)
+Phase: 66 — third of 5 in v4.0 Player Hardening (Phases 64-68)
 Plan: 1 of 2 complete
 Status: In Progress
-Last activity: 2026-02-19 — Plan 01 (player heartbeat screenshot triggers) complete
+Last activity: 2026-02-20 — Plan 01 (auto-recovery core infrastructure) complete
 
 Progress: [█████-----] 50%
 
@@ -44,6 +44,7 @@ Progress: [█████-----] 50%
 | 64 | 03 | 2min | 2 | 3 |
 | 65 | 01 | 2min | 2 | 1 |
 | Phase 65 P02 | 2min | 2 tasks | 2 files |
+| 66 | 01 | 3min | 2 | 4 |
 
 ## Accumulated Context
 
@@ -66,6 +67,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 65]: 65-02: Screenshot fields flow through existing get_screen_diagnostics RPC (no additional API call)
 - [Phase 65]: 65-02: Capture Now button disables on both local requesting state and server needs_screenshot_update flag
 - [Phase 65]: 65-02: 3-second delayed refresh after capture request picks up pending state before 30-second auto-refresh cycle
+- **66-01:** mountTimeRef removed from useAutoRecovery since blank detection lives in useStuckDetection
+- **66-01:** Recovery metrics only in heartbeat when crashCount > 0 to avoid polluting normal telemetry
+- **66-01:** Blank screen detection uses 10s grace + 3 consecutive checks (30s) to prevent false positives
 
 ### Blockers/Concerns
 
@@ -82,10 +86,10 @@ Full decision log in PROJECT.md Key Decisions table.
 
 ## Session Continuity
 
-Last session: 2026-02-19
-Stopped at: Completed 65-01-PLAN.md
-Resume file: .planning/phases/65-screenshot-enhancement/65-01-SUMMARY.md
-Next: 65-02-PLAN.md (screenshot UI in ScreenDetailDrawer)
+Last session: 2026-02-20
+Stopped at: Completed 66-01-PLAN.md
+Resume file: .planning/phases/66-auto-recovery/66-01-SUMMARY.md
+Next: 66-02-PLAN.md (ViewPage integration and RecoveryFallbackScreen)
 
 ---
-*Updated: 2026-02-19 -- Phase 65 Plan 01 complete*
+*Updated: 2026-02-20 -- Phase 66 Plan 01 complete*

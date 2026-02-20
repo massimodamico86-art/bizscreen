@@ -16,9 +16,9 @@ Requirements for player hardening milestone. Each maps to roadmap phases.
 
 ### Auto-Recovery
 
-- [ ] **RECV-01**: Player detects blank screen or frozen content and auto-reloads
-- [ ] **RECV-02**: Player falls back to cached content when reload fails to restore playback
-- [ ] **RECV-03**: Player tracks crash count to prevent infinite restart loops (max 6 restarts, then static fallback)
+- [x] **RECV-01**: Player detects blank screen or frozen content and auto-reloads
+- [x] **RECV-02**: Player falls back to cached content when reload fails to restore playback
+- [x] **RECV-03**: Player tracks crash count to prevent infinite restart loops (max 6 restarts, then static fallback)
 
 ### Content Verification
 
@@ -88,9 +88,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCRN-02 | Phase 65 | Pending |
 | SCRN-03 | Phase 65 | Pending |
 | SCRN-04 | Phase 65 | Pending |
-| RECV-01 | Phase 66 | Pending |
-| RECV-02 | Phase 66 | Pending |
-| RECV-03 | Phase 66 | Pending |
+| RECV-01 | Phase 66 | Complete |
+| RECV-02 | Phase 66 | Complete |
+| RECV-03 | Phase 66 | Complete |
 | VERI-01 | Phase 67 | Pending |
 | VERI-02 | Phase 67 | Pending |
 | VERI-03 | Phase 67 | Pending |
