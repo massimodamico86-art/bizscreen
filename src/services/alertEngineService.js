@@ -328,6 +328,10 @@ const ESCALATION_RULES = {
     // Escalate to critical after 24 hours stale
     escalateToCriticalAfterHours: 24,
   },
+  device_recovery: {
+    // No time-based escalation -- recovery is count-based, handled at SQL level
+    // JS-side escalation not needed since SQL handles severity assignment
+  },
 };
 
 /**
@@ -399,6 +403,8 @@ export const ALERT_TYPES = {
   DEVICE_SCREENSHOT_FAILED: 'device_screenshot_failed',
   DEVICE_CACHE_STALE: 'device_cache_stale',
   DEVICE_ERROR: 'device_error',
+  DEVICE_RECOVERY: 'device_recovery',
+  DEVICE_RECOVERY_EXHAUSTED: 'device_recovery_exhausted',
   SCHEDULE_MISSING_SCENE: 'schedule_missing_scene',
   SCHEDULE_CONFLICT: 'schedule_conflict',
   DATA_SOURCE_SYNC_FAILED: 'data_source_sync_failed',
@@ -1281,6 +1287,37 @@ export async function raiseCacheStaleAlert(device, hoursStale) {
     meta: {
       device_name: device.name,
       hours_stale: hoursStale,
+    },
+  });
+}
+
+/**
+ * Raise a device recovery alert
+ * Note: Primary recovery alert detection happens in SQL (update_device_status).
+ * This helper exists for any JS-initiated recovery alert needs.
+ */
+export async function raiseRecoveryAlert(device, crashCount, recoveryPhase) {
+  const isExhausted = crashCount >= 6;
+
+  return raiseAlert({
+    type: isExhausted ? ALERT_TYPES.DEVICE_RECOVERY_EXHAUSTED : ALERT_TYPES.DEVICE_RECOVERY,
+    severity: isExhausted
+      ? ALERT_SEVERITIES.CRITICAL
+      : crashCount >= 3
+        ? ALERT_SEVERITIES.WARNING
+        : ALERT_SEVERITIES.INFO,
+    title: isExhausted
+      ? `Device "${device.name}" recovery exhausted`
+      : `Device "${device.name}" is in recovery`,
+    message: isExhausted
+      ? 'All 6 recovery attempts failed. Device showing static fallback.'
+      : `Recovery attempt ${crashCount}/6 (${recoveryPhase})`,
+    tenantId: device.tenant_id,
+    deviceId: device.id,
+    meta: {
+      device_name: device.name,
+      crash_count: crashCount,
+      recovery_phase: recoveryPhase,
     },
   });
 }

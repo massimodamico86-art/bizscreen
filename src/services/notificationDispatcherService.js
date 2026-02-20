@@ -207,6 +207,8 @@ function isInQuietHours(prefs) {
 
 /**
  * Create an in-app notification for a user
+ * Handles unique constraint gracefully since the Postgres trigger
+ * (trg_alert_auto_notify) may have already created the notification.
  */
 async function createInAppNotification(userId, alert) {
   try {
@@ -225,6 +227,11 @@ async function createInAppNotification(userId, alert) {
     });
 
     if (error) {
+      // Unique constraint violation means trigger already created it -- not an error
+      if (error.code === '23505') {
+        logger.debug('In-app notification already exists (trigger created it)', { alertId: alert.id, userId });
+        return true; // Still counts as success
+      }
       logger.error('Error creating in-app notification', { error });
       return false;
     }
@@ -323,11 +330,23 @@ function getAlertActionUrl(alert) {
 
 /**
  * Queue an email notification for a user
+ * Only sends email for critical severity alerts (ALRT-05 requirement).
+ * Critical alerts: device_offline (after escalation), device_recovery_exhausted
  */
 async function queueEmailNotification(user, alert) {
   try {
-    // Store email notification record (actual sending would be handled by a worker)
-    const { error } = await supabase.from('notifications').insert({
+    // Only send email for critical alerts per ALRT-05 requirement
+    if (alert.severity !== 'critical') {
+      logger.debug('Email skipped: severity not critical', {
+        alertId: alert.id,
+        severity: alert.severity,
+        type: alert.type,
+      });
+      return false;
+    }
+
+    // Store email notification record
+    const { data: notification, error } = await supabase.from('notifications').insert({
       user_id: user.user_id,
       tenant_id: alert.tenant_id,
       alert_id: alert.id,
@@ -336,16 +355,27 @@ async function queueEmailNotification(user, alert) {
       message: alert.message,
       severity: alert.severity,
       alert_type: alert.type,
-    });
+    }).select().single();
 
     if (error) {
+      // If unique constraint violation (trigger already created it), that's OK
+      if (error.code === '23505') {
+        logger.debug('Email notification already exists (trigger created it)', { alertId: alert.id });
+        return false;
+      }
       logger.error('Error queueing email notification', { error });
       return false;
     }
 
-    // In production, this would trigger an email worker
-    // For now, we just log that an email should be sent
-    logger.info('Email queued', { recipient: user.email || user.user_id, alertTitle: alert.title });
+    // Actually send the email (previously dead code, now wired)
+    if (notification && user.email) {
+      await sendEmailNotification({ ...notification, user_id: user.user_id });
+    } else if (!user.email) {
+      logger.warn('Email notification queued but no email address available', {
+        userId: user.user_id,
+        alertId: alert.id,
+      });
+    }
 
     return true;
   } catch (error) {
