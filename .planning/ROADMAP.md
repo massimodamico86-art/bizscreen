@@ -56,7 +56,7 @@ All milestones shipped successfully.
 - Decimal phases (64.1, 64.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 64: Telemetry Pipeline & Offline Detection** - Device diagnostics on heartbeat, server-side heartbeat evaluator, automated offline alerts (completed 2026-02-19)
-- [ ] **Phase 65: Screenshot Enhancement** - Auto-capture on interval, display on screen detail page, on-demand capture, event-triggered screenshots
+- [x] **Phase 65: Screenshot Enhancement** - Auto-capture on interval, display on screen detail page, on-demand capture, event-triggered screenshots (completed 2026-02-20)
 - [ ] **Phase 66: Auto-Recovery** - Stuck/blank detection with progressive recovery, crash counter safety, cached fallback content
 - [ ] **Phase 67: Content Verification** - Player reports content version, server detects mismatch, auto-retry sync, play-then-verify pattern
 - [ ] **Phase 68: Alert Wiring & Notifications** - Recovery events generate alerts, in-app notification bell, email alerts for critical issues
@@ -145,7 +145,7 @@ Phases execute in numeric order: 64 → 65 → 66 → 67 → 68
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 64. Telemetry Pipeline & Offline Detection | 0/TBD | Complete    | 2026-02-19 |
-| 65. Screenshot Enhancement | 0/TBD | Not started | - |
+| 65. Screenshot Enhancement | 0/TBD | Complete    | 2026-02-20 |
 | 66. Auto-Recovery | 0/TBD | Not started | - |
 | 67. Content Verification | 0/TBD | Not started | - |
 | 68. Alert Wiring & Notifications | 0/TBD | Not started | - |
