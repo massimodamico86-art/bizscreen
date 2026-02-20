@@ -1,6 +1,6 @@
 // src/player/pages/ViewPage.jsx - Player View Page (extracted from Player.jsx)
 // Full-screen slideshow playback with offline support, kiosk mode, and stuck detection
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabase';
 import * as analytics from '../../services/playerAnalyticsService';
@@ -39,6 +39,7 @@ import {
   useTapSequence,
   useStuckDetection,
   useAutoRecovery,
+  useContentVerification,
 } from '../hooks';
 import { AppRenderer } from '../components/AppRenderer';
 import { SceneRenderer } from '../components/SceneRenderer.jsx';
@@ -119,7 +120,15 @@ export function ViewPage() {
     setCurrentIndex,
     loadContentRef,
     lastActivityRef,
+    contentVersionRef,
   } = usePlayerContent(screenId, navigate);
+
+  // Content verification hook - transition-aware re-sync on mismatch detection
+  const { onMismatchDetected, checkAndSync } = useContentVerification({
+    screenId,
+    loadContentRef,
+    content,
+  });
 
   // Kiosk mode hook - manages kiosk state, fullscreen, password/PIN exit
   const {
@@ -143,6 +152,17 @@ export function ViewPage() {
     onTrigger: showPinEntryDialog,
   });
 
+  // Content-verification-aware advance: check for pending sync before advancing
+  const verifiedAdvanceToNext = useCallback(async () => {
+    const synced = await checkAndSync();
+    if (synced) {
+      // Content was reloaded -- new content determines next item, skip normal advance
+      return;
+    }
+    // Normal advance to next item
+    advanceToNext();
+  }, [checkAndSync, advanceToNext]);
+
   // Playback hook - manages timing, video control, analytics
   const {
     videoRef,
@@ -150,7 +170,7 @@ export function ViewPage() {
     lastVideoTimeRef,
     handleVideoEnd,
     handleAdvanceToNext,
-  } = usePlayerPlayback(items, currentIndex, content, advanceToNext);
+  } = usePlayerPlayback(items, currentIndex, content, verifiedAdvanceToNext);
 
   // ViewPage-specific refs
   const contentContainerRef = useRef(null);
@@ -167,7 +187,10 @@ export function ViewPage() {
   );
 
   // Heartbeat hook - handles device status updates and screenshots
-  const { screenshotInProgressRef } = usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef);
+  const { screenshotInProgressRef } = usePlayerHeartbeat(screenId, loadContentRef, contentContainerRef, {
+    contentVersionRef,
+    onMismatchDetected,
+  });
 
   // Auto-recovery hook - progressive recovery with crash counter
   const { isExhausted, crashCount, triggerRecovery } = useAutoRecovery({

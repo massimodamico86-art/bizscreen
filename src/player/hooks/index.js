@@ -14,3 +14,4 @@ export { useTapSequence } from './useTapSequence.js';
 export { useDataRefreshOrchestrator } from './useDataRefreshOrchestrator.js';
 export { useWidgetData } from './useWidgetData.js';
 export { useAutoRecovery } from './useAutoRecovery.js';
+export { useContentVerification } from './useContentVerification.js';
