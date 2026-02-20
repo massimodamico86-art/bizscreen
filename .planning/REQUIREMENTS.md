@@ -28,8 +28,8 @@ Requirements for UI Completeness milestone. Each maps to roadmap phases.
 
 ### Notifications
 
-- [ ] **NOTF-01**: User can enable/disable device_recovery alerts in notification settings
-- [ ] **NOTF-02**: User can enable/disable device_recovery_exhausted alerts in notification settings
+- [x] **NOTF-01**: User can enable/disable device_recovery alerts in notification settings
+- [x] **NOTF-02**: User can enable/disable device_recovery_exhausted alerts in notification settings
 
 ### Dead Code Cleanup
 
@@ -71,8 +71,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEDT-01 | Phase 70 | Complete |
 | SCRN-01 | Phase 70 | Complete |
 | SCRN-02 | Phase 70 | Complete |
-| NOTF-01 | Phase 71 | Pending |
-| NOTF-02 | Phase 71 | Pending |
+| NOTF-01 | Phase 71 | Complete |
+| NOTF-02 | Phase 71 | Complete |
 | CLEAN-01 | Phase 71 | Complete |
 | CLEAN-02 | Phase 71 | Complete |
 | CLEAN-03 | Phase 71 | Complete |
