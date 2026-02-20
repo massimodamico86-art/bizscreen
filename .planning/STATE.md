@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone
+**Current focus:** v6.0 Functional Completeness
 
 ## Current Position
 
-Phase: N/A — all v5.0 phases complete
-Plan: N/A
-Status: Between milestones
-Last activity: 2026-02-20 — Shipped v5.0 UI Completeness
-
-Progress: [██████████] 100% (v5.0 UI Completeness — SHIPPED)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-20 — Milestone v6.0 started
 
 ## Milestones Shipped
 
@@ -59,9 +57,9 @@ None — all milestones shipped.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: v5.0 milestone archived
+Stopped at: v6.0 milestone defining requirements
 Resume file: N/A
-Next: `/gsd:new-milestone` to plan next milestone
+Next: Define requirements and create roadmap for v6.0
 
 ---
-*Updated: 2026-02-20 — v5.0 UI Completeness shipped*
+*Updated: 2026-02-20 — v6.0 Functional Completeness started*

@@ -180,7 +180,15 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-(No active requirements — define next milestone with `/gsd:new-milestone`)
+**Current Milestone: v6.0 Functional Completeness**
+
+**Goal:** Every interactive UI element performs its intended action — no dead buttons, no console errors, no placeholder behavior.
+
+**Target features:**
+- Systematic audit of all pages, components, buttons, forms, and interactions
+- Full-stack fixes: frontend wiring, backend endpoints (Edge Functions, migrations, RPCs)
+- Every button does something real against real data
+- Every page is fully functional end-to-end
 
 ### Out of Scope
 
@@ -358,4 +366,4 @@ These capabilities shipped and are production-verified:
 | SCRN-01/SCRN-02 confirmed complete, no changes needed | End-to-end verification vs unnecessary code | ✓ Good — avoided wasted work |
 
 ---
-*Last updated: 2026-02-20 after v5.0 UI Completeness milestone*
+*Last updated: 2026-02-20 after v6.0 Functional Completeness milestone started*
