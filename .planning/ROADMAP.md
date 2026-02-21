@@ -94,7 +94,10 @@ Plans:
   3. User can open the element settings panel for both text and image objects and modify properties
   4. User can right-click or tap the expanded options menu on any selected object and access all listed actions
   5. User can toggle aspect ratio lock on/off when resizing any object, and clicking a hyperlinked object opens the URL
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 73-01-PLAN.md -- Hyperlink system for text and image objects with click-to-open behavior
+- [ ] 73-02-PLAN.md -- Element settings panel, expanded options menu, and aspect ratio lock
 
 ### Phase 74: SVG Editor Image Manipulation
 **Goal**: Users can precisely position, crop, and swap images within the SVG editor
@@ -167,7 +170,7 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 72. Bug Fixes & Stability | 1/1 | Complete    | 2026-02-21 | - |
-| 73. SVG Editor Text & Object Controls | v6.0 | 0/TBD | Not started | - |
+| 73. SVG Editor Text & Object Controls | v6.0 | 0/2 | Not started | - |
 | 74. SVG Editor Image Manipulation | v6.0 | 0/TBD | Not started | - |
 | 75. Cloud Media Integrations | v6.0 | 0/TBD | Not started | - |
 | 76. Enterprise Security Controls | v6.0 | 0/TBD | Not started | - |
