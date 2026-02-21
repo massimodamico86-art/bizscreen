@@ -76,7 +76,7 @@ async function getUsersToNotify(alert) {
     // Get all users in the tenant with their notification preferences
     const { data: profiles, error: profileError } = await supabase
       .from('profiles')
-      .select('id, role, full_name, tenant_id')
+      .select('id, role, full_name, email, tenant_id')
       .eq('tenant_id', alert.tenant_id)
       .in('role', ['owner', 'admin', 'editor']);
 
@@ -95,12 +95,6 @@ async function getUsersToNotify(alert) {
 
     const prefsMap = new Map((preferences || []).map((p) => [p.user_id, p]));
 
-    // Get user emails
-    const { data: authUsers } = await supabase.auth.admin
-      ? await supabase.rpc('get_users_by_ids', { user_ids: userIds })
-      : { data: [] };
-
-    // For non-admin context, we'll use profiles
     const eligibleUsers = [];
 
     for (const profile of profiles) {
@@ -113,7 +107,7 @@ async function getUsersToNotify(alert) {
 
       eligibleUsers.push({
         user_id: profile.id,
-        email: authUsers?.find((u) => u.id === profile.id)?.email,
+        email: profile.email,
         full_name: profile.full_name,
         channel_in_app: prefs?.channel_in_app ?? true,
         channel_email: prefs?.channel_email ?? true,
@@ -392,22 +386,13 @@ async function queueEmailNotification(user, alert) {
  */
 export async function sendEmailNotification(notification) {
   try {
-    // Get recipient email
-    const { data: authData } = await supabase.auth.admin
-      ? await supabase.rpc('get_user_email', { user_id: notification.user_id })
-      : { data: null };
-
-    // Fallback: try to get email from profile or notification context
-    let recipientEmail = authData?.email;
-    if (!recipientEmail) {
-      // For client-side context, we may need to fetch user differently
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('id', notification.user_id)
-        .single();
-      recipientEmail = profile?.email;
-    }
+    // Get recipient email from profiles table
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('id', notification.user_id)
+      .single();
+    const recipientEmail = profile?.email;
 
     if (!recipientEmail) {
       logger.warn('No email found for user', { userId: notification.user_id });
