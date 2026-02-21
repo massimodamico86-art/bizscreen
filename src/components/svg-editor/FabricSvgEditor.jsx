@@ -227,6 +227,7 @@ export default function FabricSvgEditor({
 
     canvas.on('selection:cleared', () => {
       setSelectedObject(null);
+      setActivePanel(null);
     });
 
     // Track changes
@@ -783,9 +784,12 @@ export default function FabricSvgEditor({
     setShowHyperlinkModal(true);
   }, []);
 
-  const handleSaveHyperlink = useCallback((url) => {
+  const handleSaveHyperlink = useCallback((url, openInNewTab) => {
     if (!selectedObject) return;
-    selectedObject.set({ hyperlink: url, hyperlinkTarget: '_blank' });
+    selectedObject.set({
+      hyperlink: url,
+      hyperlinkTarget: openInNewTab !== false ? '_blank' : '_self',
+    });
     fabricCanvasRef.current?.renderAll();
     setShowHyperlinkModal(false);
     setHasUnsavedChanges(true);
@@ -2490,7 +2494,10 @@ export default function FabricSvgEditor({
     // Force re-render by incrementing counter
     // This avoids spreading the Fabric object which would convert it to plain JS
     setUpdateCounter(c => c + 1);
-  }, [selectedObject]);
+
+    // Sync layers panel state (name, visibility, lock changes)
+    syncCanvasObjects();
+  }, [selectedObject, syncCanvasObjects]);
 
   // Bring to front
   const handleBringToFront = useCallback(() => {
