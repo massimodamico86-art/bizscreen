@@ -94,6 +94,10 @@ export default function TopToolbar({
   onReplaceImage,
   onToggleAspectRatioLock,
   isAspectRatioLocked,
+  isCropMode,
+  onStartCrop,
+  onApplyCrop,
+  onCancelCrop,
 }) {
   const [showFontDropdown, setShowFontDropdown] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -180,6 +184,29 @@ export default function TopToolbar({
 
   // Divider
   const Divider = () => <div className="w-px h-6 bg-gray-700 mx-1" />;
+
+  // Crop mode toolbar: focused UI with only Apply/Cancel
+  if (isCropMode) {
+    return (
+      <div className="h-11 bg-gray-800 border-b border-gray-700 flex items-center px-3 gap-2">
+        <span className="text-sm text-white font-medium">Crop Image</span>
+        <span className="text-xs text-gray-400">Drag handles to adjust crop area</span>
+        <div className="flex-1" />
+        <button
+          onClick={onCancelCrop}
+          className="px-3 py-1 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={onApplyCrop}
+          className="px-3 py-1 text-sm bg-green-600 text-white hover:bg-green-500 rounded transition-colors"
+        >
+          Apply Crop
+        </button>
+      </div>
+    );
+  }
 
   if (!selectedObject) {
     return (
@@ -533,7 +560,7 @@ export default function TopToolbar({
           />
 
           {/* Crop */}
-          <SmallButton icon={Crop} title="Crop" onClick={() => {}} />
+          <SmallButton icon={Crop} title="Crop" onClick={onStartCrop} />
 
           {/* Clone/Duplicate */}
           <SmallButton icon={Copy} title="Duplicate" onClick={onDuplicate} />
