@@ -366,14 +366,17 @@ function BizScreenAppInner() {
     const updateOfflineDevicesInterval = setInterval(async () => {
       try {
         const { error } = await supabase.rpc('update_tv_device_status');
-        // Silently ignore if RPC function doesn't exist yet
-        if (error && error.code !== '42883') {
+        // Silently ignore if RPC function doesn't exist or network issues during background poll
+        const ignoredCodes = ['42883', 'PGRST202', 'PGRST301'];
+        if (error && !ignoredCodes.includes(error.code)) {
           logger.error('Error updating TV device status', { error, code: error.code });
         }
       } catch (error) {
-        // Silently ignore errors for missing RPC function
-        if (error.code !== '42883' && error.message !== 'Function not found') {
-          logger.error('Error updating TV device status', { error, code: error.code });
+        // Silently ignore network errors and missing RPC function in background polling
+        const ignoredCodes = ['42883', 'PGRST202', 'PGRST301'];
+        const isNetworkError = error instanceof TypeError || error.message?.includes('fetch');
+        if (!ignoredCodes.includes(error?.code) && !isNetworkError && error.message !== 'Function not found') {
+          logger.error('Error updating TV device status', { error, code: error?.code });
         }
       }
     }, 2 * 60 * 1000); // 2 minutes
