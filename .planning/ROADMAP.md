@@ -123,7 +123,11 @@ Plans:
   3. User can authenticate with OneDrive via OAuth and browse/select files to import into media library
   4. User can authenticate with SharePoint via OAuth and browse/select files to import into media library
   5. User can authenticate with Google Photos via OAuth and browse/select files to import into media library
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 75-01-PLAN.md -- Shared cloud OAuth utility + Google Drive and Dropbox services
+- [ ] 75-02-PLAN.md -- OneDrive, SharePoint, and Google Photos services
+- [ ] 75-03-PLAN.md -- CloudFilePicker modal, wire cloud providers in Add Media modal, and OAuth callback handling
 
 ### Phase 76: Enterprise Security Controls
 **Goal**: Admins can configure all security policies from the enterprise security page and manage tenant data lifecycle
@@ -190,7 +194,7 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 | 72. Bug Fixes & Stability | 1/1 | Complete    | 2026-02-21 | - |
 | 73. SVG Editor Text & Object Controls | 2/2 | Complete    | 2026-02-21 | - |
 | 74. SVG Editor Image Manipulation | 2/2 | Complete    | 2026-02-21 | - |
-| 75. Cloud Media Integrations | v6.0 | 0/TBD | Not started | - |
+| 75. Cloud Media Integrations | v6.0 | 0/3 | Not started | - |
 | 76. Enterprise Security Controls | v6.0 | 0/TBD | Not started | - |
 | 77. Content & Media Features | v6.0 | 0/TBD | Not started | - |
 | 78. Platform Wiring | v6.0 | 0/TBD | Not started | - |
