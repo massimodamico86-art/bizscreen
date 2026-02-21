@@ -74,16 +74,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EDIT-01 | Phase 73 | Complete |
+| EDIT-01 | Phase 73, Phase 80 | Complete (integration fix in 80) |
 | EDIT-02 | Phase 73 | Complete |
-| EDIT-03 | Phase 74 | Complete |
+| EDIT-03 | Phase 74, Phase 80 | Complete (integration fix in 80) |
 | EDIT-04 | Phase 74 | Complete |
 | EDIT-05 | Phase 74 | Complete |
-| EDIT-06 | Phase 73 | Complete |
+| EDIT-06 | Phase 73, Phase 80 | Complete (integration fix in 80) |
 | EDIT-07 | Phase 73 | Complete |
 | EDIT-08 | Phase 73 | Complete |
 | EDIT-09 | Phase 73 | Complete |
-| EDIT-10 | Phase 73 | Complete |
+| EDIT-10 | Phase 73, Phase 80 | Complete (integration fix in 80) |
 | CLOUD-01 | Phase 75 | Pending |
 | CLOUD-02 | Phase 75 | Pending |
 | CLOUD-03 | Phase 75 | Pending |
@@ -113,4 +113,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-20*
-*Last updated: 2026-02-20 after roadmap creation*
+*Last updated: 2026-02-21 after gap closure phase 80 added*

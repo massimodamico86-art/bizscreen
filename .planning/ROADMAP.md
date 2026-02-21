@@ -13,7 +13,7 @@
 - [x] **v3.2 Display Toolkit** — Phases 56-63 (shipped 2026-02-19)
 - [x] **v4.0 Player Hardening** — Phases 64-68 (shipped 2026-02-20)
 - [x] **v5.0 UI Completeness** — Phases 69-71 (shipped 2026-02-20)
-- [ ] **v6.0 Functional Completeness** — Phases 72-79 (in progress)
+- [ ] **v6.0 Functional Completeness** — Phases 72-80 (in progress)
 
 ## Phase History
 
@@ -69,6 +69,7 @@ All milestones shipped successfully.
 - [ ] **Phase 77: Content & Media Features** - Video uploads in carousel, property events, graphics library in layout editor, and content analytics timeline
 - [ ] **Phase 78: Platform Wiring** - Payment method update and app configuration editing
 - [ ] **Phase 79: AI Designer** - Generate complete layouts from text prompts
+- [ ] **Phase 80: SVG Editor Integration Polish** - Fix integration defects and tech debt from completed phases 73-74
 
 ## Phase Details
 
@@ -165,10 +166,22 @@ Plans:
   3. User can view the generated layout in the editor and modify any element as if they had built it manually
 **Plans**: TBD
 
+### Phase 80: SVG Editor Integration Polish
+**Goal**: Fix integration defects and tech debt discovered in completed phases 73-74 — runtime crash, disconnected toggle, and stale panel state
+**Depends on**: Phase 74
+**Requirements**: EDIT-01, EDIT-03, EDIT-06, EDIT-10 (re-verify after fixes)
+**Gap Closure:** Closes gaps from v6.0 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. PositionPanel close button renders without runtime error (X icon properly imported)
+  2. HyperlinkModal openInNewTab toggle value is saved and applied to the hyperlink target property
+  3. ElementSettingsPanel name edits are reflected in LayersPanel canvasObjects state
+  4. ElementSettingsPanel closes automatically when canvas selection is cleared
+**Plans**: TBD
+
 ## Progress
 
 **Execution Order:**
-Phases 72 first (fixes), then 73-74 sequentially (editor features build on each other), 75-78 in parallel (independent), 79 last (depends on editor phases).
+Phases 72 first (fixes), then 73-74 sequentially (editor features build on each other), 75-78 in parallel (independent), 79 last (depends on editor phases). Phase 80 can run anytime after 74 (fixes defects in completed phases).
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -180,6 +193,7 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 | 77. Content & Media Features | v6.0 | 0/TBD | Not started | - |
 | 78. Platform Wiring | v6.0 | 0/TBD | Not started | - |
 | 79. AI Designer | v6.0 | 0/TBD | Not started | - |
+| 80. SVG Editor Integration Polish | v6.0 | 0/TBD | Not started | - |
 
 ## Progress Summary
 
@@ -196,9 +210,9 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 | v3.2 Display Toolkit | 56-63 | 16 | Complete | 2026-02-19 |
 | v4.0 Player Hardening | 64-68 | 11 | Complete | 2026-02-20 |
 | v5.0 UI Completeness | 69-71 | 5 | Complete | 2026-02-20 |
-| v6.0 Functional Completeness | 72-79 | TBD | In progress | - |
+| v6.0 Functional Completeness | 72-80 | TBD | In progress | - |
 
-**Total:** 71 phases complete, 227 plans executed | 11 milestones shipped | v6.0 in progress (8 phases)
+**Total:** 71 phases complete, 227 plans executed | 11 milestones shipped | v6.0 in progress (9 phases)
 
 ---
 *Last updated: 2026-02-20 -- v6.0 Functional Completeness roadmap created*
