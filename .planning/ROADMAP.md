@@ -80,7 +80,9 @@ All milestones shipped successfully.
   1. BrandingSettingsPage renders without console errors when X icon is displayed
   2. Notification emails arrive at the correct user email address for all alert types
   3. Device status RPC errors in App.jsx are caught and logged without crashing the app
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 72-01-PLAN.md -- Fix X icon import, notification email resolution, and device status RPC error handling
 
 ### Phase 73: SVG Editor Text & Object Controls
 **Goal**: Users can fully configure text and object properties in the SVG editor -- hyperlinks, settings panels, expanded menus, and aspect ratio lock all work
@@ -164,7 +166,7 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 72. Bug Fixes & Stability | v6.0 | 0/TBD | Not started | - |
+| 72. Bug Fixes & Stability | v6.0 | 0/1 | Planned | - |
 | 73. SVG Editor Text & Object Controls | v6.0 | 0/TBD | Not started | - |
 | 74. SVG Editor Image Manipulation | v6.0 | 0/TBD | Not started | - |
 | 75. Cloud Media Integrations | v6.0 | 0/TBD | Not started | - |
