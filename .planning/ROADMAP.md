@@ -62,7 +62,7 @@ All milestones shipped successfully.
 **v6.0 Functional Completeness** — Every interactive UI element performs its intended action.
 
 - [x] **Phase 72: Bug Fixes & Stability** - Fix runtime errors and broken wiring before building new features (completed 2026-02-21)
-- [ ] **Phase 73: SVG Editor Text & Object Controls** - Hyperlinks, settings panels, expanded menus, and aspect ratio lock for all object types
+- [x] **Phase 73: SVG Editor Text & Object Controls** - Hyperlinks, settings panels, expanded menus, and aspect ratio lock for all object types (completed 2026-02-21)
 - [ ] **Phase 74: SVG Editor Image Manipulation** - Precise positioning, cropping, and image replacement for image objects
 - [ ] **Phase 75: Cloud Media Integrations** - OAuth-based import from Google Drive, Dropbox, OneDrive, SharePoint, and Google Photos
 - [ ] **Phase 76: Enterprise Security Controls** - Password policies, session management, JWT configuration, data deletion, and plan upgrade from enterprise security page
@@ -170,7 +170,7 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 72. Bug Fixes & Stability | 1/1 | Complete    | 2026-02-21 | - |
-| 73. SVG Editor Text & Object Controls | 1/2 | In Progress|  | - |
+| 73. SVG Editor Text & Object Controls | 2/2 | Complete   | 2026-02-21 | - |
 | 74. SVG Editor Image Manipulation | v6.0 | 0/TBD | Not started | - |
 | 75. Cloud Media Integrations | v6.0 | 0/TBD | Not started | - |
 | 76. Enterprise Security Controls | v6.0 | 0/TBD | Not started | - |
