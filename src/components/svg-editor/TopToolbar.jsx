@@ -21,6 +21,10 @@ import {
   AlignJustify,
   AlignLeft,
   AlignRight,
+  ArrowDown,
+  ArrowDownToLine,
+  ArrowUp,
+  ArrowUpToLine,
   Bold,
   ChevronDown,
   Copy,
@@ -82,12 +86,20 @@ export default function TopToolbar({
   activePanel,
   onPanelChange,
   onOpenLink,
+  onOpenSettings,
+  onBringToFront,
+  onSendToBack,
+  onBringForward,
+  onSendBackward,
+  onToggleAspectRatioLock,
+  isAspectRatioLocked,
 }) {
   const [showFontDropdown, setShowFontDropdown] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showCaseDropdown, setShowCaseDropdown] = useState(false);
   const [showAlignDropdown, setShowAlignDropdown] = useState(false);
   const [showSpacingDropdown, setShowSpacingDropdown] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [fontSearch, setFontSearch] = useState('');
 
   const fontDropdownRef = useRef(null);
@@ -95,6 +107,7 @@ export default function TopToolbar({
   const caseDropdownRef = useRef(null);
   const alignDropdownRef = useRef(null);
   const spacingDropdownRef = useRef(null);
+  const moreMenuRef = useRef(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -104,6 +117,7 @@ export default function TopToolbar({
       if (caseDropdownRef.current && !caseDropdownRef.current.contains(e.target)) setShowCaseDropdown(false);
       if (alignDropdownRef.current && !alignDropdownRef.current.contains(e.target)) setShowAlignDropdown(false);
       if (spacingDropdownRef.current && !spacingDropdownRef.current.contains(e.target)) setShowSpacingDropdown(false);
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target)) setShowMoreMenu(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -489,7 +503,7 @@ export default function TopToolbar({
           <SmallButton icon={Link2} title="Link" onClick={onOpenLink} active={!!selectedObject?.hyperlink} />
 
           {/* Settings */}
-          <SmallButton icon={Settings} title="Settings" onClick={() => {}} />
+          <SmallButton icon={Settings} title="Settings" onClick={onOpenSettings} active={activePanel === 'settings'} />
         </>
       )}
 
@@ -525,7 +539,7 @@ export default function TopToolbar({
           <SmallButton icon={Link2} title="Link" onClick={onOpenLink} active={!!selectedObject?.hyperlink} />
 
           {/* Settings */}
-          <SmallButton icon={Settings} title="Settings" onClick={() => {}} />
+          <SmallButton icon={Settings} title="Settings" onClick={onOpenSettings} active={activePanel === 'settings'} />
         </>
       )}
 
@@ -608,7 +622,45 @@ export default function TopToolbar({
       <Divider />
 
       {/* More Options Menu */}
-      <SmallButton icon={MoreHorizontal} title="More Options" onClick={() => {}} />
+      <div className="relative" ref={moreMenuRef}>
+        <SmallButton icon={MoreHorizontal} title="More Options" onClick={() => setShowMoreMenu(!showMoreMenu)} active={showMoreMenu} />
+
+        {showMoreMenu && (
+          <div className="absolute top-full right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 py-1 min-w-[180px]">
+            <button onClick={() => { onDuplicate?.(); setShowMoreMenu(false); }} className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-gray-700 flex items-center gap-2">
+              <Copy className="w-4 h-4" /> Duplicate
+            </button>
+            <button onClick={() => { onDelete?.(); setShowMoreMenu(false); }} className="w-full px-3 py-1.5 text-left text-sm text-red-400 hover:bg-gray-700 flex items-center gap-2">
+              <Trash2 className="w-4 h-4" /> Delete
+            </button>
+            <div className="h-px bg-gray-700 my-1" />
+            <button onClick={() => { onBringToFront?.(); setShowMoreMenu(false); }} className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-gray-700 flex items-center gap-2">
+              <ArrowUpToLine className="w-4 h-4" /> Bring to Front
+            </button>
+            <button onClick={() => { onBringForward?.(); setShowMoreMenu(false); }} className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-gray-700 flex items-center gap-2">
+              <ArrowUp className="w-4 h-4" /> Bring Forward
+            </button>
+            <button onClick={() => { onSendBackward?.(); setShowMoreMenu(false); }} className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-gray-700 flex items-center gap-2">
+              <ArrowDown className="w-4 h-4" /> Send Backward
+            </button>
+            <button onClick={() => { onSendToBack?.(); setShowMoreMenu(false); }} className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-gray-700 flex items-center gap-2">
+              <ArrowDownToLine className="w-4 h-4" /> Send to Back
+            </button>
+            <div className="h-px bg-gray-700 my-1" />
+            <button onClick={() => { onOpenLink?.(); setShowMoreMenu(false); }} className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-gray-700 flex items-center gap-2">
+              <Link2 className="w-4 h-4" /> Link
+            </button>
+            <button onClick={() => { onOpenSettings?.(); setShowMoreMenu(false); }} className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-gray-700 flex items-center gap-2">
+              <Settings className="w-4 h-4" /> Settings
+            </button>
+            <div className="h-px bg-gray-700 my-1" />
+            <button onClick={() => { onToggleLock?.(); setShowMoreMenu(false); }} className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-gray-700 flex items-center gap-2">
+              {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+              {isLocked ? 'Unlock' : 'Lock'}
+            </button>
+          </div>
+        )}
+      </div>
 
       <Divider />
 
@@ -662,7 +714,8 @@ export default function TopToolbar({
       <SmallButton
         icon={Lock}
         title="Lock Aspect Ratio"
-        onClick={() => {}}
+        active={isAspectRatioLocked}
+        onClick={onToggleAspectRatioLock}
       />
     </div>
   );
