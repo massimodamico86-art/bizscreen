@@ -17,22 +17,34 @@
 
 import { useState, useRef, useEffect } from 'react';
 import {
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
   Bold,
-  Italic,
-  Underline,
-  Strikethrough,
-  Link2,
-  Settings,
-  Lock,
-  Unlock,
+  ChevronDown,
+  Copy,
+  Crop,
   FlipHorizontal,
   FlipVertical,
   Grid3x3,
-  Crop,
-  Copy,
-  RefreshCw,
+  ImageIcon,
+  Italic,
+  Link2,
+  Lock,
+  Minus,
   MoreHorizontal,
+  Move,
+  Play,
+  Plus,
+  RefreshCw,
+  Settings,
+  Sparkles,
+  Strikethrough,
   Trash2,
+  Underline,
+  Unlock,
+  X,
 } from 'lucide-react';
 
 // Default Google Fonts
@@ -69,6 +81,7 @@ export default function TopToolbar({
   usedFonts = [],
   activePanel,
   onPanelChange,
+  onOpenLink,
 }) {
   const [showFontDropdown, setShowFontDropdown] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -473,7 +486,7 @@ export default function TopToolbar({
           </div>
 
           {/* Link */}
-          <SmallButton icon={Link2} title="Link" onClick={() => {}} />
+          <SmallButton icon={Link2} title="Link" onClick={onOpenLink} active={!!selectedObject?.hyperlink} />
 
           {/* Settings */}
           <SmallButton icon={Settings} title="Settings" onClick={() => {}} />
@@ -509,7 +522,7 @@ export default function TopToolbar({
           <SmallButton icon={RefreshCw} title="Replace Image" onClick={() => {}} />
 
           {/* Link */}
-          <SmallButton icon={Link2} title="Link" onClick={() => {}} />
+          <SmallButton icon={Link2} title="Link" onClick={onOpenLink} active={!!selectedObject?.hyperlink} />
 
           {/* Settings */}
           <SmallButton icon={Settings} title="Settings" onClick={() => {}} />
