@@ -49,9 +49,9 @@ Requirements for Functional Completeness milestone. Every interactive UI element
 
 ### Bug Fixes
 
-- [ ] **BUGF-01**: BrandingSettingsPage X icon renders without runtime error
-- [ ] **BUGF-02**: Notification email dispatcher correctly fetches user email addresses
-- [ ] **BUGF-03**: Device status RPC errors are logged and handled properly in App.jsx
+- [x] **BUGF-01**: BrandingSettingsPage X icon renders without runtime error
+- [x] **BUGF-02**: Notification email dispatcher correctly fetches user email addresses
+- [x] **BUGF-03**: Device status RPC errors are logged and handled properly in App.jsx
 
 ## Future Requirements
 
@@ -102,9 +102,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADMN-04 | Phase 76 | Pending |
 | ADMN-05 | Phase 76 | Pending |
 | ADMN-06 | Phase 76 | Pending |
-| BUGF-01 | Phase 72 | Pending |
-| BUGF-02 | Phase 72 | Pending |
-| BUGF-03 | Phase 72 | Pending |
+| BUGF-01 | Phase 72 | Complete |
+| BUGF-02 | Phase 72 | Complete |
+| BUGF-03 | Phase 72 | Complete |
 
 **Coverage:**
 - v6.0 requirements: 31 total
