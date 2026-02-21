@@ -58,7 +58,7 @@ export default function HyperlinkModal({ isOpen, onClose, currentUrl, onSave, on
       return;
     }
     setError('');
-    onSave(url);
+    onSave(url, openInNewTab);
   };
 
   const handleRemove = () => {

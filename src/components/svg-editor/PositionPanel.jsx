@@ -10,12 +10,29 @@
 
 import { useState } from 'react';
 import {
-  Type,
-  Image,
-  Square,
+  AlignCenterHorizontal,
+  AlignCenterVertical,
+  AlignEndHorizontal,
+  AlignEndVertical,
+  AlignStartHorizontal,
+  AlignStartVertical,
   Circle,
-  Triangle,
+  Eye,
+  EyeOff,
+  FlipHorizontal,
+  FlipVertical,
+  GripVertical,
+  Image,
+  Lock,
   Minus,
+  RotateCcw,
+  RotateCw,
+  Square,
+  Trash2,
+  Triangle,
+  Type,
+  Unlock,
+  X,
 } from 'lucide-react';
 
 const TABS = [
