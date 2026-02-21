@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v6.0 Functional Completeness — Phase 72 (Bug Fixes & Stability)
+**Current focus:** v6.0 Functional Completeness — Phase 73 (SVG Editor Text Object Controls)
 
 ## Current Position
 
-Phase: 72 of 79 (Bug Fixes & Stability)
-Plan: 1 of 1 complete in current phase
-Status: Phase 72 complete
-Last activity: 2026-02-21 — 72-01 runtime bug fixes (3 bugs fixed)
+Phase: 73 of 79 (SVG Editor Text Object Controls)
+Plan: 1 of 2 complete in current phase
+Status: Executing phase 73
+Last activity: 2026-02-21 — 73-01 hyperlink system (modal, serialization, preview click)
 
-Progress: [=░░░░░░░░░] 12.5% (v6.0 — 1/8 phases complete)
+Progress: [==░░░░░░░░] 25% (v6.0 — 2/8 phases in progress)
 
 ## Milestones Shipped
 
@@ -49,6 +49,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - Added PGRST202/PGRST301 and network error detection to device status RPC polling (72-01)
 - [Phase 72]: Removed supabase.auth.admin code paths - never work in client context
 - [Phase 72]: Added PGRST202/PGRST301 and network error detection to device status RPC polling
+- [Phase 73]: Store hyperlinks as fabric custom properties for seamless JSON serialization
+- [Phase 73]: Use isPreviewModeRef to bridge React state into canvas event handler
 
 ### Blockers/Concerns
 
@@ -62,13 +64,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | 43 | Fix 17 remaining Playwright e2e test failures | 2026-02-18 | cab3395 | [43-fix-17-remaining-playwright-e2e-test-fai](./quick/43-fix-17-remaining-playwright-e2e-test-fai/) |
 | 44 | Fix 4 failing Playwright e2e tests (auth/connection) | 2026-02-19 | 0ce7539 | [44-fix-4-failing-playwright-e2e-tests](./quick/44-fix-4-failing-playwright-e2e-tests/) |
 | Phase 72 P01 | 2min | 3 tasks | 3 files |
+| Phase 73 P01 | 3min | 2 tasks | 3 files |
 
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 72-01-PLAN.md
+Stopped at: Completed 73-01-PLAN.md
 Resume file: N/A
-Next: Phase 72 complete, proceed to phase 73
+Next: Continue with 73-02-PLAN.md (text object controls)
 
 ---
-*Updated: 2026-02-21 -- 72-01 runtime bug fixes complete*
+*Updated: 2026-02-21 -- 73-01 hyperlink system complete*
