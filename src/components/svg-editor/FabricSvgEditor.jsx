@@ -157,6 +157,10 @@ export default function FabricSvgEditor({
   // Hyperlink modal state
   const [showHyperlinkModal, setShowHyperlinkModal] = useState(false);
 
+  // Crop mode state
+  const [isCropMode, setIsCropMode] = useState(false);
+  const cropDataRef = useRef(null);
+
   // Ref to track preview mode for canvas event handlers
   const isPreviewModeRef = useRef(false);
 
@@ -628,6 +632,7 @@ export default function FabricSvgEditor({
 
   // Delete selected object
   const handleDelete = useCallback(() => {
+    if (isCropMode) return;
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
 
@@ -643,7 +648,7 @@ export default function FabricSvgEditor({
       setSelectedObject(null);
       setHasUnsavedChanges(true);
     }
-  }, []);
+  }, [isCropMode]);
 
   // Duplicate selected object
   const handleDuplicate = useCallback(() => {
@@ -946,6 +951,138 @@ export default function FabricSvgEditor({
     // Reset file input
     e.target.value = '';
   }, [canvasWidth, canvasHeight, syncCanvasObjects]);
+
+  // --- Crop mode handlers ---
+
+  // Start crop: create overlay + interactive crop rect on selected image
+  const handleStartCrop = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || isCropMode) return;
+    const obj = canvas.getActiveObject();
+    if (!obj || obj.type !== 'image') return;
+
+    // Store reference to the image being cropped
+    cropDataRef.current = { image: obj, originalClipPath: obj.clipPath || null };
+
+    // Image visible bounds on canvas
+    const imgLeft = obj.left;
+    const imgTop = obj.top;
+    const imgVisualW = (obj.width || 1) * (obj.scaleX || 1);
+    const imgVisualH = (obj.height || 1) * (obj.scaleY || 1);
+
+    // Semi-transparent dark overlay covering entire canvas
+    const overlay = new fabric.Rect({
+      left: 0,
+      top: 0,
+      width: canvasWidth,
+      height: canvasHeight,
+      fill: 'rgba(0,0,0,0.5)',
+      selectable: false,
+      evented: false,
+      id: '__crop_overlay__',
+    });
+
+    // Interactive crop region rect
+    const cropRect = new fabric.Rect({
+      left: imgLeft,
+      top: imgTop,
+      width: imgVisualW,
+      height: imgVisualH,
+      fill: 'transparent',
+      stroke: '#00ff00',
+      strokeDashArray: [5, 5],
+      strokeWidth: 2,
+      cornerColor: '#00ff00',
+      cornerSize: 10,
+      transparentCorners: false,
+      hasRotatingPoint: false,
+      id: '__crop_rect__',
+    });
+
+    canvas.add(overlay);
+    canvas.add(cropRect);
+
+    // Disable selection on all other objects
+    canvas.getObjects().forEach((o) => {
+      if (o.id !== '__crop_rect__' && o.id !== '__crop_overlay__') {
+        o.set({ selectable: false, evented: false });
+      }
+    });
+
+    canvas.setActiveObject(cropRect);
+    canvas.renderAll();
+    setIsCropMode(true);
+  }, [isCropMode, canvasWidth]);
+
+  // Apply crop: convert crop rect bounds to image-local clipPath
+  const handleApplyCrop = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || !cropDataRef.current) return;
+
+    const img = cropDataRef.current.image;
+    const cropRect = canvas.getObjects().find((o) => o.id === '__crop_rect__');
+    if (!cropRect) return;
+
+    // Convert crop rect bounds to image-local coordinates
+    const cropLeft = (cropRect.left - img.left) / (img.scaleX || 1);
+    const cropTop = (cropRect.top - img.top) / (img.scaleY || 1);
+    const cropWidth = (cropRect.width * (cropRect.scaleX || 1)) / (img.scaleX || 1);
+    const cropHeight = (cropRect.height * (cropRect.scaleY || 1)) / (img.scaleY || 1);
+
+    // Apply clipPath on image
+    img.set({
+      clipPath: new fabric.Rect({
+        left: cropLeft,
+        top: cropTop,
+        width: cropWidth,
+        height: cropHeight,
+        absolutePositioned: false,
+      }),
+    });
+
+    // Clean up crop UI elements
+    const overlay = canvas.getObjects().find((o) => o.id === '__crop_overlay__');
+    if (overlay) canvas.remove(overlay);
+    canvas.remove(cropRect);
+
+    // Re-enable selection on all objects
+    canvas.getObjects().forEach((o) => {
+      o.set({ selectable: true, evented: true });
+    });
+
+    canvas.setActiveObject(img);
+    canvas.renderAll();
+    setIsCropMode(false);
+    cropDataRef.current = null;
+    setHasUnsavedChanges(true);
+  }, []);
+
+  // Cancel crop: discard crop rect, restore original clipPath
+  const handleCancelCrop = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || !cropDataRef.current) return;
+
+    const img = cropDataRef.current.image;
+
+    // Restore original clipPath
+    img.set('clipPath', cropDataRef.current.originalClipPath);
+
+    // Remove crop UI elements
+    const overlay = canvas.getObjects().find((o) => o.id === '__crop_overlay__');
+    const cropRect = canvas.getObjects().find((o) => o.id === '__crop_rect__');
+    if (overlay) canvas.remove(overlay);
+    if (cropRect) canvas.remove(cropRect);
+
+    // Re-enable selection on all objects
+    canvas.getObjects().forEach((o) => {
+      o.set({ selectable: true, evented: true });
+    });
+
+    canvas.setActiveObject(img);
+    canvas.renderAll();
+    setIsCropMode(false);
+    cropDataRef.current = null;
+  }, []);
 
   // Handle background color change
   const handleBackgroundColorChange = useCallback((color) => {
@@ -2450,11 +2587,20 @@ export default function FabricSvgEditor({
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Escape to cancel crop mode
+      if (e.key === 'Escape' && isCropMode) {
+        handleCancelCrop();
+        return;
+      }
+
       // Escape to exit preview mode
       if (e.key === 'Escape' && isPreviewMode) {
         setIsPreviewMode(false);
         return;
       }
+
+      // Block most shortcuts while in crop mode
+      if (isCropMode) return;
 
       // Ignore if typing in input
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -2507,7 +2653,7 @@ export default function FabricSvgEditor({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleDelete, handleUndo, handleRedo, handleSave, handleDuplicate, isPreviewMode, showShortcuts]);
+  }, [handleDelete, handleUndo, handleRedo, handleSave, handleDuplicate, isPreviewMode, showShortcuts, isCropMode, handleCancelCrop]);
 
   // Error state - show full screen error
   if (error) {
@@ -2765,6 +2911,10 @@ export default function FabricSvgEditor({
           onReplaceImage={handleReplaceImage}
           onToggleAspectRatioLock={handleToggleAspectRatioLock}
           isAspectRatioLocked={selectedObject?.lockUniScaling || false}
+          isCropMode={isCropMode}
+          onStartCrop={handleStartCrop}
+          onApplyCrop={handleApplyCrop}
+          onCancelCrop={handleCancelCrop}
         />
       )}
 
