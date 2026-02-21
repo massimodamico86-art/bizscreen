@@ -126,6 +126,7 @@ export default function FabricSvgEditor({
   const [canvasObjects, setCanvasObjects] = useState([]);
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const fileInputRef = useRef(null);
+  const replaceImageRef = useRef(false);
 
   // History for undo/redo
   const [history, setHistory] = useState([]);
@@ -859,6 +860,15 @@ export default function FabricSvgEditor({
     fileInputRef.current?.click();
   }, []);
 
+  // Replace selected image with a new file (preserving geometry)
+  const handleReplaceImage = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    const obj = canvas?.getActiveObject();
+    if (!canvas || !obj || obj.type !== 'image') return;
+    replaceImageRef.current = true;
+    fileInputRef.current?.click();
+  }, []);
+
   // Handle image file selection
   const handleImageFileChange = useCallback((e) => {
     const file = e.target.files?.[0];
@@ -871,15 +881,52 @@ export default function FabricSvgEditor({
     reader.onload = (event) => {
       const imgUrl = event.target?.result;
 
-      fabric.FabricImage.fromURL(imgUrl).then((img) => {
-        // Scale image to fit within canvas
+      fabric.FabricImage.fromURL(imgUrl).then((newImg) => {
+        // Replace image mode: swap source while preserving geometry
+        if (replaceImageRef.current) {
+          replaceImageRef.current = false;
+          const oldObj = canvas.getActiveObject();
+          if (!oldObj || oldObj.type !== 'image') {
+            // Fallback: add as new image if no active image
+            return;
+          }
+
+          // Calculate new scale to match old visual dimensions
+          const oldVisualWidth = (oldObj.width || 1) * (oldObj.scaleX || 1);
+          const oldVisualHeight = (oldObj.height || 1) * (oldObj.scaleY || 1);
+          const newScaleX = oldVisualWidth / (newImg.width || 1);
+          const newScaleY = oldVisualHeight / (newImg.height || 1);
+
+          newImg.set({
+            left: oldObj.left,
+            top: oldObj.top,
+            scaleX: newScaleX,
+            scaleY: newScaleY,
+            angle: oldObj.angle || 0,
+            id: oldObj.id || `image-${Date.now()}`,
+            name: oldObj.name || file.name.replace(/\.[^.]+$/, ''),
+            lockUniScaling: oldObj.lockUniScaling ?? true,
+            hyperlink: oldObj.hyperlink || '',
+            hyperlinkTarget: oldObj.hyperlinkTarget || '_blank',
+          });
+
+          canvas.remove(oldObj);
+          canvas.add(newImg);
+          canvas.setActiveObject(newImg);
+          canvas.renderAll();
+          setHasUnsavedChanges(true);
+          syncCanvasObjects();
+          return;
+        }
+
+        // Normal add image mode
         const maxWidth = canvasWidth * 0.5;
         const maxHeight = canvasHeight * 0.5;
-        const scale = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+        const scale = Math.min(maxWidth / newImg.width, maxHeight / newImg.height, 1);
 
-        img.set({
-          left: canvasWidth / 2 - (img.width * scale) / 2,
-          top: canvasHeight / 2 - (img.height * scale) / 2,
+        newImg.set({
+          left: canvasWidth / 2 - (newImg.width * scale) / 2,
+          top: canvasHeight / 2 - (newImg.height * scale) / 2,
           scaleX: scale,
           scaleY: scale,
           id: `image-${Date.now()}`,
@@ -887,8 +934,8 @@ export default function FabricSvgEditor({
           lockUniScaling: true,
         });
 
-        canvas.add(img);
-        canvas.setActiveObject(img);
+        canvas.add(newImg);
+        canvas.setActiveObject(newImg);
         canvas.renderAll();
         setHasUnsavedChanges(true);
         syncCanvasObjects();
@@ -2715,6 +2762,7 @@ export default function FabricSvgEditor({
           onOpenSettings={() => setActivePanel(activePanel === 'settings' ? null : 'settings')}
           onBringForward={handleBringForward}
           onSendBackward={handleSendBackward}
+          onReplaceImage={handleReplaceImage}
           onToggleAspectRatioLock={handleToggleAspectRatioLock}
           isAspectRatioLocked={selectedObject?.lockUniScaling || false}
         />

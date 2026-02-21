@@ -91,6 +91,7 @@ export default function TopToolbar({
   onSendToBack,
   onBringForward,
   onSendBackward,
+  onReplaceImage,
   onToggleAspectRatioLock,
   isAspectRatioLocked,
 }) {
@@ -524,7 +525,12 @@ export default function TopToolbar({
           <Divider />
 
           {/* Position/Grid */}
-          <SmallButton icon={Grid3x3} title="Position" onClick={() => {}} />
+          <SmallButton
+            icon={Grid3x3}
+            title="Position"
+            onClick={() => onPanelChange?.(activePanel === 'position' ? null : 'position')}
+            active={activePanel === 'position'}
+          />
 
           {/* Crop */}
           <SmallButton icon={Crop} title="Crop" onClick={() => {}} />
@@ -533,7 +539,7 @@ export default function TopToolbar({
           <SmallButton icon={Copy} title="Duplicate" onClick={onDuplicate} />
 
           {/* Swap/Replace */}
-          <SmallButton icon={RefreshCw} title="Replace Image" onClick={() => {}} />
+          <SmallButton icon={RefreshCw} title="Replace Image" onClick={onReplaceImage} />
 
           {/* Link */}
           <SmallButton icon={Link2} title="Link" onClick={onOpenLink} active={!!selectedObject?.hyperlink} />
