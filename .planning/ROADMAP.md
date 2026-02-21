@@ -176,7 +176,9 @@ Plans:
   2. HyperlinkModal openInNewTab toggle value is saved and applied to the hyperlink target property
   3. ElementSettingsPanel name edits are reflected in LayersPanel canvasObjects state
   4. ElementSettingsPanel closes automatically when canvas selection is cleared
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 80-01-PLAN.md -- Fix PositionPanel X icon crash, HyperlinkModal openInNewTab wiring, settings panel sync and auto-close
 
 ## Progress
 
