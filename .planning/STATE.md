@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v6.0 Functional Completeness — Phase 73 (SVG Editor Text Object Controls)
+**Current focus:** v6.0 Functional Completeness — Phase 74 (SVG Editor Image Manipulation)
 
 ## Current Position
 
-Phase: 73 of 79 (SVG Editor Text Object Controls)
-Plan: 2 of 2 complete in current phase
-Status: Phase 73 complete
-Last activity: 2026-02-21 — 73-02 element settings panel, expanded options menu, aspect ratio lock
+Phase: 74 of 79 (SVG Editor Image Manipulation)
+Plan: 1 of 2 complete in current phase
+Status: In progress
+Last activity: 2026-02-21 — 74-01 image position/alignment and replace image
 
-Progress: [==░░░░░░░░] 25% (v6.0 — 2/8 phases in progress)
+Progress: [===░░░░░░░] 37% (v6.0 — 3/8 phases in progress)
 
 ## Milestones Shipped
 
@@ -53,6 +53,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 73]: Use isPreviewModeRef to bridge React state into canvas event handler
 - [Phase 73]: Use fabric.js lockUniScaling for aspect ratio lock, default images to locked
 - [Phase 73]: Settings panel reuses activePanel state pattern for consistent panel toggling
+- [Phase 74]: Reuse file input with replaceImageRef flag for add vs replace image flows
+- [Phase 74]: Preserve all geometry and custom properties during image replacement
 
 ### Blockers/Concerns
 
@@ -68,13 +70,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 72 P01 | 2min | 3 tasks | 3 files |
 | Phase 73 P01 | 3min | 2 tasks | 3 files |
 | Phase 73 P02 | 4min | 2 tasks | 3 files |
+| Phase 74 P01 | 2min | 2 tasks | 2 files |
 
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 73-02-PLAN.md (phase 73 complete)
+Stopped at: Completed 74-01-PLAN.md
 Resume file: N/A
-Next: Phase 74
+Next: 74-02-PLAN.md
 
 ---
-*Updated: 2026-02-21 -- 73-02 element settings panel and controls complete*
+*Updated: 2026-02-21 -- 74-01 image position/alignment and replace image complete*
