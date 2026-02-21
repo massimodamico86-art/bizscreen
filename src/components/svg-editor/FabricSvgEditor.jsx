@@ -43,6 +43,7 @@ import PositionPanel from './PositionPanel.jsx';
 import CanvasControls from './CanvasControls.jsx';
 import LayersPanel from './LayersPanel.jsx';
 import ContextMenu from './ContextMenu.jsx';
+import HyperlinkModal from './HyperlinkModal.jsx';
 import QuickCustomizePanel from './QuickCustomizePanel.jsx';
 import KeyboardShortcutsOverlay from './KeyboardShortcutsOverlay.jsx';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -151,6 +152,12 @@ export default function FabricSvgEditor({
   const [clipboard, setClipboard] = useState(null);
   const [styleClipboard, setStyleClipboard] = useState(null);
 
+  // Hyperlink modal state
+  const [showHyperlinkModal, setShowHyperlinkModal] = useState(false);
+
+  // Ref to track preview mode for canvas event handlers
+  const isPreviewModeRef = useRef(false);
+
   // Counter to force re-renders when object properties change
   const [_updateCounter, setUpdateCounter] = useState(0);
 
@@ -174,6 +181,11 @@ export default function FabricSvgEditor({
   useEffect(() => {
     return () => clearTimeout(undoRedoTimerRef.current);
   }, []);
+
+  // Sync preview mode ref for canvas event handlers
+  useEffect(() => {
+    isPreviewModeRef.current = isPreviewMode;
+  }, [isPreviewMode]);
 
   // Load Google Fonts
   useEffect(() => {
@@ -238,6 +250,15 @@ export default function FabricSvgEditor({
       setHasUnsavedChanges(true);
     });
 
+    // Preview mode: click hyperlinked objects to open URLs
+    canvas.on('mouse:down', (opt) => {
+      if (!isPreviewModeRef.current) return;
+      const target = opt.target;
+      if (target && target.hyperlink) {
+        window.open(target.hyperlink, target.hyperlinkTarget || '_blank');
+      }
+    });
+
     // Load content after a small delay to ensure canvas is fully initialized
     const timeoutId = setTimeout(() => {
       if (fabricCanvasRef.current && !fabricCanvasRef.current.disposed) {
@@ -279,7 +300,7 @@ export default function FabricSvgEditor({
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
 
-    const json = canvas.toJSON(['id', 'name', 'selectable', 'evented']);
+    const json = canvas.toJSON(['id', 'name', 'selectable', 'evented', 'hyperlink', 'hyperlinkTarget']);
 
     setHistory(prev => {
       const newHistory = prev.slice(0, historyIndex + 1);
@@ -749,6 +770,29 @@ export default function FabricSvgEditor({
   const handleCloseContextMenu = useCallback(() => {
     setContextMenu({ visible: false, x: 0, y: 0 });
   }, []);
+
+  // Hyperlink handlers
+  const handleOpenLink = useCallback(() => {
+    setShowHyperlinkModal(true);
+  }, []);
+
+  const handleSaveHyperlink = useCallback((url) => {
+    if (!selectedObject) return;
+    selectedObject.set({ hyperlink: url, hyperlinkTarget: '_blank' });
+    fabricCanvasRef.current?.renderAll();
+    setShowHyperlinkModal(false);
+    setHasUnsavedChanges(true);
+    setUpdateCounter(c => c + 1);
+  }, [selectedObject]);
+
+  const handleRemoveHyperlink = useCallback(() => {
+    if (!selectedObject) return;
+    selectedObject.set({ hyperlink: '', hyperlinkTarget: '' });
+    fabricCanvasRef.current?.renderAll();
+    setShowHyperlinkModal(false);
+    setHasUnsavedChanges(true);
+    setUpdateCounter(c => c + 1);
+  }, [selectedObject]);
 
   // Add new text
   const handleAddText = useCallback(() => {
@@ -2219,7 +2263,7 @@ export default function FabricSvgEditor({
     if (!templateName?.trim()) return;
 
     try {
-      const _fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented']);
+      const _fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented', 'hyperlink', 'hyperlinkTarget']);
       const _thumbnailDataUrl = canvas.toDataURL({
         format: 'png',
         quality: 0.8,
@@ -2276,7 +2320,7 @@ export default function FabricSvgEditor({
 
     setIsSaving(true);
     try {
-      const fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented']);
+      const fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented', 'hyperlink', 'hyperlinkTarget']);
       const thumbnailDataUrl = canvas.toDataURL({
         format: 'png',
         quality: 0.8,
@@ -2652,6 +2696,7 @@ export default function FabricSvgEditor({
           usedFonts={usedFonts}
           activePanel={activePanel}
           onPanelChange={setActivePanel}
+          onOpenLink={handleOpenLink}
         />
       )}
 
@@ -2986,10 +3031,21 @@ export default function FabricSvgEditor({
           onAlignBottom={handleAlignBottom}
           onToggleLock={handleToggleSelectedLock}
           onOpenAnimate={() => setActivePanel('animate')}
-          onOpenLink={() => {}}
+          onOpenLink={handleOpenLink}
           isLocked={selectedObject?.lockMovementX && selectedObject?.lockMovementY}
           hasClipboard={!!clipboard}
           hasStyleClipboard={!!styleClipboard}
+        />
+      )}
+
+      {/* Hyperlink Modal */}
+      {showHyperlinkModal && selectedObject && (
+        <HyperlinkModal
+          isOpen={showHyperlinkModal}
+          onClose={() => setShowHyperlinkModal(false)}
+          currentUrl={selectedObject?.hyperlink || ''}
+          onSave={handleSaveHyperlink}
+          onRemove={handleRemoveHyperlink}
         />
       )}
     </div>
