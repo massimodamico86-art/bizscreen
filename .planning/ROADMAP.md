@@ -107,7 +107,10 @@ Plans:
   1. User can set exact X/Y position and choose alignment (center, left, right, top, bottom) for image objects
   2. User can crop an image object to a custom region and see the result immediately on canvas
   3. User can replace an existing image with a new image from media library or upload, preserving position and size
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 74-01-PLAN.md -- Wire Position/alignment and Replace Image for image objects
+- [ ] 74-02-PLAN.md -- Image cropping with crop mode, clipPath, and apply/cancel workflow
 
 ### Phase 75: Cloud Media Integrations
 **Goal**: Users can connect external cloud storage accounts and import media files directly into BizScreen
@@ -171,7 +174,7 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 |-------|-----------|----------------|--------|-----------|
 | 72. Bug Fixes & Stability | 1/1 | Complete    | 2026-02-21 | - |
 | 73. SVG Editor Text & Object Controls | 2/2 | Complete    | 2026-02-21 | - |
-| 74. SVG Editor Image Manipulation | v6.0 | 0/TBD | Not started | - |
+| 74. SVG Editor Image Manipulation | v6.0 | 0/2 | Not started | - |
 | 75. Cloud Media Integrations | v6.0 | 0/TBD | Not started | - |
 | 76. Enterprise Security Controls | v6.0 | 0/TBD | Not started | - |
 | 77. Content & Media Features | v6.0 | 0/TBD | Not started | - |
