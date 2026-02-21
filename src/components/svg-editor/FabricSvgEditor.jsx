@@ -44,6 +44,7 @@ import CanvasControls from './CanvasControls.jsx';
 import LayersPanel from './LayersPanel.jsx';
 import ContextMenu from './ContextMenu.jsx';
 import HyperlinkModal from './HyperlinkModal.jsx';
+import ElementSettingsPanel from './ElementSettingsPanel.jsx';
 import QuickCustomizePanel from './QuickCustomizePanel.jsx';
 import KeyboardShortcutsOverlay from './KeyboardShortcutsOverlay.jsx';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -300,7 +301,7 @@ export default function FabricSvgEditor({
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
 
-    const json = canvas.toJSON(['id', 'name', 'selectable', 'evented', 'hyperlink', 'hyperlinkTarget']);
+    const json = canvas.toJSON(['id', 'name', 'selectable', 'evented', 'hyperlink', 'hyperlinkTarget', 'lockUniScaling']);
 
     setHistory(prev => {
       const newHistory = prev.slice(0, historyIndex + 1);
@@ -794,6 +795,18 @@ export default function FabricSvgEditor({
     setUpdateCounter(c => c + 1);
   }, [selectedObject]);
 
+  // Aspect ratio lock handler
+  const handleToggleAspectRatioLock = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    const activeObj = canvas?.getActiveObject();
+    if (!activeObj) return;
+    const newLock = !activeObj.lockUniScaling;
+    activeObj.set('lockUniScaling', newLock);
+    canvas.renderAll();
+    setHasUnsavedChanges(true);
+    setUpdateCounter(c => c + 1);
+  }, []);
+
   // Add new text
   const handleAddText = useCallback(() => {
     const canvas = fabricCanvasRef.current;
@@ -871,6 +884,7 @@ export default function FabricSvgEditor({
           scaleY: scale,
           id: `image-${Date.now()}`,
           name: file.name.replace(/\.[^.]+$/, ''),
+          lockUniScaling: true,
         });
 
         canvas.add(img);
@@ -1161,6 +1175,7 @@ export default function FabricSvgEditor({
         scaleY: scale,
         id: `image-${Date.now()}`,
         name: 'Stock Photo',
+        lockUniScaling: true,
       });
 
       canvas.add(img);
@@ -2263,7 +2278,7 @@ export default function FabricSvgEditor({
     if (!templateName?.trim()) return;
 
     try {
-      const _fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented', 'hyperlink', 'hyperlinkTarget']);
+      const _fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented', 'hyperlink', 'hyperlinkTarget', 'lockUniScaling']);
       const _thumbnailDataUrl = canvas.toDataURL({
         format: 'png',
         quality: 0.8,
@@ -2320,7 +2335,7 @@ export default function FabricSvgEditor({
 
     setIsSaving(true);
     try {
-      const fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented', 'hyperlink', 'hyperlinkTarget']);
+      const fabricJson = canvas.toJSON(['id', 'name', 'selectable', 'evented', 'hyperlink', 'hyperlinkTarget', 'lockUniScaling']);
       const thumbnailDataUrl = canvas.toDataURL({
         format: 'png',
         quality: 0.8,
@@ -2697,6 +2712,11 @@ export default function FabricSvgEditor({
           activePanel={activePanel}
           onPanelChange={setActivePanel}
           onOpenLink={handleOpenLink}
+          onOpenSettings={() => setActivePanel(activePanel === 'settings' ? null : 'settings')}
+          onBringForward={handleBringForward}
+          onSendBackward={handleSendBackward}
+          onToggleAspectRatioLock={handleToggleAspectRatioLock}
+          isAspectRatioLocked={selectedObject?.lockUniScaling || false}
         />
       )}
 
@@ -2809,6 +2829,16 @@ export default function FabricSvgEditor({
           />
         )}
 
+        {/* Element Settings Panel */}
+        {!isPreviewMode && activePanel === 'settings' && (
+          <ElementSettingsPanel
+            selectedObject={selectedObject}
+            onUpdate={handleUpdateObject}
+            onClose={() => setActivePanel(null)}
+            onOpenLink={handleOpenLink}
+          />
+        )}
+
         {/* Canvas Area - always rendered so ref can attach */}
         <div
           ref={containerRef}
@@ -2890,6 +2920,7 @@ export default function FabricSvgEditor({
                   scaleY: scale,
                   id: `${asset.type || 'dropped'}-${Date.now()}`,
                   name: asset.name || 'Dropped Asset',
+                  lockUniScaling: true,
                 });
                 canvas.add(img);
                 canvas.setActiveObject(img);
