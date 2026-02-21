@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v6.0 Functional Completeness — Phase 74 (SVG Editor Image Manipulation)
+**Current focus:** v6.0 Functional Completeness — Phase 80 (SVG Editor Integration Polish)
 
 ## Current Position
 
-Phase: 74 of 79 (SVG Editor Image Manipulation)
-Plan: 2 of 2 complete in current phase
+Phase: 80 of 80 (SVG Editor Integration Polish)
+Plan: 1 of 1 complete in current phase
 Status: Phase complete
-Last activity: 2026-02-21 — 74-02 image cropping with fabric.js clipPath
+Last activity: 2026-02-21 — 80-01 fix 4 SVG editor integration defects
 
-Progress: [===░░░░░░░] 37% (v6.0 — 3/8 phases in progress)
+Progress: [====░░░░░░] 40% (v6.0 — 4/8 phases in progress)
 
 ## Milestones Shipped
 
@@ -57,6 +57,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 74]: Preserve all geometry and custom properties during image replacement
 - [Phase 74]: Use fabric.js clipPath with Rect for non-destructive image cropping
 - [Phase 74]: Block keyboard shortcuts and deletion during crop mode to prevent accidental edits
+- [Phase 80]: Use openInNewTab !== false for backward-compatible boolean defaulting in handleSaveHyperlink
 
 ### Blockers/Concerns
 
@@ -74,13 +75,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 73 P02 | 4min | 2 tasks | 3 files |
 | Phase 74 P01 | 2min | 2 tasks | 2 files |
 | Phase 74 P02 | 3min | 2 tasks | 2 files |
+| Phase 80 P01 | 2min | 2 tasks | 3 files |
 
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 74-02-PLAN.md
+Stopped at: Completed 80-01-PLAN.md
 Resume file: N/A
 Next: Phase 75
 
 ---
-*Updated: 2026-02-21 -- 74-02 image cropping with fabric.js clipPath complete*
+*Updated: 2026-02-21 -- 80-01 SVG editor integration polish complete*
