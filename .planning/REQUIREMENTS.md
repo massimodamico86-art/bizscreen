@@ -12,7 +12,7 @@ Requirements for Functional Completeness milestone. Every interactive UI element
 - [x] **EDIT-01**: User can add/edit hyperlinks on text objects in SVG editor
 - [x] **EDIT-02**: User can open element settings panel for text objects in SVG editor
 - [x] **EDIT-03**: User can set precise position/alignment for image objects in SVG editor
-- [ ] **EDIT-04**: User can crop image objects in SVG editor
+- [x] **EDIT-04**: User can crop image objects in SVG editor
 - [x] **EDIT-05**: User can replace an image with another image in SVG editor
 - [x] **EDIT-06**: User can add/edit hyperlinks on image objects in SVG editor
 - [x] **EDIT-07**: User can open element settings panel for image objects in SVG editor
@@ -77,7 +77,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EDIT-01 | Phase 73 | Complete |
 | EDIT-02 | Phase 73 | Complete |
 | EDIT-03 | Phase 74 | Complete |
-| EDIT-04 | Phase 74 | Pending |
+| EDIT-04 | Phase 74 | Complete |
 | EDIT-05 | Phase 74 | Complete |
 | EDIT-06 | Phase 73 | Complete |
 | EDIT-07 | Phase 73 | Complete |

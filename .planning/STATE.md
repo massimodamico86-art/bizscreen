@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 74 of 79 (SVG Editor Image Manipulation)
-Plan: 1 of 2 complete in current phase
-Status: In progress
-Last activity: 2026-02-21 — 74-01 image position/alignment and replace image
+Plan: 2 of 2 complete in current phase
+Status: Phase complete
+Last activity: 2026-02-21 — 74-02 image cropping with fabric.js clipPath
 
 Progress: [===░░░░░░░] 37% (v6.0 — 3/8 phases in progress)
 
@@ -55,6 +55,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 73]: Settings panel reuses activePanel state pattern for consistent panel toggling
 - [Phase 74]: Reuse file input with replaceImageRef flag for add vs replace image flows
 - [Phase 74]: Preserve all geometry and custom properties during image replacement
+- [Phase 74]: Use fabric.js clipPath with Rect for non-destructive image cropping
+- [Phase 74]: Block keyboard shortcuts and deletion during crop mode to prevent accidental edits
 
 ### Blockers/Concerns
 
@@ -71,13 +73,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 73 P01 | 3min | 2 tasks | 3 files |
 | Phase 73 P02 | 4min | 2 tasks | 3 files |
 | Phase 74 P01 | 2min | 2 tasks | 2 files |
+| Phase 74 P02 | 3min | 2 tasks | 2 files |
 
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 74-01-PLAN.md
+Stopped at: Completed 74-02-PLAN.md
 Resume file: N/A
-Next: 74-02-PLAN.md
+Next: Phase 75
 
 ---
-*Updated: 2026-02-21 -- 74-01 image position/alignment and replace image complete*
+*Updated: 2026-02-21 -- 74-02 image cropping with fabric.js clipPath complete*
