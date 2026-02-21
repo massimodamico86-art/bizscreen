@@ -21,6 +21,19 @@ import {
   getContrastColor,
 } from '../services/brandingService';
 import { useBranding } from '../contexts/BrandingContext';
+import {
+  AlertCircle,
+  Building2,
+  CheckCircle,
+  Eye,
+  ImageIcon,
+  Palette,
+  RefreshCw,
+  RotateCcw,
+  Save,
+  Upload,
+  X,
+} from 'lucide-react';
 
 export default function BrandingSettingsPage() {
   const { refreshBranding, isImpersonating, impersonatedClient } = useBranding();
