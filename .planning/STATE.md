@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v6.0 Functional Completeness — Phase 80 (SVG Editor Integration Polish)
+**Current focus:** v6.0 Functional Completeness — Phase 75 (Cloud Media Integrations)
 
 ## Current Position
 
-Phase: 80 of 80 (SVG Editor Integration Polish)
-Plan: 1 of 1 complete in current phase
-Status: Phase complete
-Last activity: 2026-02-21 — 80-01 fix 4 SVG editor integration defects
+Phase: 75 of 80 (Cloud Media Integrations)
+Plan: 1 of 3 complete in current phase
+Status: In progress
+Last activity: 2026-02-21 — 75-01 cloud OAuth services for Google Drive and Dropbox
 
-Progress: [====░░░░░░] 40% (v6.0 — 4/8 phases in progress)
+Progress: [=====░░░░░] 50% (v6.0 — 5/8 phases in progress)
 
 ## Milestones Shipped
 
@@ -58,6 +58,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 74]: Use fabric.js clipPath with Rect for non-destructive image cropping
 - [Phase 74]: Block keyboard shortcuts and deletion during crop mode to prevent accidental edits
 - [Phase 80]: Use openInNewTab !== false for backward-compatible boolean defaulting in handleSaveHyperlink
+- [Phase 75]: Extract PKCE/state/token utilities into shared cloudOAuthService for multi-provider reuse
+- [Phase 75]: Use provider-keyed localStorage for token isolation across cloud providers
+- [Phase 75]: Google Drive download URL returns headers-getter since API requires auth for media download
 
 ### Blockers/Concerns
 
@@ -76,13 +79,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 74 P01 | 2min | 2 tasks | 2 files |
 | Phase 74 P02 | 3min | 2 tasks | 2 files |
 | Phase 80 P01 | 2min | 2 tasks | 3 files |
+| Phase 75 P01 | 2min | 2 tasks | 3 files |
 
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 80-01-PLAN.md
+Stopped at: Completed 75-01-PLAN.md
 Resume file: N/A
-Next: Phase 75
+Next: 75-02-PLAN.md
 
 ---
-*Updated: 2026-02-21 -- 80-01 SVG editor integration polish complete*
+*Updated: 2026-02-21 -- 75-01 cloud OAuth services complete*
