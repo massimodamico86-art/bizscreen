@@ -45,7 +45,7 @@ Requirements for Functional Completeness milestone. Every interactive UI element
 - [x] **ADMN-03**: User can configure password complexity requirements in enterprise security
 - [x] **ADMN-04**: User can configure session timeout duration in enterprise security
 - [x] **ADMN-05**: User can configure JWT token expiry in enterprise security
-- [ ] **ADMN-06**: User can delete all tenant data from enterprise security page
+- [x] **ADMN-06**: User can delete all tenant data from enterprise security page
 
 ### Bug Fixes
 
@@ -101,7 +101,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADMN-03 | Phase 76 | Complete |
 | ADMN-04 | Phase 76 | Complete |
 | ADMN-05 | Phase 76 | Complete |
-| ADMN-06 | Phase 76 | Pending |
+| ADMN-06 | Phase 76 | Complete |
 | BUGF-01 | Phase 72 | Complete |
 | BUGF-02 | Phase 72 | Complete |
 | BUGF-03 | Phase 72 | Complete |
