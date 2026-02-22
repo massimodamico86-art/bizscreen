@@ -37,7 +37,7 @@ import { useTranslation } from '../i18n';
 
 
 import { getSSOProvider, saveSSOProvider, toggleSSOEnabled, SSO_DEFAULT_ROLES, validateOIDCIssuer } from '../services/ssoService';
-import { downloadExport, getDataSummary, exportAsCSV, hasEnterpriseFeatures } from '../services/complianceService';
+import { downloadExport, getDataSummary, exportAsCSV, hasEnterpriseFeatures, requestDataDeletion } from '../services/complianceService';
 import { getPasswordPolicy, savePasswordPolicy, getSessionPolicy, saveSessionPolicy } from '../services/passwordService';
 
 /**
@@ -78,6 +78,12 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
 
   // SCIM
   const [copiedEndpoint, setCopiedEndpoint] = useState(null);
+
+  // Tenant Data Deletion State
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deletionReason, setDeletionReason] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   // Security Policy State
   const [securityPolicy, setSecurityPolicy] = useState({
@@ -236,6 +242,24 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
       showToast?.(err.message || 'Export failed', 'error');
     } finally {
       setExporting(false);
+    }
+  };
+
+  const handleDeleteTenantData = async () => {
+    try {
+      setDeleting(true);
+      const email = userProfile?.email;
+      await requestDataDeletion(userProfile?.id, email, deletionReason || null);
+      showToast?.('Tenant data deletion initiated', 'success');
+      setShowDeleteConfirm(false);
+      setDeleteConfirmText('');
+      setDeletionReason('');
+      loadData();
+    } catch (err) {
+      console.error('Error deleting tenant data:', err);
+      showToast?.(err.message || 'Data deletion failed', 'error');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -804,12 +828,89 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
               <p className="text-sm text-red-700 mb-4">
                 These actions are permanent and cannot be undone.
               </p>
-              <button
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                onClick={() => showToast?.('Use Tenant Admin page for data deletion', 'info')}
-              >
-                Delete All Tenant Data
-              </button>
+              {!showDeleteConfirm ? (
+                <button
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  Delete All Tenant Data
+                </button>
+              ) : (
+                <div className="mt-4 p-4 border-2 border-red-300 rounded-lg bg-white">
+                  <div className="flex items-start gap-3 mb-4">
+                    <AlertTriangle size={24} className="text-red-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold text-red-900 mb-1">Confirm Permanent Data Deletion</h4>
+                      <p className="text-sm text-red-700">
+                        This action will permanently delete all data for this tenant including screens,
+                        playlists, layouts, media, campaigns, schedules, and team member associations.
+                        This cannot be undone.
+                      </p>
+                    </div>
+                  </div>
+
+                  {dataSummary && (
+                    <div className="mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+                      <p className="text-sm font-medium text-red-900 mb-2">Data that will be deleted:</p>
+                      <div className="grid grid-cols-3 gap-2 text-sm text-red-800">
+                        <span>{dataSummary.screens} screens</span>
+                        <span>{dataSummary.playlists} playlists</span>
+                        <span>{dataSummary.layouts} layouts</span>
+                        <span>{dataSummary.media} media files</span>
+                        <span>{dataSummary.campaigns} campaigns</span>
+                        <span>{dataSummary.teamMembers} team members</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Reason for deletion (optional, for audit trail)
+                    </label>
+                    <textarea
+                      value={deletionReason}
+                      onChange={e => setDeletionReason(e.target.value)}
+                      placeholder="e.g., Customer requested full account deletion"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm"
+                      rows={2}
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Type <span className="font-mono font-bold text-red-700">DELETE MY DATA</span> to confirm
+                    </label>
+                    <input
+                      type="text"
+                      value={deleteConfirmText}
+                      onChange={e => setDeleteConfirmText(e.target.value)}
+                      placeholder="DELETE MY DATA"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm font-mono"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        setShowDeleteConfirm(false);
+                        setDeleteConfirmText('');
+                        setDeletionReason('');
+                      }}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                      disabled={deleting}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDeleteTenantData}
+                      disabled={deleteConfirmText !== 'DELETE MY DATA' || deleting}
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {deleting ? 'Deleting...' : 'Permanently Delete All Data'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
