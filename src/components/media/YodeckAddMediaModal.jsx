@@ -4,25 +4,28 @@
  * Tabs: Upload, Images, Videos, Audio, Documents, Web Pages
  * Each tab has specific upload options matching Yodeck's interface.
  */
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
-  Upload,
-  Image,
-  Video,
-  Music,
+  CloudUpload,
+  ExternalLink,
+  File,
+  FileSpreadsheet,
   FileText,
   Globe,
-  Laptop,
-  Youtube,
-  Radio,
   Grid3X3,
-  FileSpreadsheet,
-  Presentation,
-  File,
+  Image,
+  Laptop,
   Layers,
+  Loader2,
+  Music,
+  Presentation,
+  Radio,
+  Search,
   Tv,
-  CloudUpload,
+  Upload,
+  Video,
   X,
+  Youtube,
 } from 'lucide-react';
 import { Button } from '../../design-system';
 import {
@@ -35,6 +38,12 @@ import {
   parseVimeoUrl,
   MEDIA_TYPES,
 } from '../../services/mediaService';
+import { startGoogleDriveOAuth, isGoogleDriveConnected } from '../../services/cloud/googleDriveService';
+import { startDropboxOAuth, isDropboxConnected } from '../../services/cloud/dropboxService';
+import { startOneDriveOAuth, isOneDriveConnected } from '../../services/cloud/oneDriveService';
+import { startSharePointOAuth, isSharePointConnected } from '../../services/cloud/sharePointService';
+import { startGooglePhotosOAuth, isGooglePhotosConnected } from '../../services/cloud/googlePhotosService';
+import CloudFilePicker from './CloudFilePicker';
 
 // Cloud provider icons (simplified)
 const _OneDriveIcon = () => (
@@ -183,18 +192,7 @@ const DropZone = ({ onDrop, onBrowse, _instructions, _maxResolution }) => {
 };
 
 // Upload tab content (general drag & drop with cloud providers)
-const UploadTabContent = ({ onBrowse, showToast }) => {
-  const handleCloudProvider = (providerId) => {
-    const providerNames = {
-      onedrive: 'OneDrive',
-      sharepoint: 'SharePoint',
-      dropbox: 'Dropbox',
-      gdrive: 'Google Drive',
-      gphotos: 'Google Photos',
-    };
-    showToast?.(`${providerNames[providerId] || providerId} integration coming soon!`, 'info');
-  };
-
+const UploadTabContent = ({ onBrowse, onCloudProvider }) => {
   return (
     <div className="space-y-6 py-4">
       <div className="text-center">
@@ -209,7 +207,7 @@ const UploadTabContent = ({ onBrowse, showToast }) => {
             return (
               <button
                 key={provider.id}
-                onClick={() => provider.id === 'device' ? onBrowse() : handleCloudProvider(provider.id)}
+                onClick={() => provider.id === 'device' ? onBrowse() : onCloudProvider?.(provider.id)}
                 className="flex flex-col items-center gap-2 p-3 hover:bg-gray-50 rounded-lg transition-colors"
               >
                 <div className="w-10 h-10 flex items-center justify-center text-blue-600 [&>svg]:w-7 [&>svg]:h-7">
@@ -1239,6 +1237,10 @@ const YodeckAddMediaModal = ({
   const [webPageName, setWebPageName] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Cloud file picker state
+  const [cloudPickerOpen, setCloudPickerOpen] = useState(false);
+  const [cloudPickerProvider, setCloudPickerProvider] = useState(null);
+
   // YouTube state
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [youtubeName, setYoutubeName] = useState('');
@@ -1255,6 +1257,57 @@ const YodeckAddMediaModal = ({
   // Image URL state
   const [imageUrl, setImageUrl] = useState('');
   const [imageName, setImageName] = useState('');
+
+  // Close on Escape key
+  const handleEscape = useCallback((e) => {
+    if (e.key === 'Escape') onClose?.();
+  }, [onClose]);
+
+  useEffect(() => {
+    if (open) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [open, handleEscape]);
+
+  // Check if returning from OAuth callback — auto-open cloud picker
+  useEffect(() => {
+    if (open) {
+      const returnProvider = sessionStorage.getItem('cloud_import_return');
+      if (returnProvider) {
+        sessionStorage.removeItem('cloud_import_return');
+        setCloudPickerProvider(returnProvider);
+        setCloudPickerOpen(true);
+      }
+    }
+  }, [open]);
+
+  // Handle cloud provider button clicks
+  const handleCloudProvider = async (providerId) => {
+    const providerMap = {
+      gdrive: { isConnected: isGoogleDriveConnected, startOAuth: startGoogleDriveOAuth },
+      dropbox: { isConnected: isDropboxConnected, startOAuth: startDropboxOAuth },
+      onedrive: { isConnected: isOneDriveConnected, startOAuth: startOneDriveOAuth },
+      sharepoint: { isConnected: isSharePointConnected, startOAuth: startSharePointOAuth },
+      gphotos: { isConnected: isGooglePhotosConnected, startOAuth: startGooglePhotosOAuth },
+    };
+    const provider = providerMap[providerId];
+    if (!provider) return;
+
+    if (provider.isConnected()) {
+      // Already connected — open file picker directly
+      setCloudPickerProvider(providerId);
+      setCloudPickerOpen(true);
+    } else {
+      // Need OAuth — save return state so we know to open picker after callback
+      sessionStorage.setItem('cloud_import_return', providerId);
+      try {
+        await provider.startOAuth();
+      } catch (err) {
+        showToast?.(`Failed to connect: ${err.message}`, 'error');
+      }
+    }
+  };
 
   if (!open) return null;
 
@@ -1399,8 +1452,8 @@ const YodeckAddMediaModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div role="dialog" aria-modal="true" className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
+      <div role="dialog" aria-modal="true" className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">All Media</h2>
@@ -1434,7 +1487,7 @@ const YodeckAddMediaModal = ({
         {/* Content */}
         <div className="p-6 max-h-[calc(90vh-200px)] overflow-y-auto">
           {activeTab === 'upload' && (
-            <UploadTabContent onBrowse={handleBrowse} showToast={showToast} />
+            <UploadTabContent onBrowse={handleBrowse} onCloudProvider={handleCloudProvider} />
           )}
           {activeTab === 'images' && (
             <ImagesTabContent
@@ -1536,6 +1589,18 @@ const YodeckAddMediaModal = ({
           )}
         </div>
       </div>
+
+      {/* Cloud File Picker overlay */}
+      <CloudFilePicker
+        open={cloudPickerOpen}
+        onClose={() => { setCloudPickerOpen(false); setCloudPickerProvider(null); }}
+        provider={cloudPickerProvider}
+        onImport={() => {
+          onMediaAdded?.();
+          onClose?.();
+        }}
+        showToast={showToast}
+      />
     </div>
   );
 };

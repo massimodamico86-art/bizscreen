@@ -171,6 +171,9 @@ function BizScreenAppInner() {
   // Check if this is the Canva OAuth callback
   const isCanvaCallback = window.location.pathname === '/auth/canva/callback';
 
+  // Check if this is a cloud provider OAuth callback
+  const isCloudCallback = window.location.pathname === '/auth/cloud/callback';
+
   // Check if URL has password reset hash
   useEffect(() => {
     const hash = window.location.hash;
@@ -178,6 +181,54 @@ function BizScreenAppInner() {
       setIsPasswordReset(true);
     }
   }, []);
+
+  // Handle cloud OAuth callback — exchange code for tokens and redirect to media
+  useEffect(() => {
+    if (!isCloudCallback) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const cloudProvider = params.get('provider');
+    const code = params.get('code');
+    const state = params.get('state');
+    const callbackError = params.get('error');
+
+    if (callbackError) {
+      showToast(`Cloud connection failed: ${params.get('error_description') || callbackError}`, 'error');
+      window.history.replaceState({}, '', '/app');
+      return;
+    }
+
+    if (!code || !cloudProvider) {
+      window.history.replaceState({}, '', '/app');
+      return;
+    }
+
+    // Dynamic import of the correct provider's callback handler
+    const callbackHandlers = {
+      gdrive: () => import('./services/cloud/googleDriveService').then(m => m.handleGoogleDriveCallback(code, state)),
+      dropbox: () => import('./services/cloud/dropboxService').then(m => m.handleDropboxCallback(code, state)),
+      onedrive: () => import('./services/cloud/oneDriveService').then(m => m.handleOneDriveCallback(code, state)),
+      sharepoint: () => import('./services/cloud/sharePointService').then(m => m.handleSharePointCallback(code, state)),
+      gphotos: () => import('./services/cloud/googlePhotosService').then(m => m.handleGooglePhotosCallback(code, state)),
+    };
+
+    const handler = callbackHandlers[cloudProvider];
+    if (handler) {
+      handler()
+        .then(() => {
+          showToast('Connected to cloud storage!', 'success');
+          // Navigate to media library — YodeckAddMediaModal will detect the return provider via sessionStorage
+          window.history.replaceState({}, '', '/app');
+          setCurrentPage('media-all');
+        })
+        .catch((err) => {
+          showToast(`Connection failed: ${err.message}`, 'error');
+          window.history.replaceState({}, '', '/app');
+        });
+    } else {
+      window.history.replaceState({}, '', '/app');
+    }
+  }, [isCloudCallback]);  
 
   // Handle hash-based navigation (for plan page from limit modals)
   useEffect(() => {
