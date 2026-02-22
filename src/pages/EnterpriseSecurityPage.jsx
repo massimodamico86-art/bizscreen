@@ -38,6 +38,7 @@ import { useTranslation } from '../i18n';
 
 import { getSSOProvider, saveSSOProvider, toggleSSOEnabled, SSO_DEFAULT_ROLES, validateOIDCIssuer } from '../services/ssoService';
 import { downloadExport, getDataSummary, exportAsCSV, hasEnterpriseFeatures } from '../services/complianceService';
+import { getPasswordPolicy, savePasswordPolicy, getSessionPolicy, saveSessionPolicy } from '../services/passwordService';
 
 /**
  *
@@ -78,6 +79,17 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
   // SCIM
   const [copiedEndpoint, setCopiedEndpoint] = useState(null);
 
+  // Security Policy State
+  const [securityPolicy, setSecurityPolicy] = useState({
+    minLength: 8,
+    requireUppercase: true,
+    requireNumbers: true,
+    requireSpecial: true,
+    sessionTimeout: 24,
+    jwtExpiry: 1,
+  });
+  const [savingPolicy, setSavingPolicy] = useState(false);
+
   useEffect(() => {
     loadData();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
@@ -114,6 +126,19 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
       // Load data summary
       const summary = await getDataSummary();
       setDataSummary(summary);
+
+      // Load security policies
+      if (userProfile?.tenant_id) {
+        const [pwPolicy, sessPolicy] = await Promise.all([
+          getPasswordPolicy(userProfile.tenant_id),
+          getSessionPolicy(userProfile.tenant_id),
+        ]);
+        setSecurityPolicy(prev => ({
+          ...prev,
+          ...pwPolicy,
+          ...sessPolicy,
+        }));
+      }
 
     } catch (err) {
       console.error('Error loading enterprise data:', err);
@@ -211,6 +236,41 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
       showToast?.(err.message || 'Export failed', 'error');
     } finally {
       setExporting(false);
+    }
+  };
+
+  const handleSaveSecurityPolicy = async () => {
+    try {
+      setSavingPolicy(true);
+      const tenantId = userProfile?.tenant_id;
+      if (!tenantId) {
+        showToast?.('No tenant ID available', 'error');
+        return;
+      }
+
+      const [pwResult, sessResult] = await Promise.all([
+        savePasswordPolicy(tenantId, {
+          minLength: securityPolicy.minLength,
+          requireUppercase: securityPolicy.requireUppercase,
+          requireNumbers: securityPolicy.requireNumbers,
+          requireSpecial: securityPolicy.requireSpecial,
+        }),
+        saveSessionPolicy(tenantId, {
+          sessionTimeout: securityPolicy.sessionTimeout,
+          jwtExpiry: securityPolicy.jwtExpiry,
+        }),
+      ]);
+
+      if (pwResult.success && sessResult.success) {
+        showToast?.('Security settings saved', 'success');
+      } else {
+        showToast?.('Some settings could not be saved', 'error');
+      }
+    } catch (err) {
+      console.error('Error saving security policy:', err);
+      showToast?.('Error saving security settings', 'error');
+    } finally {
+      setSavingPolicy(false);
     }
   };
 
@@ -764,24 +824,69 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
               <div className="flex items-center justify-between py-2">
                 <div>
                   <div className="font-medium text-gray-900">Minimum Length</div>
-                  <div className="text-sm text-gray-500">Require passwords of at least 8 characters</div>
+                  <div className="text-sm text-gray-500">Require passwords of at least this many characters</div>
                 </div>
-                <select className="px-3 py-2 border border-gray-300 rounded-lg">
-                  <option>8 characters</option>
-                  <option>12 characters</option>
-                  <option>16 characters</option>
+                <select
+                  value={securityPolicy.minLength}
+                  onChange={e => setSecurityPolicy(prev => ({ ...prev, minLength: Number(e.target.value) }))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg"
+                >
+                  <option value={8}>8 characters</option>
+                  <option value={10}>10 characters</option>
+                  <option value={12}>12 characters</option>
+                  <option value={16}>16 characters</option>
                 </select>
               </div>
 
               <div className="flex items-center justify-between py-2">
                 <div>
-                  <div className="font-medium text-gray-900">Complexity Requirements</div>
-                  <div className="text-sm text-gray-500">Require mixed case, numbers, symbols</div>
+                  <div className="font-medium text-gray-900">Require uppercase letters</div>
+                  <div className="text-sm text-gray-500">Passwords must include at least one uppercase letter</div>
                 </div>
-                <select className="px-3 py-2 border border-gray-300 rounded-lg">
-                  <option>Standard</option>
-                  <option>Strong</option>
-                </select>
+                <button
+                  onClick={() => setSecurityPolicy(prev => ({ ...prev, requireUppercase: !prev.requireUppercase }))}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${
+                    securityPolicy.requireUppercase ? 'bg-blue-600' : 'bg-gray-200'
+                  }`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
+                    securityPolicy.requireUppercase ? 'translate-x-7' : 'translate-x-1'
+                  }`} />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <div className="font-medium text-gray-900">Require numbers</div>
+                  <div className="text-sm text-gray-500">Passwords must include at least one number</div>
+                </div>
+                <button
+                  onClick={() => setSecurityPolicy(prev => ({ ...prev, requireNumbers: !prev.requireNumbers }))}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${
+                    securityPolicy.requireNumbers ? 'bg-blue-600' : 'bg-gray-200'
+                  }`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
+                    securityPolicy.requireNumbers ? 'translate-x-7' : 'translate-x-1'
+                  }`} />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <div className="font-medium text-gray-900">Require special characters</div>
+                  <div className="text-sm text-gray-500">Passwords must include at least one special character</div>
+                </div>
+                <button
+                  onClick={() => setSecurityPolicy(prev => ({ ...prev, requireSpecial: !prev.requireSpecial }))}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${
+                    securityPolicy.requireSpecial ? 'bg-blue-600' : 'bg-gray-200'
+                  }`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
+                    securityPolicy.requireSpecial ? 'translate-x-7' : 'translate-x-1'
+                  }`} />
+                </button>
               </div>
             </div>
           </div>
@@ -794,9 +899,19 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
                   <div className="font-medium text-gray-900">Session Timeout</div>
                   <div className="text-sm text-gray-500">Automatically log out inactive users</div>
                 </div>
-                <span className="px-3 py-1 bg-gray-100 rounded text-sm text-gray-600">
-                  24 hours
-                </span>
+                <select
+                  value={securityPolicy.sessionTimeout}
+                  onChange={e => setSecurityPolicy(prev => ({ ...prev, sessionTimeout: Number(e.target.value) }))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg"
+                >
+                  <option value={1}>1 hour</option>
+                  <option value={4}>4 hours</option>
+                  <option value={8}>8 hours</option>
+                  <option value={12}>12 hours</option>
+                  <option value={24}>24 hours</option>
+                  <option value={72}>72 hours</option>
+                  <option value={168}>1 week</option>
+                </select>
               </div>
 
               <div className="flex items-center justify-between py-2">
@@ -804,11 +919,30 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
                   <div className="font-medium text-gray-900">JWT Token Expiry</div>
                   <div className="text-sm text-gray-500">Token refresh interval</div>
                 </div>
-                <span className="px-3 py-1 bg-gray-100 rounded text-sm text-gray-600">
-                  1 hour
-                </span>
+                <select
+                  value={securityPolicy.jwtExpiry}
+                  onChange={e => setSecurityPolicy(prev => ({ ...prev, jwtExpiry: Number(e.target.value) }))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg"
+                >
+                  <option value={0.25}>15 minutes</option>
+                  <option value={0.5}>30 minutes</option>
+                  <option value={1}>1 hour</option>
+                  <option value={2}>2 hours</option>
+                  <option value={4}>4 hours</option>
+                  <option value={8}>8 hours</option>
+                </select>
               </div>
             </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              onClick={handleSaveSecurityPolicy}
+              disabled={savingPolicy}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {savingPolicy ? 'Saving...' : 'Save Security Settings'}
+            </button>
           </div>
 
           <Alert variant="info" icon={<Info size={18} aria-hidden="true" />}>

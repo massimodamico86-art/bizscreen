@@ -3,11 +3,13 @@
  */
 
 import { createScopedLogger } from './loggingService.js';
+import { supabase } from '../supabase';
 
 const logger = createScopedLogger('PasswordService');
 
 /**
- * Password strength requirements
+ * Default password strength requirements.
+ * These are compile-time defaults; runtime policy from tenant_settings overrides them.
  */
 export const PASSWORD_REQUIREMENTS = {
   minLength: 8,
@@ -18,6 +20,143 @@ export const PASSWORD_REQUIREMENTS = {
   requireSpecial: true,
   specialChars: '!@#$%^&*()_+-=[]{}|;:,.<>?',
 };
+
+// ============================================================================
+// TENANT-LEVEL POLICY CRUD
+// ============================================================================
+
+const PASSWORD_POLICY_DEFAULTS = {
+  minLength: 8,
+  requireUppercase: true,
+  requireNumbers: true,
+  requireSpecial: true,
+};
+
+const SESSION_POLICY_DEFAULTS = {
+  sessionTimeout: 24,
+  jwtExpiry: 1,
+};
+
+/**
+ * Get password policy for a tenant
+ * @param {string} tenantId
+ * @returns {Promise<Object>} policy object or defaults
+ */
+export async function getPasswordPolicy(tenantId) {
+  try {
+    const { data, error } = await supabase
+      .from('tenant_settings')
+      .select('value')
+      .eq('tenant_id', tenantId)
+      .eq('key', 'password_policy')
+      .maybeSingle();
+
+    if (error) {
+      // PGRST error means table doesn't exist — return defaults silently
+      if (error.code?.startsWith('PGRST') || error.code === '42P01') {
+        return { ...PASSWORD_POLICY_DEFAULTS };
+      }
+      logger.warn('Error loading password policy', { error });
+      return { ...PASSWORD_POLICY_DEFAULTS };
+    }
+
+    return data?.value ? { ...PASSWORD_POLICY_DEFAULTS, ...data.value } : { ...PASSWORD_POLICY_DEFAULTS };
+  } catch (err) {
+    logger.error('Failed to get password policy', { err });
+    return { ...PASSWORD_POLICY_DEFAULTS };
+  }
+}
+
+/**
+ * Save password policy for a tenant
+ * @param {string} tenantId
+ * @param {Object} policy
+ * @returns {Promise<{success: boolean}>}
+ */
+export async function savePasswordPolicy(tenantId, policy) {
+  try {
+    const { error } = await supabase
+      .from('tenant_settings')
+      .upsert(
+        {
+          tenant_id: tenantId,
+          key: 'password_policy',
+          value: policy,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'tenant_id,key' }
+      );
+
+    if (error) {
+      logger.error('Error saving password policy', { error });
+      return { success: false };
+    }
+    return { success: true };
+  } catch (err) {
+    logger.error('Failed to save password policy', { err });
+    return { success: false };
+  }
+}
+
+/**
+ * Get session policy for a tenant
+ * @param {string} tenantId
+ * @returns {Promise<Object>} session policy or defaults
+ */
+export async function getSessionPolicy(tenantId) {
+  try {
+    const { data, error } = await supabase
+      .from('tenant_settings')
+      .select('value')
+      .eq('tenant_id', tenantId)
+      .eq('key', 'session_policy')
+      .maybeSingle();
+
+    if (error) {
+      if (error.code?.startsWith('PGRST') || error.code === '42P01') {
+        return { ...SESSION_POLICY_DEFAULTS };
+      }
+      logger.warn('Error loading session policy', { error });
+      return { ...SESSION_POLICY_DEFAULTS };
+    }
+
+    return data?.value ? { ...SESSION_POLICY_DEFAULTS, ...data.value } : { ...SESSION_POLICY_DEFAULTS };
+  } catch (err) {
+    logger.error('Failed to get session policy', { err });
+    return { ...SESSION_POLICY_DEFAULTS };
+  }
+}
+
+/**
+ * Save session policy for a tenant
+ * @param {string} tenantId
+ * @param {Object} policy
+ * @returns {Promise<{success: boolean}>}
+ */
+export async function saveSessionPolicy(tenantId, policy) {
+  try {
+    const { error } = await supabase
+      .from('tenant_settings')
+      .upsert(
+        {
+          tenant_id: tenantId,
+          key: 'session_policy',
+          value: policy,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'tenant_id,key' }
+      );
+
+    if (error) {
+      logger.error('Error saving session policy', { error });
+      return { success: false };
+    }
+    return { success: true };
+  } catch (err) {
+    logger.error('Failed to save session policy', { err });
+    return { success: false };
+  }
+}
 
 /**
  * Common passwords to reject (top 100 most common)
@@ -34,47 +173,57 @@ const COMMON_PASSWORDS = new Set([
  * Validate password strength
  * @param {string} password - The password to validate
  * @param {string} email - User's email to check for inclusion
+ * @param {Object} [policy] - Optional tenant-level policy override (from getPasswordPolicy)
  * @returns {{valid: boolean, score: number, errors: string[], suggestions: string[]}}
  */
-export function validatePassword(password, email = '') {
+export function validatePassword(password, email = '', policy = null) {
   const errors = [];
   const suggestions = [];
   let score = 0;
 
+  // Merge runtime policy with compile-time defaults
+  const reqs = {
+    ...PASSWORD_REQUIREMENTS,
+    ...(policy?.minLength != null && { minLength: policy.minLength }),
+    ...(policy?.requireUppercase != null && { requireUppercase: policy.requireUppercase }),
+    ...(policy?.requireNumbers != null && { requireNumber: policy.requireNumbers }),
+    ...(policy?.requireSpecial != null && { requireSpecial: policy.requireSpecial }),
+  };
+
   // Length checks
-  if (!password || password.length < PASSWORD_REQUIREMENTS.minLength) {
-    errors.push(`Password must be at least ${PASSWORD_REQUIREMENTS.minLength} characters`);
+  if (!password || password.length < reqs.minLength) {
+    errors.push(`Password must be at least ${reqs.minLength} characters`);
   } else {
     score += 1;
     if (password.length >= 12) score += 1;
     if (password.length >= 16) score += 1;
   }
 
-  if (password && password.length > PASSWORD_REQUIREMENTS.maxLength) {
-    errors.push(`Password must be less than ${PASSWORD_REQUIREMENTS.maxLength} characters`);
+  if (password && password.length > reqs.maxLength) {
+    errors.push(`Password must be less than ${reqs.maxLength} characters`);
   }
 
   // Character type checks
-  if (PASSWORD_REQUIREMENTS.requireUppercase && !/[A-Z]/.test(password)) {
+  if (reqs.requireUppercase && !/[A-Z]/.test(password)) {
     errors.push('Password must contain at least one uppercase letter');
   } else if (/[A-Z]/.test(password)) {
     score += 1;
   }
 
-  if (PASSWORD_REQUIREMENTS.requireLowercase && !/[a-z]/.test(password)) {
+  if (reqs.requireLowercase && !/[a-z]/.test(password)) {
     errors.push('Password must contain at least one lowercase letter');
   } else if (/[a-z]/.test(password)) {
     score += 1;
   }
 
-  if (PASSWORD_REQUIREMENTS.requireNumber && !/[0-9]/.test(password)) {
+  if (reqs.requireNumber && !/[0-9]/.test(password)) {
     errors.push('Password must contain at least one number');
   } else if (/[0-9]/.test(password)) {
     score += 1;
   }
 
-  if (PASSWORD_REQUIREMENTS.requireSpecial) {
-    const specialRegex = new RegExp(`[${PASSWORD_REQUIREMENTS.specialChars.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}]`);
+  if (reqs.requireSpecial) {
+    const specialRegex = new RegExp(`[${reqs.specialChars.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}]`);
     if (!specialRegex.test(password)) {
       errors.push('Password must contain at least one special character (!@#$%^&*...)');
     } else {
@@ -271,4 +420,8 @@ export default {
   checkPasswordBreach,
   getStrengthColor,
   PASSWORD_REQUIREMENTS,
+  getPasswordPolicy,
+  savePasswordPolicy,
+  getSessionPolicy,
+  saveSessionPolicy,
 };
