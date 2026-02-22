@@ -138,10 +138,11 @@ Plans:
   2. User can set minimum password length and complexity requirements (uppercase, numbers, special chars) and see them enforced on next password change
   3. User can configure session timeout duration and JWT token expiry from enterprise security settings
   4. User can trigger full tenant data deletion from the enterprise security page with confirmation safeguards
-**Plans**: 2 plans
+**Plans**: 3 plans
 Plans:
 - [ ] 76-01-PLAN.md -- Fix upsell CTA navigation, wire password policy and session/JWT configuration controls
 - [ ] 76-02-PLAN.md -- Wire tenant data deletion with multi-step confirmation safeguards
+- [ ] 76-03-PLAN.md -- Gap closure: add tenant_id to AuthContext SELECT and fix deletion argument
 
 ### Phase 77: Content & Media Features
 **Goal**: Users can upload video to carousels, manage property events, browse a graphics library in the layout editor, and view timeline analytics for content
