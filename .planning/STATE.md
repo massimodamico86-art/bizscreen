@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 75 of 80 (Cloud Media Integrations)
-Plan: 1 of 3 complete in current phase
+Plan: 2 of 3 complete in current phase
 Status: In progress
-Last activity: 2026-02-21 — 75-01 cloud OAuth services for Google Drive and Dropbox
+Last activity: 2026-02-21 — 75-02 OneDrive, SharePoint, Google Photos cloud services
 
 Progress: [=====░░░░░] 50% (v6.0 — 5/8 phases in progress)
 
@@ -61,6 +61,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 75]: Extract PKCE/state/token utilities into shared cloudOAuthService for multi-provider reuse
 - [Phase 75]: Use provider-keyed localStorage for token isolation across cloud providers
 - [Phase 75]: Google Drive download URL returns headers-getter since API requires auth for media download
+- [Phase 75]: OneDrive/SharePoint share VITE_MICROSOFT_CLIENT_ID with separate token storage keys
+- [Phase 75]: Google Photos uses POST for mediaItems:search, baseUrl + '=d' for downloads
 
 ### Blockers/Concerns
 
@@ -80,13 +82,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 74 P02 | 3min | 2 tasks | 2 files |
 | Phase 80 P01 | 2min | 2 tasks | 3 files |
 | Phase 75 P01 | 2min | 2 tasks | 3 files |
+| Phase 75 P02 | 5min | 2 tasks | 3 files |
 
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 75-01-PLAN.md
+Stopped at: Completed 75-02-PLAN.md
 Resume file: N/A
-Next: 75-02-PLAN.md
+Next: 75-03-PLAN.md
 
 ---
-*Updated: 2026-02-21 -- 75-01 cloud OAuth services complete*
+*Updated: 2026-02-21 -- 75-02 additional cloud provider services complete*

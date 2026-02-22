@@ -194,7 +194,7 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 | 72. Bug Fixes & Stability | 1/1 | Complete    | 2026-02-21 | - |
 | 73. SVG Editor Text & Object Controls | 2/2 | Complete    | 2026-02-21 | - |
 | 74. SVG Editor Image Manipulation | 2/2 | Complete    | 2026-02-21 | - |
-| 75. Cloud Media Integrations | 1/3 | In Progress|  | - |
+| 75. Cloud Media Integrations | 2/3 | In Progress|  | - |
 | 76. Enterprise Security Controls | v6.0 | 0/TBD | Not started | - |
 | 77. Content & Media Features | v6.0 | 0/TBD | Not started | - |
 | 78. Platform Wiring | v6.0 | 0/TBD | Not started | - |
