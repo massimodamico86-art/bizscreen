@@ -138,7 +138,10 @@ Plans:
   2. User can set minimum password length and complexity requirements (uppercase, numbers, special chars) and see them enforced on next password change
   3. User can configure session timeout duration and JWT token expiry from enterprise security settings
   4. User can trigger full tenant data deletion from the enterprise security page with confirmation safeguards
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 76-01-PLAN.md -- Fix upsell CTA navigation, wire password policy and session/JWT configuration controls
+- [ ] 76-02-PLAN.md -- Wire tenant data deletion with multi-step confirmation safeguards
 
 ### Phase 77: Content & Media Features
 **Goal**: Users can upload video to carousels, manage property events, browse a graphics library in the layout editor, and view timeline analytics for content
@@ -195,7 +198,7 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 | 73. SVG Editor Text & Object Controls | 2/2 | Complete    | 2026-02-21 | - |
 | 74. SVG Editor Image Manipulation | 2/2 | Complete    | 2026-02-21 | - |
 | 75. Cloud Media Integrations | 3/3 | Complete    | 2026-02-22 | - |
-| 76. Enterprise Security Controls | v6.0 | 0/TBD | Not started | - |
+| 76. Enterprise Security Controls | v6.0 | 0/2 | Not started | - |
 | 77. Content & Media Features | v6.0 | 0/TBD | Not started | - |
 | 78. Platform Wiring | v6.0 | 0/TBD | Not started | - |
 | 79. AI Designer | v6.0 | 0/TBD | Not started | - |
