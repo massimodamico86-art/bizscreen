@@ -40,11 +40,11 @@ Requirements for Functional Completeness milestone. Every interactive UI element
 
 ### Admin & Enterprise
 
-- [ ] **ADMN-01**: User can navigate to plan upgrade from enterprise security upsell screen
-- [ ] **ADMN-02**: User can configure password minimum length policy in enterprise security
-- [ ] **ADMN-03**: User can configure password complexity requirements in enterprise security
-- [ ] **ADMN-04**: User can configure session timeout duration in enterprise security
-- [ ] **ADMN-05**: User can configure JWT token expiry in enterprise security
+- [x] **ADMN-01**: User can navigate to plan upgrade from enterprise security upsell screen
+- [x] **ADMN-02**: User can configure password minimum length policy in enterprise security
+- [x] **ADMN-03**: User can configure password complexity requirements in enterprise security
+- [x] **ADMN-04**: User can configure session timeout duration in enterprise security
+- [x] **ADMN-05**: User can configure JWT token expiry in enterprise security
 - [ ] **ADMN-06**: User can delete all tenant data from enterprise security page
 
 ### Bug Fixes
@@ -96,11 +96,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FEAT-05 | Phase 77 | Pending |
 | FEAT-06 | Phase 78 | Pending |
 | FEAT-07 | Phase 78 | Pending |
-| ADMN-01 | Phase 76 | Pending |
-| ADMN-02 | Phase 76 | Pending |
-| ADMN-03 | Phase 76 | Pending |
-| ADMN-04 | Phase 76 | Pending |
-| ADMN-05 | Phase 76 | Pending |
+| ADMN-01 | Phase 76 | Complete |
+| ADMN-02 | Phase 76 | Complete |
+| ADMN-03 | Phase 76 | Complete |
+| ADMN-04 | Phase 76 | Complete |
+| ADMN-05 | Phase 76 | Complete |
 | ADMN-06 | Phase 76 | Pending |
 | BUGF-01 | Phase 72 | Complete |
 | BUGF-02 | Phase 72 | Complete |

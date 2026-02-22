@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v6.0 Functional Completeness — Phase 75 (Cloud Media Integrations)
+**Current focus:** v6.0 Functional Completeness — Phase 76 (Enterprise Security Controls)
 
 ## Current Position
 
-Phase: 75 of 80 (Cloud Media Integrations)
-Plan: 3 of 3 complete in current phase
-Status: Phase complete
-Last activity: 2026-02-22 — 75-03 CloudFilePicker UI and end-to-end cloud import wiring
+Phase: 76 of 80 (Enterprise Security Controls)
+Plan: 1 of 2 complete in current phase
+Status: In progress
+Last activity: 2026-02-22 — 76-01 Enterprise security upsell CTA, password policy, session/JWT config
 
-Progress: [=====░░░░░] 50% (v6.0 — 5/8 phases in progress)
+Progress: [======░░░░] 60% (v6.0 — 6/8 phases in progress)
 
 ## Milestones Shipped
 
@@ -66,6 +66,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 75]: CloudFilePicker uses lazy dynamic imports per provider to avoid bundling all 5 cloud services together
 - [Phase 75]: OAuth return detection uses sessionStorage to bridge pre-redirect provider selection to post-OAuth picker opening
 - [Phase 75]: Cloud callback handled inline in App.jsx via useEffect (no separate page needed like Canva)
+- [Phase 76]: Use onNavigate as alias alongside onUpgradeClick in FeatureUpgradePrompt for backward compatibility
+- [Phase 76]: Store password and session policies in tenant_settings table with key-based lookup
+- [Phase 76]: validatePassword accepts optional policy parameter for runtime tenant-specific overrides
 
 ### Blockers/Concerns
 
@@ -87,13 +90,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 75 P01 | 2min | 2 tasks | 3 files |
 | Phase 75 P02 | 5min | 2 tasks | 3 files |
 | Phase 75 P03 | 6min | 2 tasks | 3 files |
+| Phase 76 P01 | 3min | 2 tasks | 4 files |
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 75-03-PLAN.md (Phase 75 complete)
+Stopped at: Completed 76-01-PLAN.md
 Resume file: N/A
-Next: Phase 76
+Next: 76-02-PLAN.md
 
 ---
-*Updated: 2026-02-22 -- 75-03 CloudFilePicker UI and end-to-end cloud import wiring complete*
+*Updated: 2026-02-22 -- 76-01 Enterprise security upsell CTA, password policy, session/JWT config complete*
