@@ -249,7 +249,7 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
     try {
       setDeleting(true);
       const email = userProfile?.email;
-      await requestDataDeletion(userProfile?.id, email, deletionReason || null);
+      await requestDataDeletion(userProfile?.tenant_id, email, deletionReason || null);
       showToast?.('Tenant data deletion initiated', 'success');
       setShowDeleteConfirm(false);
       setDeleteConfirmText('');

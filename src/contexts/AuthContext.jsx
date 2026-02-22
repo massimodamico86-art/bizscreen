@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
       // Build the query with minimal fields for faster response
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, email, full_name, role, has_completed_onboarding')
+        .select('id, email, full_name, role, has_completed_onboarding, tenant_id')
         .eq('id', userId)
         .single();
 
