@@ -1,17 +1,28 @@
 ---
 phase: 80-svg-editor-integration-polish
-verified: 2026-02-21T23:30:00Z
+verified: 2026-02-22T00:00:00Z
 status: passed
 score: 4/4 must-haves verified
-re_verification: false
+re_verification:
+  previous_status: passed
+  previous_score: 4/4
+  gaps_closed: []
+  gaps_remaining: []
+  regressions: []
 ---
 
 # Phase 80: SVG Editor Integration Polish Verification Report
 
 **Phase Goal:** Fix integration defects and tech debt discovered in completed phases 73-74 — runtime crash, disconnected toggle, and stale panel state
-**Verified:** 2026-02-21T23:30:00Z
+**Verified:** 2026-02-22T00:00:00Z
 **Status:** PASSED
-**Re-verification:** No — initial verification
+**Re-verification:** Yes — regression check after broad codebase modifications detected in git status
+
+## Re-Verification Summary
+
+Previous verification (2026-02-21) passed with score 4/4. Re-verification triggered because the working tree showed modifications across many `src/` files. All three phase-80 files (`PositionPanel.jsx`, `HyperlinkModal.jsx`, `FabricSvgEditor.jsx`) have no uncommitted changes — their last commits are the two phase-80 task commits (`4270b65`, `0f7d340`). All four truths confirmed intact with no regressions.
+
+---
 
 ## Goal Achievement
 
@@ -19,10 +30,10 @@ re_verification: false
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | PositionPanel close button renders without React runtime error | VERIFIED | `X` imported at line 35 of PositionPanel.jsx; used at line 93 in close button |
-| 2 | HyperlinkModal openInNewTab toggle value controls the hyperlinkTarget property saved on the object | VERIFIED | HyperlinkModal line 61: `onSave(url, openInNewTab)`; FabricSvgEditor line 791: `hyperlinkTarget: openInNewTab !== false ? '_blank' : '_self'` |
-| 3 | ElementSettingsPanel name edits are immediately reflected in LayersPanel object list | VERIFIED | `handleUpdateObject` (FabricSvgEditor line 2499) calls `syncCanvasObjects()` after every property mutation; `syncCanvasObjects` is in the dependency array at line 2500 |
-| 4 | ElementSettingsPanel closes automatically when user clicks canvas background (selection cleared) | VERIFIED | `selection:cleared` handler (FabricSvgEditor lines 228-231) calls both `setSelectedObject(null)` and `setActivePanel(null)` |
+| 1 | PositionPanel close button renders without React runtime error | VERIFIED | `X,` at line 35 of lucide-react import; rendered at line 93 as `<X className="w-4 h-4" />` |
+| 2 | HyperlinkModal openInNewTab toggle value controls the hyperlinkTarget property saved on the object | VERIFIED | HyperlinkModal line 61: `onSave(url, openInNewTab)`; FabricSvgEditor line 787: param accepted; line 791: `hyperlinkTarget: openInNewTab !== false ? '_blank' : '_self'` |
+| 3 | ElementSettingsPanel name edits are immediately reflected in LayersPanel object list | VERIFIED | `handleUpdateObject` (lines 2486-2500): calls `syncCanvasObjects()` at line 2499; `syncCanvasObjects` in dependency array at line 2500 |
+| 4 | ElementSettingsPanel closes automatically when user clicks canvas background (selection cleared) | VERIFIED | `selection:cleared` handler (lines 228-231): sets both `setSelectedObject(null)` and `setActivePanel(null)` |
 
 **Score:** 4/4 truths verified
 
@@ -30,15 +41,15 @@ re_verification: false
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `src/components/svg-editor/PositionPanel.jsx` | Close button with properly imported X icon | VERIFIED | `X` present in lucide-react import block (line 35); rendered at line 93 |
-| `src/components/svg-editor/HyperlinkModal.jsx` | onSave callback passes both url and openInNewTab | VERIFIED | Line 61: `onSave(url, openInNewTab)` — exact pattern matched |
-| `src/components/svg-editor/FabricSvgEditor.jsx` | handleSaveHyperlink consumes openInNewTab; handleUpdateObject syncs layers; selection:cleared closes activePanel | VERIFIED | All three fixes present at lines 787-797, 2486-2500, and 228-231 respectively |
+| `src/components/svg-editor/PositionPanel.jsx` | Close button with properly imported X icon | VERIFIED | `X,` at line 35 in lucide-react import block; `<X className="w-4 h-4" />` at line 93 |
+| `src/components/svg-editor/HyperlinkModal.jsx` | onSave callback passes both url and openInNewTab | VERIFIED | Line 61: `onSave(url, openInNewTab)` — exact pattern present |
+| `src/components/svg-editor/FabricSvgEditor.jsx` | handleSaveHyperlink consumes openInNewTab; handleUpdateObject syncs layers; selection:cleared closes activePanel | VERIFIED | All three fixes at lines 787-791, 2499-2500, and 228-231 respectively |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|----|-----|--------|---------|
-| `HyperlinkModal.handleSave` | `FabricSvgEditor.handleSaveHyperlink` | `onSave(url, openInNewTab)` | WIRED | HyperlinkModal line 61 passes both args; FabricSvgEditor line 787 receives `(url, openInNewTab)`; wired via `onSave={handleSaveHyperlink}` at line 3283 |
+| `HyperlinkModal.handleSave` | `FabricSvgEditor.handleSaveHyperlink` | `onSave(url, openInNewTab)` | WIRED | HyperlinkModal line 61 passes both args; FabricSvgEditor line 787 receives `(url, openInNewTab)`; wired at line 3283 via `onSave={handleSaveHyperlink}` |
 | `FabricSvgEditor.handleUpdateObject` | `syncCanvasObjects` | function call after set+render | WIRED | Line 2499: `syncCanvasObjects()` called after `renderAll()`; `syncCanvasObjects` in dependency array at line 2500 |
 | `canvas selection:cleared` | `setActivePanel(null)` | event handler in canvas init | WIRED | Lines 228-231: handler sets both `selectedObject` and `activePanel` to null |
 
@@ -46,12 +57,21 @@ re_verification: false
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|------------|-------------|--------|----------|
-| EDIT-01 | 80-01-PLAN.md | User can add/edit hyperlinks on text objects in SVG editor | SATISFIED | HyperlinkModal openInNewTab now wired end-to-end; hyperlinkTarget correctly set on fabric objects |
+| EDIT-01 | 80-01-PLAN.md | User can add/edit hyperlinks on text objects in SVG editor | SATISFIED | HyperlinkModal openInNewTab now wired end-to-end; `hyperlinkTarget` correctly set on fabric objects via `handleSaveHyperlink` |
 | EDIT-03 | 80-01-PLAN.md | User can set precise position/alignment for image objects in SVG editor | SATISFIED | PositionPanel X icon crash eliminated; panel renders fully without runtime error |
-| EDIT-06 | 80-01-PLAN.md | User can add/edit hyperlinks on image objects in SVG editor | SATISFIED | Same hyperlink fix applies to image objects (handleSaveHyperlink operates on selectedObject regardless of type) |
-| EDIT-10 | 80-01-PLAN.md | User can click hyperlinks attached to objects to open URLs | SATISFIED | hyperlinkTarget is now correctly `_self` or `_blank` based on toggle; hyperlink property set alongside target |
+| EDIT-06 | 80-01-PLAN.md | User can add/edit hyperlinks on image objects in SVG editor | SATISFIED | Same hyperlink fix applies to image objects — `handleSaveHyperlink` operates on `selectedObject` regardless of type |
+| EDIT-10 | 80-01-PLAN.md | User can click hyperlinks attached to objects to open URLs | SATISFIED | `hyperlinkTarget` is now correctly `_self` or `_blank` based on toggle; set alongside `hyperlink` property at line 791 |
 
-No orphaned requirements — all four IDs declared in plan frontmatter map directly to REQUIREMENTS.md entries and are accounted for.
+No orphaned requirements — REQUIREMENTS.md maps exactly these four IDs to Phase 80 (lines 77-86). No additional phase-80 entries exist in REQUIREMENTS.md beyond these four.
+
+### Commit Verification
+
+Both task commits documented in SUMMARY.md are present in git history:
+
+- `4270b65` — fix(80-01): fix PositionPanel X icon import and HyperlinkModal openInNewTab wiring
+- `0f7d340` — fix(80-01): fix hyperlink target, layer sync, and panel close on deselect
+
+All three modified files show these commits as the most recent — no subsequent modifications have touched them.
 
 ### Anti-Patterns Found
 
@@ -59,14 +79,7 @@ No orphaned requirements — all four IDs declared in plan frontmatter map direc
 |------|------|---------|----------|--------|
 | `src/components/svg-editor/HyperlinkModal.jsx` | 115 | `placeholder="https://example.com"` | Info | HTML input placeholder attribute — not a code anti-pattern. No impact. |
 
-No blockers or warnings found. No TODO/FIXME/stub patterns in any of the three modified files.
-
-### Commit Verification
-
-Both commits documented in SUMMARY.md are present in git history:
-
-- `4270b65` — fix(80-01): fix PositionPanel X icon import and HyperlinkModal openInNewTab wiring
-- `0f7d340` — fix(80-01): fix hyperlink target, layer sync, and panel close on deselect
+No blockers, no warnings. No TODO/FIXME/stub patterns detected in any of the three modified files.
 
 ### Human Verification Required
 
@@ -98,19 +111,19 @@ The following behaviors cannot be verified programmatically and require a browse
 
 ### Summary
 
-Phase 80 achieved its goal. All four integration defects from the v6.0 milestone audit are fixed:
+All four integration defects from the v6.0 milestone audit are fixed and confirmed intact after re-verification:
 
-1. **PositionPanel X icon crash** — `X` added to the lucide-react import at line 35 of PositionPanel.jsx. The close button at line 93 now references a defined component.
+1. **PositionPanel X icon crash** — `X` in the lucide-react import at line 35 of `PositionPanel.jsx`. The close button at line 93 references a defined component.
 
-2. **HyperlinkModal openInNewTab disconnect** — Two-part fix: HyperlinkModal now passes `openInNewTab` as the second argument to `onSave` (line 61), and `handleSaveHyperlink` in FabricSvgEditor now accepts and applies it using backward-compatible `!== false` logic (line 791).
+2. **HyperlinkModal openInNewTab disconnect** — Two-part fix: `HyperlinkModal` passes `openInNewTab` as the second argument to `onSave` (line 61), and `handleSaveHyperlink` in `FabricSvgEditor` accepts and applies it using `!== false` backward-compatible logic (line 791).
 
-3. **ElementSettingsPanel name not syncing to LayersPanel** — `handleUpdateObject` now calls `syncCanvasObjects()` after every property mutation (line 2499) with `syncCanvasObjects` correctly listed in the dependency array (line 2500).
+3. **ElementSettingsPanel name not syncing to LayersPanel** — `handleUpdateObject` calls `syncCanvasObjects()` after every property mutation (line 2499) with `syncCanvasObjects` correctly listed in the dependency array (line 2500).
 
-4. **Settings panel staying open after deselection** — The `selection:cleared` canvas event handler now calls `setActivePanel(null)` alongside `setSelectedObject(null)` (lines 228-231).
+4. **Settings panel staying open after deselection** — The `selection:cleared` canvas event handler calls `setActivePanel(null)` alongside `setSelectedObject(null)` (lines 228-231).
 
-All four EDIT requirements (EDIT-01, EDIT-03, EDIT-06, EDIT-10) are satisfied. Both task commits exist in git history. No anti-patterns or stubs detected.
+All four EDIT requirements (EDIT-01, EDIT-03, EDIT-06, EDIT-10) are satisfied. Both task commits exist in git history. No regressions detected. No anti-patterns or stubs found. Phase goal fully achieved.
 
 ---
 
-_Verified: 2026-02-21T23:30:00Z_
+_Verified: 2026-02-22T00:00:00Z_
 _Verifier: Claude (gsd-verifier)_
