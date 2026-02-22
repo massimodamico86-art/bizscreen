@@ -24,9 +24,9 @@ Requirements for Functional Completeness milestone. Every interactive UI element
 
 - [x] **CLOUD-01**: User can connect and import media from Google Drive via OAuth
 - [x] **CLOUD-02**: User can connect and import media from Dropbox via OAuth
-- [ ] **CLOUD-03**: User can connect and import media from OneDrive via OAuth
-- [ ] **CLOUD-04**: User can connect and import media from SharePoint via OAuth
-- [ ] **CLOUD-05**: User can connect and import media from Google Photos via OAuth
+- [x] **CLOUD-03**: User can connect and import media from OneDrive via OAuth
+- [x] **CLOUD-04**: User can connect and import media from SharePoint via OAuth
+- [x] **CLOUD-05**: User can connect and import media from Google Photos via OAuth
 
 ### New Features
 
@@ -86,9 +86,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EDIT-10 | Phase 73, Phase 80 | Complete (integration fix in 80) |
 | CLOUD-01 | Phase 75 | Complete |
 | CLOUD-02 | Phase 75 | Complete |
-| CLOUD-03 | Phase 75 | Pending |
-| CLOUD-04 | Phase 75 | Pending |
-| CLOUD-05 | Phase 75 | Pending |
+| CLOUD-03 | Phase 75 | Complete |
+| CLOUD-04 | Phase 75 | Complete |
+| CLOUD-05 | Phase 75 | Complete |
 | FEAT-01 | Phase 79 | Pending |
 | FEAT-02 | Phase 77 | Pending |
 | FEAT-03 | Phase 77 | Pending |

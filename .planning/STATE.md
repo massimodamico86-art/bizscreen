@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 75 of 80 (Cloud Media Integrations)
-Plan: 2 of 3 complete in current phase
-Status: In progress
-Last activity: 2026-02-21 — 75-02 OneDrive, SharePoint, Google Photos cloud services
+Plan: 3 of 3 complete in current phase
+Status: Phase complete
+Last activity: 2026-02-22 — 75-03 CloudFilePicker UI and end-to-end cloud import wiring
 
 Progress: [=====░░░░░] 50% (v6.0 — 5/8 phases in progress)
 
@@ -63,6 +63,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 75]: Google Drive download URL returns headers-getter since API requires auth for media download
 - [Phase 75]: OneDrive/SharePoint share VITE_MICROSOFT_CLIENT_ID with separate token storage keys
 - [Phase 75]: Google Photos uses POST for mediaItems:search, baseUrl + '=d' for downloads
+- [Phase 75]: CloudFilePicker uses lazy dynamic imports per provider to avoid bundling all 5 cloud services together
+- [Phase 75]: OAuth return detection uses sessionStorage to bridge pre-redirect provider selection to post-OAuth picker opening
+- [Phase 75]: Cloud callback handled inline in App.jsx via useEffect (no separate page needed like Canva)
 
 ### Blockers/Concerns
 
@@ -83,13 +86,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 80 P01 | 2min | 2 tasks | 3 files |
 | Phase 75 P01 | 2min | 2 tasks | 3 files |
 | Phase 75 P02 | 5min | 2 tasks | 3 files |
+| Phase 75 P03 | 6min | 2 tasks | 3 files |
 
 ## Session Continuity
 
-Last session: 2026-02-21
-Stopped at: Completed 75-02-PLAN.md
+Last session: 2026-02-22
+Stopped at: Completed 75-03-PLAN.md (Phase 75 complete)
 Resume file: N/A
-Next: 75-03-PLAN.md
+Next: Phase 76
 
 ---
-*Updated: 2026-02-21 -- 75-02 additional cloud provider services complete*
+*Updated: 2026-02-22 -- 75-03 CloudFilePicker UI and end-to-end cloud import wiring complete*
