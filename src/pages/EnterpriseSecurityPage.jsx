@@ -11,19 +11,19 @@
  */
 import { useState, useEffect } from 'react';
 import {
-  Shield,
-  Key,
-  Users,
+  AlertTriangle,
+  Check,
+  Copy,
   Database,
-  RefreshCw,
+  Download,
   Eye,
   EyeOff,
-  Copy,
-  Check,
-  Info,
-  AlertTriangle,
-  Download,
   FileText,
+  Info,
+  Key,
+  RefreshCw,
+  Shield,
+  Users,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -44,7 +44,7 @@ import { downloadExport, getDataSummary, exportAsCSV, hasEnterpriseFeatures } fr
  * @param root0
  * @param root0.showToast
  */
-export default function EnterpriseSecurityPage({ showToast }) {
+export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
   const { userProfile } = useAuth();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('sso');
@@ -245,7 +245,7 @@ export default function EnterpriseSecurityPage({ showToast }) {
             <p className="text-gray-600 mb-6">
               {t('enterpriseSecurity.upsell.description', 'SSO, SCIM, and advanced compliance features are available on Pro and Enterprise plans.')}
             </p>
-            <Button>
+            <Button onClick={() => onNavigate ? onNavigate('account-plan') : (window.location.hash = '#account-plan')}>
               {t('enterpriseSecurity.upsell.upgrade', 'Upgrade Plan')}
             </Button>
           </div>

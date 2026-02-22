@@ -102,7 +102,8 @@ FeatureGate.defaultProps = {
  * @param root0.onUpgradeClick
  * @param root0.variant
  */
-export function FeatureUpgradePrompt({ feature, message, onUpgradeClick, variant = 'default' }) {
+export function FeatureUpgradePrompt({ feature, message, onUpgradeClick, onNavigate, variant = 'default' }) {
+  const handleUpgrade = onNavigate || onUpgradeClick;
   const { upgradePath } = useFeatureInfo(feature);
   const featureMeta = FEATURE_METADATA[feature];
 
@@ -136,9 +137,9 @@ export function FeatureUpgradePrompt({ feature, message, onUpgradeClick, variant
       </div>
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{featureName}</h3>
       <p className="text-gray-600 dark:text-gray-400 mb-4">{defaultMessage}</p>
-      {onUpgradeClick ? (
+      {handleUpgrade ? (
         <button
-          onClick={onUpgradeClick}
+          onClick={handleUpgrade}
           className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           Upgrade Now
@@ -164,6 +165,8 @@ FeatureUpgradePrompt.propTypes = {
   message: PropTypes.string,
   /** Handler for upgrade button click */
   onUpgradeClick: PropTypes.func,
+  /** Handler for navigation (alias for onUpgradeClick) */
+  onNavigate: PropTypes.func,
   /** Prompt display variant */
   variant: PropTypes.oneOf(['default', 'inline', 'badge']),
 };
@@ -171,6 +174,7 @@ FeatureUpgradePrompt.propTypes = {
 FeatureUpgradePrompt.defaultProps = {
   message: undefined,
   onUpgradeClick: undefined,
+  onNavigate: undefined,
   variant: 'default',
 };
 

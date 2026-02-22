@@ -548,7 +548,7 @@ function BizScreenAppInner() {
     'tenant-admin': <Suspense fallback={<PageLoader />}><TenantAdminPage showToast={showToast} /></Suspense>,
     'help': <Suspense fallback={<PageLoader />}><HelpCenterPage onNavigate={setCurrentPage} /></Suspense>,
     'demo-tools': <Suspense fallback={<PageLoader />}><DemoToolsPage showToast={showToast} /></Suspense>,
-    'enterprise-security': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ENTERPRISE_SSO} fallback={<FeatureUpgradePrompt feature={Feature.ENTERPRISE_SSO} onNavigate={() => setCurrentPage('account-plan')} />}><EnterpriseSecurityPage showToast={showToast} /></FeatureGate></Suspense>,
+    'enterprise-security': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ENTERPRISE_SSO} fallback={<FeatureUpgradePrompt feature={Feature.ENTERPRISE_SSO} onNavigate={() => setCurrentPage('account-plan')} />}><EnterpriseSecurityPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'reseller-dashboard': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerDashboardPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'reseller-billing': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerBillingPage showToast={showToast} /></FeatureGate></Suspense>,
     'service-quality': <Suspense fallback={<PageLoader />}><ServiceQualityPage /></Suspense>,
