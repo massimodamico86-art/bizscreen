@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v7.0 UI Verification — Phase 81: Authentication & Dashboard
+**Current focus:** v7.0 UI Verification — Phase 82: Media Library
 
 ## Current Position
 
-Phase: 81 of 90 (Authentication & Dashboard)
-Plan: — (not yet planned)
-Status: Ready to plan
-Last activity: 2026-02-23 — v7.0 roadmap created, 10 phases defined (81-90)
+Phase: 82 of 90 (Media Library)
+Plan: 01 complete
+Status: In progress
+Last activity: 2026-02-23 — Phase 82 Plan 01 complete: upload progress feedback added to YodeckAddMediaModal
 
 Progress: [░░░░░░░░░░░░] 0% (v7.0 — 0/10 phases complete)
 
@@ -53,6 +53,8 @@ Recent decisions affecting v7.0:
 - [v6.0 general]: Cloud OAuth uses shared PKCE utility with provider-keyed localStorage for token isolation
 - [Phase 81]: Auth pages in src/auth/ were fully correct — no changes needed to the primary auth flow; legacy pages fixed by adding missing Alert/Button imports
 - [Phase 81]: Auth pages in src/auth/ were fully correct — no changes needed to the primary auth flow; legacy pages fixed by adding missing Alert/Button imports; all flows human-verified and approved
+- [Phase 82-media-library]: MediaDetailModal was already well-implemented — only empty-name validation was missing; added trim guard before setIsSaving in handleSave
+- [Phase 82-01]: useMediaLibrary onError already called showToast with error message — verified correct, no change needed; YodeckAddMediaModal updated with uploading/uploadProgress props for progress display
 
 ### Blockers/Concerns
 
