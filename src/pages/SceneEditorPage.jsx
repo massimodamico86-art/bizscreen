@@ -55,6 +55,7 @@ import {
 import { getBrandTheme, getThemedBlockDefaults } from '../services/brandThemeService';
 
 // Components
+import { Button } from '../design-system';
 import { emitDesignChange } from '../services/deviceSyncService';
 
 import { fetchLanguageVariants } from '../services/languageService';
