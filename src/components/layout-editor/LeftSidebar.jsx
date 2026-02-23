@@ -285,7 +285,7 @@ export default function LeftSidebar({
         )}
 
         {activeTab === 'elements' && (
-          <ElementsTabContent onAddShape={handleAddShape} />
+          <ElementsTabContent onAddShape={handleAddShape} onAddImage={handleAddImage} />
         )}
 
         {activeTab === 'settings' && (
@@ -817,7 +817,190 @@ function TextTabContent({ onAddText, onAddTextBox }) {
   );
 }
 
-function ElementsTabContent({ onAddShape }) {
+const GRAPHICS_CATEGORIES = [
+  { id: 'all', label: 'All', icon: LayoutGrid },
+  { id: 'icons', label: 'Icons', icon: Sparkles },
+  { id: 'backgrounds', label: 'Backgrounds', icon: Image },
+  { id: 'logos', label: 'Logos', icon: Crown },
+  { id: 'decorations', label: 'Decorations', icon: Star },
+];
+
+function GraphicsLibrarySection({ onAddImage }) {
+  const [searchInput, setSearchInput] = useState('');
+  const [activeCategory, setActiveCategory] = useState('all');
+
+  const {
+    assets,
+    isLoading,
+    error,
+    hasMore,
+    setFilters,
+    fetchMore,
+    refresh,
+  } = useMedia({
+    type: 'image',
+    includeGlobal: true,
+    pageSize: 12,
+  });
+
+  // Filter assets by search and category
+  const filteredAssets = useMemo(() => {
+    let filtered = assets;
+    if (searchInput) {
+      const query = searchInput.toLowerCase();
+      filtered = filtered.filter((a) =>
+        (a.name || '').toLowerCase().includes(query)
+      );
+    }
+    if (activeCategory !== 'all') {
+      filtered = filtered.filter((a) => {
+        const name = (a.name || '').toLowerCase();
+        const folder = (a.folder_name || '').toLowerCase();
+        return name.includes(activeCategory) || folder.includes(activeCategory);
+      });
+    }
+    return filtered;
+  }, [assets, searchInput, activeCategory]);
+
+  const handleSearchChange = useCallback((e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    const timeoutId = setTimeout(() => {
+      setFilters((prev) => ({ ...prev, search: value }));
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [setFilters]);
+
+  const handleInsertGraphic = useCallback((asset) => {
+    onAddImage(asset.url, {
+      mediaId: asset.id,
+      name: asset.name,
+      width: asset.width,
+      height: asset.height,
+      type: 'image',
+    });
+  }, [onAddImage]);
+
+  return (
+    <div className="space-y-3">
+      {/* Search within graphics */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search graphics..."
+          value={searchInput}
+          onChange={handleSearchChange}
+          className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#f26f21]/20 focus:border-[#f26f21]"
+        />
+        {searchInput && (
+          <button
+            onClick={() => {
+              setSearchInput('');
+              setFilters((prev) => ({ ...prev, search: '' }));
+            }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        )}
+      </div>
+
+      {/* Category pills */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1">
+        {GRAPHICS_CATEGORIES.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => setActiveCategory(cat.id)}
+            className={`flex-shrink-0 px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${
+              activeCategory === cat.id
+                ? 'bg-[#f26f21] text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300'
+            }`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Loading */}
+      {isLoading && filteredAssets.length === 0 && (
+        <div className="flex items-center justify-center py-6">
+          <Loader2 className="w-5 h-5 text-[#f26f21] animate-spin" />
+        </div>
+      )}
+
+      {/* Error */}
+      {error && (
+        <div className="text-center py-3">
+          <p className="text-xs text-red-500 mb-1">Failed to load graphics</p>
+          <button onClick={refresh} className="text-[10px] text-[#f26f21] hover:underline">
+            Try again
+          </button>
+        </div>
+      )}
+
+      {/* Graphics grid */}
+      {!error && filteredAssets.length > 0 && (
+        <div className="grid grid-cols-3 gap-2">
+          {filteredAssets.map((asset) => {
+            const isGlobal = !asset.owner_id;
+            return (
+              <button
+                key={asset.id}
+                onClick={() => handleInsertGraphic(asset)}
+                className="group relative aspect-square rounded-lg border border-gray-200 hover:border-[#f26f21] hover:shadow-md overflow-hidden transition-all bg-white"
+                title={`${asset.name}${isGlobal ? ' (Global)' : ''}\nClick to insert`}
+              >
+                <img
+                  src={asset.thumbnail_url || asset.url}
+                  alt={asset.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                {isGlobal && (
+                  <span className="absolute top-0.5 left-0.5 px-1 py-0.5 bg-blue-500 text-[8px] font-medium text-white rounded">
+                    Global
+                  </span>
+                )}
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Plus className="w-5 h-5 text-white" />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Load more */}
+      {hasMore && !error && filteredAssets.length > 0 && (
+        <button
+          onClick={fetchMore}
+          disabled={isLoading}
+          className="w-full py-1.5 text-[10px] text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors disabled:opacity-50"
+        >
+          {isLoading ? (
+            <Loader2 className="w-3 h-3 animate-spin mx-auto" />
+          ) : (
+            'Load More'
+          )}
+        </button>
+      )}
+
+      {/* Empty state */}
+      {!isLoading && !error && filteredAssets.length === 0 && (
+        <div className="text-center py-4">
+          <Image className="w-6 h-6 text-gray-300 mx-auto mb-1.5" />
+          <p className="text-[10px] text-gray-500">
+            {searchInput ? 'No graphics match your search' : 'No graphics available'}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ElementsTabContent({ onAddShape, onAddImage }) {
   const [searchInput, setSearchInput] = useState('');
 
   const filteredShapes = useMemo(() => {
@@ -870,16 +1053,12 @@ function ElementsTabContent({ onAddShape }) {
         </div>
       </div>
 
-      {/* Graphics section */}
+      {/* Graphics library section */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Graphics</h4>
-          <button className="text-xs text-[#f26f21] hover:underline">See all</button>
         </div>
-        <div className="bg-gray-100 rounded-lg p-6 text-center">
-          <Image className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-          <p className="text-xs text-gray-500">Graphics library coming soon</p>
-        </div>
+        <GraphicsLibrarySection onAddImage={onAddImage} />
       </div>
     </div>
   );
