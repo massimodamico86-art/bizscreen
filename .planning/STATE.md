@@ -51,6 +51,7 @@ Recent decisions affecting v7.0:
 - [Phase 80]: openInNewTab !== false for backward-compatible boolean defaulting in handleSaveHyperlink
 - [v6.0 general]: Enterprise security stores policies in tenant_settings with key-based lookup
 - [v6.0 general]: Cloud OAuth uses shared PKCE utility with provider-keyed localStorage for token isolation
+- [Phase 81]: Auth pages in src/auth/ were fully correct — no changes needed to the primary auth flow; legacy pages fixed by adding missing Alert/Button imports
 
 ### Blockers/Concerns
 
