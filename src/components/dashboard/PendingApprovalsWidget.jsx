@@ -5,13 +5,13 @@
  */
 import { useState, useEffect } from 'react';
 import {
-  ListVideo,
-  Layout,
-  Zap,
-  Film,
   ChevronRight,
   Clock,
+  Film,
+  Layout,
+  ListVideo,
   Loader2,
+  Zap,
 } from 'lucide-react';
 import { Card, Badge, Button } from '../../design-system';
 import { fetchOpenReviews, REVIEW_STATUS } from '../../services/approvalService';
