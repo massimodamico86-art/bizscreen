@@ -7,18 +7,33 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import {
-  Monitor,
-  Smartphone,
-  Square,
-  Tv,
-  Play,
-  FileImage,
-  UtensilsCrossed,
-  Megaphone,
-  Share2,
+  AlertCircle,
   BarChart3,
+  ChevronDown,
+  Edit,
+  ExternalLink,
+  FileImage,
+  LayoutGrid,
+  Loader2,
+  Megaphone,
+  Monitor,
+  Palette,
+  Play,
+  Plus,
   RectangleHorizontal,
+  RefreshCw,
+  Search,
+  Share2,
+  Smartphone,
+  Sparkles,
+  Square,
+  Star,
+  Trash2,
+  Tv,
+  UtensilsCrossed,
+  Wand2,
 } from 'lucide-react';
+import { Button } from '../../design-system';
 import { useLayoutTemplates } from '../../hooks/useLayoutTemplates';
 import { fetchLayouts, deleteLayoutSafely } from '../../services/layoutService';
 import { CANVA_TEMPLATE_CATEGORIES, openCanvaTemplates } from '../../services/canvaService';

@@ -1,6 +1,32 @@
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowLeft,
+  BookTemplate,
+  Calendar,
+  Check,
+  CheckCircle,
+  Clock,
+  Copy,
+  ExternalLink,
+  FileEdit,
+  Grid3X3,
+  Image,
+  Link2,
+  ListVideo,
+  Loader2,
+  MessageSquare,
+  Plus,
+  Save,
+  Search,
+  Send,
+  Settings,
+  Trash2,
+  X,
+  XCircle,
+} from 'lucide-react';
 
+import { Button, Card } from '../design-system';
 import {
   fetchLayoutWithZones,
   updateLayout,
@@ -26,6 +52,7 @@ import {
   getExpiryLabel,
 } from '../services/previewService';
 import { createTemplateFromLayout } from '../services/layoutTemplateService';
+import { SaveAsTemplateModal } from '../components/templates';
 
 const PRESET_LAYOUTS = [
   {
