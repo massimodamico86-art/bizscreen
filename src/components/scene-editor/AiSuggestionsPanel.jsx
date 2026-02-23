@@ -10,18 +10,18 @@
 
 import { useState, useMemo } from 'react';
 import {
-  Sparkles,
-  Palette,
-  Type,
-  Image,
-  Zap,
-  Eye,
-  Star,
-  X,
-  Loader2,
-  Layout,
   ChevronRight,
+  Eye,
+  Image,
+  Layout,
+  Loader2,
+  Palette,
+  Sparkles,
+  Star,
+  Type,
   Wand2,
+  X,
+  Zap,
 } from 'lucide-react';
 import { Button } from '../../design-system';
 import {
@@ -57,6 +57,7 @@ export default function AiSuggestionsPanel({
   const _logger = useLogger('AiSuggestionsPanel');
   const [activeTab, setActiveTab] = useState('presets'); // 'presets' | 'actions' | 'improve' | 'polish'
   const [loading, setLoading] = useState(false);
+  const [promptText, setPromptText] = useState('');
 
   const presets = useMemo(
     () => getPresetsForBusinessType(businessType),
@@ -84,6 +85,20 @@ export default function AiSuggestionsPanel({
     await new Promise(r => setTimeout(r, 300));
     onApplyPreset(preset);
     setLoading(false);
+  }
+
+  function handleGenerateFromPrompt() {
+    if (!promptText.trim() || loading) return;
+    const lowerPrompt = promptText.toLowerCase();
+    // Find preset whose title or description matches prompt keywords
+    const matched = presets.find(p =>
+      p.title?.toLowerCase().split(' ').some(w => lowerPrompt.includes(w)) ||
+      p.description?.toLowerCase().split(' ').some(w => lowerPrompt.includes(w))
+    ) || presets[0]; // Fall back to first preset if no match
+    if (matched) {
+      handleApplyPreset(matched);
+      setPromptText(''); // Clear after apply — signals iterative refinement
+    }
   }
 
   return (
@@ -136,7 +151,27 @@ export default function AiSuggestionsPanel({
         )}
 
         {!loading && activeTab === 'presets' && (
-          <PresetsList presets={presets} onApply={handleApplyPreset} />
+          <>
+            {/* Quick text prompt */}
+            <div className="p-3 border-b border-gray-800">
+              <p className="text-xs text-gray-400 mb-2">Describe what you need:</p>
+              <textarea
+                value={promptText}
+                onChange={(e) => setPromptText(e.target.value)}
+                placeholder="e.g. 'Happy hour specials, vibrant colors'"
+                className="w-full text-xs bg-gray-800 text-gray-200 border border-gray-700 rounded-lg p-2 resize-none h-16 focus:outline-none focus:border-purple-500"
+              />
+              <button
+                onClick={handleGenerateFromPrompt}
+                disabled={!promptText.trim() || loading}
+                className="mt-2 w-full py-1.5 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:text-gray-500 text-white text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                Generate Layout
+              </button>
+            </div>
+            <PresetsList presets={presets} onApply={handleApplyPreset} />
+          </>
         )}
 
         {!loading && activeTab === 'actions' && (
