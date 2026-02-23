@@ -2,22 +2,22 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 import {
-  Monitor,
-  Image,
-  ListVideo,
-  Layout,
-  Calendar,
-  Sparkles,
-  Crown,
-  Zap,
-  Loader2,
-  Check,
   AlertCircle,
   AlertTriangle,
-  RefreshCw,
   ArrowRight,
-  ExternalLink,
+  Calendar,
+  Check,
   CreditCard,
+  Crown,
+  ExternalLink,
+  Image,
+  Layout,
+  ListVideo,
+  Loader2,
+  Monitor,
+  RefreshCw,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -54,6 +54,7 @@ import {
 import {
   startCheckout,
   openBillingPortal,
+  openPaymentMethodUpdate,
   mapSubscriptionToUiState,
   checkCheckoutResult,
   clearCheckoutResult
@@ -69,6 +70,7 @@ const AccountPlanPage = ({ showToast }) => {
   const [error, setError] = useState(null);
   const [upgrading, setUpgrading] = useState(null);
   const [openingPortal, setOpeningPortal] = useState(false);
+  const [updatingPayment, setUpdatingPayment] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
@@ -132,6 +134,17 @@ const AccountPlanPage = ({ showToast }) => {
       logger.error('Error opening billing portal:', error);
       showToast?.(t('accountPlan.errorPortal', 'Error opening billing portal: {{message}}', { message: error.message }), 'error');
       setOpeningPortal(false);
+    }
+  };
+
+  const handleUpdatePaymentMethod = async () => {
+    try {
+      setUpdatingPayment(true);
+      await openPaymentMethodUpdate();
+    } catch (error) {
+      logger.error('Error opening payment method update:', error);
+      showToast?.(t('accountPlan.errorPaymentUpdate', 'Error updating payment method: {{message}}', { message: error.message }), 'error');
+      setUpdatingPayment(false);
     }
   };
 
@@ -382,17 +395,22 @@ const AccountPlanPage = ({ showToast }) => {
           </CardHeader>
           <div className="p-6">
             {uiState.canManageBilling ? (
-              <div className="flex items-center justify-between">
+              <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <CreditCard className="w-8 h-8 text-gray-400" aria-hidden="true" />
                   <div>
                     <p className="font-medium text-gray-700">{t('accountPlan.manageSubscription', 'Manage your subscription')}</p>
-                    <p className="text-sm text-gray-500">{t('accountPlan.manageDescription', 'Update payment method, view invoices, or cancel your subscription.')}</p>
+                    <p className="text-sm text-gray-500">{t('accountPlan.manageDescription', 'Manage your payment method and subscription details.')}</p>
                   </div>
                 </div>
-                <Button variant="secondary" onClick={handleManageBilling} disabled={openingPortal} loading={openingPortal} icon={<ExternalLink size={16} />}>
-                  {t('accountPlan.manageBilling', 'Manage Billing')}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button onClick={handleUpdatePaymentMethod} disabled={updatingPayment} loading={updatingPayment} icon={<CreditCard size={16} />}>
+                    {t('accountPlan.updatePaymentMethod', 'Update Payment Method')}
+                  </Button>
+                  <Button variant="secondary" onClick={handleManageBilling} disabled={openingPortal} loading={openingPortal} icon={<ExternalLink size={16} />}>
+                    {t('accountPlan.manageBilling', 'Manage Billing')}
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="flex items-center gap-4 text-gray-500">

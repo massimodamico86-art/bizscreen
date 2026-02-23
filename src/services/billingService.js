@@ -87,6 +87,42 @@ export async function openBillingPortal() {
 }
 
 /**
+ * Open Stripe Billing Portal directly to payment method update flow
+ * Uses Stripe Customer Portal flow_data to deep-link to the update payment method screen
+ * @returns {Promise<void>} - Redirects to Stripe Billing Portal payment method update
+ */
+export async function openPaymentMethodUpdate() {
+  const token = await getAuthToken();
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch('/api/billing/portal', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      flow_data: { type: 'payment_method_update' },
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to create portal session');
+  }
+
+  if (!data.url) {
+    throw new Error('No portal URL returned');
+  }
+
+  // Redirect to Stripe Billing Portal payment method update
+  window.location.href = data.url;
+}
+
+/**
  * @typedef {Object} SubscriptionUiState
  * @property {'free'|'trialing'|'active'|'past_due'|'canceled'|'expired'} state
  * @property {string} message - User-friendly message about their subscription
