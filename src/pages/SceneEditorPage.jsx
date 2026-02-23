@@ -61,6 +61,7 @@ import IndustryWizardModal from '../components/scene-editor/IndustryWizardModal'
 import DataBoundWizardModal from '../components/scene-editor/DataBoundWizardModal';
 import ContentInlineMetrics from '../components/analytics/ContentInlineMetrics';
 import AddLanguageModal from '../components/scenes/AddLanguageModal';
+import EditorLanguageSwitcher from '../components/scene-editor/EditorLanguageSwitcher';
 import { emitDesignChange } from '../services/deviceSyncService';
 
 import { fetchLanguageVariants } from '../services/languageService';
