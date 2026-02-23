@@ -3,6 +3,8 @@ import {
   validateRotationInterval,
   MEDIA_CONSTRAINTS
 } from '../../types/media';
+import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
+import { ImageIcon, Plus, VideoIcon, Volume2, VolumeX, X } from 'lucide-react';
 
 /**
  * Unified Media Section Component
@@ -110,32 +112,20 @@ export const MediaSection = ({ unifiedMediaState, onChange, showToast }) => {
     showToast('Image uploaded successfully!');
   };
 
-  // Handle video upload
-  const handleVideoUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  // Handle video upload via Cloudinary widget
+  const openVideoUpload = useCloudinaryUpload({
+    onSuccess: (uploadedFile) => {
+      // Duration check: reject videos over 2 minutes
+      if (uploadedFile.duration && uploadedFile.duration > MEDIA_CONSTRAINTS.MAX_VIDEO_DURATION_SECONDS) {
+        showToast(`Video must be ${MEDIA_CONSTRAINTS.MAX_VIDEO_DURATION_SECONDS / 60} minutes or shorter (uploaded: ${Math.round(uploadedFile.duration)}s)`, 'error');
+        return;
+      }
 
-    // Validate file type
-    const fileExt = '.' + file.name.split('.').pop().toLowerCase();
-    if (!MEDIA_CONSTRAINTS.ALLOWED_VIDEO_FORMATS.includes(fileExt)) {
-      showToast(`Video must be in ${MEDIA_CONSTRAINTS.ALLOWED_VIDEO_FORMATS.join(', ')} format`, 'error');
-      return;
-    }
-
-    // Validate file size
-    const maxSizeBytes = MEDIA_CONSTRAINTS.MAX_VIDEO_SIZE_MB * 1024 * 1024;
-    if (file.size > maxSizeBytes) {
-      showToast(`Video file size must be less than ${MEDIA_CONSTRAINTS.MAX_VIDEO_SIZE_MB}MB`, 'error');
-      return;
-    }
-
-    // Convert to data URL
-    const reader = new FileReader();
-    reader.onloadend = () => {
       const newVideoItems = [...videoItems, {
         id: generateMediaId(),
-        url: reader.result,
-        source: 'uploaded'
+        url: uploadedFile.url,
+        source: 'uploaded',
+        muted: true
       }];
 
       onChange({
@@ -145,8 +135,25 @@ export const MediaSection = ({ unifiedMediaState, onChange, showToast }) => {
       });
 
       showToast('Video uploaded successfully!');
-    };
-    reader.readAsDataURL(file);
+    },
+    onError: () => {
+      showToast('Video upload failed. Please try again.', 'error');
+    },
+    folder: 'bizscreen/media/video',
+    allowedFormats: ['mp4', 'webm'],
+    resourceType: 'video',
+    multiple: false
+  });
+
+  // Toggle mute state for a video item
+  const toggleVideoMute = (videoId) => {
+    const newVideoItems = videoItems.map(item =>
+      item.id === videoId ? { ...item, muted: !item.muted } : item
+    );
+    onChange({
+      ...unifiedMediaState,
+      videoItems: newVideoItems
+    });
   };
 
   // Delete uploaded image
@@ -338,19 +345,37 @@ export const MediaSection = ({ unifiedMediaState, onChange, showToast }) => {
               Choose from library (click to select multiple)
             </label>
             <div className="grid grid-cols-3 gap-2">
-              {predefinedVideos.map((video, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => togglePredefinedVideo(video)}
-                  className={`aspect-video rounded-lg overflow-hidden border-2 transition-all ${
-                    isPredefinedVideoSelected(video)
-                      ? 'border-blue-500 ring-2 ring-blue-200'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <video src={video} className="w-full h-full object-cover" muted loop autoPlay />
-                </button>
-              ))}
+              {predefinedVideos.map((video, idx) => {
+                const predefinedItem = videoItems.find(item => item.source === 'predefined' && item.url === video);
+                const isSelected = !!predefinedItem;
+                return (
+                  <div key={idx} className="relative">
+                    <button
+                      onClick={() => togglePredefinedVideo(video)}
+                      className={`aspect-video w-full rounded-lg overflow-hidden border-2 transition-all ${
+                        isSelected
+                          ? 'border-blue-500 ring-2 ring-blue-200'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <video src={video} className="w-full h-full object-cover" muted={predefinedItem ? predefinedItem.muted !== false : true} loop autoPlay />
+                    </button>
+                    {isSelected && predefinedItem && (
+                      <button
+                        onClick={() => toggleVideoMute(predefinedItem.id)}
+                        className="absolute top-2 left-2 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center shadow-lg hover:bg-black/80 transition-colors"
+                        title={predefinedItem.muted !== false ? 'Unmute' : 'Mute'}
+                      >
+                        {predefinedItem.muted !== false ? (
+                          <VolumeX size={14} className="text-white" />
+                        ) : (
+                          <Volume2 size={14} className="text-white" />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
             <p className="text-xs text-gray-500 mt-1">
               {selectedPredefinedVideos.length} selected from library
@@ -365,7 +390,18 @@ export const MediaSection = ({ unifiedMediaState, onChange, showToast }) => {
             <div className="grid grid-cols-3 gap-2">
               {uploadedVideos.map((video) => (
                 <div key={video.id} className="relative aspect-video rounded-lg overflow-hidden border-2 border-gray-200">
-                  <video src={video.url} className="w-full h-full object-cover" muted loop autoPlay />
+                  <video src={video.url} className="w-full h-full object-cover" muted={video.muted !== false} loop autoPlay />
+                  <button
+                    onClick={() => toggleVideoMute(video.id)}
+                    className="absolute top-2 left-2 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center shadow-lg hover:bg-black/80 transition-colors"
+                    title={video.muted !== false ? 'Unmute' : 'Mute'}
+                  >
+                    {video.muted !== false ? (
+                      <VolumeX size={14} className="text-white" />
+                    ) : (
+                      <Volume2 size={14} className="text-white" />
+                    )}
+                  </button>
                   <button
                     onClick={() => deleteVideo(video.id)}
                     className="absolute top-2 right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
@@ -376,19 +412,16 @@ export const MediaSection = ({ unifiedMediaState, onChange, showToast }) => {
               ))}
 
               {/* Upload Button */}
-              <label className="aspect-video border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-gray-400 transition-colors">
+              <button
+                onClick={openVideoUpload}
+                className="aspect-video border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-gray-400 transition-colors"
+              >
                 <Plus size={24} className="text-gray-400 mb-1" />
                 <span className="text-xs text-gray-500">Upload Video</span>
-                <input
-                  type="file"
-                  accept=".mp4,.mov,.mkv,.webm,video/mp4,video/quicktime,video/x-matroska,video/webm"
-                  onChange={handleVideoUpload}
-                  className="hidden"
-                />
-              </label>
+              </button>
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Max {MEDIA_CONSTRAINTS.MAX_VIDEO_SIZE_MB}MB, formats: {MEDIA_CONSTRAINTS.ALLOWED_VIDEO_FORMATS.join(', ')}
+              Formats: MP4, WebM | Max duration: {MEDIA_CONSTRAINTS.MAX_VIDEO_DURATION_SECONDS / 60} minutes
             </p>
           </div>
 
