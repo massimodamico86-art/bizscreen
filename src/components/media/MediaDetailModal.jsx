@@ -178,6 +178,10 @@ export default function MediaDetailModal({
 
   // Save changes
   const handleSave = async () => {
+    if (!editName.trim()) {
+      showToast?.('Name cannot be empty', 'error');
+      return;
+    }
     setIsSaving(true);
     try {
       await onUpdate?.(asset.id, {
