@@ -219,6 +219,37 @@ export async function deleteScene(sceneId) {
 }
 
 /**
+ * Duplicate a scene (creates a copy with "(Copy)" name suffix)
+ * @param {string} sceneId - The scene ID to copy
+ * @param {string} tenantId - The tenant ID
+ * @returns {Promise<object>} The newly created scene
+ */
+export async function duplicateScene(sceneId, tenantId) {
+  // Fetch the original scene
+  const { data: original, error: fetchError } = await supabase
+    .from('scenes')
+    .select('*')
+    .eq('id', sceneId)
+    .single();
+  if (fetchError) throw fetchError;
+
+  // Create copy with modified name
+  const { data: copy, error: insertError } = await supabase
+    .from('scenes')
+    .insert({
+      tenant_id: tenantId,
+      name: `${original.name} (Copy)`,
+      business_type: original.business_type,
+      layout_id: original.layout_id,
+      primary_playlist_id: original.primary_playlist_id,
+    })
+    .select()
+    .single();
+  if (insertError) throw insertError;
+  return copy;
+}
+
+/**
  * Check if a tenant has any scenes
  * @param {string} tenantId - The tenant/user ID
  * @returns {Promise<boolean>} True if tenant has scenes
@@ -357,6 +388,7 @@ export default {
   updateScene,
   saveSceneWithApproval,
   deleteScene,
+  duplicateScene,
   hasScenesForTenant,
   getSceneCount,
   setSceneOnDevices,

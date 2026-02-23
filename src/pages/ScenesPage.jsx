@@ -10,23 +10,31 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Utensils,
-  Scissors,
-  Dumbbell,
-  ShoppingBag,
-  Stethoscope,
-  Home,
-  Building,
-  Car,
-  Coffee,
-  Building2,
   AlertTriangle,
-  Loader2,
+  ArrowRight,
+  Building,
+  Building2,
+  Car,
+  ChevronLeft,
   ChevronRight,
+  Coffee,
+  Copy,
+  Dumbbell,
+  Grid,
+  Home,
+  Layers,
+  Loader2,
+  Scissors,
+  ShoppingBag,
+  Sparkles,
+  Stethoscope,
+  Trash2,
+  Tv,
+  Utensils,
 } from 'lucide-react';
 import { pushEmergencyContent, EMERGENCY_DURATIONS } from '../services/emergencyService';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchScenesWithDeviceCounts } from '../services/sceneService';
+import { fetchScenesWithDeviceCounts, deleteScene, duplicateScene } from '../services/sceneService';
 import { getAvailableLanguagesForScene } from '../services/languageService';
 import {
   Card,
@@ -44,9 +52,6 @@ import {
   ModalContent,
   ModalFooter,
 } from '../design-system';
-
-
-
 
 // Business type labels and icons
 const BUSINESS_TYPE_CONFIG = {
@@ -67,7 +72,7 @@ function getBusinessTypeConfig(type) {
 }
 
 // Scene Card Component
-function SceneCard({ scene, onOpenScene, onPublish, onPushEmergency, languages }) {
+function SceneCard({ scene, onOpenScene, onPublish, onPushEmergency, onDelete, onDuplicate, languages }) {
   const config = getBusinessTypeConfig(scene.business_type);
   const Icon = config.icon;
   const deviceCount = scene.deviceCount || 0;
@@ -131,10 +136,30 @@ function SceneCard({ scene, onOpenScene, onPublish, onPushEmergency, languages }
           </Button>
         </div>
 
+        {/* Secondary actions */}
+        <div className="flex gap-1 mt-2">
+          <button
+            onClick={(e) => { e.stopPropagation(); onDuplicate(scene); }}
+            className="flex-1 text-xs text-gray-500 hover:text-blue-600 hover:bg-blue-50 py-1 rounded transition-colors flex items-center justify-center gap-1"
+            title="Duplicate scene"
+          >
+            <Copy className="w-3.5 h-3.5" />
+            Duplicate
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(scene); }}
+            className="flex-1 text-xs text-gray-500 hover:text-red-600 hover:bg-red-50 py-1 rounded transition-colors flex items-center justify-center gap-1"
+            title="Delete scene"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Delete
+          </button>
+        </div>
+
         {/* Emergency Push - smaller action below */}
         <button
           onClick={() => onPushEmergency(scene)}
-          className="mt-3 w-full text-xs text-red-600 hover:text-red-700 hover:bg-red-50 py-1.5 rounded transition-colors flex items-center justify-center gap-1.5"
+          className="mt-2 w-full text-xs text-red-600 hover:text-red-700 hover:bg-red-50 py-1.5 rounded transition-colors flex items-center justify-center gap-1.5"
         >
           <AlertTriangle className="w-3.5 h-3.5" />
           Push as Emergency
@@ -246,6 +271,8 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
   const [error, setError] = useState(null);
   const [publishModalScene, setPublishModalScene] = useState(null);
   const [emergencyModalScene, setEmergencyModalScene] = useState(null);
+  const [deleteConfirmScene, setDeleteConfirmScene] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [sceneLanguages, setSceneLanguages] = useState(new Map());
@@ -320,6 +347,32 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
     }
   }
 
+  async function handleDeleteScene(scene) {
+    setIsDeleting(true);
+    try {
+      await deleteScene(scene.id);
+      onShowToast?.('Scene deleted', 'success');
+      setDeleteConfirmScene(null);
+      loadScenes(currentPage);
+    } catch (err) {
+      console.error('Error deleting scene:', err);
+      onShowToast?.('Failed to delete scene', 'error');
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
+  async function handleDuplicateScene(scene) {
+    try {
+      await duplicateScene(scene.id, userProfile.id);
+      onShowToast?.(`"${scene.name}" duplicated`, 'success');
+      loadScenes(currentPage);
+    } catch (err) {
+      console.error('Error duplicating scene:', err);
+      onShowToast?.('Failed to duplicate scene', 'error');
+    }
+  }
+
   return (
     <PageLayout>
       <PageHeader
@@ -367,6 +420,8 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
                   onOpenScene={handleOpenScene}
                   onPublish={handlePublish}
                   onPushEmergency={setEmergencyModalScene}
+                  onDelete={setDeleteConfirmScene}
+                  onDuplicate={handleDuplicateScene}
                   languages={sceneLanguages.get(scene.id) || []}
                 />
               ))}
@@ -418,6 +473,33 @@ export default function ScenesPage({ onNavigate, onShowToast, onShowAutoBuild })
         onClose={() => setEmergencyModalScene(null)}
         onShowToast={onShowToast}
       />
+
+      {/* Delete Confirmation Modal */}
+      <Modal open={!!deleteConfirmScene} onClose={() => !isDeleting && setDeleteConfirmScene(null)} size="sm">
+        <ModalHeader>
+          <ModalTitle className="flex items-center gap-2 text-red-600">
+            <Trash2 size={20} />
+            Delete Scene
+          </ModalTitle>
+        </ModalHeader>
+        <ModalContent>
+          <p className="text-sm text-gray-600">
+            Are you sure you want to delete <span className="font-medium">&quot;{deleteConfirmScene?.name}&quot;</span>? This action cannot be undone.
+          </p>
+        </ModalContent>
+        <ModalFooter>
+          <Button variant="ghost" onClick={() => setDeleteConfirmScene(null)} disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => handleDeleteScene(deleteConfirmScene)}
+            disabled={isDeleting}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            {isDeleting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Deleting...</> : <><Trash2 className="w-4 h-4 mr-2" />Delete</>}
+          </Button>
+        </ModalFooter>
+      </Modal>
     </PageLayout>
   );
 }
