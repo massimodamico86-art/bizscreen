@@ -29,7 +29,7 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Scenes & SVG Editor (SCEN)
 
-- [ ] **SCEN-01**: User can create, duplicate, and delete scenes from the scene list
+- [x] **SCEN-01**: User can create, duplicate, and delete scenes from the scene list
 - [ ] **SCEN-02**: All SVG editor tools function (text, shapes, images, layers)
 - [ ] **SCEN-03**: All SVG editor property panels work (position, style, effects, hyperlinks, crop/replace)
 - [ ] **SCEN-04**: AI Designer generates layouts and supports iterative refinement
@@ -161,7 +161,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MEDIA-02 | Phase 82 | Complete |
 | MEDIA-03 | Phase 82 | Complete |
 | MEDIA-04 | Phase 82 | Complete |
-| SCEN-01 | Phase 83 | Pending |
+| SCEN-01 | Phase 83 | Complete |
 | SCEN-02 | Phase 83 | Pending |
 | SCEN-03 | Phase 83 | Pending |
 | SCEN-04 | Phase 83 | Pending |

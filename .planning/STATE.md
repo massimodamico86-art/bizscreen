@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v7.0 UI Verification — Phase 82: Media Library
+**Current focus:** v7.0 UI Verification — Phase 83: Scene Editor AI Designer
 
 ## Current Position
 
 Phase: 83 of 90 (Scene Editor AI Designer)
-Plan: 02 — awaiting checkpoint:human-verify (Task 3)
-Status: Tasks 1 and 2 complete, paused at human verify checkpoint
-Last activity: 2026-02-23 — Phase 083 Plan 02: audit complete — unused Icon imports removed, canvasHeight dependency fixed, all panels verified correctly wired
+Plan: 01 complete
+Status: Plan 01 complete — scene delete/duplicate CRUD implemented
+Last activity: 2026-02-23 — Phase 083 Plan 01: duplicateScene added to sceneService, Delete/Duplicate buttons on SceneCard, delete confirmation modals in ScenesPage and SceneDetailPage
 
 Progress: [░░░░░░░░░░░░] 0% (v7.0 — 0/10 phases complete)
 
@@ -57,6 +57,7 @@ Recent decisions affecting v7.0:
 - [Phase 82-01]: useMediaLibrary onError already called showToast with error message — verified correct, no change needed; YodeckAddMediaModal updated with uploading/uploadProgress props for progress display
 - [Phase 82-media-library]: MediaGridCard checkbox already had correct bulk selection wiring — no changes needed; MediaListRow checkbox fixed with isBulkSelected/onToggleSelect props and stopPropagation
 - [Phase 82-04]: Filter/search audit: all wiring correct; only gap was missing empty state for typeFilter-only zero-results case — added EmptyState with Clear Filter button; combined filter+search works via hybrid approach (server-side search + client-side type filter)
+- [Phase 083-01]: SceneCard secondary action row (Duplicate/Delete) placed below primary Publish/Open buttons for visual separation of destructive actions; SceneDetailPage Delete placed first in header actions as ghost/danger variant
 
 ### Blockers/Concerns
 
@@ -67,9 +68,9 @@ Recent decisions affecting v7.0:
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: 083-02-PLAN.md Task 3 checkpoint:human-verify — SVG editor audit complete, awaiting human review
+Stopped at: Completed 083-01-PLAN.md — scene delete/duplicate CRUD complete
 Resume file: N/A
-Next: Human approves (or reports issues) on SVG editor tools/panels at Task 3 checkpoint
+Next: Continue with 083-02-PLAN.md (next plan in phase 083)
 
 ---
-*Updated: 2026-02-23 — Phase 083 Plan 02 Tasks 1-2 complete; awaiting human-verify checkpoint*
+*Updated: 2026-02-23 — Phase 083 Plan 01 complete; scene delete/duplicate CRUD implemented*
