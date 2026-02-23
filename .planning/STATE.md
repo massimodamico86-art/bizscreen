@@ -55,6 +55,7 @@ Recent decisions affecting v7.0:
 - [Phase 81]: Auth pages in src/auth/ were fully correct — no changes needed to the primary auth flow; legacy pages fixed by adding missing Alert/Button imports; all flows human-verified and approved
 - [Phase 82-media-library]: MediaDetailModal was already well-implemented — only empty-name validation was missing; added trim guard before setIsSaving in handleSave
 - [Phase 82-01]: useMediaLibrary onError already called showToast with error message — verified correct, no change needed; YodeckAddMediaModal updated with uploading/uploadProgress props for progress display
+- [Phase 82-media-library]: MediaGridCard checkbox already had correct bulk selection wiring — no changes needed; MediaListRow checkbox fixed with isBulkSelected/onToggleSelect props and stopPropagation
 
 ### Blockers/Concerns
 
