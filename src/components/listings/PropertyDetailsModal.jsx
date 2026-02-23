@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Edit, Plus } from 'lucide-react';
+import { Edit, Pencil, Plus, Trash2 } from 'lucide-react';
 import { Button, Modal } from '../../design-system';
 import { getWeather } from '../../services/weatherService';
 import { useMediaPlayback } from '../../hooks/useMediaPlayback';
@@ -32,6 +32,86 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, _lis
   const [showMusicSelector, setShowMusicSelector] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [uploadTarget, setUploadTarget] = useState({ type: null, index: null });
+
+  // Event management state
+  const [showEventForm, setShowEventForm] = useState(false);
+  const [editingEventId, setEditingEventId] = useState(null);
+  const [eventForm, setEventForm] = useState({ title: '', date: '', startTime: '', endTime: '' });
+
+  // Get today's date as YYYY-MM-DD for filtering past events
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  // Filter and sort upcoming events (hide past)
+  const upcomingEvents = (formData.upcomingEvents || [])
+    .filter(evt => evt.date >= todayStr)
+    .sort((a, b) => a.date.localeCompare(b.date) || (a.startTime || '').localeCompare(b.startTime || ''));
+
+  const handleAddEvent = () => {
+    setEditingEventId(null);
+    setEventForm({ title: '', date: '', startTime: '', endTime: '' });
+    setShowEventForm(true);
+  };
+
+  const handleEditEvent = (evt) => {
+    setEditingEventId(evt.id);
+    setEventForm({ title: evt.title, date: evt.date, startTime: evt.startTime || '', endTime: evt.endTime || '' });
+    setShowEventForm(true);
+  };
+
+  const handleSaveEvent = () => {
+    if (!eventForm.title.trim() || !eventForm.date) return;
+
+    const events = formData.upcomingEvents || [];
+
+    if (editingEventId) {
+      // Update existing
+      const updated = events.map(evt =>
+        evt.id === editingEventId
+          ? { ...evt, title: eventForm.title.trim(), date: eventForm.date, startTime: eventForm.startTime || null, endTime: eventForm.endTime || null }
+          : evt
+      );
+      setFormData({ ...formData, upcomingEvents: updated });
+    } else {
+      // Add new
+      const newEvent = {
+        id: Date.now().toString(),
+        title: eventForm.title.trim(),
+        date: eventForm.date,
+        startTime: eventForm.startTime || null,
+        endTime: eventForm.endTime || null
+      };
+      setFormData({ ...formData, upcomingEvents: [...events, newEvent] });
+    }
+
+    setShowEventForm(false);
+    setEditingEventId(null);
+    setEventForm({ title: '', date: '', startTime: '', endTime: '' });
+  };
+
+  const handleCancelEventForm = () => {
+    setShowEventForm(false);
+    setEditingEventId(null);
+    setEventForm({ title: '', date: '', startTime: '', endTime: '' });
+  };
+
+  const handleDeleteEvent = (eventId) => {
+    const events = (formData.upcomingEvents || []).filter(evt => evt.id !== eventId);
+    setFormData({ ...formData, upcomingEvents: events });
+  };
+
+  const formatEventDate = (dateStr) => {
+    const date = new Date(dateStr + 'T00:00:00');
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  const formatEventTime = (timeStr) => {
+    if (!timeStr) return null;
+    const [h, m] = timeStr.split(':');
+    const hour = parseInt(h, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${m} ${ampm}`;
+  };
 
   // Weather data state
   const [weatherData, setWeatherData] = useState(null);
@@ -709,19 +789,161 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, _lis
               {/* QR codes - Full width with table */}
               <QRCodeManager formData={formData} setFormData={setFormData} showToast={showToast} />
 
-              {/* Upcoming events info */}
-              <div className="border rounded-lg p-4 bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-600">
-                    You can see upcoming events and recommendations in Layout 2 and 4
-                  </p>
+              {/* Upcoming Events */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold">Upcoming Events</h3>
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => showToast('Add upcoming events feature coming soon!')}
+                    onClick={handleAddEvent}
                   >
-                    <Plus size={14} /> Add New
+                    <Plus size={14} /> Add Event
                   </Button>
+                </div>
+                <p className="text-xs text-gray-500 mb-3">Events display on Layout 2 and 4</p>
+
+                {/* Add/Edit Event Inline Form */}
+                {showEventForm && !editingEventId && (
+                  <div className="border rounded-lg p-3 mb-3 bg-gray-50 space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Title *</label>
+                      <input
+                        type="text"
+                        value={eventForm.title}
+                        onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
+                        placeholder="Event title"
+                        className="w-full px-3 py-2 border rounded-lg text-sm"
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Date *</label>
+                        <input
+                          type="date"
+                          value={eventForm.date}
+                          min={todayStr}
+                          onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
+                          className="w-full px-3 py-2 border rounded-lg text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Start time</label>
+                        <input
+                          type="time"
+                          value={eventForm.startTime}
+                          onChange={(e) => setEventForm({ ...eventForm, startTime: e.target.value })}
+                          className="w-full px-3 py-2 border rounded-lg text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">End time</label>
+                        <input
+                          type="time"
+                          value={eventForm.endTime}
+                          onChange={(e) => setEventForm({ ...eventForm, endTime: e.target.value })}
+                          className="w-full px-3 py-2 border rounded-lg text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <Button size="sm" variant="outline" onClick={handleCancelEventForm}>Cancel</Button>
+                      <Button size="sm" onClick={handleSaveEvent} disabled={!eventForm.title.trim() || !eventForm.date}>Save</Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Event List */}
+                {upcomingEvents.length === 0 && !showEventForm && (
+                  <p className="text-sm text-gray-400 py-4 text-center">No upcoming events</p>
+                )}
+
+                <div className="divide-y">
+                  {upcomingEvents.map((evt) => (
+                    <div key={evt.id}>
+                      {/* Inline edit form for this event */}
+                      {editingEventId === evt.id && showEventForm ? (
+                        <div className="py-3 space-y-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Title *</label>
+                            <input
+                              type="text"
+                              value={eventForm.title}
+                              onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
+                              placeholder="Event title"
+                              className="w-full px-3 py-2 border rounded-lg text-sm"
+                            />
+                          </div>
+                          <div className="grid grid-cols-3 gap-2">
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Date *</label>
+                              <input
+                                type="date"
+                                value={eventForm.date}
+                                min={todayStr}
+                                onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
+                                className="w-full px-3 py-2 border rounded-lg text-sm"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Start time</label>
+                              <input
+                                type="time"
+                                value={eventForm.startTime}
+                                onChange={(e) => setEventForm({ ...eventForm, startTime: e.target.value })}
+                                className="w-full px-3 py-2 border rounded-lg text-sm"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">End time</label>
+                              <input
+                                type="time"
+                                value={eventForm.endTime}
+                                onChange={(e) => setEventForm({ ...eventForm, endTime: e.target.value })}
+                                className="w-full px-3 py-2 border rounded-lg text-sm"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex gap-2 justify-end">
+                            <Button size="sm" variant="outline" onClick={handleCancelEventForm}>Cancel</Button>
+                            <Button size="sm" onClick={handleSaveEvent} disabled={!eventForm.title.trim() || !eventForm.date}>Save</Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="py-3 flex items-center justify-between group">
+                          <div>
+                            <div className="text-sm font-medium">{evt.title}</div>
+                            <div className="text-xs text-gray-500">
+                              {formatEventDate(evt.date)}
+                              {(evt.startTime || evt.endTime) && (
+                                <span className="ml-2">
+                                  {formatEventTime(evt.startTime)}
+                                  {evt.startTime && evt.endTime && ' - '}
+                                  {formatEventTime(evt.endTime)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => handleEditEvent(evt)}
+                              className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+                              title="Edit event"
+                            >
+                              <Pencil size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEvent(evt.id)}
+                              className="p-1.5 rounded hover:bg-red-50 text-gray-500 hover:text-red-600 transition-colors"
+                              title="Delete event"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
 
