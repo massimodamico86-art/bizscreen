@@ -150,74 +150,74 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase ? | Pending |
-| AUTH-02 | Phase ? | Pending |
-| AUTH-03 | Phase ? | Pending |
-| AUTH-04 | Phase ? | Pending |
-| AUTH-05 | Phase ? | Pending |
-| DASH-01 | Phase ? | Pending |
-| DASH-02 | Phase ? | Pending |
-| MEDIA-01 | Phase ? | Pending |
-| MEDIA-02 | Phase ? | Pending |
-| MEDIA-03 | Phase ? | Pending |
-| MEDIA-04 | Phase ? | Pending |
-| SCEN-01 | Phase ? | Pending |
-| SCEN-02 | Phase ? | Pending |
-| SCEN-03 | Phase ? | Pending |
-| SCEN-04 | Phase ? | Pending |
-| SCEN-05 | Phase ? | Pending |
-| PLAY-01 | Phase ? | Pending |
-| PLAY-02 | Phase ? | Pending |
-| PLAY-03 | Phase ? | Pending |
-| LAYT-01 | Phase ? | Pending |
-| LAYT-02 | Phase ? | Pending |
-| LAYT-03 | Phase ? | Pending |
-| LAYT-04 | Phase ? | Pending |
-| TMPL-01 | Phase ? | Pending |
-| TMPL-02 | Phase ? | Pending |
-| SCHED-01 | Phase ? | Pending |
-| SCHED-02 | Phase ? | Pending |
-| SCHED-03 | Phase ? | Pending |
-| CAMP-01 | Phase ? | Pending |
-| CAMP-02 | Phase ? | Pending |
-| CAMP-03 | Phase ? | Pending |
-| SCRN-01 | Phase ? | Pending |
-| SCRN-02 | Phase ? | Pending |
-| SCRN-03 | Phase ? | Pending |
-| SCRN-04 | Phase ? | Pending |
-| SCRN-05 | Phase ? | Pending |
-| DATA-01 | Phase ? | Pending |
-| DATA-02 | Phase ? | Pending |
-| DATA-03 | Phase ? | Pending |
-| MODQ-01 | Phase ? | Pending |
-| MODQ-02 | Phase ? | Pending |
-| ANLYT-01 | Phase ? | Pending |
-| ANLYT-02 | Phase ? | Pending |
-| ANLYT-03 | Phase ? | Pending |
-| ANLYT-04 | Phase ? | Pending |
-| ALRT-01 | Phase ? | Pending |
-| ALRT-02 | Phase ? | Pending |
-| SET-01 | Phase ? | Pending |
-| SET-02 | Phase ? | Pending |
-| SET-03 | Phase ? | Pending |
-| SET-04 | Phase ? | Pending |
-| SET-05 | Phase ? | Pending |
-| ADMIN-01 | Phase ? | Pending |
-| ADMIN-02 | Phase ? | Pending |
-| ADMIN-03 | Phase ? | Pending |
-| ADMIN-04 | Phase ? | Pending |
-| RESELL-01 | Phase ? | Pending |
-| RESELL-02 | Phase ? | Pending |
-| RESELL-03 | Phase ? | Pending |
-| HELP-01 | Phase ? | Pending |
-| HELP-02 | Phase ? | Pending |
-| LEGC-01 | Phase ? | Pending |
+| AUTH-01 | Phase 81 | Pending |
+| AUTH-02 | Phase 81 | Pending |
+| AUTH-03 | Phase 81 | Pending |
+| AUTH-04 | Phase 81 | Pending |
+| AUTH-05 | Phase 81 | Pending |
+| DASH-01 | Phase 81 | Pending |
+| DASH-02 | Phase 81 | Pending |
+| MEDIA-01 | Phase 82 | Pending |
+| MEDIA-02 | Phase 82 | Pending |
+| MEDIA-03 | Phase 82 | Pending |
+| MEDIA-04 | Phase 82 | Pending |
+| SCEN-01 | Phase 83 | Pending |
+| SCEN-02 | Phase 83 | Pending |
+| SCEN-03 | Phase 83 | Pending |
+| SCEN-04 | Phase 83 | Pending |
+| SCEN-05 | Phase 83 | Pending |
+| PLAY-01 | Phase 84 | Pending |
+| PLAY-02 | Phase 84 | Pending |
+| PLAY-03 | Phase 84 | Pending |
+| LAYT-01 | Phase 84 | Pending |
+| LAYT-02 | Phase 84 | Pending |
+| LAYT-03 | Phase 84 | Pending |
+| LAYT-04 | Phase 84 | Pending |
+| TMPL-01 | Phase 84 | Pending |
+| TMPL-02 | Phase 84 | Pending |
+| SCHED-01 | Phase 85 | Pending |
+| SCHED-02 | Phase 85 | Pending |
+| SCHED-03 | Phase 85 | Pending |
+| CAMP-01 | Phase 85 | Pending |
+| CAMP-02 | Phase 85 | Pending |
+| CAMP-03 | Phase 85 | Pending |
+| SCRN-01 | Phase 86 | Pending |
+| SCRN-02 | Phase 86 | Pending |
+| SCRN-03 | Phase 86 | Pending |
+| SCRN-04 | Phase 86 | Pending |
+| SCRN-05 | Phase 86 | Pending |
+| DATA-01 | Phase 87 | Pending |
+| DATA-02 | Phase 87 | Pending |
+| DATA-03 | Phase 87 | Pending |
+| MODQ-01 | Phase 87 | Pending |
+| MODQ-02 | Phase 87 | Pending |
+| ANLYT-01 | Phase 88 | Pending |
+| ANLYT-02 | Phase 88 | Pending |
+| ANLYT-03 | Phase 88 | Pending |
+| ANLYT-04 | Phase 88 | Pending |
+| ALRT-01 | Phase 88 | Pending |
+| ALRT-02 | Phase 88 | Pending |
+| SET-01 | Phase 89 | Pending |
+| SET-02 | Phase 89 | Pending |
+| SET-03 | Phase 89 | Pending |
+| SET-04 | Phase 89 | Pending |
+| SET-05 | Phase 89 | Pending |
+| ADMIN-01 | Phase 90 | Pending |
+| ADMIN-02 | Phase 90 | Pending |
+| ADMIN-03 | Phase 90 | Pending |
+| ADMIN-04 | Phase 90 | Pending |
+| RESELL-01 | Phase 90 | Pending |
+| RESELL-02 | Phase 90 | Pending |
+| RESELL-03 | Phase 90 | Pending |
+| HELP-01 | Phase 90 | Pending |
+| HELP-02 | Phase 90 | Pending |
+| LEGC-01 | Phase 90 | Pending |
 
 **Coverage:**
 - v7 requirements: 57 total
-- Mapped to phases: 0
-- Unmapped: 57 ⚠️
+- Mapped to phases: 57
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-23*
-*Last updated: 2026-02-23 after initial v7.0 definition*
+*Last updated: 2026-02-23 — traceability complete, all 57 requirements mapped to phases 81-90*
