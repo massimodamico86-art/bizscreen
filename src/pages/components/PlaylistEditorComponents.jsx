@@ -1,25 +1,27 @@
 import {
-  Image,
-  Video,
-  Music,
+  BookmarkPlus,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  ExternalLink,
   FileText,
   Globe,
   Grid3X3,
-  Palette,
   GripVertical,
-  X,
-  Minus,
-  Plus,
-  Wand2,
-  Sparkles,
-  Check,
-  Loader2,
-  Send,
+  Image,
   Link2,
-  Copy,
-  ExternalLink,
+  Loader2,
+  Minus,
+  Music,
+  Palette,
+  Plus,
+  Send,
+  Sparkles,
   Trash2,
-  BookmarkPlus,
+  Video,
+  Wand2,
+  X,
 } from 'lucide-react';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
@@ -40,7 +42,7 @@ const MEDIA_TYPE_ICONS = {
 };
 
 // Timeline item component - duration-based width with drag support
-export const PlaylistStripItem = ({ item, index, onRemove, onUpdateDuration, getEffectiveDuration, onDragStart, onDragEnd, onDragOver, onDrop, isDragOver, isDragging, minDuration = 5, maxDuration = 30 }) => {
+export const PlaylistStripItem = ({ item, index, totalItems, onRemove, onUpdateDuration, getEffectiveDuration, onMoveUp, onMoveDown, onDragStart, onDragEnd, onDragOver, onDrop, isDragOver, isDragging, minDuration = 5, maxDuration = 30 }) => {
   const TypeIcon = MEDIA_TYPE_ICONS[item.media?.type] || Image;
   const duration = getEffectiveDuration(item);
 
@@ -122,10 +124,29 @@ export const PlaylistStripItem = ({ item, index, onRemove, onUpdateDuration, get
           <div className="absolute top-1 left-1 p-0.5 bg-black/40 rounded cursor-grab active:cursor-grabbing">
             <GripVertical size={10} className="text-white" />
           </div>
+          {/* Up/Down arrow buttons - center left, visible on hover */}
+          <div className="absolute top-1/2 -translate-y-1/2 right-1 flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={(e) => { e.stopPropagation(); onMoveUp?.(index); }}
+              disabled={index === 0}
+              className="w-4 h-4 bg-black/50 hover:bg-black/70 disabled:opacity-30 rounded flex items-center justify-center text-white transition-colors"
+              title="Move up"
+            >
+              <ChevronUp size={10} />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); onMoveDown?.(index); }}
+              disabled={index >= (totalItems || 1) - 1}
+              className="w-4 h-4 bg-black/50 hover:bg-black/70 disabled:opacity-30 rounded flex items-center justify-center text-white transition-colors"
+              title="Move down"
+            >
+              <ChevronDown size={10} />
+            </button>
+          </div>
           {/* Remove button - top right */}
           <button
             onClick={(e) => { e.stopPropagation(); onRemove(item.id); }}
-            className="absolute top-1 right-1 w-4 h-4 bg-black/40 hover:bg-red-500 rounded-full flex items-center justify-center text-white hover:text-white transition-colors"
+            className="absolute top-1 right-6 w-4 h-4 bg-black/40 hover:bg-red-500 rounded-full flex items-center justify-center text-white hover:text-white transition-colors opacity-0 group-hover:opacity-100"
           >
             <X size={10} />
           </button>

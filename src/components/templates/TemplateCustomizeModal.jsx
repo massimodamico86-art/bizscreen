@@ -8,7 +8,14 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Package, List, Layout, AlertCircle, Loader2, Sparkles } from 'lucide-react';
+import {
+  AlertCircle,
+  Layout,
+  List,
+  Loader2,
+  Package,
+  Sparkles,
+} from 'lucide-react';
 import {
   Modal,
   ModalHeader,

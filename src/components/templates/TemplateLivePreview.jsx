@@ -8,7 +8,15 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Package, List, Layout, Image, Video, Play, Loader2 } from 'lucide-react';
+import {
+  Image,
+  Layout,
+  List,
+  Loader2,
+  Package,
+  Play,
+  Video,
+} from 'lucide-react';
 
 /**
  * Layout zone preview - shows the zone arrangement

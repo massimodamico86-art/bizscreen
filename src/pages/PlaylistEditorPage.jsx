@@ -1,5 +1,21 @@
-import { useCallback } from 'react';
-import { Check, ChevronRight, Folder, FolderOpen, Home, Pause, Play, Plus, Search, Send, SkipBack, SkipForward } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import {
+  Check,
+  ChevronRight,
+  Folder,
+  FolderOpen,
+  Grid3X3,
+  Home,
+  Pause,
+  Pencil,
+  Play,
+  Plus,
+  Search,
+  Send,
+  Settings,
+  SkipBack,
+  SkipForward,
+} from 'lucide-react';
 
 import { Button } from '../design-system';
 import { usePlaylistEditor } from './hooks';
@@ -114,6 +130,10 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     handleRevokePreviewLink,
     handleCopyLink,
     handleSaveAsTemplate,
+    handleMoveItemUp,
+    handleMoveItemDown,
+    handleUpdateTransitionEffect,
+    handleUpdatePlaylistName,
     getEffectiveDuration,
     getTotalDuration,
     startPlayback,
@@ -121,6 +141,35 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     skipToNext,
     skipToPrev,
   } = usePlaylistEditor(playlistId, { showToast });
+
+  // Local state for rename inline editing
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
+
+  const TRANSITION_OPTIONS = [
+    { value: 'none', label: 'None' },
+    { value: 'fade', label: 'Fade' },
+    { value: 'slide', label: 'Slide' },
+    { value: 'dissolve', label: 'Dissolve' },
+  ];
+
+  const handleStartRename = useCallback(() => {
+    setRenameValue(playlist?.name || '');
+    setIsRenaming(true);
+  }, [playlist]);
+
+  const handleConfirmRename = useCallback(() => {
+    if (renameValue.trim() && renameValue.trim() !== playlist?.name) {
+      handleUpdatePlaylistName(renameValue.trim());
+    }
+    setIsRenaming(false);
+  }, [renameValue, playlist, handleUpdatePlaylistName]);
+
+  const handleCancelRename = useCallback(() => {
+    setIsRenaming(false);
+    setRenameValue('');
+  }, []);
 
   const formatDuration = useCallback((seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -152,7 +201,39 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
       {/* Editor header with save status */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg font-semibold text-gray-900">{playlist?.name || 'Untitled Playlist'}</h1>
+          {isRenaming ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleConfirmRename();
+                  if (e.key === 'Escape') handleCancelRename();
+                }}
+                className="text-lg font-semibold text-gray-900 border border-gray-300 rounded px-2 py-0.5 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                autoFocus
+              />
+              <button
+                onClick={handleConfirmRename}
+                className="p-1 text-green-600 hover:bg-green-50 rounded"
+                title="Confirm rename"
+              >
+                <Check size={16} />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 group/name">
+              <h1 className="text-lg font-semibold text-gray-900">{playlist?.name || 'Untitled Playlist'}</h1>
+              <button
+                onClick={handleStartRename}
+                className="p-1 text-gray-400 hover:text-gray-600 opacity-0 group-hover/name:opacity-100 transition-opacity rounded"
+                title="Rename playlist"
+              >
+                <Pencil size={14} />
+              </button>
+            </div>
+          )}
           {saving ? (
             <span className="text-xs bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full flex items-center gap-1.5">
               <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
@@ -166,6 +247,34 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
           )}
         </div>
         <div className="flex items-center gap-2">
+          {/* Transition effect setting */}
+          <div className="relative">
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className={`p-2 rounded-lg transition-colors ${showSettings ? 'bg-gray-100 text-gray-800' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}
+              title="Playlist settings"
+            >
+              <Settings size={18} />
+            </button>
+            {showSettings && (
+              <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-20 w-56">
+                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Transition Effect</h4>
+                <select
+                  value={playlist?.transition_effect || 'none'}
+                  onChange={(e) => {
+                    handleUpdateTransitionEffect(e.target.value);
+                    setShowSettings(false);
+                  }}
+                  className="w-full px-2.5 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                >
+                  {TRANSITION_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-400 mt-1.5">Effect between playlist items</p>
+              </div>
+            )}
+          </div>
           <Button
             size="sm"
             onClick={() => onNavigate?.('playlists')}
@@ -470,9 +579,12 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
               <PlaylistStripItem
                 item={item}
                 index={index}
+                totalItems={items.length}
                 onRemove={handleRemoveItem}
                 onUpdateDuration={handleUpdateDuration}
                 getEffectiveDuration={getEffectiveDuration}
+                onMoveUp={handleMoveItemUp}
+                onMoveDown={handleMoveItemDown}
                 onDragStart={handleTimelineDragStart}
                 onDragEnd={handleTimelineDragEnd}
                 onDragOver={handleTimelineDragOver}

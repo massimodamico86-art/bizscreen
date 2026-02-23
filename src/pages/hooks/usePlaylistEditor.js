@@ -508,6 +508,115 @@ export function usePlaylistEditor(playlistId, { showToast }) {
   }, []);
 
   // ============================================================
+  // Arrow Button Reorder Handlers (Accessibility)
+  // ============================================================
+
+  const handleMoveItemUp = useCallback(async (index) => {
+    if (index <= 0) return; // Already at the top
+
+    const newItems = [...items];
+    const temp = newItems[index];
+    newItems[index] = newItems[index - 1];
+    newItems[index - 1] = temp;
+
+    const updatedItems = newItems.map((item, idx) => ({ ...item, position: idx }));
+    setItems(updatedItems);
+
+    // Persist to database
+    try {
+      setSaving(true);
+      await Promise.all(
+        updatedItems.map(item =>
+          supabase
+            .from('playlist_items')
+            .update({ position: item.position })
+            .eq('id', item.id)
+        )
+      );
+    } catch (error) {
+      logger.error('Error moving item up', { error, index });
+      showToast?.('Error saving order', 'error');
+      fetchPlaylist();
+    } finally {
+      setSaving(false);
+    }
+  }, [items, showToast, fetchPlaylist]);
+
+  const handleMoveItemDown = useCallback(async (index) => {
+    if (index >= items.length - 1) return; // Already at the bottom
+
+    const newItems = [...items];
+    const temp = newItems[index];
+    newItems[index] = newItems[index + 1];
+    newItems[index + 1] = temp;
+
+    const updatedItems = newItems.map((item, idx) => ({ ...item, position: idx }));
+    setItems(updatedItems);
+
+    // Persist to database
+    try {
+      setSaving(true);
+      await Promise.all(
+        updatedItems.map(item =>
+          supabase
+            .from('playlist_items')
+            .update({ position: item.position })
+            .eq('id', item.id)
+        )
+      );
+    } catch (error) {
+      logger.error('Error moving item down', { error, index });
+      showToast?.('Error saving order', 'error');
+      fetchPlaylist();
+    } finally {
+      setSaving(false);
+    }
+  }, [items, showToast, fetchPlaylist]);
+
+  // ============================================================
+  // Playlist Settings Handlers
+  // ============================================================
+
+  const handleUpdateTransitionEffect = useCallback(async (effect) => {
+    try {
+      setSaving(true);
+      const { error } = await supabase
+        .from('playlists')
+        .update({ transition_effect: effect })
+        .eq('id', playlistId);
+
+      if (error) throw error;
+
+      setPlaylist(prev => prev ? { ...prev, transition_effect: effect } : prev);
+    } catch (error) {
+      logger.error('Error updating transition effect', { error, playlistId, effect });
+      showToast?.('Error saving transition effect', 'error');
+    } finally {
+      setSaving(false);
+    }
+  }, [playlistId, showToast]);
+
+  const handleUpdatePlaylistName = useCallback(async (newName) => {
+    if (!newName.trim()) return;
+    try {
+      setSaving(true);
+      const { error } = await supabase
+        .from('playlists')
+        .update({ name: newName.trim() })
+        .eq('id', playlistId);
+
+      if (error) throw error;
+
+      setPlaylist(prev => prev ? { ...prev, name: newName.trim() } : prev);
+    } catch (error) {
+      logger.error('Error updating playlist name', { error, playlistId, newName });
+      showToast?.('Error renaming playlist', 'error');
+    } finally {
+      setSaving(false);
+    }
+  }, [playlistId, showToast]);
+
+  // ============================================================
   // Drag and Drop Handlers
   // ============================================================
 
@@ -1146,6 +1255,12 @@ export function usePlaylistEditor(playlistId, { showToast }) {
     handleAddItem,
     handleRemoveItem,
     handleUpdateDuration,
+    handleMoveItemUp,
+    handleMoveItemDown,
+
+    // Actions - playlist settings
+    handleUpdateTransitionEffect,
+    handleUpdatePlaylistName,
 
     // Actions - drag and drop
     handleTimelineDragStart,

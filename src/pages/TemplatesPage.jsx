@@ -8,27 +8,27 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  LayoutTemplate,
-  Utensils,
-  Scissors,
-  Dumbbell,
-  ShoppingBag,
   Building2,
-  Star,
-  Search,
-  X,
-  Clock,
-  Package,
-  List,
-  Layout,
-  Heart,
-  Sparkles,
+  Check,
   ChevronLeft,
   ChevronRight,
-  Loader2,
-  Check,
-  Info,
+  Clock,
+  Dumbbell,
   ExternalLink,
+  Heart,
+  Info,
+  Layout,
+  LayoutTemplate,
+  List,
+  Loader2,
+  Package,
+  Scissors,
+  Search,
+  ShoppingBag,
+  Sparkles,
+  Star,
+  Utensils,
+  X,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -61,7 +61,6 @@ import { canEditContent } from '../services/permissionsService';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
-
 
 import {
   useTemplatePreview,
@@ -764,7 +763,16 @@ const TemplatesPage = ({ showToast }) => {
           <EmptyState
             icon={LayoutTemplate}
             title={t('templates.noTemplatesFound', 'No templates found')}
-            description={t('templates.adjustFilters', 'Try adjusting your filters to see more templates.')}
+            description={
+              debouncedSearch
+                ? t('templates.noSearchResults', 'No templates match "{{query}}". Try a different search term or clear your search.', { query: debouncedSearch })
+                : t('templates.adjustFilters', 'Try adjusting your filters to see more templates.')
+            }
+            action={debouncedSearch ? (
+              <Button variant="secondary" onClick={handleSearchClear}>
+                {t('common.clearSearch', 'Clear Search')}
+              </Button>
+            ) : undefined}
           />
         )}
 
