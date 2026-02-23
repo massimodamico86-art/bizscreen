@@ -121,7 +121,11 @@ Plans:
   3. All property panels (position, style, effects, hyperlinks, image crop/replace) apply changes that persist on save
   4. AI Designer accepts a text prompt, generates a layout, and supports at least one iterative refinement
   5. All five cloud import providers (Google Drive, Dropbox, OneDrive, SharePoint, Google Photos) open a file picker and insert the selected file into the editor
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 083-01-PLAN.md — Scene CRUD: add delete and duplicate to ScenesPage and SceneDetailPage
+- [ ] 083-02-PLAN.md — SVG editor tools and property panels audit and fix (human checkpoint)
+- [ ] 083-03-PLAN.md — AI suggestions panel and cloud imports into SVG editor LeftSidebar (human checkpoint)
 
 ### Phase 84: Playlists, Layouts & Templates
 **Goal**: Users can build and configure playlists, layout canvases with all 12 widget types, and apply templates from both the layout template library and the marketplace
@@ -213,7 +217,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 81. Authentication & Dashboard | 2/2 | Complete    | 2026-02-23 |
 | 82. Media Library | 4/4 | Complete    | 2026-02-23 |
-| 83. Scene Editor & AI Designer | 0/TBD | Not started | - |
+| 83. Scene Editor & AI Designer | 0/3 | Not started | - |
 | 84. Playlists, Layouts & Templates | 0/TBD | Not started | - |
 | 85. Scheduling & Campaigns | 0/TBD | Not started | - |
 | 86. Screen Management | 0/TBD | Not started | - |
