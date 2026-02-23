@@ -752,8 +752,9 @@ export default function FabricSvgEditor({
     if (!canvas || !selectedObject) return;
     canvas.bringObjectForward(selectedObject);
     canvas.renderAll();
+    syncCanvasObjects();
     setHasUnsavedChanges(true);
-  }, [selectedObject]);
+  }, [selectedObject, syncCanvasObjects]);
 
   // Send backward (one step)
   const handleSendBackward = useCallback(() => {
@@ -761,8 +762,9 @@ export default function FabricSvgEditor({
     if (!canvas || !selectedObject) return;
     canvas.sendObjectBackwards(selectedObject);
     canvas.renderAll();
+    syncCanvasObjects();
     setHasUnsavedChanges(true);
-  }, [selectedObject]);
+  }, [selectedObject, syncCanvasObjects]);
 
   // Context menu handler
   const handleContextMenu = useCallback((e) => {
@@ -2506,8 +2508,9 @@ export default function FabricSvgEditor({
 
     canvas.bringObjectToFront(selectedObject);
     canvas.renderAll();
+    syncCanvasObjects();
     setHasUnsavedChanges(true);
-  }, [selectedObject]);
+  }, [selectedObject, syncCanvasObjects]);
 
   // Send to back
   const handleSendToBack = useCallback(() => {
@@ -2516,8 +2519,9 @@ export default function FabricSvgEditor({
 
     canvas.sendObjectToBack(selectedObject);
     canvas.renderAll();
+    syncCanvasObjects();
     setHasUnsavedChanges(true);
-  }, [selectedObject]);
+  }, [selectedObject, syncCanvasObjects]);
 
   // Save design
   const handleSave = useCallback(async () => {
