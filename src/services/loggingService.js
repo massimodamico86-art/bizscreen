@@ -105,7 +105,7 @@ function shouldSample(level) {
  * @param data
  */
 function createLogEntry(level, message, data = {}) {
-  const { error, ...rest } = data;
+  const { error, ...rest } = data || {};
 
   // Apply PII redaction to message
   const redactedMessage = redactPII(message);

@@ -73,9 +73,8 @@ export default function SvgEditorPage({
       setLoading(true);
       setError(null);
 
-      logger.debug('SvgEditorPage loadContent - designId:', urlDesignId, 'templateId:', urlTemplateId);
-
       try {
+        logger.debug('SvgEditorPage loadContent', { designId: urlDesignId, templateId: urlTemplateId });
         // Check for existing design ID
         if (urlDesignId) {
           logger.debug('Loading existing design:', urlDesignId);
