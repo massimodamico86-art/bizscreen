@@ -90,7 +90,10 @@ All milestones shipped successfully.
   3. User can reset their password via the forgot-password email flow
   4. User can accept a team invitation and complete account setup
   5. Dashboard loads all widgets, quick actions navigate correctly, and no JS errors appear in the console
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 81-01-PLAN.md — Auth flow audit and fix (login, signup, reset, update-password, accept-invite)
+- [ ] 81-02-PLAN.md — Dashboard verification and fix (widgets, quick action navigation, console errors)
 
 ### Phase 82: Media Library
 **Goal**: The media library supports the full file management lifecycle with no broken interactions
@@ -203,7 +206,7 @@ All milestones shipped successfully.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 81. Authentication & Dashboard | 0/TBD | Not started | - |
+| 81. Authentication & Dashboard | 0/2 | Planned | - |
 | 82. Media Library | 0/TBD | Not started | - |
 | 83. Scene Editor & AI Designer | 0/TBD | Not started | - |
 | 84. Playlists, Layouts & Templates | 0/TBD | Not started | - |
