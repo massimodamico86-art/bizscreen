@@ -153,10 +153,11 @@ Plans:
   2. User can add, edit, and remove upcoming events on a property detail page
   3. User can browse and insert graphics from a sidebar library panel in the layout editor
   4. User can view media play counts and playlist performance over time on the content detail analytics page
-**Plans**: 2 plans
+**Plans**: 3 plans
 Plans:
 - [ ] 77-01-PLAN.md -- Video upload in carousel media manager and property events management
 - [ ] 77-02-PLAN.md -- Graphics library in layout editor sidebar and content analytics timeline
+- [ ] 77-03-PLAN.md -- Gap closure: wire Cloudinary upload, format/duration validation, and mute toggle into MediaSection
 
 ### Phase 78: Platform Wiring
 **Goal**: Users can manage their payment method and edit app configurations without leaving the platform
