@@ -14,6 +14,7 @@
  * @property {string} id - Unique identifier for the media item
  * @property {string} url - URL to the media file
  * @property {'predefined' | 'uploaded'} source - Source of the media item
+ * @property {boolean} [muted] - Whether this video item is muted (video items only, default: true)
  */
 
 /**
@@ -44,7 +45,8 @@ export const MEDIA_CONSTRAINTS = {
   IMAGE_ROTATION_INTERVAL_DEFAULT: 10,
   MAX_UPLOADED_IMAGES: 10,
   MAX_VIDEO_SIZE_MB: 40,
-  ALLOWED_VIDEO_FORMATS: ['.mp4', '.mov', '.mkv', '.webm'],
+  ALLOWED_VIDEO_FORMATS: ['.mp4', '.webm'],
+  MAX_VIDEO_DURATION_SECONDS: 120,
   IMAGE_ASPECT_RATIOS: ['3:2', '2.3:1']
 };
 
