@@ -137,7 +137,11 @@ Plans:
   3. All 12 widget types render their configuration controls correctly in the layout editor zone properties panel
   4. Layout templates can be browsed, previewed, and applied to create a new layout
   5. Template marketplace search, filter, preview, one-click apply, and customization wizard all complete without errors
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 84-01-PLAN.md — Playlist CRUD and editor (create/rename/delete, add/reorder/remove items, duration/transition settings)
+- [ ] 84-02-PLAN.md — Layout editor zones and layout templates (zone CRUD, all 12 widget controls, template browse/apply)
+- [ ] 84-03-PLAN.md — Template marketplace (search, filter, preview, one-click apply, customization wizard)
 
 ### Phase 85: Scheduling & Campaigns
 **Goal**: Users can build schedules with time/day rules, see conflict warnings, configure dayparting, and manage campaigns end-to-end
@@ -218,7 +222,7 @@ Plans:
 | 81. Authentication & Dashboard | 2/2 | Complete    | 2026-02-23 |
 | 82. Media Library | 4/4 | Complete    | 2026-02-23 |
 | 83. Scene Editor & AI Designer | 0/3 | Not started | - |
-| 84. Playlists, Layouts & Templates | 0/TBD | Not started | - |
+| 84. Playlists, Layouts & Templates | 0/3 | Not started | - |
 | 85. Scheduling & Campaigns | 0/TBD | Not started | - |
 | 86. Screen Management | 0/TBD | Not started | - |
 | 87. Data Sources, Apps & Moderation | 0/TBD | Not started | - |
