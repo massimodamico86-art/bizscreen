@@ -1,3 +1,14 @@
+import {
+  CheckSquare,
+  Download,
+  FolderInput,
+  ListPlus,
+  Loader2,
+  Square,
+  Tag,
+  Trash2,
+  X,
+} from 'lucide-react';
 /**
  * Bulk Action Bar (US-157)
  *
