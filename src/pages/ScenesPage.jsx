@@ -36,6 +36,7 @@ import { pushEmergencyContent, EMERGENCY_DURATIONS } from '../services/emergency
 import { useAuth } from '../contexts/AuthContext';
 import { fetchScenesWithDeviceCounts, deleteScene, duplicateScene } from '../services/sceneService';
 import { getAvailableLanguagesForScene } from '../services/languageService';
+import PublishSceneModal from '../components/scenes/PublishSceneModal';
 import {
   Card,
   CardContent,
