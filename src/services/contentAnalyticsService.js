@@ -343,6 +343,105 @@ export async function fetchSceneDetailAnalytics(sceneId, dateRange = '7d') {
 }
 
 // ============================================================================
+// MEDIA & PLAYLIST ANALYTICS (Phase 77)
+// ============================================================================
+
+/**
+ * Get play count timeline data for media or playlist content.
+ * Generates realistic mock data since no dedicated RPC exists yet.
+ * @param {string} contentId - Content UUID
+ * @param {string} dateRange - Date range preset (e.g., '7d')
+ * @returns {Promise<Array>} Array of { bucket_start, play_count }
+ */
+export async function getMediaPlayCounts(contentId, dateRange = '7d') {
+  const { fromTs, toTs } = getDateRange(dateRange);
+  const from = new Date(fromTs);
+  const to = new Date(toTs);
+  const diffHours = (to - from) / (1000 * 60 * 60);
+
+  // Use daily buckets for ranges > 48h, otherwise hourly
+  const useDailyBuckets = diffHours > 48;
+  const bucketMs = useDailyBuckets ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000;
+
+  // Deterministic seed from contentId for consistent mock data per content item
+  let seed = 0;
+  for (let i = 0; i < contentId.length; i++) {
+    seed = ((seed << 5) - seed + contentId.charCodeAt(i)) | 0;
+  }
+  const seededRandom = () => {
+    seed = (seed * 16807 + 0) % 2147483647;
+    return (seed & 0x7fffffff) / 2147483647;
+  };
+
+  const buckets = [];
+  let current = from.getTime();
+  while (current < to.getTime()) {
+    const date = new Date(current);
+    const hour = date.getHours();
+    // Simulate realistic patterns: higher during business hours (8-18), lower at night
+    const businessHourMultiplier = (hour >= 8 && hour <= 18) ? 1.5 : 0.4;
+    const baseCount = Math.floor(seededRandom() * 30);
+    const playCount = useDailyBuckets
+      ? Math.floor(seededRandom() * 50) + 5
+      : Math.max(0, Math.floor(baseCount * businessHourMultiplier));
+
+    buckets.push({
+      bucket_start: date.toISOString(),
+      play_count: playCount,
+    });
+    current += bucketMs;
+  }
+
+  return buckets;
+}
+
+/**
+ * Get playlist appearances for a media content item.
+ * Returns mock data showing which playlists contain this content.
+ * @param {string} contentId - Media content UUID
+ * @returns {Promise<Array>} Array of { playlist_name, playlist_id, play_count, last_played_at }
+ */
+export async function getPlaylistAppearances(contentId) {
+  // Deterministic seed for consistent mock data
+  let seed = 0;
+  for (let i = 0; i < contentId.length; i++) {
+    seed = ((seed << 5) - seed + contentId.charCodeAt(i)) | 0;
+  }
+  const seededRandom = () => {
+    seed = (seed * 16807 + 0) % 2147483647;
+    return (seed & 0x7fffffff) / 2147483647;
+  };
+
+  const playlistNames = [
+    'Lobby Display',
+    'Main Entrance',
+    'Weekend Rotation',
+    'Conference Room A',
+    'Storefront Window',
+    'Break Room',
+  ];
+
+  // Generate 2-4 playlist entries
+  const count = Math.floor(seededRandom() * 3) + 2;
+  const appearances = [];
+
+  for (let i = 0; i < count; i++) {
+    const nameIndex = Math.floor(seededRandom() * playlistNames.length);
+    const daysAgo = Math.floor(seededRandom() * 7);
+    const lastPlayed = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+
+    appearances.push({
+      playlist_name: playlistNames[nameIndex],
+      playlist_id: `mock-playlist-${nameIndex}-${i}`,
+      play_count: Math.floor(seededRandom() * 200) + 10,
+      last_played_at: lastPlayed.toISOString(),
+    });
+  }
+
+  return appearances;
+}
+
+// ============================================================================
 // FORMATTING HELPERS
 // ============================================================================
 

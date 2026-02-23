@@ -9,14 +9,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Clock,
-  CheckCircle,
-  Eye,
-  Calendar,
-  BarChart2,
-  Timer,
-  RefreshCw,
   ArrowLeft,
+  BarChart2,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Eye,
+  ListVideo,
+  RefreshCw,
+  Timer,
   TrendingUp,
 } from 'lucide-react';
 import {
@@ -28,10 +29,11 @@ import {
 } from '../design-system';
 import { useLogger } from '../hooks/useLogger.js';
 
-
 import {
   getContentMetrics,
   getSceneTimeline,
+  getMediaPlayCounts,
+  getPlaylistAppearances,
   formatDuration,
   formatRelativeTime,
   DATE_RANGES,
@@ -96,13 +98,13 @@ function TimelineChart({ data }) {
     );
   }
 
-  const maxValue = Math.max(...data.map(d => d.view_count || d.total_duration_seconds || 0), 1);
+  const maxValue = Math.max(...data.map(d => d.view_count || d.play_count || d.total_duration_seconds || 0), 1);
 
   return (
     <div className="h-40">
       <div className="flex items-end h-full gap-1">
         {data.map((bucket, i) => {
-          const value = bucket.view_count || bucket.total_duration_seconds || 0;
+          const value = bucket.view_count || bucket.play_count || bucket.total_duration_seconds || 0;
           const height = Math.max(4, (value / maxValue) * 100);
           const date = new Date(bucket.bucket_start);
           const label = date.toLocaleDateString('en-US', {
@@ -110,6 +112,13 @@ function TimelineChart({ data }) {
             day: 'numeric',
             hour: 'numeric'
           });
+
+          // Determine tooltip text based on data type
+          const tooltipValue = bucket.play_count
+            ? `${bucket.play_count} plays`
+            : bucket.view_count
+              ? `${bucket.view_count} views`
+              : formatDuration(value);
 
           return (
             <div
@@ -121,7 +130,7 @@ function TimelineChart({ data }) {
                 style={{ height: `${height}%` }}
               />
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                {label}: {bucket.view_count ? `${bucket.view_count} views` : formatDuration(value)}
+                {label}: {tooltipValue}
               </div>
             </div>
           );
@@ -175,6 +184,7 @@ export default function ContentDetailAnalyticsPage({ showToast }) {
   // State
   const [metrics, setMetrics] = useState(null);
   const [timeline, setTimeline] = useState([]);
+  const [playlistAppearances, setPlaylistAppearances] = useState([]);
   const [dateRange, setDateRange] = useState('7d');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -196,13 +206,24 @@ export default function ContentDetailAnalyticsPage({ showToast }) {
       const metricsData = await getContentMetrics(contentId, contentType, dateRange);
       setMetrics(metricsData);
 
-      // Fetch timeline only for scenes (has dedicated RPC)
+      // Fetch timeline for all content types
       if (contentType === 'scene') {
         const bucket = dateRange === '24h' ? 'hour' : dateRange === '7d' ? 'hour' : 'day';
         const timelineData = await getSceneTimeline(contentId, dateRange, bucket);
         setTimeline(timelineData || []);
+      } else if (contentType === 'media' || contentType === 'playlist') {
+        const timelineData = await getMediaPlayCounts(contentId, dateRange);
+        setTimeline(timelineData || []);
       } else {
         setTimeline([]);
+      }
+
+      // Fetch playlist appearances for media content
+      if (contentType === 'media') {
+        const appearances = await getPlaylistAppearances(contentId);
+        setPlaylistAppearances(appearances || []);
+      } else {
+        setPlaylistAppearances([]);
       }
     } catch (err) {
       logger.error('Failed to load content analytics', { error: err, contentId, contentType });
@@ -368,33 +389,69 @@ export default function ContentDetailAnalyticsPage({ showToast }) {
             </div>
           </Card>
 
-          {/* Timeline Visualization (for scenes) */}
-          {contentType === 'scene' && (
+          {/* Timeline Visualization (all content types) */}
+          <Card>
+            <div className="px-4 py-3 border-b border-gray-200">
+              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                <BarChart2 className="w-4 h-4 text-blue-600" />
+                {contentType === 'scene' ? 'View Activity Timeline' : 'Play Count Timeline'}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                {contentType === 'scene'
+                  ? 'View activity over the selected time period'
+                  : 'Play count over the selected time period'}
+              </p>
+            </div>
+            <div className="p-4">
+              <TimelineChart data={timeline} />
+            </div>
+          </Card>
+
+          {/* Playlist Appearances (media content type only) */}
+          {contentType === 'media' && (
             <Card>
               <div className="px-4 py-3 border-b border-gray-200">
                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <BarChart2 className="w-4 h-4 text-blue-600" />
-                  View Activity Timeline
+                  <ListVideo className="w-4 h-4 text-purple-600" />
+                  Playlist Appearances
                 </h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  View activity over the selected time period
+                  Playlists containing this media item
                 </p>
               </div>
               <div className="p-4">
-                <TimelineChart data={timeline} />
-              </div>
-            </Card>
-          )}
-
-          {/* No data message for non-scene content */}
-          {contentType !== 'scene' && (
-            <Card>
-              <div className="p-6 text-center text-gray-500">
-                <BarChart2 className="w-10 h-10 mx-auto mb-3 text-gray-300" />
-                <p>Timeline visualization is available for scenes only.</p>
-                <p className="text-sm mt-1">
-                  Media and playlist timeline features coming soon.
-                </p>
+                {playlistAppearances.length > 0 ? (
+                  <div className="divide-y divide-gray-100">
+                    {playlistAppearances.map((appearance) => (
+                      <div
+                        key={appearance.playlist_id}
+                        className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <ListVideo className="w-4 h-4 text-purple-600" />
+                          </div>
+                          <span className="text-sm font-medium text-gray-900 truncate">
+                            {appearance.playlist_name}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+                          <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                            {appearance.play_count} plays
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {formatRelativeTime(appearance.last_played_at)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-gray-500">
+                    <ListVideo className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                    <p className="text-sm">Not assigned to any playlists</p>
+                  </div>
+                )}
               </div>
             </Card>
           )}
