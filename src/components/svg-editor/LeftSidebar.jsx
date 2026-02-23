@@ -20,6 +20,7 @@ import { fetchSvgTemplates } from '../../services/svgTemplateService';
 import { searchPhotos as proxySearchPhotos, trackDownload } from '../../services/unsplashProxyService.js';
 import { fetchMediaAssets, MEDIA_TYPES } from '../../services/mediaService.js';
 import { useLogger } from '../../hooks/useLogger.js';
+import CloudFilePicker from '../media/CloudFilePicker';
 import {
   AppWindow,
   ArrowRight,
@@ -30,6 +31,7 @@ import {
   ChevronLeft,
   Circle,
   Clock,
+  Cloud,
   CloudSun,
   Database,
   Diamond,
@@ -90,6 +92,7 @@ const PANELS = {
   QR_CODE: 'qrcode',
   DATASOURCE: 'datasource',
   BRAND_KIT: 'brandkit',
+  CLOUD: 'cloud',
 };
 
 // Widget types matching OptiSigns
@@ -235,6 +238,7 @@ export default function LeftSidebar({
   const [iconResults, setIconResults] = useState([]);
   const [loadingIcons, setLoadingIcons] = useState(false);
   const [iconSearchQuery, setIconSearchQuery] = useState('');
+  const [cloudProvider, setCloudProvider] = useState(null); // null = cloud picker closed
 
   // Fetch stock photos from Unsplash via proxy service
   const searchPhotos = useCallback(async (query) => {
@@ -450,6 +454,7 @@ export default function LeftSidebar({
     { id: PANELS.WIDGETS, icon: Grid3X3, label: 'Widgets' },
     { id: PANELS.PHOTOS, icon: Image, label: 'Photos' },
     { id: PANELS.MY_MEDIA, icon: FolderOpen, label: 'My Media' },
+    { id: PANELS.CLOUD, icon: Cloud, label: 'Cloud' },
     { id: PANELS.GIPHY, icon: Smile, label: 'GIPHY' },
     { id: PANELS.REPEATERS, icon: Repeat, label: 'Repeaters' },
     { id: PANELS.TEXT, icon: Type, label: 'Text' },
@@ -725,6 +730,29 @@ export default function LeftSidebar({
                 ))}
               </div>
             )}
+          </div>
+        );
+
+      case PANELS.CLOUD:
+        return (
+          <div className="p-3 space-y-2">
+            <p className="text-xs text-gray-400 mb-3">Import from cloud storage:</p>
+            {[
+              { id: 'gdrive', label: 'Google Drive', color: 'text-blue-400' },
+              { id: 'dropbox', label: 'Dropbox', color: 'text-blue-500' },
+              { id: 'onedrive', label: 'OneDrive', color: 'text-blue-600' },
+              { id: 'sharepoint', label: 'SharePoint', color: 'text-cyan-400' },
+              { id: 'gphotos', label: 'Google Photos', color: 'text-green-400' },
+            ].map((provider) => (
+              <button
+                key={provider.id}
+                onClick={() => setCloudProvider(provider.id)}
+                className="w-full flex items-center gap-3 px-3 py-2.5 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors text-left"
+              >
+                <Cloud className={`w-5 h-5 ${provider.color}`} />
+                <span className="text-sm text-gray-300">{provider.label}</span>
+              </button>
+            ))}
           </div>
         );
 
@@ -1182,6 +1210,26 @@ export default function LeftSidebar({
             {renderPanelContent()}
           </div>
         </div>
+      )}
+
+      {/* Cloud File Picker — opened from Cloud panel */}
+      {cloudProvider && (
+        <CloudFilePicker
+          open={!!cloudProvider}
+          onClose={() => setCloudProvider(null)}
+          provider={cloudProvider}
+          onImport={(importedAssets) => {
+            // importedAssets is an array; insert the first selected file as an image
+            const assets = Array.isArray(importedAssets) ? importedAssets : [importedAssets];
+            assets.forEach((asset) => {
+              if (asset?.url) {
+                onAddImage?.(asset.url);
+              }
+            });
+            setCloudProvider(null);
+          }}
+          showToast={null}
+        />
       )}
     </div>
   );
