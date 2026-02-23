@@ -20,7 +20,6 @@ import {
   Coffee,
   Copy,
   Dumbbell,
-  Grid,
   Home,
   Layers,
   Loader2,
@@ -41,6 +40,7 @@ import LanguageBadges from '../components/scenes/LanguageBadges';
 import {
   Card,
   CardContent,
+  Grid,
   PageLayout,
   PageHeader,
   PageContent,
