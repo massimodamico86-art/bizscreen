@@ -25,7 +25,7 @@ Systematic AI-driven audit of every page — every interactive element verified 
 - [x] **MEDIA-01**: User can upload media files with progress feedback
 - [x] **MEDIA-02**: User can preview, rename, and delete media items
 - [x] **MEDIA-03**: User can bulk-select and bulk-delete media
-- [ ] **MEDIA-04**: User can filter and search the media library
+- [x] **MEDIA-04**: User can filter and search the media library
 
 ### Scenes & SVG Editor (SCEN)
 
@@ -160,7 +160,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MEDIA-01 | Phase 82 | Complete |
 | MEDIA-02 | Phase 82 | Complete |
 | MEDIA-03 | Phase 82 | Complete |
-| MEDIA-04 | Phase 82 | Pending |
+| MEDIA-04 | Phase 82 | Complete |
 | SCEN-01 | Phase 83 | Pending |
 | SCEN-02 | Phase 83 | Pending |
 | SCEN-03 | Phase 83 | Pending |
