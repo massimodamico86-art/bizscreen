@@ -167,6 +167,9 @@ export default function FabricSvgEditor({
   // Counter to force re-renders when object properties change
   const [_updateCounter, setUpdateCounter] = useState(0);
 
+  // Ref to hold syncCanvasObjects for use in canvas event handlers (avoids TDZ)
+  const syncCanvasObjectsRef = useRef(null);
+
   // Trigger canvas resize recalculation when quick-customize panel opens/closes
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -242,14 +245,14 @@ export default function FabricSvgEditor({
       if (!isUndoRedoAction.current) {
         saveToHistory();
       }
-      syncCanvasObjects();
+      syncCanvasObjectsRef.current?.();
     });
 
     canvas.on('object:removed', () => {
       if (!isUndoRedoAction.current) {
         saveToHistory();
       }
-      syncCanvasObjects();
+      syncCanvasObjectsRef.current?.();
     });
 
     // Text editing events
@@ -752,9 +755,9 @@ export default function FabricSvgEditor({
     if (!canvas || !selectedObject) return;
     canvas.bringObjectForward(selectedObject);
     canvas.renderAll();
-    syncCanvasObjects();
+    syncCanvasObjectsRef.current?.();
     setHasUnsavedChanges(true);
-  }, [selectedObject, syncCanvasObjects]);
+  }, [selectedObject]);
 
   // Send backward (one step)
   const handleSendBackward = useCallback(() => {
@@ -762,9 +765,9 @@ export default function FabricSvgEditor({
     if (!canvas || !selectedObject) return;
     canvas.sendObjectBackwards(selectedObject);
     canvas.renderAll();
-    syncCanvasObjects();
+    syncCanvasObjectsRef.current?.();
     setHasUnsavedChanges(true);
-  }, [selectedObject, syncCanvasObjects]);
+  }, [selectedObject]);
 
   // Context menu handler
   const handleContextMenu = useCallback((e) => {
@@ -841,6 +844,7 @@ export default function FabricSvgEditor({
   }, [canvasWidth, canvasHeight]);
 
   // Sync canvas objects for layers panel and track used colors/fonts
+  // Also keep ref in sync for canvas event handlers registered before this hook
   const syncCanvasObjects = useCallback(() => {
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
@@ -865,6 +869,7 @@ export default function FabricSvgEditor({
     setUsedColors(Array.from(colors).slice(0, 10));
     setUsedFonts(Array.from(fonts));
   }, []);
+  syncCanvasObjectsRef.current = syncCanvasObjects;
 
   // Add image from file
   const handleAddImage = useCallback(() => {
