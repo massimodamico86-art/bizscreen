@@ -21,25 +21,25 @@
  */
 import { useState } from 'react';
 import {
-  Grid3X3,
-  Image,
-  Video,
-  Music,
-  FileText,
-  Globe,
-  Plus,
-  Filter,
-  List,
   AlertTriangle,
-  Search,
-  X,
-  Folder,
-  Home,
-  ChevronRight,
   ChevronLeft,
+  ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  FileText,
+  Filter,
+  Folder,
+  Globe,
+  Grid3X3,
+  Home,
+  Image,
+  List,
   Loader2,
+  Music,
+  Plus,
+  Search,
+  Video,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
@@ -581,6 +581,8 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
                             onClick={handleSelectAsset}
                             onDoubleClick={handleOpenDetail}
                             isSelected={selectedAsset?.id === asset.id}
+                            isBulkSelected={selectedIds.has(asset.id)}
+                            onToggleSelect={toggleSelection}
                           />
                         ))}
                       </tbody>

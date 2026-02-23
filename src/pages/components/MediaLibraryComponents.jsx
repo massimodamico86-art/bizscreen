@@ -104,19 +104,24 @@ export const LimitWarningBanner = ({ limits, onUpgrade }) => {
 };
 
 // Media list row
-export const MediaListRow = ({ asset, actionMenuId, onActionMenuToggle, onEdit, onDuplicate, onDelete, onMove, onPushEmergency, formatDate, onClick, onDoubleClick, isSelected }) => {
+export const MediaListRow = ({ asset, actionMenuId, onActionMenuToggle, onEdit, onDuplicate, onDelete, onMove, onPushEmergency, formatDate, onClick, onDoubleClick, isSelected, isBulkSelected, onToggleSelect }) => {
   const TypeIcon = MEDIA_TYPE_ICONS[asset.type] || Image;
 
   return (
     <tr
       className={`border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer ${
         isSelected ? 'bg-orange-50 hover:bg-orange-100' : ''
-      }`}
+      } ${isBulkSelected ? 'bg-blue-50 hover:bg-blue-100' : ''}`}
       onClick={() => onClick?.(asset)}
       onDoubleClick={() => onDoubleClick?.(asset)}
     >
       <td className="p-4">
-        <input type="checkbox" className="rounded border-gray-300" />
+        <input
+          type="checkbox"
+          checked={isBulkSelected || false}
+          onChange={(e) => { e.stopPropagation(); onToggleSelect?.(asset.id); }}
+          className="rounded border-gray-300"
+        />
       </td>
       <td className="p-4">
         <Inline gap="sm" align="center">
