@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchScene, updateScene, getDeviceCountByScene, deleteScene } from '../services/sceneService';
+import PublishSceneModal from '../components/scenes/PublishSceneModal';
 import {
   Card,
   CardContent,
