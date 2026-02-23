@@ -6,12 +6,14 @@
  */
 
 import {
-  Type,
-  Square,
   Circle,
-  Triangle,
   Image,
   MousePointer,
+  Redo2,
+  Square,
+  Triangle,
+  Type,
+  Undo2,
 } from 'lucide-react';
 
 export default function EditorToolbar({

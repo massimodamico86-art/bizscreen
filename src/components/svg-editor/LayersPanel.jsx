@@ -11,12 +11,18 @@
  */
 
 import {
-  Type,
-  Image,
-  Square,
+  ChevronDown,
+  ChevronUp,
   Circle,
-  Triangle,
+  Eye,
+  EyeOff,
+  Image,
+  Lock,
   Minus,
+  Square,
+  Triangle,
+  Type,
+  Unlock,
 } from 'lucide-react';
 
 // Get icon for object type

@@ -1016,7 +1016,7 @@ export default function FabricSvgEditor({
     canvas.setActiveObject(cropRect);
     canvas.renderAll();
     setIsCropMode(true);
-  }, [isCropMode, canvasWidth]);
+  }, [isCropMode, canvasWidth, canvasHeight]);
 
   // Apply crop: convert crop rect bounds to image-local clipPath
   const handleApplyCrop = useCallback(() => {
