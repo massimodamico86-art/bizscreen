@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v6.0 Functional Completeness — Phase 78 (Platform Wiring)
+**Current focus:** v6.0 Functional Completeness — Phase 79 (AI Designer)
 
 ## Current Position
 
-Phase: 78 of 80 (Platform Wiring)
-Plan: 2 of 2 complete in current phase
-Status: Phase complete
-Last activity: 2026-02-22 — 78-02 App edit flow wiring
+Phase: 79 of 80 (AI Designer)
+Plan: 1 of 3 complete in current phase
+Status: In progress
+Last activity: 2026-02-22 — 79-01 AI Designer backend
 
 Progress: [======░░░░] 63% (v6.0 — 7/8 phases in progress)
 
@@ -83,6 +83,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 78]: Primary button for Update Payment Method, secondary for Manage Billing
 - [Phase 78]: Reuse existing create modals for edit by passing initialValues prop instead of separate edit modals
 - [Phase 78]: Use editingApp state at parent level to toggle modal behavior between create and edit modes
+- [Phase 79]: Use fetch directly to call Anthropic API in Deno edge function (no SDK needed)
+- [Phase 79]: Strip markdown code fences from AI response as fallback for JSON extraction
+- [Phase 79]: Clamp AI-generated position values to 0-1 range and trim overflow in client validation
 
 ### Blockers/Concerns
 
@@ -112,13 +115,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 77 P03 | 2min | 2 tasks | 2 files |
 | Phase 78 P01 | 2min | 1 tasks | 2 files |
 | Phase 78 P02 | 3min | 1 tasks | 2 files |
+| Phase 79 P01 | 2min | 2 tasks | 2 files |
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 78-02-PLAN.md
+Stopped at: Completed 79-01-PLAN.md
 Resume file: N/A
-Next: Phase 78 complete (all 2 plans), next phase
+Next: Continue phase 79 with 79-02
 
 ---
-*Updated: 2026-02-22 -- 78-02 App edit flow wiring complete*
+*Updated: 2026-02-22 -- 79-01 AI Designer backend complete*
