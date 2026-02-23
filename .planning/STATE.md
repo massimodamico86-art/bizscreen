@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 79 of 80 (AI Designer)
-Plan: 1 of 3 complete in current phase
+Plan: 2 of 3 complete in current phase
 Status: In progress
-Last activity: 2026-02-22 — 79-01 AI Designer backend
+Last activity: 2026-02-22 — 79-02 AI Designer panel UI
 
 Progress: [======░░░░] 63% (v6.0 — 7/8 phases in progress)
 
@@ -86,6 +86,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 79]: Use fetch directly to call Anthropic API in Deno edge function (no SDK needed)
 - [Phase 79]: Strip markdown code fences from AI response as fallback for JSON extraction
 - [Phase 79]: Clamp AI-generated position values to 0-1 range and trim overflow in client validation
+- [Phase 79]: AI Designer tab placed first in sidebar (before Media) for prominence
+- [Phase 79]: AiDesignerPanel has its own padding, other tabs keep existing p-4 wrapper
+- [Phase 79]: handleApplyAiLayout replaces all elements (not merge) for clean AI generation
 
 ### Blockers/Concerns
 
@@ -116,13 +119,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 78 P01 | 2min | 1 tasks | 2 files |
 | Phase 78 P02 | 3min | 1 tasks | 2 files |
 | Phase 79 P01 | 2min | 2 tasks | 2 files |
+| Phase 79 P02 | 2min | 2 tasks | 4 files |
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 79-01-PLAN.md
+Stopped at: Completed 79-02-PLAN.md
 Resume file: N/A
-Next: Continue phase 79 with 79-02
+Next: Continue phase 79 with 79-03
 
 ---
-*Updated: 2026-02-22 -- 79-01 AI Designer backend complete*
+*Updated: 2026-02-22 -- 79-02 AI Designer panel UI complete*
