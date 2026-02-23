@@ -1227,6 +1227,8 @@ const YodeckAddMediaModal = ({
   onMediaAdded,
   openFilePicker,
   showToast,
+  uploading = false,
+  uploadProgress = 0,
 }) => {
   const [activeTab, setActiveTab] = useState('upload');
   const [selectedImageType, setSelectedImageType] = useState('file');
@@ -1487,7 +1489,15 @@ const YodeckAddMediaModal = ({
         {/* Content */}
         <div className="p-6 max-h-[calc(90vh-200px)] overflow-y-auto">
           {activeTab === 'upload' && (
-            <UploadTabContent onBrowse={handleBrowse} onCloudProvider={handleCloudProvider} />
+            <>
+              <UploadTabContent onBrowse={handleBrowse} onCloudProvider={handleCloudProvider} />
+              {uploading && (
+                <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
+                  <Loader2 size={16} className="animate-spin text-[#f26f21]" />
+                  <span>Uploading... {uploadProgress}%</span>
+                </div>
+              )}
+            </>
           )}
           {activeTab === 'images' && (
             <ImagesTabContent
@@ -1582,9 +1592,17 @@ const YodeckAddMediaModal = ({
           {shouldShowFooterButton() && (
             <Button
               onClick={handleUpload}
+              disabled={uploading}
               className="bg-[#f26f21] hover:bg-[#e05e10] text-white"
             >
-              Upload
+              {uploading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 size={16} className="animate-spin" />
+                  Uploading... {uploadProgress}%
+                </span>
+              ) : (
+                'Upload'
+              )}
             </Button>
           )}
         </div>
