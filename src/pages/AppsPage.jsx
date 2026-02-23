@@ -1,18 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
-  Grid3X3,
   Clock,
-  Globe,
   CloudSun,
-  Rss,
-  Table,
-  Search,
-  MoreVertical,
   Edit,
-  Trash2,
+  Globe,
+  Grid3X3,
+  LinkIcon,
   Loader2,
+  MoreVertical,
+  Rss,
+  Search,
+  Table,
+  Trash2,
   X,
-  Link as LinkIcon,
 } from 'lucide-react';
 import { Card, Button } from '../design-system';
 import { AppCard, AppDetailModal, WeatherWallConfigModal } from '../components/apps';
@@ -36,6 +36,7 @@ import {
   createRssTickerApp,
   createDataTableApp,
   deleteApp,
+  updateAppConfig,
   APP_TYPE_KEYS
 } from '../services/mediaService';
 
@@ -89,6 +90,9 @@ const AppsPage = ({ showToast }) => {
   const [showDataTableModal, setShowDataTableModal] = useState(false);
   const [showGenericEmbedModal, setShowGenericEmbedModal] = useState(false);
   const [creating, setCreating] = useState(false);
+
+  // Editing state for user apps
+  const [editingApp, setEditingApp] = useState(null);
 
   // Dropdown menu state for user apps
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -184,6 +188,49 @@ const AppsPage = ({ showToast }) => {
       showToast?.('Error deleting app: ' + error.message, 'error');
     }
     setOpenMenuId(null);
+  };
+
+  // Handle editing user's app instance
+  const handleEditApp = (app) => {
+    setEditingApp(app);
+    setOpenMenuId(null);
+    const appType = app.config_json?.appType;
+    switch (appType) {
+      case APP_TYPE_KEYS.CLOCK:
+        setShowClockModal(true);
+        break;
+      case APP_TYPE_KEYS.WEB_PAGE:
+        setShowWebPageModal(true);
+        break;
+      case APP_TYPE_KEYS.WEATHER:
+        setShowWeatherModal(true);
+        break;
+      case APP_TYPE_KEYS.RSS_TICKER:
+        setShowRssTickerModal(true);
+        break;
+      case APP_TYPE_KEYS.DATA_TABLE:
+        setShowDataTableModal(true);
+        break;
+      default:
+        setShowGenericEmbedModal(true);
+    }
+  };
+
+  // Handle saving edited app config
+  const handleSaveApp = async (config) => {
+    if (!editingApp) return;
+    setCreating(true);
+    try {
+      const updated = await updateAppConfig(editingApp.id, config);
+      setUserApps(userApps.map(a => a.id === editingApp.id ? { ...a, ...updated, name: config.name || a.name } : a));
+      showToast?.('App updated successfully');
+    } catch (error) {
+      logger.error('Error updating app:', error);
+      showToast?.('Error updating app: ' + error.message, 'error');
+    } finally {
+      setCreating(false);
+      setEditingApp(null);
+    }
   };
 
   // Close menu when clicking outside
@@ -297,10 +344,7 @@ const AppsPage = ({ showToast }) => {
                       {openMenuId === app.id && (
                         <div className="absolute right-0 top-6 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-20 min-w-[120px]">
                           <button
-                            onClick={() => {
-                              showToast?.('Edit coming soon');
-                              setOpenMenuId(null);
-                            }}
+                            onClick={() => handleEditApp(app)}
                             className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             <Edit size={12} />
@@ -423,8 +467,14 @@ const AppsPage = ({ showToast }) => {
           onClose={() => {
             setShowClockModal(false);
             setSelectedApp(null);
+            setEditingApp(null);
           }}
           onCreate={async (config) => {
+            if (editingApp) {
+              await handleSaveApp(config);
+              setShowClockModal(false);
+              return;
+            }
             setCreating(true);
             try {
               const newApp = await createClockApp(config);
@@ -440,6 +490,7 @@ const AppsPage = ({ showToast }) => {
             }
           }}
           creating={creating}
+          initialValues={editingApp?.config_json}
         />
       )}
 
@@ -450,8 +501,14 @@ const AppsPage = ({ showToast }) => {
           onClose={() => {
             setShowWebPageModal(false);
             setSelectedApp(null);
+            setEditingApp(null);
           }}
           onCreate={async (config) => {
+            if (editingApp) {
+              await handleSaveApp(config);
+              setShowWebPageModal(false);
+              return;
+            }
             setCreating(true);
             try {
               const newApp = await createWebPageApp(config);
@@ -467,18 +524,25 @@ const AppsPage = ({ showToast }) => {
             }
           }}
           creating={creating}
+          initialValues={editingApp?.config_json}
         />
       )}
 
       {/* Weather Wall Config Modal - Yodeck Style */}
       {showWeatherModal && (
         <WeatherWallConfigModal
-          app={selectedApp}
+          app={editingApp ? { ...selectedApp, ...editingApp.config_json } : selectedApp}
           onClose={() => {
             setShowWeatherModal(false);
             setSelectedApp(null);
+            setEditingApp(null);
           }}
           onCreate={async (config) => {
+            if (editingApp) {
+              await handleSaveApp(config);
+              setShowWeatherModal(false);
+              return;
+            }
             setCreating(true);
             try {
               // Use enhanced config with theme support
@@ -504,6 +568,7 @@ const AppsPage = ({ showToast }) => {
             }
           }}
           creating={creating}
+          initialValues={editingApp?.config_json}
         />
       )}
 
@@ -514,8 +579,14 @@ const AppsPage = ({ showToast }) => {
           onClose={() => {
             setShowRssTickerModal(false);
             setSelectedApp(null);
+            setEditingApp(null);
           }}
           onCreate={async (config) => {
+            if (editingApp) {
+              await handleSaveApp(config);
+              setShowRssTickerModal(false);
+              return;
+            }
             setCreating(true);
             try {
               const newApp = await createRssTickerApp(config);
@@ -531,6 +602,7 @@ const AppsPage = ({ showToast }) => {
             }
           }}
           creating={creating}
+          initialValues={editingApp?.config_json}
         />
       )}
 
@@ -541,8 +613,14 @@ const AppsPage = ({ showToast }) => {
           onClose={() => {
             setShowDataTableModal(false);
             setSelectedApp(null);
+            setEditingApp(null);
           }}
           onCreate={async (config) => {
+            if (editingApp) {
+              await handleSaveApp(config);
+              setShowDataTableModal(false);
+              return;
+            }
             setCreating(true);
             try {
               const newApp = await createDataTableApp(config);
@@ -558,6 +636,7 @@ const AppsPage = ({ showToast }) => {
             }
           }}
           creating={creating}
+          initialValues={editingApp?.config_json}
         />
       )}
 
@@ -568,8 +647,14 @@ const AppsPage = ({ showToast }) => {
           onClose={() => {
             setShowGenericEmbedModal(false);
             setSelectedApp(null);
+            setEditingApp(null);
           }}
           onCreate={async (config) => {
+            if (editingApp) {
+              await handleSaveApp(config);
+              setShowGenericEmbedModal(false);
+              return;
+            }
             setCreating(true);
             try {
               const newApp = await createWebPageApp(config);
@@ -585,6 +670,7 @@ const AppsPage = ({ showToast }) => {
             }
           }}
           creating={creating}
+          initialValues={editingApp?.config_json}
         />
       )}
     </div>
@@ -595,13 +681,13 @@ const AppsPage = ({ showToast }) => {
 // MODAL COMPONENTS
 // ============================================
 
-function ClockAppModal({ app, onClose, onCreate, creating }) {
-  const [name, setName] = useState(app?.name || 'Clock');
-  const [format, setFormat] = useState('HH:mm');
-  const [showSeconds, setShowSeconds] = useState(false);
-  const [showDate, setShowDate] = useState(true);
-  const [dateFormat, setDateFormat] = useState('MMMM D, YYYY');
-  const [timezone, setTimezone] = useState('device');
+function ClockAppModal({ app, onClose, onCreate, creating, initialValues }) {
+  const [name, setName] = useState(initialValues?.name || app?.name || 'Clock');
+  const [format, setFormat] = useState(initialValues?.format || 'HH:mm');
+  const [showSeconds, setShowSeconds] = useState(initialValues?.showSeconds || false);
+  const [showDate, setShowDate] = useState(initialValues?.showDate !== undefined ? initialValues.showDate : true);
+  const [dateFormat, setDateFormat] = useState(initialValues?.dateFormat || 'MMMM D, YYYY');
+  const [timezone, setTimezone] = useState(initialValues?.timezone || 'device');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -713,7 +799,7 @@ function ClockAppModal({ app, onClose, onCreate, creating }) {
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
             <Button type="submit" disabled={creating}>
-              {creating ? 'Creating...' : 'Create'}
+              {creating ? (initialValues ? 'Saving...' : 'Creating...') : (initialValues ? 'Save' : 'Create')}
             </Button>
           </div>
         </form>
@@ -722,10 +808,10 @@ function ClockAppModal({ app, onClose, onCreate, creating }) {
   );
 }
 
-function WebPageAppModal({ app, onClose, onCreate, creating }) {
-  const [name, setName] = useState(app?.name || '');
-  const [url, setUrl] = useState('');
-  const [refreshSeconds, setRefreshSeconds] = useState(0);
+function WebPageAppModal({ app, onClose, onCreate, creating, initialValues }) {
+  const [name, setName] = useState(initialValues?.name || app?.name || '');
+  const [url, setUrl] = useState(initialValues?.url || '');
+  const [refreshSeconds, setRefreshSeconds] = useState(initialValues?.refreshSeconds || 0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -794,7 +880,7 @@ function WebPageAppModal({ app, onClose, onCreate, creating }) {
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
             <Button type="submit" disabled={creating || !url}>
-              {creating ? 'Creating...' : 'Create'}
+              {creating ? (initialValues ? 'Saving...' : 'Creating...') : (initialValues ? 'Save' : 'Create')}
             </Button>
           </div>
         </form>
@@ -896,11 +982,11 @@ function WeatherAppModal({ app, onClose, onCreate, creating }) {
   );
 }
 
-function RssTickerAppModal({ app, onClose, onCreate, creating }) {
-  const [name, setName] = useState(app?.name || 'News Ticker');
-  const [feedUrl, setFeedUrl] = useState(app?.presetFeedUrl || '');
-  const [maxItems, setMaxItems] = useState(10);
-  const [scrollSpeed, setScrollSpeed] = useState(30);
+function RssTickerAppModal({ app, onClose, onCreate, creating, initialValues }) {
+  const [name, setName] = useState(initialValues?.name || app?.name || 'News Ticker');
+  const [feedUrl, setFeedUrl] = useState(initialValues?.feedUrl || app?.presetFeedUrl || '');
+  const [maxItems, setMaxItems] = useState(initialValues?.maxItems || 10);
+  const [scrollSpeed, setScrollSpeed] = useState(initialValues?.scrollSpeed || 30);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -985,7 +1071,7 @@ function RssTickerAppModal({ app, onClose, onCreate, creating }) {
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
             <Button type="submit" disabled={creating || !feedUrl}>
-              {creating ? 'Creating...' : 'Create'}
+              {creating ? (initialValues ? 'Saving...' : 'Creating...') : (initialValues ? 'Save' : 'Create')}
             </Button>
           </div>
         </form>
@@ -994,11 +1080,11 @@ function RssTickerAppModal({ app, onClose, onCreate, creating }) {
   );
 }
 
-function DataTableAppModal({ app, onClose, onCreate, creating }) {
-  const [name, setName] = useState(app?.name || 'Data Table');
-  const [dataUrl, setDataUrl] = useState('');
-  const [format, setFormat] = useState('csv');
-  const [theme, setTheme] = useState('dark');
+function DataTableAppModal({ app, onClose, onCreate, creating, initialValues }) {
+  const [name, setName] = useState(initialValues?.name || app?.name || 'Data Table');
+  const [dataUrl, setDataUrl] = useState(initialValues?.dataUrl || '');
+  const [format, setFormat] = useState(initialValues?.format || 'csv');
+  const [theme, setTheme] = useState(initialValues?.theme || 'dark');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -1088,7 +1174,7 @@ function DataTableAppModal({ app, onClose, onCreate, creating }) {
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
             <Button type="submit" disabled={creating || !dataUrl}>
-              {creating ? 'Creating...' : 'Create'}
+              {creating ? (initialValues ? 'Saving...' : 'Creating...') : (initialValues ? 'Save' : 'Create')}
             </Button>
           </div>
         </form>
@@ -1097,10 +1183,10 @@ function DataTableAppModal({ app, onClose, onCreate, creating }) {
   );
 }
 
-function GenericEmbedModal({ app, onClose, onCreate, creating }) {
-  const [name, setName] = useState(app?.name || '');
-  const [url, setUrl] = useState('');
-  const [refreshSeconds, setRefreshSeconds] = useState(0);
+function GenericEmbedModal({ app, onClose, onCreate, creating, initialValues }) {
+  const [name, setName] = useState(initialValues?.name || app?.name || '');
+  const [url, setUrl] = useState(initialValues?.url || '');
+  const [refreshSeconds, setRefreshSeconds] = useState(initialValues?.refreshSeconds || 0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -1194,7 +1280,7 @@ function GenericEmbedModal({ app, onClose, onCreate, creating }) {
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
             <Button type="submit" disabled={creating || !url}>
-              {creating ? 'Creating...' : 'Create App'}
+              {creating ? (initialValues ? 'Saving...' : 'Creating...') : (initialValues ? 'Save' : 'Create App')}
             </Button>
           </div>
         </form>

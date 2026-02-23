@@ -6,7 +6,13 @@
  */
 
 import { useState, useEffect } from 'react';
-import { CloudSun, Maximize2, X } from 'lucide-react';
+import {
+  CloudSun,
+  Info,
+  Maximize2,
+  Upload,
+  X,
+} from 'lucide-react';
 import { Button } from '../../design-system';
 
 // Language options
@@ -55,27 +61,27 @@ const ORIENTATIONS = [
  * @param root0.onCreate
  * @param root0.creating
  */
-export default function WeatherWallConfigModal({ app, onClose, onCreate, creating }) {
+export default function WeatherWallConfigModal({ app, onClose, onCreate, creating, initialValues }) {
   // App Settings
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [usePlayerLocation, setUsePlayerLocation] = useState(true);
-  const [location, setLocation] = useState('');
-  const [locationHeader, setLocationHeader] = useState('');
-  const [tempUnit, setTempUnit] = useState('celsius');
-  const [showBothUnits, setShowBothUnits] = useState(true);
-  const [measurementSystem, setMeasurementSystem] = useState('metric');
-  const [language, setLanguage] = useState('en');
-  const [dateFormat, setDateFormat] = useState('default');
+  const [name, setName] = useState(initialValues?.name || '');
+  const [description, setDescription] = useState(initialValues?.description || '');
+  const [usePlayerLocation, setUsePlayerLocation] = useState(initialValues?.usePlayerLocation !== undefined ? initialValues.usePlayerLocation : true);
+  const [location, setLocation] = useState(initialValues?.location || '');
+  const [locationHeader, setLocationHeader] = useState(initialValues?.locationHeader || '');
+  const [tempUnit, setTempUnit] = useState(initialValues?.tempUnit || 'celsius');
+  const [showBothUnits, setShowBothUnits] = useState(initialValues?.showBothUnits !== undefined ? initialValues.showBothUnits : true);
+  const [measurementSystem, setMeasurementSystem] = useState(initialValues?.measurementSystem || 'metric');
+  const [language, setLanguage] = useState(initialValues?.language || 'en');
+  const [dateFormat, setDateFormat] = useState(initialValues?.dateFormat || 'default');
 
   // Style Settings
-  const [theme, setTheme] = useState('animated');
-  const [logoUrl, setLogoUrl] = useState('');
-  const [orientation, setOrientation] = useState('auto');
+  const [theme, setTheme] = useState(initialValues?.theme || 'animated');
+  const [logoUrl, setLogoUrl] = useState(initialValues?.logoUrl || '');
+  const [orientation, setOrientation] = useState(initialValues?.orientation || 'auto');
 
   // Advanced Settings
-  const [tags, setTags] = useState('');
-  const [defaultDuration, setDefaultDuration] = useState(20);
+  const [tags, setTags] = useState(initialValues?.tags ? (Array.isArray(initialValues.tags) ? initialValues.tags.join(', ') : initialValues.tags) : '');
+  const [defaultDuration, setDefaultDuration] = useState(initialValues?.defaultDuration || 20);
 
   // Full-screen preview modal state
   const [showFullPreview, setShowFullPreview] = useState(false);
