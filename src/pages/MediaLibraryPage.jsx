@@ -517,6 +517,18 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
               title="No media found"
               description={`No media matching "${search}"`}
             />
+          ) : filteredAssets.length === 0 && folders.length === 0 && typeFilter && !search ? (
+            <EmptyState
+              icon={<Filter size={48} className="text-gray-300" />}
+              title={`No ${TYPE_FILTER_OPTIONS.find((o) => o.id === typeFilter)?.label?.toLowerCase() || typeFilter} found`}
+              description="No media matches this filter. Try a different type or clear the filter."
+              action={
+                <Button variant="secondary" size="sm" onClick={clearAllFilters}>
+                  <X size={14} className="mr-1" />
+                  Clear Filter
+                </Button>
+              }
+            />
           ) : viewMode === 'list' ? (
             <Stack gap="md">
               {folders.length > 0 && !search && (
