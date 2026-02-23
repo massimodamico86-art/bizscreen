@@ -104,7 +104,12 @@ Plans:
   2. User can preview a media item in a modal, rename it inline, and delete it with confirmation
   3. User can bulk-select multiple items and delete them all in one action
   4. User can filter the library by type and search by filename, with results updating correctly
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 82-01-PLAN.md — Upload flow: error surfacing via toast + progress feedback in modal
+- [ ] 82-02-PLAN.md — Detail modal: preview rendering, rename validation, delete confirmation
+- [ ] 82-03-PLAN.md — Bulk select: fix missing X import in BulkActionBar + list-view checkbox wiring
+- [ ] 82-04-PLAN.md — Filter/search verification + human checkpoint
 
 ### Phase 83: Scene Editor & AI Designer
 **Goal**: The SVG scene editor and AI Designer are fully functional — every tool, property panel, and cloud import path works without errors
@@ -207,7 +212,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 81. Authentication & Dashboard | 2/2 | Complete    | 2026-02-23 |
-| 82. Media Library | 0/TBD | Not started | - |
+| 82. Media Library | 0/4 | Not started | - |
 | 83. Scene Editor & AI Designer | 0/TBD | Not started | - |
 | 84. Playlists, Layouts & Templates | 0/TBD | Not started | - |
 | 85. Scheduling & Campaigns | 0/TBD | Not started | - |
