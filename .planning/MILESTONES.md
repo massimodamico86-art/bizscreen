@@ -1,5 +1,39 @@
 # Project Milestones: BizScreen
 
+## v6.0 Functional Completeness (Shipped: 2026-02-23)
+
+**Delivered:** Every interactive UI element now performs its intended action — no dead buttons, no console errors, no placeholder behavior. SVG editor fully wired, AI layout generation, 5 cloud storage integrations, enterprise security controls, and content/media feature completions.
+
+**Phases completed:** 72-80 (9 phases, 20 plans)
+
+**Key accomplishments:**
+
+- Full SVG editor completeness — hyperlinks on text/image objects, element settings panels, expanded options menus, aspect ratio lock, precise image positioning, non-destructive crop with clipPath, and image replacement preserving geometry
+- AI Designer — Anthropic-powered layout generation from text prompts via Supabase Edge Function with iterative conversational refinement, reference image upload, and brand context injection
+- OAuth cloud media imports — Google Drive, Dropbox, OneDrive, SharePoint, and Google Photos all wired with PKCE flow, CloudFilePicker modal, and automatic callback handling
+- Enterprise security controls — password policies (length/complexity), session timeout, JWT expiry, and multi-step tenant data deletion with "DELETE MY DATA" phrase confirmation
+- Content & media features — video uploads in carousel (Cloudinary + format/duration validation), property events CRUD, graphics library in layout editor sidebar, and analytics timeline for media/playlists
+- Platform wiring + integration polish — payment method update via Stripe portal, app config editing with pre-populated modals, SVG editor crash fixes (X icon import, hyperlink target wiring, layer sync, panel auto-close)
+
+**Stats:**
+
+- 98 files modified
+- +13,945 / -432 lines (net +13,513)
+- 9 phases, 20 plans, 37 tasks
+- 3 days from start to ship (2026-02-20 → 2026-02-23)
+
+**Git range:** `fc7c1d8` → `50b3115`
+
+**Tech debt accepted:**
+
+- Orphaned test file: tests/unit/services/gdprDeletionService.test.js imports deleted service
+- Duplicate legacy player_heartbeat RPC in usePlayerContent (usePlayerHeartbeat now owns all reporting)
+- Wrong lastActivityRef in ViewPage passed to useStuckDetection (content-level instead of playback-level)
+
+**What's next:** v7.0 planning
+
+---
+
 ## v2.2 Onboarding Polish (Shipped: 2026-02-05)
 
 **Delivered:** Unified onboarding experience with 5-step flow (welcome → industry → starter pack → screen pairing → success), screen pairing integration with QR/OTP, legacy code cleanup, and Polotno editor hardening.
@@ -388,6 +422,16 @@
 - Orphaned test file: `tests/unit/services/gdprDeletionService.test.js` imports deleted `gdprDeletionService.js` (will fail at import time — delete the test file)
 
 **What's next:** Next milestone planning
+
+---
+
+
+## v6.0 Functional Completeness (Shipped: 2026-02-23)
+
+**Phases completed:** 64 phases, 215 plans, 23 tasks
+
+**Key accomplishments:**
+- (none recorded)
 
 ---
 

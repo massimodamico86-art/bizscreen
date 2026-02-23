@@ -178,17 +178,20 @@ These capabilities shipped and are production-verified:
 - ✓ 6 unused service/hook dead code files removed (1,716 LOC) — v5.0
 - ✓ YodeckLayoutEditorPage missing component imports resolved — v5.0
 
+**v6.0 Functional Completeness (2026-02-23):**
+- ✓ Full SVG editor completeness — hyperlinks, settings panels, expanded menus, aspect ratio lock, image position/crop/replace — v6.0
+- ✓ AI Designer — text-prompt layout generation via Anthropic API, iterative refinement, brand context, image upload — v6.0
+- ✓ OAuth cloud imports — Google Drive, Dropbox, OneDrive, SharePoint, Google Photos — v6.0
+- ✓ Enterprise security controls — password policies, session/JWT config, multi-step tenant data deletion — v6.0
+- ✓ Video uploads in carousel, property events CRUD, graphics library in layout editor, content analytics timeline — v6.0
+- ✓ Payment method update via Stripe portal, app config editing with pre-populated modals — v6.0
+- ✓ SVG editor integration polish — PositionPanel crash fix, hyperlink target wiring, layer sync, panel auto-close — v6.0
+
 ### Active
 
-**Current Milestone: v6.0 Functional Completeness**
+**Current Milestone: Planning Next**
 
-**Goal:** Every interactive UI element performs its intended action — no dead buttons, no console errors, no placeholder behavior.
-
-**Target features:**
-- Systematic audit of all pages, components, buttons, forms, and interactions
-- Full-stack fixes: frontend wiring, backend endpoints (Edge Functions, migrations, RPCs)
-- Every button does something real against real data
-- Every page is fully functional end-to-end
+No active milestone requirements — v6.0 complete. Run `/gsd:new-milestone` to define v7.0.
 
 ### Out of Scope
 
@@ -207,9 +210,9 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (post v5.0):**
+**Current State (post v6.0):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- ~190,380 lines of JavaScript/JSX/CSS in src/ (net reduction from dead code cleanup)
+- ~204,000 lines of JavaScript/JSX/CSS in src/ (net +13,513 from v6.0)
 - Unified onboarding flow (feature flag removed, unconditional)
 - Test suite: 2,079 unit tests, 1,191 E2E tests (all skips categorized and documented)
 - ESLint: zero warnings, zero errors, all rules at error level with pre-commit enforcement
@@ -219,9 +222,12 @@ These capabilities shipped and are production-verified:
 - Multi-tenant with feature flags for plan differentiation
 - AWS S3 for media storage with CloudFront CDN
 - Pre-commit hooks enforce ESLint at error level on all commits
-- Fabric.js SVG editor with stock asset panels (Unsplash proxy, Iconify icons, My Media)
+- Fabric.js SVG editor: fully wired — hyperlinks, settings panels, aspect ratio lock, image crop/replace/position, layer sync, integration polish
+- AI Designer: Anthropic API via Supabase Edge Function, iterative refinement, brand context, reference image upload
+- Cloud media imports: 5 providers (Google Drive, Dropbox, OneDrive, SharePoint, Google Photos) with shared PKCE OAuth utility
+- Enterprise security: password policies, session/JWT config, multi-step tenant data deletion in EnterpriseSecurityPage
 - Framer Motion animations throughout template gallery and editor (cardLift, scaleTap, stagger)
-- 3 Edge Function proxies: Unsplash (stock photos), RSS (news feeds), Weather (OpenWeatherMap)
+- 4 Edge Function proxies: Unsplash (stock photos), RSS (news feeds), Weather (OpenWeatherMap), AI Designer (Anthropic)
 - Centralized widget registry at `src/widgets/registry.js` with 12 widget types
 - 12 widget types: clock, date, clock-date, weather, qr, data-table, menu-board, rss-ticker, rss-card, social-feed, countdown, data-legacy
 - Video playback with hls.js light build for HLS adaptive streaming
@@ -241,6 +247,12 @@ These capabilities shipped and are production-verified:
 - 5 alert types: device_offline, content_mismatch, device_recovery, device_recovery_exhausted, plus generic
 - All 12 widget types have complete property controls in both layout editor and scene editor
 - All notification alert types configurable in settings (including recovery alerts added in v5.0)
+- Video uploads in carousel (Cloudinary) with format/duration validation, per-video mute toggle
+- Property events CRUD with inline forms and chronological display in PropertyDetailsModal
+- Graphics library browser in layout editor sidebar (categories, search, click-to-insert)
+- Timeline analytics for media and playlists on content detail page
+- Payment method update via Stripe Customer Portal flow_data
+- App config editing with pre-populated modals for all 6 app types
 
 **Technical Debt (Minimal):**
 - ~900 E2E tests skipped (intentional: ~800 project-specific multi-project pattern, remainder categorized with SKIP REASON documentation)
@@ -252,6 +264,7 @@ These capabilities shipped and are production-verified:
 - ViewPage passes wrong lastActivityRef to useStuckDetection (content-level instead of playback-level)
 - Dead code path for mode === 'scene' in computeContentVersion (unreachable)
 - Extra checkDeviceRefreshStatus RPC per heartbeat cycle (optimization: return from update_device_status)
+- Orphaned test file: tests/unit/services/gdprDeletionService.test.js imports deleted service
 
 **Codebase Mapping:**
 - `.planning/codebase/ARCHITECTURE.md` — system design
@@ -366,4 +379,4 @@ These capabilities shipped and are production-verified:
 | SCRN-01/SCRN-02 confirmed complete, no changes needed | End-to-end verification vs unnecessary code | ✓ Good — avoided wasted work |
 
 ---
-*Last updated: 2026-02-20 after v6.0 Functional Completeness milestone started*
+*Last updated: 2026-02-23 after v6.0 milestone*
