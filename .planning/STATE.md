@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v6.0 Functional Completeness — Phase 77 (Content Media Features)
+**Current focus:** v6.0 Functional Completeness — Phase 78 (Platform Wiring)
 
 ## Current Position
 
-Phase: 77 of 80 (Content Media Features)
-Plan: 3 of 3 complete in current phase
-Status: Phase complete
-Last activity: 2026-02-22 — 77-03 Gap closure: Cloudinary video upload in MediaSection
+Phase: 78 of 80 (Platform Wiring)
+Plan: 1 of 2 complete in current phase
+Status: In progress
+Last activity: 2026-02-22 — 78-01 Payment method update wiring
 
 Progress: [======░░░░] 63% (v6.0 — 7/8 phases in progress)
 
@@ -79,6 +79,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 77]: Category filtering in graphics library uses name/folder string matching
 - [Phase 77]: Unified TimelineChart supports view_count, play_count, and total_duration_seconds fields
 - [Phase 77]: Use video.muted !== false for backward-compatible muted defaulting on existing video items
+- [Phase 78]: Use Stripe Customer Portal flow_data with payment_method_update type for direct payment method update
+- [Phase 78]: Primary button for Update Payment Method, secondary for Manage Billing
 
 ### Blockers/Concerns
 
@@ -106,13 +108,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 77 P01 | 3min | 2 tasks | 2 files |
 | Phase 77 P02 | 3min | 2 tasks | 3 files |
 | Phase 77 P03 | 2min | 2 tasks | 2 files |
+| Phase 78 P01 | 2min | 1 tasks | 2 files |
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 77-03-PLAN.md
+Stopped at: Completed 78-01-PLAN.md
 Resume file: N/A
-Next: Phase 77 complete (all 3 plans), next phase
+Next: Continue with 78-02-PLAN.md
 
 ---
-*Updated: 2026-02-22 -- 77-03 Gap closure: Cloudinary video upload in MediaSection complete*
+*Updated: 2026-02-22 -- 78-01 Payment method update wiring complete*

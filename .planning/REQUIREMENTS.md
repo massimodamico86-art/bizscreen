@@ -35,7 +35,7 @@ Requirements for Functional Completeness milestone. Every interactive UI element
 - [x] **FEAT-03**: User can add upcoming events to property details
 - [x] **FEAT-04**: User can browse and insert graphics from library in layout editor sidebar
 - [x] **FEAT-05**: User can view media and playlist timeline analytics on content detail page
-- [ ] **FEAT-06**: User can update payment method from subscription/billing page
+- [x] **FEAT-06**: User can update payment method from subscription/billing page
 - [ ] **FEAT-07**: User can edit app configuration from apps page
 
 ### Admin & Enterprise
@@ -94,7 +94,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FEAT-03 | Phase 77 | Complete |
 | FEAT-04 | Phase 77 | Complete |
 | FEAT-05 | Phase 77 | Complete |
-| FEAT-06 | Phase 78 | Pending |
+| FEAT-06 | Phase 78 | Complete |
 | FEAT-07 | Phase 78 | Pending |
 | ADMN-01 | Phase 76 | Complete |
 | ADMN-02 | Phase 76 | Complete |
