@@ -23,6 +23,7 @@ import {
   Triangle,
   Type,
   Unlock,
+  X,
 } from 'lucide-react';
 
 // Get icon for object type

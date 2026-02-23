@@ -12,7 +12,7 @@
 
 import { useState } from 'react';
 import * as fabric from 'fabric';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import { ChevronUp, ChevronDown, X } from 'lucide-react';
 
 // Color presets matching OptiSigns
 const COLOR_PRESETS = [

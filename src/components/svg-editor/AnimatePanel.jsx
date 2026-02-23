@@ -8,7 +8,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { ChevronUp, ChevronDown, Play, Plus, Trash2 } from 'lucide-react';
+import { ChevronUp, ChevronDown, Play, Plus, Trash2, X } from 'lucide-react';
 
 // Animation presets
 const PAGE_ANIMATIONS = [
