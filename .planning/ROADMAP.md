@@ -166,7 +166,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can update their credit card or payment method from the subscription/billing page
   2. User can open an installed app's configuration from the apps page, make changes, and save
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 78-01-PLAN.md -- Wire payment method update via Stripe portal from AccountPlanPage
+- [ ] 78-02-PLAN.md -- Wire app configuration editing from AppsPage with pre-populated modals
 
 ### Phase 79: AI Designer
 **Goal**: Users can describe what they want in plain language and receive a complete, editable layout
