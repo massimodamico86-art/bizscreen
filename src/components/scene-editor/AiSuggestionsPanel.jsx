@@ -74,7 +74,7 @@ export default function AiSuggestionsPanel({
 
   const improvements = useMemo(
     () => currentSlide
-      ? suggestImprovements({ slide: currentSlide?.design_json })
+      ? suggestImprovements({ slide: currentSlide })
       : [],
     [currentSlide]
   );

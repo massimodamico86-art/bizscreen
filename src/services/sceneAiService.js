@@ -325,7 +325,7 @@ export function suggestImprovements({ _scene, slide }) {
   };
 
   // Improve text blocks with better styling
-  design.blocks = design.blocks.map(block => {
+  design.blocks = (design.blocks || []).map(block => {
     if (block.type === 'text') {
       return {
         ...block,
