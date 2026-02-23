@@ -22,7 +22,7 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Media Library (MEDIA)
 
-- [ ] **MEDIA-01**: User can upload media files with progress feedback
+- [x] **MEDIA-01**: User can upload media files with progress feedback
 - [x] **MEDIA-02**: User can preview, rename, and delete media items
 - [ ] **MEDIA-03**: User can bulk-select and bulk-delete media
 - [ ] **MEDIA-04**: User can filter and search the media library
@@ -157,7 +157,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-05 | Phase 81 | Complete |
 | DASH-01 | Phase 81 | Pending |
 | DASH-02 | Phase 81 | Pending |
-| MEDIA-01 | Phase 82 | Pending |
+| MEDIA-01 | Phase 82 | Complete |
 | MEDIA-02 | Phase 82 | Complete |
 | MEDIA-03 | Phase 82 | Pending |
 | MEDIA-04 | Phase 82 | Pending |
