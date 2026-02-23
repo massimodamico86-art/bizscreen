@@ -179,7 +179,11 @@ Plans:
   1. User can type a text prompt describing a layout (e.g. "restaurant menu board with daily specials") and submit it
   2. System generates a complete layout with zones, content placeholders, and styling based on the prompt
   3. User can view the generated layout in the editor and modify any element as if they had built it manually
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 79-01-PLAN.md -- AI designer edge function and client service
+- [ ] 79-02-PLAN.md -- AI Designer panel UI and layout editor sidebar integration
+- [ ] 79-03-PLAN.md -- Conversational refinement, image upload, and brand toggle
 
 ### Phase 80: SVG Editor Integration Polish
 **Goal**: Fix integration defects and tech debt discovered in completed phases 73-74 — runtime crash, disconnected toggle, and stale panel state
@@ -209,7 +213,7 @@ Phases 72 first (fixes), then 73-74 sequentially (editor features build on each 
 | 76. Enterprise Security Controls | 3/3 | Complete    | 2026-02-22 | - |
 | 77. Content & Media Features | 3/3 | Complete    | 2026-02-23 | - |
 | 78. Platform Wiring | 2/2 | Complete    | 2026-02-23 | - |
-| 79. AI Designer | v6.0 | 0/TBD | Not started | - |
+| 79. AI Designer | v6.0 | 0/3 | Not started | - |
 | 80. SVG Editor Integration Polish | 1/1 | Complete    | 2026-02-22 | - |
 
 ## Progress Summary
