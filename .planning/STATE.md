@@ -52,6 +52,7 @@ Recent decisions affecting v7.0:
 - [v6.0 general]: Enterprise security stores policies in tenant_settings with key-based lookup
 - [v6.0 general]: Cloud OAuth uses shared PKCE utility with provider-keyed localStorage for token isolation
 - [Phase 81]: Auth pages in src/auth/ were fully correct — no changes needed to the primary auth flow; legacy pages fixed by adding missing Alert/Button imports
+- [Phase 81]: Auth pages in src/auth/ were fully correct — no changes needed to the primary auth flow; legacy pages fixed by adding missing Alert/Button imports; all flows human-verified and approved
 
 ### Blockers/Concerns
 

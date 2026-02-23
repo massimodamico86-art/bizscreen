@@ -9,11 +9,11 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Authentication (AUTH)
 
-- [ ] **AUTH-01**: User can complete full signup flow with email/password and verify prompt
-- [ ] **AUTH-02**: User can log in and is redirected to the correct page
-- [ ] **AUTH-03**: User can reset password via forgot-password email link
-- [ ] **AUTH-04**: User can accept team invitation and set up account
-- [ ] **AUTH-05**: User can update password from UpdatePasswordPage
+- [x] **AUTH-01**: User can complete full signup flow with email/password and verify prompt
+- [x] **AUTH-02**: User can log in and is redirected to the correct page
+- [x] **AUTH-03**: User can reset password via forgot-password email link
+- [x] **AUTH-04**: User can accept team invitation and set up account
+- [x] **AUTH-05**: User can update password from UpdatePasswordPage
 
 ### Dashboard (DASH)
 
@@ -150,11 +150,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 81 | Pending |
-| AUTH-02 | Phase 81 | Pending |
-| AUTH-03 | Phase 81 | Pending |
-| AUTH-04 | Phase 81 | Pending |
-| AUTH-05 | Phase 81 | Pending |
+| AUTH-01 | Phase 81 | Complete |
+| AUTH-02 | Phase 81 | Complete |
+| AUTH-03 | Phase 81 | Complete |
+| AUTH-04 | Phase 81 | Complete |
+| AUTH-05 | Phase 81 | Complete |
 | DASH-01 | Phase 81 | Pending |
 | DASH-02 | Phase 81 | Pending |
 | MEDIA-01 | Phase 82 | Pending |
