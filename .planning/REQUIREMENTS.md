@@ -31,8 +31,8 @@ Requirements for Functional Completeness milestone. Every interactive UI element
 ### New Features
 
 - [ ] **FEAT-01**: User can generate a complete layout from a text prompt via AI Designer
-- [ ] **FEAT-02**: User can upload video files in carousel media manager
-- [ ] **FEAT-03**: User can add upcoming events to property details
+- [x] **FEAT-02**: User can upload video files in carousel media manager
+- [x] **FEAT-03**: User can add upcoming events to property details
 - [ ] **FEAT-04**: User can browse and insert graphics from library in layout editor sidebar
 - [ ] **FEAT-05**: User can view media and playlist timeline analytics on content detail page
 - [ ] **FEAT-06**: User can update payment method from subscription/billing page
@@ -90,8 +90,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLOUD-04 | Phase 75 | Complete |
 | CLOUD-05 | Phase 75 | Complete |
 | FEAT-01 | Phase 79 | Pending |
-| FEAT-02 | Phase 77 | Pending |
-| FEAT-03 | Phase 77 | Pending |
+| FEAT-02 | Phase 77 | Complete |
+| FEAT-03 | Phase 77 | Complete |
 | FEAT-04 | Phase 77 | Pending |
 | FEAT-05 | Phase 77 | Pending |
 | FEAT-06 | Phase 78 | Pending |

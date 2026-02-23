@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v6.0 Functional Completeness — Phase 76 (Enterprise Security Controls)
+**Current focus:** v6.0 Functional Completeness — Phase 77 (Content Media Features)
 
 ## Current Position
 
-Phase: 76 of 80 (Enterprise Security Controls)
-Plan: 3 of 3 complete in current phase
+Phase: 77 of 80 (Content Media Features)
+Plan: 2 of 2 complete in current phase
 Status: Phase complete
-Last activity: 2026-02-22 — 76-03 Gap closure: tenant_id fix for security policy and deletion
+Last activity: 2026-02-22 — 77-02 Graphics library and content analytics timeline
 
-Progress: [======░░░░] 60% (v6.0 — 6/8 phases in progress)
+Progress: [======░░░░] 63% (v6.0 — 7/8 phases in progress)
 
 ## Milestones Shipped
 
@@ -72,6 +72,13 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 76]: Use inline confirmation panel instead of modal for deletion gravity
 - [Phase 76]: Require exact case-sensitive phrase DELETE MY DATA to enable delete button
 - [Phase 76]: Single root cause fix: adding tenant_id to AuthContext SELECT closes 3 verification gaps simultaneously
+- [Phase 77]: Use Cloudinary upload widget with resourceType=video for carousel video uploads
+- [Phase 77]: Store events in formData.upcomingEvents with inline CRUD form pattern
+- [Phase 77]: Inline edit form replaces event row on edit click (not separate modal)
+- [Phase 77]: Use seeded random from contentId for deterministic mock timeline data across refreshes
+- [Phase 77]: Category filtering in graphics library uses name/folder string matching
+- [Phase 77]: Unified TimelineChart supports view_count, play_count, and total_duration_seconds fields
+- [Phase 77]: Use Cloudinary upload widget with resourceType=video for carousel video uploads
 
 ### Blockers/Concerns
 
@@ -96,13 +103,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 76 P01 | 3min | 2 tasks | 4 files |
 | Phase 76 P02 | 2min | 1 tasks | 1 files |
 | Phase 76 P03 | 1min | 1 tasks | 2 files |
+| Phase 77 P01 | 3min | 2 tasks | 2 files |
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 76-03-PLAN.md
+Stopped at: Completed 77-01-PLAN.md
 Resume file: N/A
-Next: Phase 76 complete, next phase
+Next: 77-02-PLAN.md
 
 ---
-*Updated: 2026-02-22 -- 76-03 Gap closure: tenant_id fix for security policy and deletion complete*
+*Updated: 2026-02-22 -- 77-01 Video upload and events management complete*
