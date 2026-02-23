@@ -9,38 +9,43 @@
 
 import { useState, useEffect } from 'react';
 import {
+  ArrowLeft,
+  Building,
+  Building2,
+  Car,
+  Check,
+  Coffee,
+  Dumbbell,
+  Edit,
+  ExternalLink,
+  Home,
   Layout,
   ListVideo,
-  Utensils,
+  Loader2,
+  Palette,
+  Pencil,
   Scissors,
-  Dumbbell,
   ShoppingBag,
   Stethoscope,
-  Home,
-  Building,
-  Car,
-  Coffee,
-  Building2,
-  ArrowLeft,
-  ExternalLink,
-  Loader2,
-  Check,
+  Trash2,
+  Tv,
+  Utensils,
   X,
-  Pencil,
-  Edit,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchScene, updateScene, getDeviceCountByScene } from '../services/sceneService';
+import { fetchScene, updateScene, getDeviceCountByScene, deleteScene } from '../services/sceneService';
 import {
   Card,
   CardContent,
   PageLayout,
   Button,
   Badge,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalContent,
+  ModalFooter,
 } from '../design-system';
-
-
-
 
 // Business type config (same as ScenesPage)
 const BUSINESS_TYPE_CONFIG = {
@@ -97,6 +102,8 @@ export default function SceneDetailPage({ sceneId, onNavigate, onShowToast }) {
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState('');
   const [savingName, setSavingName] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Load scene data
   useEffect(() => {
@@ -160,6 +167,20 @@ export default function SceneDetailPage({ sceneId, onNavigate, onShowToast }) {
   function handleEditPlaylist() {
     if (scene?.primary_playlist_id) {
       onNavigate?.(`playlist-editor-${scene.primary_playlist_id}`);
+    }
+  }
+
+  async function handleDeleteScene() {
+    setIsDeleting(true);
+    try {
+      await deleteScene(sceneId);
+      onShowToast?.('Scene deleted', 'success');
+      onNavigate?.('scenes');
+    } catch (err) {
+      console.error('Error deleting scene:', err);
+      onShowToast?.('Failed to delete scene', 'error');
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   }
 
@@ -282,6 +303,14 @@ export default function SceneDetailPage({ sceneId, onNavigate, onShowToast }) {
 
           {/* Primary actions */}
           <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete
+            </Button>
             <Button variant="secondary" onClick={() => onNavigate?.(`scene-editor-${sceneId}`)}>
               <Palette className="w-4 h-4 mr-2" />
               Edit Design
@@ -419,6 +448,27 @@ export default function SceneDetailPage({ sceneId, onNavigate, onShowToast }) {
         tenantId={userProfile?.id}
         onSuccess={handlePublishSuccess}
       />
+
+      {/* Delete Confirmation Modal */}
+      <Modal open={showDeleteConfirm} onClose={() => !isDeleting && setShowDeleteConfirm(false)} size="sm">
+        <ModalHeader>
+          <ModalTitle className="flex items-center gap-2 text-red-600">
+            <Trash2 size={20} />
+            Delete Scene
+          </ModalTitle>
+        </ModalHeader>
+        <ModalContent>
+          <p className="text-sm text-gray-600">
+            Delete <span className="font-medium">&quot;{scene?.name}&quot;</span>? This cannot be undone.
+          </p>
+        </ModalContent>
+        <ModalFooter>
+          <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)} disabled={isDeleting}>Cancel</Button>
+          <Button onClick={handleDeleteScene} disabled={isDeleting} className="bg-red-600 hover:bg-red-700 text-white">
+            {isDeleting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Deleting...</> : <><Trash2 className="w-4 h-4 mr-2" />Delete</>}
+          </Button>
+        </ModalFooter>
+      </Modal>
     </PageLayout>
   );
 }
