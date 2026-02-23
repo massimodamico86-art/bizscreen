@@ -337,6 +337,13 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
     setEditingImageElement(null);
   }, [editingImageElement, handleElementUpdate]);
 
+  // Apply AI-generated layout
+  const handleApplyAiLayout = useCallback(({ elements, background, name }) => {
+    handleLayoutUpdate({ elements, background, name: name || layout?.name });
+    setSelectedElementId(null);
+    showToast?.({ type: 'success', message: 'AI layout applied \u2014 use Ctrl+Z to undo' });
+  }, [handleLayoutUpdate, layout?.name, showToast]);
+
   // Keyboard shortcuts
   useEffect(() => {
     function handleKeyDown(e) {
@@ -483,6 +490,10 @@ export default function YodeckLayoutEditorPage({ layoutId, showToast, onNavigate
           onSmartGuidesChange={setSmartGuidesEnabled}
           showGrid={showGrid}
           onShowGridChange={setShowGrid}
+          onApplyLayout={handleApplyAiLayout}
+          orientation={orientation}
+          onOrientationChange={handleOrientationChange}
+          showToast={showToast}
         />
 
         {/* Canvas area */}

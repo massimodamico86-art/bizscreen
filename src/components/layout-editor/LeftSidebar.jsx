@@ -59,8 +59,10 @@ import {
   YODECK_TEXT_STYLES,
 } from '../../config/yodeckTheme';
 import { getWidgetTypes, getWidgetDefaults } from '../../widgets/registry.js';
+import AiDesignerPanel from './AiDesignerPanel';
 
 const SIDEBAR_TABS = [
+  { id: 'ai-designer', icon: Sparkles, label: 'AI' },
   { id: 'media', icon: Image, label: 'Media' },
   { id: 'apps', icon: LayoutGrid, label: 'Apps' },
   { id: 'playlists', icon: ListVideo, label: 'Playlists' },
@@ -104,6 +106,10 @@ export default function LeftSidebar({
   onShowGridChange,
   snapToGrid,
   onSnapToGridChange,
+  onApplyLayout,
+  orientation,
+  onOrientationChange,
+  showToast,
 }) {
   const [activeTab, setActiveTab] = useState('media');
   const [_expandedSection, _setExpandedSection] = useState(null);
@@ -267,7 +273,17 @@ export default function LeftSidebar({
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto">
+        {activeTab === 'ai-designer' && (
+          <AiDesignerPanel
+            onApplyLayout={onApplyLayout}
+            orientation={orientation}
+            onOrientationChange={onOrientationChange}
+            showToast={showToast}
+          />
+        )}
+
+        {activeTab !== 'ai-designer' && <div className="p-4">
         {activeTab === 'media' && (
           <MediaTabContent onAddImage={handleAddImage} onOpenLibrary={onOpenMediaLibrary} />
         )}
@@ -298,6 +314,7 @@ export default function LeftSidebar({
             onSnapToGridChange={onSnapToGridChange}
           />
         )}
+        </div>}
       </div>
     </div>
   );

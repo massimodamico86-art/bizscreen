@@ -5,6 +5,7 @@
  * Features coral/orange accent colors and light background theme.
  */
 
+export { default as AiDesignerPanel } from './AiDesignerPanel';
 export { default as LayoutEditorCanvas } from './LayoutEditorCanvas';
 export { default as LayoutElementRenderer } from './LayoutElementRenderer';
 export { default as LayoutPropertiesPanel } from './LayoutPropertiesPanel';
