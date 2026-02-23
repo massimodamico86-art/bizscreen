@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 78 of 80 (Platform Wiring)
-Plan: 1 of 2 complete in current phase
-Status: In progress
-Last activity: 2026-02-22 — 78-01 Payment method update wiring
+Plan: 2 of 2 complete in current phase
+Status: Phase complete
+Last activity: 2026-02-22 — 78-02 App edit flow wiring
 
 Progress: [======░░░░] 63% (v6.0 — 7/8 phases in progress)
 
@@ -81,6 +81,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 77]: Use video.muted !== false for backward-compatible muted defaulting on existing video items
 - [Phase 78]: Use Stripe Customer Portal flow_data with payment_method_update type for direct payment method update
 - [Phase 78]: Primary button for Update Payment Method, secondary for Manage Billing
+- [Phase 78]: Reuse existing create modals for edit by passing initialValues prop instead of separate edit modals
+- [Phase 78]: Use editingApp state at parent level to toggle modal behavior between create and edit modes
 
 ### Blockers/Concerns
 
@@ -109,13 +111,14 @@ Full decision log in PROJECT.md Key Decisions table.
 | Phase 77 P02 | 3min | 2 tasks | 3 files |
 | Phase 77 P03 | 2min | 2 tasks | 2 files |
 | Phase 78 P01 | 2min | 1 tasks | 2 files |
+| Phase 78 P02 | 3min | 1 tasks | 2 files |
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 78-01-PLAN.md
+Stopped at: Completed 78-02-PLAN.md
 Resume file: N/A
-Next: Continue with 78-02-PLAN.md
+Next: Phase 78 complete (all 2 plans), next phase
 
 ---
-*Updated: 2026-02-22 -- 78-01 Payment method update wiring complete*
+*Updated: 2026-02-22 -- 78-02 App edit flow wiring complete*
