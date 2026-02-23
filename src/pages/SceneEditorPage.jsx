@@ -12,7 +12,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   ArrowLeft,
-  Badge,
   Check,
   Clock,
   Database,
@@ -55,7 +54,13 @@ import {
 import { getBrandTheme, getThemedBlockDefaults } from '../services/brandThemeService';
 
 // Components
-import { Button } from '../design-system';
+import { Button, Badge } from '../design-system';
+import { SlideStrip, EditorCanvas, PropertiesPanel, AiSuggestionsPanel } from '../components/scene-editor';
+import LivePreviewWindow from '../components/scene-editor/LivePreviewWindow';
+import IndustryWizardModal from '../components/scene-editor/IndustryWizardModal';
+import DataBoundWizardModal from '../components/scene-editor/DataBoundWizardModal';
+import ContentInlineMetrics from '../components/analytics/ContentInlineMetrics';
+import AddLanguageModal from '../components/scenes/AddLanguageModal';
 import { emitDesignChange } from '../services/deviceSyncService';
 
 import { fetchLanguageVariants } from '../services/languageService';
