@@ -36,6 +36,68 @@ export const EXAMPLE_PROMPTS = [
 ];
 
 // ---------------------------------------------------------------------------
+// Brand Context
+// ---------------------------------------------------------------------------
+
+/** Maximum image file size for reference uploads (4MB) */
+const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024;
+
+/**
+ * Build a brand context object from branding data for AI consumption.
+ * Extracts colors, fonts, and logo URL into a structure the AI can
+ * use to generate on-brand layouts.
+ *
+ * @param {Object|null} branding - Branding data from BrandingContext
+ * @returns {Object|null} Brand context for the AI, or null if no branding
+ */
+export function buildBrandContext(branding) {
+  if (!branding) return null;
+
+  return {
+    colors: {
+      primary: branding.primaryColor || '#F26F26',
+      secondary: branding.secondaryColor || '#1E40AF',
+      accent: branding.accentColor || branding.primaryColor || '#F26F26',
+    },
+    fonts: {
+      heading: branding.headingFont || 'Inter',
+      body: branding.bodyFont || 'Inter',
+    },
+    logoUrl: branding.logoUrl || null,
+  };
+}
+
+/**
+ * Convert an image File to a base64 data URL string.
+ * Validates that the file is an image and under 4MB.
+ *
+ * @param {File} file - Image file from file input
+ * @returns {Promise<string>} Base64 data URL (data:image/...;base64,...)
+ * @throws {Error} If file is not an image or exceeds 4MB
+ */
+export function convertImageToBase64(file) {
+  if (!file) {
+    return Promise.reject(new Error('No file provided'));
+  }
+
+  if (!file.type || !file.type.startsWith('image/')) {
+    return Promise.reject(new Error('Please select an image file (PNG, JPG, GIF, etc.)'));
+  }
+
+  if (file.size > MAX_IMAGE_SIZE_BYTES) {
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    return Promise.reject(new Error(`Image is too large (${sizeMB}MB). Maximum size is 4MB.`));
+  }
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Failed to read image file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
 
@@ -232,16 +294,30 @@ export async function generateLayout({ prompt, orientation, brandContext, imageB
  * @param {Object} params
  * @param {string} params.prompt - Refinement instruction
  * @param {Array<{role: string, content: string}>} params.messages - Conversation history
+ * @param {Array} [params.previousElements] - Elements from the last generation (for context)
  * @param {string} [params.orientation='16:9'] - Aspect ratio
  * @param {Object} [params.brandContext] - Brand colors, fonts, logo
+ * @param {string} [params.imageBase64] - Base64-encoded reference image
  * @returns {Promise<{elements: Array, background: Object, name: string}>}
  */
-export async function refineLayout({ prompt, messages, orientation, brandContext }) {
+export async function refineLayout({ prompt, messages, previousElements, orientation, brandContext, imageBase64 }) {
   logger.info('Refining layout', { prompt: prompt?.substring(0, 100), messageCount: messages?.length });
 
   try {
+    // Build messages array with previous layout context
+    const rawMessages = [...(messages || [])];
+
+    // Include the previous layout JSON as assistant context so the AI
+    // knows what it previously generated and can modify it
+    if (previousElements && Array.isArray(previousElements) && previousElements.length > 0) {
+      rawMessages.push({ role: 'assistant', content: JSON.stringify(previousElements) });
+    }
+
+    // Add the current refinement prompt
+    rawMessages.push({ role: 'user', content: prompt });
+
     // Truncate conversation if needed
-    const conversation = buildConversation(messages || []);
+    const conversation = buildConversation(rawMessages);
 
     const { data, error } = await supabase.functions.invoke('ai-designer', {
       body: {
@@ -249,6 +325,7 @@ export async function refineLayout({ prompt, messages, orientation, brandContext
         messages: conversation,
         orientation: orientation || '16:9',
         brandContext,
+        imageBase64,
       },
     });
 
