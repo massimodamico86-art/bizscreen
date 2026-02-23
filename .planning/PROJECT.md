@@ -189,9 +189,17 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-**Current Milestone: Planning Next**
+**Current Milestone: v7.0 UI Verification**
 
-No active milestone requirements — v6.0 complete. Run `/gsd:new-milestone` to define v7.0.
+**Goal:** Systematically audit every page in the application using AI-driven code analysis — verify every button, form, modal, and action performs its intended function, and fix all gaps found.
+
+**Target features:**
+- Authentication & onboarding flows fully verified and functional
+- Content creation pages (scenes, playlists, media, layouts, templates) fully verified
+- Scheduling and campaign pages fully verified
+- Screen management and monitoring pages fully verified
+- Settings, billing, team, and notification pages fully verified
+- Admin and management pages fully verified
 
 ### Out of Scope
 
@@ -379,4 +387,4 @@ No active milestone requirements — v6.0 complete. Run `/gsd:new-milestone` to 
 | SCRN-01/SCRN-02 confirmed complete, no changes needed | End-to-end verification vs unnecessary code | ✓ Good — avoided wasted work |
 
 ---
-*Last updated: 2026-02-23 after v6.0 milestone*
+*Last updated: 2026-02-23 after v7.0 milestone started*

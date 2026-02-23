@@ -5,15 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Planning next milestone — v6.0 Functional Completeness shipped 2026-02-23
+**Current focus:** v7.0 UI Verification — systematic page-by-page audit and fix
 
 ## Current Position
 
-Phase: — (between milestones)
-Status: v6.0 complete — all 80 phases done, 247 plans executed, 12 milestones shipped
-Last activity: 2026-02-23 — v6.0 Functional Completeness milestone archived
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-23 — Milestone v7.0 UI Verification started
 
-Progress: [████████████] 100% (v6.0 — 9/9 phases complete)
+Progress: [░░░░░░░░░░░░] 0% (v7.0 — not started)
 
 ## Milestones Shipped
 
@@ -127,9 +128,9 @@ Full decision log in PROJECT.md Key Decisions table.
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: v6.0 Functional Completeness milestone archived
+Stopped at: v7.0 milestone started — defining requirements
 Resume file: N/A
-Next: /gsd:new-milestone to plan v7.0
+Next: /gsd:plan-phase [N] once roadmap is created
 
 ---
-*Updated: 2026-02-23 -- v6.0 milestone complete and archived*
+*Updated: 2026-02-23 — v7.0 UI Verification milestone started*
