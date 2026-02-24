@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v7.0 UI Verification — Phase 83 complete, ready for Phase 84
+**Current focus:** v7.0 UI Verification — Phase 85 complete, ready for next phase
 
 ## Current Position
 
-Phase: 83 of 90 (Scene Editor AI Designer) — COMPLETE
-Plan: All 3 plans complete (01, 02, 03)
-Status: Phase 083 complete — all plans executed and human-verified
-Last activity: 2026-02-23 — Phase 083 complete: scene CRUD, SVG editor tools/panels audit, AI suggestions panel, cloud imports
+Phase: 85 of 90 (Scheduling & Campaigns) — COMPLETE
+Plan: All 2 plans complete (01, 02)
+Status: Phase 085 complete — schedule and campaign import fixes done, all pages verified
+Last activity: 2026-02-24 — Phase 85-02: fixed 13+ missing imports in CampaignEditorPage, CampaignEditorComponents, CampaignsPage
 
-Progress: [█░░░░░░░░░░░] ~10% (v7.0 — 1/10 phases complete)
+Progress: [███░░░░░░░░░] ~30% (v7.0 — 3/10 phases complete)
 
 ## Milestones Shipped
 
@@ -36,8 +36,8 @@ Progress: [█░░░░░░░░░░░] ~10% (v7.0 — 1/10 phases comp
 ## Performance Metrics
 
 **Cumulative (v1 through v6.0):**
-- Total plans executed: 250 (247 + 3 from phase 083)
-- Total phases: 81 completed (80 + phase 083)
+- Total plans executed: 252 (250 + 2 from phase 085)
+- Total phases: 83 completed (81 + phases 084, 085)
 - Total milestones: 12 shipped
 
 ## Accumulated Context
@@ -60,6 +60,8 @@ Recent decisions affecting v7.0:
 - [Phase 083-01]: SceneCard secondary action row (Duplicate/Delete) placed below primary Publish/Open buttons for visual separation of destructive actions; SceneDetailPage Delete placed first in header actions as ghost/danger variant
 - [Phase 083-02]: syncCanvasObjects TDZ fix — useRef pattern allows canvas event handlers and layer reorder callbacks to safely reference syncCanvasObjects before its useCallback definition
 - [Phase 083-03]: suggestImprovements expects full slide object (not slide.design_json); guard blocks array with fallback to empty array
+- [Phase 85-01]: Badge imported from design-system (not lucide-react) for component usage with variant/size props; Button variant="secondary" confirmed valid in design-system
+- [Phase 85-02]: Badge collision fix in CampaignEditorPage — removed Badge from lucide-react import to avoid shadowing design-system Badge component used for status display
 
 ### Blockers/Concerns
 
@@ -69,10 +71,10 @@ Recent decisions affecting v7.0:
 
 ## Session Continuity
 
-Last session: 2026-02-23
-Stopped at: Phase 083 complete — all 3 plans executed and human-verified
+Last session: 2026-02-24
+Stopped at: Completed 85-01-PLAN.md
 Resume file: N/A
-Next: Continue with Phase 084 (next phase in v7.0 roadmap)
+Next: Continue with Phase 85 plan 02
 
 ---
-*Updated: 2026-02-23 — Phase 083 complete; scene editor AI designer fully verified*
+*Updated: 2026-02-24 — Phase 85 plan 01 complete; schedule imports fixed, E2E verified*

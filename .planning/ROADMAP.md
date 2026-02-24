@@ -71,7 +71,7 @@ All milestones shipped successfully.
 - [x] **Phase 82: Media Library** - Verify upload, preview, bulk actions, and search work end-to-end (completed 2026-02-23)
 - [ ] **Phase 83: Scene Editor & AI Designer** - Verify SVG editor tools, property panels, AI generation, and cloud imports
 - [ ] **Phase 84: Playlists, Layouts & Templates** - Verify playlist CRUD, layout editor zones, widget config, and template marketplace
-- [ ] **Phase 85: Scheduling & Campaigns** - Verify schedule creation, conflict detection, dayparting, and campaign management
+- [x] **Phase 85: Scheduling & Campaigns** - Verify schedule creation, conflict detection, dayparting, and campaign management (completed 2026-02-24)
 - [ ] **Phase 86: Screen Management** - Verify screen list, pairing, groups, diagnostics, and remote commands
 - [ ] **Phase 87: Data Sources, Apps & Moderation** - Verify data source config, app editing, menu boards, and content moderation queues
 - [ ] **Phase 88: Analytics & Alerts** - Verify analytics dashboards, content metrics, alert history, and notification settings
@@ -226,7 +226,7 @@ Plans:
 | 82. Media Library | 4/4 | Complete    | 2026-02-23 |
 | 83. Scene Editor & AI Designer | 0/3 | Not started | - |
 | 84. Playlists, Layouts & Templates | 0/3 | Not started | - |
-| 85. Scheduling & Campaigns | 0/2 | Not started | - |
+| 85. Scheduling & Campaigns | 2/2 | Complete   | 2026-02-24 |
 | 86. Screen Management | 0/TBD | Not started | - |
 | 87. Data Sources, Apps & Moderation | 0/TBD | Not started | - |
 | 88. Analytics & Alerts | 0/TBD | Not started | - |

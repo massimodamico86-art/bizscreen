@@ -55,9 +55,9 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Schedules (SCHED)
 
-- [ ] **SCHED-01**: User can create schedules with time/day rules and content assignment
-- [ ] **SCHED-02**: Schedule conflict detection and weekly preview work
-- [ ] **SCHED-03**: Daypart configuration and schedule editor tools work
+- [x] **SCHED-01**: User can create schedules with time/day rules and content assignment
+- [x] **SCHED-02**: Schedule conflict detection and weekly preview work
+- [x] **SCHED-03**: Daypart configuration and schedule editor tools work
 
 ### Campaigns (CAMP)
 
@@ -175,9 +175,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LAYT-04 | Phase 84 | Pending |
 | TMPL-01 | Phase 84 | Pending |
 | TMPL-02 | Phase 84 | Pending |
-| SCHED-01 | Phase 85 | Pending |
-| SCHED-02 | Phase 85 | Pending |
-| SCHED-03 | Phase 85 | Pending |
+| SCHED-01 | Phase 85 | Complete |
+| SCHED-02 | Phase 85 | Complete |
+| SCHED-03 | Phase 85 | Complete |
 | CAMP-01 | Phase 85 | Pending |
 | CAMP-02 | Phase 85 | Pending |
 | CAMP-03 | Phase 85 | Pending |
