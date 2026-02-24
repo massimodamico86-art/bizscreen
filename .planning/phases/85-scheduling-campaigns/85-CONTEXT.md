@@ -8,42 +8,58 @@
 
 Verify schedule creation with time/day rules, conflict detection, dayparting, weekly preview, and full campaign lifecycle (create, edit, delete, rotation, priority, seasonal dates, analytics). All components exist — this phase ensures they work end-to-end without errors.
 
+Key pages: SchedulesPage, ScheduleEditorPage, CampaignsPage, CampaignEditorPage.
+Key sub-components: ConflictWarning, WeekPreview, DaypartPicker, FillerContentPicker, AssignScreensModal, PriorityBadge, CampaignPicker, DateDurationPicker, RotationControls, SeasonalDatePicker, TemplatePickerModal, FrequencyLimitControls, CampaignAnalyticsCard.
+
 </domain>
 
 <decisions>
 ## Implementation Decisions
 
-### Conflict & Preview UX
-- Claude's discretion on conflict presentation style (inline warning vs modal vs blocking)
-- Claude's discretion on weekly preview detail level (compact color bars vs rich thumbnails)
-- Claude's discretion on daypart picker interaction (visual grid vs form-based) — use whatever the existing DaypartPicker supports
-- Claude's discretion on conflict resolution actions (notify-only vs quick-resolve buttons)
+### Schedule Editor Verification
+- Claude's discretion on calendar verification depth (render-only vs full event CRUD round-trip)
+- Claude's discretion on conflict detection testing (logic verification vs render check)
+- Claude's discretion on sub-component testing approach (independent vs in-context)
+- Claude's discretion on SchedulesPage list CRUD coverage
+- **Known concern:** ScheduleEditorPage is ~1175 lines with many inline component references (X, Button, Card, Badge, etc.) that may have import issues — prioritize making the page render without crashes
+- **Known concern:** ScheduleEditorPage uses hash-based navigation (onNavigate) while CampaignsPage uses React Router — Claude decides whether to standardize
 
-### Schedule Rule Builder
-- Claude's discretion on content assignment method (picker modal vs drag sidebar) — follow existing component patterns
-- Claude's discretion on time granularity — follow signage industry norms and existing component
-- Claude's discretion on editor visualization (live timeline vs rules list + preview tab) — follow existing ScheduleEditorPage patterns
-- Claude's discretion on filler content prominence — decide based on workflow importance
+### Campaign Lifecycle
+- Claude's discretion on which flows to verify (core CRUD, template creation, approval workflow, preview links)
+- Claude's discretion on template picker (TemplatePickerModal) verification depth
+- Claude's discretion on analytics card verification (render vs functional date range filter)
+- **Known concern:** CampaignEditorPage imports Badge from lucide-react (icon) instead of design system Badge — import audit needed
+- **Known concern:** Several components used but potentially not imported: TargetPickerModal, ContentPickerModal, FrequencyLimitControls, RotationControls, SeasonalDatePicker, ApprovalRequestModal, PreviewLinksModal, Modal/ModalHeader/ModalContent/ModalFooter
 
-### Campaign Editor Flow
-- Claude's discretion on rotation controls (simple interval vs weighted) — follow existing RotationControls component
-- Claude's discretion on seasonal date picker (simple range vs recurring rules) — follow existing SeasonalDatePicker component
-- Claude's discretion on template picker placement — follow existing TemplatePickerModal component
-- Claude's discretion on priority system (numeric vs named tiers) — follow existing PriorityBadge component
+### Fix Approach
+- Claude's discretion on fix philosophy: minimal patches for render bugs, deeper fixes for broken features
+- Claude's discretion on refactoring: avoid restructuring unless needed to fix bugs
+- Claude's discretion on navigation pattern: make each work as-is unless migration is trivial
+- Claude's discretion on test method: code review, Playwright browser testing, or both per feature
+
+### Edge Features
+- Claude's discretion on FillerContentPicker verification (important for signage — screens shouldn't go blank)
+- Claude's discretion on DaypartPicker and WeekPreview verification level
+- Claude's discretion on AssignScreensModal and campaign Targets verification
+- Claude's discretion on enterprise features (approval workflow, preview links) — not in success criteria
 
 ### Claude's Discretion
 All implementation decisions for this phase are at Claude's discretion. The user trusts Claude to:
+- Fix all import/render errors first so pages load, then test functional flows
 - Follow existing component patterns and design system conventions
 - Make choices consistent with digital signage industry norms
-- Ensure all success criteria pass (schedule CRUD, conflict detection, dayparting, campaign lifecycle, analytics)
+- Ensure all 5 success criteria pass (schedule CRUD, conflict detection, dayparting/week preview, campaign lifecycle, campaign analytics)
 - Prioritize making existing components work correctly over redesigning them
+- Use judgment on verification depth: render-first approach for complex pages, functional testing for success criteria items
 
 </decisions>
 
 <specifics>
 ## Specific Ideas
 
-No specific requirements — open to standard approaches. User trusts Claude to follow existing patterns across all schedule and campaign components.
+- No specific requirements — user has not tested these pages yet. All bugs will be discovered during verification.
+- Import audit is likely the highest-value first step — multiple components may have missing or incorrect imports.
+- ScheduleEditorPage and CampaignEditorPage are the two most complex pages in this phase.
 
 </specifics>
 
