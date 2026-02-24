@@ -69,6 +69,15 @@ export default function EditorModal({
     setRetryKey((prev) => prev + 1);
   }, []);
 
+  // Actual close - reset all state
+  const handleActualClose = useCallback(() => {
+    setIsLoading(true);
+    setError(null);
+    setIsDirty(false);
+    setShowUnsavedDialog(false);
+    onClose?.();
+  }, [onClose]);
+
   // Handle close attempt - intercept if dirty
   const handleCloseAttempt = useCallback(() => {
     if (isDirty) {
@@ -79,15 +88,6 @@ export default function EditorModal({
       handleActualClose();
     }
   }, [isDirty, handleActualClose]);
-
-  // Actual close - reset all state
-  const handleActualClose = useCallback(() => {
-    setIsLoading(true);
-    setError(null);
-    setIsDirty(false);
-    setShowUnsavedDialog(false);
-    onClose?.();
-  }, [onClose]);
 
   // Handle dirty state changes from editor
   const handleDirtyChange = useCallback((dirty) => {

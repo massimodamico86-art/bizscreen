@@ -45,6 +45,16 @@ export default function PolotnoEditor({
   // Build iframe URL with params - points to bundled Polotno editor
   const iframeSrc = `/polotno/index.html?width=${width}&height=${height}&name=${encodeURIComponent(designName)}`;
 
+  // Send message to iframe
+  const sendToIframe = useCallback((action, payload = {}) => {
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        { target: 'polotno-editor', action, payload },
+        '*'
+      );
+    }
+  }, []);
+
   // Handle messages from iframe
   const handleMessage = useCallback(async (event) => {
     // Only accept messages from our iframe
@@ -121,16 +131,6 @@ export default function PolotnoEditor({
         break;
     }
   }, [initialDesign, onSave, onClose, onReady, onError, onDirtyChange, designName, templates, logger, sendToIframe]);
-
-  // Send message to iframe
-  const sendToIframe = useCallback((action, payload = {}) => {
-    if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(
-        { target: 'polotno-editor', action, payload },
-        '*'
-      );
-    }
-  }, []);
 
   // Set up message listener
   useEffect(() => {

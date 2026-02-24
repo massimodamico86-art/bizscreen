@@ -3,7 +3,9 @@
  * Slide-out navigation overlay for mobile/tablet devices.
  * Renders when screen < 1024px (lg breakpoint).
  */
+import { Fragment } from 'react';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
+import { ChevronDown } from 'lucide-react';
 
 export function MobileNav({
   open,
