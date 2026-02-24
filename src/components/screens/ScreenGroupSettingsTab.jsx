@@ -123,6 +123,7 @@ export default function ScreenGroupSettingsTab({ group, onUpdate, showToast }) {
               value={displayLanguage}
               onChange={(e) => setDisplayLanguage(e.target.value)}
               className="max-w-md"
+              placeholder=""
             >
               <option value="">None (use device default)</option>
               {languages.map((lang) => (
@@ -156,6 +157,7 @@ export default function ScreenGroupSettingsTab({ group, onUpdate, showToast }) {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className="max-w-md"
+                placeholder=""
               >
                 <option value="">No location set</option>
                 {locations.map((loc) => (
