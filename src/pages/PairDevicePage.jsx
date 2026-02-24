@@ -29,6 +29,9 @@ import {
   PageHeader,
   Card,
   CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
   Button,
   Stack,
   Alert,
@@ -206,7 +209,7 @@ export default function PairDevicePage() {
                   Go to Screens
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   onClick={() => navigate(`/app/screens/${existingScreen.id}`)}
                 >
                   View Screen Details
@@ -355,7 +358,7 @@ export default function PairDevicePage() {
             <CardContent>
               {!showCreateForm ? (
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   onClick={() => setShowCreateForm(true)}
                   className="w-full"
                 >

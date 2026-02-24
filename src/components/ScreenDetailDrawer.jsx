@@ -199,7 +199,7 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
               <AlertCircle className="w-12 h-12 text-red-400" />
               <p className="text-red-600 font-medium">Failed to load diagnostics</p>
               <p className="text-gray-500 text-sm text-center">{error}</p>
-              <Button variant="outline" onClick={loadDiagnostics}>
+              <Button variant="secondary" onClick={loadDiagnostics}>
                 <RefreshCw size={16} />
                 Try Again
               </Button>
@@ -658,7 +658,7 @@ const ScreenDetailDrawer = ({ screen, onClose, showToast }) => {
         {/* Footer */}
         <div className="p-4 border-t border-gray-200 bg-gray-50 flex gap-3">
           <Button
-            variant="outline"
+            variant="secondary"
             onClick={onClose}
             className="flex-1"
           >
