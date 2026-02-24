@@ -153,7 +153,10 @@ Plans:
   3. Weekly preview and daypart configuration controls are functional and reflect saved settings
   4. User can create, edit, and delete a campaign with rotation, priority, and seasonal date controls working
   5. Campaign analytics display play counts and engagement data for the selected campaign
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 85-01-PLAN.md — Schedule pages import audit and functional verification (SchedulesPage, ScheduleEditorPage)
+- [ ] 85-02-PLAN.md — Campaign pages import audit and functional verification (CampaignsPage, CampaignEditorPage)
 
 ### Phase 86: Screen Management
 **Goal**: Screen listing, pairing, group management, device diagnostics, and remote commands all work end-to-end
@@ -223,7 +226,7 @@ Plans:
 | 82. Media Library | 4/4 | Complete    | 2026-02-23 |
 | 83. Scene Editor & AI Designer | 0/3 | Not started | - |
 | 84. Playlists, Layouts & Templates | 0/3 | Not started | - |
-| 85. Scheduling & Campaigns | 0/TBD | Not started | - |
+| 85. Scheduling & Campaigns | 0/2 | Not started | - |
 | 86. Screen Management | 0/TBD | Not started | - |
 | 87. Data Sources, Apps & Moderation | 0/TBD | Not started | - |
 | 88. Analytics & Alerts | 0/TBD | Not started | - |
