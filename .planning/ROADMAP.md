@@ -168,7 +168,10 @@ Plans:
   3. Screen groups can be created, tags added and removed, and screens filtered by tag
   4. Screen detail page shows device health metrics, color-coded diagnostics, and the latest screenshot
   5. Remote commands (reboot, reload, on-demand screenshot capture) trigger and produce visible feedback
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 86-01-PLAN.md — Screen list, pairing flow, remote commands, and detail drawer import audit and fix
+- [ ] 86-02-PLAN.md — Screen groups CRUD, tag management, group detail page, and settings verification
 
 ### Phase 87: Data Sources, Apps & Moderation
 **Goal**: Data source configuration, app CRUD with pre-populated edit modals, menu board management, and content moderation queues are all fully wired
@@ -227,7 +230,7 @@ Plans:
 | 83. Scene Editor & AI Designer | 0/3 | Not started | - |
 | 84. Playlists, Layouts & Templates | 0/3 | Not started | - |
 | 85. Scheduling & Campaigns | 2/2 | Complete    | 2026-02-24 |
-| 86. Screen Management | 0/TBD | Not started | - |
+| 86. Screen Management | 0/2 | Not started | - |
 | 87. Data Sources, Apps & Moderation | 0/TBD | Not started | - |
 | 88. Analytics & Alerts | 0/TBD | Not started | - |
 | 89. Settings & Account | 0/TBD | Not started | - |
