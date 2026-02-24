@@ -52,11 +52,9 @@ import PushPlaylistModal from '../components/screens/PushPlaylistModal';
 import TagChipInput from '../components/screens/TagChipInput';
 import { fetchLocations } from '../services/locationService';
 import { canEditScreens } from '../services/permissionsService';
-import { useAuth } from '../contexts/AuthContext';
 import { useLogger } from '../hooks/useLogger.js';
 
 const ScreenGroupsPage = ({ showToast }) => {
-  const { user } = useAuth();
   const { t } = useTranslation();
   const logger = useLogger('ScreenGroupsPage');
   const [groups, setGroups] = useState([]);
@@ -85,8 +83,11 @@ const ScreenGroupsPage = ({ showToast }) => {
   const [showBulkTagModal, setShowBulkTagModal] = useState(false);
   const [bulkTagInput, setBulkTagInput] = useState([]);
 
-  // Permissions
-  const canEdit = canEditScreens(user);
+  // Permissions — canEditScreens is async, resolve into state
+  const [canEdit, setCanEdit] = useState(true); // default true until resolved
+  useEffect(() => {
+    canEditScreens().then(result => setCanEdit(!!result)).catch(() => setCanEdit(false));
+  }, []);
 
   useEffect(() => {
     loadData();
@@ -123,7 +124,8 @@ const ScreenGroupsPage = ({ showToast }) => {
         filtered = filtered.filter(g => g.tags?.includes(tagFilter));
       }
       setGroups(filtered);
-      setLocations(locationsData);
+      // fetchLocations() returns { data: [...], error } — extract the array defensively
+      setLocations(locationsData?.data || (Array.isArray(locationsData) ? locationsData : []));
       setAvailableTags(tagsData);
       setSelectedIds(new Set());
     } catch (error) {
