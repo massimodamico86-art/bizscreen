@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v7.0 UI Verification — Phase 86 in progress (plan 01 of 02 complete)
+**Current focus:** v7.0 UI Verification — Phase 86 complete, ready for next phase
 
 ## Current Position
 
-Phase: 86 of 90 (Screen Management) — IN PROGRESS
-Plan: 1 of 2 complete (01 done, 02 remaining)
-Status: Phase 86-01 complete — screen management import/wiring audit done
-Last activity: 2026-02-24 — Phase 86-01: fixed PairDevicePage missing Card imports, Button variant="outline" to "secondary"
+Phase: 86 of 90 (Screen Management) — COMPLETE
+Plan: All 2 plans complete (01, 02)
+Status: Phase 086 complete — screen management import/wiring audit and screen groups fixes done
+Last activity: 2026-02-24 — Phase 86-02: fixed fetchLocations data shape, async permissions, Select placeholder duplication
 
-Progress: [████░░░░░░░░] ~35% (v7.0 — 4/10 phases in progress)
+Progress: [████░░░░░░░░] ~40% (v7.0 — 5/10 phases complete)
 
 ## Milestones Shipped
 
@@ -36,8 +36,8 @@ Progress: [████░░░░░░░░] ~35% (v7.0 — 4/10 phases in p
 ## Performance Metrics
 
 **Cumulative (v1 through v6.0):**
-- Total plans executed: 253 (250 + 2 from phase 085 + 1 from phase 086)
-- Total phases: 83 completed (81 + phases 084, 085); phase 086 in progress
+- Total plans executed: 254 (250 + 2 from phase 085 + 2 from phase 086)
+- Total phases: 84 completed (81 + phases 084, 085, 086)
 - Total milestones: 12 shipped
 
 ## Accumulated Context
@@ -65,6 +65,9 @@ Recent decisions affecting v7.0:
 - [Phase 85]: Badge collision fix in CampaignEditorPage — removed Badge from lucide-react import to avoid shadowing design-system Badge component
 - [Phase 86-01]: Button variant="outline" replaced with variant="secondary" — design-system Button has no "outline" variant; all screen management imports verified correct
 - [Phase 86]: Button variant='outline' replaced with variant='secondary' — design-system Button has no 'outline' variant
+- [Phase 86]: fetchLocations defensive extraction: use locationsData?.data with Array.isArray fallback
+- [Phase 86-02]: canEditScreens async fix: useState(true) default with useEffect resolution
+- [Phase 86-02]: Select placeholder suppression: pass placeholder='' to design-system Select with custom default options
 
 ### Blockers/Concerns
 
@@ -75,9 +78,9 @@ Recent decisions affecting v7.0:
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 86-01-PLAN.md
+Stopped at: Completed 86-02-PLAN.md — Phase 86 fully complete
 Resume file: N/A
-Next: Continue with 86-02-PLAN.md (screen groups, locations, additional screen features)
+Next: Continue with next phase in v7.0 roadmap
 
 ---
-*Updated: 2026-02-24 — Phase 86-01 complete; screen management import/wiring audit done*
+*Updated: 2026-02-24 — Phase 86 complete; screen management and screen groups fixes done*

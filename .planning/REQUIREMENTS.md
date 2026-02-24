@@ -69,8 +69,8 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 - [x] **SCRN-01**: Screens list with status, search, and bulk actions works
 - [x] **SCRN-02**: Screen pairing flow (QR + OTP) completes without errors
-- [ ] **SCRN-03**: Screen group creation, tag management, and filtering work
-- [ ] **SCRN-04**: Screen detail page diagnostics, health metrics, and screenshots work
+- [x] **SCRN-03**: Screen group creation, tag management, and filtering work
+- [x] **SCRN-04**: Screen detail page diagnostics, health metrics, and screenshots work
 - [x] **SCRN-05**: Remote commands (reboot, reload, screenshot capture) execute correctly
 
 ### Data Sources & Apps (DATA)
@@ -183,8 +183,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CAMP-03 | Phase 85 | Complete |
 | SCRN-01 | Phase 86 | Complete |
 | SCRN-02 | Phase 86 | Complete |
-| SCRN-03 | Phase 86 | Pending |
-| SCRN-04 | Phase 86 | Pending |
+| SCRN-03 | Phase 86 | Complete |
+| SCRN-04 | Phase 86 | Complete |
 | SCRN-05 | Phase 86 | Complete |
 | DATA-01 | Phase 87 | Pending |
 | DATA-02 | Phase 87 | Pending |
