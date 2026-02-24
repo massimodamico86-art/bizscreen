@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-23)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v7.0 UI Verification — Phase 85 complete, ready for next phase
+**Current focus:** v7.0 UI Verification — Phase 86 in progress (plan 01 of 02 complete)
 
 ## Current Position
 
-Phase: 85 of 90 (Scheduling & Campaigns) — COMPLETE
-Plan: All 2 plans complete (01, 02)
-Status: Phase 085 complete — schedule and campaign import fixes done, all pages verified
-Last activity: 2026-02-24 — Phase 85-02: fixed 13+ missing imports in CampaignEditorPage, CampaignEditorComponents, CampaignsPage
+Phase: 86 of 90 (Screen Management) — IN PROGRESS
+Plan: 1 of 2 complete (01 done, 02 remaining)
+Status: Phase 86-01 complete — screen management import/wiring audit done
+Last activity: 2026-02-24 — Phase 86-01: fixed PairDevicePage missing Card imports, Button variant="outline" to "secondary"
 
-Progress: [███░░░░░░░░░] ~30% (v7.0 — 3/10 phases complete)
+Progress: [████░░░░░░░░] ~35% (v7.0 — 4/10 phases in progress)
 
 ## Milestones Shipped
 
@@ -36,8 +36,8 @@ Progress: [███░░░░░░░░░] ~30% (v7.0 — 3/10 phases comp
 ## Performance Metrics
 
 **Cumulative (v1 through v6.0):**
-- Total plans executed: 252 (250 + 2 from phase 085)
-- Total phases: 83 completed (81 + phases 084, 085)
+- Total plans executed: 253 (250 + 2 from phase 085 + 1 from phase 086)
+- Total phases: 83 completed (81 + phases 084, 085); phase 086 in progress
 - Total milestones: 12 shipped
 
 ## Accumulated Context
@@ -63,6 +63,8 @@ Recent decisions affecting v7.0:
 - [Phase 85-01]: Badge imported from design-system (not lucide-react) for component usage with variant/size props; Button variant="secondary" confirmed valid in design-system
 - [Phase 85-02]: Badge collision fix in CampaignEditorPage — removed Badge from lucide-react import to avoid shadowing design-system Badge component used for status display
 - [Phase 85]: Badge collision fix in CampaignEditorPage — removed Badge from lucide-react import to avoid shadowing design-system Badge component
+- [Phase 86-01]: Button variant="outline" replaced with variant="secondary" — design-system Button has no "outline" variant; all screen management imports verified correct
+- [Phase 86]: Button variant='outline' replaced with variant='secondary' — design-system Button has no 'outline' variant
 
 ### Blockers/Concerns
 
@@ -73,9 +75,9 @@ Recent decisions affecting v7.0:
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 85-02-PLAN.md — Phase 85 fully complete
+Stopped at: Completed 86-01-PLAN.md
 Resume file: N/A
-Next: Continue with next phase in v7.0 roadmap
+Next: Continue with 86-02-PLAN.md (screen groups, locations, additional screen features)
 
 ---
-*Updated: 2026-02-24 — Phase 85 complete; scheduling & campaign import fixes done*
+*Updated: 2026-02-24 — Phase 86-01 complete; screen management import/wiring audit done*
