@@ -16,6 +16,7 @@
  */
 
 import { forwardRef, useState, useRef, useEffect } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 // Priority configuration per CONTEXT.md decisions
 export const PRIORITY_LEVELS = [

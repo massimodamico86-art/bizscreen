@@ -9,6 +9,12 @@
  */
 
 import { formatTime, formatDaysOfWeek } from '../../services/scheduleService';
+import {
+  AlertTriangle,
+  Calendar,
+  Clock,
+  Monitor,
+} from 'lucide-react';
 
 /**
  * Format date for display (YYYY-MM-DD to readable format)

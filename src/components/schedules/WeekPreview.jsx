@@ -12,6 +12,13 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Film,
+  Loader2,
+} from 'lucide-react';
 import { useSensor, useSensors, PointerSensor, useDroppable } from '@dnd-kit/core';
 import { TZDate } from '@date-fns/tz';
 import { useLogger } from '../../hooks/useLogger.js';

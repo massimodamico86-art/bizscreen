@@ -11,6 +11,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLogger } from '../../hooks/useLogger.js';
 import { getCampaignsWithEntryCounts } from '../../services/scheduleService';
+import { Folder, Loader2 } from 'lucide-react';
 
 /**
  * Format date range for display
