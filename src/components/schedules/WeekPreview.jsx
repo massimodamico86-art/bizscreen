@@ -19,7 +19,7 @@ import {
   Film,
   Loader2,
 } from 'lucide-react';
-import { useSensor, useSensors, PointerSensor, useDroppable } from '@dnd-kit/core';
+import { DndContext, DragOverlay, useSensor, useSensors, PointerSensor, useDroppable } from '@dnd-kit/core';
 import { TZDate } from '@date-fns/tz';
 import { useLogger } from '../../hooks/useLogger.js';
 import { getWeekPreview, formatTime, updateScheduleEntry } from '../../services/scheduleService';

@@ -204,8 +204,6 @@ const CampaignsPage = ({ showToast }) => {
       <PageHeader
         title={t('campaigns.title', 'Campaigns')}
         description={t('campaigns.description', 'Schedule content overrides with start/end dates and priority')}
-        icon={<Megaphone className="w-5 h-5 text-orange-600" />}
-        iconBackground="bg-orange-100"
         actions={canEdit && (
           <div className="relative">
             <Button
@@ -311,14 +309,14 @@ const CampaignsPage = ({ showToast }) => {
           </div>
         ) : campaigns.length === 0 ? (
           <EmptyState
-            icon={Megaphone}
+            icon={<Megaphone className="w-full h-full" />}
             title={t('campaigns.noCampaigns', 'No Campaigns')}
             description={t('campaigns.noCampaignsDescription', 'Campaigns let you schedule content overrides for promotions, events, or seasonal content. They take priority over normal schedules during their active window.')}
-            action={canEdit ? {
-              label: t('campaigns.createFirstCampaign', 'Create First Campaign'),
-              onClick: () => navigate('/app/campaigns/new'),
-              icon: <Plus size={18} />
-            } : undefined}
+            action={canEdit ? (
+              <Button onClick={() => navigate('/app/campaigns/new')} icon={<Plus size={18} />}>
+                {t('campaigns.createFirstCampaign', 'Create First Campaign')}
+              </Button>
+            ) : undefined}
           />
         ) : (
           <Card padding="none">
