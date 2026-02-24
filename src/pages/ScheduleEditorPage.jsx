@@ -3,7 +3,6 @@ import {
   AlertCircle,
   AlertTriangle,
   ArrowLeft,
-  Badge,
   Calendar,
   ChevronDown,
   ChevronLeft,
@@ -13,6 +12,7 @@ import {
   RefreshCw,
   Trash2,
   Users,
+  X,
 } from 'lucide-react';
 
 import {
@@ -30,11 +30,20 @@ import { supabase } from '../supabase';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 import {
-  DEFAULT_PRIORITY
+  DEFAULT_PRIORITY,
+  WeekPreview,
+  FillerContentPicker,
+  AssignScreensModal,
+  ConflictWarning,
+  DaypartPicker,
+  DateDurationPicker,
+  PriorityBadge,
+  CampaignPicker,
 } from '../components/schedules';
 import { requiresApproval } from '../services/permissionsService.js';
 import { APPROVAL_STATUS, getApprovalStatusConfig } from '../services/approvalService.js';
 import { Alert } from '../design-system/components/Alert';
+import { Button, Card, Badge } from '../design-system';
 
 // Yodeck-style repeat options
 const REPEAT_OPTIONS = [
