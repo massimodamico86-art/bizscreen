@@ -230,7 +230,7 @@ Plans:
 | 83. Scene Editor & AI Designer | 0/3 | Not started | - |
 | 84. Playlists, Layouts & Templates | 0/3 | Not started | - |
 | 85. Scheduling & Campaigns | 2/2 | Complete    | 2026-02-24 |
-| 86. Screen Management | 2/2 | Complete   | 2026-02-24 |
+| 86. Screen Management | 2/2 | Complete    | 2026-02-24 |
 | 87. Data Sources, Apps & Moderation | 0/TBD | Not started | - |
 | 88. Analytics & Alerts | 0/TBD | Not started | - |
 | 89. Settings & Account | 0/TBD | Not started | - |
