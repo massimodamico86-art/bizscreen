@@ -62,6 +62,7 @@ Recent decisions affecting v7.0:
 - [Phase 083-03]: suggestImprovements expects full slide object (not slide.design_json); guard blocks array with fallback to empty array
 - [Phase 85-01]: Badge imported from design-system (not lucide-react) for component usage with variant/size props; Button variant="secondary" confirmed valid in design-system
 - [Phase 85-02]: Badge collision fix in CampaignEditorPage — removed Badge from lucide-react import to avoid shadowing design-system Badge component used for status display
+- [Phase 85]: Badge collision fix in CampaignEditorPage — removed Badge from lucide-react import to avoid shadowing design-system Badge component
 
 ### Blockers/Concerns
 
@@ -72,9 +73,9 @@ Recent decisions affecting v7.0:
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 85-01-PLAN.md
+Stopped at: Completed 85-02-PLAN.md — Phase 85 fully complete
 Resume file: N/A
-Next: Continue with Phase 85 plan 02
+Next: Continue with next phase in v7.0 roadmap
 
 ---
-*Updated: 2026-02-24 — Phase 85 plan 01 complete; schedule imports fixed, E2E verified*
+*Updated: 2026-02-24 — Phase 85 complete; scheduling & campaign import fixes done*
