@@ -100,9 +100,9 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 - [x] **SET-01**: Billing section loads and Stripe payment method update works
 - [x] **SET-02**: Branding settings (logo, colors, fonts) can be edited and saved
-- [ ] **SET-03**: Enterprise security (password policy, session timeout, data deletion) works
-- [ ] **SET-04**: Team management (invite, role change, remove) works
-- [ ] **SET-05**: White-label settings configure custom domain and branding
+- [x] **SET-03**: Enterprise security (password policy, session timeout, data deletion) works
+- [x] **SET-04**: Team management (invite, role change, remove) works
+- [x] **SET-05**: White-label settings configure custom domain and branding
 
 ### Admin Tools (ADMIN)
 
@@ -199,9 +199,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ALRT-02 | Phase 88 | Complete |
 | SET-01 | Phase 89 | Complete |
 | SET-02 | Phase 89 | Complete |
-| SET-03 | Phase 89 | Pending |
-| SET-04 | Phase 89 | Pending |
-| SET-05 | Phase 89 | Pending |
+| SET-03 | Phase 89 | Complete |
+| SET-04 | Phase 89 | Complete |
+| SET-05 | Phase 89 | Complete |
 | ADMIN-01 | Phase 90 | Pending |
 | ADMIN-02 | Phase 90 | Pending |
 | ADMIN-03 | Phase 90 | Pending |
