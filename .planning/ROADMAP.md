@@ -262,7 +262,7 @@ Plans:
 | 87. Data Sources, Apps & Moderation | 0/3 | Complete    | 2026-02-27 |
 | 88. Analytics & Alerts | 3/3 | Complete    | 2026-02-27 |
 | 89. Settings & Account | 0/2 | Not started | - |
-| 90. Admin, Reseller, Help & Legacy | 0/TBD | Not started | - |
+| 90. Admin, Reseller, Help & Legacy | 1/2 | In Progress | - |
 | 91. Integration & Verification Fixes | 2/2 | Complete    | 2026-02-27 |
 
 **Total (v7.0):** 5/11 phases complete
