@@ -103,13 +103,14 @@ Recent decisions affecting v7.0:
 | Phase 089 P02 | 2min | 2 tasks | 2 files |
 | Phase 088 P02 | 3min | 3 tasks | 2 files |
 | Phase 088 P03 | 1min | 1 tasks | 2 files |
+| 47 | Add dev auth bypass for MCP Playwright automation (VITE_DEV_BYPASS_AUTH) | 2026-02-27 | 1ed25c8 | [47-fix-mcp-playwright-login-add-dev-auth-by](./quick/47-fix-mcp-playwright-login-add-dev-auth-by/) |
 
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 088-03-PLAN.md (Phase 088 fully complete, all 3 plans done)
+Stopped at: Completed quick task 47 (dev auth bypass for MCP Playwright)
 Resume file: N/A
 Next: Continue with next phase in v7.0 roadmap
 
 ---
-*Updated: 2026-02-27 — Completed 088-03-PLAN.md: Fix Modal isOpen->open prop in AlertsCenterPage and ContentPerformancePage*
+*Updated: 2026-02-27 — Completed quick task 47: Dev auth bypass for MCP Playwright automation*
