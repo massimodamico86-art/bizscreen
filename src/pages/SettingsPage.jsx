@@ -1,5 +1,20 @@
 import { useState, useEffect } from 'react';
-import { Bell, Eye, Shield, Activity, Palette, Lock, Sparkles, Loader2 } from 'lucide-react';
+import {
+  Activity,
+  AlertCircle,
+  Bell,
+  Eye,
+  LayoutTemplate,
+  Loader2,
+  Lock,
+  Palette,
+  Plus,
+  RefreshCw,
+  RotateCcw,
+  RotateCw,
+  Shield,
+  Sparkles,
+} from 'lucide-react';
 import { getUserSettings, updateUserSettings, resetUserSettings } from '../services/userSettingsService';
 import { getActivityLog, formatActivity } from '../services/activityLogService';
 import { getAllBrandThemes, deleteBrandTheme, setActiveTheme } from '../services/brandThemeService';
@@ -10,6 +25,15 @@ import {
 } from '../services/onboardingService';
 import { useTranslation } from '../i18n';
 import { INDUSTRIES } from '../components/onboarding';
+import { Card, Button } from '../design-system';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+import ThemePreviewCard from '../components/brand/ThemePreviewCard';
+import BrandImporterModal from '../components/brand/BrandImporterModal';
+import TwoFactorSetup from '../components/security/TwoFactorSetup';
+import SessionManagement from '../components/security/SessionManagement';
+import LoginHistory from '../components/security/LoginHistory';
+import DataPrivacySettings from '../components/compliance/DataPrivacySettings';
+import IndustrySelectionModal from '../components/onboarding/IndustrySelectionModal';
 
 const SettingsPage = ({ showToast, setCurrentPage }) => {
   const { t } = useTranslation();
@@ -213,7 +237,7 @@ const SettingsPage = ({ showToast, setCurrentPage }) => {
               {t('settings.errorTitle', 'Unable to load settings')}
             </h3>
             <p className="text-gray-600 mb-4">{error}</p>
-            <Button onClick={fetchSettings} variant="outline">
+            <Button onClick={fetchSettings} variant="secondary">
               <RefreshCw size={16} />
               {t('common.tryAgain', 'Try Again')}
             </Button>
@@ -416,7 +440,7 @@ const SettingsPage = ({ showToast, setCurrentPage }) => {
               <p className="text-gray-600 mb-4">
                 {t('settings.branding.noThemesDesc', 'Import your logo to automatically extract brand colors and create a consistent theme')}
               </p>
-              <Button onClick={() => setShowBrandModal(true)} variant="outline">
+              <Button onClick={() => setShowBrandModal(true)} variant="secondary">
                 <Plus size={16} />
                 {t('settings.branding.importFirst', 'Import Your First Brand')}
               </Button>
@@ -558,7 +582,7 @@ const SettingsPage = ({ showToast, setCurrentPage }) => {
                     </p>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => setShowIndustryModal(true)}>
+                <Button variant="secondary" size="sm" onClick={() => setShowIndustryModal(true)}>
                   {t('common.change', 'Change')}
                 </Button>
               </div>
@@ -581,7 +605,7 @@ const SettingsPage = ({ showToast, setCurrentPage }) => {
                   </div>
                 </div>
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={handleRestartTour}
                   disabled={restartingTour}
@@ -613,7 +637,7 @@ const SettingsPage = ({ showToast, setCurrentPage }) => {
                   </div>
                 </div>
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() => setCurrentPage?.('template-marketplace')}
                 >
@@ -661,7 +685,7 @@ const SettingsPage = ({ showToast, setCurrentPage }) => {
       {/* Reset Button */}
       <div className="flex justify-end">
         <Button
-          variant="outline"
+          variant="secondary"
           onClick={handleReset}
           disabled={saving}
         >
