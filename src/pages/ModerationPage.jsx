@@ -175,7 +175,7 @@ const ModerationPage = ({ showToast, onNavigate }) => {
           </div>
         ) : filteredPosts.length === 0 ? (
           <EmptyState
-            icon={CheckCircle}
+            icon={<CheckCircle className="w-full h-full" />}
             title="No posts to moderate"
             description="No social feed posts to moderate. Connect a social account and sync posts to get started."
             action={

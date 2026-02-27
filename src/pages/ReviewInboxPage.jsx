@@ -342,7 +342,7 @@ const ReviewInboxPage = ({ showToast, onNavigate }) => {
           </div>
         ) : filteredReviews.length === 0 ? (
           <EmptyState
-            icon={CheckCircle}
+            icon={<CheckCircle className="w-full h-full" />}
             title={t('reviews.noReviewsFound', 'No reviews found')}
             description={statusFilter === 'open'
               ? t('reviews.noPendingReviews', 'No pending reviews at this time.')
@@ -410,7 +410,7 @@ const ReviewInboxPage = ({ showToast, onNavigate }) => {
                           <Badge variant={
                             review.status === 'open' ? 'warning' :
                             review.status === 'approved' ? 'success' :
-                            review.status === 'rejected' ? 'danger' : 'secondary'
+                            review.status === 'rejected' ? 'error' : 'default'
                           }>
                             {statusConfig.label}
                           </Badge>
@@ -476,7 +476,7 @@ const ReviewInboxPage = ({ showToast, onNavigate }) => {
                         <Badge variant={
                           reviewDetail.status === 'open' ? 'warning' :
                           reviewDetail.status === 'approved' ? 'success' :
-                          reviewDetail.status === 'rejected' ? 'danger' : 'secondary'
+                          reviewDetail.status === 'rejected' ? 'error' : 'default'
                         }>
                           {STATUS_CONFIG[reviewDetail.status]?.label || reviewDetail.status}
                         </Badge>
