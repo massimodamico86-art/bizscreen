@@ -180,7 +180,7 @@ const AccountPlanPage = ({ showToast }) => {
                 {t('accountPlan.errorTitle', 'Unable to load plan data')}
               </h3>
               <p className="text-gray-600 mb-4">{error}</p>
-              <Button onClick={loadData} variant="outline">
+              <Button onClick={loadData} variant="secondary">
                 <RefreshCw size={16} />
                 {t('common.tryAgain', 'Try Again')}
               </Button>
