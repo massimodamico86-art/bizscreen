@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-02-23)
 Phase: 088 (Analytics & Alerts) — COMPLETE
 Plan: All 3 plans complete (01, 02, 03)
 Status: Phase 088 fully complete — all analytics/alerts pages verified, Modal prop mismatches fixed
-Last activity: 2026-02-27 - Completed 088-03-PLAN.md: Fix Modal isOpen->open prop in AlertsCenterPage and ContentPerformancePage
+Last activity: 2026-02-27 - Completed quick task 47: Fix MCP Playwright login: add dev auth bypass mode
 
 Progress: [██████░░░░░░] ~60% (v7.0 — 8/10 phases complete)
 
