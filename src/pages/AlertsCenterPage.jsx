@@ -27,6 +27,10 @@ import {
 } from 'lucide-react';
 import {
   PageLayout,
+  PageHeader,
+  PageContent,
+  Button,
+  Modal,
 } from '../design-system';
 import {
   getAlerts,
@@ -290,30 +294,34 @@ export default function AlertsCenterPage({ showToast, onNavigate }) {
   ];
 
   return (
-    <PageLayout
-      title={t('alerts.title', 'Alerts Center')}
-      description={t('alerts.description', 'Monitor and manage system alerts')}
-      icon={Bell}
-      actions={
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onNavigate?.('notification-settings')}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            <Settings className="w-4 h-4" />
-            {t('alerts.notificationSettings', 'Notification Settings')}
-          </button>
-          <button
-            onClick={loadAlerts}
-            disabled={loading}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            {t('common.refresh', 'Refresh')}
-          </button>
-        </div>
-      }
-    >
+    <PageLayout>
+      <PageHeader
+        title={t('alerts.title', 'Alerts Center')}
+        description={t('alerts.description', 'Monitor and manage system alerts')}
+        icon={<Bell className="w-5 h-5 text-blue-600" />}
+        iconBackground="bg-blue-100"
+        actions={
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => onNavigate?.('notification-settings')}
+            >
+              <Settings className="w-4 h-4" />
+              {t('alerts.notificationSettings', 'Notification Settings')}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={loadAlerts}
+              disabled={loading}
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              {t('common.refresh', 'Refresh')}
+            </Button>
+          </div>
+        }
+      />
+
+      <PageContent>
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {summaryCards.map((card) => (
@@ -664,6 +672,7 @@ export default function AlertsCenterPage({ showToast, onNavigate }) {
           t={t}
         />
       )}
+      </PageContent>
     </PageLayout>
   );
 }
@@ -676,40 +685,22 @@ function AlertDetailModal({ alert, onClose, onAcknowledge, onResolve, onNavigate
   const statusStyle = STATUS_STYLES[alert.status] || STATUS_STYLES.open;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className={`px-6 py-4 border-b ${severityStyle.bg} ${severityStyle.border}`}>
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3">
-              <div
-                className={`p-2 rounded-lg bg-white ${severityStyle.border} border`}
-              >
-                <Icon className={`w-5 h-5 ${severityStyle.icon}`} />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">{alert.title}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${severityStyle.badge}`}>
-                    {alert.severity.toUpperCase()}
-                  </span>
-                  <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${statusStyle.badge}`}>
-                    {statusStyle.label}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-1 text-gray-400 hover:text-gray-600 rounded"
-            >
-              <X className="w-5 h-5" />
-            </button>
+    <Modal isOpen={true} onClose={onClose} title={alert.title} size="lg">
+        {/* Severity and status badges */}
+        <div className="flex items-center gap-2 mb-4">
+          <div className={`p-2 rounded-lg ${severityStyle.bg} ${severityStyle.border} border`}>
+            <Icon className={`w-5 h-5 ${severityStyle.icon}`} />
           </div>
+          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${severityStyle.badge}`}>
+            {alert.severity.toUpperCase()}
+          </span>
+          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${statusStyle.badge}`}>
+            {statusStyle.label}
+          </span>
         </div>
 
         {/* Content */}
-        <div className="px-6 py-4 space-y-4">
+        <div className="space-y-4">
           {/* Message */}
           {alert.message && (
             <div>
@@ -882,33 +873,31 @@ function AlertDetailModal({ alert, onClose, onAcknowledge, onResolve, onNavigate
         </div>
 
         {/* Actions */}
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
-          <button
+        <div className="pt-4 border-t border-gray-200 flex justify-end gap-3">
+          <Button
+            variant="secondary"
             onClick={onClose}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-100"
           >
             {t('common.close', 'Close')}
-          </button>
+          </Button>
           {alert.status === 'open' && (
-            <button
+            <Button
+              variant="secondary"
               onClick={() => onAcknowledge(alert.id)}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200"
             >
               <Eye className="w-4 h-4" />
               {t('alerts.acknowledge', 'Acknowledge')}
-            </button>
+            </Button>
           )}
           {alert.status !== 'resolved' && (
-            <button
+            <Button
               onClick={() => onResolve(alert.id, resolutionNotes || null)}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
             >
               <Check className="w-4 h-4" />
               {t('alerts.resolve', 'Resolve')}
-            </button>
+            </Button>
           )}
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
