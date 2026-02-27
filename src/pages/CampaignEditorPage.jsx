@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 
 import { Button, Card, Badge, Modal, ModalHeader, ModalTitle, ModalContent, ModalFooter } from '../design-system';
 import { CAMPAIGN_STATUS } from '../services/campaignService';
@@ -43,10 +42,17 @@ import {
   XCircle,
 } from 'lucide-react';
 
-const CampaignEditorPage = ({ showToast }) => {
-  const { campaignId } = useParams();
-  const navigate = useNavigate();
+const CampaignEditorPage = ({ campaignId, showToast, onNavigate }) => {
   const { user } = useAuth();
+
+  // Adapter: hook expects a navigate function that accepts a path
+  const navigateAdapter = (path) => {
+    if (path === '/app/campaigns' || path === '/campaigns') {
+      onNavigate?.('campaigns');
+    } else {
+      onNavigate?.(path);
+    }
+  };
 
   // Use the campaign editor hook for all state and logic
   const {
@@ -201,7 +207,7 @@ const CampaignEditorPage = ({ showToast }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/app/campaigns')}
+            onClick={() => onNavigate?.('campaigns')}
             className="p-2 hover:bg-gray-100 rounded-lg"
           >
             <ArrowLeft size={20} />
@@ -272,13 +278,13 @@ const CampaignEditorPage = ({ showToast }) => {
                   Activate
                 </Button>
               )}
-              <Button variant="outline" onClick={() => handleDelete(navigate)} className="text-red-600 hover:bg-red-50">
+              <Button variant="outline" onClick={() => handleDelete(navigateAdapter)} className="text-red-600 hover:bg-red-50">
                 <Trash2 size={18} />
               </Button>
             </>
           )}
           {canEdit && (
-            <Button onClick={() => handleSave(navigate)} disabled={saving}>
+            <Button onClick={() => handleSave(navigateAdapter)} disabled={saving}>
               <Save size={18} />
               {saving ? 'Saving...' : 'Save'}
             </Button>

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Calendar,
   CheckCircle,
@@ -70,11 +69,10 @@ const STATUS_CONFIG = {
   }
 };
 
-const CampaignsPage = ({ showToast }) => {
+const CampaignsPage = ({ showToast, onNavigate }) => {
   const { t } = useTranslation();
   const logger = useLogger('CampaignsPage');
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -176,7 +174,7 @@ const CampaignsPage = ({ showToast }) => {
       const campaign = await createFromTemplate(templateId, name);
       showToast?.('Campaign created from template');
       setShowTemplatePicker(false);
-      navigate(`/app/campaigns/${campaign.id}`);
+      onNavigate?.(`campaign-editor-${campaign.id}`);
     } catch (error) {
       logger.error('Error creating campaign from template:', error);
       showToast?.('Error creating campaign: ' + error.message, 'error');
@@ -224,7 +222,7 @@ const CampaignsPage = ({ showToast }) => {
                 <button
                   onClick={() => {
                     setShowNewDropdown(false);
-                    navigate('/app/campaigns/new');
+                    onNavigate?.('campaign-editor-new');
                   }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 >
@@ -313,7 +311,7 @@ const CampaignsPage = ({ showToast }) => {
             title={t('campaigns.noCampaigns', 'No Campaigns')}
             description={t('campaigns.noCampaignsDescription', 'Campaigns let you schedule content overrides for promotions, events, or seasonal content. They take priority over normal schedules during their active window.')}
             action={canEdit ? (
-              <Button onClick={() => navigate('/app/campaigns/new')} icon={<Plus size={18} />}>
+              <Button onClick={() => onNavigate?.('campaign-editor-new')} icon={<Plus size={18} />}>
                 {t('campaigns.createFirstCampaign', 'Create First Campaign')}
               </Button>
             ) : undefined}
@@ -342,7 +340,7 @@ const CampaignsPage = ({ showToast }) => {
                       <tr
                         key={campaign.id}
                         className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                        onClick={() => navigate(`/app/campaigns/${campaign.id}`)}
+                        onClick={() => onNavigate?.(`campaign-editor-${campaign.id}`)}
                       >
                         <td className="p-4">
                           <div className="flex items-center gap-3">
@@ -424,7 +422,7 @@ const CampaignsPage = ({ showToast }) => {
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      navigate(`/app/campaigns/${campaign.id}`);
+                                      onNavigate?.(`campaign-editor-${campaign.id}`);
                                     }}
                                     className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
                                     role="menuitem"

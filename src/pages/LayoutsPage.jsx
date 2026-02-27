@@ -11,30 +11,30 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Clock,
-  Star,
-  TrendingUp,
-  Folder,
-  Gift,
-  Percent,
-  Calendar,
-  Utensils,
-  ShoppingBag,
-  Dumbbell,
   Building2,
-  Music,
-  Shirt,
-  LayoutGrid,
-  Search,
+  Calendar,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
-  Monitor,
-  Smartphone,
-  X,
-  Plus,
-  Sparkles,
+  Clock,
+  Dumbbell,
+  Folder,
+  Gift,
+  LayoutGrid,
   Loader2,
+  Monitor,
+  Music,
+  Percent,
+  Plus,
+  Search,
+  Shirt,
+  ShoppingBag,
+  Smartphone,
+  Sparkles,
+  Star,
+  TrendingUp,
+  Utensils,
+  X,
 } from 'lucide-react';
 import { getLayoutTemplates } from '../services/templateService';
 import { fetchLayouts } from '../services/layoutService';
@@ -780,7 +780,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                       {userDesigns.map((layout) => (
                         <div
                           key={layout.id}
-                          onClick={() => onNavigate?.(`layout-editor/${layout.id}`)}
+                          onClick={() => onNavigate?.(`layout-editor-${layout.id}`)}
                           className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-teal-400 transition-all"
                         >
                           <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-100 p-4">
