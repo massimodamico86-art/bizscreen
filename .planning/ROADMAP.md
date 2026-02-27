@@ -69,7 +69,7 @@ All milestones shipped successfully.
 
 - [x] **Phase 81: Authentication & Dashboard** - Verify all auth flows and dashboard widgets are fully functional (completed 2026-02-23)
 - [x] **Phase 82: Media Library** - Verify upload, preview, bulk actions, and search work end-to-end (completed 2026-02-23)
-- [ ] **Phase 83: Scene Editor & AI Designer** - Verify SVG editor tools, property panels, AI generation, and cloud imports
+- [x] **Phase 83: Scene Editor & AI Designer** - Verify SVG editor tools, property panels, AI generation, and cloud imports (completed 2026-02-23)
 - [ ] **Phase 84: Playlists, Layouts & Templates** - Verify playlist CRUD, layout editor zones, widget config, and template marketplace
 - [x] **Phase 85: Scheduling & Campaigns** - Verify schedule creation, conflict detection, dayparting, and campaign management (completed 2026-02-24)
 - [x] **Phase 86: Screen Management** - Verify screen list, pairing, groups, diagnostics, and remote commands (completed 2026-02-24)
@@ -123,9 +123,9 @@ Plans:
   5. All five cloud import providers (Google Drive, Dropbox, OneDrive, SharePoint, Google Photos) open a file picker and insert the selected file into the editor
 **Plans**: 3 plans
 Plans:
-- [ ] 083-01-PLAN.md — Scene CRUD: add delete and duplicate to ScenesPage and SceneDetailPage
-- [ ] 083-02-PLAN.md — SVG editor tools and property panels audit and fix (human checkpoint)
-- [ ] 083-03-PLAN.md — AI suggestions panel and cloud imports into SVG editor LeftSidebar (human checkpoint)
+- [x] 083-01-PLAN.md — Scene CRUD: add delete and duplicate to ScenesPage and SceneDetailPage
+- [x] 083-02-PLAN.md — SVG editor tools and property panels audit and fix (human checkpoint)
+- [x] 083-03-PLAN.md — AI suggestions panel and cloud imports into SVG editor LeftSidebar (human checkpoint)
 
 ### Phase 84: Playlists, Layouts & Templates
 **Goal**: Users can build and configure playlists, layout canvases with all 12 widget types, and apply templates from both the layout template library and the marketplace
@@ -183,7 +183,11 @@ Plans:
   3. Menu board categories and items support CRUD operations and drag-and-drop reordering
   4. Social feed moderation queue displays pending posts and approve/reject actions update post status
   5. Review inbox shows pending content approvals and approve/reject actions publish or reject the content
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 87-01-PLAN.md — Data sources page import audit and functional verification (create, edit, CSV import, Google Sheets linking)
+- [ ] 87-02-PLAN.md — Apps page and menu boards page import audit and functional verification (6 app types, edit pre-population, DnD reordering)
+- [ ] 87-03-PLAN.md — Moderation page and review inbox page import audit and functional verification (approve/reject, filters, detail drawer)
 
 ### Phase 88: Analytics & Alerts
 **Goal**: Analytics dashboards show accurate data with working filters, alert history is viewable and dismissable, and notification preferences are configurable
@@ -227,16 +231,16 @@ Plans:
 |-------|----------------|--------|-----------|
 | 81. Authentication & Dashboard | 2/2 | Complete    | 2026-02-23 |
 | 82. Media Library | 4/4 | Complete    | 2026-02-23 |
-| 83. Scene Editor & AI Designer | 0/3 | Not started | - |
+| 83. Scene Editor & AI Designer | 3/3 | Complete    | 2026-02-23 |
 | 84. Playlists, Layouts & Templates | 0/3 | Not started | - |
 | 85. Scheduling & Campaigns | 2/2 | Complete    | 2026-02-24 |
 | 86. Screen Management | 2/2 | Complete    | 2026-02-24 |
-| 87. Data Sources, Apps & Moderation | 0/TBD | Not started | - |
+| 87. Data Sources, Apps & Moderation | 0/3 | Not started | - |
 | 88. Analytics & Alerts | 0/TBD | Not started | - |
 | 89. Settings & Account | 0/TBD | Not started | - |
 | 90. Admin, Reseller, Help & Legacy | 0/TBD | Not started | - |
 
-**Total (v7.0):** 0/10 phases complete
+**Total (v7.0):** 5/10 phases complete
 
 ---
 
