@@ -13,24 +13,24 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
 import {
-  Users,
-  Building2,
-  Utensils,
-  Scissors,
-  Dumbbell,
-  ShoppingBag,
-  Loader2,
-  RefreshCw,
-  Plus,
-  Clock,
-  RotateCcw,
   AlertTriangle,
-  Play,
-  Link2,
-  Settings,
+  Building2,
   Check,
+  Clock,
   Copy,
+  Dumbbell,
   ExternalLink,
+  Link2,
+  Loader2,
+  Play,
+  Plus,
+  RefreshCw,
+  RotateCcw,
+  Scissors,
+  Settings,
+  ShoppingBag,
+  Users,
+  Utensils,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -47,7 +47,6 @@ import {
   ModalContent,
   ModalFooter,
 } from '../design-system';
-
 
 import {
   listDemoTenants,
@@ -427,7 +426,7 @@ function CreateDemoModal({ onClose, onCreate, loading, t }) {
   const [planLevel, setPlanLevel] = useState('starter');
 
   return (
-    <Modal isOpen onClose={onClose} size="md">
+    <Modal open onClose={onClose} size="md">
       <ModalHeader>
         <ModalTitle>{t('demoTools.createDemoTenant', 'Create Demo Tenant')}</ModalTitle>
       </ModalHeader>
@@ -529,7 +528,7 @@ function DemoLinksModal({ tenant, onClose, onCopy, t }) {
   ];
 
   return (
-    <Modal isOpen onClose={onClose} size="md">
+    <Modal open onClose={onClose} size="md">
       <ModalHeader>
         <ModalTitle>{t('demoTools.demoLinks', 'Demo Links')}</ModalTitle>
       </ModalHeader>
@@ -597,7 +596,7 @@ function DemoSettingsModal({ tenant, onClose, onSave, t }) {
   );
 
   return (
-    <Modal isOpen onClose={onClose} size="md">
+    <Modal open onClose={onClose} size="md">
       <ModalHeader>
         <ModalTitle>{t('demoTools.demoSettings', 'Demo Settings')}</ModalTitle>
       </ModalHeader>

@@ -69,7 +69,7 @@ export default function SecurityDashboardPage() {
       ]);
 
       if (eventsResult.error) {
-        setError(eventsResult.error);
+        setError(typeof eventsResult.error === 'string' ? eventsResult.error : eventsResult.error?.message || 'Failed to load security events');
       } else {
         setEvents(eventsResult.data);
       }

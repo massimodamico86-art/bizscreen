@@ -107,12 +107,12 @@ export default function ActivityLogPage() {
       });
 
       if (fetchError) {
-        setError(fetchError);
+        setError(typeof fetchError === 'string' ? fetchError : fetchError?.message || 'Failed to load activities');
       } else {
         setActivities(data.map(formatActivity));
       }
     } catch (err) {
-      setError(err.message);
+      setError(err?.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
