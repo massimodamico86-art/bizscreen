@@ -6,6 +6,38 @@ import { setObservabilityUser } from '../utils/observability';
 
 const log = createScopedLogger('AuthContext');
 
+// Dev auth bypass: skip Supabase when VITE_DEV_BYPASS_AUTH=true in dev mode
+const DEV_AUTH_BYPASS = import.meta.env.DEV && import.meta.env.VITE_DEV_BYPASS_AUTH === 'true';
+
+const DEV_MOCK_USER = DEV_AUTH_BYPASS ? {
+  id: '00000000-0000-0000-0000-000000000000',
+  aud: 'authenticated',
+  role: 'authenticated',
+  email: 'client@bizscreen.test',
+  email_confirmed_at: new Date().toISOString(),
+  phone: '',
+  confirmed_at: new Date().toISOString(),
+  last_sign_in_at: new Date().toISOString(),
+  app_metadata: { provider: 'email', providers: ['email'] },
+  user_metadata: { full_name: 'Dev Bypass User' },
+  identities: [],
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+} : null;
+
+const DEV_MOCK_PROFILE = DEV_AUTH_BYPASS ? {
+  id: '00000000-0000-0000-0000-000000000000',
+  email: 'client@bizscreen.test',
+  full_name: 'Dev Bypass User',
+  role: 'client',
+  has_completed_onboarding: true,
+  tenant_id: '00000000-0000-0000-0000-000000000001',
+} : null;
+
+if (DEV_AUTH_BYPASS) {
+  console.warn('[AuthContext] DEV AUTH BYPASS ACTIVE — using mock user, Supabase auth skipped');
+}
+
 // Auth context for user authentication and profile management
 const AuthContext = createContext({});
 
@@ -140,6 +172,18 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     log.debug('Initializing auth');
+
+    // DEV BYPASS: Skip all Supabase auth, use mock user immediately
+    if (DEV_AUTH_BYPASS) {
+      log.debug('DEV AUTH BYPASS ACTIVE — using mock user, skipping Supabase');
+      setUser(DEV_MOCK_USER);
+      setUserProfile(DEV_MOCK_PROFILE);
+      setAuthStatus(AUTH_STATUS.AUTHENTICATED);
+      setLoading(false);
+      setRetryCount(0);
+      setLastError(null);
+      return () => {}; // No cleanup needed — no subscription created
+    }
 
     let mounted = true;
     let retryTimeoutId = null;
