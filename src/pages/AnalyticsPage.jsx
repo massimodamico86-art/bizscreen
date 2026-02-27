@@ -80,8 +80,9 @@ export default function AnalyticsPage({ showToast }) {
   useEffect(() => {
     async function loadLocations() {
       try {
-        const data = await fetchLocations();
-        setLocations(data);
+        const locationsData = await fetchLocations();
+        const locationsList = Array.isArray(locationsData?.data) ? locationsData.data : [];
+        setLocations(locationsList);
       } catch (error) {
         logger.error('Failed to load locations:', error);
       }
