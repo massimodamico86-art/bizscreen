@@ -61,18 +61,19 @@ function RequireAuth({ children }) {
 }
 
 // Redirect authenticated users away from public pages
+// NOTE: Does NOT block on auth loading — public pages (login, signup, homepage)
+// should render immediately even when Supabase is unreachable or retrying.
+// The AuthRetryBanner handles showing retry/error status independently.
 function PublicRoute({ children }) {
   const { user, loading } = useAuth();
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  // If logged in, redirect to app
-  if (user) {
+  // Only redirect if auth has resolved AND user is authenticated
+  if (!loading && user) {
     return <Navigate to="/app" replace />;
   }
 
+  // While loading or unauthenticated, show the page content
+  // (login form, signup form, homepage, etc.)
   return children;
 }
 
