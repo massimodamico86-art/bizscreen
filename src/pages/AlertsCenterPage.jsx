@@ -685,7 +685,7 @@ function AlertDetailModal({ alert, onClose, onAcknowledge, onResolve, onNavigate
   const statusStyle = STATUS_STYLES[alert.status] || STATUS_STYLES.open;
 
   return (
-    <Modal isOpen={true} onClose={onClose} title={alert.title} size="lg">
+    <Modal open={true} onClose={onClose} title={alert.title} size="lg">
         {/* Severity and status badges */}
         <div className="flex items-center gap-2 mb-4">
           <div className={`p-2 rounded-lg ${severityStyle.bg} ${severityStyle.border} border`}>

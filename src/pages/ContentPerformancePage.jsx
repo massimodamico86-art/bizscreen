@@ -481,7 +481,7 @@ export default function ContentPerformancePage({ showToast }) {
       {/* Scene Detail Modal */}
       {selectedScene && (
         <Modal
-          isOpen={true}
+          open={true}
           onClose={closeSceneDetail}
           title={selectedScene.scene_name || 'Scene Details'}
           size="lg"
