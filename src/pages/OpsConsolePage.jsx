@@ -3,6 +3,21 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
+import {
+  Activity,
+  AlertTriangle,
+  Building2,
+  CheckCircle2,
+  ExternalLink,
+  Key,
+  Monitor,
+  RefreshCw,
+  Search,
+  Wifi,
+  WifiOff,
+  XCircle,
+} from 'lucide-react';
+import { Button, Badge } from '../design-system';
 
 /**
  * Operations Console Page
@@ -228,7 +243,7 @@ export default function OpsConsolePage() {
         <Button
           onClick={fetchData}
           disabled={loading}
-          variant="outline"
+          variant="secondary"
           aria-label={t('opsConsole.refresh', 'Refresh data')}
         >
           <RefreshCw size={16} className={loading ? 'animate-spin' : ''} aria-hidden="true" />

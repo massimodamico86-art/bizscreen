@@ -5,6 +5,22 @@ import { useTranslation } from '../i18n';
 import { downloadListingsCSV } from '../services/exportService';
 import { getSupabaseErrorMessage, logError } from '../utils/errorMessages';
 import { convertToLegacyFormat } from '../utils/mediaMigration';
+import {
+  Download,
+  Edit,
+  Eye,
+  Filter,
+  MapPin,
+  Plus,
+  Search,
+  Trash2,
+  Tv,
+} from 'lucide-react';
+import { Button, Card, Badge } from '../design-system';
+import ErrorBoundary from '../components/ErrorBoundary';
+import PropertyDetailsModal from '../components/listings/PropertyDetailsModal';
+import TVPreviewModal from '../components/listings/TVPreviewModal';
+import AddListingModal from '../components/listings/AddListingModal';
 
 const ListingsPage = ({ showToast, listings, setListings }) => {
   const { _t } = useTranslation();
@@ -16,7 +32,9 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
   const [_saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
-  const filteredListings = listings.filter(listing =>
+  const safeListings = Array.isArray(listings) ? listings : [];
+
+  const filteredListings = safeListings.filter(listing =>
     listing.name.toLowerCase().includes(search.toLowerCase()) ||
     listing.address.toLowerCase().includes(search.toLowerCase())
   );
@@ -192,7 +210,7 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
           <p className="text-gray-600">Manage your business locations and TV screens</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => {
+          <Button variant="secondary" onClick={() => {
             try {
               downloadListingsCSV(listings);
               showToast(`Exported ${listings.length} location(s) to CSV`);
@@ -221,7 +239,7 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
           />
         </div>
-        <Button variant="outline">
+        <Button variant="secondary">
           <Filter size={18} />
           Filters
         </Button>
@@ -254,7 +272,7 @@ const ListingsPage = ({ showToast, listings, setListings }) => {
                 </div>
                 <div className="flex items-center justify-end">
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => setPreviewListing(listing)}>
+                    <Button size="sm" variant="secondary" onClick={() => setPreviewListing(listing)}>
                       <Eye size={16} />
                       Preview
                     </Button>
