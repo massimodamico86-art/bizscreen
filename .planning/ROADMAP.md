@@ -73,7 +73,7 @@ All milestones shipped successfully.
 - [ ] **Phase 84: Playlists, Layouts & Templates** - Verify playlist CRUD, layout editor zones, widget config, and template marketplace
 - [x] **Phase 85: Scheduling & Campaigns** - Verify schedule creation, conflict detection, dayparting, and campaign management (completed 2026-02-24)
 - [x] **Phase 86: Screen Management** - Verify screen list, pairing, groups, diagnostics, and remote commands (completed 2026-02-24)
-- [ ] **Phase 87: Data Sources, Apps & Moderation** - Verify data source config, app editing, menu boards, and content moderation queues
+- [x] **Phase 87: Data Sources, Apps & Moderation** - Verify data source config, app editing, menu boards, and content moderation queues (completed 2026-02-27)
 - [ ] **Phase 88: Analytics & Alerts** - Verify analytics dashboards, content metrics, alert history, and notification settings
 - [ ] **Phase 89: Settings & Account** - Verify billing, branding, enterprise security, team management, and white-label settings
 - [ ] **Phase 90: Admin, Reseller, Help & Legacy** - Verify admin tools, reseller portal, help center, and legacy page stability
@@ -235,7 +235,7 @@ Plans:
 | 84. Playlists, Layouts & Templates | 0/3 | Not started | - |
 | 85. Scheduling & Campaigns | 2/2 | Complete    | 2026-02-24 |
 | 86. Screen Management | 2/2 | Complete    | 2026-02-24 |
-| 87. Data Sources, Apps & Moderation | 0/3 | Not started | - |
+| 87. Data Sources, Apps & Moderation | 0/3 | Complete    | 2026-02-27 |
 | 88. Analytics & Alerts | 0/TBD | Not started | - |
 | 89. Settings & Account | 0/TBD | Not started | - |
 | 90. Admin, Reseller, Help & Legacy | 0/TBD | Not started | - |
