@@ -240,7 +240,10 @@ Plans:
   3. Campaign editor is reachable from the campaigns list page (state routing fix)
   4. Screen group detail page is reachable from the screen groups list
   5. Scene editor Phase 83 VERIFICATION.md exists confirming SCEN-01 through SCEN-05
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 091-01-PLAN.md — Fix all 4 navigation/routing integration breaks (toast prop, layout slash, campaign routing, screen group navigation)
+- [ ] 091-02-PLAN.md — Create Phase 83 VERIFICATION.md documenting SCEN-01 through SCEN-05 satisfaction
 
 ## Progress
 
@@ -256,7 +259,7 @@ Plans:
 | 88. Analytics & Alerts | 1/2 | Complete    | 2026-02-27 |
 | 89. Settings & Account | 0/TBD | Not started | - |
 | 90. Admin, Reseller, Help & Legacy | 0/TBD | Not started | - |
-| 91. Integration & Verification Fixes | 0/TBD | Not started | - |
+| 91. Integration & Verification Fixes | 0/2 | Not started | - |
 
 **Total (v7.0):** 5/11 phases complete
 
