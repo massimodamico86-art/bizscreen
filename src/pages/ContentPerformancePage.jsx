@@ -6,7 +6,6 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   BarChart3,
   RefreshCw,
@@ -20,7 +19,6 @@ import {
   Wifi,
   WifiOff,
   Tv,
-  ExternalLink,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -52,7 +50,6 @@ import { fetchScenesForTenant } from '../services/sceneService';
  */
 export default function ContentPerformancePage({ showToast }) {
   const logger = useLogger('ContentPerformancePage');
-  const navigate = useNavigate();
 
   // Filters
   const [dateRange, setDateRange] = useState('7d');
@@ -141,11 +138,6 @@ export default function ContentPerformancePage({ showToast }) {
   const closeSceneDetail = () => {
     setSelectedScene(null);
     setSceneDetail(null);
-  };
-
-  // Navigate to scene editor
-  const handleViewScene = (sceneId) => {
-    navigate(`/scenes/${sceneId}`);
   };
 
   if (loading) {
@@ -571,10 +563,6 @@ export default function ContentPerformancePage({ showToast }) {
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
                 <Button variant="secondary" onClick={closeSceneDetail}>
                   Close
-                </Button>
-                <Button onClick={() => handleViewScene(selectedScene.scene_id)}>
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  View Scene
                 </Button>
               </div>
             </div>
