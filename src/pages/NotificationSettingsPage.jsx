@@ -19,7 +19,7 @@ import {
   Save,
   Mail,
 } from 'lucide-react';
-import { PageLayout } from '../design-system';
+import { PageLayout, PageHeader, PageContent, Button } from '../design-system';
 import {
   getNotificationPreferences,
   saveNotificationPreferences,
@@ -219,45 +219,47 @@ export default function NotificationSettingsPage({ showToast, onNavigate }) {
 
   if (loading) {
     return (
-      <PageLayout
-        title={t('notifications.settings', 'Notification Settings')}
-        icon={Bell}
-      >
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-        </div>
+      <PageLayout>
+        <PageContent>
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          </div>
+        </PageContent>
       </PageLayout>
     );
   }
 
   return (
-    <PageLayout
-      title={t('notifications.settings', 'Notification Settings')}
-      description={t(
-        'notifications.settingsDescription',
-        'Configure how and when you receive alerts'
-      )}
-      icon={Bell}
-      actions={
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onNavigate?.('alerts')}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            {t('common.back', 'Back to Alerts')}
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-          >
-            <Save className="w-4 h-4" />
-            {saving ? t('common.saving', 'Saving...') : t('common.save', 'Save Settings')}
-          </button>
-        </div>
-      }
-    >
+    <PageLayout>
+      <PageHeader
+        title={t('notifications.settings', 'Notification Settings')}
+        description={t(
+          'notifications.settingsDescription',
+          'Configure how and when you receive alerts'
+        )}
+        icon={<Bell className="w-5 h-5 text-blue-600" />}
+        iconBackground="bg-blue-100"
+        actions={
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => onNavigate?.('alerts')}
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t('common.back', 'Back to Alerts')}
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+            >
+              <Save className="w-4 h-4" />
+              {saving ? t('common.saving', 'Saving...') : t('common.save', 'Save Settings')}
+            </Button>
+          </div>
+        }
+      />
+
+      <PageContent>
       <div className="max-w-3xl space-y-6">
         {/* Notification Channels */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -562,6 +564,7 @@ export default function NotificationSettingsPage({ showToast, onNavigate }) {
           </div>
         )}
       </div>
+      </PageContent>
     </PageLayout>
   );
 }
