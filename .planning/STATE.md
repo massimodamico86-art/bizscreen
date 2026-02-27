@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-23)
 Phase: 86 of 90 (Screen Management) — COMPLETE
 Plan: All 2 plans complete (01, 02)
 Status: Phase 086 complete — screen management import/wiring audit and screen groups fixes done
-Last activity: 2026-02-24 — Phase 86-02: fixed fetchLocations data shape, async permissions, Select placeholder duplication
+Last activity: 2026-02-27 - Completed quick task 45: Fix login page stuck on loading spinner when Supabase connection times out
 
 Progress: [████░░░░░░░░] ~40% (v7.0 — 5/10 phases complete)
 
@@ -75,12 +75,18 @@ Recent decisions affecting v7.0:
 - Tech debt: duplicate legacy player_heartbeat RPC in usePlayerContent (from v4.0)
 - Tech debt: wrong lastActivityRef passed to useStuckDetection in ViewPage (from v4.0)
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 45 | Fix login page stuck on loading spinner when Supabase connection times out | 2026-02-27 | 366bfa3 | [45-fix-login-page-stuck-on-loading-spinner-](./quick/45-fix-login-page-stuck-on-loading-spinner-/) |
+
 ## Session Continuity
 
-Last session: 2026-02-24
-Stopped at: Completed 86-02-PLAN.md — Phase 86 fully complete
+Last session: 2026-02-27
+Stopped at: Completed quick task 45
 Resume file: N/A
 Next: Continue with next phase in v7.0 roadmap
 
 ---
-*Updated: 2026-02-24 — Phase 86 complete; screen management and screen groups fixes done*
+*Updated: 2026-02-27 — Completed quick task 45: Fix login page stuck on loading spinner*
