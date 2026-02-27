@@ -17,8 +17,8 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Dashboard (DASH)
 
-- [ ] **DASH-01**: Dashboard loads all sections with functional widgets and navigation
-- [ ] **DASH-02**: All dashboard quick actions navigate and execute correctly
+- [x] **DASH-01**: Dashboard loads all sections with functional widgets and navigation
+- [x] **DASH-02**: All dashboard quick actions navigate and execute correctly
 
 ### Media Library (MEDIA)
 
@@ -29,7 +29,7 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Scenes & SVG Editor (SCEN)
 
-- [x] **SCEN-01**: User can create, duplicate, and delete scenes from the scene list
+- [ ] **SCEN-01**: User can create, duplicate, and delete scenes from the scene list
 - [ ] **SCEN-02**: All SVG editor tools function (text, shapes, images, layers)
 - [ ] **SCEN-03**: All SVG editor property panels work (position, style, effects, hyperlinks, crop/replace)
 - [ ] **SCEN-04**: AI Designer generates layouts and supports iterative refinement
@@ -37,21 +37,21 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Playlists (PLAY)
 
-- [ ] **PLAY-01**: User can create, rename, and delete playlists
-- [ ] **PLAY-02**: Playlist editor supports adding, reordering, and removing items
-- [ ] **PLAY-03**: Playlist settings (duration, transitions) are saved correctly
+- [x] **PLAY-01**: User can create, rename, and delete playlists
+- [x] **PLAY-02**: Playlist editor supports adding, reordering, and removing items
+- [x] **PLAY-03**: Playlist settings (duration, transitions) are saved correctly
 
 ### Layouts & Templates (LAYT)
 
 - [ ] **LAYT-01**: User can create, edit, and delete layouts
 - [ ] **LAYT-02**: Layout editor zone creation, resize, and configuration works
 - [ ] **LAYT-03**: All 12 widget types are configurable in layout editor zone properties
-- [ ] **LAYT-04**: Layout templates browse, preview, and apply work
+- [x] **LAYT-04**: Layout templates browse, preview, and apply work
 
 ### Template Marketplace (TMPL)
 
-- [ ] **TMPL-01**: Template marketplace browse, search, preview, and filter work
-- [ ] **TMPL-02**: One-click template-to-editor and customization wizard work
+- [x] **TMPL-01**: Template marketplace browse, search, preview, and filter work
+- [x] **TMPL-02**: One-click template-to-editor and customization wizard work
 
 ### Schedules (SCHED)
 
@@ -61,40 +61,40 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Campaigns (CAMP)
 
-- [x] **CAMP-01**: User can create, edit, and delete campaigns
-- [x] **CAMP-02**: Campaign editor rotation, priority, and seasonal controls work
-- [x] **CAMP-03**: Campaign analytics display is functional
+- [ ] **CAMP-01**: User can create, edit, and delete campaigns
+- [ ] **CAMP-02**: Campaign editor rotation, priority, and seasonal controls work
+- [ ] **CAMP-03**: Campaign analytics display is functional
 
 ### Screens Management (SCRN)
 
 - [x] **SCRN-01**: Screens list with status, search, and bulk actions works
 - [x] **SCRN-02**: Screen pairing flow (QR + OTP) completes without errors
-- [x] **SCRN-03**: Screen group creation, tag management, and filtering work
-- [x] **SCRN-04**: Screen detail page diagnostics, health metrics, and screenshots work
+- [ ] **SCRN-03**: Screen group creation, tag management, and filtering work
+- [ ] **SCRN-04**: Screen detail page diagnostics, health metrics, and screenshots work
 - [x] **SCRN-05**: Remote commands (reboot, reload, screenshot capture) execute correctly
 
 ### Data Sources & Apps (DATA)
 
-- [ ] **DATA-01**: Data sources (Sheets, CSV, RSS) can be created and configured
-- [ ] **DATA-02**: Apps (6 types) can be added and edited with pre-populated modals
-- [ ] **DATA-03**: Menu boards CRUD with drag-and-drop reordering works
+- [x] **DATA-01**: Data sources (Sheets, CSV, RSS) can be created and configured
+- [x] **DATA-02**: Apps (6 types) can be added and edited with pre-populated modals
+- [x] **DATA-03**: Menu boards CRUD with drag-and-drop reordering works
 
 ### Moderation & Reviews (MODQ)
 
-- [ ] **MODQ-01**: Social feed moderation queue (approve/reject, hashtag filter) works
-- [ ] **MODQ-02**: Review inbox displays pending approvals with approve/reject actions
+- [x] **MODQ-01**: Social feed moderation queue (approve/reject, hashtag filter) works
+- [x] **MODQ-02**: Review inbox displays pending approvals with approve/reject actions
 
 ### Analytics (ANLYT)
 
-- [ ] **ANLYT-01**: Analytics dashboard with charts and date filters works
-- [ ] **ANLYT-02**: Content performance page with per-content metrics works
-- [ ] **ANLYT-03**: Content detail analytics timeline works
-- [ ] **ANLYT-04**: Activity log displays chronological events correctly
+- [x] **ANLYT-01**: Analytics dashboard with charts and date filters works
+- [x] **ANLYT-02**: Content performance page with per-content metrics works
+- [x] **ANLYT-03**: Content detail analytics timeline works
+- [x] **ANLYT-04**: Activity log displays chronological events correctly
 
 ### Alerts & Notifications (ALRT)
 
-- [ ] **ALRT-01**: Alerts center displays alert history and dismissal works
-- [ ] **ALRT-02**: Notification settings configure alert types and delivery preferences
+- [x] **ALRT-01**: Alerts center displays alert history and dismissal works
+- [x] **ALRT-02**: Notification settings configure alert types and delivery preferences
 
 ### Settings & Account (SET)
 
@@ -155,48 +155,48 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-03 | Phase 81 | Complete |
 | AUTH-04 | Phase 81 | Complete |
 | AUTH-05 | Phase 81 | Complete |
-| DASH-01 | Phase 81 | Pending |
-| DASH-02 | Phase 81 | Pending |
+| DASH-01 | Phase 81 | Complete |
+| DASH-02 | Phase 81 | Complete |
 | MEDIA-01 | Phase 82 | Complete |
 | MEDIA-02 | Phase 82 | Complete |
 | MEDIA-03 | Phase 82 | Complete |
 | MEDIA-04 | Phase 82 | Complete |
-| SCEN-01 | Phase 83 | Complete |
-| SCEN-02 | Phase 83 | Pending |
-| SCEN-03 | Phase 83 | Pending |
-| SCEN-04 | Phase 83 | Pending |
-| SCEN-05 | Phase 83 | Pending |
-| PLAY-01 | Phase 84 | Pending |
-| PLAY-02 | Phase 84 | Pending |
-| PLAY-03 | Phase 84 | Pending |
-| LAYT-01 | Phase 84 | Pending |
-| LAYT-02 | Phase 84 | Pending |
-| LAYT-03 | Phase 84 | Pending |
-| LAYT-04 | Phase 84 | Pending |
-| TMPL-01 | Phase 84 | Pending |
-| TMPL-02 | Phase 84 | Pending |
+| SCEN-01 | Phase 83 → 91 | Pending |
+| SCEN-02 | Phase 83 → 91 | Pending |
+| SCEN-03 | Phase 83 → 91 | Pending |
+| SCEN-04 | Phase 83 → 91 | Pending |
+| SCEN-05 | Phase 83 → 91 | Pending |
+| PLAY-01 | Phase 84 | Complete |
+| PLAY-02 | Phase 84 | Complete |
+| PLAY-03 | Phase 84 | Complete |
+| LAYT-01 | Phase 84 → 91 | Pending |
+| LAYT-02 | Phase 84 → 91 | Pending |
+| LAYT-03 | Phase 84 → 91 | Pending |
+| LAYT-04 | Phase 84 | Complete |
+| TMPL-01 | Phase 84 | Complete |
+| TMPL-02 | Phase 84 | Complete |
 | SCHED-01 | Phase 85 | Complete |
 | SCHED-02 | Phase 85 | Complete |
 | SCHED-03 | Phase 85 | Complete |
-| CAMP-01 | Phase 85 | Complete |
-| CAMP-02 | Phase 85 | Complete |
-| CAMP-03 | Phase 85 | Complete |
+| CAMP-01 | Phase 85 → 91 | Pending |
+| CAMP-02 | Phase 85 → 91 | Pending |
+| CAMP-03 | Phase 85 → 91 | Pending |
 | SCRN-01 | Phase 86 | Complete |
 | SCRN-02 | Phase 86 | Complete |
-| SCRN-03 | Phase 86 | Complete |
-| SCRN-04 | Phase 86 | Complete |
+| SCRN-03 | Phase 86 → 91 | Pending |
+| SCRN-04 | Phase 86 → 91 | Pending |
 | SCRN-05 | Phase 86 | Complete |
-| DATA-01 | Phase 87 | Pending |
-| DATA-02 | Phase 87 | Pending |
-| DATA-03 | Phase 87 | Pending |
-| MODQ-01 | Phase 87 | Pending |
-| MODQ-02 | Phase 87 | Pending |
-| ANLYT-01 | Phase 88 | Pending |
-| ANLYT-02 | Phase 88 | Pending |
-| ANLYT-03 | Phase 88 | Pending |
-| ANLYT-04 | Phase 88 | Pending |
-| ALRT-01 | Phase 88 | Pending |
-| ALRT-02 | Phase 88 | Pending |
+| DATA-01 | Phase 87 | Complete |
+| DATA-02 | Phase 87 | Complete |
+| DATA-03 | Phase 87 | Complete |
+| MODQ-01 | Phase 87 | Complete |
+| MODQ-02 | Phase 87 | Complete |
+| ANLYT-01 | Phase 88 | Complete |
+| ANLYT-02 | Phase 88 | Complete |
+| ANLYT-03 | Phase 88 | Complete |
+| ANLYT-04 | Phase 88 | Complete |
+| ALRT-01 | Phase 88 | Complete |
+| ALRT-02 | Phase 88 | Complete |
 | SET-01 | Phase 89 | Pending |
 | SET-02 | Phase 89 | Pending |
 | SET-03 | Phase 89 | Pending |
@@ -217,7 +217,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 - v7 requirements: 57 total
 - Mapped to phases: 57
 - Unmapped: 0
+- Satisfied: 34 | Pending (gap closure Phase 91): 13 | Pending (Phases 89-90): 10
 
 ---
 *Requirements defined: 2026-02-23*
-*Last updated: 2026-02-23 — traceability complete, all 57 requirements mapped to phases 81-90*
+*Last updated: 2026-02-27 — gap closure Phase 91 added, 13 partial requirements reassigned, checkboxes synced with audit*

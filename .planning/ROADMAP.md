@@ -14,7 +14,7 @@
 - [x] **v4.0 Player Hardening** — Phases 64-68 (shipped 2026-02-20)
 - [x] **v5.0 UI Completeness** — Phases 69-71 (shipped 2026-02-20)
 - [x] **v6.0 Functional Completeness** — Phases 72-80 (shipped 2026-02-23)
-- [ ] **v7.0 UI Verification** — Phases 81-90 (in progress)
+- [ ] **v7.0 UI Verification** — Phases 81-91 (in progress)
 
 ## Phase History
 
@@ -77,6 +77,7 @@ All milestones shipped successfully.
 - [x] **Phase 88: Analytics & Alerts** - Verify analytics dashboards, content metrics, alert history, and notification settings (completed 2026-02-27)
 - [ ] **Phase 89: Settings & Account** - Verify billing, branding, enterprise security, team management, and white-label settings
 - [ ] **Phase 90: Admin, Reseller, Help & Legacy** - Verify admin tools, reseller portal, help center, and legacy page stability
+- [ ] **Phase 91: Cross-Phase Integration & Verification Fixes** - Fix 4 navigation/routing integration breaks and verify scene editor requirements
 
 ## Phase Details
 
@@ -228,6 +229,19 @@ Plans:
   5. Help center navigation and search return results; legacy pages (FAQs, Refer, Setup, Subscription, Users) render without JS errors
 **Plans**: TBD
 
+### Phase 91: Cross-Phase Integration & Verification Fixes
+**Goal**: Fix all 4 cross-phase navigation/routing integration breaks identified by milestone audit and verify scene editor requirements
+**Depends on**: Nothing (fixes already-completed phases 83-86)
+**Requirements**: SCEN-01, SCEN-02, SCEN-03, SCEN-04, SCEN-05, LAYT-01, LAYT-02, LAYT-03, CAMP-01, CAMP-02, CAMP-03, SCRN-03, SCRN-04
+**Gap Closure:** Closes all 13 partial requirements and 4 broken E2E flows from v7.0 audit
+**Success Criteria** (what must be TRUE):
+  1. Scene toast feedback works — delete/duplicate/publish actions show toast notifications
+  2. Layout editor is reachable from the layouts list page (slash→hyphen navigation fix)
+  3. Campaign editor is reachable from the campaigns list page (state routing fix)
+  4. Screen group detail page is reachable from the screen groups list
+  5. Scene editor Phase 83 VERIFICATION.md exists confirming SCEN-01 through SCEN-05
+**Plans**: TBD
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -242,8 +256,9 @@ Plans:
 | 88. Analytics & Alerts | 1/2 | Complete    | 2026-02-27 |
 | 89. Settings & Account | 0/TBD | Not started | - |
 | 90. Admin, Reseller, Help & Legacy | 0/TBD | Not started | - |
+| 91. Integration & Verification Fixes | 0/TBD | Not started | - |
 
-**Total (v7.0):** 5/10 phases complete
+**Total (v7.0):** 5/11 phases complete
 
 ---
 
@@ -263,7 +278,7 @@ Plans:
 | v4.0 Player Hardening | 64-68 | 11 | Complete | 2026-02-20 |
 | v5.0 UI Completeness | 69-71 | 5 | Complete | 2026-02-20 |
 | v6.0 Functional Completeness | 72-80 | 20 | Complete | 2026-02-23 |
-| v7.0 UI Verification | 81-90 | TBD | In progress | - |
+| v7.0 UI Verification | 81-91 | TBD | In progress | - |
 
 **Total:** 80 phases complete, 247 plans executed | 12 milestones shipped
 
