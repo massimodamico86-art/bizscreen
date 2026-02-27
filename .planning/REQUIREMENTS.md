@@ -98,8 +98,8 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Settings & Account (SET)
 
-- [ ] **SET-01**: Billing section loads and Stripe payment method update works
-- [ ] **SET-02**: Branding settings (logo, colors, fonts) can be edited and saved
+- [x] **SET-01**: Billing section loads and Stripe payment method update works
+- [x] **SET-02**: Branding settings (logo, colors, fonts) can be edited and saved
 - [ ] **SET-03**: Enterprise security (password policy, session timeout, data deletion) works
 - [ ] **SET-04**: Team management (invite, role change, remove) works
 - [ ] **SET-05**: White-label settings configure custom domain and branding
@@ -197,8 +197,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ANLYT-04 | Phase 88 | Complete |
 | ALRT-01 | Phase 88 | Complete |
 | ALRT-02 | Phase 88 | Complete |
-| SET-01 | Phase 89 | Pending |
-| SET-02 | Phase 89 | Pending |
+| SET-01 | Phase 89 | Complete |
+| SET-02 | Phase 89 | Complete |
 | SET-03 | Phase 89 | Pending |
 | SET-04 | Phase 89 | Pending |
 | SET-05 | Phase 89 | Pending |
