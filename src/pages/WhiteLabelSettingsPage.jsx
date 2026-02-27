@@ -1,5 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import {
+  AlertCircle,
+  CheckCircle,
+  Copy,
+  ExternalLink,
+  FileText,
+  Globe,
+  Image,
+  Info,
+  Link2,
+  Loader2,
+  Mail,
+  Palette,
+  Plus,
+  RefreshCw,
+  Shield,
+  Star,
+  Trash2,
+  X,
+} from 'lucide-react';
+import { Card, Button, Badge } from '../design-system';
 
 import { useTranslation } from '../i18n';
 import {
@@ -329,7 +349,7 @@ const WhiteLabelSettingsPage = ({ showToast }) => {
                             <div className="flex items-center gap-2">
                               {!domain.is_verified && (
                                 <Button
-                                  variant="outline"
+                                  variant="secondary"
                                   size="sm"
                                   onClick={() => handleVerifyDomain(domain.id)}
                                   disabled={verifyingDomain === domain.id}
@@ -618,7 +638,7 @@ const WhiteLabelSettingsPage = ({ showToast }) => {
                   </div>
 
                   <div className="flex gap-3 pt-4">
-                    <Button type="button" variant="outline" onClick={closeAddDomainModal} className="flex-1">
+                    <Button type="button" variant="secondary" onClick={closeAddDomainModal} className="flex-1">
                       Cancel
                     </Button>
                     <Button
