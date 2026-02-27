@@ -204,7 +204,18 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-No active milestone. Use `/gsd:new-milestone` to start the next milestone.
+## Current Milestone: v8.0 Comprehensive E2E
+
+**Goal:** Complete Playwright test suite covering every user flow, edge case, role permutation, and screen size with organized screenshot evidence and CI pipeline integration.
+
+**Target features:**
+- Full happy-path walkthroughs for all 20 feature areas
+- Edge cases: empty states, validation errors, permission denials, error states
+- Multi-role coverage: client, admin, superadmin permutations
+- Responsive testing: mobile, tablet, desktop screen sizes
+- Organized screenshot directory (screenshots/{area}/) at every step
+- Screenshots embedded in Playwright HTML report
+- CI-ready pipeline with screenshot artifact upload
 
 ### Out of Scope
 
@@ -387,4 +398,4 @@ No active milestone. Use `/gsd:new-milestone` to start the next milestone.
 | Dev auth bypass (VITE_DEV_BYPASS_AUTH) | MCP Playwright automation needs deterministic login | ✓ Good — env-gated, no production risk |
 
 ---
-*Last updated: 2026-02-27 after v7.0 milestone complete*
+*Last updated: 2026-02-27 after v8.0 Comprehensive E2E milestone started*
