@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-02-23)
 Phase: 088 (Analytics & Alerts) — COMPLETE
 Plan: All 3 plans complete (01, 02, 03)
 Status: Phase 088 fully complete — all analytics/alerts pages verified, Modal prop mismatches fixed
-Last activity: 2026-02-27 - Completed quick task 47: Fix MCP Playwright login: add dev auth bypass mode
+Last activity: 2026-02-27 - Completed quick task 48: Fix 11 crashed pages (missing imports, defensive data handling)
 
 Progress: [██████░░░░░░] ~60% (v7.0 — 8/10 phases complete)
 
@@ -104,13 +104,14 @@ Recent decisions affecting v7.0:
 | Phase 088 P02 | 3min | 3 tasks | 2 files |
 | Phase 088 P03 | 1min | 1 tasks | 2 files |
 | 47 | Add dev auth bypass for MCP Playwright automation (VITE_DEV_BYPASS_AUTH) | 2026-02-27 | 1ed25c8 | [47-fix-mcp-playwright-login-add-dev-auth-by](./quick/47-fix-mcp-playwright-login-add-dev-auth-by/) |
+| 48 | Fix 11 crashed pages: missing imports, Badge/Button collisions, Modal prop, error-as-object | 2026-02-27 | 8e975f2 | [48-fix-11-crashed-pages-to-handle-missing-m](./quick/48-fix-11-crashed-pages-to-handle-missing-m/) |
 
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed quick task 47 (dev auth bypass for MCP Playwright)
+Stopped at: Completed quick task 48 (fix 11 crashed pages)
 Resume file: N/A
 Next: Continue with next phase in v7.0 roadmap
 
 ---
-*Updated: 2026-02-27 — Completed quick task 47: Dev auth bypass for MCP Playwright automation*
+*Updated: 2026-02-27 — Completed quick task 48: Fix 11 crashed pages to handle missing imports and defensive data handling*
