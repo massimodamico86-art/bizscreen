@@ -200,10 +200,11 @@ Plans:
   3. Content detail analytics timeline renders chronological play data for a selected item
   4. Activity log displays chronological system events in the correct order
   5. Alert history loads and individual alerts can be dismissed; notification settings save alert type and delivery preferences
-**Plans**: 2 plans
+**Plans**: 3 plans
 Plans:
-- [ ] 088-01-PLAN.md — Analytics pages import audit and fix (AnalyticsPage, AnalyticsDashboardPage, ContentPerformancePage, ContentDetailAnalyticsPage)
-- [ ] 088-02-PLAN.md — Activity log, alerts center, and notification settings audit and fix (ActivityLogPage, AlertsCenterPage, NotificationSettingsPage)
+- [x] 088-01-PLAN.md — Analytics pages import audit and fix (AnalyticsPage, AnalyticsDashboardPage, ContentPerformancePage, ContentDetailAnalyticsPage)
+- [x] 088-02-PLAN.md — Activity log, alerts center, and notification settings audit and fix (ActivityLogPage, AlertsCenterPage, NotificationSettingsPage)
+- [x] 088-03-PLAN.md — Modal prop isOpen->open fix in AlertsCenterPage and ContentPerformancePage
 
 ### Phase 89: Settings & Account
 **Goal**: Billing, branding, enterprise security, team management, and white-label settings are all editable and save correctly
@@ -259,7 +260,7 @@ Plans:
 | 85. Scheduling & Campaigns | 2/2 | Complete    | 2026-02-24 |
 | 86. Screen Management | 2/2 | Complete    | 2026-02-24 |
 | 87. Data Sources, Apps & Moderation | 0/3 | Complete    | 2026-02-27 |
-| 88. Analytics & Alerts | 1/2 | Complete    | 2026-02-27 |
+| 88. Analytics & Alerts | 3/3 | Complete    | 2026-02-27 |
 | 89. Settings & Account | 0/2 | Not started | - |
 | 90. Admin, Reseller, Help & Legacy | 0/TBD | Not started | - |
 | 91. Integration & Verification Fixes | 2/2 | Complete    | 2026-02-27 |
