@@ -134,10 +134,10 @@ const DataSourceCard = ({ source, onEdit, onDelete }) => {
                 <span className="text-sm text-gray-500 line-clamp-1">{source.description}</span>
               )}
               <Inline gap="sm">
-                <Badge variant="secondary" size="sm">
+                <Badge variant="default" size="sm">
                   {source.field_count || 0} fields
                 </Badge>
-                <Badge variant="secondary" size="sm">
+                <Badge variant="default" size="sm">
                   {source.row_count || 0} rows
                 </Badge>
               </Inline>
@@ -263,7 +263,7 @@ const FieldEditorRow = ({ field, onUpdate, onDelete, onMoveUp, onMoveDown, isFir
       <td className="p-2 font-mono text-sm text-gray-500">{field.name}</td>
       <td className="p-2">{field.label}</td>
       <td className="p-2">
-        <Badge variant="secondary" size="sm">
+        <Badge variant="default" size="sm">
           {field.data_type}
         </Badge>
       </td>
@@ -790,7 +790,7 @@ export default function DataSourcesPage() {
                           <span className="text-sm text-gray-500">{sourceData.description}</span>
                         )}
                       </Stack>
-                      <Badge variant={sourceData.type === DATA_SOURCE_TYPES.CSV_IMPORT ? 'info' : 'secondary'}>
+                      <Badge variant={sourceData.type === DATA_SOURCE_TYPES.CSV_IMPORT ? 'info' : 'default'}>
                         {sourceData.type === DATA_SOURCE_TYPES.CSV_IMPORT ? 'CSV Import' : 'Internal Table'}
                       </Badge>
                     </Inline>
@@ -875,8 +875,8 @@ export default function DataSourcesPage() {
                                 sourceData.last_sync_status === SYNC_STATUS.OK
                                   ? 'success'
                                   : sourceData.last_sync_status === SYNC_STATUS.ERROR
-                                  ? 'destructive'
-                                  : 'secondary'
+                                  ? 'error'
+                                  : 'default'
                               }
                             >
                               {sourceData.last_sync_status || 'pending'}
@@ -911,8 +911,8 @@ export default function DataSourcesPage() {
                                         log.status === SYNC_STATUS.OK
                                           ? 'success'
                                           : log.status === SYNC_STATUS.ERROR
-                                          ? 'destructive'
-                                          : 'secondary'
+                                          ? 'error'
+                                          : 'default'
                                       }
                                     >
                                       {log.status}
@@ -1226,7 +1226,7 @@ export default function DataSourcesPage() {
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleDelete}>
+          <Button variant="danger" onClick={handleDelete}>
             Delete
           </Button>
         </ModalFooter>
