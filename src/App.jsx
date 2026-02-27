@@ -536,9 +536,9 @@ function BizScreenAppInner() {
     'team': <Suspense fallback={<PageLoader />}><TeamPage showToast={showToast} /></Suspense>,
     'analytics': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsPage showToast={showToast} /></FeatureGate></Suspense>,
     'templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'scenes': <Suspense fallback={<PageLoader />}><ScenesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'scenes': <Suspense fallback={<PageLoader />}><ScenesPage onShowToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'assistant': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.AI_ASSISTANT} fallback={<FeatureUpgradePrompt feature={Feature.AI_ASSISTANT} onNavigate={() => setCurrentPage('account-plan')} />}><ContentAssistantPage showToast={showToast} /></FeatureGate></Suspense>,
-    'screen-groups': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.SCREEN_GROUPS} fallback={<FeatureUpgradePrompt feature={Feature.SCREEN_GROUPS} onNavigate={() => setCurrentPage('account-plan')} />}><ScreenGroupsPage showToast={showToast} /></FeatureGate></Suspense>,
+    'screen-groups': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.SCREEN_GROUPS} fallback={<FeatureUpgradePrompt feature={Feature.SCREEN_GROUPS} onNavigate={() => setCurrentPage('account-plan')} />}><ScreenGroupsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'campaigns': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.CAMPAIGNS} fallback={<FeatureUpgradePrompt feature={Feature.CAMPAIGNS} onNavigate={() => setCurrentPage('account-plan')} />}><CampaignsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'review-inbox': <Suspense fallback={<PageLoader />}><ReviewInboxPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'developer': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.API_ACCESS} fallback={<FeatureUpgradePrompt feature={Feature.API_ACCESS} onNavigate={() => setCurrentPage('account-plan')} />}><DeveloperSettingsPage showToast={showToast} /></FeatureGate></Suspense>,
@@ -1042,7 +1042,7 @@ function ClientUILayout({
               <Suspense fallback={<PageLoader />}>
                 <SceneDetailPage
                   sceneId={currentPage.replace('scene-detail-', '')}
-                  showToast={showToast}
+                  onShowToast={showToast}
                   onNavigate={setCurrentPage}
                 />
               </Suspense>

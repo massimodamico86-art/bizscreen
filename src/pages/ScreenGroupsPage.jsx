@@ -54,7 +54,7 @@ import { fetchLocations } from '../services/locationService';
 import { canEditScreens } from '../services/permissionsService';
 import { useLogger } from '../hooks/useLogger.js';
 
-const ScreenGroupsPage = ({ showToast }) => {
+const ScreenGroupsPage = ({ showToast, onNavigate }) => {
   const { t } = useTranslation();
   const logger = useLogger('ScreenGroupsPage');
   const [groups, setGroups] = useState([]);
@@ -345,7 +345,12 @@ const ScreenGroupsPage = ({ showToast }) => {
                             <Users size={20} className="text-blue-600" />
                           </div>
                           <div>
-                            <span className="font-medium text-gray-900">{group.name}</span>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onNavigate?.(`screen-group-detail-${group.id}`); }}
+                              className="font-medium text-gray-900 hover:text-blue-600 hover:underline text-left"
+                            >
+                              {group.name}
+                            </button>
                             {group.tags?.length > 0 && (
                               <div className="flex gap-1 mt-1">
                                 {group.tags.slice(0, 2).map(tag => (
@@ -425,6 +430,14 @@ const ScreenGroupsPage = ({ showToast }) => {
 
                             {openMenuId === group.id && (
                               <div className="absolute right-4 top-12 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10 min-w-[140px]" role="menu">
+                                <button
+                                  onClick={() => onNavigate?.(`screen-group-detail-${group.id}`)}
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                  role="menuitem"
+                                >
+                                  <ChevronRight size={14} aria-hidden="true" />
+                                  {t('screenGroups.viewDetails', 'View Details')}
+                                </button>
                                 <button
                                   onClick={() => openEditModal(group)}
                                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
