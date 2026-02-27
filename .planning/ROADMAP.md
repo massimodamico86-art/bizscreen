@@ -199,7 +199,10 @@ Plans:
   3. Content detail analytics timeline renders chronological play data for a selected item
   4. Activity log displays chronological system events in the correct order
   5. Alert history loads and individual alerts can be dismissed; notification settings save alert type and delivery preferences
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 088-01-PLAN.md — Analytics pages import audit and fix (AnalyticsPage, AnalyticsDashboardPage, ContentPerformancePage, ContentDetailAnalyticsPage)
+- [ ] 088-02-PLAN.md — Activity log, alerts center, and notification settings audit and fix (ActivityLogPage, AlertsCenterPage, NotificationSettingsPage)
 
 ### Phase 89: Settings & Account
 **Goal**: Billing, branding, enterprise security, team management, and white-label settings are all editable and save correctly
