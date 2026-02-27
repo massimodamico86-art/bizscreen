@@ -29,11 +29,11 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Scenes & SVG Editor (SCEN)
 
-- [ ] **SCEN-01**: User can create, duplicate, and delete scenes from the scene list
-- [ ] **SCEN-02**: All SVG editor tools function (text, shapes, images, layers)
-- [ ] **SCEN-03**: All SVG editor property panels work (position, style, effects, hyperlinks, crop/replace)
-- [ ] **SCEN-04**: AI Designer generates layouts and supports iterative refinement
-- [ ] **SCEN-05**: Cloud imports (all 5 providers) can browse and insert files
+- [x] **SCEN-01**: User can create, duplicate, and delete scenes from the scene list
+- [x] **SCEN-02**: All SVG editor tools function (text, shapes, images, layers)
+- [x] **SCEN-03**: All SVG editor property panels work (position, style, effects, hyperlinks, crop/replace)
+- [x] **SCEN-04**: AI Designer generates layouts and supports iterative refinement
+- [x] **SCEN-05**: Cloud imports (all 5 providers) can browse and insert files
 
 ### Playlists (PLAY)
 
@@ -161,11 +161,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MEDIA-02 | Phase 82 | Complete |
 | MEDIA-03 | Phase 82 | Complete |
 | MEDIA-04 | Phase 82 | Complete |
-| SCEN-01 | Phase 83 → 91 | Pending |
-| SCEN-02 | Phase 83 → 91 | Pending |
-| SCEN-03 | Phase 83 → 91 | Pending |
-| SCEN-04 | Phase 83 → 91 | Pending |
-| SCEN-05 | Phase 83 → 91 | Pending |
+| SCEN-01 | Phase 83 → 91 | Complete |
+| SCEN-02 | Phase 83 → 91 | Complete |
+| SCEN-03 | Phase 83 → 91 | Complete |
+| SCEN-04 | Phase 83 → 91 | Complete |
+| SCEN-05 | Phase 83 → 91 | Complete |
 | PLAY-01 | Phase 84 | Complete |
 | PLAY-02 | Phase 84 | Complete |
 | PLAY-03 | Phase 84 | Complete |
