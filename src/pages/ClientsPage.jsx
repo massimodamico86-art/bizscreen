@@ -21,6 +21,25 @@ import {
 } from '../services/clientService';
 import { startImpersonation } from '../services/tenantService';
 import { useBranding } from '../contexts/BrandingContext';
+import {
+  AlertCircle,
+  Building2,
+  CheckCircle,
+  CreditCard,
+  Edit2,
+  Image,
+  Lock,
+  Mail,
+  Monitor,
+  MoreVertical,
+  Plus,
+  RefreshCw,
+  Search,
+  User,
+  UserCheck,
+  Users,
+  X,
+} from 'lucide-react';
 
 export default function ClientsPage() {
   const { refreshBranding } = useBranding();
