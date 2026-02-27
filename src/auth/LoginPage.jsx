@@ -2,9 +2,15 @@
  * LoginPage - User login form with MFA support
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  Mail,
+} from 'lucide-react';
 import { signIn } from '../services/authService';
 import { isMfaRequired } from '../services/mfaService';
 import Seo from '../components/Seo';
@@ -22,6 +28,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showMfaVerification, setShowMfaVerification] = useState(false);
+
+  // Dev bypass: auto-redirect to app when auth bypass is active
+  const devBypass = import.meta.env.DEV && import.meta.env.VITE_DEV_BYPASS_AUTH === 'true';
+  useEffect(() => {
+    if (devBypass) {
+      navigate('/app');
+    }
+  }, [devBypass, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
