@@ -43,9 +43,9 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Layouts & Templates (LAYT)
 
-- [ ] **LAYT-01**: User can create, edit, and delete layouts
-- [ ] **LAYT-02**: Layout editor zone creation, resize, and configuration works
-- [ ] **LAYT-03**: All 12 widget types are configurable in layout editor zone properties
+- [x] **LAYT-01**: User can create, edit, and delete layouts
+- [x] **LAYT-02**: Layout editor zone creation, resize, and configuration works
+- [x] **LAYT-03**: All 12 widget types are configurable in layout editor zone properties
 - [x] **LAYT-04**: Layout templates browse, preview, and apply work
 
 ### Template Marketplace (TMPL)
@@ -61,16 +61,16 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Campaigns (CAMP)
 
-- [ ] **CAMP-01**: User can create, edit, and delete campaigns
-- [ ] **CAMP-02**: Campaign editor rotation, priority, and seasonal controls work
-- [ ] **CAMP-03**: Campaign analytics display is functional
+- [x] **CAMP-01**: User can create, edit, and delete campaigns
+- [x] **CAMP-02**: Campaign editor rotation, priority, and seasonal controls work
+- [x] **CAMP-03**: Campaign analytics display is functional
 
 ### Screens Management (SCRN)
 
 - [x] **SCRN-01**: Screens list with status, search, and bulk actions works
 - [x] **SCRN-02**: Screen pairing flow (QR + OTP) completes without errors
-- [ ] **SCRN-03**: Screen group creation, tag management, and filtering work
-- [ ] **SCRN-04**: Screen detail page diagnostics, health metrics, and screenshots work
+- [x] **SCRN-03**: Screen group creation, tag management, and filtering work
+- [x] **SCRN-04**: Screen detail page diagnostics, health metrics, and screenshots work
 - [x] **SCRN-05**: Remote commands (reboot, reload, screenshot capture) execute correctly
 
 ### Data Sources & Apps (DATA)
@@ -169,22 +169,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PLAY-01 | Phase 84 | Complete |
 | PLAY-02 | Phase 84 | Complete |
 | PLAY-03 | Phase 84 | Complete |
-| LAYT-01 | Phase 84 → 91 | Pending |
-| LAYT-02 | Phase 84 → 91 | Pending |
-| LAYT-03 | Phase 84 → 91 | Pending |
+| LAYT-01 | Phase 84 → 91 | Complete |
+| LAYT-02 | Phase 84 → 91 | Complete |
+| LAYT-03 | Phase 84 → 91 | Complete |
 | LAYT-04 | Phase 84 | Complete |
 | TMPL-01 | Phase 84 | Complete |
 | TMPL-02 | Phase 84 | Complete |
 | SCHED-01 | Phase 85 | Complete |
 | SCHED-02 | Phase 85 | Complete |
 | SCHED-03 | Phase 85 | Complete |
-| CAMP-01 | Phase 85 → 91 | Pending |
-| CAMP-02 | Phase 85 → 91 | Pending |
-| CAMP-03 | Phase 85 → 91 | Pending |
+| CAMP-01 | Phase 85 → 91 | Complete |
+| CAMP-02 | Phase 85 → 91 | Complete |
+| CAMP-03 | Phase 85 → 91 | Complete |
 | SCRN-01 | Phase 86 | Complete |
 | SCRN-02 | Phase 86 | Complete |
-| SCRN-03 | Phase 86 → 91 | Pending |
-| SCRN-04 | Phase 86 → 91 | Pending |
+| SCRN-03 | Phase 86 → 91 | Complete |
+| SCRN-04 | Phase 86 → 91 | Complete |
 | SCRN-05 | Phase 86 | Complete |
 | DATA-01 | Phase 87 | Complete |
 | DATA-02 | Phase 87 | Complete |
