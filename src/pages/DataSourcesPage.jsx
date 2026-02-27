@@ -379,7 +379,7 @@ export default function DataSourcesPage() {
       setLoading(true);
       setError(null);
       const data = await fetchDataSources();
-      setDataSources(data);
+      setDataSources(Array.isArray(data) ? data : []);
     } catch (err) {
       logger.error('Failed to load data sources', { error: err });
       setError('Failed to load data sources');

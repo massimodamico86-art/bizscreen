@@ -151,10 +151,10 @@ export default function TemplateMarketplacePage() {
         search: search || null,
       });
       // Client-side orientation filter (RPC doesn't support orientation)
-      if (orientation) {
+      if (orientation && Array.isArray(data)) {
         data = data.filter(t => t.metadata?.orientation === orientation);
       }
-      setTemplates(data);
+      setTemplates(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load templates:', err);
       setError('Failed to load templates');
@@ -171,7 +171,7 @@ export default function TemplateMarketplacePage() {
   useEffect(() => {
     if (templates.length > 0) {
       checkFavoritedTemplates(templates.map(t => t.id))
-        .then(setFavoritedIds)
+        .then(ids => setFavoritedIds(ids instanceof Set ? ids : new Set()))
         .catch(err => console.error('Failed to check favorites:', err));
     }
   }, [templates]);
@@ -180,7 +180,7 @@ export default function TemplateMarketplacePage() {
   useEffect(() => {
     if (templates.length > 0) {
       getTemplateUsageCounts(templates.map(t => t.id))
-        .then(setUsageCounts)
+        .then(counts => setUsageCounts(counts instanceof Map ? counts : new Map()))
         .catch(err => console.error('Failed to load usage counts:', err));
     }
   }, [templates]);

@@ -1,18 +1,25 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  ArrowUp,
+  Activity,
+  AlertCircle,
+  AlertTriangle,
   ArrowDown,
-  Minus,
-  Shield,
+  ArrowUp,
+  BarChart2,
   Bell,
   BellOff,
-  XCircle,
-  AlertTriangle,
-  AlertCircle,
   CheckCircle2,
-  Wifi,
-  Activity,
+  Grid,
+  Minus,
   Monitor,
+  PieChart,
+  RefreshCw,
+  Shield,
+  TrendingDown,
+  TrendingUp,
+  Wifi,
+  XCircle,
+  Zap,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
@@ -43,9 +50,8 @@ import {
   Stack,
   Inline,
   Banner,
+  Alert,
 } from '../design-system';
-
-
 
 // --------------------------------------------------------------------------
 // Sub-components
@@ -621,6 +627,7 @@ export default function ServiceQualityPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
+  const [error, setError] = useState(null);
 
   const [slaBreakdown, setSlaBreakdown] = useState(null);
   const [slaStatus, setSlaStatus] = useState(null);
@@ -651,6 +658,7 @@ export default function ServiceQualityPage() {
       setLastRefresh(new Date());
     } catch (error) {
       console.error('Error fetching service quality data:', error);
+      setError('Failed to load service quality data. Please try again.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -787,6 +795,7 @@ export default function ServiceQualityPage() {
       />
 
       <PageContent>
+        {error && <Alert variant="error" className="mb-4">{error}</Alert>}
         <Stack gap="lg">
           {/* Tier Banner */}
           <TierBanner tier={subscriptionTier} config={tierConfig} />

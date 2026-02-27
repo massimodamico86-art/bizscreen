@@ -599,7 +599,7 @@ export default function DeviceDiagnosticsPage({ showToast }) {
     try {
       setError(null);
       const data = await fetchDevicesWithScreenshots();
-      setDevices(data);
+      setDevices(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load devices:', err);
       setError(err.message);

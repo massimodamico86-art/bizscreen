@@ -9,11 +9,11 @@
 import { useState, useEffect } from 'react';
 
 import {
+  AlertCircle,
   Check,
   Clock,
-  AlertCircle,
-  Languages,
   Globe,
+  Languages,
   Sparkles,
 } from 'lucide-react';
 import {
@@ -62,7 +62,7 @@ export default function TranslationDashboardPage({ showToast }) {
           status: filters.status || null,
           languageCode: filters.languageCode || null,
         });
-        setScenes(data);
+        setScenes(Array.isArray(data) ? data : []);
         // Clear selection when filters change
         setSelected([]);
       } catch (error) {
@@ -102,7 +102,7 @@ export default function TranslationDashboardPage({ showToast }) {
       status: filters.status || null,
       languageCode: filters.languageCode || null,
     });
-    setScenes(data);
+    setScenes(Array.isArray(data) ? data : []);
   };
 
   // Open AI panel for a scene

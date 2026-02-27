@@ -4,21 +4,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../i18n';
 import {
-  Users,
-  Shield,
+  AlertCircle,
+  Check,
+  Clock,
   Crown,
   Edit3,
   Eye,
   Loader2,
-  UserPlus,
-  MoreVertical,
-  X,
-  Clock,
   Mail,
+  MoreVertical,
   RefreshCw,
+  Shield,
   Trash2,
-  Check,
-  AlertCircle,
+  UserPlus,
+  Users,
+  X,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -87,9 +87,10 @@ const TeamPage = ({ showToast }) => {
       ]);
 
       if (membersResult.error) {
-        showToast?.(t('team.errorLoading', 'Error loading team: {{error}}', { error: membersResult.error }), 'error');
+        const errorMsg = typeof membersResult.error === 'string' ? membersResult.error : membersResult.error?.message || 'Unknown error';
+        showToast?.(t('team.errorLoading', 'Error loading team: {{error}}', { error: errorMsg }), 'error');
       } else {
-        setMembers(membersResult.data);
+        setMembers(Array.isArray(membersResult.data) ? membersResult.data : []);
       }
       setPermissions(permsResult);
     } catch (_err) {
