@@ -113,18 +113,18 @@ Systematic AI-driven audit of every page — every interactive element verified 
 
 ### Reseller Portal (RESELL)
 
-- [ ] **RESELL-01**: Reseller dashboard with client list and metrics works
-- [ ] **RESELL-02**: Reseller billing page displays subscription info correctly
-- [ ] **RESELL-03**: Clients page management actions work
+- [x] **RESELL-01**: Reseller dashboard with client list and metrics works
+- [x] **RESELL-02**: Reseller billing page displays subscription info correctly
+- [x] **RESELL-03**: Clients page management actions work
 
 ### Help & Status (HELP)
 
-- [ ] **HELP-01**: Help center navigation and search work
-- [ ] **HELP-02**: Status page and other public pages render correctly
+- [x] **HELP-01**: Help center navigation and search work
+- [x] **HELP-02**: Status page and other public pages render correctly
 
 ### Legacy Pages (LEGC)
 
-- [ ] **LEGC-01**: Legacy pages (FAQs, Refer, Setup, Subscription, Users) render without JS errors
+- [x] **LEGC-01**: Legacy pages (FAQs, Refer, Setup, Subscription, Users) render without JS errors
 
 ## Future Requirements
 
@@ -206,12 +206,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADMIN-02 | Phase 90 | Complete |
 | ADMIN-03 | Phase 90 | Complete |
 | ADMIN-04 | Phase 90 | Complete |
-| RESELL-01 | Phase 90 | Pending |
-| RESELL-02 | Phase 90 | Pending |
-| RESELL-03 | Phase 90 | Pending |
-| HELP-01 | Phase 90 | Pending |
-| HELP-02 | Phase 90 | Pending |
-| LEGC-01 | Phase 90 | Pending |
+| RESELL-01 | Phase 90 | Complete |
+| RESELL-02 | Phase 90 | Complete |
+| RESELL-03 | Phase 90 | Complete |
+| HELP-01 | Phase 90 | Complete |
+| HELP-02 | Phase 90 | Complete |
+| LEGC-01 | Phase 90 | Complete |
 
 **Coverage:**
 - v7 requirements: 57 total

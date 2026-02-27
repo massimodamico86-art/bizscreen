@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: UI Verification
 status: unknown
-last_updated: "2026-02-27T20:33:49.486Z"
+last_updated: "2026-02-27T20:35:12.175Z"
 progress:
   total_phases: 77
-  completed_phases: 74
+  completed_phases: 75
   total_plans: 247
-  completed_plans: 243
+  completed_plans: 244
 ---
 
 # Project State
@@ -88,6 +88,7 @@ Recent decisions affecting v7.0:
 - [Phase 088-02]: ActivityLogPage already correct (audit-only); AlertsCenterPage inline row action buttons kept as raw elements; Modal footer actions placed inside body
 - [Phase 088]: Modal prop isOpen renamed to open in AlertsCenterPage and ContentPerformancePage -- design-system Modal uses open (not isOpen)
 - [Phase 090-01]: OpsConsolePage already fixed by quick task 48 -- no code changes needed; all 10 admin/ops pages pass read-only audit with zero issues
+- [Phase 090]: Legacy pages use Modal wrapper from components/Modal for isOpen/size API; Badge removed from lucide-react to avoid design-system collision
 
 ### Blockers/Concerns
 
@@ -107,6 +108,7 @@ Recent decisions affecting v7.0:
 | 47 | Add dev auth bypass for MCP Playwright automation (VITE_DEV_BYPASS_AUTH) | 2026-02-27 | 1ed25c8 | [47-fix-mcp-playwright-login-add-dev-auth-by](./quick/47-fix-mcp-playwright-login-add-dev-auth-by/) |
 | 48 | Fix 11 crashed pages: missing imports, Badge/Button collisions, Modal prop, error-as-object | 2026-02-27 | 8e975f2 | [48-fix-11-crashed-pages-to-handle-missing-m](./quick/48-fix-11-crashed-pages-to-handle-missing-m/) |
 | Phase 090 P01 | 2min | 2 tasks | 0 files |
+| Phase 090 P02 | 3min | 2 tasks | 8 files |
 
 ## Session Continuity
 
