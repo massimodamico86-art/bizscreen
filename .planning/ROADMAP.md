@@ -215,7 +215,10 @@ Plans:
   3. Enterprise security controls (password policy, session timeout, data deletion) save and the DELETE MY DATA confirmation flow completes
   4. Team management page supports inviting a new member, changing a role, and removing a member
   5. White-label settings (custom domain, branding overrides) can be edited and saved without errors
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 089-01-PLAN.md — Billing and branding settings audit (AccountPlanPage variant fix, SettingsPage missing imports and branding tab)
+- [ ] 089-02-PLAN.md — Enterprise security, team management, and white-label audit (WhiteLabelSettingsPage Badge collision, DataPrivacySettings variants, TeamPage and EnterpriseSecurityPage wiring)
 
 ### Phase 90: Admin, Reseller, Help & Legacy
 **Goal**: Admin and reseller tooling surfaces correct data with working actions, the help center is navigable, and all legacy pages render without JavaScript errors
@@ -257,7 +260,7 @@ Plans:
 | 86. Screen Management | 2/2 | Complete    | 2026-02-24 |
 | 87. Data Sources, Apps & Moderation | 0/3 | Complete    | 2026-02-27 |
 | 88. Analytics & Alerts | 1/2 | Complete    | 2026-02-27 |
-| 89. Settings & Account | 0/TBD | Not started | - |
+| 89. Settings & Account | 0/2 | Not started | - |
 | 90. Admin, Reseller, Help & Legacy | 0/TBD | Not started | - |
 | 91. Integration & Verification Fixes | 2/2 | Complete    | 2026-02-27 |
 
