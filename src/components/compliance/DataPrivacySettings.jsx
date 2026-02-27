@@ -205,7 +205,7 @@ export default function DataPrivacySettings({ showToast, user }) {
                   </p>
                 )}
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={handleDownloadExport}
                   disabled={exportLoading}
@@ -230,7 +230,7 @@ export default function DataPrivacySettings({ showToast, user }) {
 
             <div className="mt-4 flex flex-wrap gap-3">
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={handleQuickExport}
                 disabled={exportLoading}
@@ -243,7 +243,7 @@ export default function DataPrivacySettings({ showToast, user }) {
                 Quick Export (Basic Data)
               </Button>
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={handleFullExport}
                 disabled={exportLoading || exportStatus?.status === 'processing'}
@@ -270,7 +270,7 @@ export default function DataPrivacySettings({ showToast, user }) {
 
             <div className="mt-4">
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={handleWithdrawConsent}
               >
@@ -313,7 +313,7 @@ export default function DataPrivacySettings({ showToast, user }) {
                       You can view your data but cannot make changes.
                     </div>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                       onClick={handleCancelDeletion}
                       disabled={deletionLoading}
@@ -334,7 +334,7 @@ export default function DataPrivacySettings({ showToast, user }) {
             {!deletionStatus && (
               <div className="mt-4">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() => setShowDeleteModal(true)}
                   className="text-red-600 border-red-200 hover:bg-red-50"
@@ -413,7 +413,7 @@ export default function DataPrivacySettings({ showToast, user }) {
 
               <div className="flex gap-3 mt-6">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   onClick={() => {
                     setShowDeleteModal(false);
                     setDeleteReason('');
