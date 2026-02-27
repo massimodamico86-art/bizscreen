@@ -246,8 +246,8 @@ Plans:
   5. Scene editor Phase 83 VERIFICATION.md exists confirming SCEN-01 through SCEN-05
 **Plans**: 2 plans
 Plans:
-- [ ] 091-01-PLAN.md — Fix all 4 navigation/routing integration breaks (toast prop, layout slash, campaign routing, screen group navigation)
-- [ ] 091-02-PLAN.md — Create Phase 83 VERIFICATION.md documenting SCEN-01 through SCEN-05 satisfaction
+- [x] 091-01-PLAN.md — Fix all 4 navigation/routing integration breaks (toast prop, layout slash, campaign routing, screen group navigation)
+- [x] 091-02-PLAN.md — Create Phase 83 VERIFICATION.md documenting SCEN-01 through SCEN-05 satisfaction
 
 ## Progress
 
