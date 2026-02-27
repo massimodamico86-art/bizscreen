@@ -1,3 +1,5 @@
+import { Check } from 'lucide-react';
+import { Card, Button } from '../../design-system';
 
 
 const SetupPage = ({ showToast }) => {

@@ -1,4 +1,7 @@
 import { useState, useRef } from 'react';
+import { Plus } from 'lucide-react';
+import { Button } from '../../../design-system';
+import Modal from '../../../components/Modal';
 export const BackgroundVideoSelector = ({ isOpen, onClose, currentVideo, onSelect }) => {
   const [selectedVideo, setSelectedVideo] = useState(currentVideo || '');
   const fileInputRef = useRef(null);
@@ -94,7 +97,7 @@ export const BackgroundVideoSelector = ({ isOpen, onClose, currentVideo, onSelec
         
         {/* Action Buttons */}
         <div className="flex gap-2 justify-end pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
           <Button onClick={handleSave}>Save</Button>
         </div>
       </div>

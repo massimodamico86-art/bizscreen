@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { mockData } from '../data/mockData';
+import { Plus } from 'lucide-react';
+import { Card, Button, Badge } from '../../design-system';
+import Modal from '../../components/Modal';
 
 const UsersPage = ({ showToast }) => {
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -46,7 +49,7 @@ const UsersPage = ({ showToast }) => {
                     <Badge variant="success">{user.status}</Badge>
                   </td>
                   <td className="px-6 py-4">
-                    <Button size="sm" variant="outline" onClick={() => showToast('Edit user permissions')}>
+                    <Button size="sm" variant="secondary" onClick={() => showToast('Edit user permissions')}>
                       Edit
                     </Button>
                   </td>
@@ -73,7 +76,7 @@ const UsersPage = ({ showToast }) => {
               </select>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowInviteModal(false)}>Cancel</Button>
+              <Button variant="secondary" onClick={() => setShowInviteModal(false)}>Cancel</Button>
               <Button onClick={() => { setShowInviteModal(false); showToast('Invitation sent!'); }}>
                 Send Invite
               </Button>

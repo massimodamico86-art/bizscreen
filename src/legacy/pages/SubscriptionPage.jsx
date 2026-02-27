@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { CreditCard, Download } from 'lucide-react';
+import { Card, Button, Badge } from '../../design-system';
 
 const SubscriptionPage = ({ showToast }) => {
   const [currentPlan, setCurrentPlan] = useState('pro');
@@ -41,7 +43,7 @@ const SubscriptionPage = ({ showToast }) => {
             ) : (
               <Button
                 className="w-full"
-                variant={currentPlan === plan.id ? 'outline' : 'primary'}
+                variant={currentPlan === plan.id ? 'secondary' : 'primary'}
                 onClick={() => { setCurrentPlan(plan.id); showToast(`Switched to ${plan.name} plan!`); }}
               >
                 {plan.price > plans.find(p => p.id === currentPlan).price ? 'Upgrade' : 'Downgrade'}
@@ -61,7 +63,7 @@ const SubscriptionPage = ({ showToast }) => {
             </div>
             <div className="flex items-center gap-3">
               <span className="font-bold">$59.00</span>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="secondary">
                 <Download size={14} />
                 Invoice
               </Button>

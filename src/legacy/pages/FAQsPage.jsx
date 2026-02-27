@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { mockData } from '../data/mockData';
+import { Search } from 'lucide-react';
+import { Card, Badge } from '../../design-system';
 
 const FAQsPage = () => {
   const [search, setSearch] = useState('');

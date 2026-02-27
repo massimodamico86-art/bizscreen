@@ -1,3 +1,5 @@
+import { X } from 'lucide-react';
+import { Button } from '../../../design-system';
 
 export const BackgroundMediaManager = ({
   formData,
@@ -65,7 +67,7 @@ export const BackgroundMediaManager = ({
             )}
             <Button
               size="sm"
-              variant="outline"
+              variant="secondary"
               onClick={() => setShowBackgroundSelector(true)}
               className="w-full"
             >
@@ -98,7 +100,7 @@ export const BackgroundMediaManager = ({
             )}
             <Button
               size="sm"
-              variant="outline"
+              variant="secondary"
               onClick={() => setShowBackgroundVideoSelector(true)}
               className="w-full"
             >
@@ -143,7 +145,7 @@ export const BackgroundMediaManager = ({
           </div>
           <Button
             size="sm"
-            variant="outline"
+            variant="secondary"
             className="w-full"
             onClick={() => setShowMusicSelector(true)}
           >

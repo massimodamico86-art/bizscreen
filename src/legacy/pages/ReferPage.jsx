@@ -1,5 +1,12 @@
 
-import { Users, DollarSign, Target } from 'lucide-react';
+import {
+  DollarSign,
+  Share2,
+  Target,
+  Users,
+} from 'lucide-react';
+import { Card, Button } from '../../design-system';
+import StatCard from '../../components/StatCard';
 
 const ReferPage = ({ showToast }) => {
   const copyCode = () => {
@@ -35,13 +42,13 @@ const ReferPage = ({ showToast }) => {
       <Card className="p-6">
         <h2 className="text-lg font-semibold mb-4">Share on Social Media</h2>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => showToast('Opening Facebook...')}>
+          <Button variant="secondary" onClick={() => showToast('Opening Facebook...')}>
             Facebook
           </Button>
-          <Button variant="outline" onClick={() => showToast('Opening Twitter...')}>
+          <Button variant="secondary" onClick={() => showToast('Opening Twitter...')}>
             Twitter
           </Button>
-          <Button variant="outline" onClick={() => showToast('Opening LinkedIn...')}>
+          <Button variant="secondary" onClick={() => showToast('Opening LinkedIn...')}>
             LinkedIn
           </Button>
         </div>
