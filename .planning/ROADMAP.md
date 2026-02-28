@@ -72,7 +72,7 @@ All milestones shipped successfully.
 **Milestone Goal:** Complete Playwright test suite covering every user flow with organized screenshot evidence at every step, across all roles and screen sizes, integrated into CI pipeline.
 
 - [x] **Phase 92: Test Infrastructure** - Screenshot helpers, viewport configs, CI pipeline, naming conventions (completed 2026-02-28)
-- [ ] **Phase 93: Auth & Onboarding** - Login, signup, reset, invite, session, onboarding wizard tests
+- [x] **Phase 93: Auth & Onboarding** - Login, signup, reset, invite, session, onboarding wizard tests (completed 2026-02-28)
 - [ ] **Phase 94: Dashboard & Navigation** - Dashboard widgets, quick actions, sidebar nav, empty/health states
 - [ ] **Phase 95: Media Library** - Upload, preview, rename, delete, bulk ops, search, storage, validation
 - [ ] **Phase 96: Scenes & SVG Editor** - Scene CRUD, SVG editor tools, panels, AI designer, cloud imports
@@ -358,7 +358,7 @@ Phases execute in numeric order: 92 -> 93 -> ... -> 109
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 92. Test Infrastructure | 2/2 | Complete    | 2026-02-28 |
-| 93. Auth & Onboarding | 2/3 | In Progress|  |
+| 93. Auth & Onboarding | 3/3 | Complete   | 2026-02-28 |
 | 94. Dashboard & Navigation | 0/1 | Not started | - |
 | 95. Media Library | 0/2 | Not started | - |
 | 96. Scenes & SVG Editor | 0/3 | Not started | - |
