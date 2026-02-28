@@ -23,10 +23,10 @@ Requirements for comprehensive Playwright E2E test suite. Each maps to roadmap p
 - [x] **AUTH-03**: Login with empty fields tested, screenshot of validation errors
 - [x] **AUTH-04**: Signup flow tested with valid data, screenshot of each step
 - [x] **AUTH-05**: Signup validation tested (weak password, invalid email, existing email)
-- [ ] **AUTH-06**: Password reset request tested, screenshot of reset form and confirmation
-- [ ] **AUTH-07**: Password update flow tested, screenshot of update form and success
-- [ ] **AUTH-08**: Invite accept flow tested, screenshot of invite page and completion
-- [ ] **AUTH-09**: Session persistence tested (refresh browser, still authenticated)
+- [x] **AUTH-06**: Password reset request tested, screenshot of reset form and confirmation
+- [x] **AUTH-07**: Password update flow tested, screenshot of update form and success
+- [x] **AUTH-08**: Invite accept flow tested, screenshot of invite page and completion
+- [x] **AUTH-09**: Session persistence tested (refresh browser, still authenticated)
 - [x] **AUTH-10**: Onboarding wizard tested end-to-end (welcome → industry → starter pack → pairing → success)
 - [x] **AUTH-11**: Industry selection modal tested with different selections
 - [x] **AUTH-12**: Screen pairing during onboarding tested (QR code display, OTP fallback)
@@ -265,10 +265,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-03 | Phase 93 | Complete |
 | AUTH-04 | Phase 93 | Complete |
 | AUTH-05 | Phase 93 | Complete |
-| AUTH-06 | Phase 93 | Pending |
-| AUTH-07 | Phase 93 | Pending |
-| AUTH-08 | Phase 93 | Pending |
-| AUTH-09 | Phase 93 | Pending |
+| AUTH-06 | Phase 93 | Complete |
+| AUTH-07 | Phase 93 | Complete |
+| AUTH-08 | Phase 93 | Complete |
+| AUTH-09 | Phase 93 | Complete |
 | AUTH-10 | Phase 93 | Complete |
 | AUTH-11 | Phase 93 | Complete |
 | AUTH-12 | Phase 93 | Complete |
