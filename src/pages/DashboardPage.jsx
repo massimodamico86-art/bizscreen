@@ -9,7 +9,7 @@
  * - ./dashboard/DashboardSections.jsx - Core display components
  * - ./dashboard/OnboardingCards.jsx - First-run cards
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Loader2,
   ArrowRight,
@@ -23,6 +23,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 import { useLogger } from '../hooks/useLogger.js';
+import { useRetryWithBackoff } from '../hooks/useRetryWithBackoff.js';
 
 import {
   getDashboardStats,
@@ -77,60 +78,58 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
   const [screens, setScreens] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [alertSummary, setAlertSummary] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [activityLoading, setActivityLoading] = useState(true);
   const [alertsLoading, setAlertsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   // Unified onboarding state (Phase 31)
   const [showUnifiedOnboarding, setShowUnifiedOnboarding] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    if (!user) return;
+  // Track whether we already fired the maxedOut toast to avoid repeats
+  const maxedOutToastFiredRef = useRef(false);
 
-    try {
-      setError(null); // Clear any previous error
+  // Core fetch function -- throws on error so useRetryWithBackoff can handle it
+  const fetchDashboardData = useCallback(async () => {
+    if (!user) throw new Error('User not authenticated');
 
-      // Fetch core data in parallel
-      const [statsData, screensData] = await Promise.all([
-        getDashboardStats(),
-        getTopScreens(5),
-      ]);
-      setStats(statsData);
-      setScreens(screensData);
+    // Fetch core data in parallel
+    const [statsData, screensData] = await Promise.all([
+      getDashboardStats(),
+      getTopScreens(5),
+    ]);
+    setStats(statsData);
+    setScreens(screensData);
 
-      // Fetch secondary data (recent activity, alerts) - don't block main load
-      setActivityLoading(true);
-      setAlertsLoading(true);
+    // Fetch secondary data (recent activity, alerts) - don't block main load
+    setActivityLoading(true);
+    setAlertsLoading(true);
 
-      getRecentActivity(5)
-        .then(data => setRecentActivity(data))
-        .catch(err => logger.warn('Failed to fetch recent activity:', err))
-        .finally(() => setActivityLoading(false));
+    getRecentActivity(5)
+      .then(data => setRecentActivity(data))
+      .catch(err => logger.warn('Failed to fetch recent activity:', err))
+      .finally(() => setActivityLoading(false));
 
-      getAlertSummary()
-        .then(data => setAlertSummary(data))
-        .catch(err => logger.warn('Failed to fetch alert summary:', err))
-        .finally(() => setAlertsLoading(false));
+    getAlertSummary()
+      .then(data => setAlertSummary(data))
+      .catch(err => logger.warn('Failed to fetch alert summary:', err))
+      .finally(() => setAlertsLoading(false));
+  }, [user, logger]);
 
-    } catch (err) {
-      logger.error('Error fetching dashboard data:', err);
-      setError(err.message || 'Failed to load dashboard data');
-      showToast?.('Error loading dashboard: ' + err.message, 'error');
-    }
-  }, [user, showToast, logger]);
+  // Bounded retry with exponential backoff -- replaces the old setInterval loop
+  const { loading, error, retryCount, maxedOut, retry } = useRetryWithBackoff(
+    fetchDashboardData,
+    { maxRetries: 5, baseDelay: 2000, maxDelay: 30000, pollInterval: 30000, enabled: !!user }
+  );
 
+  // Fire a single error toast when retries are exhausted (not per-retry)
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await fetchData();
-      setLoading(false);
-    };
-
-    loadData();
-    const interval = setInterval(fetchData, 30000);
-    return () => clearInterval(interval);
-  }, [fetchData]);
+    if (maxedOut && !maxedOutToastFiredRef.current) {
+      maxedOutToastFiredRef.current = true;
+      showToast?.('Error loading dashboard: retries exhausted. Click "Try Again" to retry.', 'error');
+    }
+    if (!maxedOut) {
+      maxedOutToastFiredRef.current = false;
+    }
+  }, [maxedOut, showToast]);
 
   // Check for unified onboarding state
   useEffect(() => {
@@ -152,8 +151,8 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
   const handleUnifiedOnboardingComplete = useCallback(() => {
     setShowUnifiedOnboarding(false);
     // Refresh dashboard data
-    fetchData?.();
-  }, [fetchData]);
+    retry?.();
+  }, [retry]);
 
   if (loading) {
     return (
@@ -177,8 +176,10 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
           />
           <PageContent>
             <DashboardErrorState
-              error={error}
-              onRetry={fetchData}
+              error={maxedOut
+                ? `${error} (${retryCount}/${5} retries exhausted)`
+                : `${error} (retry ${retryCount}/5...)`}
+              onRetry={retry}
               t={t}
             />
           </PageContent>
