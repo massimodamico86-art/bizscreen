@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Comprehensive E2E
 status: unknown
-last_updated: "2026-02-28T01:45:22.019Z"
+last_updated: "2026-02-28T01:51:09.172Z"
 progress:
   total_phases: 68
   completed_phases: 66
   total_plans: 227
-  completed_plans: 224
+  completed_plans: 225
 ---
 
 # Project State
@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-02-27)
 ## Current Position
 
 Phase: 93 of 109 (Auth & Onboarding Screenshots)
-Plan: 4 of 6 in current phase (93-04 complete)
+Plan: 5 of 6 in current phase (93-05 complete)
 Status: Executing
-Last activity: 2026-02-28 -- Completed 93-04 (Auth Screenshot Gap Closure)
+Last activity: 2026-02-28 -- Completed 93-05 (Onboarding Wizard Screenshot Tests)
 
 Progress: [**░░░░░░░░░░░░░░░░░░] 6%
 
@@ -68,6 +68,7 @@ Recent: Barrel re-exports existing helpers.js without modification for backward 
 - [Phase 93]: auth.setup.js fixed to handle already-authenticated storage state
 - [Phase 93]: State-resilient onboarding tests use Promise.race with soft timeouts to document visible state rather than fail
 - [Phase 93]: Used VITE_DEV_BYPASS_AUTH=false command prefix in Playwright webServer to override .env.local for test runs
+- [Phase 93]: Onboarding tests use reuseExistingServer with bypass-enabled dev server to produce fallback dashboard evidence
 
 ### Blockers/Concerns
 
@@ -79,9 +80,9 @@ Recent: Barrel re-exports existing helpers.js without modification for backward 
 ## Session Continuity
 
 Last session: 2026-02-28
-Stopped at: Completed 93-04-PLAN.md (Auth Screenshot Gap Closure)
+Stopped at: Completed 93-05-PLAN.md (Onboarding Wizard Screenshot Tests)
 Resume file: N/A
-Next: Continue phase 93 with 93-05 plan
+Next: Continue phase 93 with 93-06 plan
 
 ---
-*Updated: 2026-02-28 -- 93-04 complete*
+*Updated: 2026-02-28 -- 93-05 complete*
