@@ -65,35 +65,35 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | — | Pending |
-| BUG-02 | — | Pending |
-| BUG-03 | — | Pending |
-| RESIL-01 | — | Pending |
-| RESIL-02 | — | Pending |
-| RESIL-03 | — | Pending |
-| UX-01 | — | Pending |
-| UX-02 | — | Pending |
-| UX-03 | — | Pending |
-| VERIFY-01 | — | Pending |
-| VERIFY-02 | — | Pending |
-| VERIFY-03 | — | Pending |
-| VERIFY-04 | — | Pending |
-| VERIFY-05 | — | Pending |
-| VERIFY-06 | — | Pending |
-| VERIFY-07 | — | Pending |
-| VERIFY-08 | — | Pending |
-| VERIFY-09 | — | Pending |
-| VERIFY-10 | — | Pending |
-| VERIFY-11 | — | Pending |
-| VERIFY-12 | — | Pending |
-| VERIFY-13 | — | Pending |
-| VERIFY-14 | — | Pending |
+| BUG-01 | Phase 94 | Pending |
+| BUG-02 | Phase 94 | Pending |
+| BUG-03 | Phase 94 | Pending |
+| RESIL-01 | Phase 95 | Pending |
+| RESIL-02 | Phase 95 | Pending |
+| RESIL-03 | Phase 95 | Pending |
+| UX-01 | Phase 96 | Pending |
+| UX-02 | Phase 96 | Pending |
+| UX-03 | Phase 96 | Pending |
+| VERIFY-01 | Phase 97 | Pending |
+| VERIFY-02 | Phase 97 | Pending |
+| VERIFY-03 | Phase 97 | Pending |
+| VERIFY-04 | Phase 97 | Pending |
+| VERIFY-05 | Phase 97 | Pending |
+| VERIFY-06 | Phase 97 | Pending |
+| VERIFY-07 | Phase 97 | Pending |
+| VERIFY-08 | Phase 97 | Pending |
+| VERIFY-09 | Phase 97 | Pending |
+| VERIFY-10 | Phase 97 | Pending |
+| VERIFY-11 | Phase 97 | Pending |
+| VERIFY-12 | Phase 97 | Pending |
+| VERIFY-13 | Phase 97 | Pending |
+| VERIFY-14 | Phase 97 | Pending |
 
 **Coverage:**
 - v9.0 requirements: 23 total
-- Mapped to phases: 0
-- Unmapped: 23 ⚠️
+- Mapped to phases: 23
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-27*
-*Last updated: 2026-02-27 after initial definition*
+*Last updated: 2026-02-27 after roadmap creation (traceability updated)*
