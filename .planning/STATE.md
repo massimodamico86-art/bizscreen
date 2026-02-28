@@ -1,33 +1,33 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.1
-milestone_name: Comprehensive E2E
-status: unknown
-last_updated: "2026-02-28T01:59:21.291Z"
+milestone: null
+milestone_name: null
+status: between_milestones
+last_updated: "2026-02-28"
 progress:
-  total_phases: 68
-  completed_phases: 67
-  total_plans: 227
-  completed_plans: 226
+  total_phases: 93
+  completed_phases: 93
+  total_plans: 283
+  completed_plans: 283
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-27)
+See: .planning/PROJECT.md (updated 2026-02-28)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v8.0 Comprehensive E2E -- Phase 93 executing
+**Current focus:** Between milestones — use `/gsd:new-milestone` to start next
 
 ## Current Position
 
-Phase: 93 of 109 (Auth & Onboarding Screenshots) -- COMPLETE
-Plan: 6 of 6 in current phase (93-06 complete -- phase done)
-Status: Phase 93 Complete
-Last activity: 2026-02-28 -- Completed 93-06 (Requirements Gap Closure)
+Phase: None active (v8.0 milestone completed)
+Plan: N/A
+Status: Between milestones
+Last activity: 2026-02-28 — Completed v8.0 Comprehensive E2E milestone
 
-Progress: [***░░░░░░░░░░░░░░░░] 7%
+Progress: [********************] 100% (all milestones shipped)
 
 ## Milestones Shipped
 
@@ -46,30 +46,22 @@ Progress: [***░░░░░░░░░░░░░░░░] 7%
 | v5.0 UI Completeness | 69-71 | 5 | 2026-02-20 |
 | v6.0 Functional Completeness | 72-80 | 20 | 2026-02-23 |
 | v7.0 UI Verification | 81-91 | 28 | 2026-02-27 |
+| v8.0 Comprehensive E2E | 92-93 | 8 | 2026-02-28 |
 
 ## Performance Metrics
 
-**Cumulative (v1 through v7.0):**
-- Total plans executed: 275
-- Total phases: 91 completed
-- Total milestones: 13 shipped
-- Timeline: 2026-01-24 to 2026-02-27 (35 days)
+**Cumulative (v1 through v8.0):**
+- Total plans executed: 283
+- Total phases: 93 completed
+- Total milestones: 14 shipped
+- Timeline: 2026-01-24 to 2026-02-28 (36 days)
 
 ## Accumulated Context
 
 ### Decisions
 
 Full decision log in PROJECT.md Key Decisions table.
-Recent: Viewport projects use testMatch opt-in pattern to avoid tripling test suite run time.
-Recent: Screenshot artifacts get 14-day CI retention for documentation evidence.
-Recent: Barrel re-exports existing helpers.js without modification for backward compatibility (92-01).
-- [Phase 92]: Viewport projects use testMatch opt-in pattern to avoid tripling test suite run time
-- [Phase 93]: Dev-bypass detection added for login form tests to skip gracefully when VITE_DEV_BYPASS_AUTH=true
-- [Phase 93]: auth.setup.js fixed to handle already-authenticated storage state
-- [Phase 93]: State-resilient onboarding tests use Promise.race with soft timeouts to document visible state rather than fail
-- [Phase 93]: Used VITE_DEV_BYPASS_AUTH=false command prefix in Playwright webServer to override .env.local for test runs
-- [Phase 93]: Onboarding tests use reuseExistingServer with bypass-enabled dev server to produce fallback dashboard evidence
-- [Phase 93]: AUTH-04/AUTH-05 already marked complete by prior plans; only AUTH-06 through AUTH-09 needed gap closure updates
+Recent: Shipped v8.0 with 2/18 phases complete — infrastructure + auth foundation captured, 139 reqs deferred.
 
 ### Blockers/Concerns
 
@@ -77,13 +69,14 @@ Recent: Barrel re-exports existing helpers.js without modification for backward 
 - Tech debt: duplicate legacy player_heartbeat RPC in usePlayerContent
 - Tech debt: wrong lastActivityRef passed to useStuckDetection in ViewPage
 - ~900 E2E tests currently skipped (project-specific multi-project pattern)
+- v8.0 shipped with 139/157 E2E requirements deferred
 
 ## Session Continuity
 
 Last session: 2026-02-28
-Stopped at: Completed 93-06-PLAN.md (Requirements Gap Closure) -- Phase 93 complete
+Stopped at: Completed v8.0 milestone archival
 Resume file: N/A
-Next: Phase 94 (Dashboard Screenshots)
+Next: `/gsd:new-milestone` to plan next version
 
 ---
-*Updated: 2026-02-28 -- 93-06 complete, Phase 93 done*
+*Updated: 2026-02-28 — v8.0 milestone completed and archived*

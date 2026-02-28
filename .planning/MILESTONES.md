@@ -472,3 +472,52 @@
 
 ---
 
+
+## v8.0 Comprehensive E2E (Shipped: 2026-02-28)
+
+**Delivered:** Playwright E2E test infrastructure and authentication/onboarding screenshot test suite. Foundation for comprehensive test coverage with screenshot-at-every-step pattern, viewport presets, and CI artifact upload.
+
+**Phases completed:** 92-93 (2 phases, 8 plans)
+
+**Key accomplishments:**
+
+- Screenshot helper infrastructure — screenshotStep() utility, VIEWPORTS constant (mobile/tablet/desktop), cleanScreenshots() lifecycle management, unified helpers barrel export
+- Playwright viewport projects — mobile (375x667), tablet (768x1024), desktop (1440x900) presets with testMatch opt-in pattern to avoid tripling test run time
+- CI pipeline screenshot artifact upload — GitHub Actions workflow updated with 14-day retention for screenshot documentation evidence
+- Login flow screenshot tests — valid credentials, invalid password error state, and empty-field validation with screenshots at every step
+- Auth flows screenshot tests — signup, password reset request/confirmation, password update, invite accept, and session persistence (browser refresh retains auth)
+- Onboarding wizard screenshot tests — welcome tour, industry selection modal, screen pairing (QR/OTP), success step with resilient Promise.race soft timeouts
+
+**Stats:**
+
+- 29 files modified
+- +3,192 / -71 lines
+- 2 phases, 8 plans
+- 1 day (2026-02-27 → 2026-02-28)
+- Requirements: 18/157 complete
+
+**Git range:** `bd51c3a` → `8f872e4`
+
+### Known Gaps
+
+139 of 157 requirements not completed (Phases 94-109 not started):
+
+- DASH-01 through DASH-05 (Phase 94: Dashboard & Navigation)
+- MEDIA-01 through MEDIA-10 (Phase 95: Media Library)
+- SCENE-01 through SCENE-17 (Phase 96: Scenes & SVG Editor)
+- PLAY-01 through PLAY-08 (Phase 97: Playlists)
+- LAYOUT-01 through LAYOUT-08 (Phase 98: Layouts & Widget Types)
+- TMPL-01 through TMPL-08 (Phase 99: Templates Marketplace)
+- SCHED-01 through SCHED-06, CAMP-01 through CAMP-09 (Phase 100: Schedules & Campaigns)
+- SCRN-01 through SCRN-11 (Phase 101: Screens & Device Management)
+- DATA-01 through DATA-05, APP-01 through APP-08 (Phase 102: Data Sources, Apps & Menu Boards)
+- MOD-01 through MOD-05 (Phase 103: Content Moderation)
+- ANLYT-01 through ANLYT-08 (Phase 104: Analytics & Alerts)
+- SET-01 through SET-07 (Phase 105: Settings)
+- ADMIN-01 through ADMIN-08 (Phase 106: Admin & Reseller)
+- RESP-01 through RESP-08 (Phase 107: Responsive & Cross-Role)
+- EDGE-01 through EDGE-08 (Phase 108: Edge Cases & Error States)
+- Phase 109: CI Pipeline & Final Integration (no new requirements)
+
+---
+
