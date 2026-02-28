@@ -101,11 +101,11 @@ All milestones shipped successfully.
   2. A reusable `screenshotStep()` helper is importable from any spec file and captures screenshots at the current test step
   3. Playwright config defines mobile (375x667), tablet (768x1024), and desktop (1440x900) viewport presets usable by any test
   4. CI workflow uploads `screenshots/` directory as an artifact alongside the existing HTML report
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 92-01: Screenshot infrastructure and helpers
-- [ ] 92-02: CI pipeline and viewport configuration
+- [ ] 92-01-PLAN.md -- Screenshot helper module, directory structure, naming convention, barrel exports
+- [ ] 92-02-PLAN.md -- Viewport projects in Playwright config, CI screenshot artifact upload, gitignore
 
 ### Phase 93: Auth & Onboarding
 **Goal**: Every authentication and onboarding path is tested with screenshot evidence -- login (valid, invalid, empty), signup, password reset/update, invite accept, session persistence, and full onboarding wizard
