@@ -24,9 +24,11 @@ import {
 } from './helpers/index.js';
 
 test.describe('Onboarding Wizard Screenshots', () => {
-  test.beforeEach(async (_fixtures, testInfo) => {
+  // Skip if client credentials not configured
+  test.skip(() => !process.env.TEST_USER_EMAIL, 'Test credentials not configured');
+
+  test.beforeEach(async ({ page: _page }, testInfo) => {
     test.skip(testInfo.project.name !== 'chromium', 'Client-only screenshot test');
-    test.skip(!process.env.TEST_USER_EMAIL, 'Test credentials not configured');
   });
 
   test.beforeAll(() => {
