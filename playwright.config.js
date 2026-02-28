@@ -142,10 +142,12 @@ export default defineConfig({
   ],
 
   // Run local dev server before starting tests
+  // VITE_DEV_BYPASS_AUTH=false ensures auth forms render during E2E tests
+  // even when .env.local has VITE_DEV_BYPASS_AUTH=true for development
   webServer: {
-    command: 'npm run dev',
+    command: 'VITE_DEV_BYPASS_AUTH=false npm run dev',
     url: 'http://localhost:5173',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000
   }
 });
