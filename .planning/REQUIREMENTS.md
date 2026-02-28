@@ -10,7 +10,7 @@ Requirements for v9.0 Production Polish. Each maps to roadmap phases.
 ### Bug Fixes
 
 - [ ] **BUG-01**: DashboardPage stops retrying after max retry count with exponential backoff (no more ~200 errors/sec)
-- [ ] **BUG-02**: Breadcrumbs reflect actual current route path instead of always showing "Home > Dashboard"
+- [x] **BUG-02**: Breadcrumbs reflect actual current route path instead of always showing "Home > Dashboard"
 - [ ] **BUG-03**: Error toasts are deduplicated and throttled so retry loops do not flood the UI with repeated messages
 
 ### Error Resilience
@@ -66,7 +66,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | BUG-01 | Phase 94 | Pending |
-| BUG-02 | Phase 94 | Pending |
+| BUG-02 | Phase 94 | Complete |
 | BUG-03 | Phase 94 | Pending |
 | RESIL-01 | Phase 95 | Pending |
 | RESIL-02 | Phase 95 | Pending |

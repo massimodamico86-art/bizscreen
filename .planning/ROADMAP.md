@@ -131,7 +131,7 @@ All milestones shipped successfully (14 total).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 94. Bug Fixes | 0/2 | Planned | - |
+| 94. Bug Fixes | 1/2 | In Progress|  |
 | 95. Error Resilience | 0/TBD | Not started | - |
 | 96. UX Polish | 0/TBD | Not started | - |
 | 97. Screenshot Verification | 0/TBD | Not started | - |
