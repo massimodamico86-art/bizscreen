@@ -11,8 +11,8 @@ Requirements for comprehensive Playwright E2E test suite. Each maps to roadmap p
 
 - [ ] **INFRA-01**: Screenshot directory structure created (screenshots/{area}/) with automatic cleanup between runs
 - [ ] **INFRA-02**: Playwright config updated for auto-screenshots at every test step (not just on failure)
-- [ ] **INFRA-03**: Responsive viewport helpers defined (mobile 375x667, tablet 768x1024, desktop 1440x900)
-- [ ] **INFRA-04**: CI workflow updated to upload screenshot artifacts alongside HTML report
+- [x] **INFRA-03**: Responsive viewport helpers defined (mobile 375x667, tablet 768x1024, desktop 1440x900)
+- [x] **INFRA-04**: CI workflow updated to upload screenshot artifacts alongside HTML report
 - [ ] **INFRA-05**: Screenshot naming convention enforced ({area}-{step}-{viewport}.png)
 - [ ] **INFRA-06**: Test helper for screenshot-at-every-step pattern (reusable across all spec files)
 
@@ -256,8 +256,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | INFRA-01 | Phase 92 | Pending |
 | INFRA-02 | Phase 92 | Pending |
-| INFRA-03 | Phase 92 | Pending |
-| INFRA-04 | Phase 92 | Pending |
+| INFRA-03 | Phase 92 | Complete |
+| INFRA-04 | Phase 92 | Complete |
 | INFRA-05 | Phase 92 | Pending |
 | INFRA-06 | Phase 92 | Pending |
 | AUTH-01 | Phase 93 | Pending |
