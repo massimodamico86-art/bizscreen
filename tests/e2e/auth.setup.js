@@ -45,9 +45,22 @@ async function authenticateRole(page, email, password, authFile, roleName) {
   // Navigate to login page (don't use networkidle - Supabase realtime keeps connections open)
   await page.goto('/auth/login', { waitUntil: 'domcontentloaded' });
 
-  // Wait for the form to be visible (React has mounted)
-  console.log(`${roleName}: Waiting for login form to render...`);
-  await page.waitForSelector('input[type="email"], input[placeholder*="email" i]', { timeout: 15000 });
+  // Wait for either the login form OR the app (already authenticated via storage state)
+  console.log(`${roleName}: Waiting for login form or app to render...`);
+  const loginForm = page.locator('input[type="email"], input[placeholder*="email" i]');
+  const appSidebar = page.locator('aside').first();
+
+  const authState = await Promise.race([
+    loginForm.waitFor({ state: 'visible', timeout: 15000 }).then(() => 'need-login'),
+    appSidebar.waitFor({ state: 'visible', timeout: 15000 }).then(() => 'already-authenticated'),
+  ]).catch(() => 'unknown');
+
+  if (authState === 'already-authenticated' || (authState === 'unknown' && page.url().includes('/app'))) {
+    console.log(`${roleName}: Already authenticated via storage state - saving session to ${authFile}`);
+    await page.context().storageState({ path: authFile });
+    return;
+  }
+
   console.log(`${roleName}: Login form found`);
 
   // Fill in credentials
