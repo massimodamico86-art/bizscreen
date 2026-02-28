@@ -4,6 +4,10 @@
  *
  * Custom Playwright fixtures for test isolation.
  *
+ * NOTE: New test specs should import helpers from the unified barrel:
+ *   import { screenshotStep, loginAndPrepare, VIEWPORTS } from '../helpers/index.js';
+ * This provides both screenshot helpers and all existing test utilities.
+ *
  * USAGE PATTERNS:
  *
  * 1. For authenticated tests (most common):
