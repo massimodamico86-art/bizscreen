@@ -90,7 +90,9 @@ All milestones shipped successfully (14 total).
   1. DashboardPage stops retrying after a configurable max count and shows a clear error state instead of silently hammering the API
   2. Breadcrumbs on every page reflect the actual current route (e.g., Screens > Group Detail, not always "Home > Dashboard")
   3. When a retry loop fires multiple errors, the user sees at most one error toast per distinct error type, not a stack of duplicates
-**Plans**: TBD
+**Plans**: 2 plans
+- [ ] 94-01-PLAN.md -- Dashboard retry backoff + toast deduplication (BUG-01, BUG-03)
+- [ ] 94-02-PLAN.md -- Comprehensive breadcrumb routing (BUG-02)
 
 ### Phase 95: Error Resilience
 **Goal**: The app degrades gracefully when Supabase is slow, down, or returning errors -- no page shows an unhandled crash or infinite spinner
@@ -129,7 +131,7 @@ All milestones shipped successfully (14 total).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 94. Bug Fixes | 0/TBD | Not started | - |
+| 94. Bug Fixes | 0/2 | Planned | - |
 | 95. Error Resilience | 0/TBD | Not started | - |
 | 96. UX Polish | 0/TBD | Not started | - |
 | 97. Screenshot Verification | 0/TBD | Not started | - |
