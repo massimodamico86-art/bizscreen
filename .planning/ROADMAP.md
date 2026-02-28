@@ -75,7 +75,7 @@ All milestones shipped successfully (14 total).
 
 **Milestone Goal:** Fix all bugs found in MCP visual audit, add error resilience (boundaries, backoff), replace spinners with skeleton loaders, and capture MCP screenshots of every working page as proof.
 
-- [ ] **Phase 94: Bug Fixes** - Fix dashboard retry loop, stale breadcrumbs, and error toast flooding
+- [x] **Phase 94: Bug Fixes** - Fix dashboard retry loop, stale breadcrumbs, and error toast flooding (completed 2026-02-28)
 - [ ] **Phase 95: Error Resilience** - Add per-route error boundaries, API retry with backoff, and connection error states
 - [ ] **Phase 96: UX Polish** - Replace loading spinners with content-aware skeleton screens and redesign error states
 - [ ] **Phase 97: Screenshot Verification** - Capture MCP screenshots of every page to prove everything works against real Supabase
@@ -131,7 +131,7 @@ All milestones shipped successfully (14 total).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 94. Bug Fixes | 1/2 | In Progress|  |
+| 94. Bug Fixes | 2/2 | Complete   | 2026-02-28 |
 | 95. Error Resilience | 0/TBD | Not started | - |
 | 96. UX Polish | 0/TBD | Not started | - |
 | 97. Screenshot Verification | 0/TBD | Not started | - |
