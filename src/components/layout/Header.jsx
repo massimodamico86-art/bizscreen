@@ -21,6 +21,109 @@ import NotificationBell from '../notifications/NotificationBell';
 import AnnouncementCenter from '../AnnouncementCenter';
 
 /**
+ * Breadcrumb configuration for all app routes.
+ * - label: Display text for this page
+ * - parent: Display text for parent breadcrumb (if hierarchical)
+ * - parentPage: Page key to navigate to when clicking parent
+ */
+const BREADCRUMB_CONFIG = {
+  // Top-level pages (Home > Page)
+  dashboard: { label: 'Dashboard' },
+  welcome: { label: 'Dashboard' },
+  screens: { label: 'Screens' },
+  playlists: { label: 'Playlists' },
+  layouts: { label: 'Layouts' },
+  schedules: { label: 'Schedules' },
+  scenes: { label: 'Scenes' },
+  templates: { label: 'Templates' },
+  'svg-templates': { label: 'Templates' },
+  'template-marketplace': { label: 'Template Marketplace' },
+  apps: { label: 'Apps' },
+  'menu-boards': { label: 'Menu Boards' },
+  listings: { label: 'Listings' },
+  'data-sources': { label: 'Data Sources' },
+  'social-accounts': { label: 'Social Accounts' },
+
+  // Media sub-pages (Home > Media > Filter)
+  'media-all': { label: 'All Media', parent: 'Media', parentPage: 'media-all' },
+  'media-images': { label: 'Images', parent: 'Media', parentPage: 'media-all' },
+  'media-videos': { label: 'Videos', parent: 'Media', parentPage: 'media-all' },
+  'media-audio': { label: 'Audio', parent: 'Media', parentPage: 'media-all' },
+  'media-documents': { label: 'Documents', parent: 'Media', parentPage: 'media-all' },
+  'media-webpages': { label: 'Web Pages', parent: 'Media', parentPage: 'media-all' },
+
+  // Analytics & Monitoring
+  analytics: { label: 'Analytics' },
+  'analytics-dashboard': { label: 'Analytics Dashboard', parent: 'Analytics', parentPage: 'analytics' },
+  'content-performance': { label: 'Content Performance', parent: 'Analytics', parentPage: 'analytics' },
+  alerts: { label: 'Alerts' },
+  'notification-settings': { label: 'Notification Settings' },
+
+  // Content tools
+  assistant: { label: 'Content Assistant' },
+  'content-moderation': { label: 'Content Moderation' },
+  'review-inbox': { label: 'Review Inbox', parent: 'Moderation', parentPage: 'content-moderation' },
+  campaigns: { label: 'Campaigns' },
+  'screen-groups': { label: 'Screen Groups', parent: 'Screens', parentPage: 'screens' },
+
+  // Settings & Account
+  settings: { label: 'Settings' },
+  'account-plan': { label: 'Account & Plan', parent: 'Settings', parentPage: 'settings' },
+  team: { label: 'Team', parent: 'Settings', parentPage: 'settings' },
+  locations: { label: 'Locations' },
+  developer: { label: 'Developer Settings', parent: 'Settings', parentPage: 'settings' },
+  'white-label': { label: 'White Label', parent: 'Settings', parentPage: 'settings' },
+  'enterprise-security': { label: 'Enterprise Security', parent: 'Settings', parentPage: 'settings' },
+  translations: { label: 'Translations' },
+  branding: { label: 'Branding', parent: 'Settings', parentPage: 'settings' },
+
+  // Admin pages
+  'admin-tenants': { label: 'Tenants', parent: 'Admin', parentPage: 'admin-tenants' },
+  'admin-audit-logs': { label: 'Audit Logs', parent: 'Admin', parentPage: 'admin-tenants' },
+  'admin-system-events': { label: 'System Events', parent: 'Admin', parentPage: 'admin-tenants' },
+  'admin-templates': { label: 'Templates', parent: 'Admin', parentPage: 'admin-tenants' },
+  'admin-test': { label: 'Admin Test', parent: 'Admin', parentPage: 'admin-tenants' },
+  'tenant-admin': { label: 'Tenant Admin' },
+
+  // Reseller pages
+  'reseller-dashboard': { label: 'Reseller Dashboard' },
+  'reseller-billing': { label: 'Reseller Billing', parent: 'Reseller', parentPage: 'reseller-dashboard' },
+
+  // Tools & System
+  'demo-tools': { label: 'Demo Tools' },
+  'feature-flags': { label: 'Feature Flags' },
+  'ops-console': { label: 'Ops Console' },
+  status: { label: 'System Status' },
+  security: { label: 'Security Dashboard' },
+  usage: { label: 'Usage Dashboard' },
+  help: { label: 'Help Center' },
+  activity: { label: 'Activity Log' },
+  clients: { label: 'Clients' },
+  'device-diagnostics': { label: 'Device Diagnostics' },
+  'service-quality': { label: 'Service Quality' },
+};
+
+/**
+ * Dynamic breadcrumb patterns for parameterized routes.
+ * Checked in order -- first match wins.
+ */
+const DYNAMIC_BREADCRUMBS = [
+  { prefix: 'playlist-editor-', label: 'Edit Playlist', parent: 'Playlists', parentPage: 'playlists' },
+  { prefix: 'layout-editor-', label: 'Edit Layout', parent: 'Layouts', parentPage: 'layouts' },
+  { prefix: 'schedule-editor-', label: 'Edit Schedule', parent: 'Schedules', parentPage: 'schedules' },
+  { prefix: 'campaign-editor-', label: 'Edit Campaign', parent: 'Campaigns', parentPage: 'campaigns' },
+  { prefix: 'scene-editor-', label: 'Edit Scene', parent: 'Scenes', parentPage: 'scenes' },
+  { prefix: 'scene-detail-', label: 'Scene Detail', parent: 'Scenes', parentPage: 'scenes' },
+  { prefix: 'screen-group-detail-', label: 'Group Detail', parent: 'Screens', parentPage: 'screens' },
+  { prefix: 'admin-tenant-', label: 'Tenant Details', parent: 'Admin', parentPage: 'admin-tenants' },
+  { prefix: 'admin-template-', label: 'Edit Template', parent: 'Admin Templates', parentPage: 'admin-templates' },
+  { prefix: 'yodeck-layout-preview-', label: 'Layout Preview', parent: 'Layouts', parentPage: 'layouts' },
+  { prefix: 'yodeck-layout-', label: 'Layout Editor', parent: 'Layouts', parentPage: 'layouts' },
+  { prefix: 'design-editor', label: 'Design Editor', parent: 'Templates', parentPage: 'templates' },
+  { prefix: 'svg-editor', label: 'SVG Editor', parent: 'Scenes', parentPage: 'scenes' },
+];
+
+/**
  * Emergency Push Modal - Content selection for emergency override
  * @param root0
  * @param root0.open
@@ -238,64 +341,42 @@ export default function Header({
 
   // Get breadcrumb based on current page
   const getBreadcrumb = () => {
-    if (currentPage.startsWith('playlist-editor-')) {
-      return (
-        <>
-          <button onClick={() => setCurrentPage('playlists')} className="hover:text-gray-700">
-            Playlists
-          </button>
-          <ChevronRight size={14} className="mx-2 text-gray-400" />
-          <span className="text-gray-900 font-medium">Edit Playlist</span>
-        </>
-      );
+    // Check static config first
+    const staticConfig = BREADCRUMB_CONFIG[currentPage];
+    if (staticConfig) {
+      if (staticConfig.parent) {
+        return (
+          <>
+            <button onClick={() => setCurrentPage(staticConfig.parentPage)} className="hover:text-gray-700">
+              {staticConfig.parent}
+            </button>
+            <ChevronRight size={14} className="mx-2 text-gray-400" />
+            <span className="text-gray-900 font-medium">{staticConfig.label}</span>
+          </>
+        );
+      }
+      return <span className="text-gray-900 font-medium">{staticConfig.label}</span>;
     }
-    if (currentPage.startsWith('layout-editor-')) {
-      return (
-        <>
-          <button onClick={() => setCurrentPage('layouts')} className="hover:text-gray-700">
-            Layouts
-          </button>
-          <ChevronRight size={14} className="mx-2 text-gray-400" />
-          <span className="text-gray-900 font-medium">Edit Layout</span>
-        </>
-      );
+
+    // Check dynamic patterns
+    for (const pattern of DYNAMIC_BREADCRUMBS) {
+      if (currentPage.startsWith(pattern.prefix)) {
+        return (
+          <>
+            <button onClick={() => setCurrentPage(pattern.parentPage)} className="hover:text-gray-700">
+              {pattern.parent}
+            </button>
+            <ChevronRight size={14} className="mx-2 text-gray-400" />
+            <span className="text-gray-900 font-medium">{pattern.label}</span>
+          </>
+        );
+      }
     }
-    if (currentPage.startsWith('schedule-editor-')) {
-      return (
-        <>
-          <button onClick={() => setCurrentPage('schedules')} className="hover:text-gray-700">
-            Schedules
-          </button>
-          <ChevronRight size={14} className="mx-2 text-gray-400" />
-          <span className="text-gray-900 font-medium">Edit Schedule</span>
-        </>
-      );
-    }
-    if (currentPage.startsWith('scene-editor-') || currentPage.startsWith('scene-detail-')) {
-      return (
-        <>
-          <button onClick={() => setCurrentPage('scenes')} className="hover:text-gray-700">
-            Scenes
-          </button>
-          <ChevronRight size={14} className="mx-2 text-gray-400" />
-          <span className="text-gray-900 font-medium">Edit Scene</span>
-        </>
-      );
-    }
-    if (currentPage.startsWith('admin-tenant-')) {
-      return (
-        <>
-          <button onClick={() => setCurrentPage('admin')} className="hover:text-gray-700">
-            Admin
-          </button>
-          <ChevronRight size={14} className="mx-2 text-gray-400" />
-          <span className="text-gray-900 font-medium">Tenant Details</span>
-        </>
-      );
-    }
+
+    // Fallback: capitalize page name
     return (
       <span className="text-gray-900 font-medium capitalize">
-        {currentPage.replace(/-/g, ' ').replace(/^media /, '')}
+        {currentPage.replace(/-/g, ' ')}
       </span>
     );
   };
