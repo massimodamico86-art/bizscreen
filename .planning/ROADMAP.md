@@ -116,12 +116,12 @@ Plans:
   2. User can see screenshot proof of the signup flow, password reset request/confirmation, password update, and invite accept page
   3. User can see screenshot proof that refreshing the browser after login keeps the user authenticated
   4. User can see screenshot proof of the full onboarding wizard (welcome, industry selection, starter pack, screen pairing with QR/OTP, success)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 93-01: Login flow tests (valid, invalid, empty)
-- [ ] 93-02: Signup, password reset, invite, and session tests
-- [ ] 93-03: Onboarding wizard tests
+- [ ] 93-01-PLAN.md -- Login flow screenshot tests (valid, invalid, empty-field validation)
+- [ ] 93-02-PLAN.md -- Signup, password reset, update password, invite accept, and session persistence screenshot tests
+- [ ] 93-03-PLAN.md -- Onboarding wizard screenshot tests (welcome tour, industry selection, screen pairing)
 
 ### Phase 94: Dashboard & Navigation
 **Goal**: Dashboard page and sidebar navigation are fully tested with screenshots of all widgets, quick actions, empty state, health indicators, and navigation to every section
