@@ -212,12 +212,17 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-(No active milestone — planning next)
+## Current Milestone: v9.0 Production Polish
 
-**Candidates for next milestone:**
-- Continue E2E test coverage (dashboard, media, scenes, playlists, layouts, templates, etc.)
-- Visual regression testing infrastructure
-- Performance benchmarking
+**Goal:** Fix all bugs found in MCP visual audit, add error resilience (boundaries, backoff), replace spinners with skeleton loaders, and capture MCP screenshots of every working page as proof.
+
+**Target features:**
+- Fix infinite retry loop on DashboardPage (exponential backoff, max retries)
+- Fix breadcrumbs to reflect actual current route
+- Add per-route error boundaries with route-appropriate error states
+- Add exponential backoff on all Supabase API calls
+- Replace generic loading spinners with content-aware skeleton loaders
+- Capture MCP screenshots of every page working against real Supabase
 
 ### Out of Scope
 
@@ -409,4 +414,4 @@ These capabilities shipped and are production-verified:
 | Ship v8.0 with 2/18 phases complete | Capture infrastructure + auth foundation; resume later | — Accepted — 139 reqs deferred |
 
 ---
-*Last updated: 2026-02-28 after v8.0 Comprehensive E2E milestone completed*
+*Last updated: 2026-02-27 after v9.0 Production Polish milestone started*
