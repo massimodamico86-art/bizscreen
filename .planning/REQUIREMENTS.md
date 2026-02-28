@@ -18,9 +18,9 @@ Requirements for comprehensive Playwright E2E test suite. Each maps to roadmap p
 
 ### Authentication & Onboarding
 
-- [ ] **AUTH-01**: Login flow tested with valid credentials, screenshot of login page and dashboard after login
-- [ ] **AUTH-02**: Login with invalid credentials tested, screenshot of error state
-- [ ] **AUTH-03**: Login with empty fields tested, screenshot of validation errors
+- [x] **AUTH-01**: Login flow tested with valid credentials, screenshot of login page and dashboard after login
+- [x] **AUTH-02**: Login with invalid credentials tested, screenshot of error state
+- [x] **AUTH-03**: Login with empty fields tested, screenshot of validation errors
 - [ ] **AUTH-04**: Signup flow tested with valid data, screenshot of each step
 - [ ] **AUTH-05**: Signup validation tested (weak password, invalid email, existing email)
 - [ ] **AUTH-06**: Password reset request tested, screenshot of reset form and confirmation
@@ -260,9 +260,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-04 | Phase 92 | Complete |
 | INFRA-05 | Phase 92 | Complete |
 | INFRA-06 | Phase 92 | Complete |
-| AUTH-01 | Phase 93 | Pending |
-| AUTH-02 | Phase 93 | Pending |
-| AUTH-03 | Phase 93 | Pending |
+| AUTH-01 | Phase 93 | Complete |
+| AUTH-02 | Phase 93 | Complete |
+| AUTH-03 | Phase 93 | Complete |
 | AUTH-04 | Phase 93 | Pending |
 | AUTH-05 | Phase 93 | Pending |
 | AUTH-06 | Phase 93 | Pending |

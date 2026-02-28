@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Comprehensive E2E
-status: unknown
-last_updated: "2026-02-28T00:29:34.260Z"
+status: executing
+last_updated: "2026-02-28T00:47:03Z"
 progress:
   total_phases: 67
   completed_phases: 66
   total_plans: 221
-  completed_plans: 220
+  completed_plans: 221
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-27)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v8.0 Comprehensive E2E -- Phase 92 executing
+**Current focus:** v8.0 Comprehensive E2E -- Phase 93 executing
 
 ## Current Position
 
-Phase: 92 of 109 (Test Infrastructure)
-Plan: 2 of 2 in current phase (92-02 complete)
+Phase: 93 of 109 (Auth & Onboarding Screenshots)
+Plan: 1 of 3 in current phase (93-01 complete)
 Status: Executing
-Last activity: 2026-02-28 -- Completed 92-02 (Viewport Presets & CI Pipeline)
+Last activity: 2026-02-28 -- Completed 93-01 (Login Flow Screenshot Tests)
 
-Progress: [*░░░░░░░░░░░░░░░░░░░] 3%
+Progress: [**░░░░░░░░░░░░░░░░░░] 6%
 
 ## Milestones Shipped
 
@@ -64,6 +64,8 @@ Recent: Viewport projects use testMatch opt-in pattern to avoid tripling test su
 Recent: Screenshot artifacts get 14-day CI retention for documentation evidence.
 Recent: Barrel re-exports existing helpers.js without modification for backward compatibility (92-01).
 - [Phase 92]: Viewport projects use testMatch opt-in pattern to avoid tripling test suite run time
+- [Phase 93]: Dev-bypass detection added for login form tests to skip gracefully when VITE_DEV_BYPASS_AUTH=true
+- [Phase 93]: auth.setup.js fixed to handle already-authenticated storage state
 
 ### Blockers/Concerns
 
@@ -75,9 +77,9 @@ Recent: Barrel re-exports existing helpers.js without modification for backward 
 ## Session Continuity
 
 Last session: 2026-02-28
-Stopped at: Completed 92-01-PLAN.md (Screenshot Helper Infrastructure)
+Stopped at: Completed 93-01-PLAN.md (Login Flow Screenshot Tests)
 Resume file: N/A
-Next: Phase 92 complete (both plans done), advance to phase 93
+Next: Continue phase 93 with 93-02 plan
 
 ---
-*Updated: 2026-02-28 -- 92-01 complete*
+*Updated: 2026-02-28 -- 93-01 complete*
