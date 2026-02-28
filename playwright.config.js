@@ -98,6 +98,38 @@ export default defineConfig({
       },
       dependencies: ['setup'],
     },
+    // Viewport presets for responsive testing (Phase 92+)
+    // Tests opt-in to these by using --project flag or test.describe config
+    {
+      name: 'mobile',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 375, height: 667 },
+        storageState: 'playwright/.auth/client.json',
+      },
+      dependencies: ['setup'],
+      testMatch: /.*responsive.*\.spec\.js/,
+    },
+    {
+      name: 'tablet',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 768, height: 1024 },
+        storageState: 'playwright/.auth/client.json',
+      },
+      dependencies: ['setup'],
+      testMatch: /.*responsive.*\.spec\.js/,
+    },
+    {
+      name: 'desktop',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1440, height: 900 },
+        storageState: 'playwright/.auth/client.json',
+      },
+      dependencies: ['setup'],
+      testMatch: /.*responsive.*\.spec\.js/,
+    },
     // Uncomment for additional browsers
     // {
     //   name: 'firefox',
