@@ -254,13 +254,170 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated by roadmapper) | | |
+| INFRA-01 | Phase 92 | Pending |
+| INFRA-02 | Phase 92 | Pending |
+| INFRA-03 | Phase 92 | Pending |
+| INFRA-04 | Phase 92 | Pending |
+| INFRA-05 | Phase 92 | Pending |
+| INFRA-06 | Phase 92 | Pending |
+| AUTH-01 | Phase 93 | Pending |
+| AUTH-02 | Phase 93 | Pending |
+| AUTH-03 | Phase 93 | Pending |
+| AUTH-04 | Phase 93 | Pending |
+| AUTH-05 | Phase 93 | Pending |
+| AUTH-06 | Phase 93 | Pending |
+| AUTH-07 | Phase 93 | Pending |
+| AUTH-08 | Phase 93 | Pending |
+| AUTH-09 | Phase 93 | Pending |
+| AUTH-10 | Phase 93 | Pending |
+| AUTH-11 | Phase 93 | Pending |
+| AUTH-12 | Phase 93 | Pending |
+| DASH-01 | Phase 94 | Pending |
+| DASH-02 | Phase 94 | Pending |
+| DASH-03 | Phase 94 | Pending |
+| DASH-04 | Phase 94 | Pending |
+| DASH-05 | Phase 94 | Pending |
+| MEDIA-01 | Phase 95 | Pending |
+| MEDIA-02 | Phase 95 | Pending |
+| MEDIA-03 | Phase 95 | Pending |
+| MEDIA-04 | Phase 95 | Pending |
+| MEDIA-05 | Phase 95 | Pending |
+| MEDIA-06 | Phase 95 | Pending |
+| MEDIA-07 | Phase 95 | Pending |
+| MEDIA-08 | Phase 95 | Pending |
+| MEDIA-09 | Phase 95 | Pending |
+| MEDIA-10 | Phase 95 | Pending |
+| SCENE-01 | Phase 96 | Pending |
+| SCENE-02 | Phase 96 | Pending |
+| SCENE-03 | Phase 96 | Pending |
+| SCENE-04 | Phase 96 | Pending |
+| SCENE-05 | Phase 96 | Pending |
+| SCENE-06 | Phase 96 | Pending |
+| SCENE-07 | Phase 96 | Pending |
+| SCENE-08 | Phase 96 | Pending |
+| SCENE-09 | Phase 96 | Pending |
+| SCENE-10 | Phase 96 | Pending |
+| SCENE-11 | Phase 96 | Pending |
+| SCENE-12 | Phase 96 | Pending |
+| SCENE-13 | Phase 96 | Pending |
+| SCENE-14 | Phase 96 | Pending |
+| SCENE-15 | Phase 96 | Pending |
+| SCENE-16 | Phase 96 | Pending |
+| SCENE-17 | Phase 96 | Pending |
+| PLAY-01 | Phase 97 | Pending |
+| PLAY-02 | Phase 97 | Pending |
+| PLAY-03 | Phase 97 | Pending |
+| PLAY-04 | Phase 97 | Pending |
+| PLAY-05 | Phase 97 | Pending |
+| PLAY-06 | Phase 97 | Pending |
+| PLAY-07 | Phase 97 | Pending |
+| PLAY-08 | Phase 97 | Pending |
+| LAYOUT-01 | Phase 98 | Pending |
+| LAYOUT-02 | Phase 98 | Pending |
+| LAYOUT-03 | Phase 98 | Pending |
+| LAYOUT-04 | Phase 98 | Pending |
+| LAYOUT-05 | Phase 98 | Pending |
+| LAYOUT-06 | Phase 98 | Pending |
+| LAYOUT-07 | Phase 98 | Pending |
+| LAYOUT-08 | Phase 98 | Pending |
+| TMPL-01 | Phase 99 | Pending |
+| TMPL-02 | Phase 99 | Pending |
+| TMPL-03 | Phase 99 | Pending |
+| TMPL-04 | Phase 99 | Pending |
+| TMPL-05 | Phase 99 | Pending |
+| TMPL-06 | Phase 99 | Pending |
+| TMPL-07 | Phase 99 | Pending |
+| TMPL-08 | Phase 99 | Pending |
+| SCHED-01 | Phase 100 | Pending |
+| SCHED-02 | Phase 100 | Pending |
+| SCHED-03 | Phase 100 | Pending |
+| SCHED-04 | Phase 100 | Pending |
+| SCHED-05 | Phase 100 | Pending |
+| SCHED-06 | Phase 100 | Pending |
+| CAMP-01 | Phase 100 | Pending |
+| CAMP-02 | Phase 100 | Pending |
+| CAMP-03 | Phase 100 | Pending |
+| CAMP-04 | Phase 100 | Pending |
+| CAMP-05 | Phase 100 | Pending |
+| CAMP-06 | Phase 100 | Pending |
+| CAMP-07 | Phase 100 | Pending |
+| CAMP-08 | Phase 100 | Pending |
+| CAMP-09 | Phase 100 | Pending |
+| SCRN-01 | Phase 101 | Pending |
+| SCRN-02 | Phase 101 | Pending |
+| SCRN-03 | Phase 101 | Pending |
+| SCRN-04 | Phase 101 | Pending |
+| SCRN-05 | Phase 101 | Pending |
+| SCRN-06 | Phase 101 | Pending |
+| SCRN-07 | Phase 101 | Pending |
+| SCRN-08 | Phase 101 | Pending |
+| SCRN-09 | Phase 101 | Pending |
+| SCRN-10 | Phase 101 | Pending |
+| SCRN-11 | Phase 101 | Pending |
+| DATA-01 | Phase 102 | Pending |
+| DATA-02 | Phase 102 | Pending |
+| DATA-03 | Phase 102 | Pending |
+| DATA-04 | Phase 102 | Pending |
+| DATA-05 | Phase 102 | Pending |
+| APP-01 | Phase 102 | Pending |
+| APP-02 | Phase 102 | Pending |
+| APP-03 | Phase 102 | Pending |
+| APP-04 | Phase 102 | Pending |
+| APP-05 | Phase 102 | Pending |
+| APP-06 | Phase 102 | Pending |
+| APP-07 | Phase 102 | Pending |
+| APP-08 | Phase 102 | Pending |
+| MOD-01 | Phase 103 | Pending |
+| MOD-02 | Phase 103 | Pending |
+| MOD-03 | Phase 103 | Pending |
+| MOD-04 | Phase 103 | Pending |
+| MOD-05 | Phase 103 | Pending |
+| ANLYT-01 | Phase 104 | Pending |
+| ANLYT-02 | Phase 104 | Pending |
+| ANLYT-03 | Phase 104 | Pending |
+| ANLYT-04 | Phase 104 | Pending |
+| ANLYT-05 | Phase 104 | Pending |
+| ANLYT-06 | Phase 104 | Pending |
+| ANLYT-07 | Phase 104 | Pending |
+| ANLYT-08 | Phase 104 | Pending |
+| SET-01 | Phase 105 | Pending |
+| SET-02 | Phase 105 | Pending |
+| SET-03 | Phase 105 | Pending |
+| SET-04 | Phase 105 | Pending |
+| SET-05 | Phase 105 | Pending |
+| SET-06 | Phase 105 | Pending |
+| SET-07 | Phase 105 | Pending |
+| ADMIN-01 | Phase 106 | Pending |
+| ADMIN-02 | Phase 106 | Pending |
+| ADMIN-03 | Phase 106 | Pending |
+| ADMIN-04 | Phase 106 | Pending |
+| ADMIN-05 | Phase 106 | Pending |
+| ADMIN-06 | Phase 106 | Pending |
+| ADMIN-07 | Phase 106 | Pending |
+| ADMIN-08 | Phase 106 | Pending |
+| RESP-01 | Phase 107 | Pending |
+| RESP-02 | Phase 107 | Pending |
+| RESP-03 | Phase 107 | Pending |
+| RESP-04 | Phase 107 | Pending |
+| RESP-05 | Phase 107 | Pending |
+| RESP-06 | Phase 107 | Pending |
+| RESP-07 | Phase 107 | Pending |
+| RESP-08 | Phase 107 | Pending |
+| EDGE-01 | Phase 108 | Pending |
+| EDGE-02 | Phase 108 | Pending |
+| EDGE-03 | Phase 108 | Pending |
+| EDGE-04 | Phase 108 | Pending |
+| EDGE-05 | Phase 108 | Pending |
+| EDGE-06 | Phase 108 | Pending |
+| EDGE-07 | Phase 108 | Pending |
+| EDGE-08 | Phase 108 | Pending |
 
 **Coverage:**
-- v8.0 requirements: 120 total
-- Mapped to phases: 0
-- Unmapped: 120
+- v8.0 requirements: 157 total (19 categories)
+- Mapped to phases: 157
+- Unmapped: 0
+- Phase 109 has no new requirements (integration validation of all prior phases)
 
 ---
 *Requirements defined: 2026-02-27*
-*Last updated: 2026-02-27 after initial definition*
+*Last updated: 2026-02-27 after roadmap creation -- all 157 requirements mapped to phases 92-108*

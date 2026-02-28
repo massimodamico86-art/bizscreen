@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v8.0
 milestone_name: Comprehensive E2E
-status: defining_requirements
-last_updated: "2026-02-27T23:00:00Z"
+status: ready_to_plan
+last_updated: "2026-02-27T23:30:00Z"
 progress:
-  total_phases: 0
+  total_phases: 18
   completed_phases: 0
-  total_plans: 0
+  total_plans: 31
   completed_plans: 0
 ---
 
@@ -18,14 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-27)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v8.0 Comprehensive E2E — defining requirements
+**Current focus:** v8.0 Comprehensive E2E -- Phase 92 ready to plan
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-27 — Milestone v8.0 started
+Phase: 92 of 109 (Test Infrastructure)
+Plan: 0 of 2 in current phase
+Status: Ready to plan
+Last activity: 2026-02-27 -- Roadmap created for v8.0 (18 phases, 31 plans, 157 requirements)
+
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0%
 
 ## Milestones Shipped
 
@@ -51,28 +53,28 @@ Last activity: 2026-02-27 — Milestone v8.0 started
 - Total plans executed: 275
 - Total phases: 91 completed
 - Total milestones: 13 shipped
-- Timeline: 2026-01-24 → 2026-02-27 (35 days)
+- Timeline: 2026-01-24 to 2026-02-27 (35 days)
 
 ## Accumulated Context
 
 ### Decisions
 
 Full decision log in PROJECT.md Key Decisions table.
+Recent: Dev auth bypass (VITE_DEV_BYPASS_AUTH) for Playwright automation.
 
 ### Blockers/Concerns
 
-- Orphaned test file: `tests/unit/services/gdprDeletionService.test.js` imports deleted service (from v5.0)
-- Tech debt: duplicate legacy player_heartbeat RPC in usePlayerContent (from v4.0)
-- Tech debt: wrong lastActivityRef passed to useStuckDetection in ViewPage (from v4.0)
-- ContentPerformancePage has no direct link to ContentDetailAnalyticsPage (minor UX gap)
-- canEditContent()/canEditScreens() async called sync in CampaignsPage (Promises always truthy)
+- Orphaned test file: `tests/unit/services/gdprDeletionService.test.js` imports deleted service
+- Tech debt: duplicate legacy player_heartbeat RPC in usePlayerContent
+- Tech debt: wrong lastActivityRef passed to useStuckDetection in ViewPage
+- ~900 E2E tests currently skipped (project-specific multi-project pattern)
 
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Defining requirements for v8.0 Comprehensive E2E
+Stopped at: Roadmap created for v8.0 Comprehensive E2E (18 phases, 157 requirements)
 Resume file: N/A
-Next: Define requirements, create roadmap
+Next: `/gsd:plan-phase 92` -- Test Infrastructure
 
 ---
-*Updated: 2026-02-27 — v8.0 Comprehensive E2E milestone started*
+*Updated: 2026-02-27 -- v8.0 roadmap created*
