@@ -73,36 +73,36 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DISC-01 | — | Pending |
-| DISC-02 | — | Pending |
-| DISC-03 | — | Pending |
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| AUTH-04 | — | Pending |
-| AUTH-05 | — | Pending |
-| AUTH-06 | — | Pending |
-| CRUD-01 | — | Pending |
-| CRUD-02 | — | Pending |
-| CRUD-03 | — | Pending |
-| CRUD-04 | — | Pending |
-| CRUD-05 | — | Pending |
-| DISP-01 | — | Pending |
-| DISP-02 | — | Pending |
-| DISP-03 | — | Pending |
-| EDGE-01 | — | Pending |
-| EDGE-02 | — | Pending |
-| EDGE-03 | — | Pending |
-| EDGE-04 | — | Pending |
-| RPT-01 | — | Pending |
-| RPT-02 | — | Pending |
-| RPT-03 | — | Pending |
+| DISC-01 | Phase 98 | Pending |
+| DISC-02 | Phase 98 | Pending |
+| DISC-03 | Phase 98 | Pending |
+| AUTH-01 | Phase 99 | Pending |
+| AUTH-02 | Phase 99 | Pending |
+| AUTH-03 | Phase 99 | Pending |
+| AUTH-04 | Phase 99 | Pending |
+| AUTH-05 | Phase 99 | Pending |
+| AUTH-06 | Phase 99 | Pending |
+| CRUD-01 | Phase 100 | Pending |
+| CRUD-02 | Phase 100 | Pending |
+| CRUD-03 | Phase 100 | Pending |
+| CRUD-04 | Phase 100 | Pending |
+| CRUD-05 | Phase 100 | Pending |
+| DISP-01 | Phase 101 | Pending |
+| DISP-02 | Phase 101 | Pending |
+| DISP-03 | Phase 101 | Pending |
+| EDGE-01 | Phase 102 | Pending |
+| EDGE-02 | Phase 102 | Pending |
+| EDGE-03 | Phase 102 | Pending |
+| EDGE-04 | Phase 102 | Pending |
+| RPT-01 | Phase 103 | Pending |
+| RPT-02 | Phase 103 | Pending |
+| RPT-03 | Phase 103 | Pending |
 
 **Coverage:**
 - v10.0 requirements: 24 total
-- Mapped to phases: 0
-- Unmapped: 24
+- Mapped to phases: 24
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-28*
-*Last updated: 2026-02-28 after initial definition*
+*Last updated: 2026-02-28 after roadmap creation -- all 24 requirements mapped to phases*

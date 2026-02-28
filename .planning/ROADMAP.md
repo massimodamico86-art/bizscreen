@@ -16,12 +16,13 @@
 - [x] **v6.0 Functional Completeness** — Phases 72-80 (shipped 2026-02-23)
 - [x] **v7.0 UI Verification** — Phases 81-91 (shipped 2026-02-27)
 - [x] **v8.0 Comprehensive E2E** — Phases 92-93 (shipped 2026-02-28, 139 reqs deferred)
-- [ ] **v9.0 Production Polish** — Phases 94-97 (in progress)
+- [x] **v9.0 Production Polish** — Phase 94 (shipped 2026-02-28, 20 reqs deferred)
+- [ ] **v10.0 Visual QA Audit** — Phases 98-103 (in progress)
 
 ## Phase History
 
 <details>
-<summary>Completed Milestones (v1 through v8.0)</summary>
+<summary>Completed Milestones (v1 through v9.0)</summary>
 
 **v1 Production Release** — Phases 1-12
 See `.planning/milestones/v1-ROADMAP.md`
@@ -65,76 +66,103 @@ See `.planning/milestones/v7.0-ROADMAP.md`
 **v8.0 Comprehensive E2E** — Phases 92-93 (2/18 phases, 139 reqs deferred)
 See `.planning/milestones/v8.0-ROADMAP.md`
 
-All milestones shipped successfully (14 total).
+**v9.0 Production Polish** — Phase 94 (1/4 phases, 20 reqs deferred)
+See `.planning/milestones/v9.0-ROADMAP.md`
+
+All milestones shipped successfully (15 total).
 
 </details>
 
 ## Phases
 
-### v9.0 Production Polish (In Progress)
+### v10.0 Visual QA Audit (In Progress)
 
-**Milestone Goal:** Fix all bugs found in MCP visual audit, add error resilience (boundaries, backoff), replace spinners with skeleton loaders, and capture MCP screenshots of every working page as proof.
+**Milestone Goal:** Perform a comprehensive end-to-end visual audit of the entire BizScreen app using Playwright MCP browser tools -- navigating every page, interacting with every feature, taking screenshots at every step, and producing a detailed audit report of bugs, visual glitches, and broken functionality. No code is written. All work is browser interaction via MCP tools (browser_navigate, browser_screenshot, browser_click, browser_type, browser_snapshot). All screenshots go to `./screenshots/` with sequential numbering.
 
-- [x] **Phase 94: Bug Fixes** - Fix dashboard retry loop, stale breadcrumbs, and error toast flooding (completed 2026-02-28)
-- [ ] **Phase 95: Error Resilience** - Add per-route error boundaries, API retry with backoff, and connection error states
-- [ ] **Phase 96: UX Polish** - Replace loading spinners with content-aware skeleton screens and redesign error states
-- [ ] **Phase 97: Screenshot Verification** - Capture MCP screenshots of every page to prove everything works against real Supabase
+- [ ] **Phase 98: App Discovery & Navigation Map** - Navigate to every route, screenshot initial states, and document the complete navigation structure
+- [ ] **Phase 99: Authentication & Onboarding Flows** - Walk through all auth flows (login, signup, reset, logout) capturing screenshots and error states
+- [ ] **Phase 100: Core Feature Walkthrough - CRUD Operations** - Create, browse, edit, delete, and interact with all major entities (screens, playlists, layouts, schedules, campaigns, etc.)
+- [ ] **Phase 101: Display & Preview Modes** - Open all layout previews, toggle display options across widget types, test media uploads and QR generation
+- [ ] **Phase 102: Settings, Configuration & Edge Cases** - Visit all settings pages, toggle configurations, test edge cases (empty states, long text, special chars), check responsive behavior
+- [ ] **Phase 103: Audit Report Compilation** - Produce AUDIT_REPORT.md with page catalog, prioritized bug list, console errors, and screenshot coverage summary
 
 ## Phase Details
 
-### Phase 94: Bug Fixes
-**Goal**: Users no longer experience cascading failures from retry loops, misleading navigation context, or error toast floods
-**Depends on**: Nothing (first phase in v9.0)
-**Requirements**: BUG-01, BUG-02, BUG-03
+### Phase 98: App Discovery & Navigation Map
+**Goal**: A complete map of every route and page in the application exists, with screenshots proving each page loads, and a documented list of all interactive elements
+**Depends on**: Nothing (first phase in v10.0)
+**Requirements**: DISC-01, DISC-02, DISC-03
 **Success Criteria** (what must be TRUE):
-  1. DashboardPage stops retrying after a configurable max count and shows a clear error state instead of silently hammering the API
-  2. Breadcrumbs on every page reflect the actual current route (e.g., Screens > Group Detail, not always "Home > Dashboard")
-  3. When a retry loop fires multiple errors, the user sees at most one error toast per distinct error type, not a stack of duplicates
-**Plans**: 2 plans
-- [ ] 94-01-PLAN.md -- Dashboard retry backoff + toast deduplication (BUG-01, BUG-03)
-- [ ] 94-02-PLAN.md -- Comprehensive breadcrumb routing (BUG-02)
-
-### Phase 95: Error Resilience
-**Goal**: The app degrades gracefully when Supabase is slow, down, or returning errors -- no page shows an unhandled crash or infinite spinner
-**Depends on**: Phase 94 (bug fixes establish backoff patterns that resilience builds on)
-**Requirements**: RESIL-01, RESIL-02, RESIL-03
-**Success Criteria** (what must be TRUE):
-  1. Navigating to any app route that throws a runtime error shows a route-specific error UI with retry option, not a white screen or fallback to Dashboard
-  2. All Supabase data-fetching calls automatically retry with exponential backoff and stop after a configurable max, without manual wiring per call site
-  3. When Supabase is completely unreachable, every page that loads data shows a "Connection error" state with a retry button instead of spinning forever
+  1. Every known app route has been visited via browser_navigate and a screenshot exists in `./screenshots/` showing its initial load state
+  2. A browser_snapshot accessibility tree has been captured for every page, revealing all buttons, links, inputs, and interactive elements
+  3. A complete route list document exists mapping every URL path to its page name, sidebar section, and whether it requires authentication
 **Plans**: TBD
 
-### Phase 96: UX Polish
-**Goal**: Users perceive fast, predictable page loads with content-shaped placeholders and get actionable guidance when things go wrong
-**Depends on**: Phase 95 (skeleton loaders replace the spinners that resilience made finite; error states build on error boundaries)
-**Requirements**: UX-01, UX-02, UX-03
+### Phase 99: Authentication & Onboarding Flows
+**Goal**: Every authentication path (login, signup, reset password, logout) has been walked through step-by-step with screenshots capturing each form state, success state, and error state
+**Depends on**: Phase 98 (navigation map identifies all auth-related routes)
+**Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, AUTH-06
 **Success Criteria** (what must be TRUE):
-  1. Every page that previously showed a generic spinning loader now shows a skeleton layout that matches the shape of the content about to appear (card grids, data tables, forms, etc.)
-  2. Each major page type (dashboard, list pages, detail pages, editor pages, settings pages) has a distinct skeleton that matches its specific content structure
-  3. Error states across the app include a retry button, a human-readable message explaining what went wrong, and a suggestion for recovery (e.g., "Check your connection and try again")
+  1. Screenshots exist for every step of the login flow -- empty form, filled form, submit, dashboard landing after successful login
+  2. Screenshots exist showing error states for invalid credentials and empty field validation on login and signup
+  3. Screenshots exist for the complete signup registration flow, password reset request and confirmation, and logout with post-logout state
+  4. All loading states, empty states, and transition states encountered during auth flows have been captured
 **Plans**: TBD
 
-### Phase 97: Screenshot Verification
-**Goal**: Every page in the application has an MCP screenshot proving it renders correctly against real Supabase data
-**Depends on**: Phase 96 (all bug fixes, resilience, and polish must be complete before capturing proof)
-**Requirements**: VERIFY-01, VERIFY-02, VERIFY-03, VERIFY-04, VERIFY-05, VERIFY-06, VERIFY-07, VERIFY-08, VERIFY-09, VERIFY-10, VERIFY-11, VERIFY-12, VERIFY-13, VERIFY-14
+### Phase 100: Core Feature Walkthrough - CRUD Operations
+**Goal**: Every major entity in the app (screens, playlists, layouts, scenes, schedules, campaigns, media, templates, data sources, apps, menu boards) has been created, browsed, edited, and deleted through the UI, with screenshots at each step
+**Depends on**: Phase 99 (authenticated session established for CRUD operations)
+**Requirements**: CRUD-01, CRUD-02, CRUD-03, CRUD-04, CRUD-05
 **Success Criteria** (what must be TRUE):
-  1. MCP screenshots exist for all public-facing pages (marketing homepage, features, pricing) showing correct rendering without errors
-  2. MCP screenshots exist for all authenticated pages (dashboard, media, playlists, templates, schedules, campaigns, screens, menu boards, apps, settings, admin, help) showing real data
-  3. MCP screenshots exist for all auth flow pages (login, signup, reset password, update password, accept invite) showing correct form rendering
-  4. Every screenshot shows the page in its final polished state (skeleton loaders resolved to content, error boundaries not triggered, no console errors visible)
+  1. For each major entity type, screenshots show the create form with sample data entered and the resulting record after submission
+  2. For each entity list/table view, screenshots show pagination controls, active filters, search results, and sorting -- demonstrating the list is functional
+  3. Screenshots show edit forms pre-populated with existing data and the result after saving changes, plus delete confirmation dialogs and the list state after deletion
+  4. Every toggle, dropdown, tab, and modal encountered on each page has been exercised and screenshot in both/all states
+**Plans**: TBD
+
+### Phase 101: Display & Preview Modes
+**Goal**: All layout previews render correctly, all widget display options have been toggled and screenshot, and media upload and QR code generation features are verified
+**Depends on**: Phase 100 (CRUD operations have created content to preview in layouts)
+**Requirements**: DISP-01, DISP-02, DISP-03
+**Success Criteria** (what must be TRUE):
+  1. Screenshots exist of every layout preview at its default state, showing zones, widgets, and content rendering correctly
+  2. Each widget display option (weather, clock, countdown, QR code, data table, RSS, social feed, menu board, video) has been toggled on/off with screenshots showing the visual change
+  3. Media upload functionality and QR code generation have been exercised with screenshots showing the upload result and generated QR code
+**Plans**: TBD
+
+### Phase 102: Settings, Configuration & Edge Cases
+**Goal**: Every settings page has been visited and toggled, edge cases (empty states, boundary inputs, special characters) have been tested, and responsive behavior verified at mobile, tablet, and desktop viewports
+**Depends on**: Phase 101 (display modes complete before testing configuration edge cases)
+**Requirements**: EDGE-01, EDGE-02, EDGE-03, EDGE-04
+**Success Criteria** (what must be TRUE):
+  1. Screenshots exist of every settings page (billing, branding, security, team, white-label, notifications, developer) showing their current configuration
+  2. Every toggle and configuration option on settings pages has been switched with screenshots showing the before and after state
+  3. Edge cases have been tested -- empty state pages (no data), very long text in input fields, special characters in names/descriptions -- with screenshots proving the UI handles them gracefully
+  4. At least 3 key pages have been screenshot at mobile (375px), tablet (768px), and desktop (1440px) viewport widths, showing responsive layout behavior
+**Plans**: TBD
+
+### Phase 103: Audit Report Compilation
+**Goal**: A comprehensive AUDIT_REPORT.md exists cataloging every page visited, every bug found (prioritized by severity), all console errors, and a full screenshot coverage summary
+**Depends on**: Phase 102 (all browsing and testing complete before compiling the report)
+**Requirements**: RPT-01, RPT-02, RPT-03
+**Success Criteria** (what must be TRUE):
+  1. AUDIT_REPORT.md contains a page catalog listing every URL visited with its page name and reference to its screenshot file(s)
+  2. All bugs discovered during the audit are listed with severity (critical / major / minor / cosmetic), a description, the page/route where found, and screenshot evidence
+  3. The report includes a console error log section, a total screenshot count, and a coverage summary showing which app areas were fully audited vs partially covered
 **Plans**: TBD
 
 ## Progress
 
-**Execution Order:** 94 -> 95 -> 96 -> 97
+**Execution Order:** 98 -> 99 -> 100 -> 101 -> 102 -> 103
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 94. Bug Fixes | 2/2 | Complete    | 2026-02-28 |
-| 95. Error Resilience | 0/TBD | Not started | - |
-| 96. UX Polish | 0/TBD | Not started | - |
-| 97. Screenshot Verification | 0/TBD | Not started | - |
+| 98. App Discovery & Navigation Map | 0/TBD | Not started | - |
+| 99. Authentication & Onboarding Flows | 0/TBD | Not started | - |
+| 100. Core Feature Walkthrough - CRUD | 0/TBD | Not started | - |
+| 101. Display & Preview Modes | 0/TBD | Not started | - |
+| 102. Settings, Config & Edge Cases | 0/TBD | Not started | - |
+| 103. Audit Report Compilation | 0/TBD | Not started | - |
 
 ## Progress Summary
 
@@ -154,9 +182,10 @@ All milestones shipped successfully (14 total).
 | v6.0 Functional Completeness | 72-80 | 20 | Complete | 2026-02-23 |
 | v7.0 UI Verification | 81-91 | 28 | Complete | 2026-02-27 |
 | v8.0 Comprehensive E2E | 92-93 | 8 | Complete | 2026-02-28 |
-| v9.0 Production Polish | 94-97 | TBD | In progress | - |
+| v9.0 Production Polish | 94 | 2 | Complete | 2026-02-28 |
+| v10.0 Visual QA Audit | 98-103 | TBD | In progress | - |
 
-**Total:** 93 phases complete, 283 plans executed | 14 milestones shipped | 1 milestone in progress
+**Total:** 94 phases complete, 285 plans executed | 15 milestones shipped | 1 milestone in progress
 
 ---
-*Last updated: 2026-02-27 -- v9.0 Production Polish roadmap created*
+*Last updated: 2026-02-28 -- v10.0 Visual QA Audit roadmap created*
