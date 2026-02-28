@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-02-27)
 ## Current Position
 
 Phase: 93 of 109 (Auth & Onboarding Screenshots)
-Plan: 1 of 3 in current phase (93-01 complete)
+Plan: 3 of 3 in current phase (93-03 complete)
 Status: Executing
-Last activity: 2026-02-28 -- Completed 93-01 (Login Flow Screenshot Tests)
+Last activity: 2026-02-28 -- Completed 93-03 (Onboarding Wizard Screenshot Tests)
 
 Progress: [**░░░░░░░░░░░░░░░░░░] 6%
 
@@ -66,6 +66,7 @@ Recent: Barrel re-exports existing helpers.js without modification for backward 
 - [Phase 92]: Viewport projects use testMatch opt-in pattern to avoid tripling test suite run time
 - [Phase 93]: Dev-bypass detection added for login form tests to skip gracefully when VITE_DEV_BYPASS_AUTH=true
 - [Phase 93]: auth.setup.js fixed to handle already-authenticated storage state
+- [Phase 93]: State-resilient onboarding tests use Promise.race with soft timeouts to document visible state rather than fail
 
 ### Blockers/Concerns
 

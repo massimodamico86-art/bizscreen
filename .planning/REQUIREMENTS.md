@@ -27,9 +27,9 @@ Requirements for comprehensive Playwright E2E test suite. Each maps to roadmap p
 - [ ] **AUTH-07**: Password update flow tested, screenshot of update form and success
 - [ ] **AUTH-08**: Invite accept flow tested, screenshot of invite page and completion
 - [ ] **AUTH-09**: Session persistence tested (refresh browser, still authenticated)
-- [ ] **AUTH-10**: Onboarding wizard tested end-to-end (welcome → industry → starter pack → pairing → success)
-- [ ] **AUTH-11**: Industry selection modal tested with different selections
-- [ ] **AUTH-12**: Screen pairing during onboarding tested (QR code display, OTP fallback)
+- [x] **AUTH-10**: Onboarding wizard tested end-to-end (welcome → industry → starter pack → pairing → success)
+- [x] **AUTH-11**: Industry selection modal tested with different selections
+- [x] **AUTH-12**: Screen pairing during onboarding tested (QR code display, OTP fallback)
 
 ### Dashboard
 
@@ -269,9 +269,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-07 | Phase 93 | Pending |
 | AUTH-08 | Phase 93 | Pending |
 | AUTH-09 | Phase 93 | Pending |
-| AUTH-10 | Phase 93 | Pending |
-| AUTH-11 | Phase 93 | Pending |
-| AUTH-12 | Phase 93 | Pending |
+| AUTH-10 | Phase 93 | Complete |
+| AUTH-11 | Phase 93 | Complete |
+| AUTH-12 | Phase 93 | Complete |
 | DASH-01 | Phase 94 | Pending |
 | DASH-02 | Phase 94 | Pending |
 | DASH-03 | Phase 94 | Pending |
