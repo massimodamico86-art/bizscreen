@@ -210,19 +210,24 @@ These capabilities shipped and are production-verified:
 - ✓ Auth flows screenshot tests (signup, password reset, invite, session persistence) — v8.0
 - ✓ Onboarding wizard screenshot tests (welcome, industry, pairing, success) — v8.0
 
+**v9.0 Production Polish (2026-02-28):**
+- ✓ Dashboard retry with exponential backoff (max 3, 1s/2s/4s) replacing unbounded loop — v9.0
+- ✓ Toast deduplication with 5s throttle per error type — v9.0
+- ✓ Data-driven breadcrumb routing for all app routes — v9.0
+
 ### Active
 
-## Current Milestone: v9.0 Production Polish
+## Current Milestone: v10.0 Visual QA Audit
 
-**Goal:** Fix all bugs found in MCP visual audit, add error resilience (boundaries, backoff), replace spinners with skeleton loaders, and capture MCP screenshots of every working page as proof.
+**Goal:** Perform a comprehensive end-to-end visual audit of the entire BizScreen app using Playwright MCP browser tools — navigating every page, interacting with every feature, taking screenshots at every step, and producing a detailed audit report of bugs, visual glitches, and broken functionality.
 
 **Target features:**
-- Fix infinite retry loop on DashboardPage (exponential backoff, max retries)
-- Fix breadcrumbs to reflect actual current route
-- Add per-route error boundaries with route-appropriate error states
-- Add exponential backoff on all Supabase API calls
-- Replace generic loading spinners with content-aware skeleton loaders
-- Capture MCP screenshots of every page working against real Supabase
+- Navigate and screenshot every page/route in the app via MCP browser tools
+- Test all authentication flows (login, signup, reset, logout) with screenshots
+- CRUD walkthrough of all major entities (screens, playlists, layouts, schedules, campaigns, etc.)
+- Test all layout previews, display modes, and widget configurations
+- Audit all settings, configuration, and edge cases
+- Produce AUDIT_REPORT.md with prioritized bugs and full screenshot coverage
 
 ### Out of Scope
 
@@ -414,4 +419,4 @@ These capabilities shipped and are production-verified:
 | Ship v8.0 with 2/18 phases complete | Capture infrastructure + auth foundation; resume later | — Accepted — 139 reqs deferred |
 
 ---
-*Last updated: 2026-02-27 after v9.0 Production Polish milestone started*
+*Last updated: 2026-02-28 after v10.0 Visual QA Audit milestone started*

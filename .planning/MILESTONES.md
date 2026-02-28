@@ -473,6 +473,37 @@
 ---
 
 
+## v9.0 Production Polish (Shipped: 2026-02-28)
+
+**Delivered:** Fixed dashboard infinite retry loop with exponential backoff, added toast deduplication/throttling, and implemented comprehensive breadcrumb routing. Archived early — remaining 3 phases (Error Resilience, UX Polish, Screenshot Verification) deferred.
+
+**Phases completed:** 94 (1 phase, 2 plans)
+
+**Key accomplishments:**
+
+- Dashboard retry replaced unbounded loop with exponential backoff (max 3 retries, 1s/2s/4s delays) and clear error state on exhaustion
+- Toast deduplication system with 5s throttle window per error type, preventing retry-loop error floods
+- Data-driven breadcrumb config (BREADCRUMB_CONFIG + DYNAMIC_BREADCRUMBS) replacing hardcoded "Home > Dashboard" on all routes
+
+**Stats:**
+
+- 4 files modified
+- 2 plans, 4 tasks
+- 1 day (2026-02-28)
+
+**Git range:** `8f872e4` → `87e1209`
+
+### Deferred Requirements (20)
+
+- RESIL-01 through RESIL-03 (Error boundaries, API backoff, connection states)
+- UX-01 through UX-03 (Skeleton loaders, page-type skeletons, error state redesign)
+- VERIFY-01 through VERIFY-14 (MCP screenshot verification of all pages)
+
+**What's next:** v10.0 planning
+
+---
+
+
 ## v8.0 Comprehensive E2E (Shipped: 2026-02-28)
 
 **Delivered:** Playwright E2E test infrastructure and authentication/onboarding screenshot test suite. Foundation for comprehensive test coverage with screenshot-at-every-step pattern, viewport presets, and CI artifact upload.
