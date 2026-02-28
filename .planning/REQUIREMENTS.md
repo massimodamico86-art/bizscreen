@@ -1,63 +1,71 @@
 # Requirements: BizScreen
 
-**Defined:** 2026-02-27
+**Defined:** 2026-02-28
 **Core Value:** Screens reliably display the right content at the right time, even when offline
 
-## v9.0 Requirements
+## v10.0 Requirements
 
-Requirements for v9.0 Production Polish. Each maps to roadmap phases.
+Requirements for v10.0 Visual QA Audit. Each maps to roadmap phases.
 
-### Bug Fixes
+### Discovery
 
-- [x] **BUG-01**: DashboardPage stops retrying after max retry count with exponential backoff (no more ~200 errors/sec)
-- [x] **BUG-02**: Breadcrumbs reflect actual current route path instead of always showing "Home > Dashboard"
-- [x] **BUG-03**: Error toasts are deduplicated and throttled so retry loops do not flood the UI with repeated messages
+- [ ] **DISC-01**: Navigate to every app route via MCP browser_navigate and screenshot each page's initial load state
+- [ ] **DISC-02**: Take browser_snapshot accessibility tree on every page to discover all interactive elements
+- [ ] **DISC-03**: Map complete navigation structure (all routes, sidebar links, menu items) into a documented route list
 
-### Error Resilience
+### Authentication
 
-- [ ] **RESIL-01**: Each app route has its own error boundary displaying route-appropriate error UI instead of falling through to Dashboard
-- [ ] **RESIL-02**: All Supabase data-fetching calls use exponential backoff with configurable max retry limits
-- [ ] **RESIL-03**: When Supabase is unreachable, app shows a helpful connection error state instead of infinite loading spinner
+- [ ] **AUTH-01**: Screenshot login flow with valid credentials at each step (form, submit, dashboard landing)
+- [ ] **AUTH-02**: Screenshot login with invalid credentials showing error states
+- [ ] **AUTH-03**: Screenshot signup/registration flow at each step
+- [ ] **AUTH-04**: Screenshot logout flow with confirmation
+- [ ] **AUTH-05**: Screenshot password reset flow at each step
+- [ ] **AUTH-06**: Capture all auth empty states, loading states, and error states
 
-### UX Polish
+### CRUD Walkthrough
 
-- [ ] **UX-01**: Generic loading spinners replaced with content-aware skeleton screens across all app pages
-- [ ] **UX-02**: Each page type has a skeleton layout matching its content structure (card grids, data tables, form layouts, etc.)
-- [ ] **UX-03**: Error states redesigned with retry buttons, helpful messaging, and recovery suggestions
+- [ ] **CRUD-01**: For each major entity, create via UI forms with sample data and screenshot before/after submission
+- [ ] **CRUD-02**: Browse lists/tables for each entity, screenshot pagination, filters, and search
+- [ ] **CRUD-03**: Edit existing records for each entity, screenshot edit forms and results
+- [ ] **CRUD-04**: Delete records for each entity, screenshot confirmation dialogs and results
+- [ ] **CRUD-05**: Test every toggle, dropdown, tab, and modal on each page, screenshot all state changes
 
-### Screenshot Verification
+### Display & Preview
 
-- [ ] **VERIFY-01**: MCP screenshot of marketing pages (homepage, features, pricing) showing correct rendering
-- [ ] **VERIFY-02**: MCP screenshot of auth pages (login, signup, reset password, update password, accept invite) showing correct forms
-- [ ] **VERIFY-03**: MCP screenshot of Dashboard showing real data (widgets, stats, health indicators, quick actions)
-- [ ] **VERIFY-04**: MCP screenshot of Media Library showing uploaded media items with grid/list views
-- [ ] **VERIFY-05**: MCP screenshot of Playlists page showing playlist items
-- [ ] **VERIFY-06**: MCP screenshot of Templates marketplace showing template cards with search/filter
-- [ ] **VERIFY-07**: MCP screenshot of Schedules page showing schedule entries
-- [ ] **VERIFY-08**: MCP screenshot of Campaigns page showing campaign data
-- [ ] **VERIFY-09**: MCP screenshot of Screens page showing registered screens with status indicators
-- [ ] **VERIFY-10**: MCP screenshot of Menu Boards page showing menu board entries
-- [ ] **VERIFY-11**: MCP screenshot of Apps page showing app listings
-- [ ] **VERIFY-12**: MCP screenshot of Settings pages (billing, branding, security, team, white-label)
-- [ ] **VERIFY-13**: MCP screenshot of Admin pages (admin dashboard, tenant management, reseller portal)
-- [ ] **VERIFY-14**: MCP screenshot of Help Center / Knowledge Hub page
+- [ ] **DISP-01**: Open every layout preview and screenshot each at default state
+- [ ] **DISP-02**: Toggle all display options (weather, wifi, contact, check-in/out widgets) and screenshot each combination
+- [ ] **DISP-03**: Test media uploads and QR code generation features if applicable, screenshot results
+
+### Settings & Edge Cases
+
+- [ ] **EDGE-01**: Visit and screenshot every settings page
+- [ ] **EDGE-02**: Toggle every setting and screenshot results
+- [ ] **EDGE-03**: Test edge cases — empty states, very long text inputs, special characters
+- [ ] **EDGE-04**: Check responsive behavior at multiple viewport sizes (mobile, tablet, desktop)
+
+### Audit Report
+
+- [ ] **RPT-01**: Produce AUDIT_REPORT.md listing every page visited with URL and screenshot reference
+- [ ] **RPT-02**: Catalog all bugs by severity (critical / major / minor / cosmetic) with screenshot evidence
+- [ ] **RPT-03**: Include console error log, total screenshot count, and coverage summary
 
 ## Future Requirements
 
-### Continued E2E Testing
+### Continued QA
 
-- **E2E-01**: Complete remaining 139 E2E screenshot test requirements deferred from v8.0
-- **E2E-02**: Visual regression testing infrastructure with baseline comparison
-- **E2E-03**: Performance benchmarking and bundle size tracking
+- **QA-01**: Automated visual regression testing with baseline screenshot comparison
+- **QA-02**: Performance benchmarking (Lighthouse scores, Core Web Vitals) per page
+- **QA-03**: Accessibility audit (WCAG 2.1 AA compliance) with axe-core integration
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Dev auth bypass improvements | Real Supabase backend is the target — dev mocking not needed |
-| New feature development | This milestone is fixing and polishing existing features |
-| E2E test automation | Screenshot verification is manual MCP-based, not Playwright automation |
-| Player-side changes | Focus is on admin UI, not player components |
+| Writing Playwright test script files | This milestone uses MCP tools directly, not test automation files |
+| Fixing bugs found during audit | Audit identifies bugs; a follow-up milestone fixes them |
+| Player-side testing | Focus is admin UI only |
+| Database-level test data setup | All test data created through the UI |
+| Performance optimization | Audit only, no code changes |
 
 ## Traceability
 
@@ -65,35 +73,36 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | Phase 94 | Complete |
-| BUG-02 | Phase 94 | Complete |
-| BUG-03 | Phase 94 | Complete |
-| RESIL-01 | Phase 95 | Pending |
-| RESIL-02 | Phase 95 | Pending |
-| RESIL-03 | Phase 95 | Pending |
-| UX-01 | Phase 96 | Pending |
-| UX-02 | Phase 96 | Pending |
-| UX-03 | Phase 96 | Pending |
-| VERIFY-01 | Phase 97 | Pending |
-| VERIFY-02 | Phase 97 | Pending |
-| VERIFY-03 | Phase 97 | Pending |
-| VERIFY-04 | Phase 97 | Pending |
-| VERIFY-05 | Phase 97 | Pending |
-| VERIFY-06 | Phase 97 | Pending |
-| VERIFY-07 | Phase 97 | Pending |
-| VERIFY-08 | Phase 97 | Pending |
-| VERIFY-09 | Phase 97 | Pending |
-| VERIFY-10 | Phase 97 | Pending |
-| VERIFY-11 | Phase 97 | Pending |
-| VERIFY-12 | Phase 97 | Pending |
-| VERIFY-13 | Phase 97 | Pending |
-| VERIFY-14 | Phase 97 | Pending |
+| DISC-01 | — | Pending |
+| DISC-02 | — | Pending |
+| DISC-03 | — | Pending |
+| AUTH-01 | — | Pending |
+| AUTH-02 | — | Pending |
+| AUTH-03 | — | Pending |
+| AUTH-04 | — | Pending |
+| AUTH-05 | — | Pending |
+| AUTH-06 | — | Pending |
+| CRUD-01 | — | Pending |
+| CRUD-02 | — | Pending |
+| CRUD-03 | — | Pending |
+| CRUD-04 | — | Pending |
+| CRUD-05 | — | Pending |
+| DISP-01 | — | Pending |
+| DISP-02 | — | Pending |
+| DISP-03 | — | Pending |
+| EDGE-01 | — | Pending |
+| EDGE-02 | — | Pending |
+| EDGE-03 | — | Pending |
+| EDGE-04 | — | Pending |
+| RPT-01 | — | Pending |
+| RPT-02 | — | Pending |
+| RPT-03 | — | Pending |
 
 **Coverage:**
-- v9.0 requirements: 23 total
-- Mapped to phases: 23
-- Unmapped: 0
+- v10.0 requirements: 24 total
+- Mapped to phases: 0
+- Unmapped: 24
 
 ---
-*Requirements defined: 2026-02-27*
-*Last updated: 2026-02-27 after roadmap creation (traceability updated)*
+*Requirements defined: 2026-02-28*
+*Last updated: 2026-02-28 after initial definition*
