@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import {
   Calendar,
   ChevronDown,
@@ -122,6 +122,9 @@ export default function BizScreenApp() {
   );
 }
 
+// Suppress duplicate toasts (same message+type) within this window
+const TOAST_THROTTLE_MS = 5000;
+
 function BizScreenAppInner() {
   const { user, loading: authLoading, signOut, userProfile: authUserProfile } = useAuth();
   const { branding, isImpersonating, impersonatedClient, refreshBranding } = useBranding();
@@ -158,6 +161,9 @@ function BizScreenAppInner() {
   // Refs to hold current values for real-time handlers (avoids stale closures)
   const listingsRef = useRef(listings);
   const userProfileRef = useRef(userProfile);
+
+  // Track recently shown toasts for deduplication (key: "type:message" -> timestamp)
+  const recentToastsRef = useRef(new Map());
 
   // Keep refs in sync with state
   useEffect(() => {
@@ -249,10 +255,28 @@ function BizScreenAppInner() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const showToast = (message, type = 'success') => {
+  const showToast = useCallback((message, type = 'success') => {
+    const key = `${type}:${message}`;
+    const now = Date.now();
+    const lastShown = recentToastsRef.current.get(key);
+
+    // Deduplicate: skip if same message+type shown within throttle window
+    if (lastShown && (now - lastShown) < TOAST_THROTTLE_MS) {
+      return;
+    }
+
+    recentToastsRef.current.set(key, now);
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
-  };
+
+    // Housekeeping: prune old entries to prevent memory leak
+    if (recentToastsRef.current.size > 50) {
+      const cutoff = now - TOAST_THROTTLE_MS;
+      for (const [k, ts] of recentToastsRef.current) {
+        if (ts < cutoff) recentToastsRef.current.delete(k);
+      }
+    }
+  }, []);
 
   /**
    * Fetch user data and set up real-time subscriptions
