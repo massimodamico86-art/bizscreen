@@ -96,7 +96,7 @@ All milestones shipped successfully (15 total).
   1. Every known app route has been visited via browser_navigate and a screenshot exists in `./screenshots/` showing its initial load state
   2. A browser_snapshot accessibility tree has been captured for every page, revealing all buttons, links, inputs, and interactive elements
   3. A complete route list document exists mapping every URL path to its page name, sidebar section, and whether it requires authentication
-**Plans**: TBD
+**Plans**: 98-01 (Public Routes), 98-02 (Authenticated Pages), 98-03 (Route Map Document) -- 3 waves
 
 ### Phase 99: Authentication & Onboarding Flows
 **Goal**: Every authentication path (login, signup, reset password, logout) has been walked through step-by-step with screenshots capturing each form state, success state, and error state
@@ -157,7 +157,7 @@ All milestones shipped successfully (15 total).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 98. App Discovery & Navigation Map | 0/TBD | Not started | - |
+| 98. App Discovery & Navigation Map | 1/3 | In Progress|  |
 | 99. Authentication & Onboarding Flows | 0/TBD | Not started | - |
 | 100. Core Feature Walkthrough - CRUD | 0/TBD | Not started | - |
 | 101. Display & Preview Modes | 0/TBD | Not started | - |
@@ -188,4 +188,4 @@ All milestones shipped successfully (15 total).
 **Total:** 94 phases complete, 285 plans executed | 15 milestones shipped | 1 milestone in progress
 
 ---
-*Last updated: 2026-02-28 -- v10.0 Visual QA Audit roadmap created*
+*Last updated: 2026-02-28 -- Phase 98 planned (3 plans, 3 waves)*

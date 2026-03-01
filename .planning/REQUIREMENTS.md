@@ -9,8 +9,8 @@ Requirements for v10.0 Visual QA Audit. Each maps to roadmap phases.
 
 ### Discovery
 
-- [ ] **DISC-01**: Navigate to every app route via MCP browser_navigate and screenshot each page's initial load state
-- [ ] **DISC-02**: Take browser_snapshot accessibility tree on every page to discover all interactive elements
+- [x] **DISC-01**: Navigate to every app route via MCP browser_navigate and screenshot each page's initial load state
+- [x] **DISC-02**: Take browser_snapshot accessibility tree on every page to discover all interactive elements
 - [ ] **DISC-03**: Map complete navigation structure (all routes, sidebar links, menu items) into a documented route list
 
 ### Authentication
@@ -73,8 +73,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DISC-01 | Phase 98 | Pending |
-| DISC-02 | Phase 98 | Pending |
+| DISC-01 | Phase 98 | Complete |
+| DISC-02 | Phase 98 | Complete |
 | DISC-03 | Phase 98 | Pending |
 | AUTH-01 | Phase 99 | Pending |
 | AUTH-02 | Phase 99 | Pending |
