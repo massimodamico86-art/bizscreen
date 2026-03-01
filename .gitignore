@@ -31,4 +31,6 @@ perf-reports/
 playwright/.auth/
 
 # E2E test screenshots (generated during test runs)
-screenshots/
+screenshots/*
+# Keep QA discovery screenshots (v10.0 audit)
+!screenshots/98-*

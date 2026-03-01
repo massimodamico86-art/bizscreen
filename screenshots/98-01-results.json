@@ -1,0 +1,523 @@
+[
+  {
+    "id": "98-01",
+    "path": "/",
+    "name": "Homepage (Marketing)",
+    "url": "http://localhost:5173/",
+    "finalUrl": "http://localhost:5173/app",
+    "status": 200,
+    "redirected": true,
+    "screenshotFile": "98-01-homepage-marketing.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Try Again"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null
+  },
+  {
+    "id": "98-02",
+    "path": "/features",
+    "name": "Features Page",
+    "url": "http://localhost:5173/features",
+    "finalUrl": "http://localhost:5173/features",
+    "status": 200,
+    "redirected": false,
+    "screenshotFile": "98-02-features-page.png",
+    "interactiveElements": 17,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "link",
+        "name": "BizScreen"
+      },
+      {
+        "role": "link",
+        "name": "Home"
+      },
+      {
+        "role": "link",
+        "name": "Features"
+      },
+      {
+        "role": "link",
+        "name": "Pricing"
+      },
+      {
+        "role": "link",
+        "name": "Log in"
+      },
+      {
+        "role": "link",
+        "name": "Get Started"
+      },
+      {
+        "role": "link",
+        "name": "Start free"
+      },
+      {
+        "role": "link",
+        "name": "View pricing"
+      },
+      {
+        "role": "link",
+        "name": "Features"
+      },
+      {
+        "role": "link",
+        "name": "Pricing"
+      },
+      {
+        "role": "link",
+        "name": "Documentation"
+      },
+      {
+        "role": "link",
+        "name": "About"
+      },
+      {
+        "role": "link",
+        "name": "Blog"
+      },
+      {
+        "role": "link",
+        "name": "Contact"
+      },
+      {
+        "role": "link",
+        "name": "Privacy"
+      },
+      {
+        "role": "link",
+        "name": "Terms"
+      }
+    ],
+    "error": null
+  },
+  {
+    "id": "98-03",
+    "path": "/pricing",
+    "name": "Pricing Page",
+    "url": "http://localhost:5173/pricing",
+    "finalUrl": "http://localhost:5173/pricing",
+    "status": 200,
+    "redirected": false,
+    "screenshotFile": "98-03-pricing-page.png",
+    "interactiveElements": 20,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "link",
+        "name": "BizScreen"
+      },
+      {
+        "role": "link",
+        "name": "Home"
+      },
+      {
+        "role": "link",
+        "name": "Features"
+      },
+      {
+        "role": "link",
+        "name": "Pricing"
+      },
+      {
+        "role": "link",
+        "name": "Log in"
+      },
+      {
+        "role": "link",
+        "name": "Get Started"
+      },
+      {
+        "role": "link",
+        "name": "Start free"
+      },
+      {
+        "role": "link",
+        "name": "Start free trial"
+      },
+      {
+        "role": "link",
+        "name": "Start free trial"
+      },
+      {
+        "role": "link",
+        "name": "Contact sales"
+      },
+      {
+        "role": "link",
+        "name": "Create free account"
+      },
+      {
+        "role": "link",
+        "name": "Features"
+      },
+      {
+        "role": "link",
+        "name": "Pricing"
+      },
+      {
+        "role": "link",
+        "name": "Documentation"
+      },
+      {
+        "role": "link",
+        "name": "About"
+      },
+      {
+        "role": "link",
+        "name": "Blog"
+      },
+      {
+        "role": "link",
+        "name": "Contact"
+      },
+      {
+        "role": "link",
+        "name": "Privacy"
+      },
+      {
+        "role": "link",
+        "name": "Terms"
+      }
+    ],
+    "error": null
+  },
+  {
+    "id": "98-04",
+    "path": "/auth/login",
+    "name": "Login Page",
+    "url": "http://localhost:5173/auth/login",
+    "finalUrl": "http://localhost:5173/app",
+    "status": 200,
+    "redirected": true,
+    "screenshotFile": "98-04-login-page.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Try Again"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null
+  },
+  {
+    "id": "98-05",
+    "path": "/auth/signup",
+    "name": "Signup Page",
+    "url": "http://localhost:5173/auth/signup",
+    "finalUrl": "http://localhost:5173/app",
+    "status": 200,
+    "redirected": true,
+    "screenshotFile": "98-05-signup-page.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Try Again"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null
+  },
+  {
+    "id": "98-06",
+    "path": "/auth/reset-password",
+    "name": "Reset Password Page",
+    "url": "http://localhost:5173/auth/reset-password",
+    "finalUrl": "http://localhost:5173/auth/reset-password",
+    "status": 200,
+    "redirected": false,
+    "screenshotFile": "98-06-reset-password-page.png",
+    "interactiveElements": 4,
+    "elements": [
+      {
+        "role": "link",
+        "name": "BizScreen"
+      },
+      {
+        "role": "textbox",
+        "name": "Email address"
+      },
+      {
+        "role": "button",
+        "name": "Send reset link"
+      },
+      {
+        "role": "link",
+        "name": "Back to login"
+      }
+    ],
+    "error": null
+  },
+  {
+    "id": "98-07",
+    "path": "/auth/update-password",
+    "name": "Update Password Page",
+    "url": "http://localhost:5173/auth/update-password",
+    "finalUrl": "http://localhost:5173/auth/update-password",
+    "status": 200,
+    "redirected": false,
+    "screenshotFile": "98-07-update-password-page.png",
+    "interactiveElements": 2,
+    "elements": [
+      {
+        "role": "link",
+        "name": "BizScreen"
+      },
+      {
+        "role": "link",
+        "name": "Request new link"
+      }
+    ],
+    "error": null
+  },
+  {
+    "id": "98-08",
+    "path": "/auth/accept-invite",
+    "name": "Accept Invite Page",
+    "url": "http://localhost:5173/auth/accept-invite",
+    "finalUrl": "http://localhost:5173/auth/accept-invite",
+    "status": 200,
+    "redirected": false,
+    "screenshotFile": "98-08-accept-invite-page.png",
+    "interactiveElements": 2,
+    "elements": [
+      {
+        "role": "link",
+        "name": "BizScreen"
+      },
+      {
+        "role": "link",
+        "name": "Go to login"
+      }
+    ],
+    "error": null
+  },
+  {
+    "id": "98-09",
+    "path": "/preview/test-token",
+    "name": "Public Preview Page",
+    "url": "http://localhost:5173/preview/test-token",
+    "finalUrl": "http://localhost:5173/preview/test-token",
+    "status": 200,
+    "redirected": false,
+    "screenshotFile": "98-09-public-preview-page.png",
+    "interactiveElements": 0,
+    "elements": [],
+    "error": null
+  }
+]
