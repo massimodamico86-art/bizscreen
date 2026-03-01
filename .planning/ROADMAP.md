@@ -158,7 +158,7 @@ All milestones shipped successfully (15 total).
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 98. App Discovery & Navigation Map | 3/3 | Complete    | 2026-03-01 |
-| 99. Authentication & Onboarding Flows | 3/3 | Complete   | 2026-03-01 |
+| 99. Authentication & Onboarding Flows | 3/3 | Complete    | 2026-03-01 |
 | 100. Core Feature Walkthrough - CRUD | 0/TBD | Not started | - |
 | 101. Display & Preview Modes | 0/TBD | Not started | - |
 | 102. Settings, Config & Edge Cases | 0/TBD | Not started | - |
