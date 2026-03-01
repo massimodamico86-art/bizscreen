@@ -17,9 +17,9 @@ Requirements for v10.0 Visual QA Audit. Each maps to roadmap phases.
 
 - [x] **AUTH-01**: Screenshot login flow with valid credentials at each step (form, submit, dashboard landing)
 - [x] **AUTH-02**: Screenshot login with invalid credentials showing error states
-- [ ] **AUTH-03**: Screenshot signup/registration flow at each step
+- [x] **AUTH-03**: Screenshot signup/registration flow at each step
 - [ ] **AUTH-04**: Screenshot logout flow with confirmation
-- [ ] **AUTH-05**: Screenshot password reset flow at each step
+- [x] **AUTH-05**: Screenshot password reset flow at each step
 - [x] **AUTH-06**: Capture all auth empty states, loading states, and error states
 
 ### CRUD Walkthrough
@@ -78,9 +78,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DISC-03 | Phase 98 | Complete |
 | AUTH-01 | Phase 99 | Complete |
 | AUTH-02 | Phase 99 | Complete |
-| AUTH-03 | Phase 99 | Pending |
+| AUTH-03 | Phase 99 | Complete |
 | AUTH-04 | Phase 99 | Pending |
-| AUTH-05 | Phase 99 | Pending |
+| AUTH-05 | Phase 99 | Complete |
 | AUTH-06 | Phase 99 | Complete |
 | CRUD-01 | Phase 100 | Pending |
 | CRUD-02 | Phase 100 | Pending |

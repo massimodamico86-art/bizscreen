@@ -107,7 +107,7 @@ All milestones shipped successfully (15 total).
   2. Screenshots exist showing error states for invalid credentials and empty field validation on login and signup
   3. Screenshots exist for the complete signup registration flow, password reset request and confirmation, and logout with post-logout state
   4. All loading states, empty states, and transition states encountered during auth flows have been captured
-**Plans**: TBD
+**Plans**: 99-01 (Login Flow Walkthrough) [DONE], 99-02 (Signup & Password Reset Flows) [DONE], 99-03 (Onboarding Walkthrough) -- 3 waves
 
 ### Phase 100: Core Feature Walkthrough - CRUD Operations
 **Goal**: Every major entity in the app (screens, playlists, layouts, scenes, schedules, campaigns, media, templates, data sources, apps, menu boards) has been created, browsed, edited, and deleted through the UI, with screenshots at each step
