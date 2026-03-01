@@ -80,7 +80,7 @@ All milestones shipped successfully (15 total).
 **Milestone Goal:** Perform a comprehensive end-to-end visual audit of the entire BizScreen app using Playwright MCP browser tools -- navigating every page, interacting with every feature, taking screenshots at every step, and producing a detailed audit report of bugs, visual glitches, and broken functionality. No code is written. All work is browser interaction via MCP tools (browser_navigate, browser_screenshot, browser_click, browser_type, browser_snapshot). All screenshots go to `./screenshots/` with sequential numbering.
 
 - [x] **Phase 98: App Discovery & Navigation Map** - Navigate to every route, screenshot initial states, and document the complete navigation structure (completed 2026-03-01)
-- [ ] **Phase 99: Authentication & Onboarding Flows** - Walk through all auth flows (login, signup, reset, logout) capturing screenshots and error states
+- [x] **Phase 99: Authentication & Onboarding Flows** - Walk through all auth flows (login, signup, reset, logout) capturing screenshots and error states (completed 2026-03-01)
 - [ ] **Phase 100: Core Feature Walkthrough - CRUD Operations** - Create, browse, edit, delete, and interact with all major entities (screens, playlists, layouts, schedules, campaigns, etc.)
 - [ ] **Phase 101: Display & Preview Modes** - Open all layout previews, toggle display options across widget types, test media uploads and QR generation
 - [ ] **Phase 102: Settings, Configuration & Edge Cases** - Visit all settings pages, toggle configurations, test edge cases (empty states, long text, special chars), check responsive behavior
@@ -158,7 +158,7 @@ All milestones shipped successfully (15 total).
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 98. App Discovery & Navigation Map | 3/3 | Complete    | 2026-03-01 |
-| 99. Authentication & Onboarding Flows | 1/3 | In Progress|  |
+| 99. Authentication & Onboarding Flows | 3/3 | Complete   | 2026-03-01 |
 | 100. Core Feature Walkthrough - CRUD | 0/TBD | Not started | - |
 | 101. Display & Preview Modes | 0/TBD | Not started | - |
 | 102. Settings, Config & Edge Cases | 0/TBD | Not started | - |
