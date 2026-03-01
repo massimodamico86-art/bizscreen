@@ -148,6 +148,19 @@ function BizScreenAppInner() {
   ]);
 
   const [currentPage, setCurrentPage] = useState('dashboard');
+  // Expose setCurrentPage globally for QA discovery scripts (dev only)
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      window.__setCurrentPage = setCurrentPage;
+      window.__getCurrentPage = () => currentPage;
+    }
+    return () => {
+      if (import.meta.env.DEV) {
+        delete window.__setCurrentPage;
+        delete window.__getCurrentPage;
+      }
+    };
+  }, [currentPage]);
   const [toast, setToast] = useState(null);
   const [listings, setListings] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
