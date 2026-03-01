@@ -1,0 +1,6132 @@
+[
+  {
+    "id": "98-10",
+    "pageId": "dashboard",
+    "name": "Dashboard",
+    "group": 1,
+    "screenshotFile": "98-10-dashboard.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Try Again"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-11",
+    "pageId": "welcome",
+    "name": "Welcome",
+    "group": 1,
+    "screenshotFile": "98-11-welcome.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Try Again"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-12",
+    "pageId": "media-all",
+    "name": "Media All",
+    "group": 1,
+    "screenshotFile": "98-12-media-all.png",
+    "interactiveElements": 34,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Add Media"
+      },
+      {
+        "role": "button",
+        "name": "Tags"
+      },
+      {
+        "role": "button",
+        "name": "Add folder"
+      },
+      {
+        "role": "button",
+        "name": "Filter"
+      },
+      {
+        "role": "textbox",
+        "name": "Search media..."
+      },
+      {
+        "role": "button",
+        "name": "First page"
+      },
+      {
+        "role": "button",
+        "name": "Previous page"
+      },
+      {
+        "role": "button",
+        "name": "1"
+      },
+      {
+        "role": "button",
+        "name": "Next page"
+      },
+      {
+        "role": "button",
+        "name": "Last page"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-13",
+    "pageId": "media-images",
+    "name": "Media Images",
+    "group": 1,
+    "screenshotFile": "98-13-media-images.png",
+    "interactiveElements": 34,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Add Media"
+      },
+      {
+        "role": "button",
+        "name": "Tags"
+      },
+      {
+        "role": "button",
+        "name": "Add folder"
+      },
+      {
+        "role": "button",
+        "name": "Filter"
+      },
+      {
+        "role": "textbox",
+        "name": "Search media..."
+      },
+      {
+        "role": "button",
+        "name": "First page"
+      },
+      {
+        "role": "button",
+        "name": "Previous page"
+      },
+      {
+        "role": "button",
+        "name": "1"
+      },
+      {
+        "role": "button",
+        "name": "Next page"
+      },
+      {
+        "role": "button",
+        "name": "Last page"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-14",
+    "pageId": "media-videos",
+    "name": "Media Videos",
+    "group": 1,
+    "screenshotFile": "98-14-media-videos.png",
+    "interactiveElements": 33,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Add Media"
+      },
+      {
+        "role": "button",
+        "name": "Tags"
+      },
+      {
+        "role": "button",
+        "name": "Add folder"
+      },
+      {
+        "role": "button",
+        "name": "Filter"
+      },
+      {
+        "role": "button",
+        "name": "Upload Media"
+      },
+      {
+        "role": "button",
+        "name": "Add Web Page"
+      },
+      {
+        "role": "button",
+        "name": "Take the media tour"
+      },
+      {
+        "role": "button",
+        "name": "Add Video"
+      },
+      {
+        "role": "textbox",
+        "name": "Search media..."
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-15",
+    "pageId": "media-audio",
+    "name": "Media Audio",
+    "group": 1,
+    "screenshotFile": "98-15-media-audio.png",
+    "interactiveElements": 33,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Add Media"
+      },
+      {
+        "role": "button",
+        "name": "Tags"
+      },
+      {
+        "role": "button",
+        "name": "Add folder"
+      },
+      {
+        "role": "button",
+        "name": "Filter"
+      },
+      {
+        "role": "button",
+        "name": "Upload Media"
+      },
+      {
+        "role": "button",
+        "name": "Add Web Page"
+      },
+      {
+        "role": "button",
+        "name": "Take the media tour"
+      },
+      {
+        "role": "button",
+        "name": "Add Audio"
+      },
+      {
+        "role": "textbox",
+        "name": "Search media..."
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-16",
+    "pageId": "media-documents",
+    "name": "Media Documents",
+    "group": 1,
+    "screenshotFile": "98-16-media-documents.png",
+    "interactiveElements": 33,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Add Media"
+      },
+      {
+        "role": "button",
+        "name": "Tags"
+      },
+      {
+        "role": "button",
+        "name": "Add folder"
+      },
+      {
+        "role": "button",
+        "name": "Filter"
+      },
+      {
+        "role": "button",
+        "name": "Upload Media"
+      },
+      {
+        "role": "button",
+        "name": "Add Web Page"
+      },
+      {
+        "role": "button",
+        "name": "Take the media tour"
+      },
+      {
+        "role": "button",
+        "name": "Add Document"
+      },
+      {
+        "role": "textbox",
+        "name": "Search media..."
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-17",
+    "pageId": "media-webpages",
+    "name": "Media Web Pages",
+    "group": 1,
+    "screenshotFile": "98-17-media-web-pages.png",
+    "interactiveElements": 33,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Add Media"
+      },
+      {
+        "role": "button",
+        "name": "Tags"
+      },
+      {
+        "role": "button",
+        "name": "Add folder"
+      },
+      {
+        "role": "button",
+        "name": "Filter"
+      },
+      {
+        "role": "button",
+        "name": "Upload Media"
+      },
+      {
+        "role": "button",
+        "name": "Add Web Page"
+      },
+      {
+        "role": "button",
+        "name": "Take the media tour"
+      },
+      {
+        "role": "button",
+        "name": "Add Web Page"
+      },
+      {
+        "role": "textbox",
+        "name": "Search media..."
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-18",
+    "pageId": "apps",
+    "name": "Apps",
+    "group": 1,
+    "screenshotFile": "98-18-apps.png",
+    "interactiveElements": 146,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "textbox",
+        "name": "Search in All Apps"
+      },
+      {
+        "role": "button",
+        "name": "All Apps"
+      },
+      {
+        "role": "button",
+        "name": "Weather"
+      },
+      {
+        "role": "button",
+        "name": "Time"
+      },
+      {
+        "role": "button",
+        "name": "General"
+      },
+      {
+        "role": "button",
+        "name": "News"
+      },
+      {
+        "role": "button",
+        "name": "Social Media"
+      },
+      {
+        "role": "button",
+        "name": "Calendars"
+      },
+      {
+        "role": "button",
+        "name": "Dashboards"
+      },
+      {
+        "role": "button",
+        "name": "Business Tools"
+      },
+      {
+        "role": "button",
+        "name": "Interactivity"
+      },
+      {
+        "role": "button",
+        "name": "Custom Apps"
+      },
+      {
+        "role": "button",
+        "name": "Daily Weather"
+      },
+      {
+        "role": "button",
+        "name": "Analog Clock"
+      },
+      {
+        "role": "button",
+        "name": "ESPN ESPN"
+      },
+      {
+        "role": "button",
+        "name": "Custom RSS"
+      },
+      {
+        "role": "button",
+        "name": "Instagram Instagram"
+      },
+      {
+        "role": "button",
+        "name": "Facebook Facebook"
+      },
+      {
+        "role": "button",
+        "name": "Google Calendar Google Calendar"
+      },
+      {
+        "role": "button",
+        "name": "Google Sheets Google Sheets"
+      },
+      {
+        "role": "button",
+        "name": "Daily Weather"
+      },
+      {
+        "role": "button",
+        "name": "Analog Clock"
+      },
+      {
+        "role": "button",
+        "name": "ESPN ESPN"
+      },
+      {
+        "role": "button",
+        "name": "Google Slides Google Slides"
+      },
+      {
+        "role": "button",
+        "name": "Custom RSS"
+      },
+      {
+        "role": "button",
+        "name": "DSMenu"
+      },
+      {
+        "role": "button",
+        "name": "Airtable Airtable"
+      },
+      {
+        "role": "button",
+        "name": "Al Jazeera Al Jazeera"
+      },
+      {
+        "role": "button",
+        "name": "Analog Clock"
+      },
+      {
+        "role": "button",
+        "name": "Asana Asana"
+      },
+      {
+        "role": "button",
+        "name": "BareMetrics BareMetrics"
+      },
+      {
+        "role": "button",
+        "name": "BBC BBC"
+      },
+      {
+        "role": "button",
+        "name": "Birthday Notification"
+      },
+      {
+        "role": "button",
+        "name": "Bloomberg Bloomberg"
+      },
+      {
+        "role": "button",
+        "name": "Calendar Events Feed"
+      },
+      {
+        "role": "button",
+        "name": "Canva Canva"
+      },
+      {
+        "role": "button",
+        "name": "Canva Export Canva Export"
+      },
+      {
+        "role": "button",
+        "name": "Chargebee Chargebee"
+      },
+      {
+        "role": "button",
+        "name": "ChartMogul ChartMogul"
+      },
+      {
+        "role": "button",
+        "name": "CNN CNN"
+      },
+      {
+        "role": "button",
+        "name": "Counter down"
+      },
+      {
+        "role": "button",
+        "name": "Counter up"
+      },
+      {
+        "role": "button",
+        "name": "Current Weather"
+      },
+      {
+        "role": "button",
+        "name": "Custom RSS"
+      },
+      {
+        "role": "button",
+        "name": "Cyfe Cyfe"
+      },
+      {
+        "role": "button",
+        "name": "Daily Weather"
+      },
+      {
+        "role": "button",
+        "name": "Daily/Weekly Calendar"
+      },
+      {
+        "role": "button",
+        "name": "Date & Time"
+      },
+      {
+        "role": "button",
+        "name": "Dropbox Dropbox"
+      },
+      {
+        "role": "button",
+        "name": "DSMenu"
+      },
+      {
+        "role": "button",
+        "name": "Embed App"
+      },
+      {
+        "role": "button",
+        "name": "Embeddable Feeds"
+      },
+      {
+        "role": "button",
+        "name": "ESPN ESPN"
+      },
+      {
+        "role": "button",
+        "name": "Facebook Facebook"
+      },
+      {
+        "role": "button",
+        "name": "Fathom Fathom"
+      },
+      {
+        "role": "button",
+        "name": "Fox News Fox News"
+      },
+      {
+        "role": "button",
+        "name": "Google Alerts Google Alerts"
+      },
+      {
+        "role": "button",
+        "name": "Google Analytics Google Analytics"
+      },
+      {
+        "role": "button",
+        "name": "Google Calendar Google Calendar"
+      },
+      {
+        "role": "button",
+        "name": "Google Looker Studio Google Looker Studio"
+      },
+      {
+        "role": "button",
+        "name": "Google News Google News"
+      },
+      {
+        "role": "button",
+        "name": "Google Sheets Google Sheets"
+      },
+      {
+        "role": "button",
+        "name": "Google Slides Google Slides"
+      },
+      {
+        "role": "button",
+        "name": "Grafana Grafana"
+      },
+      {
+        "role": "button",
+        "name": "Hourly Weather"
+      },
+      {
+        "role": "button",
+        "name": "Instagram Instagram"
+      },
+      {
+        "role": "button",
+        "name": "Interactive Kiosk"
+      },
+      {
+        "role": "button",
+        "name": "NEW Interactive Library"
+      },
+      {
+        "role": "button",
+        "name": "Interactive Playlist"
+      },
+      {
+        "role": "button",
+        "name": "Jira Jira"
+      },
+      {
+        "role": "button",
+        "name": "LinkedIn LinkedIn"
+      },
+      {
+        "role": "button",
+        "name": "Luzmo Luzmo"
+      },
+      {
+        "role": "button",
+        "name": "Monday.com Monday.com"
+      },
+      {
+        "role": "button",
+        "name": "Monthly Calendar"
+      },
+      {
+        "role": "button",
+        "name": "My Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Notion Notion"
+      },
+      {
+        "role": "button",
+        "name": "NWS Weather Alert"
+      },
+      {
+        "role": "button",
+        "name": "OneDrive Playlist OneDrive Playlist"
+      },
+      {
+        "role": "button",
+        "name": "Online Slideshow"
+      },
+      {
+        "role": "button",
+        "name": "Outlook Calendar Outlook Calendar"
+      },
+      {
+        "role": "button",
+        "name": "Planner Planner"
+      },
+      {
+        "role": "button",
+        "name": "Player Basic Info"
+      },
+      {
+        "role": "button",
+        "name": "PosterMyWall PosterMyWall"
+      },
+      {
+        "role": "button",
+        "name": "Power BI Power BI"
+      },
+      {
+        "role": "button",
+        "name": "Putler Putler"
+      },
+      {
+        "role": "button",
+        "name": "QR Code"
+      },
+      {
+        "role": "button",
+        "name": "Rich Text"
+      },
+      {
+        "role": "button",
+        "name": "SharePoint SharePoint"
+      },
+      {
+        "role": "button",
+        "name": "SharePoint News SharePoint News"
+      },
+      {
+        "role": "button",
+        "name": "Shedul Shedul"
+      },
+      {
+        "role": "button",
+        "name": "Sky News Sky News"
+      },
+      {
+        "role": "button",
+        "name": "SmartSheet SmartSheet"
+      },
+      {
+        "role": "button",
+        "name": "Stream"
+      },
+      {
+        "role": "button",
+        "name": "Suggest a new app"
+      },
+      {
+        "role": "button",
+        "name": "Tableau Tableau"
+      },
+      {
+        "role": "button",
+        "name": "Taggbox display Taggbox display"
+      },
+      {
+        "role": "button",
+        "name": "Team Celebrations"
+      },
+      {
+        "role": "button",
+        "name": "Teams Channels Teams Channels"
+      },
+      {
+        "role": "button",
+        "name": "BETA Teams Live (Townhall) Teams Live (Townhall)"
+      },
+      {
+        "role": "button",
+        "name": "Teams Rooms Teams Rooms"
+      },
+      {
+        "role": "button",
+        "name": "The Guardian The Guardian"
+      },
+      {
+        "role": "button",
+        "name": "The New York Times The New York Times"
+      },
+      {
+        "role": "button",
+        "name": "The Wall Street Journal The Wall Street Journal"
+      },
+      {
+        "role": "button",
+        "name": "Ticker"
+      },
+      {
+        "role": "button",
+        "name": "Trello Trello"
+      },
+      {
+        "role": "button",
+        "name": "TV Source"
+      },
+      {
+        "role": "button",
+        "name": "Twitter / X Twitter / X"
+      },
+      {
+        "role": "button",
+        "name": "Video Wall"
+      },
+      {
+        "role": "button",
+        "name": "Viva Engage Viva Engage"
+      },
+      {
+        "role": "button",
+        "name": "Walls.io Walls.io"
+      },
+      {
+        "role": "button",
+        "name": "Weather Radar"
+      },
+      {
+        "role": "button",
+        "name": "NEW Weather Wall"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "WiFi Share"
+      },
+      {
+        "role": "button",
+        "name": "WikiQuotes"
+      },
+      {
+        "role": "button",
+        "name": "Word Clock"
+      },
+      {
+        "role": "button",
+        "name": "World Clock"
+      },
+      {
+        "role": "button",
+        "name": "Xero Xero"
+      },
+      {
+        "role": "button",
+        "name": "Yahoo Yahoo"
+      },
+      {
+        "role": "button",
+        "name": "YouTube YouTube"
+      },
+      {
+        "role": "button",
+        "name": "Zenkit Zenkit"
+      },
+      {
+        "role": "button",
+        "name": "Zoho Zoho"
+      },
+      {
+        "role": "button",
+        "name": "Zoom Room Zoom Room"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-19",
+    "pageId": "playlists",
+    "name": "Playlists",
+    "group": 1,
+    "screenshotFile": "98-19-playlists.png",
+    "interactiveElements": 27,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Add Playlist"
+      },
+      {
+        "role": "textbox",
+        "name": "Search playlists..."
+      },
+      {
+        "role": "button",
+        "name": "Add Playlist"
+      },
+      {
+        "role": "button",
+        "name": "Do you want to view the Playlists tour?"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-20",
+    "pageId": "templates",
+    "name": "Templates",
+    "group": 1,
+    "screenshotFile": "98-20-templates.png",
+    "interactiveElements": 43,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "textbox",
+        "name": "Try \\"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "New Design"
+      },
+      {
+        "role": "button",
+        "name": "Your Designs"
+      },
+      {
+        "role": "button",
+        "name": "Landscape"
+      },
+      {
+        "role": "button",
+        "name": "Portrait"
+      },
+      {
+        "role": "button",
+        "name": "All"
+      },
+      {
+        "role": "button",
+        "name": "Featured"
+      },
+      {
+        "role": "button",
+        "name": "Popular"
+      },
+      {
+        "role": "button",
+        "name": "Your Templates"
+      },
+      {
+        "role": "button",
+        "name": "Recent Designs"
+      },
+      {
+        "role": "button",
+        "name": "Top 20 Promo Designs"
+      },
+      {
+        "role": "button",
+        "name": "+ View 10 more"
+      },
+      {
+        "role": "button",
+        "name": "Industries"
+      },
+      {
+        "role": "button",
+        "name": "Tags"
+      },
+      {
+        "role": "textbox",
+        "name": "Try \\"
+      },
+      {
+        "role": "button",
+        "name": "Search Templates"
+      },
+      {
+        "role": "button",
+        "name": "View all"
+      },
+      {
+        "role": "button",
+        "name": "View all"
+      },
+      {
+        "role": "button",
+        "name": "View all"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-21",
+    "pageId": "schedules",
+    "name": "Schedules",
+    "group": 1,
+    "screenshotFile": "98-21-schedules.png",
+    "interactiveElements": 29,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Add Schedule"
+      },
+      {
+        "role": "textbox",
+        "name": "Search schedules..."
+      },
+      {
+        "role": "button",
+        "name": "Create Schedule"
+      },
+      {
+        "role": "button",
+        "name": "Learn about scheduling →"
+      },
+      {
+        "role": "button",
+        "name": "Add Schedule"
+      },
+      {
+        "role": "button",
+        "name": "Actions"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-22",
+    "pageId": "screens",
+    "name": "Screens",
+    "group": 1,
+    "screenshotFile": "98-22-screens.png",
+    "interactiveElements": 32,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Master PIN"
+      },
+      {
+        "role": "button",
+        "name": "Add Screen"
+      },
+      {
+        "role": "button",
+        "name": "Add Your First Screen"
+      },
+      {
+        "role": "button",
+        "name": "Learn how to pair a TV"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Buy a Player"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Buy a Player"
+      },
+      {
+        "role": "button",
+        "name": "Add Screen →"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-23",
+    "pageId": "menu-boards",
+    "name": "Menu Boards",
+    "group": 1,
+    "screenshotFile": "98-23-menu-boards.png",
+    "interactiveElements": 25,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "New Menu Board"
+      },
+      {
+        "role": "button",
+        "name": "Create Menu Board"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-24",
+    "pageId": "settings",
+    "name": "Settings",
+    "group": 2,
+    "screenshotFile": "98-24-settings.png",
+    "interactiveElements": 24,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Try Again"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-25",
+    "pageId": "account-plan",
+    "name": "Account Plan",
+    "group": 2,
+    "screenshotFile": "98-25-account-plan.png",
+    "interactiveElements": 25,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Settings"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Refresh"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-26",
+    "pageId": "branding",
+    "name": "Branding Settings",
+    "group": 2,
+    "screenshotFile": "98-26-branding-settings.png",
+    "interactiveElements": 33,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "All Media"
+      },
+      {
+        "role": "button",
+        "name": "Images"
+      },
+      {
+        "role": "button",
+        "name": "Videos"
+      },
+      {
+        "role": "button",
+        "name": "Audio"
+      },
+      {
+        "role": "button",
+        "name": "Documents"
+      },
+      {
+        "role": "button",
+        "name": "Web Pages"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Settings"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Save Changes"
+      },
+      {
+        "role": "textbox",
+        "name": "Your Business Name"
+      },
+      {
+        "role": "button",
+        "name": "Upload Logo"
+      },
+      {
+        "role": "textbox",
+        "name": "https://example.com/logo.png"
+      },
+      {
+        "role": "textbox",
+        "name": "#3B82F6"
+      },
+      {
+        "role": "textbox",
+        "name": "#1D4ED8"
+      },
+      {
+        "role": "button",
+        "name": "Reset to Default Branding"
+      },
+      {
+        "role": "button",
+        "name": "Primary"
+      },
+      {
+        "role": "button",
+        "name": "Secondary"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-27",
+    "pageId": "team",
+    "name": "Team Management",
+    "group": 2,
+    "screenshotFile": "98-27-team-management.png",
+    "interactiveElements": 3,
+    "elements": [
+      {
+        "role": "button",
+        "name": "Show Technical Details"
+      },
+      {
+        "role": "button",
+        "name": "Reload Page"
+      },
+      {
+        "role": "button",
+        "name": "Go Home"
+      }
+    ],
+    "error": "Error boundary (crash)",
+    "crashed": true,
+    "unreachable": false
+  },
+  {
+    "id": "98-28",
+    "pageId": "activity",
+    "name": "Activity Log",
+    "group": 2,
+    "screenshotFile": "98-28-activity-log.png",
+    "interactiveElements": 3,
+    "elements": [
+      {
+        "role": "button",
+        "name": "Show Technical Details"
+      },
+      {
+        "role": "button",
+        "name": "Reload Page"
+      },
+      {
+        "role": "button",
+        "name": "Go Home"
+      }
+    ],
+    "error": "Error boundary (crash)",
+    "crashed": true,
+    "unreachable": false
+  },
+  {
+    "id": "98-29",
+    "pageId": "locations",
+    "name": "Locations",
+    "group": 2,
+    "screenshotFile": "98-29-locations.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      },
+      {
+        "role": "button",
+        "name": "Close notification"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-30",
+    "pageId": "help",
+    "name": "Help Center",
+    "group": 2,
+    "screenshotFile": "98-30-help-center.png",
+    "interactiveElements": 21,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "textbox",
+        "name": "Search help articles"
+      },
+      {
+        "role": "link",
+        "name": "Contact Support"
+      },
+      {
+        "role": "button",
+        "name": "System Status"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      },
+      {
+        "role": "button",
+        "name": "Close notification"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-31",
+    "pageId": "analytics",
+    "name": "Analytics",
+    "group": 3,
+    "screenshotFile": "98-31-analytics.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-32",
+    "pageId": "analytics-dashboard",
+    "name": "Analytics Dashboard",
+    "group": 3,
+    "screenshotFile": "98-32-analytics-dashboard.png",
+    "interactiveElements": 19,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Analytics"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-33",
+    "pageId": "content-performance",
+    "name": "Content Performance",
+    "group": 3,
+    "screenshotFile": "98-33-content-performance.png",
+    "interactiveElements": 19,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Analytics"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-34",
+    "pageId": "campaigns",
+    "name": "Campaigns",
+    "group": 3,
+    "screenshotFile": "98-34-campaigns.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-35",
+    "pageId": "screen-groups",
+    "name": "Screen Groups",
+    "group": 3,
+    "screenshotFile": "98-35-screen-groups.png",
+    "interactiveElements": 19,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-36",
+    "pageId": "assistant",
+    "name": "AI Content Assistant",
+    "group": 3,
+    "screenshotFile": "98-36-ai-content-assistant.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-37",
+    "pageId": "developer",
+    "name": "Developer Settings",
+    "group": 3,
+    "screenshotFile": "98-37-developer-settings.png",
+    "interactiveElements": 19,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Settings"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-38",
+    "pageId": "white-label",
+    "name": "White Label Settings",
+    "group": 3,
+    "screenshotFile": "98-38-white-label-settings.png",
+    "interactiveElements": 19,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Settings"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-39",
+    "pageId": "usage",
+    "name": "Usage Dashboard",
+    "group": 3,
+    "screenshotFile": "98-39-usage-dashboard.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-40",
+    "pageId": "enterprise-security",
+    "name": "Enterprise Security",
+    "group": 3,
+    "screenshotFile": "98-40-enterprise-security.png",
+    "interactiveElements": 19,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Settings"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-41",
+    "pageId": "reseller-dashboard",
+    "name": "Reseller Dashboard",
+    "group": 3,
+    "screenshotFile": "98-41-reseller-dashboard.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-42",
+    "pageId": "reseller-billing",
+    "name": "Reseller Billing",
+    "group": 3,
+    "screenshotFile": "98-42-reseller-billing.png",
+    "interactiveElements": 19,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Reseller"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Upgrade Now"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-43",
+    "pageId": "scenes",
+    "name": "Scenes",
+    "group": 4,
+    "screenshotFile": "98-43-scenes.png",
+    "interactiveElements": 19,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Create Scene"
+      },
+      {
+        "role": "button",
+        "name": "Generate My First Scene"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-44",
+    "pageId": "svg-templates",
+    "name": "SVG Template Gallery",
+    "group": 4,
+    "screenshotFile": "98-44-svg-template-gallery.png",
+    "interactiveElements": 37,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "textbox",
+        "name": "Try \\"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "New Design"
+      },
+      {
+        "role": "button",
+        "name": "Your Designs"
+      },
+      {
+        "role": "button",
+        "name": "Landscape"
+      },
+      {
+        "role": "button",
+        "name": "Portrait"
+      },
+      {
+        "role": "button",
+        "name": "All"
+      },
+      {
+        "role": "button",
+        "name": "Featured"
+      },
+      {
+        "role": "button",
+        "name": "Popular"
+      },
+      {
+        "role": "button",
+        "name": "Your Templates"
+      },
+      {
+        "role": "button",
+        "name": "Recent Designs"
+      },
+      {
+        "role": "button",
+        "name": "Top 20 Promo Designs"
+      },
+      {
+        "role": "button",
+        "name": "+ View 10 more"
+      },
+      {
+        "role": "button",
+        "name": "Industries"
+      },
+      {
+        "role": "button",
+        "name": "Tags"
+      },
+      {
+        "role": "textbox",
+        "name": "Try \\"
+      },
+      {
+        "role": "button",
+        "name": "Search Templates"
+      },
+      {
+        "role": "button",
+        "name": "View all"
+      },
+      {
+        "role": "button",
+        "name": "View all"
+      },
+      {
+        "role": "button",
+        "name": "View all"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-45",
+    "pageId": "template-marketplace",
+    "name": "Template Marketplace",
+    "group": 4,
+    "screenshotFile": "98-45-template-marketplace.png",
+    "interactiveElements": 3,
+    "elements": [
+      {
+        "role": "button",
+        "name": "Show Technical Details"
+      },
+      {
+        "role": "button",
+        "name": "Reload Page"
+      },
+      {
+        "role": "button",
+        "name": "Go Home"
+      }
+    ],
+    "error": "Error boundary (crash)",
+    "crashed": true,
+    "unreachable": false
+  },
+  {
+    "id": "98-46",
+    "pageId": "data-sources",
+    "name": "Data Sources",
+    "group": 4,
+    "screenshotFile": "98-46-data-sources.png",
+    "interactiveElements": 20,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "New Data Source"
+      },
+      {
+        "role": "textbox",
+        "name": "Search data sources..."
+      },
+      {
+        "role": "button",
+        "name": "Create"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-47",
+    "pageId": "social-accounts",
+    "name": "Social Accounts",
+    "group": 4,
+    "screenshotFile": "98-47-social-accounts.png",
+    "interactiveElements": 21,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Instagram Click to connect"
+      },
+      {
+        "role": "button",
+        "name": "Facebook Click to connect"
+      },
+      {
+        "role": "button",
+        "name": "TikTok Click to connect"
+      },
+      {
+        "role": "button",
+        "name": "Google Reviews Click to connect"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-48",
+    "pageId": "content-moderation",
+    "name": "Content Moderation",
+    "group": 4,
+    "screenshotFile": "98-48-content-moderation.png",
+    "interactiveElements": 23,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "combobox",
+        "name": "Filter by social account"
+      },
+      {
+        "role": "button",
+        "name": "All(0)"
+      },
+      {
+        "role": "button",
+        "name": "Pending(0)"
+      },
+      {
+        "role": "button",
+        "name": "Approved(0)"
+      },
+      {
+        "role": "button",
+        "name": "Rejected(0)"
+      },
+      {
+        "role": "button",
+        "name": "Connect Social Account"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-49",
+    "pageId": "review-inbox",
+    "name": "Review Inbox",
+    "group": 4,
+    "screenshotFile": "98-49-review-inbox.png",
+    "interactiveElements": 22,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Moderation"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Refresh"
+      },
+      {
+        "role": "textbox",
+        "name": "Search reviews"
+      },
+      {
+        "role": "combobox",
+        "name": "Filter by status"
+      },
+      {
+        "role": "combobox",
+        "name": "Filter by type"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-50",
+    "pageId": "translations",
+    "name": "Translation Dashboard",
+    "group": 4,
+    "screenshotFile": "98-50-translation-dashboard.png",
+    "interactiveElements": 3,
+    "elements": [
+      {
+        "role": "button",
+        "name": "Show Technical Details"
+      },
+      {
+        "role": "button",
+        "name": "Reload Page"
+      },
+      {
+        "role": "button",
+        "name": "Go Home"
+      }
+    ],
+    "error": "Error boundary (crash)",
+    "crashed": true,
+    "unreachable": false
+  },
+  {
+    "id": "98-51",
+    "pageId": "admin-tenants",
+    "name": "Admin Tenants List",
+    "group": 5,
+    "screenshotFile": "98-51-admin-tenants-list.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Admin"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-52",
+    "pageId": "admin-audit-logs",
+    "name": "Admin Audit Logs",
+    "group": 5,
+    "screenshotFile": "98-52-admin-audit-logs.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Admin"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-53",
+    "pageId": "admin-system-events",
+    "name": "Admin System Events",
+    "group": 5,
+    "screenshotFile": "98-53-admin-system-events.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Admin"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-54",
+    "pageId": "admin-templates",
+    "name": "Admin Templates",
+    "group": 5,
+    "screenshotFile": "98-54-admin-templates.png",
+    "interactiveElements": 19,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Admin"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Create your first template"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-55",
+    "pageId": "tenant-admin",
+    "name": "Tenant Admin",
+    "group": 5,
+    "screenshotFile": "98-55-tenant-admin.png",
+    "interactiveElements": 17,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-56",
+    "pageId": "status",
+    "name": "Status Page",
+    "group": 5,
+    "screenshotFile": "98-56-status-page.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Refresh"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-57",
+    "pageId": "ops-console",
+    "name": "Ops Console",
+    "group": 5,
+    "screenshotFile": "98-57-ops-console.png",
+    "interactiveElements": 22,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Refresh data"
+      },
+      {
+        "role": "tab",
+        "name": "Tenants"
+      },
+      {
+        "role": "tab",
+        "name": "Queues"
+      },
+      {
+        "role": "tab",
+        "name": "Warnings"
+      },
+      {
+        "role": "textbox",
+        "name": "Search by name or email..."
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-58",
+    "pageId": "feature-flags",
+    "name": "Feature Flags",
+    "group": 5,
+    "screenshotFile": "98-58-feature-flags.png",
+    "interactiveElements": 17,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-59",
+    "pageId": "demo-tools",
+    "name": "Demo Tools",
+    "group": 5,
+    "screenshotFile": "98-59-demo-tools.png",
+    "interactiveElements": 3,
+    "elements": [
+      {
+        "role": "button",
+        "name": "Show Technical Details"
+      },
+      {
+        "role": "button",
+        "name": "Reload Page"
+      },
+      {
+        "role": "button",
+        "name": "Go Home"
+      }
+    ],
+    "error": "Error boundary (crash)",
+    "crashed": true,
+    "unreachable": false
+  },
+  {
+    "id": "98-60",
+    "pageId": "security",
+    "name": "Security Dashboard",
+    "group": 5,
+    "screenshotFile": "98-60-security-dashboard.png",
+    "interactiveElements": 3,
+    "elements": [
+      {
+        "role": "button",
+        "name": "Show Technical Details"
+      },
+      {
+        "role": "button",
+        "name": "Reload Page"
+      },
+      {
+        "role": "button",
+        "name": "Go Home"
+      }
+    ],
+    "error": "Error boundary (crash)",
+    "crashed": true,
+    "unreachable": false
+  },
+  {
+    "id": "98-61",
+    "pageId": "device-diagnostics",
+    "name": "Device Diagnostics",
+    "group": 5,
+    "screenshotFile": "98-61-device-diagnostics.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Try Again"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-62",
+    "pageId": "service-quality",
+    "name": "Service Quality",
+    "group": 5,
+    "screenshotFile": "98-62-service-quality.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Refresh"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-63",
+    "pageId": "alerts",
+    "name": "Alerts Center",
+    "group": 5,
+    "screenshotFile": "98-63-alerts-center.png",
+    "interactiveElements": 21,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Notification Settings"
+      },
+      {
+        "role": "button",
+        "name": "Refresh"
+      },
+      {
+        "role": "button",
+        "name": "Clear filters"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      },
+      {
+        "role": "button",
+        "name": "Close notification"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-64",
+    "pageId": "notification-settings",
+    "name": "Notification Settings",
+    "group": 5,
+    "screenshotFile": "98-64-notification-settings.png",
+    "interactiveElements": 42,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Back"
+      },
+      {
+        "role": "button",
+        "name": "Save"
+      },
+      {
+        "role": "checkbox",
+        "name": "In-app Notifications Show alerts in the notification bell"
+      },
+      {
+        "role": "checkbox",
+        "name": "Email Notifications Receive alerts via email"
+      },
+      {
+        "role": "radio",
+        "name": "All alerts (Info and above)"
+      },
+      {
+        "role": "radio",
+        "name": "Warnings and Critical only"
+      },
+      {
+        "role": "radio",
+        "name": "Critical only"
+      },
+      {
+        "role": "checkbox",
+        "name": "Device Alerts (6/6)"
+      },
+      {
+        "role": "checkbox",
+        "name": "Device goes offline"
+      },
+      {
+        "role": "checkbox",
+        "name": "Screenshot capture fails"
+      },
+      {
+        "role": "checkbox",
+        "name": "Device cache becomes stale"
+      },
+      {
+        "role": "checkbox",
+        "name": "Device errors"
+      },
+      {
+        "role": "checkbox",
+        "name": "Device recovers from failure"
+      },
+      {
+        "role": "checkbox",
+        "name": "Device recovery attempts exhausted"
+      },
+      {
+        "role": "checkbox",
+        "name": "Schedule Alerts (2/2)"
+      },
+      {
+        "role": "checkbox",
+        "name": "Schedule references missing scene"
+      },
+      {
+        "role": "checkbox",
+        "name": "Schedule conflicts"
+      },
+      {
+        "role": "checkbox",
+        "name": "Data & Sync Alerts (2/2)"
+      },
+      {
+        "role": "checkbox",
+        "name": "Data source sync fails"
+      },
+      {
+        "role": "checkbox",
+        "name": "Social feed sync fails"
+      },
+      {
+        "role": "checkbox",
+        "name": "System Alerts (3/3)"
+      },
+      {
+        "role": "checkbox",
+        "name": "Content expires"
+      },
+      {
+        "role": "checkbox",
+        "name": "Storage quota warnings"
+      },
+      {
+        "role": "checkbox",
+        "name": "API rate limits hit"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      },
+      {
+        "role": "button",
+        "name": "Close notification"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-65",
+    "pageId": "clients",
+    "name": "Clients Page",
+    "group": 5,
+    "screenshotFile": "98-65-clients-page.png",
+    "interactiveElements": 20,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Add Client"
+      },
+      {
+        "role": "textbox",
+        "name": "Search clients by name, email, or business..."
+      },
+      {
+        "role": "button",
+        "name": "Add Client"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-66",
+    "pageId": "admin-test",
+    "name": "Admin Test",
+    "group": 5,
+    "screenshotFile": "98-66-admin-test.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Admin"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  },
+  {
+    "id": "98-67",
+    "pageId": "listings",
+    "name": "Listings Legacy",
+    "group": 5,
+    "screenshotFile": "98-67-listings-legacy.png",
+    "interactiveElements": 18,
+    "elements": [
+      {
+        "role": "link",
+        "name": "Skip to main content"
+      },
+      {
+        "role": "button",
+        "name": "Welcome"
+      },
+      {
+        "role": "button",
+        "name": "Dashboard"
+      },
+      {
+        "role": "button",
+        "name": "Media"
+      },
+      {
+        "role": "button",
+        "name": "Apps"
+      },
+      {
+        "role": "button",
+        "name": "Playlists"
+      },
+      {
+        "role": "button",
+        "name": "Templates"
+      },
+      {
+        "role": "button",
+        "name": "Schedules"
+      },
+      {
+        "role": "button",
+        "name": "Screens"
+      },
+      {
+        "role": "button",
+        "name": "Menu Boards"
+      },
+      {
+        "role": "button",
+        "name": "Knowledge Hub"
+      },
+      {
+        "role": "button",
+        "name": "Home"
+      },
+      {
+        "role": "button",
+        "name": "Emergency"
+      },
+      {
+        "role": "button",
+        "name": "View notifications"
+      },
+      {
+        "role": "button",
+        "name": "Announcements"
+      },
+      {
+        "role": "button",
+        "name": "Sign out"
+      },
+      {
+        "role": "button",
+        "name": "Try Again"
+      },
+      {
+        "role": "button",
+        "name": "Send feedback"
+      }
+    ],
+    "error": null,
+    "crashed": false,
+    "unreachable": false
+  }
+]
