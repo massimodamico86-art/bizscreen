@@ -34,4 +34,5 @@ playwright/.auth/
 screenshots/*
 # Keep QA discovery screenshots (v10.0 audit)
 !screenshots/98-*
+!screenshots/99-*
 !screenshots/ROUTE_MAP.md
