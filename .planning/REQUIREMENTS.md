@@ -18,14 +18,14 @@ Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sou
 
 ### Functionality Fixes
 
-- [ ] **FUNC-01**: Settings page loads successfully for dev-bypass users instead of failing with null user_id constraint violation (B-07)
-- [ ] **FUNC-02**: Status page resolves `{{env}}` and `{{version}}` template variables to actual runtime values (B-08)
-- [ ] **FUNC-03**: Data Sources page loads without "Failed to load data sources" RPC failure error banner (B-09)
+- [x] **FUNC-01**: Settings page loads successfully for dev-bypass users instead of failing with null user_id constraint violation (B-07)
+- [x] **FUNC-02**: Status page resolves `{{env}}` and `{{version}}` template variables to actual runtime values (B-08)
+- [x] **FUNC-03**: Data Sources page loads without "Failed to load data sources" RPC failure error banner (B-09)
 
 ### Error Handling
 
-- [ ] **ERR-01**: "Use Template" with missing template ID shows graceful error or redirects to templates list instead of "Template not found" crash (B-10)
-- [ ] **ERR-02**: Public preview with invalid token shows clean user-friendly error page instead of raw JSON parse error "Unexpected token '<'" (B-12)
+- [x] **ERR-01**: "Use Template" with missing template ID shows graceful error or redirects to templates list instead of "Template not found" crash (B-10)
+- [x] **ERR-02**: Public preview with invalid token shows clean user-friendly error page instead of raw JSON parse error "Unexpected token '<'" (B-12)
 
 ### Dev Experience
 
@@ -75,11 +75,11 @@ Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sou
 | CRASH-04 | Phase 104 | Complete |
 | CRASH-05 | Phase 104 | Complete |
 | CRASH-06 | Phase 104 | Complete |
-| FUNC-01 | Phase 105 | Pending |
-| FUNC-02 | Phase 105 | Pending |
-| FUNC-03 | Phase 105 | Pending |
-| ERR-01 | Phase 105 | Pending |
-| ERR-02 | Phase 105 | Pending |
+| FUNC-01 | Phase 105 | Complete |
+| FUNC-02 | Phase 105 | Complete |
+| FUNC-03 | Phase 105 | Complete |
+| ERR-01 | Phase 105 | Complete |
+| ERR-02 | Phase 105 | Complete |
 | DEV-01 | Phase 106 | Pending |
 | DEV-02 | Phase 106 | Pending |
 | DEV-03 | Phase 106 | Pending |

@@ -84,7 +84,7 @@ All milestones shipped successfully (16 total).
 **Milestone Goal:** Fix all 18 bugs discovered during the v10.0 Visual QA Audit -- 6 critical page crashes, 3 major functionality failures, 5 minor bugs (error handling + dev experience), and 4 cosmetic issues. No new features. Strictly targeted fixes sourced from screenshots/AUDIT_REPORT.md.
 
 - [x] **Phase 104: React Render Crash Fixes** - Diagnose and fix the shared "Objects are not valid as a React child" crash across 6 pages (team, activity, template-marketplace, translations, demo-tools, security) (completed 2026-03-02)
-- [ ] **Phase 105: Functionality & Error Handling Fixes** - Fix Settings null user_id, Status template variables, Data Sources RPC failure, and improve error handling for missing templates and invalid preview tokens
+- [x] **Phase 105: Functionality & Error Handling Fixes** - Fix Settings null user_id, Status template variables, Data Sources RPC failure, and improve error handling for missing templates and invalid preview tokens (completed 2026-03-02)
 - [ ] **Phase 106: Dev Experience Improvements** - Fix dev-bypass-only issues: playlist creation null user, dashboard retry loop, and Unsplash proxy empty state
 - [ ] **Phase 107: Cosmetic Polish** - Fix templates mobile filter layout, pricing tablet spacing, SVG export dialog, and branding save button state
 
@@ -143,7 +143,7 @@ All milestones shipped successfully (16 total).
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 104. React Render Crash Fixes | 2/2 | Complete    | 2026-03-02 |
-| 105. Functionality & Error Handling Fixes | 0/? | Not started | - |
+| 105. Functionality & Error Handling Fixes | 2/2 | Complete   | 2026-03-02 |
 | 106. Dev Experience Improvements | 0/? | Not started | - |
 | 107. Cosmetic Polish | 0/? | Not started | - |
 
