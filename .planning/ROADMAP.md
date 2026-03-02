@@ -134,7 +134,9 @@ All milestones shipped successfully (16 total).
   2. User viewing the Pricing page on a 768px tablet viewport sees plan cards with comfortable spacing and readable text instead of aggressively wrapped content
   3. User clicking the SVG Editor export button sees a preview/options dialog (format selection, size, quality) before any download begins instead of an immediate PNG download
   4. User on the Branding page sees the Save button state accurately reflect whether unsaved changes exist -- disabled when no changes, enabled when changes are pending
-**Plans**: TBD
+**Plans**:
+  - Plan 01 (Wave 1): Fix responsive layout on Templates page (mobile filter collapse) and Pricing page (tablet card spacing)
+  - Plan 02 (Wave 1): Add SVG Editor export options dialog and improve Branding page save button unsaved changes UX
 
 ## Progress
 
