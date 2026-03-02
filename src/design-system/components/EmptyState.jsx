@@ -12,7 +12,7 @@
  * />
  */
 
-import { forwardRef } from 'react';
+import { forwardRef, createElement } from 'react';
 
 export const EmptyState = forwardRef(function EmptyState(
   {
@@ -61,7 +61,11 @@ export const EmptyState = forwardRef(function EmptyState(
     >
       {icon && (
         <div className={`${styles.icon} text-gray-300 mb-4`}>
-          {icon}
+          {typeof icon === 'function'
+            ? createElement(icon, { className: styles.icon, 'aria-hidden': 'true' })
+            : (icon?.$$typeof
+              ? createElement(icon, { className: styles.icon, 'aria-hidden': 'true' })
+              : icon)}
         </div>
       )}
       {title && (

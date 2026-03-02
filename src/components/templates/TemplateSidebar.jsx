@@ -11,6 +11,63 @@
 import PropTypes from 'prop-types';
 
 /**
+ * SidebarRecentsSection - Shows recently used templates
+ */
+function SidebarRecentsSection({ templates, onTemplateClick }) {
+  if (!templates || templates.length === 0) return null;
+  return (
+    <div>
+      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        Recent
+      </h4>
+      <div className="space-y-0.5">
+        {templates.map((template) => (
+          <button
+            key={template.id}
+            onClick={() => onTemplateClick(template)}
+            className="text-sm text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md w-full text-left truncate"
+          >
+            {template.name}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * SidebarFavoritesSection - Shows favorited templates
+ */
+function SidebarFavoritesSection({ templates, onTemplateClick }) {
+  if (!templates || templates.length === 0) return null;
+  return (
+    <div>
+      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        Favorites
+      </h4>
+      <div className="space-y-0.5">
+        {templates.map((template) => (
+          <button
+            key={template.id}
+            onClick={() => onTemplateClick(template)}
+            className="text-sm text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-md w-full text-left truncate"
+          >
+            {template.name}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * SidebarSuggestedSection - Placeholder for suggested templates (no data source yet)
+ */
+function SidebarSuggestedSection({ onTemplateClick: _onTemplateClick }) {
+  return null;
+}
+
+/**
  * TemplateSidebar component
  *
  * @param {Object} props
