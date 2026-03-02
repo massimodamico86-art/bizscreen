@@ -7,6 +7,29 @@ import { createScopedLogger } from './loggingService.js';
 const logger = createScopedLogger('UserSettingsService');
 
 /**
+ * Default user settings used as fallback when Supabase RPC is unavailable
+ * (e.g., dev bypass user with no real session).
+ */
+export const DEFAULT_SETTINGS = {
+  email_notifications: true,
+  guest_checkin_notifications: true,
+  pms_sync_notifications: true,
+  tv_offline_notifications: true,
+  theme: 'light',
+  language: 'en',
+  timezone: 'UTC',
+  date_format: 'MM/DD/YYYY',
+  time_format: '12h',
+  default_page: 'dashboard',
+  items_per_page: 10,
+  show_welcome_banner: true,
+  activity_tracking: true,
+  analytics_enabled: true,
+  auto_sync_pms: false,
+  sync_frequency_hours: 24,
+};
+
+/**
  * Get user settings (creates default if doesn't exist)
  * @returns {Promise<object>} - User settings
  */
@@ -17,8 +40,9 @@ export async function getUserSettings() {
     if (error) throw error;
     return data;
   } catch (error) {
-    logger.error('Error getting user settings:', { error: error });
-    throw error;
+    logger.error('Error getting user settings, using defaults:', { error: error });
+    // Return defaults so the page can still render
+    return { ...DEFAULT_SETTINGS };
   }
 }
 
@@ -64,26 +88,7 @@ export async function updateUserSettings(settings) {
  */
 export async function resetUserSettings() {
   try {
-    const defaultSettings = {
-      email_notifications: true,
-      guest_checkin_notifications: true,
-      pms_sync_notifications: true,
-      tv_offline_notifications: true,
-      theme: 'light',
-      language: 'en',
-      timezone: 'UTC',
-      date_format: 'MM/DD/YYYY',
-      time_format: '12h',
-      default_page: 'dashboard',
-      items_per_page: 10,
-      show_welcome_banner: true,
-      activity_tracking: true,
-      analytics_enabled: true,
-      auto_sync_pms: false,
-      sync_frequency_hours: 24
-    };
-
-    return await updateUserSettings(defaultSettings);
+    return await updateUserSettings({ ...DEFAULT_SETTINGS });
   } catch (error) {
     logger.error('Error resetting user settings:', { error: error });
     throw error;
