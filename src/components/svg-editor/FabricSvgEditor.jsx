@@ -128,6 +128,13 @@ export default function FabricSvgEditor({
   const fileInputRef = useRef(null);
   const replaceImageRef = useRef(false);
 
+  // Export dialog state
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [exportFormat, setExportFormat] = useState('png');
+  const [exportQuality, setExportQuality] = useState(1);
+  const [exportScale, setExportScale] = useState(1);
+  const [exportPreviewUrl, setExportPreviewUrl] = useState(null);
+
   // History for undo/redo
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -2572,22 +2579,55 @@ export default function FabricSvgEditor({
     }
   }, [designId, designName, templateId, canvasWidth, canvasHeight, onSave, showToast, logger]);
 
-  // Export as PNG
+  // Export - open dialog with preview
   const handleExport = useCallback(() => {
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
 
-    const dataUrl = canvas.toDataURL({
+    // Generate preview at low resolution
+    const previewUrl = canvas.toDataURL({
       format: 'png',
-      quality: 1,
-      multiplier: 1,
+      quality: 0.5,
+      multiplier: 0.5,
+    });
+    setExportPreviewUrl(previewUrl);
+    setShowExportDialog(true);
+  }, []);
+
+  // Export confirm - perform the actual download
+  const handleExportConfirm = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas) return;
+
+    // SVG export uses toSVG() for vector output
+    if (exportFormat === 'svg') {
+      const svgData = canvas.toSVG();
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = `${designName.replace(/[^a-z0-9]/gi, '_')}.svg`;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+      setShowExportDialog(false);
+      return;
+    }
+
+    // Raster export (PNG or JPEG)
+    const dataUrl = canvas.toDataURL({
+      format: exportFormat === 'jpeg' ? 'jpeg' : 'png',
+      quality: exportFormat === 'jpeg' ? exportQuality : 1,
+      multiplier: exportScale,
     });
 
     const link = document.createElement('a');
-    link.download = `${designName.replace(/[^a-z0-9]/gi, '_')}.png`;
+    const ext = exportFormat === 'jpeg' ? 'jpg' : exportFormat;
+    link.download = `${designName.replace(/[^a-z0-9]/gi, '_')}.${ext}`;
     link.href = dataUrl;
     link.click();
-  }, [designName]);
+
+    setShowExportDialog(false);
+  }, [exportFormat, exportQuality, exportScale, designName]);
 
   // Handle close with unsaved changes warning
   const handleClose = useCallback(() => {
@@ -3292,6 +3332,105 @@ export default function FabricSvgEditor({
           onSave={handleSaveHyperlink}
           onRemove={handleRemoveHyperlink}
         />
+      )}
+
+      {/* Export Dialog */}
+      {showExportDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]" onClick={() => setShowExportDialog(false)}>
+          <div className="bg-gray-800 rounded-xl shadow-2xl w-[480px] max-w-[90vw] text-white" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <h3 className="text-lg font-semibold">Export Design</h3>
+              <button onClick={() => setShowExportDialog(false)} className="text-gray-400 hover:text-white">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-4">
+              {/* Preview */}
+              {exportPreviewUrl && (
+                <div className="bg-gray-900 rounded-lg p-2 flex items-center justify-center" style={{ minHeight: 160 }}>
+                  <img src={exportPreviewUrl} alt="Export preview" className="max-h-40 max-w-full object-contain rounded" />
+                </div>
+              )}
+
+              {/* Format Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Format</label>
+                <div className="flex gap-2">
+                  {['png', 'jpeg', 'svg'].map(fmt => (
+                    <button
+                      key={fmt}
+                      onClick={() => setExportFormat(fmt)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        exportFormat === fmt
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      {fmt.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quality (JPEG only) */}
+              {exportFormat === 'jpeg' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Quality: {Math.round(exportQuality * 100)}%
+                  </label>
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="1"
+                    step="0.1"
+                    value={exportQuality}
+                    onChange={e => setExportQuality(parseFloat(e.target.value))}
+                    className="w-full accent-blue-500"
+                  />
+                </div>
+              )}
+
+              {/* Scale */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Scale: {exportScale}x ({Math.round(canvasWidth * exportScale)} x {Math.round(canvasHeight * exportScale)}px)
+                </label>
+                <div className="flex gap-2">
+                  {[0.5, 1, 2, 3].map(scale => (
+                    <button
+                      key={scale}
+                      onClick={() => setExportScale(scale)}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                        exportScale === scale
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      {scale}x
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 p-4 border-t border-gray-700">
+              <button
+                onClick={() => setShowExportDialog(false)}
+                className="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleExportConfirm}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Download size={16} />
+                Export
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

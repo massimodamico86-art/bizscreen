@@ -15,6 +15,7 @@ import {
   Clock,
   Dumbbell,
   ExternalLink,
+  Filter,
   Heart,
   Info,
   Layout,
@@ -118,6 +119,9 @@ const TemplatesPage = ({ showToast }) => {
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+
+  // Mobile filter collapse state
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Search state (US-128)
   const [searchInput, setSearchInput] = useState(searchParams.get('search') || '');
@@ -493,114 +497,133 @@ const TemplatesPage = ({ showToast }) => {
           </section>
         )}
 
-        {/* Category Filter Tabs */}
-        <div className="flex flex-wrap gap-2 mb-4" role="tablist" aria-label={t('templates.categoryFilter', 'Category filter')}>
-          <button
-            onClick={() => handleCategoryChange('all')}
-            disabled={loading}
-            role="tab"
-            aria-selected={activeCategory === 'all' && !showFavorites}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
-              activeCategory === 'all' && !showFavorites
-                ? 'bg-blue-100 text-blue-700'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            {t('templates.allCategories', 'All Categories')}
-          </button>
-          {categories.map((cat) => {
-            const Icon = getCategoryIcon(cat.icon);
-            return (
-              <button
-                key={cat.slug}
-                onClick={() => handleCategoryChange(cat.slug)}
-                disabled={loading}
-                role="tab"
-                aria-selected={activeCategory === cat.slug && !showFavorites}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
-                  activeCategory === cat.slug && !showFavorites
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                <Icon size={16} aria-hidden="true" />
-                {cat.name}
-              </button>
-            );
-          })}
-        </div>
+        {/* Mobile Filter Toggle Button - visible only on small screens */}
+        <button
+          onClick={() => setShowMobileFilters(prev => !prev)}
+          className="sm:hidden flex items-center gap-2 px-4 py-2 mb-4 bg-gray-100 text-gray-700 rounded-lg w-full justify-center"
+          aria-expanded={showMobileFilters}
+          aria-controls="template-filters"
+        >
+          <Filter size={16} aria-hidden="true" />
+          {showMobileFilters ? t('templates.hideFilters', 'Hide Filters') : t('templates.showFilters', 'Show Filters')}
+          {(activeCategory !== 'all' || activeType !== 'all' || showFavorites) && (
+            <span className="ml-1 bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs">
+              {t('templates.filtersActive', 'Active')}
+            </span>
+          )}
+        </button>
 
-        {/* Type Filter with Favorites (US-131) */}
-        <div className="flex gap-2 mb-6" role="tablist" aria-label={t('templates.typeFilter', 'Type filter')}>
-          <button
-            onClick={() => handleTypeChange('all')}
-            disabled={loading}
-            role="tab"
-            aria-selected={activeType === 'all' && !showFavorites}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
-              activeType === 'all' && !showFavorites
-                ? 'bg-gray-800 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            {t('templates.allTypes', 'All Types')}
-          </button>
-          <button
-            onClick={handleFavoritesToggle}
-            disabled={loading}
-            role="tab"
-            aria-selected={showFavorites}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 disabled:opacity-50 ${
-              showFavorites
-                ? 'bg-yellow-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <Star size={14} aria-hidden="true" />
-            {t('templates.favorites', 'Favorites')}
-          </button>
-          <button
-            onClick={() => handleTypeChange('pack')}
-            disabled={loading}
-            role="tab"
-            aria-selected={activeType === 'pack' && !showFavorites}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-50 ${
-              activeType === 'pack' && !showFavorites
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <Package size={14} aria-hidden="true" />
-            {t('templates.starterPacks', 'Starter Packs')}
-          </button>
-          <button
-            onClick={() => handleTypeChange('playlist')}
-            disabled={loading}
-            role="tab"
-            aria-selected={activeType === 'playlist' && !showFavorites}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
-              activeType === 'playlist' && !showFavorites
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <List size={14} aria-hidden="true" />
-            {t('templates.playlists', 'Playlists')}
-          </button>
-          <button
-            onClick={() => handleTypeChange('layout')}
-            disabled={loading}
-            role="tab"
-            aria-selected={activeType === 'layout' && !showFavorites}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 disabled:opacity-50 ${
-              activeType === 'layout' && !showFavorites
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <Layout size={14} aria-hidden="true" />
-            {t('templates.layouts', 'Layouts')}
-          </button>
+        {/* Collapsible Filter Container - hidden on mobile, always visible on sm+ */}
+        <div id="template-filters" className={`${showMobileFilters ? 'block' : 'hidden'} sm:block`}>
+          {/* Category Filter Tabs */}
+          <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-1" role="tablist" aria-label={t('templates.categoryFilter', 'Category filter')}>
+            <button
+              onClick={() => handleCategoryChange('all')}
+              disabled={loading}
+              role="tab"
+              aria-selected={activeCategory === 'all' && !showFavorites}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
+                activeCategory === 'all' && !showFavorites
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {t('templates.allCategories', 'All Categories')}
+            </button>
+            {categories.map((cat) => {
+              const Icon = getCategoryIcon(cat.icon);
+              return (
+                <button
+                  key={cat.slug}
+                  onClick={() => handleCategoryChange(cat.slug)}
+                  disabled={loading}
+                  role="tab"
+                  aria-selected={activeCategory === cat.slug && !showFavorites}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
+                    activeCategory === cat.slug && !showFavorites
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  <Icon size={16} aria-hidden="true" />
+                  {cat.name}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Type Filter with Favorites (US-131) */}
+          <div className="flex flex-wrap gap-2 mb-6" role="tablist" aria-label={t('templates.typeFilter', 'Type filter')}>
+            <button
+              onClick={() => handleTypeChange('all')}
+              disabled={loading}
+              role="tab"
+              aria-selected={activeType === 'all' && !showFavorites}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
+                activeType === 'all' && !showFavorites
+                  ? 'bg-gray-800 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {t('templates.allTypes', 'All Types')}
+            </button>
+            <button
+              onClick={handleFavoritesToggle}
+              disabled={loading}
+              role="tab"
+              aria-selected={showFavorites}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 disabled:opacity-50 ${
+                showFavorites
+                  ? 'bg-yellow-500 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <Star size={14} aria-hidden="true" />
+              {t('templates.favorites', 'Favorites')}
+            </button>
+            <button
+              onClick={() => handleTypeChange('pack')}
+              disabled={loading}
+              role="tab"
+              aria-selected={activeType === 'pack' && !showFavorites}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-50 ${
+                activeType === 'pack' && !showFavorites
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <Package size={14} aria-hidden="true" />
+              {t('templates.starterPacks', 'Starter Packs')}
+            </button>
+            <button
+              onClick={() => handleTypeChange('playlist')}
+              disabled={loading}
+              role="tab"
+              aria-selected={activeType === 'playlist' && !showFavorites}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 ${
+                activeType === 'playlist' && !showFavorites
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <List size={14} aria-hidden="true" />
+              {t('templates.playlists', 'Playlists')}
+            </button>
+            <button
+              onClick={() => handleTypeChange('layout')}
+              disabled={loading}
+              role="tab"
+              aria-selected={activeType === 'layout' && !showFavorites}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 disabled:opacity-50 ${
+                activeType === 'layout' && !showFavorites
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <Layout size={14} aria-hidden="true" />
+              {t('templates.layouts', 'Layouts')}
+            </button>
+          </div>
         </div>
 
         {/* Loading State */}
