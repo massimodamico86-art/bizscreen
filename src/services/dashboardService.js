@@ -1,6 +1,7 @@
 // Dashboard Service - Stats and summary data for the dashboard
 import { supabase } from '../supabase';
 
+import { getAuthenticatedUserId } from '../utils/devBypass.js';
 import { createScopedLogger } from './loggingService.js';
 
 const logger = createScopedLogger('DashboardService');
@@ -26,41 +27,51 @@ export function isDeviceOnline(lastSeen) {
  * @returns {Promise<Object>} Dashboard stats
  */
 export async function getDashboardStats() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('User must be authenticated');
+  // Validate user is authenticated (with dev bypass fallback)
+  await getAuthenticatedUserId();
 
-  // Use optimized database function - single query instead of fetching all rows
-  const { data, error } = await supabase.rpc('get_dashboard_stats');
+  try {
+    // Use optimized database function - single query instead of fetching all rows
+    const { data, error } = await supabase.rpc('get_dashboard_stats');
 
-  if (error) {
-    logger.error('Error fetching dashboard stats:', { error: error });
-    // Fallback to legacy method if function doesn't exist
-    if (error.code === 'PGRST202') {
-      return getDashboardStatsLegacy();
+    if (error) {
+      logger.error('Error fetching dashboard stats:', { error: error });
+      // Fallback to legacy method if function doesn't exist
+      if (error.code === 'PGRST202') {
+        return getDashboardStatsLegacy();
+      }
+      throw error;
     }
-    throw error;
+
+    // Normalize the response to match expected format
+    return {
+      screens: {
+        total: data?.screens?.total || 0,
+        online: data?.screens?.online || 0,
+        offline: data?.screens?.offline || 0
+      },
+      playlists: {
+        total: data?.playlists?.total || 0
+      },
+      media: {
+        total: data?.media?.total || 0,
+        images: data?.media?.images || 0,
+        videos: data?.media?.videos || 0,
+        audio: data?.media?.audio || 0,
+        documents: data?.media?.documents || 0,
+        webPages: data?.media?.web_pages || 0,
+        apps: data?.media?.apps || 0
+      }
+    };
+  } catch (err) {
+    logger.error('getDashboardStats failed, returning empty stats:', { error: err });
+    // Return empty stats so the dashboard can render instead of entering retry loop
+    return {
+      screens: { total: 0, online: 0, offline: 0 },
+      playlists: { total: 0 },
+      media: { total: 0, images: 0, videos: 0, audio: 0, documents: 0, webPages: 0, apps: 0 }
+    };
   }
-
-  // Normalize the response to match expected format
-  return {
-    screens: {
-      total: data?.screens?.total || 0,
-      online: data?.screens?.online || 0,
-      offline: data?.screens?.offline || 0
-    },
-    playlists: {
-      total: data?.playlists?.total || 0
-    },
-    media: {
-      total: data?.media?.total || 0,
-      images: data?.media?.images || 0,
-      videos: data?.media?.videos || 0,
-      audio: data?.media?.audio || 0,
-      documents: data?.media?.documents || 0,
-      webPages: data?.media?.web_pages || 0,
-      apps: data?.media?.apps || 0
-    }
-  };
 }
 
 /**
