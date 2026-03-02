@@ -11,6 +11,7 @@ import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
 import { requiresApproval } from './permissionsService.js';
 import { requestApproval, getOpenReviewForResource, APPROVAL_STATUS } from './approvalService.js';
+import { getAuthenticatedUserId } from '../utils/devBypass.js';
 import { createScopedLogger } from './loggingService';
 
 const _logger = createScopedLogger('PlaylistService');
@@ -99,13 +100,12 @@ export async function createPlaylist({
   transitionEffect = 'fade',
   shuffle = false
 }) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('User must be authenticated');
+  const userId = await getAuthenticatedUserId();
 
   const { data, error } = await supabase
     .from('playlists')
     .insert({
-      owner_id: user.id,
+      owner_id: userId,
       name,
       description,
       default_duration: defaultDuration,
