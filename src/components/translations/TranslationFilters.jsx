@@ -5,6 +5,7 @@
  * Filters by translation status (draft/review/approved) and language code.
  */
 
+import { Select } from '../../design-system';
 import { getSupportedLanguages } from '../../services/languageService';
 
 const STATUS_OPTIONS = [

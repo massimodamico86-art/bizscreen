@@ -12,7 +12,7 @@
  * />
  */
 
-import { forwardRef, createElement } from 'react';
+import { forwardRef, createElement, isValidElement, cloneElement } from 'react';
 
 export const EmptyState = forwardRef(function EmptyState(
   {
@@ -61,11 +61,11 @@ export const EmptyState = forwardRef(function EmptyState(
     >
       {icon && (
         <div className={`${styles.icon} text-gray-300 mb-4`}>
-          {typeof icon === 'function'
-            ? createElement(icon, { className: styles.icon, 'aria-hidden': 'true' })
-            : (icon?.$$typeof
+          {isValidElement(icon)
+            ? cloneElement(icon, { className: styles.icon, 'aria-hidden': 'true' })
+            : typeof icon === 'function' || (icon?.$$typeof && typeof icon?.render === 'function')
               ? createElement(icon, { className: styles.icon, 'aria-hidden': 'true' })
-              : icon)}
+              : icon}
         </div>
       )}
       {title && (

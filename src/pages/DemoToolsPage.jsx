@@ -280,11 +280,11 @@ export default function DemoToolsPage({ showToast }) {
                 icon={<Users className="w-full h-full" />}
                 title={t('demoTools.noTenants', 'No demo tenants yet')}
                 description={t('demoTools.noTenantsDescription', 'Create your first demo tenant to start running demos')}
-                action={{
-                  label: t('demoTools.createDemoTenant', 'Create Demo Tenant'),
-                  onClick: () => setShowCreateModal(true),
-                  icon: <Plus size={16} />
-                }}
+                action={
+                  <Button onClick={() => setShowCreateModal(true)} icon={<Plus size={16} />}>
+                    {t('demoTools.createDemoTenant', 'Create Demo Tenant')}
+                  </Button>
+                }
               />
             </div>
           ) : (
