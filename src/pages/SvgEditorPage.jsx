@@ -9,7 +9,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import {
   loadUserSvgDesign,
   saveUserSvgDesign,
@@ -124,7 +124,7 @@ export default function SvgEditorPage({
             });
           } catch (e) {
             console.error('Failed to load template:', e);
-            if (!cancelled) setError('Template not found. Please select a template again.');
+            if (!cancelled) setError('This template is no longer available in your session. Please go back to the template gallery and select a template to start editing.');
           }
         }
         // New blank design
@@ -192,15 +192,20 @@ export default function SvgEditorPage({
   if (error) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-center max-w-md">
-          <h2 className="text-xl font-semibold text-white mb-2">Error</h2>
-          <p className="text-gray-400 mb-4">{error}</p>
-          <button
-            onClick={handleClose}
-            className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-          >
-            Go Back
-          </button>
+        <div className="text-center max-w-md px-6">
+          <div className="w-16 h-16 bg-gray-800 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-orange-400" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Unable to Load Design</h2>
+          <p className="text-gray-400 mb-6">{error}</p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={handleClose}
+              className="px-6 py-2.5 bg-orange-600 hover:bg-orange-500 text-white rounded-lg transition-colors font-medium"
+            >
+              Browse Templates
+            </button>
+          </div>
         </div>
       </div>
     );
