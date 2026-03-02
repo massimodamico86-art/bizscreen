@@ -23,6 +23,14 @@ const logger = createScopedLogger('UnsplashProxyService');
 
 const FUNCTION_NAME = 'unsplash-proxy';
 
+/** Error thrown when the Unsplash proxy Edge Function is unreachable */
+export class UnsplashProxyUnavailableError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'UnsplashProxyUnavailableError';
+  }
+}
+
 /**
  * Search Unsplash photos through the server-side proxy.
  *
@@ -50,6 +58,15 @@ export async function searchPhotos(query, options = {}) {
 
   if (error) {
     logger.error('Unsplash search invoke failed:', error.message);
+    // Detect proxy unavailable (Edge Function not running)
+    const isUnavailable = error.message?.includes('FunctionsHttpError') ||
+      error.message?.includes('FunctionsFetchError') ||
+      error.message?.includes('Failed to fetch') ||
+      error.message?.includes('FunctionsRelayError') ||
+      error.message?.includes('non-2xx status code');
+    if (isUnavailable) {
+      throw new UnsplashProxyUnavailableError('Unsplash proxy Edge Function is not available');
+    }
     throw new Error(`Unsplash search failed: ${error.message}`);
   }
 

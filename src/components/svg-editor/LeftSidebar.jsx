@@ -17,7 +17,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { fetchSvgTemplates } from '../../services/svgTemplateService';
-import { searchPhotos as proxySearchPhotos, trackDownload } from '../../services/unsplashProxyService.js';
+import { searchPhotos as proxySearchPhotos, trackDownload, UnsplashProxyUnavailableError } from '../../services/unsplashProxyService.js';
 import { fetchMediaAssets, MEDIA_TYPES } from '../../services/mediaService.js';
 import { useLogger } from '../../hooks/useLogger.js';
 import CloudFilePicker from '../media/CloudFilePicker';
@@ -223,6 +223,7 @@ export default function LeftSidebar({
   const [searchQuery, setSearchQuery] = useState('');
   const [photos, setPhotos] = useState([]);
   const [loadingPhotos, setLoadingPhotos] = useState(false);
+  const [photosError, setPhotosError] = useState(null); // null = no error, 'proxy_unavailable' | 'search_failed'
   const [qrCodeType, setQrCodeType] = useState('url');
   const [qrCodeText, setQrCodeText] = useState('');
   const [giphyTab, setGiphyTab] = useState('stickers');
@@ -243,6 +244,7 @@ export default function LeftSidebar({
   // Fetch stock photos from Unsplash via proxy service
   const searchPhotos = useCallback(async (query) => {
     setLoadingPhotos(true);
+    setPhotosError(null);
     try {
       const searchQuery = query.trim() || 'nature';
       const result = await proxySearchPhotos(searchQuery, { perPage: 20, orientation: 'landscape' });
@@ -250,6 +252,11 @@ export default function LeftSidebar({
     } catch (error) {
       logger.error('Error fetching photos', { error });
       setPhotos([]);
+      if (error instanceof UnsplashProxyUnavailableError) {
+        setPhotosError('proxy_unavailable');
+      } else {
+        setPhotosError('search_failed');
+      }
     } finally {
       setLoadingPhotos(false);
     }
@@ -631,6 +638,22 @@ export default function LeftSidebar({
             {loadingPhotos ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
+              </div>
+            ) : photos.length === 0 && photosError ? (
+              <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+                <Cloud className="w-10 h-10 text-gray-500 mb-3" />
+                {photosError === 'proxy_unavailable' ? (
+                  <>
+                    <p className="text-sm text-gray-300 font-medium mb-1">Unsplash proxy not available</p>
+                    <p className="text-xs text-gray-500">Start Supabase Edge Functions locally to browse stock photos</p>
+                    <code className="text-xs text-gray-600 mt-2 bg-gray-700 px-2 py-1 rounded">supabase functions serve</code>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-300 font-medium mb-1">Could not load photos</p>
+                    <p className="text-xs text-gray-500">Check your network connection and try again</p>
+                  </>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
