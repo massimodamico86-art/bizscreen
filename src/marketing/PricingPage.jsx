@@ -3,7 +3,12 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Zap, Star, Building2, Check } from 'lucide-react';
+import {
+  Building2,
+  Check,
+  Star,
+  Zap,
+} from 'lucide-react';
 import Seo from '../components/Seo';
 
 const plans = [
@@ -112,13 +117,13 @@ export default function PricingPage() {
       {/* Pricing Cards */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {plans.map((plan) => {
               const Icon = plan.icon;
               return (
                 <div
                   key={plan.name}
-                  className={`relative rounded-2xl border-2 p-8 ${
+                  className={`relative rounded-2xl border-2 p-6 lg:p-8 ${
                     plan.highlighted
                       ? 'border-blue-600 shadow-xl shadow-blue-600/10'
                       : 'border-gray-200'
@@ -138,7 +143,7 @@ export default function PricingPage() {
                     <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
                   </div>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                    <span className="text-3xl lg:text-4xl font-bold text-gray-900">{plan.price}</span>
                     <span className="text-gray-500 ml-2">/{plan.period}</span>
                   </div>
                   <p className="text-gray-600 mb-6">{plan.description}</p>
