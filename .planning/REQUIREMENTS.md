@@ -9,12 +9,12 @@ Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sou
 
 ### Crash Fixes
 
-- [ ] **CRASH-01**: Team Management page loads without React error boundary crash (B-01: "Objects are not valid as a React child")
-- [ ] **CRASH-02**: Activity Log page loads without React error boundary crash (B-02: same React child render error)
-- [ ] **CRASH-03**: Template Marketplace page loads without React error boundary crash (B-03)
-- [ ] **CRASH-04**: Translation Dashboard page loads without React error boundary crash (B-04)
-- [ ] **CRASH-05**: Demo Tools page loads without React error boundary crash (B-05)
-- [ ] **CRASH-06**: Security Dashboard page loads without React error boundary crash (B-06)
+- [x] **CRASH-01**: Team Management page loads without React error boundary crash (B-01: "Objects are not valid as a React child")
+- [x] **CRASH-02**: Activity Log page loads without React error boundary crash (B-02: same React child render error)
+- [x] **CRASH-03**: Template Marketplace page loads without React error boundary crash (B-03)
+- [x] **CRASH-04**: Translation Dashboard page loads without React error boundary crash (B-04)
+- [x] **CRASH-05**: Demo Tools page loads without React error boundary crash (B-05)
+- [x] **CRASH-06**: Security Dashboard page loads without React error boundary crash (B-06)
 
 ### Functionality Fixes
 
@@ -69,12 +69,12 @@ Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sou
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CRASH-01 | Phase 104 | Pending |
-| CRASH-02 | Phase 104 | Pending |
-| CRASH-03 | Phase 104 | Pending |
-| CRASH-04 | Phase 104 | Pending |
-| CRASH-05 | Phase 104 | Pending |
-| CRASH-06 | Phase 104 | Pending |
+| CRASH-01 | Phase 104 | Complete |
+| CRASH-02 | Phase 104 | Complete |
+| CRASH-03 | Phase 104 | Complete |
+| CRASH-04 | Phase 104 | Complete |
+| CRASH-05 | Phase 104 | Complete |
+| CRASH-06 | Phase 104 | Complete |
 | FUNC-01 | Phase 105 | Pending |
 | FUNC-02 | Phase 105 | Pending |
 | FUNC-03 | Phase 105 | Pending |
