@@ -233,7 +233,7 @@ export default function ActivityLogPage() {
         {/* Empty state */}
         {!loading && activities.length === 0 && (
           <EmptyState
-            icon={Activity}
+            icon={<Activity className="w-full h-full" />}
             title={t('activityLog.noActivity', 'No activity found')}
             description={
               resourceType || days !== 30

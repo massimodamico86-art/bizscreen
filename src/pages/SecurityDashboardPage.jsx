@@ -290,7 +290,7 @@ export default function SecurityDashboardPage() {
             </div>
           ) : events.length === 0 ? (
             <EmptyState
-              icon={Shield}
+              icon={<Shield className="w-full h-full" />}
               title={t('security.noEvents', 'No sanitization events')}
               description={t('security.noEventsHint', 'Events will appear here when potentially malicious content is sanitized')}
             />

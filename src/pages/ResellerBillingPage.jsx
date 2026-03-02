@@ -10,17 +10,17 @@
  */
 import { useState, useEffect } from 'react';
 import {
-  DollarSign,
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  XCircle,
-  ChevronLeft,
-  Download,
-  BarChart3,
-  ArrowUpRight,
   ArrowDownRight,
+  ArrowUpRight,
+  BarChart3,
+  CheckCircle,
+  ChevronLeft,
+  Clock,
+  DollarSign,
+  Download,
   Info,
+  TrendingUp,
+  XCircle,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -163,7 +163,7 @@ export default function ResellerBillingPage({ showToast, onNavigate }) {
       <PageLayout>
         <PageContent className="max-w-2xl mx-auto">
           <EmptyState
-            icon={DollarSign}
+            icon={<DollarSign className="w-full h-full" />}
             title={t('reseller.billingNotAvailable', 'Billing Not Available')}
             description={t('reseller.billingNotAvailableDesc', 'You need an active reseller account to view billing information.')}
           />

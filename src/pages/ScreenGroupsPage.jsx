@@ -291,7 +291,7 @@ const ScreenGroupsPage = ({ showToast, onNavigate }) => {
           </div>
         ) : groups.length === 0 ? (
           <EmptyState
-            icon={Layers}
+            icon={<Layers className="w-full h-full" />}
             title={t('screenGroups.noGroups', 'No Screen Groups')}
             description={t('screenGroups.noGroupsDesc', 'Create groups to organize your screens by purpose, location, or any criteria. Groups make it easy to assign content to multiple screens at once.')}
             action={canEdit && {

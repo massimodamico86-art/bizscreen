@@ -9,15 +9,15 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Monitor,
-  Settings,
-  Loader2,
   ArrowLeft,
-  Users,
-  MapPin,
-  Play,
   Check,
+  Loader2,
+  MapPin,
+  Monitor,
+  Play,
   Plus,
+  Settings,
+  Users,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -347,7 +347,7 @@ function DevicesTabContent({
         <CardContent className="flex-1 overflow-y-auto p-2">
           {assignedScreens.length === 0 ? (
             <EmptyState
-              icon={Monitor}
+              icon={<Monitor className="w-full h-full" />}
               title={t('screenGroups.noScreensInGroup', 'No screens in this group')}
               description={t(
                 'screenGroups.addScreensHint',
@@ -392,7 +392,7 @@ function DevicesTabContent({
         <CardContent className="flex-1 overflow-y-auto p-2">
           {availableScreens.length === 0 ? (
             <EmptyState
-              icon={Monitor}
+              icon={<Monitor className="w-full h-full" />}
               title={t('screenGroups.noAvailableScreens', 'No available screens')}
               description={t(
                 'screenGroups.allScreensAssigned',

@@ -251,7 +251,7 @@ const TeamPage = ({ showToast }) => {
 
           {activeMembers.length === 0 ? (
             <EmptyState
-              icon={Users}
+              icon={<Users className="w-full h-full" />}
               title={t('team.noActiveMembers', 'No active team members yet')}
             />
           ) : (

@@ -11,22 +11,22 @@
  */
 import { useState, useEffect } from 'react';
 import {
+  AlertTriangle,
   Building2,
-  Monitor,
-  Key,
-  DollarSign,
-  TrendingUp,
-  CreditCard,
-  UserPlus,
-  Users,
-  Eye,
-  Download,
-  Plus,
-  Copy,
   Check,
   Clock,
-  AlertTriangle,
+  Copy,
+  CreditCard,
+  DollarSign,
+  Download,
   ExternalLink,
+  Eye,
+  Key,
+  Monitor,
+  Plus,
+  TrendingUp,
+  UserPlus,
+  Users,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -201,7 +201,7 @@ export default function ResellerDashboardPage({ showToast, onNavigate }) {
       <PageLayout>
         <PageContent className="max-w-2xl mx-auto">
           <EmptyState
-            icon={Building2}
+            icon={<Building2 className="w-full h-full" />}
             title={t('reseller.becomePartner', 'Become a Reseller Partner')}
             description={t('reseller.becomePartnerDesc', 'Join our reseller program to distribute BizScreen to your clients and earn commissions.')}
             action={{

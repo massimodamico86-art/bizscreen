@@ -201,7 +201,7 @@ export default function TranslationDashboardPage({ showToast }) {
           </div>
         ) : scenes.length === 0 ? (
           <EmptyState
-            icon={Languages}
+            icon={<Languages className="w-full h-full" />}
             title="No Scenes Found"
             description={
               filters.status || filters.languageCode

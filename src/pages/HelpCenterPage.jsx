@@ -4,20 +4,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../i18n';
 import {
-  Rocket,
-  Monitor,
-  ListVideo,
-  Layout,
-  Zap,
-  LayoutTemplate,
-  CreditCard,
-  BookOpen,
-  Search,
-  ChevronRight,
-  ChevronLeft,
-  ExternalLink,
   ArrowLeft,
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  CreditCard,
+  ExternalLink,
+  Layout,
+  LayoutTemplate,
+  ListVideo,
   Loader2,
+  Monitor,
+  Rocket,
+  Search,
+  Zap,
 } from 'lucide-react';
 
 
@@ -240,7 +240,7 @@ function TopicsListView({ topics, selectedCategory, onSelectTopic, searchQuery, 
 
       {topics.length === 0 ? (
         <EmptyState
-          icon={BookOpen}
+          icon={<BookOpen className="w-full h-full" />}
           title={t('helpCenter.noArticles', 'No articles found')}
           description={t('helpCenter.tryDifferentSearch', 'Try a different search term or browse categories')}
         />

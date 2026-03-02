@@ -277,7 +277,7 @@ export default function DemoToolsPage({ showToast }) {
           {demoTenants.length === 0 ? (
             <div className="p-6">
               <EmptyState
-                icon={Users}
+                icon={<Users className="w-full h-full" />}
                 title={t('demoTools.noTenants', 'No demo tenants yet')}
                 description={t('demoTools.noTenantsDescription', 'Create your first demo tenant to start running demos')}
                 action={{

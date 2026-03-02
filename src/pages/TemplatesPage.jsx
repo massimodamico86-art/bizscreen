@@ -613,7 +613,7 @@ const TemplatesPage = ({ showToast }) => {
         {/* Favorites Empty State (US-131) */}
         {showFavorites && !loadingFavorites && templates.length === 0 && (
           <EmptyState
-            icon={Star}
+            icon={<Star className="w-full h-full" />}
             title={t('templates.noFavoritesYet', 'No favorites yet')}
             description={t('templates.noFavoritesDescription', 'Click the heart icon on any template to add it to your favorites.')}
           />
@@ -761,7 +761,7 @@ const TemplatesPage = ({ showToast }) => {
         {/* Empty State */}
         {!isInitialLoading && templates.length === 0 && !showFavorites && (
           <EmptyState
-            icon={LayoutTemplate}
+            icon={<LayoutTemplate className="w-full h-full" />}
             title={t('templates.noTemplatesFound', 'No templates found')}
             description={
               debouncedSearch
