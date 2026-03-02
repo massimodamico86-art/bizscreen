@@ -197,7 +197,13 @@ export default function BrandingSettingsPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {hasChanges && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-sm font-medium">
+              <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+              Unsaved changes
+            </span>
+          )}
           {hasChanges && (
             <button
               onClick={handleReset}
@@ -210,15 +216,20 @@ export default function BrandingSettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving || !hasChanges}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: 'var(--branding-primary)' }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              hasChanges
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+            }`}
+            title={hasChanges ? 'Save your branding changes' : 'No changes to save'}
+            style={hasChanges ? { backgroundColor: 'var(--branding-primary)' } : {}}
           >
             {saving ? (
               <RefreshCw className="w-4 h-4 animate-spin" />
             ) : (
               <Save className="w-4 h-4" />
             )}
-            Save Changes
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>
