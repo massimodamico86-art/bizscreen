@@ -37,8 +37,8 @@ Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sou
 
 - [ ] **COSM-01**: Templates page filter panel collapses or converts to a mobile-friendly layout on 375px viewport instead of taking ~50% screen width (B-15)
 - [ ] **COSM-02**: Pricing page cards have adequate spacing at 768px tablet viewport without aggressive text wrapping (B-16)
-- [ ] **COSM-03**: SVG Editor export button shows preview/options dialog before downloading instead of triggering immediate PNG download (B-17)
-- [ ] **COSM-04**: Branding page save button state clearly indicates whether unsaved changes exist instead of being permanently disabled (B-18)
+- [x] **COSM-03**: SVG Editor export button shows preview/options dialog before downloading instead of triggering immediate PNG download (B-17)
+- [x] **COSM-04**: Branding page save button state clearly indicates whether unsaved changes exist instead of being permanently disabled (B-18)
 
 ## Future Requirements
 
@@ -85,8 +85,8 @@ Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sou
 | DEV-03 | Phase 106 | Complete |
 | COSM-01 | Phase 107 | Pending |
 | COSM-02 | Phase 107 | Pending |
-| COSM-03 | Phase 107 | Pending |
-| COSM-04 | Phase 107 | Pending |
+| COSM-03 | Phase 107 | Complete |
+| COSM-04 | Phase 107 | Complete |
 
 **Coverage:**
 - v11.0 requirements: 18 total
