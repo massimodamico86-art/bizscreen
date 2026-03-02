@@ -23,6 +23,10 @@ export class ErrorBoundary extends Component {
     handleReactError(error, errorInfo);
   }
 
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null, errorInfo: null, showDetails: false });
+  };
+
   toggleDetails = () => {
     this.setState((prev) => ({ showDetails: !prev.showDetails }));
   };
@@ -100,6 +104,12 @@ export class ErrorBoundary extends Component {
 
             {/* Action Buttons */}
             <div className="flex gap-2">
+              <button
+                onClick={this.handleRetry}
+                className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+              >
+                Try Again
+              </button>
               <button
                 onClick={() => window.location.reload()}
                 className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
