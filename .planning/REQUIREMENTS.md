@@ -67,34 +67,32 @@ Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sou
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CRASH-01 | TBD | Pending |
-| CRASH-02 | TBD | Pending |
-| CRASH-03 | TBD | Pending |
-| CRASH-04 | TBD | Pending |
-| CRASH-05 | TBD | Pending |
-| CRASH-06 | TBD | Pending |
-| FUNC-01 | TBD | Pending |
-| FUNC-02 | TBD | Pending |
-| FUNC-03 | TBD | Pending |
-| ERR-01 | TBD | Pending |
-| ERR-02 | TBD | Pending |
-| DEV-01 | TBD | Pending |
-| DEV-02 | TBD | Pending |
-| DEV-03 | TBD | Pending |
-| COSM-01 | TBD | Pending |
-| COSM-02 | TBD | Pending |
-| COSM-03 | TBD | Pending |
-| COSM-04 | TBD | Pending |
+| CRASH-01 | Phase 104 | Pending |
+| CRASH-02 | Phase 104 | Pending |
+| CRASH-03 | Phase 104 | Pending |
+| CRASH-04 | Phase 104 | Pending |
+| CRASH-05 | Phase 104 | Pending |
+| CRASH-06 | Phase 104 | Pending |
+| FUNC-01 | Phase 105 | Pending |
+| FUNC-02 | Phase 105 | Pending |
+| FUNC-03 | Phase 105 | Pending |
+| ERR-01 | Phase 105 | Pending |
+| ERR-02 | Phase 105 | Pending |
+| DEV-01 | Phase 106 | Pending |
+| DEV-02 | Phase 106 | Pending |
+| DEV-03 | Phase 106 | Pending |
+| COSM-01 | Phase 107 | Pending |
+| COSM-02 | Phase 107 | Pending |
+| COSM-03 | Phase 107 | Pending |
+| COSM-04 | Phase 107 | Pending |
 
 **Coverage:**
 - v11.0 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 (pending roadmap creation)
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-02*
-*Last updated: 2026-03-02 after initial definition*
+*Last updated: 2026-03-02 after roadmap creation -- all 18 requirements mapped to phases 104-107*
