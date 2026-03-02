@@ -1,53 +1,44 @@
 # Requirements: BizScreen
 
-**Defined:** 2026-02-28
+**Defined:** 2026-03-02
 **Core Value:** Screens reliably display the right content at the right time, even when offline
 
-## v10.0 Requirements
+## v11.0 Requirements
 
-Requirements for v10.0 Visual QA Audit. Each maps to roadmap phases.
+Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sourced from v10.0 Visual QA Audit (screenshots/AUDIT_REPORT.md).
 
-### Discovery
+### Crash Fixes
 
-- [x] **DISC-01**: Navigate to every app route via MCP browser_navigate and screenshot each page's initial load state
-- [x] **DISC-02**: Take browser_snapshot accessibility tree on every page to discover all interactive elements
-- [x] **DISC-03**: Map complete navigation structure (all routes, sidebar links, menu items) into a documented route list
+- [ ] **CRASH-01**: Team Management page loads without React error boundary crash (B-01: "Objects are not valid as a React child")
+- [ ] **CRASH-02**: Activity Log page loads without React error boundary crash (B-02: same React child render error)
+- [ ] **CRASH-03**: Template Marketplace page loads without React error boundary crash (B-03)
+- [ ] **CRASH-04**: Translation Dashboard page loads without React error boundary crash (B-04)
+- [ ] **CRASH-05**: Demo Tools page loads without React error boundary crash (B-05)
+- [ ] **CRASH-06**: Security Dashboard page loads without React error boundary crash (B-06)
 
-### Authentication
+### Functionality Fixes
 
-- [x] **AUTH-01**: Screenshot login flow with valid credentials at each step (form, submit, dashboard landing)
-- [x] **AUTH-02**: Screenshot login with invalid credentials showing error states
-- [x] **AUTH-03**: Screenshot signup/registration flow at each step
-- [x] **AUTH-04**: Screenshot logout flow with confirmation
-- [x] **AUTH-05**: Screenshot password reset flow at each step
-- [x] **AUTH-06**: Capture all auth empty states, loading states, and error states
+- [ ] **FUNC-01**: Settings page loads successfully for dev-bypass users instead of failing with null user_id constraint violation (B-07)
+- [ ] **FUNC-02**: Status page resolves `{{env}}` and `{{version}}` template variables to actual runtime values (B-08)
+- [ ] **FUNC-03**: Data Sources page loads without "Failed to load data sources" RPC failure error banner (B-09)
 
-### CRUD Walkthrough
+### Error Handling
 
-- [ ] **CRUD-01**: For each major entity, create via UI forms with sample data and screenshot before/after submission
-- [ ] **CRUD-02**: Browse lists/tables for each entity, screenshot pagination, filters, and search
-- [ ] **CRUD-03**: Edit existing records for each entity, screenshot edit forms and results
-- [ ] **CRUD-04**: Delete records for each entity, screenshot confirmation dialogs and results
-- [ ] **CRUD-05**: Test every toggle, dropdown, tab, and modal on each page, screenshot all state changes
+- [ ] **ERR-01**: "Use Template" with missing template ID shows graceful error or redirects to templates list instead of "Template not found" crash (B-10)
+- [ ] **ERR-02**: Public preview with invalid token shows clean user-friendly error page instead of raw JSON parse error "Unexpected token '<'" (B-12)
 
-### Display & Preview
+### Dev Experience
 
-- [ ] **DISP-01**: Open every layout preview and screenshot each at default state
-- [ ] **DISP-02**: Toggle all display options (weather, wifi, contact, check-in/out widgets) and screenshot each combination
-- [ ] **DISP-03**: Test media uploads and QR code generation features if applicable, screenshot results
+- [ ] **DEV-01**: Playlist creation succeeds when using dev auth bypass instead of failing with "Cannot read properties of null (reading 'id')" (B-11)
+- [ ] **DEV-02**: Dashboard loads cleanly for dev-bypass users without "Couldn't load dashboard" retry loop caused by missing Supabase profile (B-13)
+- [ ] **DEV-03**: SVG Editor Photos panel handles missing Unsplash proxy gracefully with informative empty state instead of silent failure (B-14)
 
-### Settings & Edge Cases
+### Cosmetic Polish
 
-- [ ] **EDGE-01**: Visit and screenshot every settings page
-- [ ] **EDGE-02**: Toggle every setting and screenshot results
-- [ ] **EDGE-03**: Test edge cases — empty states, very long text inputs, special characters
-- [ ] **EDGE-04**: Check responsive behavior at multiple viewport sizes (mobile, tablet, desktop)
-
-### Audit Report
-
-- [ ] **RPT-01**: Produce AUDIT_REPORT.md listing every page visited with URL and screenshot reference
-- [ ] **RPT-02**: Catalog all bugs by severity (critical / major / minor / cosmetic) with screenshot evidence
-- [ ] **RPT-03**: Include console error log, total screenshot count, and coverage summary
+- [ ] **COSM-01**: Templates page filter panel collapses or converts to a mobile-friendly layout on 375px viewport instead of taking ~50% screen width (B-15)
+- [ ] **COSM-02**: Pricing page cards have adequate spacing at 768px tablet viewport without aggressive text wrapping (B-16)
+- [ ] **COSM-03**: SVG Editor export button shows preview/options dialog before downloading instead of triggering immediate PNG download (B-17)
+- [ ] **COSM-04**: Branding page save button state clearly indicates whether unsaved changes exist instead of being permanently disabled (B-18)
 
 ## Future Requirements
 
@@ -57,15 +48,22 @@ Requirements for v10.0 Visual QA Audit. Each maps to roadmap phases.
 - **QA-02**: Performance benchmarking (Lighthouse scores, Core Web Vitals) per page
 - **QA-03**: Accessibility audit (WCAG 2.1 AA compliance) with axe-core integration
 
+### Deferred from Previous Milestones
+
+- **RESIL-01 through RESIL-03**: Error boundaries, API backoff, connection states (deferred from v9.0)
+- **UX-01 through UX-03**: Skeleton loaders, page-type skeletons, error state redesign (deferred from v9.0)
+- **E2E-01 through E2E-139**: Comprehensive E2E screenshot tests (deferred from v8.0)
+
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Writing Playwright test script files | This milestone uses MCP tools directly, not test automation files |
-| Fixing bugs found during audit | Audit identifies bugs; a follow-up milestone fixes them |
-| Player-side testing | Focus is admin UI only |
-| Database-level test data setup | All test data created through the UI |
-| Performance optimization | Audit only, no code changes |
+| New features or functionality | This milestone is strictly bug fixes from v10.0 audit |
+| E2E test coverage expansion | Deferred to future milestone |
+| Performance optimization | Not identified as a bug in audit |
+| Player-side fixes | Audit covered admin UI only |
+| Database schema changes | Bugs are UI/frontend-level; no schema work needed |
+| Refactoring beyond bug fixes | Fix the bug, don't refactor the page |
 
 ## Traceability
 
@@ -73,36 +71,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DISC-01 | Phase 98 | Complete |
-| DISC-02 | Phase 98 | Complete |
-| DISC-03 | Phase 98 | Complete |
-| AUTH-01 | Phase 99 | Complete |
-| AUTH-02 | Phase 99 | Complete |
-| AUTH-03 | Phase 99 | Complete |
-| AUTH-04 | Phase 99 | Complete |
-| AUTH-05 | Phase 99 | Complete |
-| AUTH-06 | Phase 99 | Complete |
-| CRUD-01 | Phase 100 | Pending |
-| CRUD-02 | Phase 100 | Pending |
-| CRUD-03 | Phase 100 | Pending |
-| CRUD-04 | Phase 100 | Pending |
-| CRUD-05 | Phase 100 | Pending |
-| DISP-01 | Phase 101 | Pending |
-| DISP-02 | Phase 101 | Pending |
-| DISP-03 | Phase 101 | Pending |
-| EDGE-01 | Phase 102 | Pending |
-| EDGE-02 | Phase 102 | Pending |
-| EDGE-03 | Phase 102 | Pending |
-| EDGE-04 | Phase 102 | Pending |
-| RPT-01 | Phase 103 | Pending |
-| RPT-02 | Phase 103 | Pending |
-| RPT-03 | Phase 103 | Pending |
+| CRASH-01 | TBD | Pending |
+| CRASH-02 | TBD | Pending |
+| CRASH-03 | TBD | Pending |
+| CRASH-04 | TBD | Pending |
+| CRASH-05 | TBD | Pending |
+| CRASH-06 | TBD | Pending |
+| FUNC-01 | TBD | Pending |
+| FUNC-02 | TBD | Pending |
+| FUNC-03 | TBD | Pending |
+| ERR-01 | TBD | Pending |
+| ERR-02 | TBD | Pending |
+| DEV-01 | TBD | Pending |
+| DEV-02 | TBD | Pending |
+| DEV-03 | TBD | Pending |
+| COSM-01 | TBD | Pending |
+| COSM-02 | TBD | Pending |
+| COSM-03 | TBD | Pending |
+| COSM-04 | TBD | Pending |
 
 **Coverage:**
-- v10.0 requirements: 24 total
-- Mapped to phases: 24
-- Unmapped: 0
+- v11.0 requirements: 18 total
+- Mapped to phases: 0
+- Unmapped: 18 (pending roadmap creation)
 
 ---
-*Requirements defined: 2026-02-28*
-*Last updated: 2026-02-28 after roadmap creation -- all 24 requirements mapped to phases*
+*Requirements defined: 2026-03-02*
+*Last updated: 2026-03-02 after initial definition*
