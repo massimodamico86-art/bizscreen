@@ -2,7 +2,7 @@
 gsd_state_version: 1.0
 milestone: v11.0
 milestone_name: Stability Pass
-status: unknown
+status: in-progress
 last_updated: "2026-03-02T18:24:23.848Z"
 progress:
   total_phases: 72
@@ -53,7 +53,6 @@ Full decision log in PROJECT.md Key Decisions table.
 - v11.0: Service-level fallback pattern -- getUserSettings returns DEFAULT_SETTINGS on error instead of throwing
 - v11.0: StatusPage uses Vite env vars (import.meta.env.MODE, VITE_APP_VERSION) as fallbacks when health API unavailable
 - v11.0: DataSourcesPage falls back to empty array on RPC failure to show empty state instead of error banner
-- [Phase 105]: Service-level fallback pattern: getUserSettings returns defaults instead of throwing
 
 ### Key Context for v11.0
 
