@@ -29,9 +29,9 @@ Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sou
 
 ### Dev Experience
 
-- [ ] **DEV-01**: Playlist creation succeeds when using dev auth bypass instead of failing with "Cannot read properties of null (reading 'id')" (B-11)
-- [ ] **DEV-02**: Dashboard loads cleanly for dev-bypass users without "Couldn't load dashboard" retry loop caused by missing Supabase profile (B-13)
-- [ ] **DEV-03**: SVG Editor Photos panel handles missing Unsplash proxy gracefully with informative empty state instead of silent failure (B-14)
+- [x] **DEV-01**: Playlist creation succeeds when using dev auth bypass instead of failing with "Cannot read properties of null (reading 'id')" (B-11)
+- [x] **DEV-02**: Dashboard loads cleanly for dev-bypass users without "Couldn't load dashboard" retry loop caused by missing Supabase profile (B-13)
+- [x] **DEV-03**: SVG Editor Photos panel handles missing Unsplash proxy gracefully with informative empty state instead of silent failure (B-14)
 
 ### Cosmetic Polish
 
@@ -80,9 +80,9 @@ Requirements for v11.0 Stability Pass. Each maps to roadmap phases. All bugs sou
 | FUNC-03 | Phase 105 | Complete |
 | ERR-01 | Phase 105 | Complete |
 | ERR-02 | Phase 105 | Complete |
-| DEV-01 | Phase 106 | Pending |
-| DEV-02 | Phase 106 | Pending |
-| DEV-03 | Phase 106 | Pending |
+| DEV-01 | Phase 106 | Complete |
+| DEV-02 | Phase 106 | Complete |
+| DEV-03 | Phase 106 | Complete |
 | COSM-01 | Phase 107 | Pending |
 | COSM-02 | Phase 107 | Pending |
 | COSM-03 | Phase 107 | Pending |

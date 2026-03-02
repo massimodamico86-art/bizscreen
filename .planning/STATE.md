@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v11.0
 milestone_name: Stability Pass
-status: unknown
-last_updated: "2026-03-02T18:27:50.159Z"
+status: in-progress
+last_updated: "2026-03-02T21:10:00.000Z"
 progress:
-  total_phases: 72
-  completed_phases: 70
-  total_plans: 236
-  completed_plans: 230
+  total_phases: 73
+  completed_phases: 72
+  total_plans: 238
+  completed_plans: 233
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 105 -- Functionality & Error Handling Fixes -- COMPLETE
+**Current focus:** Phase 106 -- Dev Experience Improvements -- COMPLETE
 
 ## Current Position
 
-Phase: 2 of 4 (Phase 105: Functionality & Error Handling Fixes) -- COMPLETE
+Phase: 3 of 4 (Phase 106: Dev Experience Improvements) -- COMPLETE
 Plan: 2 of 2 complete (all plans done)
-Status: Phase 105 complete, ready for Phase 106
-Last activity: 2026-03-02 -- Plan 01 executed (2 tasks, 3 files, 2min)
+Status: Phase 106 complete, ready for Phase 107
+Last activity: 2026-03-02 -- Plan 01 executed (2 tasks, 3 files, 3min)
 
-Progress: [██████████████░░░░░░] 50%
+Progress: [███████████████████░] 75%
 
 ## Performance Metrics
 
@@ -53,6 +53,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - v11.0: Service-level fallback pattern -- getUserSettings returns DEFAULT_SETTINGS on error instead of throwing
 - v11.0: StatusPage uses Vite env vars (import.meta.env.MODE, VITE_APP_VERSION) as fallbacks when health API unavailable
 - v11.0: DataSourcesPage falls back to empty array on RPC failure to show empty state instead of error banner
+- v11.0: Custom UnsplashProxyUnavailableError class for proxy failure detection; actionable empty state with supabase functions serve hint
+- [Phase 106]: Centralized dev bypass detection in shared utility (getAuthenticatedUserId) for service-layer auth with mock user fallback
+- [Phase 106]: getDashboardStats returns empty stats on RPC failure instead of throwing, preventing retry loop
 
 ### Key Context for v11.0
 
@@ -68,9 +71,9 @@ None for v11.0. All bugs are well-documented with screenshot evidence.
 ## Session Continuity
 
 Last session: 2026-03-02
-Stopped at: Completed 105-01-PLAN.md (Phase 105 complete)
+Stopped at: Completed 106-01-PLAN.md (Phase 106 complete)
 Resume file: N/A
-Next: Phase 106 (Dev-only Fixes)
+Next: Phase 107 (Cosmetic Fixes)
 
 ---
-*Updated: 2026-03-02 -- Phase 105 complete (2 plans, 4 tasks, 5 files, 4min total)*
+*Updated: 2026-03-02 -- Phase 106 complete (2 plans, 3 tasks, 5 files, 5min total)*
