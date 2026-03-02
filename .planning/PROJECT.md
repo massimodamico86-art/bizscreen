@@ -217,17 +217,18 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-## Current Milestone: v10.0 Visual QA Audit
+## Current Milestone: v11.0 Stability Pass
 
-**Goal:** Perform a comprehensive end-to-end visual audit of the entire BizScreen app using Playwright MCP browser tools — navigating every page, interacting with every feature, taking screenshots at every step, and producing a detailed audit report of bugs, visual glitches, and broken functionality.
+**Goal:** Fix all 18 bugs discovered during the v10.0 Visual QA Audit — 6 critical page crashes, 3 major functionality failures, 5 minor bugs, and 4 cosmetic issues — covering both production bugs and dev-bypass improvements.
 
 **Target features:**
-- Navigate and screenshot every page/route in the app via MCP browser tools
-- Test all authentication flows (login, signup, reset, logout) with screenshots
-- CRUD walkthrough of all major entities (screens, playlists, layouts, schedules, campaigns, etc.)
-- Test all layout previews, display modes, and widget configurations
-- Audit all settings, configuration, and edge cases
-- Produce AUDIT_REPORT.md with prioritized bugs and full screenshot coverage
+- Fix 6 critical page crashes (team, activity, template-marketplace, translations, demo-tools, security)
+- Fix Settings page null user_id constraint violation
+- Fix Status page unresolved template variables ({{env}}, {{version}})
+- Fix Data Sources page RPC failure
+- Fix public preview JSON parse error for invalid tokens
+- Fix dev-bypass-only issues (mock user profile, template IDs, playlist creation, dashboard retry, Unsplash proxy)
+- Polish cosmetic issues (templates mobile filter, pricing tablet layout, SVG export dialog, branding save button state)
 
 ### Out of Scope
 
@@ -419,4 +420,4 @@ These capabilities shipped and are production-verified:
 | Ship v8.0 with 2/18 phases complete | Capture infrastructure + auth foundation; resume later | — Accepted — 139 reqs deferred |
 
 ---
-*Last updated: 2026-02-28 after v10.0 Visual QA Audit milestone started*
+*Last updated: 2026-03-02 after v11.0 Stability Pass milestone started*

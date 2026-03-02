@@ -1,63 +1,55 @@
 ---
 gsd_state_version: 1.0
-milestone: v10.0
-milestone_name: Visual QA Audit
-status: unknown
-last_updated: "2026-03-01T01:24:00.374Z"
+milestone: v11.0
+milestone_name: Stability Pass
+status: active
+last_updated: "2026-03-02T00:00:00.000Z"
 progress:
-  total_phases: 69
-  completed_phases: 68
-  total_plans: 227
-  completed_plans: 226
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-28)
+See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** Phase 99 in progress (v10.0 Visual QA Audit -- Authentication & Onboarding Flows)
+**Current focus:** v11.0 Stability Pass
 
 ## Current Position
 
-Phase: 99 (2 of 6 in v10.0: Authentication & Onboarding Flows) -- COMPLETE
-Plan: 99-03 (3 of 3 complete)
-Status: Phase 99 complete; all 3 plans executed (login, signup/reset, logout/transitions)
-Last activity: 2026-03-01 -- Completed 99-03 (Logout Flow & Auth Transition States)
-
-Progress: [██████████] 100% (3/3 plans in phase 99)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-02 — Milestone v11.0 started
 
 ## Performance Metrics
 
-**Cumulative (v1 through v9.0):**
-- Total plans executed: 285
-- Total phases: 94 completed
-- Total milestones: 15 shipped
-- Timeline: 2026-01-24 to 2026-02-28 (36 days)
+**Cumulative (v1 through v10.0):**
+- Total milestones: 16 (15 shipped + 1 audit)
+- Timeline: 2026-01-24 to 2026-03-01 (37 days)
 
 ## Accumulated Context
 
 ### Decisions
 
 Full decision log in PROJECT.md Key Decisions table.
-Recent: v9.0 archived early with Phase 94 only; remaining 20 requirements deferred.
-98-01: Used Playwright programmatic API (not MCP tools) for headless screenshot capture; added .gitignore negation for QA screenshots.
-98-02: Exposed dev-only window.__setCurrentPage for QA navigation; discovered 6 crash bugs (team, activity, template-marketplace, translations, demo-tools, security).
-98-03: Compiled ROUTE_MAP.md documenting 80 routes, 1,443 interactive elements, and 6 crash bugs from 67 screenshots.
-99-01: Used Playwright programmatic API for login flow screenshots; added .gitignore negation for 99-* screenshots; captured 12 login screenshots including error states and dev bypass flow.
-99-02: Used reportValidity() to trigger HTML5 validation on disabled submit button; signup succeeded against Supabase (no email confirmation); captured 18 screenshots across signup, reset password, update password, and accept invite flows.
-99-03: Captured Suspense loading fallback for auth callback and loading spinner since redirect happens too fast; dev bypass re-authenticates after signOut keeping user on /app; 9 screenshots (logout flow + auth transitions).
+v10.0: Comprehensive visual QA audit with MCP Playwright browser tools found 18 bugs.
+v11.0: Fixing all 18 bugs (6 critical, 3 major, 5 minor, 4 cosmetic).
 
-### Key Context for v10.0
+### Key Findings from v10.0
 
-- This is NOT a coding milestone -- all work uses Playwright MCP browser tools
-- MCP tools: browser_navigate, browser_screenshot, browser_click, browser_type, browser_snapshot
-- All screenshots go to `./screenshots/` with sequential numbering
-- No test files are written -- this is interactive browser exploration
-- Output is AUDIT_REPORT.md with bugs, screenshots, and coverage summary
-- Dev auth bypass available via VITE_DEV_BYPASS_AUTH for deterministic login
+- 6 pages crash on load (team, activity, template-marketplace, translations, demo-tools, security)
+- Settings page fails with null user_id constraint (dev bypass issue)
+- Status page has unresolved template variables ({{env}}, {{version}})
+- Data sources page fails to load (Supabase RPC error)
+- XSS protection works (React escaping prevents injection)
+- Responsive layout generally good; templates filter panel doesn't collapse on mobile
+- Dev auth bypass limitations: can't test CRUD writes, feature-gated interiors, or admin-role pages
 
 ### Blockers/Concerns
 
@@ -67,10 +59,10 @@ Recent: v9.0 archived early with Phase 94 only; remaining 20 requirements deferr
 
 ## Session Continuity
 
-Last session: 2026-03-01
-Stopped at: Completed 99-03-PLAN.md (Logout Flow & Auth Transition States) -- Phase 99 COMPLETE
+Last session: 2026-03-02
+Stopped at: Milestone v11.0 started — defining requirements
 Resume file: N/A
-Next: Next phase in v10.0 Visual QA Audit
+Next: Define requirements, create roadmap
 
 ---
-*Updated: 2026-03-01 -- Completed Phase 99 Authentication & Onboarding Flows (3/3 plans, 39 screenshots)*
+*Updated: 2026-03-02 — v11.0 Stability Pass milestone started*
