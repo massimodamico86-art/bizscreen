@@ -74,7 +74,15 @@ export default function StatusPage() {
       const data = await response.json();
       setAppHealth(data);
     } catch (error) {
-      setAppHealth({ status: 'error', error: error.message });
+      setAppHealth({
+        status: 'error',
+        error: error.message,
+        environment: import.meta.env.MODE || 'unknown',
+        version: import.meta.env.VITE_APP_VERSION || '1.0.0',
+        uptime: null,
+        build: null,
+        server: { region: 'local' },
+      });
     }
   };
 
@@ -208,7 +216,7 @@ export default function StatusPage() {
                    t('status.issuesDetected', 'System Issues Detected')}
                 </h2>
                 <p className="text-sm text-gray-600">
-                  {t('status.envVersion', 'Environment: {{env}} | Version: {{version}}', { env: appHealth.environment, version: appHealth.version })}
+                  {t('status.envVersion', 'Environment: {{env}} | Version: {{version}}', { env: appHealth.environment || import.meta.env.MODE || 'unknown', version: appHealth.version || import.meta.env.VITE_APP_VERSION || '1.0.0' })}
                   {appHealth.build?.sha && ` | Build: ${appHealth.build.sha}`}
                 </p>
               </div>

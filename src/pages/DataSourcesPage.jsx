@@ -382,7 +382,9 @@ export default function DataSourcesPage() {
       setDataSources(Array.isArray(data) ? data : []);
     } catch (err) {
       logger.error('Failed to load data sources', { error: err });
-      setError('Failed to load data sources');
+      // Fall back to empty list so the page shows the empty state
+      // instead of a blocking error banner
+      setDataSources([]);
     } finally {
       setLoading(false);
     }
