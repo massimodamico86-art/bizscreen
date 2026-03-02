@@ -12,7 +12,24 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import {
+  AlertCircle,
+  Clock,
+  ImageIcon,
+  Layout,
+  ListVideo,
+  Loader2,
+  Maximize2,
+  MessageSquare,
+  Minimize2,
+  Pause,
+  Play,
+  Send,
+  SkipBack,
+  SkipForward,
+  User,
+  Zap,
+} from 'lucide-react';
 
 import { useTranslation } from '../i18n';
 
@@ -25,11 +42,30 @@ const API_BASE = '';
 
 async function fetchPreviewContent(token) {
   const res = await fetch(`${API_BASE}/api/preview/${token}`);
+
+  // Check Content-Type to avoid parsing HTML as JSON
+  const contentType = res.headers.get('content-type') || '';
+
   if (!res.ok) {
-    const error = await res.json().catch(() => ({ error: 'Failed to load preview' }));
-    throw new Error(error.error || 'Failed to load preview');
+    // Try to extract error message from JSON response, fall back to generic message
+    if (contentType.includes('application/json')) {
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.error || 'This preview link is invalid or has expired.');
+    }
+    throw new Error('This preview link is invalid or has expired.');
   }
-  return res.json();
+
+  // Verify the successful response is actually JSON (not an HTML catch-all)
+  if (!contentType.includes('application/json')) {
+    throw new Error('This preview link is invalid or has expired.');
+  }
+
+  // Parse the JSON response with safety catch
+  try {
+    return await res.json();
+  } catch {
+    throw new Error('This preview link is invalid or has expired.');
+  }
 }
 
 async function fetchPreviewComments(token) {
