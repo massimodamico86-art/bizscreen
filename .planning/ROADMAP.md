@@ -99,7 +99,9 @@ All milestones shipped successfully (16 total).
   2. User can navigate to the Activity Log page and see log entries rendered as text without a crash
   3. User can navigate to Template Marketplace, Translation Dashboard, Demo Tools, and Security Dashboard pages and each loads its intended UI without error
   4. The root cause pattern ("Objects are not valid as a React child") is identified and fixed consistently across all 6 pages so the same class of bug does not recur
-**Plans**: TBD
+**Plans**:
+  - Plan 01 (Wave 1): Fix EmptyState defensive icon rendering, TemplateSidebar missing components, ErrorBoundary Try Again button, and audit broader codebase for same pattern
+  - Plan 02 (Wave 2): Create E2E crash regression tests for all 6 pages
 
 ### Phase 105: Functionality & Error Handling Fixes
 **Goal**: Users encounter working pages and clear error messages instead of constraint violations, unresolved template variables, RPC failures, and raw JSON parse errors
@@ -140,7 +142,7 @@ All milestones shipped successfully (16 total).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 104. React Render Crash Fixes | 0/? | Not started | - |
+| 104. React Render Crash Fixes | 0/2 | Planned | - |
 | 105. Functionality & Error Handling Fixes | 0/? | Not started | - |
 | 106. Dev Experience Improvements | 0/? | Not started | - |
 | 107. Cosmetic Polish | 0/? | Not started | - |
