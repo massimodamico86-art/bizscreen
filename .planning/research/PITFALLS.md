@@ -1,432 +1,490 @@
-# Domain Pitfalls: Player Hardening Features
+# Pitfalls Research
 
-**Domain:** Adding screenshot capture, auto-recovery, content verification, diagnostic telemetry, and alert tuning to existing digital signage player
-**Researched:** 2026-02-19
-**Scope:** BizScreen -- React player running in browser/webview across 5 platforms (web, Android, iOS, WebOS, Tizen), Supabase backend with RLS, existing 30s heartbeat, IndexedDB offline cache, S3/CloudFront media, Sentry error monitoring, html2canvas screenshot capture
-**Confidence:** MEDIUM -- Based on deep codebase analysis and domain expertise; web search unavailable for verification of platform-specific claims
-
----
+**Domain:** Adding 14 features to existing digital signage platform (v12.0 Feature Parity)
+**Researched:** 2026-03-02
+**Confidence:** HIGH (based on deep codebase analysis of 196K LOC + domain expertise)
 
 ## Critical Pitfalls
 
-Mistakes that cause player downtime on deployed devices, data loss, or cascading failures across the fleet.
+### Pitfall 1: Nested Playlists Creating Infinite Recursion in Content Resolution
+
+**What goes wrong:**
+Adding sub-playlist support (`item_type = 'playlist'` in `playlist_items`) without recursion guards causes infinite loops when Playlist A references Playlist B which references Playlist A. The `get_resolved_player_content` RPC (migration 016) currently flattens playlist items with a single-level `LEFT JOIN playlist_items pi ON pi.playlist_id`. Nested playlists require recursive resolution, and the same RPC is called by the player on every 30-second heartbeat. An infinite loop here crashes the player or exhausts the Supabase connection pool.
+
+**Why it happens:**
+The content resolution RPC was designed for flat playlists. Developers add a self-referencing FK (`playlist_items.item_id -> playlists.id WHERE item_type = 'playlist'`) but forget that the resolution must be recursive AND that the player's offline cache, campaign priority system, and playback tracking all assume flat item arrays.
+
+**How to avoid:**
+- Add a `max_depth` parameter (3 levels) to a new recursive CTE in the resolution RPC
+- Add a DB constraint: `CHECK` trigger that prevents circular references at write time (traverse the chain on INSERT/UPDATE)
+- Flatten nested playlists into a single item array at resolution time -- the player should never receive nested structures
+- Add a `playlist_items.item_type = 'playlist'` check that resolves to the child playlist's items inline
+- Hard limit on total resolved items: 500 items per playlist (after expansion)
+
+**Warning signs:**
+- Player enters infinite content fetch loop (heartbeat logs show repeated RPC calls)
+- `get_resolved_player_content` response grows unexpectedly large
+- Supabase connection pool exhaustion alerts
+- Offline cache fails to serialize (circular JSON)
+
+**Phase to address:**
+Nested playlists phase. Must be implemented with the circular reference check BEFORE any UI allows creating nested playlists.
 
 ---
 
-### Pitfall 1: Auto-Recovery Infinite Restart Loop
+### Pitfall 2: Document Display Failing Silently on Smart TV Platforms (WebOS/Tizen)
 
-**What goes wrong:** The existing `useStuckDetection.js` calls `window.location.reload()` when the page is inactive for 5 minutes (`maxNoActivityMs: 300000`). If the root cause of inactivity is a persistent error (bad content JSON, corrupt cache, unreachable Supabase endpoint), the page reloads, hits the same error, goes inactive again, and reloads indefinitely. On low-power signage hardware (WebOS, Tizen), this creates a visible reload flash every 5 minutes and exhausts device memory as each reload leaks browser resources that the constrained garbage collector cannot reclaim.
+**What goes wrong:**
+PDF.js requires a canvas element and significant JavaScript execution. WebOS (LG) and Tizen (Samsung) smart TV browsers have severe JS memory limits (typically 256-512MB), limited canvas support, and no native PDF rendering. Word/PPT/Excel files require server-side conversion. Implementing document display as client-side rendering works on web/desktop players but produces blank screens or crashes on 60%+ of deployed devices.
 
-**Why it happens:** The current `onPageStuck` callback in `ViewPage.jsx` (line 186) does a hard reload with zero state tracking:
-```javascript
-onPageStuck: () => {
-  logger.warn('Player inactive for too long, reloading...');
-  window.location.reload();
-}
-```
-There is no mechanism to detect that the reload is happening repeatedly, no exponential backoff between reloads, and no fallback behavior after N failed recovery attempts.
+**Why it happens:**
+Developers test on Chrome desktop, where PDF.js works perfectly. The player already runs on WebOS/Tizen (see `Player.jsx` supporting web, Android, iOS, WebOS, Tizen), but the document rendering path is never tested on these constrained devices. The existing content resolution pipeline (`get_resolved_player_content`) returns media URLs -- it does not handle document-to-image conversion.
 
-**Consequences:**
-- **Visible flashing:** Customer sees white screen flashing every 5 minutes on their lobby display.
-- **Memory exhaustion:** WebOS LG panels and older Tizen Samsung displays have 512MB-1GB RAM. Each reload without proper cleanup fragments memory. After 10-20 cycles, the browser process is killed by the OS watchdog, leaving a black screen until manual power cycle.
-- **Heartbeat spam:** Each reload sends an immediate heartbeat (line 95 of `usePlayerHeartbeat.js`), content fetch, screenshot check, PIN hash fetch, and analytics init. A fleet of 100 devices in a restart loop generates 100 concurrent bursts every 5 minutes against Supabase.
-- **Alert storm:** Each restart cycle triggers device_offline -> device_online transitions, flooding the alerts table and notification system.
+**How to avoid:**
+- Server-side conversion is mandatory: convert PDF/Word/PPT/Excel to images (PNG/JPEG per page) via a Supabase Edge Function or background worker at upload time
+- Store converted images as regular media_assets linked to the source document
+- Player receives image URLs, never document URLs -- the conversion is transparent
+- For multi-page documents, generate an image per page and create an auto-cycling "slide deck" within the playlist item
+- Use LibreOffice headless (via Docker sidecar or external service like Gotenberg) for Word/PPT/Excel conversion; use a PDF-to-image library for PDFs
+- Conversion is async: `media_assets.conversion_status` column (pending, processing, completed, failed) with retry logic
 
-**Prevention:**
-- Track restart count in `localStorage` with a timestamp. Before executing `window.location.reload()`, check: if more than 3 reloads in the last 30 minutes, stop reloading and display a static "device needs attention" screen instead.
-- Implement exponential backoff between reloads: 5 min, 10 min, 20 min, capped at 60 min.
-- On recovery after multiple failures, clear IndexedDB cache before reloading (the cached content may be the cause).
-- Add a `recovery_attempts` counter to the heartbeat payload so the dashboard shows which devices are in a restart loop.
+**Warning signs:**
+- Document media items show blank in player preview but work in admin dashboard
+- Smart TV devices report crashes or recovery events around document items
+- Test coverage exists only for web browser player
+- Edge Function timeout errors (60s default) on large documents
 
-**Detection:**
-- `localStorage.getItem('player_restart_count')` exists and is > 3.
-- Dashboard shows a device alternating between online/offline every few minutes.
-- Sentry shows repeated `Player inactive for too long, reloading...` warnings from the same device.
-
-**Phase assignment:** Must be the first thing addressed in the auto-recovery phase. All other recovery features depend on not having an infinite loop as the foundation.
+**Phase to address:**
+Document display phase. Server-side conversion must be the first task, before any player rendering work.
 
 ---
 
-### Pitfall 2: html2canvas Fails Silently on WebOS and Tizen
+### Pitfall 3: Video Wall Synchronization Without a Clock Source
 
-**What goes wrong:** The existing `screenshotService.js` uses `html2canvas` to capture the DOM. On WebOS (LG signage) and Tizen (Samsung signage), `html2canvas` frequently fails or produces blank/corrupt images because:
+**What goes wrong:**
+Video wall support means multiple physical screens display synchronized content that forms a larger image. Without a shared clock source, each screen's player advances through playlists independently. Even with identical content, clocks drift by 50-200ms within minutes, causing visible tearing at screen boundaries. The existing `usePlayerPlayback` hook manages per-device timing with local `setTimeout` -- there is no cross-device time coordination.
 
-1. **WebGL/Canvas limitations:** WebOS 3.x-5.x and Tizen 3.x-5.x have incomplete Canvas 2D implementations. `html2canvas` uses `CanvasRenderingContext2D.drawImage()` to composite layers, but the hardware-accelerated canvas on these platforms sometimes returns empty pixel data for cross-origin images (even with `useCORS: true`).
-2. **Memory pressure during capture:** `html2canvas` clones the entire DOM, creates an offscreen canvas at the configured scale (currently 0.5x), and composites all elements. On a device playing 1080p video with 512MB RAM, this operation can trigger an out-of-memory kill of the canvas context, returning a blank canvas that converts to a tiny (200-500 byte) JPEG.
-3. **Video frames not captured:** `html2canvas` cannot capture the current frame of a `<video>` element. The screenshot shows everything except the video, which appears as a black rectangle. For a signage player where video is the primary content, this makes screenshots useless for diagnostics.
+**Why it happens:**
+The current architecture is deliberately single-screen: `ViewPage.jsx` fetches content per `screenId`, `usePlayerHeartbeat` reports per device, and `usePlayerPlayback` uses local timers. Video wall is architecturally different from everything else in the player -- it requires devices to coordinate rather than operate independently.
 
-**Why it happens:** The current code (line 40-50 of `screenshotService.js`) passes `allowTaint: true` and `useCORS: true` but does not handle the case where the canvas is blank or undersized. The `captureScreenshot` function returns whatever blob `canvas.toBlob` produces, even if it is effectively empty.
+**How to avoid:**
+- Designate one screen as the "leader" and others as "followers" in a video wall group
+- Leader broadcasts its playback position via Supabase Realtime (a dedicated channel per wall group)
+- Followers sync their playback position to the leader's timestamp on each message
+- Use NTP-aligned timestamps (`performance.now()` offset calculated against server time) rather than `Date.now()` for timing
+- Content for each screen is a viewport crop of the full content -- resolve this server-side and deliver pre-cropped coordinates per device
+- Start simple: static content (images/scenes) split across screens. Video sync across screens is much harder and may need to be deferred
+- Accept 100-200ms tolerance as industry standard for non-genlock video walls
+- Display a "sync quality" indicator in admin UI showing per-screen offset
 
-**Consequences:**
-- Dashboard shows "last screenshot" that is a black rectangle or a blank white image, providing zero diagnostic value.
-- Operators waste time investigating "broken screens" that are actually working fine -- the screenshot just did not capture properly.
-- After 2 consecutive failures, `screenshotService.js` raises a `DEVICE_SCREENSHOT_FAILED` alert (line 201), creating noise for a problem that is not actually a device failure but a capture limitation.
-- Screenshot storage fills with useless blank images consuming Supabase Storage quota.
+**Warning signs:**
+- Visible content offset at screen boundaries (content doesn't align)
+- Content transitions happen at different times on different screens
+- Player heartbeats show different `content_version` across wall members
 
-**Prevention:**
-- **Validate screenshot before upload:** After `canvas.toBlob()`, check the blob size. A valid 1920x1080 JPEG at 0.5x scale (960x540) should be 30KB-200KB. If the blob is under 5KB, it is almost certainly blank. Discard and skip rather than upload.
-- **Capture video frames separately:** Use `videoElement.captureStream()` or draw the video frame directly onto a canvas with `ctx.drawImage(videoRef.current, 0, 0)` before compositing with the html2canvas output. This requires merging two canvases: one from html2canvas (UI layer) and one from the video element.
-- **Platform-specific fallback:** On WebOS and Tizen, skip html2canvas entirely and use the native WebOS `window.PalmSystem?.screenCapture()` or Tizen `tizen.systeminfo` screenshot APIs if available. These capture the actual display output including video frames.
-- **Reduce capture frequency on constrained devices:** Detect device type from user agent. On WebOS/Tizen, only capture screenshots on explicit admin request (`needs_screenshot_update` flag), never on a timer. On web/Android/iOS, periodic capture is safe.
-- **Add a minimum size check to the existing `cleanupOldScreenshots`** so it also purges screenshots under 5KB.
-
-**Detection:**
-- Query `device-screenshots` storage for files under 5KB -- these are blank captures.
-- Screenshot age is always stale on WebOS/Tizen devices even though the device is online and responding to heartbeats.
-
-**Phase assignment:** Screenshot hardening phase. Must address before enabling periodic screenshots fleet-wide, or the alert system will be overwhelmed with false positives.
+**Phase to address:**
+Video wall phase. Requires its own Realtime channel architecture and a new `video_wall_groups` table. Do NOT attempt to retrofit the existing single-screen playback model.
 
 ---
 
-### Pitfall 3: Telemetry Volume Overwhelms Supabase Database
+### Pitfall 4: Proof of Play Reporting Blowing Up Database Storage
 
-**What goes wrong:** The player already sends telemetry on multiple overlapping timers:
-- **Heartbeat** every 30s (`usePlayerHeartbeat.js` -> `updateDeviceStatus` RPC)
-- **Content polling** every 30s (`usePlayerContent.js` line 307 -> `getResolvedContent` RPC + `player_heartbeat` RPC)
-- **Device refresh check** every heartbeat (`checkDeviceRefreshStatus` -> direct `tv_devices` query)
-- **Command polling** (realtime WebSocket with polling fallback at 10s)
-- **Playback tracking** flushes every 30s (`playbackTrackingService.js` CONFIG.FLUSH_INTERVAL_MS)
-- **Data refresh orchestrator** ticks every 10s (`useDataRefreshOrchestrator.js`)
-- **PIN hash fetch** every 30s in kiosk mode (line 209 of `ViewPage.jsx`)
+**What goes wrong:**
+Proof of Play requires logging every content impression with timestamps, duration, and screen ID. With 1,000 screens each playing 6 items per minute at 10-second durations, that is 360,000 rows per hour, 8.6M per day. The existing `playback_events` table (migration 022) and `playbackTrackingService.js` already queue events locally and flush every 30 seconds (`CONFIG.FLUSH_INTERVAL_MS = 30000`). But adding compliance-grade proof of play (with exact start/end timestamps, no gaps, exportable to CSV/PDF) dramatically increases the volume and retention requirements. Without partitioning, this table will degrade query performance within weeks.
 
-Adding diagnostic telemetry (device metrics like CPU, memory, temperature, network stats) on top of this creates a situation where each device makes **8-12 Supabase calls every 30 seconds**. For a fleet of 500 devices, that is **8,000-12,000 requests per minute** against the database. Supabase Pro plan includes pooled connections (25 direct, 200 via Supavisor), and this volume will exhaust the connection pool, causing timeouts for both player devices AND admin dashboard users.
+**Why it happens:**
+The existing tracking was designed for analytics aggregation (counts, averages), not compliance reporting (every event, exact timestamps, long retention). Developers add the columns and start collecting data, but the table becomes the largest in the database and slows down all reporting queries.
 
-**Why it happens:** Each feature was added incrementally by different phases. The heartbeat, content polling, device refresh check, and command polling all evolved independently with their own timers. Nobody audited the total request volume per device per minute.
+**How to avoid:**
+- Partition `playback_events` by month (`PARTITION BY RANGE (recorded_at)`) from day one
+- Set up automatic partition creation (pg_cron job creates next month's partition on the 25th)
+- Create a separate `proof_of_play_reports` table for generated reports (pre-aggregated)
+- Create `playback_daily_summary` aggregate table populated by pg_cron for dashboard queries
+- Add an archival policy: move raw events older than 90 days to cold storage (or archive to S3 as CSV)
+- Batch inserts: the player already queues events locally. Use `record_playback_events_batch` RPC (already exists in `offlineService.js:551`) for bulk inserts
+- Index only on `(tenant_id, screen_id, recorded_at)` -- do NOT add per-media indexes on the raw table
 
-**Consequences:**
-- **Connection pool exhaustion:** Supabase connection pool timeouts cascade -- when one request hangs, the next request queues, and within 60s the entire pool is blocked. Admin users see "connection timeout" when trying to load the dashboard.
-- **Database CPU saturation:** Each `get_resolved_player_content` RPC joins 5+ tables. At 500 devices x 2 calls/min = 1,000 complex queries/min. This competes with admin CRUD operations.
-- **Supabase billing spike:** Supabase bills on database compute time and bandwidth. Telemetry is read-heavy (heartbeats update one row then read back), and at fleet scale the egress costs multiply.
-- **Battery drain on Android/iOS players:** Frequent network calls prevent the device from entering low-power mode, draining battery on tablet-based signage.
+**Warning signs:**
+- `playback_events` table exceeds 10M rows
+- Analytics dashboard queries take > 5 seconds
+- Supabase plan storage alerts
+- Player heartbeat RPC slows down (shares connection pool)
 
-**Prevention:**
-- **Consolidate into a single heartbeat RPC:** Create one `player_heartbeat_v2` RPC that accepts a JSONB payload containing: device status, content hash, metrics snapshot, screenshot status, and recent playback events. Call it every 30s. Kill the separate content poll, device refresh check, and PIN hash fetch timers.
-- **Batch telemetry writes:** Instead of flushing playback events every 30s, accumulate locally and flush every 5 minutes (or when the queue hits 50 events). The existing `playbackTrackingService.js` already has this pattern but the `FLUSH_INTERVAL_MS` of 30s is too aggressive for fleet scale.
-- **Use Supabase realtime channels instead of polling:** The existing realtime subscription for commands (`subscribeToDeviceCommands`) is correct. Extend this pattern to content updates and screenshot requests, eliminating 2 polling endpoints per device.
-- **Add server-side telemetry aggregation:** Instead of storing raw heartbeats, use a PostgreSQL function that updates an `device_metrics_hourly` rollup table. Only keep the last 24h of raw heartbeats; aggregate older data into hourly/daily summaries.
-- **Implement adaptive polling intervals:** If the device has not had a content change in 30 minutes, back off content polling to every 5 minutes. Resume 30s polling on realtime event or on admin dashboard visit.
-
-**Detection:**
-- Supabase dashboard shows sustained database CPU > 50% during business hours.
-- `pg_stat_activity` shows more than 20 concurrent connections from the `anon` role (player devices).
-- Player logs show increasing `Heartbeat error` or `Polling error` entries.
-- Admin dashboard becomes sluggish during peak device hours.
-
-**Phase assignment:** Telemetry phase must consolidate the heartbeat BEFORE adding new diagnostic metrics. Adding metrics to the existing fragmented polling architecture will make this pitfall materialize immediately.
+**Phase to address:**
+Proof of Play phase. Table partitioning must be in the first migration, not retrofitted later.
 
 ---
 
-### Pitfall 4: Content Verification Blocks Playback on Slow Networks
+### Pitfall 5: YouTube/Vimeo Embedding Breaking Offline Player
 
-**What goes wrong:** Content verification (checking that media files are complete, not corrupted, and match server checksums) is added as a synchronous step before playback. The existing `checkSceneNeedsUpdate` in `offlineService.js` already calls the `check_if_scene_changed` RPC, but adding full media verification (downloading and checking checksums for all media in a playlist) on every content change can take 10-60 seconds on slow networks or with large playlists (20+ items, 100MB+ total media).
+**What goes wrong:**
+YouTube and Vimeo embeds use iframe-based players that require network access. When the player goes offline (the entire offline cache system in `offlineService.js` and `cacheService.js` is designed for self-hosted content), embedded videos show blank iframes or error pages. The `getSceneForPlayback` fallback in `offlineService.js:337-376` returns cached scenes but cannot cache third-party iframe content.
 
-During this verification window, the screen shows either a loading spinner or the previous content (which may be outdated). If verification fails (network timeout, checksum mismatch on one item), the question becomes: play the unverified content, or show nothing?
+**Why it happens:**
+The existing cache system stores media blobs in IndexedDB (images, videos uploaded to S3). YouTube/Vimeo content cannot be downloaded and cached -- it is third-party streaming content behind DRM and ToS restrictions. Developers add the embed widget but forget the offline story, resulting in blank zones on screens that lose connectivity.
 
-**Why it happens:** Developers implement verification as a blocking pre-condition because it feels "safe" -- never play content that has not been verified. But signage has a different correctness priority than other software: **showing slightly stale content is always better than showing nothing**. A blank screen in a restaurant or hotel lobby is worse than showing yesterday's menu.
+**How to avoid:**
+- Treat YouTube/Vimeo embeds as "online-only" content with an explicit fallback
+- When offline, display a configurable fallback: thumbnail + "Content requires internet" message, or a designated offline replacement media item
+- Add a `requiresNetwork` flag to the widget registry entry for these types
+- The player's `getMediaUrl` function (`offlineService.js:406-417`) must handle the "no cache available" case for iframe widgets gracefully
+- Generate and cache a thumbnail of the video (via YouTube/Vimeo API thumbnail endpoints) as the offline fallback image
+- Document this limitation in the admin UI when adding YouTube/Vimeo content: "This content will not display when screen is offline"
+- Always embed with `mute=1` parameter (muted autoplay is allowed without user interaction on all platforms)
+- Add `allow="autoplay; encrypted-media"` to the iframe
 
-**Consequences:**
-- **Extended blank screen windows:** On 3G/4G-connected signage (common in outdoor and retail), verification of a 20-item playlist with video takes 30-60 seconds. The screen is blank during this time, multiple times per day when content updates.
-- **Verification failure = no content:** If even one media file fails checksum, strict verification rejects the entire content set. The player falls back to cache, but if the cache was already cleared (e.g., by a `clear_cache` command), the screen goes blank.
-- **Memory pressure from parallel downloads:** Verifying by downloading all media into memory (even just for checksum) on a 512MB WebOS device can OOM the browser process.
+**Warning signs:**
+- Blank zones on screens during network outages
+- Player recovery system triggers (blank screen detection at 30s threshold) for YouTube/Vimeo zones
+- Stuck detection false positives (`useStuckDetection` hook sees no content)
 
-**Prevention:**
-- **Never block playback for verification.** Always play content immediately (from cache or fresh fetch), then verify in the background. If verification finds issues, log them and flag the specific items, but continue playing.
-- **Verify lazily per-item:** Verify each media item just before it plays (e.g., during the previous item's display duration). If verification fails, skip to the next item and alert.
-- **Use streaming checksums:** Instead of downloading the entire file to verify, use HTTP Range requests to check the first 64KB and last 64KB of each file. This catches truncated downloads (the most common corruption) without downloading the whole file.
-- **Separate "can play" from "verified":** Content enters a `playable` state immediately on successful fetch. Verification upgrades it to `verified` state. The player always plays `playable` content. The dashboard shows verification status as an informational indicator, not a blocker.
-- **Implement progressive verification:** Check the most important items first (currently playing item, next 3 items in playlist). Defer verification of items further in the queue.
-
-**Detection:**
-- Player logs show "Loading content..." for > 10 seconds between content transitions.
-- Users report blank screens during content updates.
-- Playback tracking shows gaps in scene playback events correlating with content change timestamps.
-
-**Phase assignment:** Content verification phase. The architecture decision (blocking vs. background) must be made at the start of this phase. Getting this wrong requires a rewrite.
-
----
-
-### Pitfall 5: Multi-Tenant Alert Noise Makes Alerts Useless
-
-**What goes wrong:** The existing alert system (`alertEngineService.js`) already has rate limiting (5 alerts per device per minute) and coalescing (dedup open alerts). But adding screenshot failure alerts, content verification failure alerts, auto-recovery alerts, and telemetry gap alerts to the existing device_offline, cache_stale, and sync_failed alerts creates an alert volume where operators stop checking them entirely.
-
-The current escalation rules (line 308-331 of `alertEngineService.js`) auto-escalate to CRITICAL after specific thresholds (30 min offline, 5 screenshot failures, etc.), but there is no mechanism to suppress low-value alerts when a higher-value alert already explains the root cause. For example: a device goes offline, which simultaneously triggers `device_offline`, `device_screenshot_failed` (because screenshots cannot be uploaded), `device_cache_stale` (because cache cannot be refreshed), and `data_source_sync_failed` (because RSS/weather cannot be fetched). One root cause produces 4+ alerts.
-
-**Why it happens:** Each alert type was added by a different feature phase with its own raise/resolve logic. The alertEngineService handles dedup within a single alert type (coalescing), but does not correlate across alert types. Adding 3-5 new alert types for hardening features multiplies the cross-type correlation problem.
-
-**Consequences:**
-- **Alert fatigue:** Operators see 20 open alerts, most of which are symptoms of 2 root causes. They stop checking.
-- **Real issues hidden:** A genuine content verification failure (corrupt media file) is buried among a flood of screenshot and telemetry alerts.
-- **Notification spam:** The `dispatchAlertNotifications` function sends emails for new CRITICAL alerts. If a fleet-wide network outage triggers 500 device_offline + 500 screenshot_failed + 500 cache_stale alerts, that is up to 1,500 notification emails.
-- **Database growth:** The alerts table grows unbounded. With 500 devices generating 5+ alert types each, the coalescing index (`idx_alerts_coalesce`) becomes a bottleneck because it must check for existing open alerts across 6 columns.
-
-**Prevention:**
-- **Implement root cause correlation:** When a device is offline, suppress all other alerts for that device. The `device_offline` alert is the root cause; screenshot, cache, and sync failures are expected consequences. Auto-resolve these symptom alerts when they are raised while a `device_offline` alert is already open.
-- **Add alert grouping/hierarchy:** Define parent-child relationships between alert types. `device_offline` is a parent of `device_screenshot_failed`, `device_cache_stale`, and `data_source_sync_failed` for the same device. The dashboard shows the parent alert with a count of suppressed children.
-- **Implement fleet-level dedup:** If more than 30% of devices in a screen group simultaneously go offline, raise a single "Network outage in [group]" alert instead of N individual device_offline alerts.
-- **Add auto-close TTL:** Alerts in `open` status for more than 7 days are automatically archived/closed. Stale alerts provide no value and clutter the dashboard.
-- **Tier notification channels by severity:** CRITICAL = email + in-app. WARNING = in-app only. INFO = dashboard only (no notification). Currently all levels dispatch through the same path.
-
-**Detection:**
-- Dashboard shows > 10 open alerts for the same device, all with similar timestamps.
-- Operators report ignoring alerts or disabling email notifications.
-- `alerts` table has > 10,000 rows within the first month.
-
-**Phase assignment:** Alert tuning should be a dedicated sub-phase that happens AFTER all new alert types are defined but BEFORE enabling them in production. Shipping noisy alerts is worse than shipping no alerts.
+**Phase to address:**
+YouTube/Vimeo embedding phase. The offline fallback must be implemented alongside the embed widget, not as a follow-up.
 
 ---
 
-## Moderate Pitfalls
+### Pitfall 6: SAML SSO Bypassing Supabase Auth and Breaking RLS
 
-Issues that cause degraded functionality, poor UX, or maintenance burden, but not outright failures.
+**What goes wrong:**
+Supabase Auth has built-in SAML support (via `supabase.auth.signInWithSSO()`), but it requires configuring the SAML provider at the Supabase project level. The existing `ssoService.js` stores provider config in a custom `sso_providers` table with fields for `metadata_url`, `metadata_xml`, `entity_id`, `sso_url`, and `certificate` but does not wire it to Supabase Auth's actual SAML flow. If SSO is implemented as a separate auth mechanism that bypasses `supabase.auth`, then all RLS policies (which depend on `auth.uid()`) break. Users authenticated via custom SSO would have no Supabase session and no row-level security.
 
----
+**Why it happens:**
+Multi-tenant SAML is complex. Each tenant wants their own IdP (Okta, Azure AD, etc.). Supabase's SSO requires either their enterprise plan or manual provider registration. Developers build a custom SAML flow to avoid this dependency but forget that the entire data access layer depends on `auth.uid()` in RLS policies.
 
-### Pitfall 6: Screenshot Storage Costs Grow Linearly and Are Never Cleaned at Fleet Scale
+**How to avoid:**
+- Use Supabase Auth SSO if on a plan that supports it -- this keeps `auth.uid()` and all RLS intact
+- If building custom SAML: after SAML assertion validation, create/link a Supabase user and generate a Supabase session (via `supabase.auth.admin.generateLink()` or custom JWT)
+- NEVER have two parallel auth systems -- SSO users must end up with a Supabase session
+- The `AuthContext.jsx` (which reads `supabase.auth.getSession()`) must handle SSO sessions identically to password sessions
+- Store SAML provider config per tenant, but the actual authentication still flows through Supabase Auth
+- Test with `enforce_sso: true` (already in `ssoService.js:63`) to ensure password login is properly blocked for SSO tenants
+- Never parse SAML XML in the browser -- assertion validation must happen server-side
 
-**What goes wrong:** The existing `cleanupOldScreenshots` function (line 227 of `screenshotService.js`) keeps the last 5 screenshots per device. With 500 devices, that is 2,500 files. But the function is called by the player device itself on every screenshot capture, using `supabase.storage.list()` which is an expensive operation at scale. More importantly, if a device goes offline permanently (removed, replaced, lost), its screenshots are never cleaned up because the cleanup runs on the device.
+**Warning signs:**
+- SSO users can log in but see empty data (RLS filtering everything)
+- SSO users authenticated but `userProfile` is null (no matching row in `profiles` table)
+- SSO sessions not appearing in Supabase Auth dashboard
+- `auth.uid()` returns null in RLS policies for SSO users
 
-**Why it happens:** Storage cleanup was designed for a small fleet (< 50 devices). The per-device cleanup approach does not account for decommissioned devices or storage growth over time.
-
-**Prevention:**
-- Implement server-side cleanup: a Supabase Edge Function or cron job that runs daily, listing all screenshot folders and deleting files older than 7 days AND files from devices that have been offline for > 30 days.
-- Remove the per-device cleanup from the screenshot capture path (it adds latency and API calls to an already expensive operation).
-- Set a Supabase Storage lifecycle policy on the `device-screenshots` bucket to auto-delete files older than 30 days.
-- Track screenshot storage usage per tenant in the `usage_quotas` system (migration 056) and alert when approaching limits.
-
-**Detection:**
-- Supabase Storage dashboard shows `device-screenshots` bucket growing by > 1GB/month.
-- `supabase.storage.list()` calls start timing out for devices with many screenshots.
-
-**Phase assignment:** Screenshot phase. Add server-side cleanup alongside periodic capture, not as an afterthought.
-
----
-
-### Pitfall 7: Stuck Detection Recovery Creates Visible Content Glitches
-
-**What goes wrong:** The current video stuck recovery in `ViewPage.jsx` (line 177) resets the video to the beginning and calls `.play()`:
-```javascript
-onVideoStuck: () => {
-  videoRef.current.currentTime = 0;
-  videoRef.current.play().catch(...);
-}
-```
-For page-level stuck recovery (line 186), it does a full page reload. Both approaches create a visible disruption: the video visibly restarts from the beginning, or the screen flashes white during reload. On a 4K lobby display, this is jarring.
-
-**Why it happens:** Recovery prioritizes getting back to a working state as fast as possible, which is correct. But it does not consider minimizing the visual disruption of the recovery.
-
-**Prevention:**
-- For video stuck: instead of resetting to `currentTime = 0`, skip to the next playlist item. A stuck video is likely a codec or memory issue with that specific file; replaying it will likely get stuck again.
-- For page stuck: instead of `window.location.reload()`, try a soft recovery first: re-mount the content components via React state change. Only escalate to a full reload if the soft recovery does not resolve within 10 seconds.
-- Add a "recovery in progress" overlay: a simple black screen with the logo shown for 1-2 seconds during recovery, which looks intentional rather than broken.
-- On WebOS and Tizen, perform recovery by destroying and recreating the video element rather than reloading the page. These platforms leak memory on reload, making the problem worse.
-
-**Detection:**
-- Playback tracking shows gaps of 1-3 seconds in scene playback that correlate with stuck detection logs.
-- Users report "the screen blinks sometimes."
-
-**Phase assignment:** Auto-recovery phase, when implementing the tiered recovery strategy.
+**Phase to address:**
+SSO/SAML phase. Architecture decision (Supabase native vs. custom) must be made first, before any implementation.
 
 ---
 
-### Pitfall 8: IndexedDB Quota Exceeded on Constrained Devices When Adding Diagnostic Data
+### Pitfall 7: Public REST API Leaking Tenant Data Across Boundaries
 
-**What goes wrong:** The existing `cacheService.js` allocates 500MB for media and 100MB for scenes (line 32-41). Adding diagnostic telemetry storage (device metrics history, screenshot queue for offline sync, error logs, content verification results) to IndexedDB pushes total storage demand toward or past the browser's IndexedDB quota. On WebOS (typically 50-100MB total quota for web storage) and Tizen (varies by model, 50-500MB), this can exceed the platform limit even without considering the existing 600MB media/scene allocation (which works because LRU eviction prevents actual usage from reaching the limit).
+**What goes wrong:**
+The existing `apiTokenService.js` generates tokens with scopes (9 defined in `AVAILABLE_SCOPES`) and stores hashes in an `api_tokens` table. But a public REST API needs its own request handling layer (Edge Function or separate endpoint) that validates the token AND applies tenant isolation. If the API uses a service role key for flexibility (batch operations, cross-table queries), it bypasses RLS entirely. One misconfigured endpoint can return another tenant's screens, playlists, or media.
 
-**Why it happens:** The `CACHE_LIMITS` in `cacheService.js` define soft limits enforced by JavaScript LRU eviction, not hard limits from the browser. The actual browser quota on constrained devices is much lower than the sum of configured limits. Adding new stores to IndexedDB adds entries that the existing eviction logic does not manage.
+**Why it happens:**
+The existing 90+ service files all use `supabase` from `src/supabase.js` which authenticates via the user's session. API token auth is fundamentally different -- there is no user session. Developers either use the service role (bypassing RLS) or try to impersonate a user (fragile). Neither approach naturally maps to the existing service layer.
 
-**Consequences:**
-- `QuotaExceededError` thrown by IndexedDB, caught or uncaught, which can corrupt the database or prevent new entries.
-- On some WebOS versions, exceeding quota causes the entire IndexedDB to become read-only until the app is restarted.
-- Offline mode breaks: the player cannot cache new content because IndexedDB is full of diagnostic data.
+**How to avoid:**
+- Implement the API as Supabase Edge Functions that validate the `biz_` token prefix, hash and look up from `api_tokens`, and then execute queries with explicit `WHERE owner_id = $1` filters (defense in depth alongside RLS)
+- Never use the service role key in API endpoints that accept external tokens
+- Each API endpoint must include a tenant filter even if RLS is active (belt and suspenders)
+- Rate limit per API token, not per IP (the token identifies the tenant)
+- Add integration tests that attempt cross-tenant access and verify 403 responses
+- The existing `AVAILABLE_SCOPES` in `apiTokenService.js` must map to actual authorization checks in each endpoint
+- Include `Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` headers in responses
 
-**Prevention:**
-- **Add diagnostic data to a separate IndexedDB database** with its own size limit (e.g., 10MB). This prevents diagnostic data from competing with content cache.
-- **Implement global quota awareness:** Before writing, check `navigator.storage.estimate()` (where available) and compare remaining quota against the write size. Skip the write if quota is low.
-- **Prioritize content cache over diagnostic cache:** If storage is tight, clear diagnostic data first, then old screenshots, then stale content. Never evict currently-playing content.
-- **On WebOS/Tizen, reduce diagnostic storage to in-memory only** with periodic flush to server. Do not persist diagnostic data locally on constrained devices.
-- **Size the existing `CACHE_LIMITS` dynamically:** Detect available storage at startup and set limits proportionally instead of using hardcoded 500MB/100MB values.
+**Warning signs:**
+- API responses include data from multiple tenants
+- API token with `screens:read` scope can access playlists
+- No tenant filter in API query WHERE clauses (relying solely on RLS)
+- API tests pass without creating test data (reading real/other tenant data)
 
-**Detection:**
-- Player logs show "QuotaExceededError" or "Failed to cache content" errors.
-- Devices lose offline capability even though they were previously caching successfully.
-
-**Phase assignment:** Telemetry phase. Must be considered when designing the local telemetry storage schema.
-
----
-
-### Pitfall 9: Supabase RLS Bypass via Player Screenshot/Telemetry Endpoints
-
-**What goes wrong:** The player runs as the `anon` role (anonymous Supabase key). The existing `store_device_screenshot` and `update_device_status` functions use `SECURITY DEFINER` to bypass RLS, which is correct. But adding new telemetry endpoints (device metrics, content verification results, error reports) as `SECURITY DEFINER` functions without proper input validation allows any client with the public anon key to write arbitrary data to any device's records.
-
-The existing `store_device_screenshot` (migration 075, line 69) takes a `p_device_id` and `p_screenshot_url` but does NOT verify that the caller is actually that device. Anyone with the public Supabase anon key can call `store_device_screenshot('any-device-id', 'https://evil.com/image.jpg')` and overwrite another device's screenshot.
-
-**Why it happens:** `SECURITY DEFINER` functions run as the function owner (typically `postgres`), bypassing all RLS policies. This is necessary for player devices (which are anonymous), but it means the function itself must implement access control. The existing functions trust the device ID passed by the caller without verification.
-
-**Consequences:**
-- **Data poisoning:** An attacker (or a misconfigured device) writes false telemetry data for other devices, making the diagnostic dashboard unreliable.
-- **Screenshot spoofing:** Replace another tenant's device screenshot with an arbitrary image.
-- **Alert manipulation:** If telemetry endpoints can clear device status flags, an attacker could suppress alerts for offline devices.
-- **Cross-tenant data leak:** If telemetry endpoints return data (like the `update_device_status` function returns `needs_screenshot_update`), a device can poll another device's status.
-
-**Prevention:**
-- **Implement device authentication tokens:** After OTP pairing, issue a per-device JWT or API key stored in `localStorage`. All player RPC calls must include this token. The `SECURITY DEFINER` function validates the token against the `tv_devices` table before executing.
-- **Alternatively, use a lightweight device session:** On pairing, store a random `device_secret` in both `tv_devices.device_secret_hash` (server) and `localStorage` (device). Each RPC validates `p_device_secret` against the hash. This avoids full JWT infrastructure.
-- **At minimum, validate device ownership in existing functions:** The `store_device_screenshot` function should verify that the device exists and belongs to a valid tenant. Add `PERFORM 1 FROM tv_devices WHERE id = p_device_id` and raise an exception if not found.
-- **Rate-limit SECURITY DEFINER functions:** Add a `last_api_call_at` column to `tv_devices` and reject calls more frequent than 1/second to prevent brute-force scanning of device IDs.
-
-**Detection:**
-- Supabase logs show `store_device_screenshot` or `update_device_status` calls with device IDs that do not match the geographic origin IP.
-- Screenshot URLs in `tv_devices.last_screenshot_url` point to external domains.
-
-**Phase assignment:** Must be addressed before any new telemetry endpoints are added. Retrofitting authentication onto existing functions is easier than doing it for all endpoints at once.
+**Phase to address:**
+Public API phase. Tenant isolation must be validated in the first endpoint, establishing the pattern for all subsequent endpoints.
 
 ---
 
-### Pitfall 10: Recovery and Telemetry Timers Pile Up After Multiple Hot Reloads
+### Pitfall 8: Audio/Background Music Conflicting with Video Playback
 
-**What goes wrong:** The player uses multiple `setInterval` timers:
-- Heartbeat: 30s (`usePlayerHeartbeat.js` line 96)
-- Content poll: 30s (`usePlayerContent.js` line 307)
-- Stuck detection: 10s (`useStuckDetection.js` line 103)
-- Data refresh: 10s (`useDataRefreshOrchestrator.js`)
-- PIN hash fetch: 30s (`ViewPage.jsx` line 209)
-- Playback tracking flush: 30s (`playbackTrackingService.js`)
+**What goes wrong:**
+Background music is a separate audio track that plays alongside visual content. But the player already handles video with audio (`VideoPlayer.jsx` defaults to `muted = true` but can be unmuted). When a user adds background music AND a video with audio, both audio streams play simultaneously. The existing player has no audio mixing or priority system. On WebOS/Tizen, multiple simultaneous audio streams may not be supported at all (hardware audio decoders are limited).
 
-React effects clean these up on unmount, but the `initOfflineService()`, `initTracking()`, and `analytics.initSession()` calls in `ViewPage.jsx` run at the module level or in effects without proper idempotency guards. If the ViewPage component re-mounts (which happens on hot module replacement during development, React Strict Mode double-mounting, or after a soft recovery that re-renders the route), listeners and timers can double up.
+**Why it happens:**
+The player treats each zone/item independently. `ZonePlayer.jsx` manages items per zone with no awareness of what other zones are playing. Adding a "background music" track is a cross-zone concern that the current architecture does not support.
 
-The `offlineService.js` uses module-level state (`isOfflineMode`, `lastHeartbeatSuccess`, `offlineListeners`), which persists across component re-mounts. The `offlineListeners` array (line 79) accumulates duplicate listeners on each mount because the `addOfflineListener` is called but the returned cleanup function is not called on unmount.
+**How to avoid:**
+- Add audio priority: background music automatically pauses when a video with audio plays, resumes when the video ends
+- Implement a player-level `AudioManager` that coordinates audio across all zones (similar to `DataRefreshContext.jsx` but for audio)
+- Default all video items to muted when background music is active; provide per-item "override: play video audio" toggle
+- On WebOS/Tizen, only one audio stream at a time (detect platform via user agent)
+- Background music should be a screen-level setting, not a playlist item -- it persists across content transitions
+- Use the Web Audio API for mixing on platforms that support it; fall back to simple pause/resume on constrained platforms
 
-**Why it happens:** Mixing module-level singletons (`offlineService.js`, `playbackTrackingService.js`) with React component lifecycle creates cleanup gaps. Adding more timers for telemetry and recovery makes this worse.
+**Warning signs:**
+- Overlapping audio from multiple sources on screen
+- Audio continues playing after content transitions
+- Smart TV players crash when two audio streams are requested
+- Background music restarts on every playlist loop
 
-**Prevention:**
-- **Make all service initializations idempotent:** `initOfflineService()` should check `if (initialized) return` at the top. Same for `initTracking()`.
-- **Use a single player lifecycle manager:** Create a `PlayerLifecycleManager` singleton that owns all timers and listeners. The React component calls `.start()` on mount and `.stop()` on unmount. The manager internally deduplicates.
-- **Add timer auditing:** In development mode, track all active `setInterval` IDs. Warn in console if more than expected number of timers are running. This catches the double-mount problem immediately.
-- **For new telemetry timers:** Do not add new `setInterval` calls. Instead, piggyback on the existing heartbeat interval. The heartbeat callback already runs every 30s; add telemetry collection to it rather than creating a parallel timer.
-
-**Detection:**
-- DevTools Performance panel shows increasing timer count over time.
-- `offlineListeners` array length grows beyond 1-2 entries.
-- Heartbeat logs show duplicate entries with the same timestamp.
-
-**Phase assignment:** Should be addressed early as a foundation cleanup before adding new timers/listeners.
+**Phase to address:**
+Audio/background music phase. The AudioManager must be implemented BEFORE the background music widget, as it affects the entire player playback model.
 
 ---
 
-## Minor Pitfalls
+## Technical Debt Patterns
 
-Issues that cause annoyances, technical debt, or minor UX problems.
+Shortcuts that seem reasonable but create long-term problems.
 
----
+| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+|----------|-------------------|----------------|-----------------|
+| Client-side PDF rendering (PDF.js) | Fast to implement, no server needed | Crashes on smart TVs, memory exhaustion on large docs | Never -- server-side conversion is mandatory |
+| Storing OAuth tokens in localStorage (Canva/Google) | Simple persistence across sessions | XSS can steal tokens; existing pattern in `canvaService.js` uses localStorage | MVP only -- migrate to httpOnly cookies or server-side vault |
+| Polling for video wall sync | Simpler than Realtime channels | 100ms+ latency makes visible sync drift | Only for static content walls (no video) |
+| Single `playback_events` table without partitioning | No migration complexity | Table bloats to millions of rows; queries slow | Never for production proof of play |
+| Embedding YouTube via direct iframe URL | No API key needed | No offline fallback, no playback tracking, no duration control | MVP with documented limitation |
+| API endpoints using service role key | Bypass RLS for flexibility | One bug = cross-tenant data leak | Never |
+| Client-side SAML assertion parsing | No server-side dependency | Cannot validate signature without IdP cert on server | Never -- security critical |
+| On-demand document conversion (not at upload) | Simpler upload flow | First viewer sees loading spinner for minutes | Never -- convert at upload time |
 
-### Pitfall 11: Screenshot Capture Blocks the UI Thread
+## Integration Gotchas
 
-**What goes wrong:** `html2canvas` runs synchronously on the main thread. For complex scenes with many DOM elements (scene editor with 20+ layers, data tables, RSS tickers), capture can take 500ms-2s. During this time, video playback stutters, animations freeze, and CSS transitions jump.
+Common mistakes when connecting to external services.
 
-**Prevention:**
-- Run screenshot capture on a `requestIdleCallback` boundary so it only executes when the browser is idle.
-- Reduce capture scale further on constrained devices (0.25x instead of 0.5x).
-- Add a `screenshot-ignore` class to animated/video elements (the existing `ignoreElements` filter at line 48 of `screenshotService.js` already supports this -- ensure all animated widgets use it).
-- Consider using `OffscreenCanvas` in a Web Worker for the compositing step (available in Chrome 69+, which covers all target platforms except some older WebOS versions).
+| Integration | Common Mistake | Correct Approach |
+|-------------|----------------|------------------|
+| YouTube embed | Using `watch?v=` URL in iframe | Must use `embed/VIDEO_ID` URL format; `watch` URLs blocked by X-Frame-Options |
+| Vimeo embed | Assuming all videos are embeddable | Check `privacy.embed` field in Vimeo API response; private videos return 403 |
+| Google Calendar API | Requesting full event details for display | Use `events.list` with `fields` parameter to limit response size; fetch only today + 7 days |
+| Outlook Calendar | Using Microsoft Graph with delegated permissions | Calendar read requires `Calendars.Read` scope AND admin consent in many orgs |
+| Google Slides | Fetching presentation via Drive API | Must use Slides API specifically (`presentations.get`) for slide dimensions and thumbnail URLs |
+| Canva Connect | Assuming export is instant | Export is async: `POST /designs/{id}/exports`, then poll until `status: completed`; existing `canvaService.js` handles this |
+| SAML IdP metadata | Hardcoding metadata URL | Metadata URLs change; store and periodically refresh; support both URL and raw XML upload |
+| Supabase Edge Functions + CORS | Forgetting CORS for new Edge Functions | Use the existing `_shared/cors.ts` pattern; the 4 existing proxies all use it |
+| IndexedDB version bump | Adding new stores without incrementing DB_VERSION | `cacheService.js` uses `DB_VERSION = 4`. New stores for calendar/document cache need version 5+ with proper `upgrade` handler |
+| Supabase Realtime for video wall | Creating one channel per screen | One channel per wall group; screens subscribe with their position metadata |
+| Web page widget iframes | No sandbox attribute | Always use `sandbox="allow-scripts allow-same-origin"` to prevent parent page access |
+| Google OAuth | Requesting all scopes at once | Request incrementally: only `calendar.readonly` for calendar widget, only `presentations.readonly` for Slides |
 
-**Phase assignment:** Screenshot phase optimization, not blocking for initial implementation.
+## Performance Traps
 
----
+Patterns that work at small scale but fail as usage grows.
 
-### Pitfall 12: Content Hash Comparison is Unreliable for Change Detection
+| Trap | Symptoms | Prevention | When It Breaks |
+|------|----------|------------|----------------|
+| Proof of play: unpartitioned events table | Analytics queries slow to > 5s | Partition by month from day one | ~5M rows (1-2 weeks at 1K screens) |
+| Document conversion on-demand | First viewer sees minutes-long spinner | Convert at upload time, store as images | First use with multi-page PPT |
+| YouTube embed auto-refresh on player heartbeat | YouTube rate limits reached, embeds show errors | Cache embed URL, only refresh iframe on content change | 100+ screens with YouTube |
+| Calendar widget fetching all events | Slow render, memory pressure on player | Fetch only today + 7 day lookahead | Calendars with 1000+ historical events |
+| API token validation via DB lookup per request | DB connection pool exhaustion under load | Cache token-to-tenant mapping in-memory with 5-min TTL | 100+ API requests/second |
+| Media expiration check on every heartbeat | N+1 query pattern (check each item) | Add `expires_at` to content resolution RPC, filter server-side | 50+ expired items in active playlists |
+| Nested playlist resolution at play time | Deep nesting = slow resolution + large payloads | Flatten at publish time, cache the flat version | 3+ nesting levels with 50+ items each |
+| Video wall: all screens polling leader state | Network traffic grows with wall size | Leader broadcasts via Realtime; followers receive, not poll | 3x3+ walls (9+ screens) |
 
-**What goes wrong:** The existing `generateContentHash` in `playerService.js` (line 348) uses a simple djb2-style hash of `JSON.stringify(content)`. This hash is:
-1. Not collision-resistant (32-bit integer space = high collision probability with many content variants).
-2. Order-dependent: `{a:1, b:2}` hashes differently than `{b:2, a:1}`, but both represent the same content.
-3. Includes transient fields: timestamps, server-generated IDs, and other metadata that change on every fetch even when the actual content is identical.
+## Security Mistakes
 
-For content verification, relying on this hash means frequent false positives (content appears changed when it has not) and occasional false negatives (content actually changed but hash collides).
+Domain-specific security issues beyond general web security.
 
-**Prevention:**
-- Use a canonical hash: sort object keys before stringifying, exclude transient fields (timestamps, IDs), and use SHA-256 (available via `crypto.subtle.digest`) instead of djb2.
-- Better: have the server compute and return a `content_hash` column on playlists/scenes (the existing `content_hash` in `scene_slides` is a good pattern). Compare server-provided hashes rather than computing client-side.
+| Mistake | Risk | Prevention |
+|---------|------|------------|
+| API key stored in plaintext | DB breach reveals all API keys, full API access to all tenants | SHA-256 hash storage only (existing `apiTokenService.js` generates tokens correctly); show raw key once at creation |
+| SAML assertion replay | Attacker reuses intercepted SAML response to gain access | Validate `NotOnOrAfter`, check `InResponseTo` against stored request ID; use Supabase Auth SSO which handles this |
+| Iframe widget pointing to malicious URL | XSS via injected web page widget content | Sanitize and validate URLs server-side; use CSP `frame-src` allowlist; warn on non-HTTPS URLs |
+| YouTube/Vimeo embed leaking screen context | Referrer headers sent to YouTube reveal screen URLs | Use `referrerpolicy="no-referrer"` on embed iframes |
+| Public API without rate limiting | DDoS via unlimited API calls exhausts Supabase pool | Rate limit per token (100 req/min default), implement in Edge Function |
+| Google/Outlook OAuth tokens stored in client-accessible table | Tokens persisted in RLS-protected but still client-queryable table | Store OAuth tokens in separate `oauth_tokens` table with service-role-only RLS; never send to client |
+| Background music file stored without scanning | Malicious audio file exploits codec vulnerability on smart TV | Validate audio MIME type and file header bytes at upload; transcode to known-safe format (MP3/AAC) |
+| Service role key in API Edge Functions | Any API bug can leak/modify data across tenants | Never use service role for external-facing endpoints; use explicit WHERE filters per tenant |
 
-**Phase assignment:** Content verification phase prerequisite.
+## UX Pitfalls
 
----
+Common user experience mistakes in this domain.
 
-### Pitfall 13: Device Metrics Collection Varies Wildly Across Platforms
+| Pitfall | User Impact | Better Approach |
+|---------|-------------|-----------------|
+| No preview for document pages before scheduling | User uploads 50-page PDF, doesn't know which pages will show | Show page thumbnails in media library after upload conversion; let user select page range |
+| Media expiration with no warning | Content disappears from screens without notice | Show "expires in X days" badge in playlist editor; send email notification 7 days before expiration |
+| Working hours conflicts with existing schedules | Power-off schedule turns off screen during scheduled campaign | Show conflict detection in working hours UI; working hours overrides schedule |
+| Nested playlist with no visual depth indicator | User can't tell which items are direct vs. from sub-playlists | Show indented tree view with sub-playlist name as section header; total duration includes sub-playlist durations |
+| Video wall setup requiring manual per-screen config | Setting up a 3x3 wall requires configuring 9 screens individually | Provide "wall wizard" that auto-assigns position (row, column) based on selected grid layout |
+| API key shown only once but user misses copy | User creates token, navigates away, token is lost | Show token in modal with explicit "I've copied this token" confirmation before allowing dismiss |
+| Calendar widget showing stale data | Screen shows yesterday's schedule all day | Default refresh to 15-min intervals; show "last updated" timestamp on calendar widget |
+| Media expiration timezone confusion | User sets "March 15" but content expires at UTC midnight, 5-8 hours early | Default expiration to end-of-day (23:59) in user's timezone; show explicit date+time+timezone |
+| Google OAuth "unverified app" warning | Users scared by Google's warning screen, abandon setup | Submit app for Google OAuth verification (2-6 weeks); request scopes incrementally |
 
-**What goes wrong:** Collecting CPU usage, memory usage, temperature, and network stats for diagnostic telemetry requires different APIs on each platform:
-- **Web (Chrome):** `navigator.deviceMemory`, `navigator.connection`, Performance APIs. No CPU or temperature.
-- **Android WebView:** Requires a JavaScript bridge to native code. `window.Android?.getSystemStats()` pattern. Must be added to the APK.
-- **iOS WKWebView:** Similar native bridge requirement. Much more restricted than Android.
-- **WebOS:** `webOS.service.request("luna://com.webos.service.tv.systemproperty/getSystemInfo", ...)` for some metrics. Available in LG signage mode only.
-- **Tizen:** `tizen.systeminfo.getPropertyValue("CPU", ...)` for CPU, `tizen.systeminfo.getPropertyValue("MEMORY", ...)` for memory. Requires Tizen privilege declarations.
+## "Looks Done But Isn't" Checklist
 
-Building a telemetry system that assumes uniform metric availability across all platforms will either fail silently on half the fleet or require extensive platform-specific code.
+Things that appear complete but are missing critical pieces.
 
-**Prevention:**
-- Define a `DeviceCapabilities` interface that each platform adapter reports. Start with the intersection of what is available everywhere (memory pressure, network type, error counts) and treat platform-specific metrics (CPU %, temperature) as optional extensions.
-- Use the user agent to detect the platform at player startup and load the appropriate metrics collector module.
-- Accept that web players will have the least metrics and Android/WebOS/Tizen players will have the most. Design the telemetry dashboard to gracefully show "N/A" for unavailable metrics rather than showing misleading zeros.
+- [ ] **Document display:** Often missing server-side conversion -- verify documents render on WebOS/Tizen, not just Chrome
+- [ ] **YouTube embed:** Often missing offline fallback -- verify screen shows fallback image, not blank, when offline
+- [ ] **YouTube embed:** Often missing muted autoplay -- verify `mute=1` in embed URL (required for autoplay without interaction)
+- [ ] **Web page widget:** Often missing iframe sandboxing -- verify `sandbox` attribute prevents parent page access
+- [ ] **Web page widget:** Often missing X-Frame-Options pre-check -- verify admin UI warns when URL blocks embedding
+- [ ] **Proof of play:** Often missing data export -- verify CSV/PDF export works for 100K+ events without timeout
+- [ ] **Proof of play:** Often missing table partitioning -- verify `playback_events` is partitioned from day one
+- [ ] **SSO/SAML:** Often missing profile sync -- verify SAML attributes (name, email) sync to `profiles` table on each login
+- [ ] **SSO/SAML:** Often missing Supabase session -- verify SSO users have `auth.uid()` set (not null in RLS context)
+- [ ] **Public API:** Often missing pagination -- verify list endpoints return paginated results, not unbounded arrays
+- [ ] **Public API:** Often missing rate limit headers -- verify 429 responses include `Retry-After` header
+- [ ] **Nested playlists:** Often missing duration calculation -- verify total playlist duration accounts for sub-playlist items
+- [ ] **Nested playlists:** Often missing circular reference check -- verify A->B->A is rejected at save time
+- [ ] **Media expiration:** Often missing player-side enforcement -- verify expired media is skipped during playback, not just hidden in admin
+- [ ] **Working hours:** Often missing timezone awareness -- verify power schedule respects per-screen timezone (`tv_devices.timezone`)
+- [ ] **Audio/music:** Often missing resume-on-next-loop -- verify background music resumes from where it paused after video ends
+- [ ] **Audio/music:** Often missing WebOS/Tizen single-stream enforcement -- verify only one audio stream on smart TVs
+- [ ] **Video wall:** Often missing partial failure handling -- verify wall continues displaying if one screen goes offline
+- [ ] **Calendar widgets:** Often missing auth token refresh -- verify OAuth tokens are refreshed before expiry (proactive, not reactive)
+- [ ] **Google Slides:** Often missing slide update detection -- verify slides reflect changes made in Google Slides without manual re-import
+- [ ] **Canva integration:** Often missing design update sync -- verify Canva design changes propagate to screens (existing `canvaService.js` handles initial import only)
 
-**Phase assignment:** Telemetry phase. This is an architecture decision that must be made upfront to avoid per-platform rewrites.
+## Recovery Strategies
 
----
+When pitfalls occur despite prevention, how to recover.
 
-### Pitfall 14: Existing `usePlayerHeartbeat` Does Not Distinguish Intentional Restarts from Crashes
+| Pitfall | Recovery Cost | Recovery Steps |
+|---------|---------------|----------------|
+| Nested playlist infinite recursion crashes player | MEDIUM | Add `MAX_DEPTH = 3` guard to RPC; deploy migration; affected players recover on next heartbeat |
+| Document rendering crashes smart TVs | HIGH | Must build server-side conversion pipeline; redeploy all document media as images; player update needed |
+| Video wall sync drift | LOW | Increase Realtime broadcast frequency; add manual "sync now" command to screen group |
+| Proof of play table bloat | HIGH | Requires table partitioning migration (locks table); export/reimport data into partitioned table |
+| YouTube embed breaks offline player | LOW | Add `requiresNetwork` flag to widget type; deploy player update; fallback shows cached thumbnail |
+| SSO bypasses RLS (no Supabase session) | CRITICAL | Must rearchitect SSO to produce Supabase sessions; all SSO users need re-authentication |
+| API leaks cross-tenant data | CRITICAL | Disable API immediately; audit access logs; add tenant filter to all endpoints; rotate affected tokens |
+| Audio conflict crashes WebOS player | MEDIUM | Add platform detection; limit to single audio stream on WebOS/Tizen; deploy player update |
+| Media expiration not enforced on player | LOW | Add `expires_at` filter to content resolution RPC; player re-fetches on next heartbeat |
+| Working hours timezone mismatch | LOW | Fix schedule to use screen timezone; affected screens correct on next schedule evaluation |
 
-**What goes wrong:** When a device restarts (due to auto-recovery, admin command, OOM kill, or power cycle), the heartbeat resumes immediately. From the server's perspective, there is a gap in heartbeats followed by normal operation. There is no telemetry indicating WHY the restart happened or whether it was intentional (admin-triggered reboot command) vs. unintentional (crash + auto-restart).
+## Pitfall-to-Phase Mapping
 
-**Why it happens:** The existing command handling reports results for intentional restarts (`reportCommandResult(commandId, true)` at line 59 of `usePlayerCommands.js`), but the restart happens via `setTimeout(() => window.location.reload(), 500)`, and if the page unloads before the report is sent, the command result is lost.
+How roadmap phases should address these pitfalls.
 
-**Prevention:**
-- Store restart reason in `localStorage` before restarting: `localStorage.setItem('last_restart_reason', JSON.stringify({reason: 'admin_reboot', commandId, timestamp}))`. On next boot, read this and include it in the first heartbeat.
-- For crash restarts (where no `last_restart_reason` exists), report the restart as "unplanned" in the first heartbeat. Check if the previous session ended with a `beforeunload` event (store a `clean_shutdown` flag).
-- Track restart frequency per device: if a device has > 3 unplanned restarts per hour, flag it for investigation.
+| Pitfall | Prevention Phase | Verification |
+|---------|------------------|--------------|
+| Nested playlist recursion | Nested playlists (circular ref check in first migration) | Create A->B->A chain, verify error; check `get_resolved_player_content` returns flat array |
+| Document rendering on smart TVs | Document display (server-side conversion first) | Upload PDF, verify images appear in media_assets; test on WebOS emulator |
+| Video wall sync drift | Video wall (leader/follower pattern from start) | Deploy 2-screen wall; verify content transitions within 200ms of each other |
+| Proof of play storage | Proof of play (partitioned table in first migration) | Run for 24 hours at scale; verify query performance < 2s on 1M rows |
+| YouTube/Vimeo offline fallback | YouTube/Vimeo embedding (fallback alongside embed) | Disconnect network; verify fallback image displays within 5s |
+| SSO breaking RLS | SSO/SAML (architecture decision before implementation) | SSO user logs in; verify `auth.uid()` is set; verify data access matches password user |
+| API tenant isolation | Public API (first endpoint includes cross-tenant test) | Create data as Tenant A; query API as Tenant B; verify 0 results |
+| Audio conflicts | Audio/background music (AudioManager before music widget) | Play video with audio + background music; verify only one plays at a time |
+| Media expiration not enforced on player | Media expiration (add `expires_at` filter to content resolution RPC) | Set media expiration to past date; verify player skips item |
+| Working hours timezone mismatch | Working hours scheduling (use screen timezone from `tv_devices.timezone`) | Set screen to Tokyo timezone; set working hours 9-17; verify power state matches Tokyo time |
+| Calendar token refresh failure | Calendar widgets (proactive token refresh, not reactive) | Set token expiry to short interval; verify refresh happens before expiry |
+| Canva design staleness | Canva integration (webhook or polling for design changes) | Edit design in Canva; verify BizScreen detects change within configured interval |
+| Google Slides staleness | Google Slides (periodic re-fetch of slide thumbnails) | Edit slide in Google Slides; verify updated thumbnail appears on screen |
+| Web page iframe escape | Web page widget (sandbox attribute on all iframes) | Create widget pointing to page with `window.parent.postMessage`; verify it is blocked |
+| API key plaintext storage | Public API (SHA-256 hash from day one) | Inspect `api_tokens` table; verify no plaintext key column exists |
 
-**Phase assignment:** Auto-recovery phase, integrated with the restart loop prevention from Pitfall 1.
+## Cross-Cutting Concerns
 
----
+These concerns span ALL 14 features and must be addressed systematically rather than per-feature.
 
-## Phase-Specific Warnings
+### Offline Support
 
-| Phase Topic | Likely Pitfall | Mitigation |
-|---|---|---|
-| Screenshot Capture | html2canvas blank on WebOS/Tizen (Pitfall 2) | Validate blob size before upload; platform-specific capture fallbacks |
-| Screenshot Capture | Storage costs grow unbounded (Pitfall 6) | Server-side cleanup cron; lifecycle policies on storage bucket |
-| Screenshot Capture | UI thread blocking (Pitfall 11) | requestIdleCallback; reduce scale on constrained devices |
-| Auto-Recovery | Infinite restart loop (Pitfall 1) | localStorage restart counter; exponential backoff; static fallback screen |
-| Auto-Recovery | Visible glitches during recovery (Pitfall 7) | Skip-to-next instead of replay; soft recovery before hard reload |
-| Auto-Recovery | No restart reason tracking (Pitfall 14) | localStorage reason tracking; unplanned restart detection |
-| Content Verification | Blocking playback (Pitfall 4) | Background verification only; never block; play-then-verify |
-| Content Verification | Unreliable hash comparison (Pitfall 12) | Server-provided SHA-256 hashes; canonical serialization |
-| Telemetry | Database overwhelm (Pitfall 3) | Consolidate into single heartbeat RPC; batch writes; adaptive polling |
-| Telemetry | IndexedDB quota exceeded (Pitfall 8) | Separate diagnostic database; dynamic limits; priority eviction |
-| Telemetry | Timer accumulation (Pitfall 10) | Idempotent init; single lifecycle manager; piggyback on existing heartbeat |
-| Telemetry | Cross-platform metric variance (Pitfall 13) | DeviceCapabilities interface; optional metrics; graceful N/A |
-| Alerts | Alert noise and fatigue (Pitfall 5) | Root cause correlation; parent-child hierarchy; fleet-level dedup |
-| All Phases | RLS bypass via anon endpoints (Pitfall 9) | Device authentication token; input validation in SECURITY DEFINER functions |
+Every new widget type registered in `WIDGET_REGISTRY` must answer: "What does this widget show when offline?"
 
----
+| Feature | Offline Strategy | Cache Store Needed |
+|---------|------------------|--------------------|
+| Document display | Pre-converted images already in media cache | No (uses existing `STORES.MEDIA`) |
+| YouTube/Vimeo | Cached thumbnail + "requires internet" overlay | New: thumbnail stored in `STORES.MEDIA` |
+| Web page widget | Cached screenshot of last loaded state OR fallback | New: webpage screenshot in `STORES.MEDIA` or separate store |
+| Calendar widgets | Last-fetched event list from IndexedDB | New: `STORES.CALENDAR_EVENTS` (requires DB_VERSION bump to 5) |
+| Google Slides | Cached slide images from last sync | No (uses existing `STORES.MEDIA`) |
+| Canva designs | Cached exported image from last sync | No (uses existing `STORES.MEDIA`) |
+| Audio/music | Cached audio file in IndexedDB media store | No (uses existing `STORES.MEDIA`, but note larger blob sizes) |
+| Proof of play | Events queued in offline queue (already supported) | No (existing `STORES.OFFLINE_QUEUE`) |
+| Nested playlists | Same as parent: resolved flat items cached normally | No change needed |
+| Media expiration | Expiration metadata cached with content | Include in content resolution response |
+| Working hours | Schedule cached locally | Existing device state store |
+| Video wall | Leader broadcasts; followers cache last position | Existing device state store |
 
-## Anti-Patterns Specific to Cross-Platform Player Hardening
+Requires `cacheService.js` DB_VERSION bump from 4 to 5+ for new stores.
 
-### Anti-Pattern: "Works in Chrome, Ship It"
-Every feature must be tested on at least Chrome (web), one Android WebView device, and one WebOS or Tizen panel before shipping. The gap between Chrome's capabilities and a 2019 LG WebOS browser is enormous. Allocate 30% of each phase's time for cross-platform testing and workarounds.
+### Player Compatibility
 
-### Anti-Pattern: "More Timers = More Monitoring"
-Do not add new `setInterval` calls for each hardening feature. Each timer is a potential memory leak, a source of timer drift, and a contributor to connection pool pressure. The heartbeat is the single metronome; all other periodic operations should piggyback on it.
+| Feature | Web | Android | iOS | WebOS | Tizen | Notes |
+|---------|-----|---------|-----|-------|-------|-------|
+| Document display (as images) | Yes | Yes | Yes | Yes | Yes | Server-side conversion eliminates platform issues |
+| YouTube embed (iframe) | Yes | Yes | Partial | Partial | Partial | Smart TVs may restrict iframes; test needed |
+| Vimeo embed (iframe) | Yes | Yes | Partial | Partial | Partial | Same iframe restrictions as YouTube |
+| Web page (iframe) | Yes | Yes | Yes | Limited | Limited | CSP and memory constraints on smart TVs |
+| Audio playback | Yes | Yes | Yes | Single stream | Single stream | AudioManager handles platform limits |
+| Video wall sync | Yes | Yes | Yes | Yes | Yes | Realtime channels work on all platforms |
+| Calendar widget | Yes | Yes | Yes | Yes | Yes | Data-driven, no special APIs needed |
+| Google Slides (as images) | Yes | Yes | Yes | Yes | Yes | Pre-fetched slide images |
+| Canva (as exported image) | Yes | Yes | Yes | Yes | Yes | Pre-exported image |
+| Proof of play tracking | Yes | Yes | Yes | Yes | Yes | Uses existing event queue |
 
-### Anti-Pattern: "Fail Closed for Safety"
-In server software, failing closed (deny by default) is correct. In signage players, failing closed means a blank screen. Every verification, check, and validation must have a "play anyway" fallback. The worst thing a signage player can do is show nothing.
+### Multi-Tenant Isolation
 
-### Anti-Pattern: "Collect Everything, Filter Later"
-Telemetry that sends raw data and plans to "filter on the server" always overwhelms the database before filtering is implemented. Design the collection to be minimal and aggregated from day one. Collect counts and rates, not raw events.
+Every new database table must include:
 
-### Anti-Pattern: "Same Alert for Every Device"
-500 devices losing connectivity simultaneously due to a network outage should produce 1 alert, not 500. Fleet-level deduplication is not a nice-to-have; it is essential for operational sanity.
+1. `tenant_id` (or `owner_id`) column with NOT NULL constraint
+2. RLS policy: `USING (owner_id = auth.uid())` for client access
+3. Index on `(owner_id, ...)` for RLS-filtered query performance
+4. API endpoints with explicit `WHERE owner_id = $1` (defense in depth)
 
----
+New tables needed for v12.0:
+
+| Table | Tenant Column | Special RLS Notes |
+|-------|---------------|-------------------|
+| `proof_of_play_events` (partitioned) | `tenant_id` | RLS on parent table propagates to partitions |
+| `sso_providers` | `tenant_id` | Already exists in `ssoService.js`; verify RLS |
+| `api_tokens` | `owner_id` | Already exists; verify RLS policy covers scopes |
+| `video_wall_groups` | `owner_id` | Members must share same tenant |
+| `screen_power_schedules` | `owner_id` | Per-screen overrides need same tenant check |
+| `oauth_tokens` | `owner_id` | Service-role-only access; never client-readable |
+| `media_expirations` | Via `media_assets.owner_id` | No new table; add `expires_at` column to `media_assets` |
+
+### Widget Registry Expansion
+
+Current registry has 12 types (11 + 1 legacy alias) in `src/widgets/registry.js`. v12.0 adds up to 7 new widget types:
+
+| New Widget Type | Registry Key | Component | Requires Network |
+|-----------------|-------------|-----------|-----------------|
+| YouTube embed | `youtube` | `YouTubeWidget` | Yes |
+| Vimeo embed | `vimeo` | `VimeoWidget` | Yes |
+| Web page | `webpage` | `WebPageWidget` | Yes |
+| Calendar | `calendar` | `CalendarWidget` | Yes (for refresh) |
+| Google Slides | `google-slides` | `GoogleSlidesWidget` | Yes (for refresh) |
+| Audio player | `audio` | `AudioWidget` | No (cached) |
+| Document viewer | `document` | `DocumentWidget` | No (pre-converted images) |
+
+Each must follow the existing pattern: add ONE entry to `WIDGET_REGISTRY`, implement the component in `src/player/components/widgets/`, and all rendering paths pick it up automatically. The `requiresNetwork` flag is new metadata that the offline service should check.
+
+### Edge Function Expansion
+
+Current: 4 Edge Functions (`unsplash-proxy`, `rss-proxy`, `weather-proxy`, `ai-designer`). v12.0 needs:
+
+| New Edge Function | Purpose | Pattern |
+|-------------------|---------|---------|
+| `document-converter` | PDF/Office to image conversion | Async job pattern (POST returns job ID, poll for result) |
+| `api-gateway` | Public REST API endpoint | Token auth, tenant isolation, rate limiting |
+| `calendar-proxy` | Google Calendar / Outlook API proxy | OAuth token refresh, data transform, caching |
+| `slides-proxy` | Google Slides thumbnail fetch | OAuth token refresh, image URL extraction |
+
+All must use the existing `_shared/cors.ts` pattern for CORS headers.
 
 ## Sources
 
-- **Codebase analysis (HIGH confidence):** Direct reading of `screenshotService.js`, `usePlayerHeartbeat.js`, `useStuckDetection.js`, `offlineService.js`, `cacheService.js`, `alertEngineService.js`, `playerService.js`, `deviceSyncService.js`, `ViewPage.jsx`, `usePlayerContent.js`, `usePlayerCommands.js`, `useDataRefreshOrchestrator.js`, `playbackTrackingService.js`
-- **Schema analysis (HIGH confidence):** Direct reading of Supabase migrations 075 (screenshots), 082 (alerts), 096 (diagnostics), 072 (heartbeat)
-- **Domain expertise (MEDIUM confidence):** Cross-platform WebView behavior, IndexedDB quotas on smart TV platforms, html2canvas limitations on constrained hardware, signage industry patterns for fleet management and telemetry. These claims are based on training data and could not be verified with current web search due to tool unavailability. Platform-specific quota numbers and API availability should be validated against current device documentation during implementation.
+- Codebase analysis: `src/widgets/registry.js` -- 12 widget types, registration pattern, `getWidgetComponent()` lookup
+- Codebase analysis: `src/player/offlineService.js` -- offline sync strategy, IndexedDB caching, 3-phase sync
+- Codebase analysis: `src/player/cacheService.js` -- DB_VERSION=4, 6 stores, LRU eviction, 500MB media limit
+- Codebase analysis: `supabase/migrations/016_player_content_resolution.sql` -- content resolution RPC, flat playlist assumption, schedule priority
+- Codebase analysis: `src/player/components/AppRenderer.jsx` -- app type routing, `WebPageApp` iframe pattern
+- Codebase analysis: `src/player/components/VideoPlayer.jsx` -- HLS support, stall detection, muted default
+- Codebase analysis: `src/player/components/ZonePlayer.jsx` -- per-zone playback, no cross-zone coordination, duration timer
+- Codebase analysis: `src/player/pages/ViewPage.jsx` -- player hooks composition, retry config, content verification
+- Codebase analysis: `src/services/ssoService.js` -- SSO_TYPES, provider config, enforce_sso, attribute mapping
+- Codebase analysis: `src/services/apiTokenService.js` -- token generation with `biz_` prefix, SHA-256 hash, 9 scopes
+- Codebase analysis: `src/services/canvaService.js` -- PKCE OAuth, localStorage tokens, export polling
+- Codebase analysis: `src/services/playbackTrackingService.js` -- event queue (50 max), 30s flush, offline storage
+- Codebase analysis: `src/services/mediaService.js` -- MEDIA_TYPES enum (image/video/audio/document/web_page/app)
+- Codebase analysis: `.planning/codebase/ARCHITECTURE.md` -- system layers, content resolution flow, widget registry
+- Codebase analysis: `.planning/codebase/CONCERNS.md` -- existing security issues (API keys in client, fake billing), tech debt
+- Codebase analysis: `.planning/codebase/STACK.md` -- Supabase 2.80, React 19, Vite 7, hls.js light build
+- Domain expertise: PDF rendering on constrained smart TV platforms (WebOS/Tizen memory limits)
+- Domain expertise: Video wall synchronization (leader/follower, NTP alignment, genlock alternatives)
+- Domain expertise: SAML/SSO multi-tenant architecture (Supabase Auth integration requirements)
+- Domain expertise: Proof of play compliance requirements (partition strategies, retention policies)
+- Domain expertise: YouTube/Vimeo iframe embedding restrictions and autoplay policies
+
+---
+*Pitfalls research for: BizScreen v12.0 Feature Parity*
+*Researched: 2026-03-02*

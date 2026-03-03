@@ -1,293 +1,526 @@
-# Feature Landscape: Display Toolkit Widgets
+# Feature Landscape: v12.0 Feature Parity
 
-**Domain:** Digital signage display capability features (weather, video playback, screen groups, portrait mode, clock/date, QR code, menu board)
-**Researched:** 2026-02-13
-**Overall confidence:** HIGH (strong codebase analysis + training data on Yodeck, ScreenCloud, OptiSigns, Rise Vision, NoviSign patterns)
-
-## Summary
-
-This research covers 7 display toolkit features that extend BizScreen's content rendering capabilities. The critical finding is that **most of these features are partially built** -- weather, clock, date, QR code, and screen groups all have working service layers and basic player widgets. The work is completing, enhancing, and connecting them rather than building from scratch.
-
-The features cluster into three categories:
-1. **Widget upgrades** (weather, clock/date, QR code) -- Existing player widgets need configuration UIs, timezone support, and additional display styles. LOW complexity per widget.
-2. **Infrastructure features** (video playback, screen groups, portrait mode) -- These are architectural. Video needs loop/mute/preload behavior. Screen groups need bulk content push. Portrait mode needs layout awareness. MEDIUM-HIGH complexity.
-3. **Data-driven templates** (menu board) -- This is the highest-value, highest-complexity feature. It combines data binding, visual templates, and category/pricing structure. HIGH complexity.
-
-**Key dependency insight:** BizScreen already has `ZonePlayer.jsx` rendering video via `<video>` tags, `AppRenderer.jsx` routing app types, and a widget barrel export in `src/player/components/widgets/index.js`. New widgets follow the established `{ props = {} }` pattern. The screen group service (`screenGroupService.js`) already has full CRUD + scene publishing. The real gaps are in the admin configuration UIs and player-side enhancements.
-
----
+**Domain:** Digital signage platform -- closing feature gap with Yodeck, OptiSigns, ScreenCloud, Rise Vision
+**Researched:** 2026-03-02
+**Confidence:** MEDIUM (based on training data knowledge of competitor platforms + HIGH confidence codebase analysis)
 
 ## Table Stakes
 
-Features users expect in any digital signage platform. Missing = product feels incomplete.
+Features users expect from any mid-tier digital signage platform. Missing = product feels incomplete compared to Yodeck/OptiSigns.
 
-### 1. Weather Widget (with Location + Forecast)
-
-| Feature | Why Expected | Complexity | Existing BizScreen State | Notes |
-|---------|-------------|------------|--------------------------|-------|
-| Current temperature + condition icon | Every platform has this (Yodeck Weather Wall, ScreenCloud Weather) | Low | **BUILT**: `weatherService.js` fetches from OpenWeatherMap, `WeatherWidget.jsx` renders in player, `WeatherWall/` has 3 themes (Animated, Classic, Glass) | Enhancement: add timezone-aware display, more compact styles for zones |
-| Location by city name or coordinates | Users expect to type "Miami" or "10.5,-84.3" | Low | **BUILT**: `getWeather(city)` and `getWeatherByCoords(lat, lon)` both implemented with caching | Working. No changes needed. |
-| Celsius/Fahrenheit toggle | International users need both | Low | **BUILT**: `WeatherWallConfigModal` has unit selector, service accepts `metric`/`imperial` | Working. |
-| Weather icon (not just text) | Visual weather representation is expected | Low | **BUILT**: Uses OpenWeatherMap icon URLs + emoji fallback via `getWeatherEmoji()` | Working. Icons render as images. |
-| 5-day forecast | Most signage platforms show multi-day | Med | **BUILT**: `getWeatherForecast()` returns 5-day data, `getWeatherWallData()` bundles current + forecast | WeatherWall themes render it. Zone widget (compact) does not show forecast -- reasonable for small zones. |
-| Auto-refresh (not stale data) | Weather data must update without restart | Low | **BUILT**: 15-min refresh interval in WeatherWall, 30-min cache in service, useWidgetData orchestrator for zone widget | Working. |
-
-**Verdict: Weather is ~90% complete.** Gap: the admin-side configuration for the zone-embedded weather widget (not WeatherWall app) is basic -- the `LayoutElementRenderer.jsx` weather widget has hardcoded mock temp. Needs to use actual `getWeather()` at render time, or defer to player-side widget which already works.
-
-### 2. Video Playback in Playlists and Zones
-
-| Feature | Why Expected | Complexity | Existing BizScreen State | Notes |
-|---------|-------------|------------|--------------------------|-------|
-| Play video files (MP4/WebM) | Core media type alongside images | Low | **BUILT**: `ZonePlayer.jsx` renders `<video>` with autoPlay, muted, playsInline. `mediaService.js` validates video MIME types. | Working for basic playback. |
-| Auto-advance after video ends | Playlist must cycle through items | Low | **BUILT**: `onEnded={advanceToNext}` in ZonePlayer | Working. |
-| Muted by default (auto-play policy) | Browsers block unmuted autoplay | Low | **BUILT**: `muted` prop on video element | Working. Browsers require muted for autoplay. |
-| Video preloading | No black frame between items | Med | **PARTIAL**: `mediaPreloader.js` has `loadedVideos` Map and bandwidth detection, but ZonePlayer doesn't call preloader for next item | Need to wire preloader to ZonePlayer advance logic |
-| Error recovery (skip corrupt video) | Must not crash the playlist | Low | **BUILT**: `onError={advanceToNext}` in ZonePlayer | Working. |
-| objectFit: cover (fill zone) | Video must fill its zone without distortion | Low | **BUILT**: `objectFit: 'cover'` in ZonePlayer | Working. |
-
-**Verdict: Video playback is ~75% complete.** Gaps: (1) Video preloading for seamless transitions is wired in mediaPreloader but not connected to ZonePlayer. (2) No video duration override (always plays to completion, no way to cut short or extend). (3) No looping single video option (useful for ambient video walls). (4) No admin-side video preview in playlist editor.
-
-### 3. Screen Groups (Bulk Content Management)
-
-| Feature | Why Expected | Complexity | Existing BizScreen State | Notes |
-|---------|-------------|------------|--------------------------|-------|
-| Create/edit/delete groups | Users with 10+ screens need grouping | Low | **BUILT**: `screenGroupService.js` has full CRUD, `ScreenGroupDetailPage.jsx` has devices tab + settings tab | Working. |
-| Assign/remove screens from groups | Drag or checkbox UI for assignment | Low | **BUILT**: `DevicesTabContent` in ScreenGroupDetailPage shows assigned vs available with checkbox + Add/Remove buttons | Working. |
-| Publish content to group (push to all screens) | Core value of grouping | Low | **BUILT**: `publishSceneToGroup()`, `publishSceneToMultipleGroups()` RPC functions in service | Working at service layer. Need UI to trigger from more places (campaign editor, quick actions). |
-| Location-based groups | Filter screens by physical location | Low | **BUILT**: Groups have `location_id`, service supports `locationId` filter | Working. |
-| Group status overview | See online/offline count per group | Low | **BUILT**: `v_screen_groups_with_counts` view used in fetchScreenGroups | Working. |
-| Language settings per group | Different groups serve different languages | Low | **BUILT**: `updateGroupLanguage()` + `ScreenGroupSettingsTab` component | Working. |
-
-**Verdict: Screen groups are ~85% complete.** Gaps: (1) No "push playlist to group" flow (only scene publishing exists). (2) No group-level schedule assignment. (3) No group overview dashboard showing content status across all groups. (4) Missing bulk operations (rename, tag, delete multiple groups).
-
-### 4. Clock/Date Widget
-
-| Feature | Why Expected | Complexity | Existing BizScreen State | Notes |
-|---------|-------------|------------|--------------------------|-------|
-| Digital clock display | Lobby screens, wayfinding, corporate | Low | **BUILT**: `ClockWidget.jsx` in player renders time with 1-second interval, configurable size + color | Working. |
-| Date display | Expected alongside clock | Low | **BUILT**: `DateWidget.jsx` renders formatted date, 3 format presets (short/long/full) | Working. |
-| 12h/24h format toggle | US vs international | Low | **PARTIAL**: ClockWidget uses hardcoded `hour12: true`. Layout editor widget has `format: '12h'` prop but player ignores it | Need to wire format prop through to player widget |
-| Timezone support | Show time for a specific timezone (e.g., NYC office shows Tokyo time) | Med | **NOT BUILT**: Both widgets use `new Date()` (local browser time). No timezone config in widget props. Device timezone exists in player content payload (`device.timezone`) | Need to add `timezone` prop and use `Intl.DateTimeFormat` with `timeZone` option |
-| Custom font size | Fit the widget to any zone size | Low | **BUILT**: `size` prop with small/medium/large/custom presets, `customFontSize` for pixel control | Working. |
-
-**Verdict: Clock/date is ~65% complete.** Gaps: (1) No timezone awareness (critical for multi-location deployments). (2) 24-hour format not wired to player. (3) No combined clock+date widget (users often want "10:30 AM | Thursday, Feb 13" in a single zone). (4) No analog clock style. (5) No seconds display option.
-
-### 5. Portrait Mode (Vertical Display Support)
-
-| Feature | Why Expected | Complexity | Existing BizScreen State | Notes |
-|---------|-------------|------------|--------------------------|-------|
-| 1080x1920 layout template | Retail, restaurant menu boards, wayfinding | Med | **PARTIAL**: `svgTemplateService.js` has portrait preset (1080x1920). WeatherWallConfigModal has orientation selector. Templates include 1 portrait template. | Layout editor needs portrait-aware canvas. |
-| Content auto-adapts to orientation | Users should not manually redesign everything | Med | **PARTIAL**: WeatherWall handles portrait/landscape rendering. Layout zones use percentage-based positioning (orientation-agnostic). | Percentage zones auto-adapt. Scene editor (Fabric.js) is pixel-based -- needs explicit portrait canvas size. |
-| Player renders portrait without CSS rotation hacks | Physical screen is rotated 90 degrees | Med | **NOT BUILT**: No player-side orientation detection or rotation. Many cheap signage players rotate via OS display settings, not app-level. | Player should detect orientation from device config or viewport aspect ratio and adjust content accordingly. |
-| Template marketplace has portrait options | Users expect pre-built portrait designs | Low | **PARTIAL**: 1 portrait SVG template exists. WeatherWall supports portrait orientation. | Need 3-5 portrait templates minimum for launch. |
-
-**Verdict: Portrait mode is ~40% complete.** This is the most infrastructure-heavy table stakes feature. The layout system's percentage-based zones are inherently orientation-agnostic, which is good. But the scene editor, template marketplace, and player need explicit portrait support.
-
-### 6. QR Code Widget
-
-| Feature | Why Expected | Complexity | Existing BizScreen State | Notes |
-|---------|-------------|------------|--------------------------|-------|
-| Generate QR from URL | Reviews, menu links, WiFi login pages | Low | **BUILT**: `qrcodeService.js` generates QR via `qrcode` library. `QRCodeWidget.jsx` in player renders via `qrcode.react` (QRCodeSVG). | Working. |
-| WiFi QR code | Lobby/restaurant WiFi sharing | Low | **BUILT**: `generateWiFiQRCode(ssid, password, encryption)` in service | Service exists; need admin UI to select "WiFi" QR type and enter SSID/password |
-| Customizable colors | Match brand theme | Low | **BUILT**: `qrFgColor`, `qrBgColor` props in player widget | Working. |
-| Error correction levels | High correction for print/screen viewing | Low | **BUILT**: `errorCorrection` prop with L/M/Q/H levels | Working. |
-| Label below QR code | "Scan for Menu" text | Low | **BUILT**: `label` prop renders text below QR | Working. |
-| Scale control | Size QR within zone | Low | **BUILT**: `qrScale` prop (0.5-2.0 range) | Working. |
-
-**Verdict: QR code is ~80% complete.** Gaps: (1) Admin config UI for QR type selection (URL vs WiFi vs plain text). (2) WiFi QR flow not exposed in layout editor sidebar. (3) No dynamic QR (e.g., QR that changes URL based on schedule or data source). (4) No logo/image overlay in center of QR code (common branding feature).
-
----
+| # | Feature | Why Expected | Complexity | Existing Foundation |
+|---|---------|--------------|------------|---------------------|
+| 1 | YouTube/Vimeo embedding | Every competitor has this. Users upload YouTube URLs daily. Yodeck/OptiSigns treat it as a first-class media type. | Low | Video playback with HLS exists in ZonePlayer. AppRenderer has iframe pattern. appCatalog defines youtube type. |
+| 2 | Web page display widget | All 4 competitors offer URL-as-content. Common for dashboards, internal portals, live sports scores. | Low | WebPageApp already exists in AppRenderer with iframe, zoom, auto-refresh. Needs promotion to widget registry. |
+| 3 | Document display (PDF/Word/PPT/Excel) | Yodeck/OptiSigns both support PDF and Office docs. Corporate lobby/HR boards rely on this heavily. | Medium | Media library handles upload/browse. mediaService recognizes document type. Conversion pipeline needed. |
+| 4 | Media expiration dates | OptiSigns and Yodeck both have auto-expire. Compliance-sensitive industries (pharma, finance, food) require it. | Low | Media library exists. media_assets table ready for expires_at column + cron/filter logic. |
+| 5 | Nested/sub-playlists | Yodeck and OptiSigns both support playlists-within-playlists. Essential for multi-department content mixing. | Medium | Playlist CRUD is mature. Recursive resolution needed in player. Add FK reference for nesting. |
+| 6 | Working hours / screen power scheduling | All 4 competitors offer this. Saves energy costs, extends screen life. Expected by any business deploying 5+ screens. | Medium | Schedule system with time/day rules and TZDate exists. Player commands (reboot, reload) exist. |
+| 7 | Proof of Play reporting | Yodeck, OptiSigns, ScreenCloud all offer this. Required for advertising networks, franchise compliance, regulatory audits. | Medium | playbackTrackingService.js already tracks scene_start/end, media_play with offline queue and server flush via insert_playback_events RPC. Reporting/export layer needed. |
+| 8 | Audio / background music | Yodeck and OptiSigns support background audio tracks behind visual content. Common in retail, restaurants, waiting rooms. | Medium | Media library supports audio type uploads. No player audio layer exists yet. |
+| 9 | Calendar widgets (Google/Outlook) | Yodeck, OptiSigns, ScreenCloud all offer calendar widgets. Meeting room displays are a top-3 signage use case. | Medium | Widget registry has 12 types. Google OAuth exists. appCatalog defines calendar types. ical.js in package.json. |
+| 10 | Google Slides integration | Yodeck, OptiSigns, and Rise Vision all support Google Slides. Users already have presentations they want on screens. | Low-Med | Google Drive OAuth import exists. Google Slides has embed URL pattern. Slides-specific rendering needed. |
 
 ## Differentiators
 
-Features that set BizScreen apart. Not expected, but high value when present.
+Features that set BizScreen apart. Not universally expected, but valued by enterprise/power users.
 
-### 7. Menu Board Widget (Data-Driven)
-
-| Feature | Value Proposition | Complexity | Existing BizScreen State | Notes |
-|---------|-------------------|------------|--------------------------|-------|
-| Structured menu template (categories, items, prices) | Restaurant vertical is huge for signage. Most competitors offer this but poorly (static images). | High | **PARTIAL**: `restaurant-menu-template.json` is a static scene template with hardcoded items. Data binding exists (`dataBindingResolver.js`, `DataBoundWizardModal`). | The static template proves the concept. Real value is data-driven: connect a Google Sheet of menu items and auto-render a styled menu board. |
-| Auto-pagination for long menus | 50+ item menus need to rotate across multiple "pages" on screen | High | **NOT BUILT** as a cohesive feature. DataTableWidget has pagination. | Combine pagination logic with menu styling. |
-| Category grouping (Appetizers, Entrees, Drinks) | Organized menus with section headers | Med | **NOT BUILT**: Template has static category headings. | Need category field in data source, auto-grouping renderer. |
-| Price display with currency formatting | "$12.99" or "12,99 EUR" based on locale | Low | **NOT BUILT**: Template hardcodes dollar signs in text. | Use Intl.NumberFormat with locale. |
-| Item photos alongside menu items | Photo menus convert better (fast food, QSR) | Med | **NOT BUILT**: Template uses static decorative images, not per-item photos. | Support image URL column in data source, render inline or as grid. |
-| Dietary icons/badges (V, VG, GF, spicy) | Expected in modern restaurant menus | Low | Not built. | Icon mapping from data source tags. |
-| Real-time price/availability updates | "86'd" items or happy hour pricing | Med | Data source refresh exists (orchestrator). | Connect menu board to data source refresh cycle. |
-| Multi-page layout (different boards for different sections) | Large restaurants with multiple screens | Med | **PARTIAL**: Playlists cycle through content. Screen groups target screens. | Combine: each menu section is a scene, group of scenes pushed to screen group. |
-
-**Verdict: Menu board is ~20% complete.** This is the highest-complexity, highest-value new feature. The restaurant template proves visual feasibility but is entirely static. The real differentiator is connecting the data binding system (Google Sheets of menu items) to styled menu rendering with auto-pagination and category grouping. Competitors (Yodeck, ScreenCloud) offer basic menu board apps but few do true data-driven menus with live updates.
-
-### Additional Differentiators (Lower Priority)
-
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Combined clock + weather bar widget | Single zone shows "10:30 AM -- 72F Sunny -- Thursday, Feb 13". Common in lobby/reception displays. | Low | Combine existing clock, date, weather widgets into one horizontal bar. |
-| Analog clock style | Premium feel for corporate lobbies, hotels | Med | SVG-based analog clock face with rotating hands. New component. |
-| Video wall sync (play same video across screen group) | Impressive for retail/events -- 2x2 or 3x3 video walls | High | Would require WebSocket time-sync between players. Defer to future. |
-| QR code with embedded logo | Brand logo in center of QR code. Premium feel. | Med | Use higher error correction (H) + overlay brand image. qrcode library may support. |
-| Screen group scheduling | Push different content to a group at different times (breakfast menu vs lunch menu) | Med | Combines screen groups with existing campaign/dayparting scheduler. |
-| Weather-triggered content | "Show iced coffee ad when temp > 80F" | High | Combines weather API with campaign rules. Complex but powerful differentiator. |
-
----
+| # | Feature | Value Proposition | Complexity | Existing Foundation |
+|---|---------|-------------------|------------|---------------------|
+| 1 | Public REST API with key management | OptiSigns has a basic API. Yodeck has limited API. A well-documented, scoped, rate-limited REST API is a genuine differentiator. | High | apiTokenService.js with scopes (9 scope types), generation, rotation already exists. apiVersionService.js with v1 versioning and deprecation support exists. api_access feature flag on Pro plan. |
+| 2 | SSO via SAML | Only enterprise-tier platforms offer this. Instant credibility with IT procurement. | High | Supabase Auth supports SAML. enterprise_sso feature flag already in Enterprise plan. ssoService.js models SAML providers. |
+| 3 | Video wall support | ScreenCloud and Rise Vision offer this. Most competitors charge extra. Multi-screen synchronized display is a "wow" feature. | High | Screen groups with tag management exist. Supabase Realtime channels exist. No wall-specific code yet. |
+| 4 | Canva integration (OAuth) | Only OptiSigns has meaningful Canva integration. Most competitors lack this entirely. | Medium | canvaService.js with full OAuth PKCE flow exists. CanvaCallbackPage.jsx implemented. Design list/import flow needed. |
 
 ## Anti-Features
 
-Features to explicitly NOT build in this milestone.
+Features to explicitly NOT build in v12.0.
 
 | Anti-Feature | Why Avoid | What to Do Instead |
 |--------------|-----------|-------------------|
-| Custom video player controls (play/pause/seek) | Digital signage is passive; there is no viewer to control playback. Controls add complexity and attack surface. | Auto-play, auto-loop, auto-advance only. Muted by default. |
-| Real-time weather alerts/severe weather push | Liability concern. Weather alerts require NOAA/NWS integration, legal disclaimers, and reliability guarantees. | Show current conditions and forecast. Let emergency override system handle severe weather messaging. |
-| Video transcoding/encoding on upload | Massive infrastructure cost. Users should upload web-ready formats. | Validate accepted formats (MP4 H.264, WebM VP9). Reject unsupported formats with helpful error message. |
-| Menu board POS integration | POS systems (Toast, Square, Clover) have complex APIs, require OAuth, and change frequently. Too much scope. | Google Sheets or CSV as data source for menu items. POS integration can be a future premium feature. |
-| Interactive QR code analytics (scan tracking) | Requires server-side redirect infrastructure, analytics pipeline, GDPR consent. | Static QR codes pointing to user-controlled URLs. Users can track via their own URL shortener (bit.ly, etc.). |
-| Screen group auto-discovery (mDNS/SSDP) | Network discovery is unreliable across subnets, firewalls, VLANs. Support nightmare. | Manual OTP pairing (already built) + manual group assignment. |
-| Portrait mode auto-detection via accelerometer | Web browsers have limited accelerometer access, and signage players are physically mounted once. | User selects orientation in device settings. Player reads orientation from config. |
+| Native video transcoding | Massive infrastructure cost (FFmpeg, GPU, storage). Out of scope per PROJECT.md. | Accept pre-processed media. For documents, convert to images server-side. |
+| Client-side Office rendering | mammoth.js/SheetJS lose layout fidelity. PPTX has no viable client renderer. | Server-side conversion to PDF/images at upload time. |
+| Full web browser widget (interactive) | Security nightmare (XSS, clickjacking). Tizen/WebOS sandboxing makes this unreliable. | Sandboxed iframe with strict CSP for web page widget. Display-only, no interaction. |
+| Audio mixing / multi-track editing | Audio DAW features are not signage features. Complexity explosion. | Single background audio track per playlist/layout. Volume control only. |
+| Video wall pixel-perfect sync | NTP-based frame sync requires custom firmware. Software sync covers 95% of use cases. | Region-based content assignment. Heartbeat-based loose sync via Realtime channels. |
+| SCIM user provisioning | Complex, rarely needed at launch. Even Yodeck Enterprise defers this. | SAML SSO with JIT provisioning. Users created on first login. |
+| GraphQL API endpoint | GraphQL adds schema complexity without clear benefit for signage API use cases. | REST API with clear resource endpoints and OpenAPI spec. |
+| Full-featured API covering all events | Scope creep. Webhooks already exist as a feature flag. | Read endpoints first. Write for media upload and playlist update. Expand later. |
+| Offline document rendering | PDF/Office rendering requires heavy libraries. Player devices cannot run these. | Convert documents to images server-side. Player displays pre-rendered images. |
+| Calendar event creation/editing | Signage displays events, it does not manage calendars. | Read-only calendar widget. Users manage events in Google/Outlook. |
+| Interactive PDF viewer (zoom/scroll/search) | Player displays are view-only. No user interaction possible. | Auto-paginating slideshow of PDF page images. |
+| Peer-to-peer video wall sync | WebRTC/TURN/STUN complexity for marginal improvement. | Supabase Realtime channels with leader-based sync. |
+
+---
+
+## Feature Details: Behavior Expectations per Competitor Analysis
+
+### 1. Document Display (PDF/Word/PPT/Excel)
+
+**How competitors do it:**
+- **Yodeck:** Upload PDF/PPTX/DOCX. Server converts to images. Each page becomes a slide with configurable duration.
+- **OptiSigns:** PDF and Google Slides natively. PPT requires conversion or Google Slides import.
+- **ScreenCloud:** Uses Google Docs viewer for Office formats. PDF rendered natively.
+- **Rise Vision:** Google Slides primary. PDF via third-party widget.
+
+**Table stakes behavior:**
+- Upload PDF, see pages rendered as slides with configurable duration per page
+- Multi-page documents auto-paginate (rotate through pages)
+- Office formats (DOCX/PPTX/XLSX) converted on upload
+- Landscape/portrait detection matching screen orientation
+
+**Implementation approach:**
+- Server-side: Document conversion Edge Function (PDF-to-PNG via pdf.js or conversion API; Office-to-PDF-to-PNG pipeline)
+- Store rendered pages as media assets linked to source document
+- Player displays image sequence (already supported pattern)
+- Re-conversion trigger when source document is re-uploaded
+
+**Complexity:** MEDIUM -- conversion pipeline is the main work. Player already handles image sequences.
+
+**Dependencies:** New media type in media_assets, Edge Function for conversion, S3 storage for rendered pages.
+
+### 2. YouTube/Vimeo Embedding
+
+**How competitors do it:**
+- **Yodeck:** Paste URL. Extracts video ID. Renders in iframe. Options: mute, loop, autoplay, start time.
+- **OptiSigns:** YouTube/Vimeo as media types. URL validation. YouTube IFrame API for control.
+- **ScreenCloud:** YouTube app. Paste URL, configure loop/mute/autoplay.
+- **Rise Vision:** YouTube widget. Mute by default (signage best practice).
+
+**Table stakes behavior:**
+- Paste YouTube or Vimeo URL, platform extracts video ID and thumbnail
+- Player renders via YouTube IFrame API / Vimeo Player SDK
+- Options: mute (default ON), loop, autoplay
+- Offline: show thumbnail (streaming video cannot cache)
+
+**Implementation approach:**
+- New widget types `youtube` and `vimeo` in registry (or unified `video-embed`)
+- URL parser: extract IDs from youtu.be, youtube.com/watch, vimeo.com/123
+- Player: `<iframe>` with enablejsapi=1, muted autoplay loop
+- Thumbnail via oEmbed API for admin preview
+- CSP frame-src update required for youtube.com and player.vimeo.com
+
+**Complexity:** LOW -- iframe embedding is straightforward. URL parsing and oEmbed well-documented.
+
+**Platform concern:** YouTube IFrame API works on web players. Tizen/WebOS may need `<webview>`. Test on target platforms.
+
+### 3. Web Page Display Widget
+
+**How competitors do it:**
+- **Yodeck:** "Webpage" media type. URL, refresh interval, sandboxed iframe. Scroll position, zoom, CSS injection.
+- **OptiSigns:** Web page widget. URL input. Refresh interval. No interaction.
+- **ScreenCloud:** "URL" content type. Full-screen iframe.
+- **Rise Vision:** Web page widget with configurable refresh.
+
+**Table stakes behavior:**
+- Enter any URL, display full-screen or in layout zone
+- Configurable auto-refresh (5/15/30/60 min)
+- Display-only (no user interaction on player)
+- Handle HTTPS-only (mixed content blocking)
+
+**Implementation approach:**
+- WebPageApp already exists in AppRenderer with iframe, zoom, and auto-refresh
+- Promote to widget registry as `webpage` type for use in layouts/scenes
+- Props: url, refreshIntervalMinutes, scrollPosition, zoomLevel
+- Handle X-Frame-Options/CSP errors gracefully (many sites block iframe embedding)
+
+**Complexity:** LOW -- existing code needs promotion to widget registry plus error handling for blocked sites.
+
+### 4. Proof of Play Reporting
+
+**How competitors do it:**
+- **Yodeck:** Reports with exact play times per screen per content. CSV/PDF export. Date/screen/content filters.
+- **OptiSigns:** Detailed logs. CSV export. Screenshot evidence optional.
+- **ScreenCloud:** "Audit Trail" with play logs and compliance exports.
+- **Rise Vision:** Basic display logs.
+
+**Table stakes behavior:**
+- Log every content playback: screen, content, start time, end time, duration
+- Filter by: date range, screen, screen group, content item, playlist
+- Export to CSV and PDF
+- Summary: total plays, total duration, screens reached, unique items
+- Compliance mode: screenshot evidence on content change
+
+**Implementation approach:**
+- Data collection DONE: playbackTrackingService.js tracks scene_start/end, media_play with offline queue and flush via insert_playback_events RPC. playerAnalyticsService.js tracks per-zone playback in ZonePlayer.
+- Need: Admin reporting page with filters, aggregation queries, CSV/PDF export
+- Need: Database views/RPCs for aggregated proof-of-play queries (plays by screen, by content, by date)
+- Need: Export service (CSV generation, PDF report template)
+- Need: Optional screenshot-on-transition for compliance evidence (player already captures screenshots)
+
+**Complexity:** MEDIUM -- data collection exists. Reporting UI, aggregation queries, and export formatting are the work.
+
+### 5. SSO via SAML
+
+**How competitors do it:**
+- **Yodeck:** Enterprise only. SAML 2.0 with Okta, Azure AD, OneLogin. Admin configures IdP metadata.
+- **OptiSigns:** Enterprise SSO via SAML.
+- **ScreenCloud:** SAML on enterprise plan. Azure AD, Okta, Google Workspace.
+- **Rise Vision:** Google Workspace SSO. Limited SAML.
+
+**Table stakes behavior:**
+- Admin configures SAML IdP: metadata URL, entity ID, X.509 certificate
+- SP-initiated SSO ("Sign in with SSO" on login page)
+- IdP-initiated SSO (user clicks app in IdP portal)
+- JIT user provisioning: create profile on first SAML login
+- Attribute mapping: email, name, role from SAML assertions
+
+**Implementation approach:**
+- Supabase Auth supports SAML 2.0 via `supabase.auth.signInWithSSO()`
+- ssoService.js already models SAML providers
+- Admin UI: SAML configuration in Enterprise Security settings
+- Login page: "Sign in with SSO" button triggering SP-initiated flow
+- JIT provisioning: create profile record with role from SAML attributes on first login
+- Feature-gated to Enterprise plan (enterprise_sso flag exists in plans.js)
+
+**Complexity:** HIGH -- SAML is notoriously finicky. Certificate rotation, clock skew, IdP-specific quirks. Supabase handles protocol, but config and testing are complex.
+
+### 6. Public REST API
+
+**How competitors do it:**
+- **Yodeck:** Limited API for screen management and content push.
+- **OptiSigns:** REST API with API key. Screens, playlists, media endpoints.
+- **ScreenCloud:** API for content and screen control.
+- **Rise Vision:** Extensive API for all features.
+
+**Table stakes behavior:**
+- API key authentication (bearer token)
+- Endpoints: GET screens, GET playlists, GET media, POST media (upload), PUT playlists
+- Rate limiting per key per minute
+- JSON responses with pagination
+- API documentation (OpenAPI/Swagger)
+
+**Implementation approach:**
+- apiTokenService.js already handles token creation with 9 scope types, expiration, rotation, prefix-based identification
+- apiVersionService.js has v1 versioning with deprecation tracking and response wrappers
+- api_access feature flag exists on Pro plan, webhooks flag exists
+- Need: Supabase Edge Functions implementing REST endpoints
+- Need: Rate limiting middleware (token bucket per API key)
+- Need: OpenAPI spec and documentation page
+- Start with read endpoints + media upload + playlist update
+
+**Complexity:** HIGH -- API design, documentation, rate limiting, error handling, and versioning all need to be right from launch. Existing service layer provides strong foundation.
+
+### 7. Nested/Sub-Playlists
+
+**How competitors do it:**
+- **Yodeck:** Playlists contain other playlists. Folder icon in editor. Flattened at play time. Circular reference prevention.
+- **OptiSigns:** Sub-playlists. Drag into parent. Recursive play with duration inheritance.
+- **ScreenCloud:** Channels reference other channels.
+- **Rise Vision:** Schedules reference multiple playlists (not nested within playlists).
+
+**Table stakes behavior:**
+- "Add Playlist" option in playlist editor alongside "Add Media"
+- Sub-playlist shows as collapsed item with icon and count
+- Play order: parent items in sequence; sub-playlist plays all its items, then continues parent
+- Circular reference prevention
+- Depth limit: 3 levels max
+
+**Implementation approach:**
+- Add `item_type` ('media'|'playlist') and `linked_playlist_id` to playlist_items
+- Playlist editor: "Insert Playlist" button with picker modal
+- Player: recursive flatten at play time via server-side RPC (recursive CTE)
+- Cycle detection on save: walk graph, reject cycles with clear error
+- Offline cache stores flattened result
+
+**Complexity:** MEDIUM -- data model is simple. Cycle detection and recursive CTE resolution are the tricky parts.
+
+### 8. Media Expiration Dates
+
+**How competitors do it:**
+- **Yodeck:** "Valid until" date. After date, hidden from playlists and marked expired. Can be restored.
+- **OptiSigns:** Expiration date. Auto-removes from playlists. Notification before expiry.
+- **ScreenCloud:** Content scheduling with end date.
+- **Rise Vision:** Schedule-based expiration.
+
+**Table stakes behavior:**
+- Optional `expires_at` date on any media asset
+- Expired media excluded from playlist resolution automatically
+- Visual indicator on expired media (badge, dimmed) in admin
+- Expiration warnings (7 days before)
+- Bulk set/clear expiration
+- Library filters: expired, expiring soon, no expiration
+
+**Implementation approach:**
+- Add `expires_at` timestamp column to media_assets
+- Date picker in media detail panel
+- Playlist resolution RPC: filter `WHERE expires_at IS NULL OR expires_at > now()`
+- pg_cron job: flag expiring-soon items, create notifications
+- Media library filter additions
+
+**Complexity:** LOW -- single column, filter in queries, date picker UI. Simplest feature in this set.
+
+### 9. Working Hours / Screen Power Scheduling
+
+**How competitors do it:**
+- **Yodeck:** "Working Hours" per screen/group. On/off times per day. CEC power commands. Timezone-aware.
+- **OptiSigns:** Power schedule. CEC or RS-232. Per-screen or group.
+- **ScreenCloud:** "Power Schedule." Hardware-dependent.
+- **Rise Vision:** Display on/off scheduling.
+
+**Table stakes behavior:**
+- Working hours per screen or screen group (Mon-Fri 8am-6pm)
+- Outside hours: black screen/standby or power-off command
+- Holiday/exception dates
+- Timezone-aware (TZDate, already proven in schedule system)
+
+**Implementation approach:**
+- New `screen_power_schedules` table: screen_id, day_of_week, start_time, end_time, timezone
+- Player checks schedule on heartbeat and content resolution
+- v12.0: Player shows black screen outside hours (software approach)
+- Future: CEC commands for hardware-supported devices
+- Admin UI: working hours config per screen with group inheritance
+- Holiday exceptions table
+
+**Complexity:** MEDIUM -- schedule logic well-understood. CEC deferred. Software black-screen is straightforward.
+
+### 10. Audio / Background Music
+
+**How competitors do it:**
+- **Yodeck:** Background audio per playlist/screen. MP3/AAC. Volume. Loops independently of visual content.
+- **OptiSigns:** Background music per playlist. MP3. Volume slider. Loop.
+- **ScreenCloud:** Audio zone in layouts. Separate channel.
+- **Rise Vision:** Limited (video audio only).
+
+**Table stakes behavior:**
+- Upload audio files (MP3, AAC, WAV)
+- Assign background audio to playlist or layout
+- Audio plays continuously behind visual content
+- Volume control, loop toggle
+- Audio uninterrupted during visual transitions
+- Mute per screen option
+
+**Implementation approach:**
+- Audio upload via existing media pipeline (already accepts audio types)
+- `background_audio_id` on playlists, `audio_track_id` on layouts
+- Player: `AudioPlayer` component parallel to visual rendering using HTML5 Audio API
+- Volume/loop from playlist/layout settings
+
+**Complexity:** MEDIUM -- HTML5 Audio straightforward. Complexity in lifecycle management independent of visual content and autoplay policy handling on various platforms.
+
+### 11. Video Wall Support
+
+**How competitors do it:**
+- **Yodeck:** Grid definition (2x2, 3x3). Assign screens to positions. Content stretched/cropped across all.
+- **OptiSigns:** Drag-and-drop positioning. Bezel compensation. Content split.
+- **ScreenCloud:** Higher tiers. Grid-based layout.
+- **Rise Vision:** Multi-display with content spanning.
+
+**Table stakes behavior:**
+- Video wall config: grid dimensions (rows x columns)
+- Assign screens to grid positions
+- Content split: each screen renders its portion of total canvas
+- Bezel compensation for seamless appearance
+- Admin preview showing full wall
+- Works with images, videos, layouts
+
+**Implementation approach:**
+- New tables: `video_walls` (id, name, rows, columns) and `video_wall_positions` (wall_id, screen_id, row, col, bezel offsets)
+- Player receives wall config: total grid, this screen's position, bezel offsets
+- Player: CSS clip/transform to show only this screen's portion
+- Sync: Supabase Realtime broadcast channel for loose content synchronization (leader-based: one screen is leader, others follow)
+- Admin: visual grid editor
+
+**Complexity:** HIGH -- bezel compensation math, content splitting, cross-device synchronization. Loose sync achievable. Frame-perfect sync is anti-feature.
+
+### 12. Calendar Widgets (Google/Outlook)
+
+**How competitors do it:**
+- **Yodeck:** Google Calendar and Outlook apps. OAuth. Agenda/timeline view. Auto-refresh.
+- **OptiSigns:** Google Calendar widget. Outlook via iCal URL.
+- **ScreenCloud:** Calendar apps. Room booking display mode.
+- **Rise Vision:** Google Calendar widget. Event list display.
+
+**Table stakes behavior:**
+- Connect Google Calendar or Outlook via OAuth
+- Display modes: agenda list, day view, meeting room (free/busy)
+- Show: title, time, location, organizer
+- Auto-refresh (5-15 min)
+- Meeting room mode: large free/busy indicator with next-event countdown
+- Privacy option: free/busy only without details
+
+**Implementation approach:**
+- Widget types: `google-calendar`, `outlook-calendar` in registry
+- OAuth: Google Calendar API (calendar.readonly scope), Microsoft Graph API
+- Edge Function proxy: fetch events server-side, return sanitized JSON
+- Meeting room mode: simplified status UI
+- Offline: cache events in IndexedDB
+- ical.js already in package.json for iCal parsing
+
+**Complexity:** MEDIUM -- Google Calendar API well-documented. Microsoft Graph requires Azure AD app. OAuth pattern exists.
+
+### 13. Google Slides Integration
+
+**How competitors do it:**
+- **Yodeck:** Paste URL. Google published embed. Auto-refresh. Configurable slide duration.
+- **OptiSigns:** Google Slides as media. Auto-sync on edit.
+- **ScreenCloud:** OAuth connect or public URL.
+- **Rise Vision:** Deep integration (Google partner).
+
+**Table stakes behavior:**
+- Paste Google Slides URL
+- Slides rotate at configurable interval
+- Auto-sync when presentation edited
+- Optional: specific slide range
+
+**Implementation approach:**
+- Simplest: Google Slides published URL in iframe (auto-advance built-in, limited control)
+- Better: Slides API to fetch slide thumbnails, render as image sequence (full timing control)
+- Recommend iframe embed for v12.0 (lowest effort), with API-based upgrade path
+- Google OAuth scope extension (slides.readonly)
+
+**Complexity:** LOW-MEDIUM -- iframe embed is trivial. API-based rendering is medium but provides better control.
+
+### 14. Canva Integration (OAuth)
+
+**How competitors do it:**
+- **OptiSigns:** Canva Connect API. OAuth. Browse designs. Import as image/PDF.
+- **Yodeck/ScreenCloud/Rise Vision:** No native integration.
+
+**Table stakes behavior:**
+- Connect Canva account via OAuth
+- Browse designs in picker modal
+- Import as PNG/JPEG for playlists/layouts
+- Optional auto-refresh on design update
+
+**Implementation approach:**
+- canvaService.js EXISTS with full OAuth PKCE flow and scopes: design:content:read, design:content:write, asset:read, asset:write, profile:read
+- CanvaCallbackPage.jsx EXISTS and handles redirect
+- Need: Design browser modal (list designs via Canva API)
+- Need: Export flow (Canva API design export to PNG/PDF, upload to media library)
+- Need: Refresh trigger for design updates
+
+**Complexity:** MEDIUM -- OAuth done. Design browser UI, export pipeline, and media library integration needed.
 
 ---
 
 ## Feature Dependencies
 
 ```
-Weather Widget (enhanced)
-  --> Timezone support in Clock/Date (shared timezone infrastructure)
+Document Display -------> Media Library (upload), S3 (storage), Edge Function (conversion)
+YouTube/Vimeo ----------> Widget Registry, CSP frame-src update, Player iframe
+Web Page Widget --------> Promote existing WebPageApp to Widget Registry
+Proof of Play ----------> playbackTrackingService (EXISTS), Admin reporting UI, Export service
+SSO via SAML -----------> Supabase Auth SAML, ssoService (EXISTS), Enterprise plan gate
+Public REST API --------> apiTokenService (EXISTS), apiVersionService (EXISTS), Edge Functions
+Nested Playlists -------> Playlist items schema, Recursive CTE, Cycle detection
+Media Expiration -------> media_assets.expires_at, Playlist resolution filter, pg_cron
+Working Hours ----------> screen_power_schedules table, TZDate, Player schedule check
+Audio / Music ----------> Media library, AudioPlayer component, Playlist/Layout data model
+Video Wall ------------->  video_wall tables, Realtime broadcast, Player clip/transform
+Calendar Widgets -------> Google/Microsoft OAuth, Edge Function proxy, Widget Registry, ical.js
+Google Slides ----------> Google OAuth scope extension, Slides embed/API
+Canva Integration ------> canvaService (EXISTS), Design browser UI, Export pipeline
 
-Clock/Date Widget (enhanced)
-  --> Timezone utility functions (shared with weather, countdown)
+YouTube/Vimeo --\
+Web Page Widget --> Both use iframe in player (shared rendering pattern)
 
-QR Code Widget (enhanced)
-  --> WiFi QR admin UI (new settings panel in layout sidebar)
+Google Slides --\
+Canva -----------> Both import external designs as rendered images (shared import pattern)
 
-Video Playback (enhanced)
-  --> Media preloader connection (wire existing mediaPreloader to ZonePlayer)
-  --> No external dependencies
+Calendar --------\
+Google Slides ----> Both use Google OAuth (shared credential, extend scopes together)
 
-Portrait Mode
-  --> Layout editor canvas resizing (new)
-  --> Portrait template library (content creation)
-  --> No dependency on other 6 features
+Media Expiration --> affects Playlist Resolution --> affects Nested Playlists
+                     (expiration filter applied before nesting resolution)
 
-Screen Groups (enhanced)
-  --> Playlist push to groups (extends existing scene push)
-  --> Schedule assignment per group (extends existing campaign system)
-  --> No dependency on widget features
-
-Menu Board Widget (NEW)
-  --> Data source system (already built: Google Sheets, CSV)
-  --> Data binding resolver (already built: dataBindingResolver.js)
-  --> Scene/template rendering (already built: Fabric.js, Polotno)
-  --> Auto-pagination (new, builds on DataTableWidget pagination)
-  --> Portrait mode (menu boards often run portrait)
+Proof of Play ----> depends on all content types being trackable
+                    (must track document pages, YouTube plays, audio plays)
 ```
 
-**Dependency order summary:**
-1. Clock/Date + Weather (timezone infrastructure first, shared by both)
-2. QR Code + Video (independent, can parallel with #1)
-3. Portrait Mode (enables menu board portrait layouts)
-4. Screen Groups (independent of widgets, can parallel)
-5. Menu Board (depends on portrait mode + data binding, build last)
+**Critical chain:** Google Calendar + Google Slides share Google OAuth scopes -- implement together or sequentially to avoid re-authorization prompts.
 
----
+## Complexity Tiers
+
+### Tier 1: Low Complexity (ship fast, high impact)
+| Feature | Est. Effort | Why Low |
+|---------|-------------|---------|
+| Media Expiration | 1-2 days | Single column, filter logic, date picker UI |
+| YouTube/Vimeo Embedding | 2-3 days | iframe + URL parser + widget registry entry |
+| Web Page Widget | 1-2 days | Promote existing AppRenderer code to widget registry |
+
+### Tier 2: Medium Complexity (core of v12.0)
+| Feature | Est. Effort | Why Medium |
+|---------|-------------|------------|
+| Nested/Sub-Playlists | 3-5 days | Cycle detection, recursive CTE, editor UI |
+| Audio / Background Music | 3-5 days | New player component, autoplay policy handling |
+| Calendar Widgets | 4-6 days | OAuth + API integration + widget rendering |
+| Document Display | 4-6 days | Server-side conversion pipeline |
+| Proof of Play | 4-6 days | Reporting UI, aggregation queries, export |
+| Google Slides | 2-4 days | iframe embed or API integration |
+| Canva Integration | 3-4 days | Design browser UI (OAuth already done) |
+| Working Hours | 3-5 days | Schedule logic, player check, admin UI |
+
+### Tier 3: High Complexity (enterprise value, more risk)
+| Feature | Est. Effort | Why High |
+|---------|-------------|----------|
+| Public REST API | 6-10 days | Endpoint design, rate limiting, docs, testing |
+| SSO via SAML | 4-6 days | SAML finicky, IdP-specific testing needed |
+| Video Wall | 6-10 days | Synchronization, bezel math, grid editor |
 
 ## MVP Recommendation
 
-### Must Ship (Table Stakes Completion)
+**Priority order for maximum user impact:**
 
-1. **Clock/Date Widget Enhancement** -- Add timezone support (using `Intl.DateTimeFormat`), wire 12h/24h format to player, add combined clock+date mode. LOW effort, HIGH impact for multi-location deployments.
+### Phase A: Quick Wins (ship first, 1 week)
+1. **Media Expiration Dates** -- lowest effort, immediate compliance value
+2. **YouTube/Vimeo Embedding** -- highest user demand, low effort
+3. **Web Page Display Widget** -- zero new code (promote existing), high utility
 
-2. **Video Playback Enhancement** -- Connect mediaPreloader to ZonePlayer for seamless transitions, add single-video loop mode, add video duration override in playlist editor. MEDIUM effort, removes a rough edge.
+### Phase B: Core Feature Parity (2 weeks)
+4. **Proof of Play Reporting** -- enterprise requirement, data collection exists
+5. **Nested/Sub-Playlists** -- power user workflow, data model change
+6. **Document Display** -- corporate/education use case, needs conversion pipeline
+7. **Calendar Widgets** -- meeting room use case, OAuth extension
 
-3. **Weather Widget Polish** -- Ensure zone-embedded widget (not just WeatherWall app) uses live data in player. Add timezone-aware display. LOW effort, mostly wiring.
+### Phase C: Integration Power (2 weeks)
+8. **Google Slides Integration** -- shares OAuth with calendar, natural pairing
+9. **Canva Integration** -- OAuth already built, finish the flow
+10. **Audio / Background Music** -- retail/restaurant differentiator
+11. **Working Hours / Power Schedule** -- energy savings, screen management
 
-4. **QR Code Admin UI** -- Add QR type selector (URL/WiFi/text) in layout editor sidebar. Expose WiFi SSID/password fields. LOW effort, HIGH perceived completeness.
+### Phase D: Enterprise Features (2 weeks)
+12. **SSO via SAML** -- enterprise gate, feature-flagged to Enterprise plan
+13. **Public REST API** -- developer ecosystem, feature-flagged to Pro+ plans
+14. **Video Wall** -- highest complexity, highest wow factor, enterprise only
 
-5. **Portrait Mode** -- Layout editor portrait canvas option (1080x1920), 3-5 portrait templates. Player reads orientation from device config. MEDIUM effort, unlocks entire vertical display market.
+**Defer to post-v12.0:**
+- Video wall frame-perfect sync (software loose-sync sufficient)
+- API write endpoints beyond media upload and playlist update
+- SCIM provisioning
+- CEC hardware power commands (start with software black-screen)
 
-6. **Screen Groups Enhancement** -- Add "push playlist to group" action in playlist editor. Group-level quick actions from main screen list. LOW effort on existing foundation.
+## Plan Tier Gating Recommendation
 
-### Defer to Future
-
-7. **Menu Board Widget** -- This is the correct #7 because it depends on portrait mode being solid, requires data-driven template rendering infrastructure, and is the highest-complexity item. Build it as a separate focused milestone after the display toolkit foundation is solid. It is a differentiator, not table stakes -- users will accept "use the restaurant template + manual editing" as V1.
-
-### Rationale
-
-Build order follows dependency chain: timezone infrastructure (clock/date/weather) first, then independent improvements (video/QR/screen groups/portrait), then menu board last because it consumes all of them. This also means the first 4-5 items ship quickly (1-2 days each) creating visible progress, while the menu board gets its own focused phase.
-
----
-
-## Complexity Breakdown by Feature
-
-| Feature | Admin UI Work | Service Layer Work | Player Rendering Work | Total Estimate |
-|---------|--------------|-------------------|----------------------|----------------|
-| Clock/Date Enhancement | Wire format/timezone props to sidebar | None (use Intl API) | Add timezone + format logic to ClockWidget/DateWidget | Low (1-2 days) |
-| Video Playback Enhancement | Duration override in playlist editor | None | Preloader wiring, loop mode, seamless transition | Medium (2-3 days) |
-| Weather Widget Polish | Minor -- zone widget config in sidebar | None (already built) | Ensure WeatherWidget uses live data, add timezone | Low (1 day) |
-| QR Code Admin UI | QR type selector, WiFi fields in sidebar | None (service has WiFi QR) | None (player widget already works) | Low (1 day) |
-| Portrait Mode | Canvas size toggle, portrait template CRUD | Portrait layout creation service | Orientation-aware rendering | Medium (3-4 days) |
-| Screen Groups Enhancement | Push playlist flow, group quick actions | Extend service for playlist push | None | Low-Med (2 days) |
-| Menu Board Widget | Template builder, category/item editor, price formatting UI | Data-to-menu rendering pipeline, auto-pagination service | Menu renderer with categories, pricing, photos, pagination | High (5-8 days) |
-
-**Total estimated effort: 15-21 days** across all 7 features.
-
----
-
-## Competitive Landscape (User Expectations by Feature)
-
-### Weather Widget
-**What competitors offer:** Yodeck has Weather Wall (3 themes, 12 languages, forecast). ScreenCloud has Weather App. OptiSigns has weather widget. All offer current + forecast, unit toggle, location input, themed display.
-**BizScreen position:** Already at parity with full WeatherWall app. Zone widget is simpler than competitors (no forecast in compact mode) -- acceptable.
-**Confidence:** MEDIUM (based on training data, not verified against current competitor sites)
-
-### Video Playback
-**What competitors offer:** All platforms support MP4/WebM playback. Yodeck supports 4K. ScreenCloud supports video playlists with transition effects. Most require H.264/H.265 codec. None offer in-browser transcoding.
-**BizScreen position:** Basic playback works. Needs preloading for seamless transitions (competitors do this). Loop mode is expected.
-**Confidence:** HIGH (video playback is well-understood; existing code confirms behavior)
-
-### Screen Groups
-**What competitors offer:** Yodeck has "Screen Groups" with bulk content push. ScreenCloud has "Channels" that map to screen groups. OptiSigns has "Groups" with bulk scheduling. All support location-based grouping.
-**BizScreen position:** Ahead of most on group management (CRUD, scene publishing, language per group). Behind on playlist/schedule push to groups.
-**Confidence:** HIGH (service layer code confirms feature set)
-
-### Portrait Mode
-**What competitors offer:** All major platforms support portrait (9:16). Yodeck auto-detects orientation from player device. ScreenCloud requires manual orientation setting. Most offer portrait-specific templates.
-**BizScreen position:** Behind. Only 1 portrait template. No explicit portrait mode in layout editor. WeatherWall supports it; other features do not.
-**Confidence:** HIGH (code analysis confirms gaps)
-
-### Clock/Date
-**What competitors offer:** Simple utility widgets. Most offer 12h/24h toggle, timezone selection (world clock), optional seconds, analog/digital styles. Often combined as a single widget with configurable parts.
-**BizScreen position:** Basic widgets work but lack timezone and format configuration in player. Behind on analog clock style (nice-to-have).
-**Confidence:** HIGH (widget code confirms current capabilities and gaps)
-
-### QR Code
-**What competitors offer:** URL QR, WiFi QR, vCard QR. Color customization. Logo overlay (premium feature in some). Dynamic QR (URL changes based on context -- rare).
-**BizScreen position:** Strong. URL and WiFi QR services exist. Player widget has color, scale, error correction. Missing admin UI for WiFi config and logo overlay.
-**Confidence:** HIGH (service and widget code confirms)
-
-### Menu Board
-**What competitors offer:** Yodeck has "Digital Menu Board" app with templates. ScreenCloud has menu board templates. OptiSigns has menu board with Google Sheets integration. NoviSign has data-driven menu boards. Most are template-based with manual editing; few offer true data-driven auto-rendering.
-**BizScreen position:** Behind on dedicated menu board feature. Has static restaurant template. Has data source infrastructure (Google Sheets, CSV, data binding). The combination of data binding + menu rendering is a differentiator opportunity.
-**Confidence:** MEDIUM (competitor features based on training data)
-
----
+| Feature | Free | Starter | Pro | Enterprise |
+|---------|------|---------|-----|------------|
+| YouTube/Vimeo | Yes | Yes | Yes | Yes |
+| Web Page Widget | No | Yes | Yes | Yes |
+| Document Display | No | Yes | Yes | Yes |
+| Media Expiration | No | Yes | Yes | Yes |
+| Nested Playlists | No | Yes | Yes | Yes |
+| Working Hours | No | Yes | Yes | Yes |
+| Calendar Widgets | No | No | Yes | Yes |
+| Google Slides | No | No | Yes | Yes |
+| Canva Integration | No | No | Yes | Yes |
+| Audio / Background | No | No | Yes | Yes |
+| Proof of Play | No | No | Yes | Yes |
+| Public REST API | No | No | Yes | Yes |
+| SSO via SAML | No | No | No | Yes |
+| Video Wall | No | No | No | Yes |
 
 ## Sources
 
-- **BizScreen codebase analysis** (HIGH confidence):
-  - `/Users/massimodamico/bizscreen/src/services/weatherService.js` -- OpenWeatherMap integration with caching, forecast, coords
-  - `/Users/massimodamico/bizscreen/src/components/WeatherWall/` -- 3-theme weather app (Animated, Classic, Glass)
-  - `/Users/massimodamico/bizscreen/src/components/apps/WeatherWallConfigModal.jsx` -- Full config UI
-  - `/Users/massimodamico/bizscreen/src/services/qrcodeService.js` -- QR generation (URL, WiFi, batch)
-  - `/Users/massimodamico/bizscreen/src/services/screenGroupService.js` -- Full CRUD + scene publishing
-  - `/Users/massimodamico/bizscreen/src/pages/ScreenGroupDetailPage.jsx` -- Device assignment UI
-  - `/Users/massimodamico/bizscreen/src/player/components/ZonePlayer.jsx` -- Video/image/app rendering in zones
-  - `/Users/massimodamico/bizscreen/src/player/components/widgets/` -- Clock, Date, Weather, QR, DataTable, RSS widgets
-  - `/Users/massimodamico/bizscreen/src/player/components/AppRenderer.jsx` -- App routing with data caching
-  - `/Users/massimodamico/bizscreen/src/components/layout-editor/LayoutElementRenderer.jsx` -- Admin-side widget preview
-  - `/Users/massimodamico/bizscreen/src/services/svgTemplateService.js` -- Portrait/landscape presets
-  - `/Users/massimodamico/bizscreen/src/services/mediaPreloader.js` -- Image/video preloading with bandwidth detection
-  - `/Users/massimodamico/bizscreen/src/templates/restaurant-menu-template.json` -- Static menu template
-- **Digital signage industry patterns** (MEDIUM confidence, training data):
-  - Yodeck app marketplace patterns (Weather Wall, QR Code, Clock, Menu Board)
-  - ScreenCloud app store patterns (Weather, QR, Menu Board)
-  - OptiSigns widget patterns (Google Sheets menu board)
-  - Rise Vision widget patterns (Weather, Clock, QR)
+- Competitor platform feature knowledge from training data (Yodeck, OptiSigns, ScreenCloud, Rise Vision) -- MEDIUM confidence, not live-verified
+- BizScreen codebase analysis -- HIGH confidence:
+  - `/Users/massimodamico/bizscreen/src/widgets/registry.js` -- 12 widget types, extensible pattern
+  - `/Users/massimodamico/bizscreen/src/services/playbackTrackingService.js` -- full event tracking with offline queue
+  - `/Users/massimodamico/bizscreen/src/services/canvaService.js` -- OAuth PKCE flow complete
+  - `/Users/massimodamico/bizscreen/src/pages/CanvaCallbackPage.jsx` -- callback handler implemented
+  - `/Users/massimodamico/bizscreen/src/services/apiTokenService.js` -- 9 scopes, token generation/rotation
+  - `/Users/massimodamico/bizscreen/src/services/apiVersionService.js` -- v1 versioning with deprecation
+  - `/Users/massimodamico/bizscreen/src/config/plans.js` -- enterprise_sso, api_access flags exist
+  - `/Users/massimodamico/bizscreen/src/config/appCatalog.js` -- calendar and youtube types defined
+  - `/Users/massimodamico/bizscreen/src/player/components/AppRenderer.jsx` -- WebPageApp iframe pattern
+  - `/Users/massimodamico/bizscreen/src/player/components/ZonePlayer.jsx` -- zone playback with analytics
+  - `/Users/massimodamico/bizscreen/.planning/codebase/ARCHITECTURE.md` -- system design reference
