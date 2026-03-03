@@ -20,7 +20,7 @@ const _logger = createScopedLogger('PlaylistService');
  * @typedef {Object} PlaylistItem
  * @property {string} id - Playlist item UUID
  * @property {string} playlist_id - Parent playlist UUID
- * @property {'media'|'app'} item_type - Type of content
+ * @property {'media'|'app'|'layout'|'web_page'|'playlist'} item_type - Type of content
  * @property {string} item_id - Referenced media/app UUID
  * @property {number} position - Display order position
  * @property {number|null} duration - Override duration in seconds
@@ -291,6 +291,65 @@ export async function addPlaylistItem(playlistId, { itemType, itemId, duration =
 
   if (error) throw error;
   return data;
+}
+
+/**
+ * Add a nested playlist as an item inside another playlist.
+ * Validates against circular references and nesting depth limits before inserting.
+ *
+ * @param {string} playlistId - Parent playlist UUID
+ * @param {string} nestedPlaylistId - Child playlist UUID to nest
+ * @param {number|null} [duration=null] - Override duration in seconds
+ * @returns {Promise<PlaylistItem>} The created playlist item
+ * @throws {Error} If self-reference, circular reference, or depth limit exceeded
+ */
+export async function addNestedPlaylist(playlistId, nestedPlaylistId, duration = null) {
+  // Fast path: prevent self-reference
+  if (playlistId === nestedPlaylistId) {
+    throw new Error('Cannot add a playlist to itself');
+  }
+
+  // Pre-validate nesting via RPC (mirrors DB trigger for fast UX feedback)
+  const { data, error } = await supabase.rpc('check_playlist_nesting_valid', {
+    p_parent_id: playlistId,
+    p_child_id: nestedPlaylistId,
+  });
+
+  if (error) throw error;
+
+  if (data === false) {
+    throw new Error('Adding this playlist would create a circular reference or exceed the 5-level nesting limit');
+  }
+
+  // Validation passed -- insert via existing addPlaylistItem
+  return addPlaylistItem(playlistId, {
+    itemType: 'playlist',
+    itemId: nestedPlaylistId,
+    duration,
+  });
+}
+
+/**
+ * Fetch display info for a nested playlist (name + item count).
+ * Used by the playlist editor strip to render nested playlist items.
+ *
+ * @param {string} playlistId - Playlist UUID to fetch info for
+ * @returns {Promise<{id: string, name: string, itemCount: number}>}
+ */
+export async function getNestedPlaylistInfo(playlistId) {
+  const { data, error } = await supabase
+    .from('playlists')
+    .select('id, name, playlist_items(count)')
+    .eq('id', playlistId)
+    .single();
+
+  if (error) throw error;
+
+  return {
+    id: data.id,
+    name: data.name,
+    itemCount: data.playlist_items?.[0]?.count || 0,
+  };
 }
 
 /**
