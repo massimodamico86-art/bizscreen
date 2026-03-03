@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T21:13:26Z"
+last_updated: "2026-03-03T21:15:47.264Z"
 progress:
   total_phases: 72
   completed_phases: 69
@@ -44,6 +44,7 @@ Progress: [████████████████████] 75%
 | 109-content-model | 3/4 | 14 min | 4.7 min |
 
 *Updated after each plan completion*
+| Phase 109 P02 | 6 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,7 @@ Key constraints for v12.0:
 - SSO MUST use supabase.auth.signInWithSSO() to preserve RLS
 - Proof of Play table MUST be partitioned by month from day one
 - Video wall uses Supabase Realtime broadcast (leader/follower), last phase
+- [Phase 109]: addNestedPlaylist wraps addPlaylistItem after RPC validation; parallel Promise.all for nested playlist info; blue-themed cards distinguish nested playlists; excludePlaylistId for UI self-reference prevention
 
 ### Blockers/Concerns
 

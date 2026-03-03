@@ -42,8 +42,8 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 ### Nested Playlists
 
-- [ ] **NEST-01**: User can add a playlist as an item within another playlist
-- [ ] **NEST-02**: Nested playlists resolve to a flat content list on the player
+- [x] **NEST-01**: User can add a playlist as an item within another playlist
+- [x] **NEST-02**: Nested playlists resolve to a flat content list on the player
 - [x] **NEST-03**: System prevents circular playlist references at write time
 - [x] **NEST-04**: Nesting depth is limited to 5 levels
 
@@ -153,8 +153,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SLIDES-01 | Phase 108 | Complete |
 | SLIDES-02 | Phase 108 | Complete |
 | SLIDES-03 | Phase 108 | Complete |
-| NEST-01 | Phase 109 | Pending |
-| NEST-02 | Phase 109 | Pending |
+| NEST-01 | Phase 109 | Complete |
+| NEST-02 | Phase 109 | Complete |
 | NEST-03 | Phase 109 | Complete |
 | NEST-04 | Phase 109 | Complete |
 | AUDIO-01 | Phase 109 | Complete |
