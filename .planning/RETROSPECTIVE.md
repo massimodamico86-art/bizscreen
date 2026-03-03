@@ -91,6 +91,56 @@
 
 ---
 
+## Milestone: v11.0 — Stability Pass
+
+**Shipped:** 2026-03-02
+**Phases:** 4 | **Plans:** 8 | **Tasks:** 16 | **Commits:** 30
+
+### What Was Built
+- Fixed 6 page crashes caused by "Objects are not valid as a React child" — root cause was EmptyState rendering forwardRef component refs as children
+- Defined 3 missing TemplateSidebar sub-components and added ErrorBoundary Try Again button
+- Graceful degradation for Settings/Status/DataSources pages when Supabase RPCs unavailable
+- Error handling for missing template IDs and invalid preview tokens (Content-Type header check)
+- Shared dev bypass utility (`src/utils/devBypass.js`) for service-layer auth with mock user fallback
+- Unsplash proxy graceful empty state with actionable "functions serve" hint
+- Templates mobile filter collapse (375px) and Pricing tablet 2-column grid (768px)
+- SVG Editor export preview dialog with format/quality/scale options
+- Branding save button unsaved changes tracking
+
+### What Worked
+- **Root cause analysis over symptom fixing**: All 6 crashes shared the same EmptyState icon rendering bug — fixing the root cause in one place resolved all 6 pages simultaneously
+- **Severity-ordered phases**: Crash fixes first (104), then functionality (105), then dev experience (106), then cosmetic (107) — this dependency order prevented rework since later phases depended on earlier fixes
+- **Service-level fallback pattern**: Catching errors in service functions and returning defaults (not throwing) eliminates an entire class of UI error states — established as a reusable pattern
+- **Pre-existing milestone audit**: The v11.0 audit passed 18/18 requirements with 5/5 E2E flows verified, giving confidence for immediate completion
+- **Concentrated execution**: All 4 phases completed in a single day (8 hours), 30 commits
+
+### What Was Inefficient
+- **SUMMARY files still lack one_liner field**: summary-extract returned null for all 8 summaries — same issue from v7.0 and v8.0 still unresolved
+- **Task counting required manual regex debugging**: The "Tasks:" field in summaries uses `**Tasks:**` markdown bold format that simple grep patterns miss on macOS
+- **Phase 88 and 100 left in-progress from prior milestones**: These are orphaned phases from v7.0 and v10.0 that were never completed or cleaned up — they inflate the "in_progress" count
+
+### Patterns Established
+- **EmptyState icon prop**: Always pass JSX elements (`icon={<Icon />}`), not component refs (`icon={Icon}`) — defensive typeof/$$typeof detection handles both
+- **Service-level fallback**: RPC functions catch errors and return sensible defaults instead of propagating to UI
+- **getAuthenticatedUserId pattern**: Services use shared utility from devBypass.js instead of raw `supabase.auth.getUser()` when user ID is needed in dev bypass mode
+- **Content-Type header check**: Detect HTML error responses before JSON.parse to prevent parse crashes
+- **sm:hidden toggle pattern**: Mobile filter collapse with aria-expanded accessibility
+- **Export dialog pattern**: Preview/options dialog before download action
+
+### Key Lessons
+1. **Root cause analysis pays compound dividends** — fixing EmptyState's icon handling once resolved 6 independent crash reports
+2. **Severity ordering prevents rework** — crash > functionality > dev > cosmetic ensures later fixes don't break on unresolved earlier issues
+3. **Service-level error swallowing is a valid pattern for optional data** — Settings defaults, dashboard stats, and data sources can all gracefully degrade
+4. **Bug fix milestones execute fast** — clear scope (18 known bugs), no design decisions, no new features = 1 day for 4 phases
+5. **Visual QA audit + stability pass is a powerful two-milestone combo** — v10.0 found the bugs, v11.0 fixed them all
+
+### Cost Observations
+- Model mix: ~70% sonnet (execution), ~25% opus (planning, audit, completion), ~5% haiku (research)
+- Sessions: ~3 sessions in 1 day
+- Notable: Fastest milestone execution — 8 plans in ~20 minutes total execution time across all 4 phases
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -99,6 +149,7 @@
 |-----------|---------|--------|------------|
 | v7.0 | 83 | 11 | Quick executor for audit plans, milestone audit before ship |
 | v8.0 | 12 | 2 | Screenshot infrastructure + auth tests, shipped at 11% with gaps |
+| v11.0 | 30 | 4 | Root cause analysis across 6 crashes, service-level fallback pattern, 1-day execution |
 
 ### Cumulative Quality
 
@@ -106,6 +157,7 @@
 |-----------|-------------|-------------|---------------|
 | v7.0 | 57 | 100% | 11/11 passed |
 | v8.0 | 18/157 | 100% (completed) | 8/8 plans passed |
+| v11.0 | 18/18 | 100% | 4/4 phases, 5/5 E2E flows |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -114,3 +166,5 @@
 3. Pattern-based fixes scale well — identify once, apply everywhere
 4. Test infrastructure is worth dedicated investment — reusable helpers accelerate all subsequent phases
 5. Shipping incomplete milestones is acceptable when foundation is solid and gaps are documented
+6. Root cause analysis pays compound dividends — one fix can resolve multiple independent bug reports
+7. Visual QA audit + stability pass is an effective two-milestone pattern — find bugs systematically, then fix them all

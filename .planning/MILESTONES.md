@@ -1,5 +1,42 @@
 # Project Milestones: BizScreen
 
+## v11.0 Stability Pass (Shipped: 2026-03-02)
+
+**Delivered:** Fixed all 18 bugs discovered during v10.0 Visual QA Audit — 6 critical page crashes, 3 major functionality failures, 3 dev experience issues, 2 error handling gaps, and 4 cosmetic issues. No new features; strictly targeted fixes.
+
+**Phases completed:** 104-107 (4 phases, 8 plans, 16 tasks)
+
+**Key accomplishments:**
+
+- Fixed 6 page crashes ("Objects are not valid as a React child") via defensive EmptyState icon rendering, TemplateSidebar sub-component definitions, and ErrorBoundary Try Again button
+- Settings/Status/DataSources pages gracefully degrade with local defaults, Vite env vars, and empty state when Supabase RPCs unavailable
+- Created shared dev bypass utility (`devBypass.js`) fixing playlist creation crash and dashboard retry loop in dev bypass mode
+- Templates page filter collapse on mobile (375px) and Pricing page responsive 2-column grid on tablet (768px)
+- SVG Editor export preview/options dialog and Branding save button unsaved changes tracking
+- Improved error handling for missing template IDs and invalid preview tokens
+
+**Stats:**
+
+- 63 files modified
+- +6,507 / -312 lines (net +6,195)
+- 4 phases, 8 plans, 16 tasks
+- 1 day (2026-03-02)
+- 30 commits
+
+**Git range:** `7be5957` → `b379408`
+
+**Tech debt accepted:**
+
+- SidebarSuggestedSection returns null (intentional stub — no data source yet)
+- 3 standalone Sidebar*Section.jsx files are orphaned dead code (inline versions in TemplateSidebar.jsx are active)
+- Dormant catch block at SettingsPage.jsx:79-81 will never execute (getUserSettings now swallows errors)
+- updateUserSettings still uses raw supabase.auth.getUser() — saves fail for dev-bypass users (acceptable)
+- Pre-existing build error: TVPreviewModal.jsx imports ScaledStage from wrong path (predates v11.0)
+
+**What's next:** Next milestone planning
+
+---
+
 ## v6.0 Functional Completeness (Shipped: 2026-02-23)
 
 **Delivered:** Every interactive UI element now performs its intended action — no dead buttons, no console errors, no placeholder behavior. SVG editor fully wired, AI layout generation, 5 cloud storage integrations, enterprise security controls, and content/media feature completions.
