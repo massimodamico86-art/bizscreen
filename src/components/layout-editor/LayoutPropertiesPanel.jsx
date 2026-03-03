@@ -29,6 +29,7 @@ import { RssWidgetControls } from '../scene-editor/RssWidgetControls.jsx';
 import { SocialFeedWidgetControls } from '../scene-editor/SocialFeedWidgetControls.jsx';
 import { CountdownWidgetControls } from '../scene-editor/CountdownWidgetControls.jsx';
 import { MenuBoardWidgetControls } from '../scene-editor/MenuBoardWidgetControls.jsx';
+import { EmbedWidgetControls } from '../scene-editor/EmbedWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -625,6 +626,15 @@ function WidgetControls({ element, onUpdate, onPropsUpdate }) {
 
       {widgetType === 'menu-board' && (
         <MenuBoardWidgetControls
+          props={props}
+          onPropChange={(key, value) => onPropsUpdate({ [key]: value })}
+        />
+      )}
+
+      {/* Embed Widget Controls (YouTube, Vimeo, Web Page, Google Slides) */}
+      {(widgetType === 'youtube' || widgetType === 'vimeo' || widgetType === 'webpage' || widgetType === 'google-slides') && (
+        <EmbedWidgetControls
+          widgetType={widgetType}
           props={props}
           onPropChange={(key, value) => onPropsUpdate({ [key]: value })}
         />

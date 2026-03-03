@@ -42,6 +42,7 @@ import { SocialFeedWidgetControls } from './SocialFeedWidgetControls';
 import { CountdownWidgetControls } from './CountdownWidgetControls.jsx';
 import { QRCodeWidgetControls } from './QRCodeWidgetControls.jsx';
 import { MenuBoardWidgetControls } from './MenuBoardWidgetControls';
+import { EmbedWidgetControls } from './EmbedWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -962,6 +963,15 @@ function WidgetControls({ block, onUpdate }) {
       {/* Menu Board Widget Controls */}
       {widgetType === 'menu-board' && (
         <MenuBoardWidgetControls
+          props={props}
+          onPropChange={handlePropChange}
+        />
+      )}
+
+      {/* Embed Widget Controls (YouTube, Vimeo, Web Page, Google Slides) */}
+      {(widgetType === 'youtube' || widgetType === 'vimeo' || widgetType === 'webpage' || widgetType === 'google-slides') && (
+        <EmbedWidgetControls
+          widgetType={widgetType}
           props={props}
           onPropChange={handlePropChange}
         />
