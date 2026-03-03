@@ -230,7 +230,25 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-(No active requirements — milestone cycle complete. Run `/gsd:new-milestone` to define next.)
+## Current Milestone: v12.0 Feature Parity
+
+**Goal:** Close the core feature gap with Yodeck and OptiSigns by implementing 14 production-ready features spanning media types, integrations, enterprise capabilities, and player enhancements.
+
+**Target features:**
+- Document display (PDF/Word/PPT/Excel as first-class media)
+- YouTube/Vimeo video embedding
+- Web page display widget
+- Proof of Play reporting (playback logs with compliance export)
+- SSO via SAML (enterprise authentication)
+- Public REST API with API key management
+- Nested/sub-playlists
+- Media expiration dates (auto-archive after date)
+- Working hours / screen power scheduling
+- Audio / background music support
+- Video wall support (multi-screen synchronized display)
+- Calendar widgets (Google Calendar / Outlook)
+- Google Slides integration (import and display)
+- Canva integration (OAuth import and display)
 
 ### Out of Scope
 
@@ -429,4 +447,4 @@ These capabilities shipped and are production-verified:
 | sm:grid-cols-2 lg:grid-cols-3 for pricing | Starts 2-column at 640px for better tablet use of space | ✓ Good — comfortable spacing |
 
 ---
-*Last updated: 2026-03-02 after v11.0 Stability Pass milestone completed*
+*Last updated: 2026-03-02 after v12.0 Feature Parity milestone started*
