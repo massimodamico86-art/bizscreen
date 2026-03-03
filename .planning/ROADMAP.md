@@ -114,7 +114,11 @@ All milestones shipped successfully (17 total).
   3. User can assign a background audio track to a playlist that plays continuously behind visual content transitions, with volume control
   4. User can upload MP3/WAV/OGG audio files as media assets
   5. User can define per-screen working hours (on/off times by day of week) and the screen automatically blanks outside those hours and resumes at start time
-**Plans**: TBD
+**Plans**: 4 plans
+- [ ] 109-01-PLAN.md -- Schema migration: nested playlist trigger, background audio columns, working hours column, updated player content RPC
+- [ ] 109-02-PLAN.md -- Nested playlists service layer and UI (InsertContentModal wiring, editor display)
+- [ ] 109-03-PLAN.md -- Background audio picker/volume in playlist editor, working hours editor in screen settings
+- [ ] 109-04-PLAN.md -- Player integration: BackgroundAudio component, WorkingHoursGuard, flattened content handling
 
 ### Phase 110: Enterprise Platform
 **Goal**: Enterprise customers can authenticate via SAML SSO, integrate external systems via a public REST API, and generate compliance-ready Proof of Play reports
@@ -158,7 +162,7 @@ All milestones shipped successfully (17 total).
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 108. Embed Widgets | 2/2 | Complete    | 2026-03-03 |
-| 109. Content Model | 0/TBD | Not started | - |
+| 109. Content Model | 0/4 | Not started | - |
 | 110. Enterprise Platform | 0/TBD | Not started | - |
 | 111. Documents and Calendar | 0/TBD | Not started | - |
 | 112. Canva and Video Wall | 0/TBD | Not started | - |
