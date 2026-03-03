@@ -36,6 +36,7 @@ const FILTER_TABS = [
   { key: 'web_page', label: 'Web' },
   { key: 'app', label: 'Apps' },
   { key: 'my_designs', label: 'My Designs' },
+  { key: 'playlists', label: 'Playlists' },
 ];
 
 const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
