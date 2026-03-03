@@ -9,19 +9,19 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 ### Embeds (YouTube/Vimeo/Web Page)
 
-- [ ] **EMBED-01**: User can add a YouTube video widget to a layout zone with a video URL
-- [ ] **EMBED-02**: User can add a Vimeo video widget to a layout zone with a video URL
-- [ ] **EMBED-03**: YouTube/Vimeo widget plays the video on the screen player via iframe embed
-- [ ] **EMBED-04**: YouTube/Vimeo widget shows a cached thumbnail with "requires internet" message when offline
-- [ ] **EMBED-05**: User can add a web page widget to a layout zone with a URL
-- [ ] **EMBED-06**: Web page widget displays the live website on the screen player
-- [ ] **EMBED-07**: User can configure auto-refresh interval for web page widget
+- [x] **EMBED-01**: User can add a YouTube video widget to a layout zone with a video URL
+- [x] **EMBED-02**: User can add a Vimeo video widget to a layout zone with a video URL
+- [x] **EMBED-03**: YouTube/Vimeo widget plays the video on the screen player via iframe embed
+- [x] **EMBED-04**: YouTube/Vimeo widget shows a cached thumbnail with "requires internet" message when offline
+- [x] **EMBED-05**: User can add a web page widget to a layout zone with a URL
+- [x] **EMBED-06**: Web page widget displays the live website on the screen player
+- [x] **EMBED-07**: User can configure auto-refresh interval for web page widget
 
 ### Google Slides
 
-- [ ] **SLIDES-01**: User can add a Google Slides widget to a layout zone
-- [ ] **SLIDES-02**: User can paste a Google Slides URL to display a presentation
-- [ ] **SLIDES-03**: Google Slides widget renders slides on the screen with configurable auto-advance interval
+- [x] **SLIDES-01**: User can add a Google Slides widget to a layout zone
+- [x] **SLIDES-02**: User can paste a Google Slides URL to display a presentation
+- [x] **SLIDES-03**: Google Slides widget renders slides on the screen with configurable auto-advance interval
 
 ### Calendar
 
@@ -143,16 +143,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EMBED-01 | Phase 108 | Pending |
-| EMBED-02 | Phase 108 | Pending |
-| EMBED-03 | Phase 108 | Pending |
-| EMBED-04 | Phase 108 | Pending |
-| EMBED-05 | Phase 108 | Pending |
-| EMBED-06 | Phase 108 | Pending |
-| EMBED-07 | Phase 108 | Pending |
-| SLIDES-01 | Phase 108 | Pending |
-| SLIDES-02 | Phase 108 | Pending |
-| SLIDES-03 | Phase 108 | Pending |
+| EMBED-01 | Phase 108 | Complete |
+| EMBED-02 | Phase 108 | Complete |
+| EMBED-03 | Phase 108 | Complete |
+| EMBED-04 | Phase 108 | Complete |
+| EMBED-05 | Phase 108 | Complete |
+| EMBED-06 | Phase 108 | Complete |
+| EMBED-07 | Phase 108 | Complete |
+| SLIDES-01 | Phase 108 | Complete |
+| SLIDES-02 | Phase 108 | Complete |
+| SLIDES-03 | Phase 108 | Complete |
 | NEST-01 | Phase 109 | Pending |
 | NEST-02 | Phase 109 | Pending |
 | NEST-03 | Phase 109 | Pending |

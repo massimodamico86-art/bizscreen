@@ -157,7 +157,7 @@ All milestones shipped successfully (17 total).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 108. Embed Widgets | 0/2 | Planned | - |
+| 108. Embed Widgets | 1/2 | In Progress|  |
 | 109. Content Model | 0/TBD | Not started | - |
 | 110. Enterprise Platform | 0/TBD | Not started | - |
 | 111. Documents and Calendar | 0/TBD | Not started | - |
