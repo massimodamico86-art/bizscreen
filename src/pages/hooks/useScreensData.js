@@ -285,6 +285,7 @@ export function useScreensData({ showToast }) {
         assigned_layout_id: data.layoutId,
         display_language: data.displayLanguage,
         orientation: data.orientation,
+        working_hours: data.workingHours,
       });
 
       setScreens((prev) =>
@@ -303,6 +304,7 @@ export function useScreensData({ showToast }) {
               assigned_layout: layout ? { id: layout.id, name: layout.name } : null,
               display_language: data.displayLanguage,
               orientation: data.orientation,
+              working_hours: data.workingHours,
             };
           }
           return s;

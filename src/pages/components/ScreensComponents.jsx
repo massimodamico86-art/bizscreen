@@ -43,6 +43,7 @@ import { formatDuration, getUptimeColor, DATE_RANGES } from '../../services/anal
 import YodeckEmptyState from '../../components/YodeckEmptyState';
 import { PlayerStatusBadge, getPlayerStatus } from '../../components/screens/PlayerStatusBadge';
 import { OrientationMismatchWarning } from '../../components/schedules/OrientationMismatchWarning';
+import { WorkingHoursEditor } from '../../components/screens/WorkingHoursEditor';
 
 // Design system imports
 import {
@@ -842,6 +843,7 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
   const [layoutId, setLayoutId] = useState(screen?.assigned_layout_id || '');
   const [displayLanguage, setDisplayLanguage] = useState(screen?.display_language || 'en');
   const [orientation, setOrientation] = useState(screen?.orientation || 'landscape');
+  const [workingHours, setWorkingHours] = useState(screen?.working_hours || null);
 
   useEffect(() => {
     if (screen) {
@@ -852,6 +854,7 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
       setLayoutId(screen.assigned_layout_id || '');
       setDisplayLanguage(screen.display_language || 'en');
       setOrientation(screen.orientation || 'landscape');
+      setWorkingHours(screen.working_hours || null);
     }
   }, [screen]);
 
@@ -868,6 +871,7 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
       layoutId: layoutId || null,
       displayLanguage: displayLanguage,
       orientation: orientation,
+      workingHours: workingHours,
     });
   };
 
@@ -936,6 +940,18 @@ export const EditScreenModal = ({ screen, locations, screenGroups, playlists, la
                 <option value="landscape">Landscape (horizontal)</option>
                 <option value="portrait">Portrait (vertical)</option>
               </Select>
+            </FormField>
+            <hr className="border-gray-200" />
+            <FormField
+              label={
+                <Inline gap="xs" align="center">
+                  <Clock size={14} className="text-orange-500" />
+                  <span>Working Hours</span>
+                </Inline>
+              }
+              hint="Screen will turn off outside these hours"
+            >
+              <WorkingHoursEditor value={workingHours} onChange={setWorkingHours} />
             </FormField>
             <hr className="border-gray-200" />
             <h4 className="font-medium text-gray-900">Content Assignment</h4>
