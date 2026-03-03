@@ -143,69 +143,69 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EMBED-01 | — | Pending |
-| EMBED-02 | — | Pending |
-| EMBED-03 | — | Pending |
-| EMBED-04 | — | Pending |
-| EMBED-05 | — | Pending |
-| EMBED-06 | — | Pending |
-| EMBED-07 | — | Pending |
-| SLIDES-01 | — | Pending |
-| SLIDES-02 | — | Pending |
-| SLIDES-03 | — | Pending |
-| CAL-01 | — | Pending |
-| CAL-02 | — | Pending |
-| CAL-03 | — | Pending |
-| CAL-04 | — | Pending |
-| CAL-05 | — | Pending |
-| DOC-01 | — | Pending |
-| DOC-02 | — | Pending |
-| DOC-03 | — | Pending |
-| DOC-04 | — | Pending |
-| DOC-05 | — | Pending |
-| DOC-06 | — | Pending |
-| NEST-01 | — | Pending |
-| NEST-02 | — | Pending |
-| NEST-03 | — | Pending |
-| NEST-04 | — | Pending |
-| AUDIO-01 | — | Pending |
-| AUDIO-02 | — | Pending |
-| AUDIO-03 | — | Pending |
-| AUDIO-04 | — | Pending |
-| POWER-01 | — | Pending |
-| POWER-02 | — | Pending |
-| POWER-03 | — | Pending |
-| SSO-01 | — | Pending |
-| SSO-02 | — | Pending |
-| SSO-03 | — | Pending |
-| SSO-04 | — | Pending |
-| SSO-05 | — | Pending |
-| API-01 | — | Pending |
-| API-02 | — | Pending |
-| API-03 | — | Pending |
-| API-04 | — | Pending |
-| API-05 | — | Pending |
-| API-06 | — | Pending |
-| API-07 | — | Pending |
-| POP-01 | — | Pending |
-| POP-02 | — | Pending |
-| POP-03 | — | Pending |
-| POP-04 | — | Pending |
-| POP-05 | — | Pending |
-| CANVA-01 | — | Pending |
-| CANVA-02 | — | Pending |
-| CANVA-03 | — | Pending |
-| CANVA-04 | — | Pending |
-| VWALL-01 | — | Pending |
-| VWALL-02 | — | Pending |
-| VWALL-03 | — | Pending |
-| VWALL-04 | — | Pending |
+| EMBED-01 | Phase 108 | Pending |
+| EMBED-02 | Phase 108 | Pending |
+| EMBED-03 | Phase 108 | Pending |
+| EMBED-04 | Phase 108 | Pending |
+| EMBED-05 | Phase 108 | Pending |
+| EMBED-06 | Phase 108 | Pending |
+| EMBED-07 | Phase 108 | Pending |
+| SLIDES-01 | Phase 108 | Pending |
+| SLIDES-02 | Phase 108 | Pending |
+| SLIDES-03 | Phase 108 | Pending |
+| NEST-01 | Phase 109 | Pending |
+| NEST-02 | Phase 109 | Pending |
+| NEST-03 | Phase 109 | Pending |
+| NEST-04 | Phase 109 | Pending |
+| AUDIO-01 | Phase 109 | Pending |
+| AUDIO-02 | Phase 109 | Pending |
+| AUDIO-03 | Phase 109 | Pending |
+| AUDIO-04 | Phase 109 | Pending |
+| POWER-01 | Phase 109 | Pending |
+| POWER-02 | Phase 109 | Pending |
+| POWER-03 | Phase 109 | Pending |
+| SSO-01 | Phase 110 | Pending |
+| SSO-02 | Phase 110 | Pending |
+| SSO-03 | Phase 110 | Pending |
+| SSO-04 | Phase 110 | Pending |
+| SSO-05 | Phase 110 | Pending |
+| API-01 | Phase 110 | Pending |
+| API-02 | Phase 110 | Pending |
+| API-03 | Phase 110 | Pending |
+| API-04 | Phase 110 | Pending |
+| API-05 | Phase 110 | Pending |
+| API-06 | Phase 110 | Pending |
+| API-07 | Phase 110 | Pending |
+| POP-01 | Phase 110 | Pending |
+| POP-02 | Phase 110 | Pending |
+| POP-03 | Phase 110 | Pending |
+| POP-04 | Phase 110 | Pending |
+| POP-05 | Phase 110 | Pending |
+| DOC-01 | Phase 111 | Pending |
+| DOC-02 | Phase 111 | Pending |
+| DOC-03 | Phase 111 | Pending |
+| DOC-04 | Phase 111 | Pending |
+| DOC-05 | Phase 111 | Pending |
+| DOC-06 | Phase 111 | Pending |
+| CAL-01 | Phase 111 | Pending |
+| CAL-02 | Phase 111 | Pending |
+| CAL-03 | Phase 111 | Pending |
+| CAL-04 | Phase 111 | Pending |
+| CAL-05 | Phase 111 | Pending |
+| CANVA-01 | Phase 112 | Pending |
+| CANVA-02 | Phase 112 | Pending |
+| CANVA-03 | Phase 112 | Pending |
+| CANVA-04 | Phase 112 | Pending |
+| VWALL-01 | Phase 112 | Pending |
+| VWALL-02 | Phase 112 | Pending |
+| VWALL-03 | Phase 112 | Pending |
+| VWALL-04 | Phase 112 | Pending |
 
 **Coverage:**
-- v12.0 requirements: 55 total
-- Mapped to phases: 0
-- Unmapped: 55 ⚠️
+- v12.0 requirements: 57 total
+- Mapped to phases: 57
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-03*
-*Last updated: 2026-03-03 after initial definition*
+*Last updated: 2026-03-03 after roadmap creation -- all 57 requirements mapped to phases*
