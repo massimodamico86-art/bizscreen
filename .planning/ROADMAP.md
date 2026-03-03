@@ -100,7 +100,9 @@ All milestones shipped successfully (17 total).
   2. User can add a web page URL to a layout zone and see the live website displayed on the screen player with configurable auto-refresh
   3. User can paste a Google Slides URL into a layout zone and see slides auto-advancing on the screen player
   4. When a screen is offline, embed widgets show a cached thumbnail with a "requires internet" indicator instead of a broken frame
-**Plans**: TBD
+**Plans**: 2 plans
+- [ ] 108-01-PLAN.md -- Embed utilities service, offline fallback, 4 player widget components, widget registry entries
+- [ ] 108-02-PLAN.md -- Editor controls component, wiring into scene and layout editor panels
 
 ### Phase 109: Content Model
 **Goal**: Users can compose playlists from other playlists, add background music to visual content, and schedule screen on/off times by day of week
@@ -155,7 +157,7 @@ All milestones shipped successfully (17 total).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 108. Embed Widgets | 0/TBD | Not started | - |
+| 108. Embed Widgets | 0/2 | Planned | - |
 | 109. Content Model | 0/TBD | Not started | - |
 | 110. Enterprise Platform | 0/TBD | Not started | - |
 | 111. Documents and Calendar | 0/TBD | Not started | - |
