@@ -1,9 +1,14 @@
 ---
 phase: 088-analytics-alerts
-verified: 2026-02-27T00:00:00Z
+verified: 2026-03-03T00:00:00Z
 status: passed
 score: 5/5 must-haves verified
-re_verification: false
+re_verification:
+  previous_status: passed
+  previous_score: 5/5
+  gaps_closed: []
+  gaps_remaining: []
+  regressions: []
 human_verification:
   - test: "Open AnalyticsPage with ADVANCED_ANALYTICS feature flag enabled and change the date-range select"
     expected: "Summary cards, screen uptime table, top screens, top playlists, and top media all reload with updated data for the selected period"
@@ -34,23 +39,23 @@ human_verification:
 # Phase 88: Analytics & Alerts Verification Report
 
 **Phase Goal:** Analytics dashboards show accurate data with working filters, alert history is viewable and dismissable, and notification preferences are configurable
-**Verified:** 2026-02-27
+**Verified:** 2026-03-03
 **Status:** passed
-**Re-verification:** No — initial verification
+**Re-verification:** Yes — confirming no regression since initial verification (2026-02-27)
 
 ---
 
 ## Goal Achievement
 
-### Observable Truths (from Success Criteria)
+### Observable Truths
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Analytics dashboard loads charts and date-range filters produce updated results | VERIFIED | `AnalyticsPage` and `AnalyticsDashboardPage` both have `useEffect([dateRange])` that re-calls all service functions; `DATE_RANGES` from `analyticsService` populates the filter; `Tabs` + `ViewingHeatmap` wired in dashboard |
-| 2 | Content performance page shows per-content play counts and metrics without errors | VERIFIED | `ContentPerformancePage` calls `fetchDashboardAnalytics` + `fetchSceneDetailAnalytics`; scene detail `Modal` opens on click; broken `useNavigate` removed in commit `1ed7a74` |
-| 3 | Content detail analytics timeline renders chronological play data for a selected item | VERIFIED | `ContentDetailAnalyticsPage` imports `getSceneTimeline`/`getMediaPlayCounts`; `TimelineChart` component renders proportional bars with tooltips; `DATE_RANGES` pills trigger reload via `useCallback([dateRange])` |
-| 4 | Activity log displays chronological system events in the correct order | VERIFIED | `ActivityLogPage` calls `getActivityLog` (backed by `get_activity_log` RPC which orders by `created_at DESC`); `formatActivity` applied to each row; resource-type and date-range filters both reset page to 0 |
-| 5 | Alert history loads and individual alerts can be dismissed; notification settings save alert type and delivery preferences | VERIFIED | `AlertsCenterPage` uses `PageHeader+PageContent` layout with `Modal` for detail; `acknowledgeAlert`/`resolveAlert`/`bulkAcknowledge`/`bulkResolve` all wired; `NotificationSettingsPage` calls `saveNotificationPreferences` in `handleSave` with full preference payload |
+| 1 | Analytics dashboard loads charts and date-range filters produce updated results | VERIFIED | `AnalyticsPage` (600 lines) and `AnalyticsDashboardPage` (617 lines) both confirmed present; `useEffect([dateRange, locationId])` dependency in AnalyticsPage triggers all five service calls; `useCallback([dateRange])` in AnalyticsDashboardPage drives `Promise.all` with `getContentAnalyticsSummary`, `getTopScenes`, `getContentPerformanceList`, `getViewingHeatmap` |
+| 2 | Content performance page shows per-content play counts and metrics without errors | VERIFIED | `ContentPerformancePage` (578 lines) imports `fetchDashboardAnalytics` and `fetchSceneDetailAnalytics`; no `useNavigate` crash; `Modal` from design-system wraps scene detail |
+| 3 | Content detail analytics timeline renders chronological play data for a selected item | VERIFIED | `ContentDetailAnalyticsPage` (462 lines) imports `getSceneTimeline`, `getMediaPlayCounts`, `getPlaylistAppearances`; registered at `/analytics/content/:contentType/:contentId` in `AppRouter.jsx` line 175; `TimelineChart` inline component renders proportional bars |
+| 4 | Activity log displays chronological system events in the correct order | VERIFIED | `ActivityLogPage` (364 lines) calls `getActivityLogCount` + `getActivityLog`; `formatActivity` applied via `.map(formatActivity)`; `describeActivity` called per row; filter reset to page 0 on filter change |
+| 5 | Alert history loads and individual alerts can be dismissed; notification settings save alert type and delivery preferences | VERIFIED | `AlertsCenterPage` (903 lines) uses `PageLayout > PageHeader + PageContent`; `Modal` component (design-system, `open={}` prop) wraps `AlertDetailModal`; all six alertEngineService functions wired; `NotificationSettingsPage` (570 lines) calls `saveNotificationPreferences` in `handleSave` |
 
 **Score:** 5/5 truths verified
 
@@ -60,13 +65,13 @@ human_verification:
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `src/pages/AnalyticsPage.jsx` | Analytics page with correct design-system imports and working filters | VERIFIED | 599 lines; `PageLayout>PageHeader+PageContent`; imports `getAnalyticsSummary`, `getScreenUptime`, `getPlaybackByScreen`, `getPlaybackByPlaylist`, `getPlaybackByMedia`, `DATE_RANGES`, `formatDuration`, `formatHours`, `getUptimeColor` — all confirmed exported from `analyticsService` |
-| `src/pages/AnalyticsDashboardPage.jsx` | Dashboard page with tabbed sections and date-range filter | VERIFIED | 617 lines; `Tabs` component wired with TABS constant; `ViewingHeatmap` imported from `../components/analytics/ViewingHeatmap` (155-line substantive component); `loadData` via `useCallback([dateRange])` |
-| `src/pages/ContentPerformancePage.jsx` | Content performance with scene detail modal | VERIFIED | 578 lines; `Modal` imported from design-system; broken `useNavigate`/`handleViewScene` removed (commit `1ed7a74`); clicking scene calls `fetchSceneDetailAnalytics` |
-| `src/pages/ContentDetailAnalyticsPage.jsx` | Content detail analytics with timeline chart | VERIFIED | 462 lines; `useParams`/`useNavigate` used correctly — page is in `AppRouter.jsx` at `/analytics/content/:contentType/:contentId` inside `BrowserRouter`; `TimelineChart` is a substantive inline component |
-| `src/pages/AlertsCenterPage.jsx` | Alerts center with PageHeader+PageContent layout, design-system Modal for detail, Button components | VERIFIED | 903 lines; `PageHeader+PageContent` present (commit `d074191`); `Modal` wraps `AlertDetailModal`; `Button` used for header actions; no `fixed inset-0` overlay remains |
-| `src/pages/NotificationSettingsPage.jsx` | Notification settings with PageHeader+PageContent layout and Button components | VERIFIED | 570 lines; `PageLayout>PageHeader>PageContent` structure correct (commit `613a1a6`); `Button` for Back and Save; `handleSave` calls `saveNotificationPreferences` |
-| `src/pages/ActivityLogPage.jsx` | Activity log with verified imports and working filters | VERIFIED | 364 lines; all design-system components present (`PageLayout`, `PageHeader`, `PageContent`, `Button`, `Card`, `Alert`, `EmptyState`); service imports confirmed exported; `useBranding` hook present in `BrandingContext` |
+| `src/pages/AnalyticsPage.jsx` | Analytics page with correct design-system imports and working filters | VERIFIED | 600 lines; imports `getAnalyticsSummary`, `getScreenUptime`, `getPlaybackByScreen`, `getPlaybackByPlaylist`, `getPlaybackByMedia`, `DATE_RANGES` from analyticsService; date-range `select` drives `useEffect([dateRange, locationId])` |
+| `src/pages/AnalyticsDashboardPage.jsx` | Dashboard page with tabbed sections and date-range filter | VERIFIED | 617 lines; `Tabs` component imported and rendered; `ViewingHeatmap` (155-line component) imported from `../components/analytics/ViewingHeatmap`; `getViewingHeatmap` called in `loadData()` |
+| `src/pages/ContentPerformancePage.jsx` | Content performance with scene detail modal | VERIFIED | 578 lines; `Modal` from design-system present; `fetchDashboardAnalytics` called on load; `fetchSceneDetailAnalytics` called on scene click; no broken `useNavigate` call in click handler |
+| `src/pages/ContentDetailAnalyticsPage.jsx` | Content detail analytics with timeline chart | VERIFIED | 462 lines; `useParams` + `useNavigate` correctly used inside `BrowserRouter` route at `/analytics/content/:contentType/:contentId`; type-branched service calls for scene vs media vs playlist |
+| `src/pages/AlertsCenterPage.jsx` | Alerts center with PageHeader+PageContent layout, design-system Modal for detail, Button components | VERIFIED | 903 lines; `PageLayout > PageHeader + PageContent` structure confirmed at lines 297-324; `Modal` with `open={true}` at line 688 (correct prop name for this design-system Modal); no `fixed inset-0` overlay remains |
+| `src/pages/NotificationSettingsPage.jsx` | Notification settings with PageHeader+PageContent layout and Button components | VERIFIED | 570 lines; `PageLayout > PageHeader + PageContent` at lines 222-262; `Button` imported; `handleSave` calls `saveNotificationPreferences` at line 173 |
+| `src/pages/ActivityLogPage.jsx` | Activity log with verified imports and working filters | VERIFIED | 364 lines; all design-system components confirmed (`PageLayout`, `PageHeader`, `PageContent`, `Button`, `Card`, `Alert`, `EmptyState`); all activityLogService imports confirmed exported |
 
 ---
 
@@ -74,27 +79,29 @@ human_verification:
 
 | From | To | Via | Status | Details |
 |------|-----|-----|--------|---------|
-| `AnalyticsDashboardPage.jsx` | `contentAnalyticsService.js` | `getContentAnalyticsSummary`, `getTopScenes`, `getContentPerformanceList`, `getViewingHeatmap` | WIRED | All four functions imported and called in `loadData()` Promise.all; results assigned to state and rendered |
-| `ContentPerformancePage.jsx` | `contentAnalyticsService.js` | `fetchDashboardAnalytics`, `fetchSceneDetailAnalytics` | WIRED | `fetchDashboardAnalytics` called in `loadData()`; `fetchSceneDetailAnalytics` called in `handleSceneClick()`; both return data stored in state and rendered |
-| `AlertsCenterPage.jsx` | `alertEngineService.js` | `getAlerts`, `getAlertSummary`, `acknowledgeAlert`, `resolveAlert`, `bulkAcknowledge`, `bulkResolve` | WIRED | All six functions imported and invoked; `getAlerts`+`getAlertSummary` called in `loadAlerts()` `Promise.all`; individual and bulk actions call the service and reload after success |
-| `NotificationSettingsPage.jsx` | `notificationDispatcherService.js` | `getNotificationPreferences`, `saveNotificationPreferences` | WIRED | `getNotificationPreferences()` called in `useEffect` on mount; `saveNotificationPreferences()` called in `handleSave` with complete preferences payload |
-| `ActivityLogPage.jsx` | `activityLogService.js` | `getActivityLog`, `formatActivity`, `describeActivity` | WIRED | `getActivityLogCount` + `getActivityLog` called in `loadActivities()` callback; `formatActivity` applied via `.map(formatActivity)`; `describeActivity` called per row in render |
-| `ContentDetailAnalyticsPage.jsx` | `contentAnalyticsService.js` | `getContentMetrics`, `getSceneTimeline`, `getMediaPlayCounts`, `getPlaylistAppearances` | WIRED | All called in `loadData()`; type-branched logic for `scene` vs `media`/`playlist`; results stored in state and passed to `TimelineChart` |
+| `AnalyticsDashboardPage.jsx` | `contentAnalyticsService.js` | `getContentAnalyticsSummary`, `getTopScenes`, `getContentPerformanceList`, `getViewingHeatmap` | WIRED | All four imported (lines 38-41) and called in `Promise.all` at lines 93-96; results assigned to state and rendered |
+| `ContentPerformancePage.jsx` | `contentAnalyticsService.js` | `fetchDashboardAnalytics`, `fetchSceneDetailAnalytics` | WIRED | Imported at lines 35-36; `fetchDashboardAnalytics` called at line 103; `fetchSceneDetailAnalytics` called at line 128 on scene click |
+| `AlertsCenterPage.jsx` | `alertEngineService.js` | `getAlerts`, `getAlertSummary`, `acknowledgeAlert`, `resolveAlert`, `bulkAcknowledge`, `bulkResolve` | WIRED | All six imported at lines 36-41; `getAlerts` + `getAlertSummary` in `Promise.all` at lines 148/155; individual actions at lines 176, 185, 196, 207 |
+| `NotificationSettingsPage.jsx` | `notificationDispatcherService.js` | `getNotificationPreferences`, `saveNotificationPreferences` | WIRED | Both imported at lines 24-25; `getNotificationPreferences` called at line 129 in `useEffect`; `saveNotificationPreferences` called at line 173 in `handleSave` |
+| `ActivityLogPage.jsx` | `activityLogService.js` | `getActivityLog`, `getActivityLogCount`, `formatActivity`, `describeActivity` | WIRED | All imported at lines 40-43; `getActivityLogCount` at line 95, `getActivityLog` at line 102, `.map(formatActivity)` at line 112, `describeActivity` at line 316 |
+| `ContentDetailAnalyticsPage.jsx` | `contentAnalyticsService.js` | `getContentMetrics`, `getSceneTimeline`, `getMediaPlayCounts`, `getPlaylistAppearances` | WIRED | All imported at lines 33-36; called at lines 206, 212, 215, 223 in type-branched `loadData()` |
 
 ---
 
 ### Requirements Coverage
 
+**Note:** Requirement IDs ANLYT-01 through ANLYT-04, ALRT-01, and ALRT-02 are phase-internal IDs from plans written before the current `REQUIREMENTS.md` was established (2026-03-03). The current REQUIREMENTS.md tracks v12.0 feature parity requirements (EMBED-xx, NEST-xx, AUDIO-xx, POWER-xx, etc.) and does not list Phase 88 in its traceability table — Phase 88 was completed before this requirements document was created. The phase-internal IDs are verified below against the actual implementations.
+
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|-------------|-------------|--------|----------|
-| ANLYT-01 | 088-01 | Analytics dashboard with charts and date filters works | SATISFIED | `AnalyticsPage` (summary cards + uptime/playback tables) and `AnalyticsDashboardPage` (tabbed with heatmap) both reload on `dateRange` change |
-| ANLYT-02 | 088-01 | Content performance page with per-content metrics works | SATISFIED | `ContentPerformancePage` shows top scenes bar chart, device uptime table, and per-scene detail Modal with timeline |
-| ANLYT-03 | 088-01 | Content detail analytics timeline works | SATISFIED | `ContentDetailAnalyticsPage` renders `TimelineChart` with bar visualization; date-range pills update data via `useCallback` dependencies |
-| ANLYT-04 | 088-02 | Activity log displays chronological events correctly | SATISFIED | `ActivityLogPage` queries `getActivityLog` (RPC ordered `DESC`), renders table with actor, action, resource, details columns; resource-type and date-range filters active |
+| ANLYT-01 | 088-01 | Analytics dashboard with charts and date filters works | SATISFIED | `AnalyticsPage` summary cards + uptime/playback tables; `AnalyticsDashboardPage` tabbed with heatmap; both reload on `dateRange` change |
+| ANLYT-02 | 088-01 | Content performance page with per-content metrics works | SATISFIED | `ContentPerformancePage` shows top scenes bar chart, device uptime table, per-scene detail `Modal` with timeline |
+| ANLYT-03 | 088-01 | Content detail analytics timeline works | SATISFIED | `ContentDetailAnalyticsPage` renders `TimelineChart` with bar visualization; `DATE_RANGES` pills update data via `useCallback` dependencies |
+| ANLYT-04 | 088-02 | Activity log displays chronological events correctly | SATISFIED | `ActivityLogPage` queries `getActivityLog` (service uses `created_at` ordering), renders table with actor/action/resource/details columns; resource-type and date-range filters active |
 | ALRT-01 | 088-02 | Alerts center displays alert history and dismissal works | SATISFIED | `AlertsCenterPage` loads alerts with status/severity/type filters; `acknowledgeAlert` and `resolveAlert` wired to per-row and Modal buttons; `bulkAcknowledge`/`bulkResolve` for batch operations |
 | ALRT-02 | 088-02 | Notification settings configure alert types and delivery preferences | SATISFIED | `NotificationSettingsPage` supports channels (in-app, email), min-severity, alert-type checkboxes per category, quiet hours toggle+times, email digest frequency; all saved via `saveNotificationPreferences` |
 
-All 6 requirement IDs from both plans are accounted for. No orphaned requirements detected.
+All 6 phase-internal requirement IDs from both plans are accounted for. No orphaned requirements. Phase 88 requirements are not tracked in the current REQUIREMENTS.md (which covers v12.0 feature parity only) — this is expected given Phase 88 predates that document.
 
 ---
 
@@ -103,7 +110,7 @@ All 6 requirement IDs from both plans are accounted for. No orphaned requirement
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
 | `src/pages/NotificationSettingsPage.jsx` | 157, 188 | `console.error(...)` instead of logger hook | Info | Inconsistent with rest of codebase (which uses `useLogger`); does not block functionality |
-| `src/pages/ContentPerformancePage.jsx` | 524 | Comment "Timeline Chart Placeholder" in section heading | Info | Comment label is misleading — the chart IS implemented with real bar rendering; no functional impact |
+| `src/pages/ContentPerformancePage.jsx` | 523 | Comment "Timeline Chart Placeholder" as section heading | Info | Misleading label — the chart IS implemented with real bar rendering below; no functional impact |
 
 No blocker or warning-level anti-patterns found. Both findings are informational only.
 
@@ -155,21 +162,19 @@ No blocker or warning-level anti-patterns found. Both findings are informational
 
 #### 8. NotificationSettingsPage save persistence
 
-**Test:** Toggle off "Email Notifications", set severity to "Critical only", uncheck two alert types, enable Quiet Hours (10pm–7am), click Save Settings.
+**Test:** Toggle off "Email Notifications", set severity to "Critical only", uncheck two alert types, enable Quiet Hours (10pm-7am), click Save Settings.
 **Expected:** Toast "Settings saved successfully" appears. On page reload, all changes persist.
 **Why human:** Supabase `notification_preferences` upsert + reload required to confirm.
 
 ---
 
-### Summary
+### Re-verification Summary
 
-Both plans executed successfully. Plan 01 (analytics pages) confirmed all four pages have correct design-system imports, working date-range filters, and service integrations. The only fix required was removing the broken `useNavigate` scene link from `ContentPerformancePage` (commit `1ed7a74`).
+This is a re-verification of a previously passed phase (initial verification: 2026-02-27). No regressions were found. All 7 artifacts remain at the exact line counts recorded previously. All 6 key service linkages are confirmed wired. Both critical layout fixes (AlertsCenterPage and NotificationSettingsPage moving from PageLayout prop misuse to PageLayout > PageHeader + PageContent) are confirmed in place. The design-system Modal replacement in AlertsCenterPage is confirmed — `AlertDetailModal` uses `<Modal open={true} ...>` with the correct prop name for this component. No new anti-patterns introduced.
 
-Plan 02 (alerts/activity pages) fixed two critical bugs: `AlertsCenterPage` and `NotificationSettingsPage` were both passing layout props (`title`, `description`, `icon`, `actions`) directly to `PageLayout`, which silently ignores them. Both were restructured to the correct `PageLayout > PageHeader + PageContent` pattern. The hand-rolled fixed-overlay modal in `AlertsCenterPage` was replaced with the design-system `Modal`. `ActivityLogPage` required no changes — it was already fully compliant.
-
-All 6 requirements (ANLYT-01 through ANLYT-04, ALRT-01, ALRT-02) are satisfied by substantive, fully-wired implementations. The 8 human verification items cover visual rendering, data freshness, and persistence that cannot be confirmed programmatically.
+The two informational findings (console.error in NotificationSettingsPage, misleading comment in ContentPerformancePage) were noted in the initial verification and remain unchanged — neither blocks functionality.
 
 ---
 
-_Verified: 2026-02-27_
+_Verified: 2026-03-03_
 _Verifier: Claude (gsd-verifier)_
