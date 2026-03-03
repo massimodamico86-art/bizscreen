@@ -44,15 +44,15 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 - [ ] **NEST-01**: User can add a playlist as an item within another playlist
 - [ ] **NEST-02**: Nested playlists resolve to a flat content list on the player
-- [ ] **NEST-03**: System prevents circular playlist references at write time
-- [ ] **NEST-04**: Nesting depth is limited to 5 levels
+- [x] **NEST-03**: System prevents circular playlist references at write time
+- [x] **NEST-04**: Nesting depth is limited to 5 levels
 
 ### Background Audio
 
 - [ ] **AUDIO-01**: User can assign a background audio track to a playlist
 - [ ] **AUDIO-02**: Background audio plays continuously behind visual content transitions
 - [ ] **AUDIO-03**: User can control audio volume per playlist
-- [ ] **AUDIO-04**: User can upload audio files (MP3/WAV/OGG) as media assets
+- [x] **AUDIO-04**: User can upload audio files (MP3/WAV/OGG) as media assets
 
 ### Working Hours
 
@@ -155,12 +155,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SLIDES-03 | Phase 108 | Complete |
 | NEST-01 | Phase 109 | Pending |
 | NEST-02 | Phase 109 | Pending |
-| NEST-03 | Phase 109 | Pending |
-| NEST-04 | Phase 109 | Pending |
+| NEST-03 | Phase 109 | Complete |
+| NEST-04 | Phase 109 | Complete |
 | AUDIO-01 | Phase 109 | Pending |
 | AUDIO-02 | Phase 109 | Pending |
 | AUDIO-03 | Phase 109 | Pending |
-| AUDIO-04 | Phase 109 | Pending |
+| AUDIO-04 | Phase 109 | Complete |
 | POWER-01 | Phase 109 | Pending |
 | POWER-02 | Phase 109 | Pending |
 | POWER-03 | Phase 109 | Pending |
