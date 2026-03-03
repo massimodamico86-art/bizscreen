@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T21:06:05.313Z"
+last_updated: "2026-03-03T21:13:26Z"
 progress:
   total_phases: 72
   completed_phases: 69
   total_plans: 238
-  completed_plans: 229
+  completed_plans: 231
 ---
 
 # Project State
@@ -18,30 +18,30 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v12.0 Feature Parity -- Phase 109 (Content Model) in progress (1/4 plans complete)
+**Current focus:** v12.0 Feature Parity -- Phase 109 (Content Model) in progress (3/4 plans complete)
 
 ## Current Position
 
 Phase: 109 of 112 (Content Model) -- IN PROGRESS
-Plan: 1 of 4 complete
+Plan: 3 of 4 complete
 Status: Executing phase
-Last activity: 2026-03-03 -- Plan 01 complete (schema migration for nested playlists, background audio, working hours)
+Last activity: 2026-03-03 -- Plan 03 complete (background audio + working hours admin UI)
 
-Progress: [████████████████████] 20%
+Progress: [████████████████████] 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 3.7 min
-- Total execution time: 0.18 hours
+- Total plans completed: 5
+- Average duration: 3.6 min
+- Total execution time: 0.30 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 108-embed-widgets | 2/2 | 7 min | 3.5 min |
-| 109-content-model | 1/4 | 4 min | 4 min |
+| 109-content-model | 3/4 | 14 min | 4.7 min |
 
 *Updated after each plan completion*
 
@@ -54,6 +54,10 @@ Progress: [████████████████████] 20%
 **108-02:** Web pages use Globe icon placeholder only (OG image extraction deferred -- needs server-side proxy); Google Slides thumbnail via /export/png?pageid=p with HEAD check; non-blocking URL validation (red error but save not blocked); thumbnails pre-cached as blobs in IndexedDB.
 
 **109-01:** Two-phase recursive CTE in flatten_playlist_items (build tree then join leaves, avoids cartesian product); separate UP/DOWN ancestry walks in trigger for accurate depth; boolean validation RPC mirrors trigger for service-layer pre-check; media_assets.url for audio (not file_url).
+
+**109-02:** addNestedPlaylist wraps addPlaylistItem after RPC validation (no duplication); parallel Promise.all for nested playlist info fetching; blue-themed cards (bg-blue-50) distinguish nested playlists in timeline strip; excludePlaylistId optional prop for UI-level self-reference prevention.
+
+**109-03:** Audio picker uses select dropdown lazy-loaded on focus; volume changes debounced at 500ms; WorkingHoursEditor null = always on (DEFAULT_WORKING_HOURS on first enable); isWithinWorkingHours fails open (returns true) on error.
 
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
@@ -70,9 +74,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 109-01-PLAN.md (content model schema migration)
+Stopped at: Completed 109-03-PLAN.md (background audio + working hours admin UI)
 Resume file: None
-Next: 109-02-PLAN.md (nested playlists service + UI)
+Next: 109-04-PLAN.md (player-side integration)
 
 ---
-*Updated: 2026-03-03 -- 109-01 complete, phase 109 in progress (1/4)*
+*Updated: 2026-03-03 -- 109-03 complete, phase 109 in progress (3/4)*

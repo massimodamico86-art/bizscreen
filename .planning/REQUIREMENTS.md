@@ -49,14 +49,14 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 ### Background Audio
 
-- [ ] **AUDIO-01**: User can assign a background audio track to a playlist
-- [ ] **AUDIO-02**: Background audio plays continuously behind visual content transitions
-- [ ] **AUDIO-03**: User can control audio volume per playlist
+- [x] **AUDIO-01**: User can assign a background audio track to a playlist
+- [x] **AUDIO-02**: Background audio plays continuously behind visual content transitions
+- [x] **AUDIO-03**: User can control audio volume per playlist
 - [x] **AUDIO-04**: User can upload audio files (MP3/WAV/OGG) as media assets
 
 ### Working Hours
 
-- [ ] **POWER-01**: User can define working hours schedule per screen (on/off times by day of week)
+- [x] **POWER-01**: User can define working hours schedule per screen (on/off times by day of week)
 - [ ] **POWER-02**: Screen displays black/standby outside working hours
 - [ ] **POWER-03**: Screen automatically resumes content at working hours start
 
@@ -157,11 +157,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NEST-02 | Phase 109 | Pending |
 | NEST-03 | Phase 109 | Complete |
 | NEST-04 | Phase 109 | Complete |
-| AUDIO-01 | Phase 109 | Pending |
-| AUDIO-02 | Phase 109 | Pending |
-| AUDIO-03 | Phase 109 | Pending |
+| AUDIO-01 | Phase 109 | Complete |
+| AUDIO-02 | Phase 109 | Complete |
+| AUDIO-03 | Phase 109 | Complete |
 | AUDIO-04 | Phase 109 | Complete |
-| POWER-01 | Phase 109 | Pending |
+| POWER-01 | Phase 109 | Complete |
 | POWER-02 | Phase 109 | Pending |
 | POWER-03 | Phase 109 | Pending |
 | SSO-01 | Phase 110 | Pending |
