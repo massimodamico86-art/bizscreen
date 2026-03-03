@@ -40,12 +40,14 @@ import {
   useStuckDetection,
   useAutoRecovery,
   useContentVerification,
+  useWorkingHours,
 } from '../hooks';
 import { AppRenderer } from '../components/AppRenderer';
 import { SceneRenderer } from '../components/SceneRenderer.jsx';
 import { LayoutRenderer } from '../components/LayoutRenderer.jsx';
 import { PinEntry } from '../components/PinEntry.jsx';
 import { RecoveryFallbackScreen } from '../components/RecoveryFallbackScreen.jsx';
+import { BackgroundAudio } from '../components/BackgroundAudio.jsx';
 
 // Module-level logger for utility functions
 const retryLogger = createScopedLogger('Player:retry');
@@ -122,6 +124,22 @@ export function ViewPage() {
     lastActivityRef,
     contentVersionRef,
   } = usePlayerContent(screenId, navigate);
+
+  // Working hours and background audio -- extract from content
+  const workingHours = content?.device?.working_hours || null;
+  const deviceTimezone = content?.device?.timezone || 'UTC';
+  const backgroundAudioUrl = content?.playlist?.backgroundAudioUrl || null;
+  const backgroundAudioVolume = content?.playlist?.backgroundAudioVolume ?? 100;
+
+  // Check if within working hours (60s interval)
+  const isWithinWorkingHoursResult = useWorkingHours(workingHours, deviceTimezone);
+
+  // Emergency content overrides working hours
+  const isEmergency = content?.source === 'emergency';
+  const effectivelyActive = isEmergency || isWithinWorkingHoursResult;
+
+  // Background audio should play only when screen is active and has content
+  const shouldPlayAudio = effectivelyActive && items.length > 0;
 
   // Content verification hook - transition-aware re-sync on mismatch detection
   const { onMismatchDetected, checkAndSync } = useContentVerification({
@@ -623,6 +641,28 @@ export function ViewPage() {
     );
   }
 
+  // Working hours guard - blank screen when outside working hours
+  // BackgroundAudio is included so it stays mounted (paused) during blank screen
+  if (!effectivelyActive) {
+    return (
+      <div
+        ref={contentContainerRef}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: '#000',
+          overflow: 'hidden'
+        }}
+      >
+        <BackgroundAudio
+          audioUrl={backgroundAudioUrl}
+          volume={backgroundAudioVolume}
+          isPlaying={false}
+        />
+      </div>
+    );
+  }
+
   // Scene mode - render scene slides with block-based designs
   // content_source === 'scene' when active_scene_id is set
   if (content.content_source === 'scene' && content.scene) {
@@ -636,6 +676,11 @@ export function ViewPage() {
           overflow: 'hidden'
         }}
       >
+        <BackgroundAudio
+          audioUrl={backgroundAudioUrl}
+          volume={backgroundAudioVolume}
+          isPlaying={shouldPlayAudio}
+        />
         <SceneRenderer
           scene={content.scene}
           screenId={localStorage.getItem(STORAGE_KEYS.screenId)}
@@ -769,6 +814,11 @@ export function ViewPage() {
           overflow: 'hidden'
         }}
       >
+        <BackgroundAudio
+          audioUrl={backgroundAudioUrl}
+          volume={backgroundAudioVolume}
+          isPlaying={shouldPlayAudio}
+        />
         {rotationStyle ? (
           <div style={rotationStyle}>
             <LayoutRenderer
@@ -909,6 +959,11 @@ export function ViewPage() {
         overflow: 'hidden'
       }}
     >
+      <BackgroundAudio
+        audioUrl={backgroundAudioUrl}
+        volume={backgroundAudioVolume}
+        isPlaying={shouldPlayAudio}
+      />
       {/* Media display */}
       {currentItem.mediaType === 'video' ? (
         <video

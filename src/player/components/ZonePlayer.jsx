@@ -4,6 +4,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as analytics from '../../services/playerAnalyticsService';
+import { createScopedLogger } from '../../services/loggingService';
+
+const logger = createScopedLogger('Player:ZonePlayer');
 
 /**
  * Zone Player - Plays content in a single zone (used by LayoutRenderer)
@@ -98,6 +101,17 @@ export function ZonePlayer({ zone, timezone, screenId, tenantId, layoutId, campa
   }
 
   const currentItem = items[currentIndex];
+
+  // Defensive guard: skip unflattened playlist items (should be flattened by RPC)
+  if (currentItem?.mediaType === 'playlist') {
+    logger.warn('Unexpected playlist item in zone player - should be flattened by RPC', {
+      itemId: currentItem.id,
+      itemName: currentItem.name,
+    });
+    // Skip to next item after a brief delay
+    setTimeout(advanceToNext, 100);
+    return null;
+  }
 
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
