@@ -309,8 +309,42 @@ export function usePlaylistEditor(playlistId, { showToast }) {
 
   const fetchMediaAssets = useCallback(async () => {
     try {
-      // Special handling for "My Designs" filter
-      if (mediaFilter === 'my_designs') {
+      // Special handling for "Playlists" filter - fetch playlists instead of media_assets
+      if (mediaFilter === 'playlists') {
+        let query = supabase
+          .from('playlists')
+          .select('id, name, created_at, updated_at, playlist_items(count)')
+          .order('updated_at', { ascending: false })
+          .limit(100);
+
+        // Exclude the currently-edited playlist to prevent self-reference
+        if (playlistId) {
+          query = query.neq('id', playlistId);
+        }
+
+        if (mediaSearch) {
+          query = query.ilike('name', `%${mediaSearch}%`);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        // Transform playlists to media-like format for LibraryMediaItem rendering
+        const playlistsAsMedia = (data || []).map(p => ({
+          id: p.id,
+          name: p.name,
+          type: 'playlist',
+          url: null,
+          thumbnail_url: null,
+          duration: null,
+          created_at: p.created_at,
+          _isPlaylist: true,
+          itemCount: p.playlist_items?.[0]?.count || 0,
+        }));
+
+        setMediaAssets(playlistsAsMedia);
+      } else if (mediaFilter === 'my_designs') {
+        // Special handling for "My Designs" filter
         let query = supabase
           .from('layouts')
           .select('*')
@@ -377,7 +411,7 @@ export function usePlaylistEditor(playlistId, { showToast }) {
     } catch (error) {
       logger.error('Error fetching media assets', { error, mediaFilter, mediaSearch, currentFolderId });
     }
-  }, [mediaFilter, mediaSearch, currentFolderId]);
+  }, [mediaFilter, mediaSearch, currentFolderId, playlistId]);
 
   // ============================================================
   // Effects for data loading
