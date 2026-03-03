@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T23:04:42.337Z"
+last_updated: "2026-03-03T23:17:15.982Z"
 progress:
   total_phases: 72
   completed_phases: 71
   total_plans: 239
-  completed_plans: 237
+  completed_plans: 238
 ---
 
 # Project State
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v12.0 Feature Parity -- Phase 100 (Core Feature Walkthrough) Plan 01 complete (1/5 plans, re-executing with new plan structure)
+**Current focus:** v12.0 Feature Parity -- Phase 100 (Core Feature Walkthrough) Plan 04 complete (4/5 plans)
 
 ## Current Position
 
 Phase: 100 of 112 (Core Feature Walkthrough - CRUD Operations)
-Plan: 1 of 5 complete
+Plan: 4 of 5 complete
 Status: In progress
-Last activity: 2026-03-03 -- Plan 01 complete (Screens & Playlists CRUD walkthrough: 29 screenshots)
+Last activity: 2026-03-03 -- Plan 04 complete (Data Sources, Menu Boards & Apps CRUD: 26 screenshots)
 
 Progress: [████████████████████████████] 100%
 
@@ -43,13 +43,14 @@ Progress: [███████████████████████
 | 108-embed-widgets | 2/2 | 7 min | 3.5 min |
 | 109-content-model | 5/5 | 18 min | 3.6 min |
 | 088-analytics-alerts | 1/3 | 2 min | 2.0 min |
-| 100-core-feature-walkthrough | 1/5 | 18 min | 18.0 min |
+| 100-core-feature-walkthrough | 4/5 | 29 min | 7.3 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
 | Phase 109 P04 | 3 | 2 tasks | 7 files |
 | Phase 109 P05 | 1 | 2 tasks | 2 files |
 | Phase 100 P02 | 17 | 2 tasks | 28 files |
+| Phase 100 P04 | 11 | 2 tasks | 26 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,8 @@ Progress: [███████████████████████
 
 **100-03:** Playwright .cjs scripts for ESM projects; yodeck-layout-new for layout editor; SVG template search crashes with "X is not defined" (pre-existing bug); media delete via detail modal (double-click then Delete); SVG delete shows empty state (no user designs in demo).
 
+**100-04:** React fiber state injection via component name lookup for DataSourcesPage (hooks: 1=dataSources, 5=selectedSource, 6=sourceData, 9=showDeleteModal, 10=deleteTarget) and MenuBoardsPage; MenuBoardsPage delete uses window.confirm (native dialog); DataSourcesPage delete uses custom Modal (injectable via fiber); AppDetailModal uses custom fixed overlay (closed via backdrop or X button); Apps marketplace is catalog-based (fully functional without injection).
+
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
 - Nested playlists MUST have circular reference prevention DB trigger before any nesting UI
@@ -87,6 +90,7 @@ Key constraints for v12.0:
 - [Phase 109]: addNestedPlaylist wraps addPlaylistItem after RPC validation; parallel Promise.all for nested playlist info; blue-themed cards distinguish nested playlists; excludePlaylistId for UI self-reference prevention
 - [Phase 109]: BackgroundAudio uses new Audio() via useRef; working hours guard is early-return black div with BackgroundAudio mounted paused; emergency overrides working hours client-side; ZonePlayer defensive guard uses setTimeout for graceful skip
 - [Phase 100]: 100-02: Playwright route interception for Supabase mock data in bypass-auth mode; React fiber tree patching to override FeatureContext plan for campaigns feature gate bypass; scenes require userProfile?.id for data loading
+- [Phase 100]: 100-04: React fiber state injection via component name lookup for DataSourcesPage and MenuBoardsPage; MenuBoardsPage delete uses window.confirm; AppDetailModal uses custom fixed overlay; Apps marketplace is catalog-based
 
 ### Blockers/Concerns
 
@@ -95,9 +99,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 100-03-PLAN.md (media, layouts & templates CRUD walkthrough: 28 screenshots)
+Stopped at: Completed 100-04-PLAN.md (data sources, menu boards & apps CRUD walkthrough: 26 screenshots)
 Resume file: None
-Next: 100-04-PLAN.md (next walkthrough plan)
+Next: 100-05-PLAN.md (final walkthrough plan -- Settings, Admin & Remaining Pages)
 
 ---
-*Updated: 2026-03-03 -- 100-03 complete, media/layouts/SVG templates CRUD lifecycle captured*
+*Updated: 2026-03-03 -- 100-04 complete, data sources/menu boards/apps marketplace walkthrough captured*
