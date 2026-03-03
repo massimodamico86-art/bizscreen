@@ -57,8 +57,8 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 ### Working Hours
 
 - [x] **POWER-01**: User can define working hours schedule per screen (on/off times by day of week)
-- [ ] **POWER-02**: Screen displays black/standby outside working hours
-- [ ] **POWER-03**: Screen automatically resumes content at working hours start
+- [x] **POWER-02**: Screen displays black/standby outside working hours
+- [x] **POWER-03**: Screen automatically resumes content at working hours start
 
 ### SSO (SAML)
 
@@ -162,8 +162,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUDIO-03 | Phase 109 | Complete |
 | AUDIO-04 | Phase 109 | Complete |
 | POWER-01 | Phase 109 | Complete |
-| POWER-02 | Phase 109 | Pending |
-| POWER-03 | Phase 109 | Pending |
+| POWER-02 | Phase 109 | Complete |
+| POWER-03 | Phase 109 | Complete |
 | SSO-01 | Phase 110 | Pending |
 | SSO-02 | Phase 110 | Pending |
 | SSO-03 | Phase 110 | Pending |
