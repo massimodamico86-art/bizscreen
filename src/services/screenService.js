@@ -58,7 +58,8 @@ export async function updateScreen(id, updates) {
     'device_name', 'assigned_playlist_id', 'assigned_layout_id',
     'assigned_schedule_id', 'screen_group_id', 'location_id', 'latitude', 'longitude', 'timezone',
     'display_language',
-    'orientation'
+    'orientation',
+    'working_hours'
   ];
 
   const filteredUpdates = {};

@@ -134,7 +134,7 @@ export async function createPlaylist({
  * Update a playlist
  */
 export async function updatePlaylist(id, updates) {
-  const allowedFields = ['name', 'description', 'default_duration', 'transition_effect', 'shuffle'];
+  const allowedFields = ['name', 'description', 'default_duration', 'transition_effect', 'shuffle', 'background_audio_id', 'background_audio_volume'];
 
   const filteredUpdates = {};
   for (const key of allowedFields) {
