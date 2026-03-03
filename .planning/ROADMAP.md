@@ -83,7 +83,7 @@ All milestones shipped successfully (17 total).
 
 ## Phases
 
-- [ ] **Phase 108: Embed Widgets** - YouTube, Vimeo, web page, and Google Slides as new widget registry entries with iframe rendering and offline fallback
+- [x] **Phase 108: Embed Widgets** - YouTube, Vimeo, web page, and Google Slides as new widget registry entries with iframe rendering and offline fallback (completed 2026-03-03)
 - [ ] **Phase 109: Content Model** - Nested playlists with circular reference prevention, background audio tracks, and screen working hours scheduling
 - [ ] **Phase 110: Enterprise Platform** - SAML SSO preserving Supabase Auth, public REST API with scoped tokens, and Proof of Play reporting with partitioned storage
 - [ ] **Phase 111: Documents and Calendar** - Server-side document conversion for smart TV compatibility and Google/Outlook calendar widgets via OAuth
@@ -157,7 +157,7 @@ All milestones shipped successfully (17 total).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 108. Embed Widgets | 1/2 | In Progress|  |
+| 108. Embed Widgets | 2/2 | Complete   | 2026-03-03 |
 | 109. Content Model | 0/TBD | Not started | - |
 | 110. Enterprise Platform | 0/TBD | Not started | - |
 | 111. Documents and Calendar | 0/TBD | Not started | - |
