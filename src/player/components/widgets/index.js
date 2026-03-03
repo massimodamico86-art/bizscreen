@@ -13,3 +13,8 @@ export { SocialFeedWidget } from './SocialFeedWidget.jsx';
 export { CountdownWidget } from './CountdownWidget.jsx';
 export { ClockDateWidget } from './ClockDateWidget.jsx';
 export { SyncStatusIndicator } from './SyncStatusIndicator.jsx';
+export { YouTubeWidget } from './YouTubeWidget.jsx';
+export { VimeoWidget } from './VimeoWidget.jsx';
+export { WebPageWidget } from './WebPageWidget.jsx';
+export { GoogleSlidesWidget } from './GoogleSlidesWidget.jsx';
+export { EmbedOfflineFallback } from './EmbedOfflineFallback.jsx';

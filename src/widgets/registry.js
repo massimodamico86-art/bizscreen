@@ -25,6 +25,10 @@ import {
   Share2,
   Timer,
   UtensilsCrossed,
+  Youtube,
+  Video,
+  Globe,
+  Presentation,
 } from 'lucide-react';
 
 import {
@@ -39,6 +43,10 @@ import {
   SocialFeedWidget,
   CountdownWidget,
   ClockDateWidget,
+  YouTubeWidget,
+  VimeoWidget,
+  WebPageWidget,
+  GoogleSlidesWidget,
 } from '../player/components/widgets/index.js';
 
 /**
@@ -204,6 +212,34 @@ export const WIDGET_REGISTRY = {
       timezone: 'device',
       label: '',
     },
+  },
+
+  youtube: {
+    component: YouTubeWidget,
+    icon: Youtube,
+    label: 'YouTube',
+    defaultProps: { url: '', muted: true, loop: true, thumbnailUrl: '' },
+  },
+
+  vimeo: {
+    component: VimeoWidget,
+    icon: Video,
+    label: 'Vimeo',
+    defaultProps: { url: '', muted: true, loop: true, thumbnailUrl: '' },
+  },
+
+  webpage: {
+    component: WebPageWidget,
+    icon: Globe,
+    label: 'Web Page',
+    defaultProps: { url: '', refreshIntervalMinutes: 0, zoom: 1, thumbnailUrl: '' },
+  },
+
+  'google-slides': {
+    component: GoogleSlidesWidget,
+    icon: Presentation,
+    label: 'Google Slides',
+    defaultProps: { url: '', delayMs: 5000, loop: true, thumbnailUrl: '' },
   },
 
   // Legacy alias for backward compatibility -- 'data' maps to DataTableWidget
