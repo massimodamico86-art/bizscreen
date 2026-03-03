@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T21:22:36.820Z"
+last_updated: "2026-03-03T22:07:12.000Z"
 progress:
   total_phases: 72
   completed_phases: 70
-  total_plans: 238
-  completed_plans: 232
+  total_plans: 239
+  completed_plans: 233
 ---
 
 # Project State
@@ -18,34 +18,35 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v12.0 Feature Parity -- Phase 109 (Content Model) COMPLETE (4/4 plans)
+**Current focus:** v12.0 Feature Parity -- Phase 109 (Content Model) COMPLETE (5/5 plans)
 
 ## Current Position
 
 Phase: 109 of 112 (Content Model) -- COMPLETE
-Plan: 4 of 4 complete
+Plan: 5 of 5 complete
 Status: Phase complete
-Last activity: 2026-03-03 -- Plan 04 complete (player-side integration: working hours guard + background audio)
+Last activity: 2026-03-03 -- Plan 05 complete (nested playlists gap closure: Playlists tab in playlist editor)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 3.5 min
-- Total execution time: 0.35 hours
+- Total plans completed: 7
+- Average duration: 3.1 min
+- Total execution time: 0.37 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 108-embed-widgets | 2/2 | 7 min | 3.5 min |
-| 109-content-model | 4/4 | 17 min | 4.3 min |
+| 109-content-model | 5/5 | 18 min | 3.6 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
 | Phase 109 P04 | 3 | 2 tasks | 7 files |
+| Phase 109 P05 | 1 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,8 @@ Progress: [███████████████████████
 **109-03:** Audio picker uses select dropdown lazy-loaded on focus; volume changes debounced at 500ms; WorkingHoursEditor null = always on (DEFAULT_WORKING_HOURS on first enable); isWithinWorkingHours fails open (returns true) on error.
 
 **109-04:** BackgroundAudio uses new Audio() via useRef (not DOM element); working hours guard is early-return black div with BackgroundAudio mounted (paused); emergency content overrides working hours client-side; ZonePlayer defensive guard uses setTimeout(advanceToNext, 100) for graceful skip.
+
+**109-05:** Playlists tab after My Designs in FILTER_TABS; _isPlaylist flag on transformed playlists for handleAddItem detection without sourceType passthrough; playlistId in fetchMediaAssets dependency array for self-exclusion reactivity.
 
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
@@ -80,9 +83,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 109-04-PLAN.md (player-side integration: working hours guard + background audio)
+Stopped at: Completed 109-05-PLAN.md (nested playlists gap closure: Playlists tab in playlist editor)
 Resume file: None
 Next: Phase 110 (next milestone phase)
 
 ---
-*Updated: 2026-03-03 -- 109-04 complete, phase 109 COMPLETE (4/4)*
+*Updated: 2026-03-03 -- 109-05 complete, phase 109 COMPLETE (5/5 plans)*
