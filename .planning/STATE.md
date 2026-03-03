@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T22:37:38.205Z"
+last_updated: "2026-03-03T23:01:01.000Z"
 progress:
   total_phases: 72
   completed_phases: 71
   total_plans: 239
-  completed_plans: 234
+  completed_plans: 235
 ---
 
 # Project State
@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v12.0 Feature Parity -- Phase 088 (Analytics & Alerts) Plan 01 complete (1/3 plans)
+**Current focus:** v12.0 Feature Parity -- Phase 100 (Core Feature Walkthrough) Plan 01 complete (1/5 plans, re-executing with new plan structure)
 
 ## Current Position
 
-Phase: 088 of 112 (Analytics & Alerts)
-Plan: 1 of 3 complete
+Phase: 100 of 112 (Core Feature Walkthrough - CRUD Operations)
+Plan: 1 of 5 complete
 Status: In progress
-Last activity: 2026-03-03 -- Plan 01 complete (analytics pages audit: all imports verified, no changes needed)
+Last activity: 2026-03-03 -- Plan 01 complete (Screens & Playlists CRUD walkthrough: 29 screenshots)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 3.0 min
-- Total execution time: 0.40 hours
+- Total plans completed: 11
+- Average duration: 4.0 min
+- Total execution time: 0.73 hours
 
 **By Phase:**
 
@@ -43,6 +43,7 @@ Progress: [███████████████████████
 | 108-embed-widgets | 2/2 | 7 min | 3.5 min |
 | 109-content-model | 5/5 | 18 min | 3.6 min |
 | 088-analytics-alerts | 1/3 | 2 min | 2.0 min |
+| 100-core-feature-walkthrough | 1/5 | 18 min | 18.0 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -69,6 +70,10 @@ Progress: [███████████████████████
 
 **088-01:** All four analytics pages clean -- no import errors, no missing design-system components, no navigation issues; ContentPerformancePage does not use useNavigate (concern pre-resolved); BrowserRouter wraps app in main.jsx for ContentDetailAnalyticsPage route-based navigation.
 
+**100-01:** React fiber injection via __reactContainer$ (React 18) to populate mock screen/playlist data in bypass-auth mode; evaluate(el => el.click()) for elements behind modal overlays; direct state injection for delete confirmation modals.
+
+**100-03:** Playwright .cjs scripts for ESM projects; yodeck-layout-new for layout editor; SVG template search crashes with "X is not defined" (pre-existing bug); media delete via detail modal (double-click then Delete); SVG delete shows empty state (no user designs in demo).
+
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
 - Nested playlists MUST have circular reference prevention DB trigger before any nesting UI
@@ -86,9 +91,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 088-01-PLAN.md (analytics pages audit: all imports verified)
+Stopped at: Completed 100-03-PLAN.md (media, layouts & templates CRUD walkthrough: 28 screenshots)
 Resume file: None
-Next: 088-02-PLAN.md (alerts center)
+Next: 100-04-PLAN.md (next walkthrough plan)
 
 ---
-*Updated: 2026-03-03 -- 088-01 complete, analytics pages audit verified clean*
+*Updated: 2026-03-03 -- 100-03 complete, media/layouts/SVG templates CRUD lifecycle captured*
