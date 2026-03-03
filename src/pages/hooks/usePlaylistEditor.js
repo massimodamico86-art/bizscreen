@@ -31,7 +31,7 @@ import {
   revokePreviewLink,
   formatPreviewLink,
 } from '../../services/previewService';
-import { savePlaylistAsTemplate, savePlaylistWithApproval } from '../../services/playlistService';
+import { savePlaylistAsTemplate, savePlaylistWithApproval, addNestedPlaylist, getNestedPlaylistInfo, updatePlaylist } from '../../services/playlistService';
 
 // Module-level logger
 const logger = createScopedLogger('usePlaylistEditor');
@@ -107,6 +107,13 @@ export function usePlaylistEditor(playlistId, { showToast }) {
   const [templateDescription, setTemplateDescription] = useState('');
   const [savingTemplate, setSavingTemplate] = useState(false);
 
+  // Background audio state
+  const [backgroundAudioId, setBackgroundAudioId] = useState(null);
+  const [backgroundAudioVolume, setBackgroundAudioVolume] = useState(75);
+  const [backgroundAudioAsset, setBackgroundAudioAsset] = useState(null);
+  const [audioAssets, setAudioAssets] = useState([]);
+  const volumeDebounceRef = useRef(null);
+
   // Drag refs for throttling
   const lastDragOverIndexRef = useRef(null);
   const dragOverIndexRef = useRef(null);
@@ -130,6 +137,22 @@ export function usePlaylistEditor(playlistId, { showToast }) {
       if (playlistError) throw playlistError;
       setPlaylist(playlistData);
 
+      // Initialize background audio state from playlist data
+      setBackgroundAudioId(playlistData.background_audio_id || null);
+      setBackgroundAudioVolume(playlistData.background_audio_volume ?? 75);
+
+      // If background audio is set, fetch the media asset for display
+      if (playlistData.background_audio_id) {
+        const { data: audioAsset } = await supabase
+          .from('media_assets')
+          .select('id, name, url, mime_type, type')
+          .eq('id', playlistData.background_audio_id)
+          .single();
+        setBackgroundAudioAsset(audioAsset || null);
+      } else {
+        setBackgroundAudioAsset(null);
+      }
+
       // Fetch playlist items
       const { data: itemsData, error: itemsError } = await supabase
         .from('playlist_items')
@@ -142,6 +165,7 @@ export function usePlaylistEditor(playlistId, { showToast }) {
       // Separate items by type and fetch related data
       const mediaItemIds = itemsData?.filter(i => i.item_type === 'media').map(i => i.item_id) || [];
       const layoutItemIds = itemsData?.filter(i => i.item_type === 'layout').map(i => i.item_id) || [];
+      const playlistItemIds = itemsData?.filter(i => i.item_type === 'playlist').map(i => i.item_id) || [];
 
       // Fetch media assets
       let mediaMap = {};
@@ -173,10 +197,36 @@ export function usePlaylistEditor(playlistId, { showToast }) {
         }), {});
       }
 
-      // Combine items with their media/layout data
+      // Fetch nested playlist info (name + item count)
+      let playlistMap = {};
+      if (playlistItemIds.length > 0) {
+        const playlistInfoResults = await Promise.all(
+          playlistItemIds.map(pid => getNestedPlaylistInfo(pid).catch(() => null))
+        );
+        playlistMap = playlistInfoResults
+          .filter(Boolean)
+          .reduce((acc, info) => ({
+            ...acc,
+            [info.id]: {
+              id: info.id,
+              name: info.name,
+              type: 'playlist',
+              url: null,
+              thumbnail_url: null,
+              duration: null,
+              itemCount: info.itemCount,
+            }
+          }), {});
+      }
+
+      // Combine items with their media/layout/playlist data
       const enrichedItems = (itemsData || []).map(item => ({
         ...item,
-        media: item.item_type === 'layout' ? layoutMap[item.item_id] : mediaMap[item.item_id]
+        media: item.item_type === 'layout'
+          ? layoutMap[item.item_id]
+          : item.item_type === 'playlist'
+            ? playlistMap[item.item_id]
+            : mediaMap[item.item_id]
       }));
 
       setItems(enrichedItems);
@@ -402,9 +452,41 @@ export function usePlaylistEditor(playlistId, { showToast }) {
   // Item Management Functions
   // ============================================================
 
-  const handleAddItem = useCallback(async (media) => {
+  const handleAddItem = useCallback(async (media, sourceType) => {
     try {
       setSaving(true);
+
+      // Detect if this is a playlist being added as a nested item
+      const isPlaylistItem = sourceType === 'playlists' || media._isPlaylist;
+
+      if (isPlaylistItem) {
+        // Use addNestedPlaylist for validation (circular ref check) + insert
+        const data = await addNestedPlaylist(playlistId, media.id, media.duration || 10);
+
+        // Enrich with nested playlist display info
+        const info = await getNestedPlaylistInfo(media.id).catch(() => null);
+        data.media = info ? {
+          id: info.id,
+          name: info.name,
+          type: 'playlist',
+          url: null,
+          thumbnail_url: null,
+          duration: null,
+          itemCount: info.itemCount,
+        } : {
+          id: media.id,
+          name: media.name || 'Playlist',
+          type: 'playlist',
+          url: null,
+          thumbnail_url: null,
+          duration: null,
+          itemCount: 0,
+        };
+
+        setItems(prev => [...prev, data]);
+        showToast?.(`Added playlist "${media.name}" as nested item`);
+        return;
+      }
 
       const maxPosition = items.length > 0
         ? Math.max(...items.map(i => i.position))
@@ -450,7 +532,7 @@ export function usePlaylistEditor(playlistId, { showToast }) {
       setItems(prev => [...prev, data]);
       showToast?.(`Added "${media.name}" to playlist`);
     } catch (error) {
-      logger.error('Error adding item to playlist', { error, playlistId, itemType: media._isDesign ? 'layout' : 'media' });
+      logger.error('Error adding item to playlist', { error, playlistId, itemType: media._isDesign ? 'layout' : media._isPlaylist ? 'playlist' : 'media' });
       showToast?.('Error adding item: ' + error.message, 'error');
     } finally {
       setSaving(false);
@@ -615,6 +697,87 @@ export function usePlaylistEditor(playlistId, { showToast }) {
       setSaving(false);
     }
   }, [playlistId, showToast]);
+
+  // ============================================================
+  // Background Audio Handlers
+  // ============================================================
+
+  /**
+   * Fetch audio assets from media library for the audio picker
+   */
+  const fetchAudioAssets = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('media_assets')
+        .select('id, name, url, mime_type, type, duration')
+        .eq('type', 'audio')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+      setAudioAssets(data || []);
+    } catch (error) {
+      logger.error('Error fetching audio assets', { error });
+    }
+  }, []);
+
+  /**
+   * Set background audio track for the playlist
+   */
+  const handleSetBackgroundAudio = useCallback(async (mediaAsset) => {
+    try {
+      setSaving(true);
+      await updatePlaylist(playlistId, { background_audio_id: mediaAsset.id });
+      setBackgroundAudioId(mediaAsset.id);
+      setBackgroundAudioAsset(mediaAsset);
+      setPlaylist(prev => prev ? { ...prev, background_audio_id: mediaAsset.id } : prev);
+      showToast?.(`Background audio set to "${mediaAsset.name}"`);
+    } catch (error) {
+      logger.error('Error setting background audio', { error, playlistId, audioId: mediaAsset.id });
+      showToast?.('Error setting background audio', 'error');
+    } finally {
+      setSaving(false);
+    }
+  }, [playlistId, showToast]);
+
+  /**
+   * Remove background audio from the playlist
+   */
+  const handleRemoveBackgroundAudio = useCallback(async () => {
+    try {
+      setSaving(true);
+      await updatePlaylist(playlistId, { background_audio_id: null });
+      setBackgroundAudioId(null);
+      setBackgroundAudioAsset(null);
+      setPlaylist(prev => prev ? { ...prev, background_audio_id: null } : prev);
+      showToast?.('Background audio removed');
+    } catch (error) {
+      logger.error('Error removing background audio', { error, playlistId });
+      showToast?.('Error removing background audio', 'error');
+    } finally {
+      setSaving(false);
+    }
+  }, [playlistId, showToast]);
+
+  /**
+   * Update background audio volume (debounced persistence)
+   */
+  const handleVolumeChange = useCallback((volume) => {
+    setBackgroundAudioVolume(volume);
+    setPlaylist(prev => prev ? { ...prev, background_audio_volume: volume } : prev);
+
+    // Debounce the database write
+    if (volumeDebounceRef.current) {
+      clearTimeout(volumeDebounceRef.current);
+    }
+    volumeDebounceRef.current = setTimeout(async () => {
+      try {
+        await updatePlaylist(playlistId, { background_audio_volume: volume });
+      } catch (error) {
+        logger.error('Error saving volume', { error, playlistId, volume });
+      }
+    }, 500);
+  }, [playlistId]);
 
   // ============================================================
   // Drag and Drop Handlers
@@ -1243,9 +1406,16 @@ export function usePlaylistEditor(playlistId, { showToast }) {
     setTemplateDescription,
     savingTemplate,
 
+    // Background audio state
+    backgroundAudioId,
+    backgroundAudioVolume,
+    backgroundAudioAsset,
+    audioAssets,
+
     // Actions - data loading
     fetchPlaylist,
     fetchMediaAssets,
+    fetchAudioAssets,
     navigateToFolder,
 
     // Actions - media scroll
@@ -1261,6 +1431,11 @@ export function usePlaylistEditor(playlistId, { showToast }) {
     // Actions - playlist settings
     handleUpdateTransitionEffect,
     handleUpdatePlaylistName,
+
+    // Actions - background audio
+    handleSetBackgroundAudio,
+    handleRemoveBackgroundAudio,
+    handleVolumeChange,
 
     // Actions - drag and drop
     handleTimelineDragStart,

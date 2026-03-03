@@ -6,6 +6,7 @@ import {
   FolderOpen,
   Grid3X3,
   Home,
+  Music,
   Pause,
   Pencil,
   Play,
@@ -15,6 +16,8 @@ import {
   Settings,
   SkipBack,
   SkipForward,
+  Volume2,
+  X,
 } from 'lucide-react';
 
 import { Button } from '../design-system';
@@ -110,6 +113,11 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     setTemplateDescription,
     savingTemplate,
 
+    // Background audio state
+    backgroundAudioVolume,
+    backgroundAudioAsset,
+    audioAssets,
+
     // Actions
     navigateToFolder,
     handleMediaScroll,
@@ -134,6 +142,10 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
     handleMoveItemDown,
     handleUpdateTransitionEffect,
     handleUpdatePlaylistName,
+    handleSetBackgroundAudio,
+    handleRemoveBackgroundAudio,
+    handleVolumeChange,
+    fetchAudioAssets,
     getEffectiveDuration,
     getTotalDuration,
     startPlayback,
@@ -257,13 +269,12 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
               <Settings size={18} />
             </button>
             {showSettings && (
-              <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-20 w-56">
+              <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-20 w-72">
                 <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Transition Effect</h4>
                 <select
                   value={playlist?.transition_effect || 'none'}
                   onChange={(e) => {
                     handleUpdateTransitionEffect(e.target.value);
-                    setShowSettings(false);
                   }}
                   className="w-full px-2.5 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 >
@@ -272,6 +283,63 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
                   ))}
                 </select>
                 <p className="text-xs text-gray-400 mt-1.5">Effect between playlist items</p>
+
+                <hr className="my-3 border-gray-200" />
+
+                {/* Background Audio Section */}
+                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                  <Music size={12} className="text-purple-500" />
+                  Background Audio
+                </h4>
+
+                {backgroundAudioAsset ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 bg-purple-50 rounded-lg px-2.5 py-2 border border-purple-200">
+                      <Music size={14} className="text-purple-600 flex-shrink-0" />
+                      <span className="text-sm text-gray-800 truncate flex-1" title={backgroundAudioAsset.name}>
+                        {backgroundAudioAsset.name}
+                      </span>
+                      <button
+                        onClick={handleRemoveBackgroundAudio}
+                        className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors flex-shrink-0"
+                        title="Remove audio"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <Volume2 size={14} className="text-gray-400 flex-shrink-0" />
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={backgroundAudioVolume}
+                          onChange={(e) => handleVolumeChange(Number(e.target.value))}
+                          className="flex-1 h-1.5 accent-purple-600 cursor-pointer"
+                        />
+                        <span className="text-xs text-gray-600 w-8 text-right tabular-nums">{backgroundAudioVolume}%</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <select
+                    value=""
+                    onFocus={fetchAudioAssets}
+                    onChange={(e) => {
+                      if (!e.target.value) return;
+                      const asset = audioAssets.find(a => a.id === e.target.value);
+                      if (asset) handleSetBackgroundAudio(asset);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  >
+                    <option value="">Select audio track...</option>
+                    {audioAssets.map(asset => (
+                      <option key={asset.id} value={asset.id}>{asset.name}</option>
+                    ))}
+                  </select>
+                )}
+                <p className="text-xs text-gray-400 mt-1.5">Plays behind all content items</p>
               </div>
             )}
           </div>
