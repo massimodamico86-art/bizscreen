@@ -11,6 +11,7 @@ import {
   GripVertical,
   Image,
   Link2,
+  ListVideo,
   Loader2,
   Minus,
   Music,
@@ -38,7 +39,8 @@ const MEDIA_TYPE_ICONS = {
   document: FileText,
   web_page: Globe,
   app: Grid3X3,
-  design: Palette
+  design: Palette,
+  playlist: ListVideo,
 };
 
 // Timeline item component - duration-based width with drag support
@@ -108,8 +110,23 @@ export const PlaylistStripItem = ({ item, index, totalItems, onRemove, onUpdateD
         onDrop={handleDrop}
       >
         {/* Thumbnail */}
-        <div className="relative h-[70px] bg-gray-100 rounded-t overflow-hidden border border-gray-200">
-          {item.media?.thumbnail_url || item.media?.url ? (
+        <div className={`relative h-[70px] rounded-t overflow-hidden border ${
+          item.item_type === 'playlist' ? 'bg-blue-50 border-blue-200' : 'bg-gray-100 border-gray-200'
+        }`}>
+          {item.item_type === 'playlist' ? (
+            /* Nested playlist: distinct visual with ListVideo icon, name, and item count */
+            <div className="w-full h-full flex flex-col items-center justify-center gap-1 px-1">
+              <ListVideo size={20} className="text-blue-500" />
+              <span className="text-[9px] text-blue-700 font-medium truncate w-full text-center leading-tight">
+                {item.media?.name || 'Playlist'}
+              </span>
+              {item.media?.itemCount !== undefined && (
+                <span className="text-[8px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-medium">
+                  {item.media.itemCount} items
+                </span>
+              )}
+            </div>
+          ) : item.media?.thumbnail_url || item.media?.url ? (
             <img
               src={item.media.thumbnail_url || item.media.url}
               alt={item.media.name}

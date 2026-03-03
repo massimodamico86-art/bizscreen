@@ -6,23 +6,23 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Image,
-  Video,
+  Check,
+  ChevronRight,
+  Clock,
   FileText,
-  Music,
+  Folder,
   Globe,
   Grid3X3,
+  Home,
+  Image,
   Layout,
   ListVideo,
-  X,
-  Search,
-  Home,
-  ChevronRight,
-  Folder,
-  Play,
-  Check,
-  Clock,
   Loader2,
+  Music,
+  Play,
+  Search,
+  Video,
+  X,
 } from 'lucide-react';
 import { Button, Modal } from '../../design-system';
 import { fetchMediaAssets, fetchApps } from '../../services/mediaService';
@@ -249,6 +249,7 @@ export function InsertContentModal({
   initialTab = 'media',
   title = 'Insert Content',
   allowedTabs,
+  excludePlaylistId,
 }) {
   const logger = useLogger('InsertContentModal');
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -306,7 +307,11 @@ export function InsertContentModal({
           }
           case 'playlists': {
             const playlistsData = await fetchPlaylists();
-            setPlaylists(playlistsData || []);
+            // Filter out the current playlist to prevent self-reference
+            const filtered = excludePlaylistId
+              ? (playlistsData || []).filter(p => p.id !== excludePlaylistId)
+              : (playlistsData || []);
+            setPlaylists(filtered);
             break;
           }
         }

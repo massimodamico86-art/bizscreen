@@ -6,6 +6,7 @@ import {
   FolderOpen,
   Grid3X3,
   Home,
+  ListVideo,
   Music,
   Pause,
   Pencil,
@@ -527,6 +528,15 @@ const PlaylistEditorPage = ({ playlistId, showToast, onNavigate }) => {
                             </div>
                           );
                         })()
+                      ) : previewItem.media?.type === 'playlist' ? (
+                        /* Nested playlist preview */
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 to-blue-700 text-white">
+                          <ListVideo size={48} className="mb-3 opacity-80" />
+                          <p className="text-lg font-medium">{previewItem.media?.name || 'Playlist'}</p>
+                          {previewItem.media?.itemCount !== undefined && (
+                            <p className="text-sm opacity-70 mt-1">{previewItem.media.itemCount} items</p>
+                          )}
+                        </div>
                       ) : previewItem.media?.thumbnail_url || previewItem.media?.url ? (
                         <img
                           src={previewItem.media.thumbnail_url || previewItem.media.url}
