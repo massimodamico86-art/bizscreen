@@ -15,3 +15,5 @@ export { useDataRefreshOrchestrator } from './useDataRefreshOrchestrator.js';
 export { useWidgetData } from './useWidgetData.js';
 export { useAutoRecovery } from './useAutoRecovery.js';
 export { useContentVerification } from './useContentVerification.js';
+export { useWorkingHours } from './useWorkingHours.js';
+export { useBackgroundAudio } from './useBackgroundAudio.js';

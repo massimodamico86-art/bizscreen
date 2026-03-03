@@ -13,5 +13,8 @@ export { PairPage } from './PairPage.jsx';
 export { PairingScreen } from './PairingScreen.jsx';
 export { PinEntry } from './PinEntry.jsx';
 
+// Background audio
+export { BackgroundAudio } from './BackgroundAudio.jsx';
+
 // Re-export widgets from widgets subdirectory
 export { ClockWidget, DateWidget, WeatherWidget, QRCodeWidget } from './widgets';
