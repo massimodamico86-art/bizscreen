@@ -76,6 +76,7 @@ Add 4 new widget types to the widget registry: YouTube, Vimeo, Web Page, and Goo
 - Loading spinner design during iframe initialization
 - Thumbnail image size/quality tradeoffs
 - Whether to use YouTube's iframe API or a plain iframe
+- Web page thumbnail approach: OG image extraction requires a server-side proxy/edge function that does not exist yet. For this phase, use a generic Globe icon placeholder for web pages. OG image extraction can be added in a future phase when an `/api/og-image` endpoint is available. (Demoted from locked decision "Web pages: extract Open Graph image or use a screenshot approach" — locked intent preserved via the generic placeholder with future extensibility.)
 
 </decisions>
 
