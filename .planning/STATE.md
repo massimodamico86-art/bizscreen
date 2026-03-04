@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T21:53:28.276Z"
+last_updated: "2026-03-04T21:58:34.000Z"
 progress:
   total_phases: 75
   completed_phases: 73
   total_plans: 247
-  completed_plans: 245
+  completed_plans: 246
 ---
 
 # Project State
@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 Documents & Calendar -- Phase 111 Plan 03 complete (3/4 plans)
+**Current focus:** v2.1 Documents & Calendar -- Phase 111 Plan 04 next (3/4 plans complete, 02 just completed)
 
 ## Current Position
 
 Phase: 111 of 112 (Documents & Calendar)
-Plan: 3 of 4 complete
+Plan: 3 of 4 complete (01, 02, 03 done; 04 remaining)
 Status: In progress
-Last activity: 2026-03-04 -- Plan 03 complete (Calendar OAuth services, calendarService, calendar-proxy Edge Function)
+Last activity: 2026-03-04 -- Plan 02 complete (Document widget player component, registry, editor controls)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
-- Average duration: 3.7 min
-- Total execution time: 0.95 hours
+- Total plans completed: 16
+- Average duration: 3.6 min
+- Total execution time: 0.98 hours
 
 **By Phase:**
 
@@ -45,7 +45,7 @@ Progress: [███████████████████████
 | 088-analytics-alerts | 1/3 | 2 min | 2.0 min |
 | 100-core-feature-walkthrough | 4/5 | 29 min | 7.3 min |
 | 110-enterprise-platform | 3/4 | 10 min | 3.3 min |
-| 111-documents-and-calendar | 3/4 | 9 min | 3.0 min |
+| 111-documents-and-calendar | 3/4 | 12 min | 3.0 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -58,6 +58,7 @@ Progress: [███████████████████████
 | Phase 110 P03 | 5 | 2 tasks | 5 files |
 | Phase 110 P04 | 1 | 1 tasks | 2 files |
 | Phase 111 P01 | 3 | 2 tasks | 4 files |
+| Phase 111 P02 | 3 | 2 tasks | 6 files |
 | Phase 111 P03 | 6 | 2 tasks | 6 files |
 
 ## Accumulated Context
@@ -96,6 +97,8 @@ Progress: [███████████████████████
 
 **111-01:** PDF stored as single convertedPages entry (magick-wasm page splitting deferred as TODO); Office conversion via Gotenberg LibreOffice API with graceful error; removed legacy text/ MIME catch-all; shared migration 164 for calendar tables; pollConversionStatus uses exponential backoff (2s start, 15s cap, 30 max).
 
+**111-02:** DocumentWidget reads directly from Supabase (not documentService) to avoid circular deps in player bundle; crossfade via absolute-positioned img tags with opacity transition (500ms ease); page indicator badge in bottom-right with semi-transparent background; controls show conversion status with colored dots (yellow=pending, green=complete, red=error).
+
 **111-03:** Calendar OAuth callbacks return token objects (not saving to localStorage) for DB persistence via calendarService.saveCalendarSource(); calendar-proxy Edge Function handles token refresh on 401 server-side; 5-minute cache TTL on calendar_event_cache; provider-aware toast message and navigation (calendar callbacks do not redirect to media library); Google Calendar uses 'primary' as default calendarId, Outlook uses 'default'.
 
 Full decision log in PROJECT.md Key Decisions table.
@@ -119,9 +122,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 111-03-PLAN.md (Calendar OAuth services, calendarService, calendar-proxy Edge Function)
+Stopped at: Completed 111-02-PLAN.md (Document widget player component, registry, editor controls)
 Resume file: None
 Next: Phase 111 Plan 04 (Calendar Widget UI)
 
 ---
-*Updated: 2026-03-04 -- 111-03 complete, Google Calendar and Outlook OAuth with PKCE, calendarService for DB token persistence, calendar-proxy Edge Function with caching and token refresh*
+*Updated: 2026-03-04 -- 111-02 complete, DocumentWidget player with page carousel and crossfade, WIDGET_REGISTRY document entry, DocumentWidgetControls for both editor panels*
