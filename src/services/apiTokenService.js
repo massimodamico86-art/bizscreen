@@ -28,6 +28,7 @@ export const AVAILABLE_SCOPES = [
   { value: 'playlists:read', label: 'Playlists - Read', description: 'Read playlist data' },
   { value: 'playlists:write', label: 'Playlists - Write', description: 'Create, update playlists' },
   { value: 'screens:read', label: 'Screens - Read', description: 'Read screen/device data' },
+  { value: 'screens:write', label: 'Screens - Write', description: 'Update screen assignments' },
   { value: 'media:read', label: 'Media - Read', description: 'Read media assets' },
   { value: 'media:write', label: 'Media - Write', description: 'Upload and manage media' },
 ];

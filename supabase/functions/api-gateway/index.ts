@@ -53,7 +53,7 @@ const ROUTES: Record<string, RouteConfig> = {
   'GET /v1/media':                  { rpc: 'api_list_media',              scope: 'media:read' },
   'POST /v1/media':                 { handler: 'generatePresignedUrl',    scope: 'media:write' },
   'POST /v1/media/confirm':         { rpc: 'api_create_media_record',     scope: 'media:write' },
-  'PUT /v1/screens/:id/assignment': { rpc: 'api_update_screen_assignment', scope: 'screens:read' },
+  'PUT /v1/screens/:id/assignment': { rpc: 'api_update_screen_assignment', scope: 'screens:write' },
 };
 
 // ---------------------------------------------------------------------------
