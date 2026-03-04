@@ -44,6 +44,7 @@ import { QRCodeWidgetControls } from './QRCodeWidgetControls.jsx';
 import { MenuBoardWidgetControls } from './MenuBoardWidgetControls';
 import { EmbedWidgetControls } from './EmbedWidgetControls.jsx';
 import { DocumentWidgetControls } from './DocumentWidgetControls.jsx';
+import { CalendarWidgetControls } from './CalendarWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -981,6 +982,11 @@ function WidgetControls({ block, onUpdate }) {
       {/* Document Widget Controls */}
       {widgetType === 'document' && (
         <DocumentWidgetControls props={props} onPropChange={handlePropChange} />
+      )}
+
+      {/* Calendar Widget Controls */}
+      {widgetType === 'calendar' && (
+        <CalendarWidgetControls props={props} onPropChange={handlePropChange} />
       )}
 
       {/* Text Color for all widgets */}

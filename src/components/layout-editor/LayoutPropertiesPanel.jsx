@@ -31,6 +31,7 @@ import { CountdownWidgetControls } from '../scene-editor/CountdownWidgetControls
 import { MenuBoardWidgetControls } from '../scene-editor/MenuBoardWidgetControls.jsx';
 import { EmbedWidgetControls } from '../scene-editor/EmbedWidgetControls.jsx';
 import { DocumentWidgetControls } from '../scene-editor/DocumentWidgetControls.jsx';
+import { CalendarWidgetControls } from '../scene-editor/CalendarWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -644,6 +645,11 @@ function WidgetControls({ element, onUpdate, onPropsUpdate }) {
       {/* Document Widget Controls */}
       {widgetType === 'document' && (
         <DocumentWidgetControls props={props} onPropChange={(key, value) => onPropsUpdate({ [key]: value })} />
+      )}
+
+      {/* Calendar Widget Controls */}
+      {widgetType === 'calendar' && (
+        <CalendarWidgetControls props={props} onPropChange={(key, value) => onPropsUpdate({ [key]: value })} />
       )}
 
       <ColorPicker
