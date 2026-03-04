@@ -18,4 +18,5 @@ export { VimeoWidget } from './VimeoWidget.jsx';
 export { WebPageWidget } from './WebPageWidget.jsx';
 export { GoogleSlidesWidget } from './GoogleSlidesWidget.jsx';
 export { DocumentWidget } from './DocumentWidget.jsx';
+export { CalendarWidget } from './CalendarWidget.jsx';
 export { EmbedOfflineFallback } from './EmbedOfflineFallback.jsx';

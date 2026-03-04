@@ -30,6 +30,7 @@ import {
   Globe,
   Presentation,
   FileText,
+  CalendarDays,
 } from 'lucide-react';
 
 import {
@@ -49,6 +50,7 @@ import {
   WebPageWidget,
   GoogleSlidesWidget,
   DocumentWidget,
+  CalendarWidget,
 } from '../player/components/widgets/index.js';
 
 /**
@@ -253,6 +255,21 @@ export const WIDGET_REGISTRY = {
       pageIntervalSeconds: 10,
       loop: true,
       transition: 'crossfade',
+    },
+  },
+
+  calendar: {
+    component: CalendarWidget,
+    icon: CalendarDays,
+    label: 'Calendar',
+    defaultProps: {
+      sources: [],
+      refreshIntervalMinutes: 5,
+      maxEvents: 10,
+      showEndTime: true,
+      textColor: '#ffffff',
+      accentColor: '#3b82f6',
+      theme: 'dark',
     },
   },
 
