@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T22:15:54.910Z"
+last_updated: "2026-03-04T23:15:03.689Z"
 progress:
   total_phases: 75
-  completed_phases: 74
-  total_plans: 247
-  completed_plans: 247
+  completed_phases: 75
+  total_plans: 248
+  completed_plans: 248
 ---
 
 # Project State
@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 Documents & Calendar -- Phase 111 complete (4/4 plans done), phase 112 next
+**Current focus:** v2.1 -- Phase 113 complete (1/1 plans done), API-04 and POP-05 gaps closed
 
 ## Current Position
 
-Phase: 111 of 112 (Documents & Calendar)
-Plan: 4 of 4 complete (01, 02, 03, 04 done)
-Status: Phase 111 complete
-Last activity: 2026-03-04 -- Plan 04 complete (Calendar widget player component, controls, registry, panel wiring)
+Phase: 113 of 113 (Enterprise Platform Fixes)
+Plan: 1 of 1 complete (01 done)
+Status: Phase 113 complete
+Last activity: 2026-03-04 -- Plan 01 complete (API scope fix + playback summary dashboard)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
-- Average duration: 3.6 min
-- Total execution time: 1.05 hours
+- Total plans completed: 18
+- Average duration: 3.5 min
+- Total execution time: 1.08 hours
 
 **By Phase:**
 
@@ -46,6 +46,7 @@ Progress: [███████████████████████
 | 100-core-feature-walkthrough | 4/5 | 29 min | 7.3 min |
 | 110-enterprise-platform | 3/4 | 10 min | 3.3 min |
 | 111-documents-and-calendar | 4/4 | 16 min | 4.0 min |
+| 113-enterprise-platform-fixes | 1/1 | 2 min | 2.0 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -61,6 +62,7 @@ Progress: [███████████████████████
 | Phase 111 P02 | 3 | 2 tasks | 6 files |
 | Phase 111 P03 | 6 | 2 tasks | 6 files |
 | Phase 111 P04 | 4 | 2 tasks | 6 files |
+| Phase 113 P01 | 2 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -118,6 +120,7 @@ Key constraints for v12.0:
 - [Phase 110]: 110-03: Rename-and-swap partitioning strategy; 15 monthly partitions (2026-01 to 2027-03) plus DEFAULT; pg_cron on 25th creates partition 2 months ahead; media_play and scene_end event_types for completed playbacks; ClipboardList icon from lucide-react; native HTML multi-select for screen filter
 - [Phase 111]: 111-03: Calendar OAuth callbacks return token objects for DB persistence; calendar-proxy handles 401 token refresh server-side; 5-min cache TTL; provider-aware toast; Google uses 'primary', Outlook uses 'default' calendarId
 - [Phase 111]: 111-04: CalendarWidget invokes calendar-proxy directly in player; multi-source widget pattern with sources array, Promise.all fetch, merge+sort+slice; date grouping with Today/Tomorrow relative labels; CalendarWidgetControls with OAuth source management in both editor panels
+- [Phase 113]: 113-01: screens:write scope follows read/write pair convention; PlaybackSummarySection after StatsGrid before PendingApprovalsWidget; playback fetch uses non-blocking fire-and-forget pattern
 
 ### Blockers/Concerns
 
@@ -126,9 +129,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 111-04-PLAN.md (Calendar widget player component, controls, registry, panel wiring)
+Stopped at: Completed 113-01-PLAN.md (API scope fix + playback summary dashboard)
 Resume file: None
-Next: Phase 112 (next phase) or milestone completion
+Next: Phase 113 complete (1/1 plans done). v12.0 milestone gaps API-04 and POP-05 closed.
 
 ---
-*Updated: 2026-03-04 -- 111-04 complete, Phase 111 done (4/4), CalendarWidget with agenda list, auto-refresh, multi-source, CalendarWidgetControls in both editor panels*
+*Updated: 2026-03-04 -- 113-01 complete, Phase 113 done (1/1), screens:write API scope fix, PlaybackSummarySection on dashboard*
