@@ -7,28 +7,30 @@
  */
 import { useState } from 'react';
 import {
-  Image,
-  Video,
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  ArrowRight,
+  Bell,
+  BarChart3,
+  Clock,
+  Edit,
   FileAudio,
   FileText,
-  AlertTriangle,
+  Grid3X3,
+  Image,
+  Info,
+  ListVideo,
   Loader2,
-  RefreshCw,
   Monitor,
+  Play,
+  PlusCircle,
+  RefreshCw,
+  Sparkles,
+  Upload,
+  Video,
   Wifi,
   WifiOff,
-  ListVideo,
-  Grid3X3,
-  Sparkles,
-  Clock,
-  ArrowRight,
-  AlertCircle,
-  Info,
-  Bell,
-  PlusCircle,
-  Edit,
-  Upload,
-  Activity,
 } from 'lucide-react';
 
 import { Badge, Stack, Card, Button, StatCard } from '../../design-system';
@@ -524,5 +526,75 @@ export function AlertsWidget({ alertSummary, setCurrentPage, t, loading }) {
         )}
       </div>
     </Card>
+  );
+}
+
+/**
+ * Playback summary statistics from Proof of Play data.
+ * Shows four stat cards: total plays, total hours, unique content, active screens.
+ *
+ * @param {Object} props
+ * @param {Object|null} props.playbackSummary - Playback summary data
+ * @param {number} [props.playbackSummary.total_plays] - Total playback events
+ * @param {number} [props.playbackSummary.total_hours] - Total hours of playback
+ * @param {number} [props.playbackSummary.unique_content] - Distinct content items played
+ * @param {number} [props.playbackSummary.active_screens] - Screens with playback activity
+ * @param {(key: string, fallback: string) => string} props.t - Translation function
+ * @param {boolean} props.loading - Whether data is loading
+ */
+export function PlaybackSummarySection({ playbackSummary, t, loading }) {
+  if (loading) {
+    return (
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <BarChart3 className="w-5 h-5 text-gray-400" />
+          <h3 className="font-semibold text-gray-900">{t('dashboard.playbackSummary', 'Playback Summary')}</h3>
+          <span className="text-xs text-gray-400">{t('dashboard.last30Days', 'Last 30 days')}</span>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-24 bg-gray-50 rounded-lg animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!playbackSummary) return null;
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <BarChart3 className="w-5 h-5 text-gray-400" />
+        <h3 className="font-semibold text-gray-900">{t('dashboard.playbackSummary', 'Playback Summary')}</h3>
+        <span className="text-xs text-gray-400">{t('dashboard.last30Days', 'Last 30 days')}</span>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          title={t('dashboard.totalPlays', 'Total Plays')}
+          value={playbackSummary.total_plays?.toLocaleString() || '0'}
+          icon={<Play className="w-5 h-5" />}
+          description={t('dashboard.playbackEvents', 'Playback events')}
+        />
+        <StatCard
+          title={t('dashboard.totalHours', 'Total Hours')}
+          value={playbackSummary.total_hours?.toLocaleString(undefined, { maximumFractionDigits: 1 }) || '0'}
+          icon={<Clock className="w-5 h-5" />}
+          description={t('dashboard.screenTime', 'Screen time')}
+        />
+        <StatCard
+          title={t('dashboard.uniqueContent', 'Unique Content')}
+          value={playbackSummary.unique_content?.toLocaleString() || '0'}
+          icon={<Image className="w-5 h-5" />}
+          description={t('dashboard.distinctItems', 'Distinct items played')}
+        />
+        <StatCard
+          title={t('dashboard.activeScreens', 'Active Screens')}
+          value={playbackSummary.active_screens?.toLocaleString() || '0'}
+          icon={<Monitor className="w-5 h-5" />}
+          description={t('dashboard.withPlayback', 'With playback activity')}
+        />
+      </div>
+    </div>
   );
 }

@@ -32,6 +32,8 @@ import {
   getAlertSummary,
 } from '../services/dashboardService';
 
+import { fetchPlaybackSummary } from '../services/proofOfPlayService';
+
 // Design system components
 import {
   PageLayout,
@@ -47,7 +49,7 @@ import {
 } from '../design-system';
 
 // Extracted sub-components
-import { DashboardErrorState, StatsGrid, ScreenRow, QuickActionButton, AlertsWidget } from './dashboard/DashboardSections';
+import { DashboardErrorState, StatsGrid, ScreenRow, QuickActionButton, AlertsWidget, PlaybackSummarySection } from './dashboard/DashboardSections';
 import { GettingStartedTips } from './dashboard/OnboardingCards';
 import { QuickActionsBar, HealthBanner, ActiveContentGrid, TimelineActivity, PendingApprovalsWidget, ScreenPairingReminderCard } from '../components/dashboard';
 
@@ -80,6 +82,8 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
   const [alertSummary, setAlertSummary] = useState(null);
   const [activityLoading, setActivityLoading] = useState(true);
   const [alertsLoading, setAlertsLoading] = useState(true);
+  const [playbackSummary, setPlaybackSummary] = useState(null);
+  const [playbackLoading, setPlaybackLoading] = useState(true);
 
   // Unified onboarding state (Phase 31)
   const [showUnifiedOnboarding, setShowUnifiedOnboarding] = useState(false);
@@ -112,6 +116,17 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
       .then(data => setAlertSummary(data))
       .catch(err => logger.warn('Failed to fetch alert summary:', err))
       .finally(() => setAlertsLoading(false));
+
+    setPlaybackLoading(true);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    fetchPlaybackSummary({
+      startDate: thirtyDaysAgo.toISOString(),
+      endDate: new Date().toISOString(),
+    })
+      .then(data => setPlaybackSummary(data))
+      .catch(err => logger.warn('Failed to fetch playback summary:', err))
+      .finally(() => setPlaybackLoading(false));
   }, [user, logger]);
 
   // Bounded retry with exponential backoff -- replaces the old setInterval loop
@@ -219,6 +234,13 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
               stats={stats}
               setCurrentPage={setCurrentPage}
               t={t}
+            />
+
+            {/* Playback Summary */}
+            <PlaybackSummarySection
+              playbackSummary={playbackSummary}
+              t={t}
+              loading={playbackLoading}
             />
 
             {/* Pending Approvals Widget - only shows for approvers with pending items */}
@@ -355,4 +377,4 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
 export default DashboardPage;
 
 // Named exports for testing - re-export from extracted modules
-export { DashboardErrorState, ScreenRow, StatsGrid } from './dashboard/DashboardSections';
+export { DashboardErrorState, ScreenRow, StatsGrid, PlaybackSummarySection } from './dashboard/DashboardSections';
