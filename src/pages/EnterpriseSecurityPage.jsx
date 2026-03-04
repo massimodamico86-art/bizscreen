@@ -65,6 +65,7 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
     tokenEndpoint: '',
     userinfoEndpoint: '',
     metadataUrl: '',
+    domains: '',
     defaultRole: 'viewer',
     autoCreateUsers: true,
     enforceSso: false
@@ -123,6 +124,7 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
           tokenEndpoint: provider.token_endpoint || '',
           userinfoEndpoint: provider.userinfo_endpoint || '',
           metadataUrl: provider.metadata_url || '',
+          domains: Array.isArray(provider.domains) ? provider.domains.join(', ') : '',
           defaultRole: provider.default_role || 'viewer',
           autoCreateUsers: provider.auto_create_users ?? true,
           enforceSso: provider.enforce_sso ?? false
@@ -158,6 +160,11 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
     try {
       setSaving(true);
 
+      const domainsArray = ssoForm.domains
+        .split(',')
+        .map(d => d.trim().toLowerCase())
+        .filter(Boolean);
+
       const saved = await saveSSOProvider({
         type: ssoForm.type,
         name: ssoForm.name,
@@ -168,6 +175,7 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
         tokenEndpoint: ssoForm.tokenEndpoint,
         userinfoEndpoint: ssoForm.userinfoEndpoint,
         metadataUrl: ssoForm.metadataUrl,
+        domains: domainsArray,
         defaultRole: ssoForm.defaultRole,
         autoCreateUsers: ssoForm.autoCreateUsers,
         enforceSso: ssoForm.enforceSso
@@ -590,6 +598,22 @@ export default function EnterpriseSecurityPage({ showToast, onNavigate }) {
 
             {/* Common Settings */}
             <div className="mt-6 pt-6 border-t border-gray-200 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Domains
+                </label>
+                <input
+                  type="text"
+                  value={ssoForm.domains}
+                  onChange={e => setSsoForm(prev => ({ ...prev, domains: e.target.value }))}
+                  placeholder="company.com, company.org"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  Email domains that will be auto-detected for SSO login. Separate multiple domains with commas.
+                </p>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Default Role for New Users
