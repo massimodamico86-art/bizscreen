@@ -26,7 +26,15 @@ export function getMediaTypeFromMime(mimeType) {
   if (mimeType.startsWith('image/')) return MEDIA_TYPES.IMAGE;
   if (mimeType.startsWith('video/')) return MEDIA_TYPES.VIDEO;
   if (mimeType.startsWith('audio/')) return MEDIA_TYPES.AUDIO;
-  if (mimeType === 'application/pdf' || mimeType.startsWith('text/')) return MEDIA_TYPES.DOCUMENT;
+  if (
+    mimeType === 'application/pdf' ||
+    mimeType === 'application/msword' ||
+    mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+    mimeType === 'application/vnd.ms-powerpoint' ||
+    mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
+    mimeType === 'application/vnd.ms-excel' ||
+    mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  ) return MEDIA_TYPES.DOCUMENT;
 
   return null;
 }
