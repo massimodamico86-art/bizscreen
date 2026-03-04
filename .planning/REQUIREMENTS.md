@@ -70,13 +70,13 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 ### Public REST API
 
-- [ ] **API-01**: Admin can generate API tokens with scoped permissions
-- [ ] **API-02**: API supports reading screens, playlists, and media via REST endpoints
-- [ ] **API-03**: API supports uploading media assets
-- [ ] **API-04**: API supports updating playlists and screen assignments
-- [ ] **API-05**: API rate limits requests per token
-- [ ] **API-06**: API documentation page available in developer settings
-- [ ] **API-07**: API tokens are tenant-isolated (cannot access other tenants' data)
+- [x] **API-01**: Admin can generate API tokens with scoped permissions
+- [x] **API-02**: API supports reading screens, playlists, and media via REST endpoints
+- [x] **API-03**: API supports uploading media assets
+- [x] **API-04**: API supports updating playlists and screen assignments
+- [x] **API-05**: API rate limits requests per token
+- [x] **API-06**: API documentation page available in developer settings
+- [x] **API-07**: API tokens are tenant-isolated (cannot access other tenants' data)
 
 ### Proof of Play
 
@@ -169,13 +169,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SSO-03 | Phase 110 | Complete |
 | SSO-04 | Phase 110 | Complete |
 | SSO-05 | Phase 110 | Complete |
-| API-01 | Phase 110 | Pending |
-| API-02 | Phase 110 | Pending |
-| API-03 | Phase 110 | Pending |
-| API-04 | Phase 110 | Pending |
-| API-05 | Phase 110 | Pending |
-| API-06 | Phase 110 | Pending |
-| API-07 | Phase 110 | Pending |
+| API-01 | Phase 110 | Complete |
+| API-02 | Phase 110 | Complete |
+| API-03 | Phase 110 | Complete |
+| API-04 | Phase 110 | Complete |
+| API-05 | Phase 110 | Complete |
+| API-06 | Phase 110 | Complete |
+| API-07 | Phase 110 | Complete |
 | POP-01 | Phase 110 | Complete |
 | POP-02 | Phase 110 | Complete |
 | POP-03 | Phase 110 | Complete |

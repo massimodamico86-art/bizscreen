@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T18:44:26.164Z"
+last_updated: "2026-03-04T18:45:49.338Z"
 progress:
   total_phases: 73
-  completed_phases: 72
+  completed_phases: 73
   total_plans: 242
-  completed_plans: 241
+  completed_plans: 242
 ---
 
 # Project State
@@ -44,7 +44,7 @@ Progress: [███████████████████████
 | 109-content-model | 5/5 | 18 min | 3.6 min |
 | 088-analytics-alerts | 1/3 | 2 min | 2.0 min |
 | 100-core-feature-walkthrough | 4/5 | 29 min | 7.3 min |
-| 110-enterprise-platform | 1/3 | 3 min | 3.0 min |
+| 110-enterprise-platform | 2/3 | 9 min | 4.5 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -53,6 +53,7 @@ Progress: [███████████████████████
 | Phase 100 P02 | 17 | 2 tasks | 28 files |
 | Phase 100 P04 | 11 | 2 tasks | 26 files |
 | Phase 110 P01 | 3 | 2 tasks | 4 files |
+| Phase 110 P02 | 6 | 2 tasks | 3 files |
 | Phase 110 P03 | 5 | 2 tasks | 5 files |
 
 ## Accumulated Context
@@ -85,6 +86,8 @@ Progress: [███████████████████████
 
 **110-01:** SSO login via supabase.auth.signInWithSSO({ domain }) to preserve RLS session; domain lookup uses GIN-indexed TEXT[] with ANY(); lookup_sso_by_domain RPC granted to anon for pre-login detection; initiateSSOLogin() deprecated but not removed; domains stored as comma-separated in UI, array on save.
 
+**110-02:** Correct column names from actual schema (device_name not name, assigned_playlist_id not current_playlist_id, no device_type on tv_devices); presigned URL generation in Edge Function (not RPC) for AWS Sig V4 HMAC; rate limiter fails open on error; file_size cast BIGINT->INTEGER matching media_assets schema.
+
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
 - Nested playlists MUST have circular reference prevention DB trigger before any nesting UI
@@ -105,9 +108,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 110-03-PLAN.md (Proof of Play: partitioned storage, RPCs, reporting UI)
+Stopped at: Completed 110-02-PLAN.md (API Gateway: 9-endpoint REST API with token auth, rate limiting, presigned S3 uploads)
 Resume file: None
-Next: Phase 110 complete (3/3 plans done)
+Next: Phase 110 complete (all plans done)
 
 ---
-*Updated: 2026-03-04 -- 110-01 complete, SSO domain detection/login/enforcement wired*
+*Updated: 2026-03-04 -- 110-02 complete, API gateway with 9 endpoints, token auth, rate limiting, S3 presigned uploads*
