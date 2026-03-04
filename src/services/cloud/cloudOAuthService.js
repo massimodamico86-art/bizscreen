@@ -20,6 +20,8 @@ export const CLOUD_PROVIDERS = {
   ONEDRIVE: 'onedrive',
   SHAREPOINT: 'sharepoint',
   GOOGLE_PHOTOS: 'gphotos',
+  GOOGLE_CALENDAR: 'gcal',
+  OUTLOOK_CALENDAR: 'outlook_cal',
 };
 
 // ─── PKCE Utilities ──────────────────────────────────────────────────
