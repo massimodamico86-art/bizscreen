@@ -19,7 +19,7 @@
 - [x] **v9.0 Production Polish** -- Phase 94 (shipped 2026-02-28, 20 reqs deferred)
 - [x] **v10.0 Visual QA Audit** -- Phases 98-103 (shipped 2026-03-01)
 - [x] **v11.0 Stability Pass** -- Phases 104-107 (shipped 2026-03-02)
-- [ ] **v12.0 Feature Parity** -- Phases 108-112 (in progress)
+- [ ] **v12.0 Feature Parity** -- Phases 108-113 (in progress)
 
 ## Phase History
 
@@ -88,6 +88,7 @@ All milestones shipped successfully (17 total).
 - [x] **Phase 110: Enterprise Platform** - SAML SSO preserving Supabase Auth, public REST API with scoped tokens, and Proof of Play reporting with partitioned storage (completed 2026-03-04)
 - [ ] **Phase 111: Documents and Calendar** - Server-side document conversion for smart TV compatibility and Google/Outlook calendar widgets via OAuth
 - [ ] **Phase 112: Canva and Video Wall** - Canva design import workflow and multi-screen synchronized video wall display
+- [ ] **Phase 113: Enterprise Platform Fixes** - Fix API scope mismatch and wire dashboard playback summary (gap closure from audit)
 
 ## Phase Details
 
@@ -159,9 +160,20 @@ All milestones shipped successfully (17 total).
   4. Screens in a video wall synchronize content playback within 200ms via Supabase Realtime
 **Plans**: TBD
 
+### Phase 113: Enterprise Platform Fixes
+**Goal**: Fix API scope mismatch on screen assignment endpoint and wire playback summary stats to the main dashboard
+**Depends on**: Phase 110 (fixes issues in completed enterprise platform)
+**Requirements**: API-04 (scope fix), POP-05 (dashboard placement)
+**Gap Closure:** Closes integration and flow gaps from v12.0 audit
+**Success Criteria** (what must be TRUE):
+  1. `PUT /v1/screens/:id/assignment` requires `screens:write` scope (not `screens:read`)
+  2. `screens:write` scope exists in the API token system and can be assigned to tokens
+  3. Playback summary statistics are visible on the main DashboardPage (not only ProofOfPlayPage)
+**Plans**: TBD
+
 ## Progress
 
-**Execution Order:** Phases execute in numeric order: 108 -> 109 -> 110 -> 111 -> 112
+**Execution Order:** Phases execute in numeric order: 108 -> 109 -> 110 -> 111 -> 112 -> 113
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -170,6 +182,7 @@ All milestones shipped successfully (17 total).
 | 110. Enterprise Platform | 4/4 | Complete    | 2026-03-04 |
 | 111. Documents and Calendar | 0/TBD | Not started | - |
 | 112. Canva and Video Wall | 0/TBD | Not started | - |
+| 113. Enterprise Platform Fixes | 0/TBD | Not started | - |
 
 ## Progress Summary
 
@@ -192,9 +205,9 @@ All milestones shipped successfully (17 total).
 | v9.0 Production Polish | 94 | 2 | Complete | 2026-02-28 |
 | v10.0 Visual QA Audit | 98-103 | 10 | Complete | 2026-03-01 |
 | v11.0 Stability Pass | 104-107 | 8 | Complete | 2026-03-02 |
-| v12.0 Feature Parity | 108-112 | TBD | In progress | - |
+| v12.0 Feature Parity | 108-113 | TBD | In progress | - |
 
-**Total:** 107 phases (104 complete, 5 planned) | 299 plans executed | 18 milestones (17 shipped, 1 in progress)
+**Total:** 108 phases (104 complete, 6 planned) | 299 plans executed | 18 milestones (17 shipped, 1 in progress)
 
 ---
 *Last updated: 2026-03-03 -- v12.0 Feature Parity roadmap created*
