@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T23:17:15.982Z"
+last_updated: "2026-03-04T18:42:08.588Z"
 progress:
-  total_phases: 72
-  completed_phases: 71
-  total_plans: 239
-  completed_plans: 238
+  total_phases: 73
+  completed_phases: 72
+  total_plans: 242
+  completed_plans: 240
 ---
 
 # Project State
@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v12.0 Feature Parity -- Phase 100 (Core Feature Walkthrough) Plan 04 complete (4/5 plans)
+**Current focus:** v2.1 Enterprise Platform -- Phase 110 Plan 01 complete (1/3 plans)
 
 ## Current Position
 
-Phase: 100 of 112 (Core Feature Walkthrough - CRUD Operations)
-Plan: 4 of 5 complete
+Phase: 110 of 112 (Enterprise Platform)
+Plan: 1 of 3 complete
 Status: In progress
-Last activity: 2026-03-03 -- Plan 04 complete (Data Sources, Menu Boards & Apps CRUD: 26 screenshots)
+Last activity: 2026-03-04 -- Plan 01 complete (SSO domain lookup and login page SSO detection)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 4.0 min
-- Total execution time: 0.73 hours
+- Total plans completed: 12
+- Average duration: 3.9 min
+- Total execution time: 0.78 hours
 
 **By Phase:**
 
@@ -44,6 +44,7 @@ Progress: [███████████████████████
 | 109-content-model | 5/5 | 18 min | 3.6 min |
 | 088-analytics-alerts | 1/3 | 2 min | 2.0 min |
 | 100-core-feature-walkthrough | 4/5 | 29 min | 7.3 min |
+| 110-enterprise-platform | 1/3 | 3 min | 3.0 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -51,6 +52,7 @@ Progress: [███████████████████████
 | Phase 109 P05 | 1 | 2 tasks | 2 files |
 | Phase 100 P02 | 17 | 2 tasks | 28 files |
 | Phase 100 P04 | 11 | 2 tasks | 26 files |
+| Phase 110 P01 | 3 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -80,6 +82,8 @@ Progress: [███████████████████████
 
 **100-04:** React fiber state injection via component name lookup for DataSourcesPage (hooks: 1=dataSources, 5=selectedSource, 6=sourceData, 9=showDeleteModal, 10=deleteTarget) and MenuBoardsPage; MenuBoardsPage delete uses window.confirm (native dialog); DataSourcesPage delete uses custom Modal (injectable via fiber); AppDetailModal uses custom fixed overlay (closed via backdrop or X button); Apps marketplace is catalog-based (fully functional without injection).
 
+**110-01:** SSO login via supabase.auth.signInWithSSO({ domain }) to preserve RLS session; domain lookup uses GIN-indexed TEXT[] with ANY(); lookup_sso_by_domain RPC granted to anon for pre-login detection; initiateSSOLogin() deprecated but not removed; domains stored as comma-separated in UI, array on save.
+
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
 - Nested playlists MUST have circular reference prevention DB trigger before any nesting UI
@@ -98,10 +102,10 @@ None. Clean start.
 
 ## Session Continuity
 
-Last session: 2026-03-03
-Stopped at: Completed 100-04-PLAN.md (data sources, menu boards & apps CRUD walkthrough: 26 screenshots)
+Last session: 2026-03-04
+Stopped at: Completed 110-01-PLAN.md (SSO domain lookup and login page SSO detection)
 Resume file: None
-Next: 100-05-PLAN.md (final walkthrough plan -- Settings, Admin & Remaining Pages)
+Next: 110-02-PLAN.md (REST API Key Management)
 
 ---
-*Updated: 2026-03-03 -- 100-04 complete, data sources/menu boards/apps marketplace walkthrough captured*
+*Updated: 2026-03-04 -- 110-01 complete, SSO domain detection/login/enforcement wired*

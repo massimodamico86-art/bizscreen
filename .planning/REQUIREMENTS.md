@@ -62,11 +62,11 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 ### SSO (SAML)
 
-- [ ] **SSO-01**: Admin can configure a SAML identity provider with IdP metadata URL
-- [ ] **SSO-02**: Users can sign in via SSO from the login page
-- [ ] **SSO-03**: SSO login creates a proper Supabase Auth session (preserves RLS)
-- [ ] **SSO-04**: Admin can enforce SSO-only login for their tenant
-- [ ] **SSO-05**: System auto-detects SSO by email domain and redirects accordingly
+- [x] **SSO-01**: Admin can configure a SAML identity provider with IdP metadata URL
+- [x] **SSO-02**: Users can sign in via SSO from the login page
+- [x] **SSO-03**: SSO login creates a proper Supabase Auth session (preserves RLS)
+- [x] **SSO-04**: Admin can enforce SSO-only login for their tenant
+- [x] **SSO-05**: System auto-detects SSO by email domain and redirects accordingly
 
 ### Public REST API
 
@@ -164,11 +164,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | POWER-01 | Phase 109 | Complete |
 | POWER-02 | Phase 109 | Complete |
 | POWER-03 | Phase 109 | Complete |
-| SSO-01 | Phase 110 | Pending |
-| SSO-02 | Phase 110 | Pending |
-| SSO-03 | Phase 110 | Pending |
-| SSO-04 | Phase 110 | Pending |
-| SSO-05 | Phase 110 | Pending |
+| SSO-01 | Phase 110 | Complete |
+| SSO-02 | Phase 110 | Complete |
+| SSO-03 | Phase 110 | Complete |
+| SSO-04 | Phase 110 | Complete |
+| SSO-05 | Phase 110 | Complete |
 | API-01 | Phase 110 | Pending |
 | API-02 | Phase 110 | Pending |
 | API-03 | Phase 110 | Pending |
