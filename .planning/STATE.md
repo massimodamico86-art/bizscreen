@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T21:58:34.000Z"
+last_updated: "2026-03-04T22:07:26.000Z"
 progress:
   total_phases: 75
-  completed_phases: 73
+  completed_phases: 74
   total_plans: 247
-  completed_plans: 246
+  completed_plans: 247
 ---
 
 # Project State
@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 Documents & Calendar -- Phase 111 Plan 04 next (3/4 plans complete, 02 just completed)
+**Current focus:** v2.1 Documents & Calendar -- Phase 111 complete (4/4 plans done), phase 112 next
 
 ## Current Position
 
 Phase: 111 of 112 (Documents & Calendar)
-Plan: 3 of 4 complete (01, 02, 03 done; 04 remaining)
-Status: In progress
-Last activity: 2026-03-04 -- Plan 02 complete (Document widget player component, registry, editor controls)
+Plan: 4 of 4 complete (01, 02, 03, 04 done)
+Status: Phase 111 complete
+Last activity: 2026-03-04 -- Plan 04 complete (Calendar widget player component, controls, registry, panel wiring)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 3.6 min
-- Total execution time: 0.98 hours
+- Total execution time: 1.05 hours
 
 **By Phase:**
 
@@ -45,7 +45,7 @@ Progress: [███████████████████████
 | 088-analytics-alerts | 1/3 | 2 min | 2.0 min |
 | 100-core-feature-walkthrough | 4/5 | 29 min | 7.3 min |
 | 110-enterprise-platform | 3/4 | 10 min | 3.3 min |
-| 111-documents-and-calendar | 3/4 | 12 min | 3.0 min |
+| 111-documents-and-calendar | 4/4 | 16 min | 4.0 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -60,6 +60,7 @@ Progress: [███████████████████████
 | Phase 111 P01 | 3 | 2 tasks | 4 files |
 | Phase 111 P02 | 3 | 2 tasks | 6 files |
 | Phase 111 P03 | 6 | 2 tasks | 6 files |
+| Phase 111 P04 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Progress: [███████████████████████
 
 **111-03:** Calendar OAuth callbacks return token objects (not saving to localStorage) for DB persistence via calendarService.saveCalendarSource(); calendar-proxy Edge Function handles token refresh on 401 server-side; 5-minute cache TTL on calendar_event_cache; provider-aware toast message and navigation (calendar callbacks do not redirect to media library); Google Calendar uses 'primary' as default calendarId, Outlook uses 'default'.
 
+**111-04:** CalendarWidget invokes calendar-proxy Edge Function directly (same as DocumentWidget reads Supabase directly) to avoid service-layer deps in player bundle; _lastRefresh underscore prefix for ESLint unused-var compliance; ESLint auto-removed unused isGoogleCalendarConnected/isOutlookCalendarConnected imports since source availability checked via DB query.
+
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
 - Nested playlists MUST have circular reference prevention DB trigger before any nesting UI
@@ -114,6 +117,7 @@ Key constraints for v12.0:
 - [Phase 100]: 100-04: React fiber state injection via component name lookup for DataSourcesPage and MenuBoardsPage; MenuBoardsPage delete uses window.confirm; AppDetailModal uses custom fixed overlay; Apps marketplace is catalog-based
 - [Phase 110]: 110-03: Rename-and-swap partitioning strategy; 15 monthly partitions (2026-01 to 2027-03) plus DEFAULT; pg_cron on 25th creates partition 2 months ahead; media_play and scene_end event_types for completed playbacks; ClipboardList icon from lucide-react; native HTML multi-select for screen filter
 - [Phase 111]: 111-03: Calendar OAuth callbacks return token objects for DB persistence; calendar-proxy handles 401 token refresh server-side; 5-min cache TTL; provider-aware toast; Google uses 'primary', Outlook uses 'default' calendarId
+- [Phase 111]: 111-04: CalendarWidget invokes calendar-proxy directly in player; multi-source widget pattern with sources array, Promise.all fetch, merge+sort+slice; date grouping with Today/Tomorrow relative labels; CalendarWidgetControls with OAuth source management in both editor panels
 
 ### Blockers/Concerns
 
@@ -122,9 +126,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 111-02-PLAN.md (Document widget player component, registry, editor controls)
+Stopped at: Completed 111-04-PLAN.md (Calendar widget player component, controls, registry, panel wiring)
 Resume file: None
-Next: Phase 111 Plan 04 (Calendar Widget UI)
+Next: Phase 112 (next phase) or milestone completion
 
 ---
-*Updated: 2026-03-04 -- 111-02 complete, DocumentWidget player with page carousel and crossfade, WIDGET_REGISTRY document entry, DocumentWidgetControls for both editor panels*
+*Updated: 2026-03-04 -- 111-04 complete, Phase 111 done (4/4), CalendarWidget with agenda list, auto-refresh, multi-source, CalendarWidgetControls in both editor panels*

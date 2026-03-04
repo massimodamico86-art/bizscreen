@@ -25,11 +25,11 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 ### Calendar
 
-- [ ] **CAL-01**: User can add a calendar widget to a layout zone
+- [x] **CAL-01**: User can add a calendar widget to a layout zone
 - [x] **CAL-02**: User can connect Google Calendar via OAuth
-- [ ] **CAL-03**: Calendar widget displays upcoming events on screen with auto-refresh
+- [x] **CAL-03**: Calendar widget displays upcoming events on screen with auto-refresh
 - [x] **CAL-04**: User can connect Outlook calendar via Microsoft OAuth
-- [ ] **CAL-05**: Calendar widget supports multiple calendar sources per widget
+- [x] **CAL-05**: Calendar widget supports multiple calendar sources per widget
 
 ### Documents
 
@@ -187,11 +187,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DOC-04 | Phase 111 | Complete |
 | DOC-05 | Phase 111 | Complete |
 | DOC-06 | Phase 111 | Complete |
-| CAL-01 | Phase 111 | Pending |
+| CAL-01 | Phase 111 | Complete |
 | CAL-02 | Phase 111 | Complete |
-| CAL-03 | Phase 111 | Pending |
+| CAL-03 | Phase 111 | Complete |
 | CAL-04 | Phase 111 | Complete |
-| CAL-05 | Phase 111 | Pending |
+| CAL-05 | Phase 111 | Complete |
 | CANVA-01 | Phase 112 | Pending |
 | CANVA-02 | Phase 112 | Pending |
 | CANVA-03 | Phase 112 | Pending |
