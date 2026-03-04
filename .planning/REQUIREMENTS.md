@@ -33,12 +33,12 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 ### Documents
 
-- [ ] **DOC-01**: User can upload PDF documents as media assets
-- [ ] **DOC-02**: User can upload Word/PPT/Excel documents as media assets
-- [ ] **DOC-03**: Uploaded documents are converted to images server-side for player compatibility
+- [x] **DOC-01**: User can upload PDF documents as media assets
+- [x] **DOC-02**: User can upload Word/PPT/Excel documents as media assets
+- [x] **DOC-03**: Uploaded documents are converted to images server-side for player compatibility
 - [ ] **DOC-04**: User can add a document widget to display pages in a layout zone
 - [ ] **DOC-05**: Document pages auto-advance on the screen player with configurable interval
-- [ ] **DOC-06**: Document widget works on WebOS/Tizen devices (rendered as pre-converted images)
+- [x] **DOC-06**: Document widget works on WebOS/Tizen devices (rendered as pre-converted images)
 
 ### Nested Playlists
 
@@ -181,12 +181,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | POP-03 | Phase 110 | Complete |
 | POP-04 | Phase 110 | Complete |
 | POP-05 | Phase 110 | Complete |
-| DOC-01 | Phase 111 | Pending |
-| DOC-02 | Phase 111 | Pending |
-| DOC-03 | Phase 111 | Pending |
+| DOC-01 | Phase 111 | Complete |
+| DOC-02 | Phase 111 | Complete |
+| DOC-03 | Phase 111 | Complete |
 | DOC-04 | Phase 111 | Pending |
 | DOC-05 | Phase 111 | Pending |
-| DOC-06 | Phase 111 | Pending |
+| DOC-06 | Phase 111 | Complete |
 | CAL-01 | Phase 111 | Pending |
 | CAL-02 | Phase 111 | Pending |
 | CAL-03 | Phase 111 | Pending |
