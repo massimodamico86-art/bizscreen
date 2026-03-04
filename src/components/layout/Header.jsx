@@ -56,6 +56,7 @@ const BREADCRUMB_CONFIG = {
   analytics: { label: 'Analytics' },
   'analytics-dashboard': { label: 'Analytics Dashboard', parent: 'Analytics', parentPage: 'analytics' },
   'content-performance': { label: 'Content Performance', parent: 'Analytics', parentPage: 'analytics' },
+  'proof-of-play': { label: 'Proof of Play', parent: 'Analytics', parentPage: 'analytics' },
   alerts: { label: 'Alerts' },
   'notification-settings': { label: 'Notification Settings' },
 

@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react';
 import {
-  Loader2,
-  Key,
-  Webhook,
-  Plus,
-  Info,
-  ExternalLink,
+  BookOpen,
+  CheckCircle,
   Clock,
-  Shield,
-  Trash2,
-  Globe,
-  Power,
+  Copy,
+  ExternalLink,
   Eye,
   EyeOff,
-  Copy,
-  CheckCircle,
+  Globe,
+  Info,
+  Key,
+  Loader2,
+  Plus,
+  Power,
+  Shield,
+  Trash2,
+  Webhook,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -32,7 +33,6 @@ import {
   ModalFooter,
 } from '../design-system';
 import { useTranslation } from '../i18n';
-
 
 import {
   fetchTokens,
@@ -340,6 +340,20 @@ const DeveloperSettingsPage = ({ showToast }) => {
               <Webhook size={16} aria-hidden="true" />
               {t('developerSettings.tabs.webhooks', 'Webhooks')}
             </button>
+            <button
+              onClick={() => setActiveTab('docs')}
+              role="tab"
+              aria-selected={activeTab === 'docs'}
+              aria-controls="docs-panel"
+              className={`px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                activeTab === 'docs'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <BookOpen size={16} aria-hidden="true" />
+              {t('developerSettings.tabs.docs', 'API Documentation')}
+            </button>
           </div>
 
       {loading ? (
@@ -518,6 +532,192 @@ const DeveloperSettingsPage = ({ showToast }) => {
                   </div>
                 </Card>
               )}
+            </div>
+          )}
+
+          {/* API Documentation Tab */}
+          {activeTab === 'docs' && (
+            <div id="docs-panel" role="tabpanel" aria-labelledby="docs-tab" className="space-y-6">
+              <h2 className="text-lg font-semibold text-gray-900">{t('developerSettings.docs.title', 'API Documentation')}</h2>
+
+              {/* Base URL */}
+              <Card>
+                <div className="p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">{t('developerSettings.docs.baseUrl', 'API Base URL')}</h3>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 bg-gray-50 rounded-lg p-3 text-sm font-mono text-gray-800 break-all">
+                      {window.location.origin}/functions/v1/api-gateway
+                    </code>
+                    <button
+                      onClick={() => copyToClipboard(`${window.location.origin}/functions/v1/api-gateway`)}
+                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg flex-shrink-0"
+                      aria-label={t('common.copy', 'Copy to clipboard')}
+                    >
+                      <Copy size={16} aria-hidden="true" />
+                    </button>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Authentication */}
+              <Card>
+                <div className="p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">{t('developerSettings.docs.auth', 'Authentication')}</h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    {t('developerSettings.docs.authDesc', 'Include your API token in the Authorization header of every request.')}
+                  </p>
+                  <pre className="bg-gray-50 rounded-lg p-3 text-sm font-mono text-gray-800 overflow-x-auto">
+                    Authorization: Bearer biz_your_token_here
+                  </pre>
+                  <p className="text-xs text-gray-500 mt-2">
+                    {t('developerSettings.docs.authNote', 'Tokens can be created in the API Tokens tab. Store tokens securely -- they are only shown once at creation.')}
+                  </p>
+                </div>
+              </Card>
+
+              {/* Rate Limiting */}
+              <Card>
+                <div className="p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">{t('developerSettings.docs.rateLimit', 'Rate Limiting')}</h3>
+                  <ul className="text-sm text-gray-600 space-y-1.5">
+                    <li>{t('developerSettings.docs.rateLimitWindow', '100 requests per 15-minute window per token')}</li>
+                    <li>{t('developerSettings.docs.rateLimitExceeded', '429 Too Many Requests returned when exceeded, with Retry-After header')}</li>
+                  </ul>
+                </div>
+              </Card>
+
+              {/* Endpoints Reference */}
+              <Card>
+                <div className="p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">{t('developerSettings.docs.endpoints', 'Endpoints Reference')}</h3>
+                  <div className="space-y-4">
+                    {[
+                      { method: 'GET', path: '/v1/screens', scope: 'screens:read', desc: 'List all screens', example: { request: 'GET /v1/screens?limit=10&offset=0', response: '{ "data": [{ "id": "...", "name": "Lobby Screen", "is_online": true }], "meta": { "total_count": 5 } }' } },
+                      { method: 'GET', path: '/v1/screens/:id', scope: 'screens:read', desc: 'Get a single screen', example: { request: 'GET /v1/screens/550e8400-e29b-41d4-a716-446655440000', response: '{ "data": { "id": "...", "name": "Lobby Screen", "is_online": true, "orientation": "landscape" } }' } },
+                      { method: 'GET', path: '/v1/playlists', scope: 'playlists:read', desc: 'List all playlists', example: { request: 'GET /v1/playlists?limit=20', response: '{ "data": [{ "id": "...", "name": "Morning Rotation", "item_count": 8 }], "meta": { "total_count": 12 } }' } },
+                      { method: 'GET', path: '/v1/playlists/:id', scope: 'playlists:read', desc: 'Get playlist with items', example: { request: 'GET /v1/playlists/550e8400-e29b-41d4-a716-446655440000', response: '{ "data": { "id": "...", "name": "Morning Rotation", "items": [{ "item_type": "media", "position": 0 }] } }' } },
+                      { method: 'PUT', path: '/v1/playlists/:id', scope: 'playlists:write', desc: 'Update playlist name/description', example: { request: 'PUT /v1/playlists/:id\n{ "name": "Updated Name", "description": "New description" }', response: '{ "data": { "id": "...", "name": "Updated Name", "description": "New description" } }' } },
+                      { method: 'GET', path: '/v1/media', scope: 'media:read', desc: 'List all media assets', example: { request: 'GET /v1/media?limit=50', response: '{ "data": [{ "id": "...", "name": "promo.mp4", "type": "video", "file_size": 10485760 }], "meta": { "total_count": 24 } }' } },
+                      { method: 'POST', path: '/v1/media', scope: 'media:write', desc: 'Get presigned S3 upload URL', example: { request: 'POST /v1/media\n{ "filename": "hero.jpg", "content_type": "image/jpeg" }', response: '{ "data": { "upload_url": "https://s3...", "file_key": "uploads/.../hero.jpg", "expires_in": 3600 } }' } },
+                      { method: 'POST', path: '/v1/media/confirm', scope: 'media:write', desc: 'Create media record after upload', example: { request: 'POST /v1/media/confirm\n{ "name": "hero.jpg", "type": "image", "file_url": "https://cdn.../hero.jpg", "file_size": 204800 }', response: '{ "data": { "id": "...", "name": "hero.jpg", "type": "image" } }' } },
+                      { method: 'PUT', path: '/v1/screens/:id/assignment', scope: 'screens:read', desc: 'Assign playlist to screen', example: { request: 'PUT /v1/screens/:id/assignment\n{ "playlist_id": "550e8400-..." }', response: '{ "data": { "id": "...", "name": "Lobby Screen", "assigned_playlist_id": "550e8400-..." } }' } },
+                    ].map((endpoint) => (
+                      <div key={`${endpoint.method} ${endpoint.path}`} className="border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="flex items-center gap-3 p-3 bg-gray-50 border-b border-gray-200">
+                          <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
+                            endpoint.method === 'GET'
+                              ? 'bg-green-100 text-green-700'
+                              : endpoint.method === 'PUT'
+                                ? 'bg-amber-100 text-amber-700'
+                                : 'bg-blue-100 text-blue-700'
+                          }`}>
+                            {endpoint.method}
+                          </span>
+                          <code className="text-sm font-mono text-gray-900">{endpoint.path}</code>
+                          <Badge variant="default">{endpoint.scope}</Badge>
+                        </div>
+                        <div className="p-3">
+                          <p className="text-sm text-gray-600 mb-2">{endpoint.desc}</p>
+                          <div className="space-y-2">
+                            <div>
+                              <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Request</span>
+                              <pre className="bg-gray-50 rounded p-2 text-xs font-mono text-gray-700 mt-1 overflow-x-auto whitespace-pre-wrap">{endpoint.example.request}</pre>
+                            </div>
+                            <div>
+                              <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Response</span>
+                              <pre className="bg-gray-50 rounded p-2 text-xs font-mono text-gray-700 mt-1 overflow-x-auto whitespace-pre-wrap">{endpoint.example.response}</pre>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+
+              {/* Pagination */}
+              <Card>
+                <div className="p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">{t('developerSettings.docs.pagination', 'Pagination')}</h3>
+                  <ul className="text-sm text-gray-600 space-y-1.5">
+                    <li>
+                      {t('developerSettings.docs.paginationParams', 'List endpoints support')} <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono">?limit=50&offset=0</code> {t('developerSettings.docs.paginationParamsSuffix', 'query parameters')}
+                    </li>
+                    <li>
+                      {t('developerSettings.docs.paginationMeta', 'Response includes')} <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono">meta.total_count</code> {t('developerSettings.docs.paginationMetaSuffix', 'for pagination')}
+                    </li>
+                    <li>
+                      {t('developerSettings.docs.paginationMax', 'Maximum limit is 100 items per request')}
+                    </li>
+                  </ul>
+                </div>
+              </Card>
+
+              {/* Media Upload Flow */}
+              <Card>
+                <div className="p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">{t('developerSettings.docs.uploadFlow', 'Media Upload Flow')}</h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    {t('developerSettings.docs.uploadFlowDesc', 'Media uploads use a two-step presigned URL flow for direct S3 uploads:')}
+                  </p>
+                  <ol className="text-sm text-gray-600 space-y-2 list-decimal list-inside">
+                    <li>
+                      <strong>POST /v1/media</strong> {t('developerSettings.docs.uploadStep1', 'with filename and content_type to get a presigned upload URL')}
+                    </li>
+                    <li>
+                      <strong>PUT</strong> {t('developerSettings.docs.uploadStep2', 'the file binary to the returned upload_url (direct S3 upload)')}
+                    </li>
+                    <li>
+                      <strong>POST /v1/media/confirm</strong> {t('developerSettings.docs.uploadStep3', 'with name, type, file_url, and file_size to create the media record')}
+                    </li>
+                  </ol>
+                </div>
+              </Card>
+
+              {/* Error Codes */}
+              <Card>
+                <div className="p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('developerSettings.docs.errorCodes', 'Error Codes')}</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="text-left py-2 pr-4 font-medium text-gray-900">{t('developerSettings.docs.statusCode', 'Status')}</th>
+                          <th className="text-left py-2 pr-4 font-medium text-gray-900">{t('developerSettings.docs.errorName', 'Error')}</th>
+                          <th className="text-left py-2 font-medium text-gray-900">{t('developerSettings.docs.errorDescription', 'Description')}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        <tr>
+                          <td className="py-2 pr-4"><code className="bg-red-50 text-red-700 px-1.5 py-0.5 rounded text-xs font-mono">401</code></td>
+                          <td className="py-2 pr-4 text-gray-900">Unauthorized</td>
+                          <td className="py-2 text-gray-600">{t('developerSettings.docs.error401', 'Invalid or expired API token')}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 pr-4"><code className="bg-red-50 text-red-700 px-1.5 py-0.5 rounded text-xs font-mono">403</code></td>
+                          <td className="py-2 pr-4 text-gray-900">Forbidden</td>
+                          <td className="py-2 text-gray-600">{t('developerSettings.docs.error403', 'Token lacks the required scope for this endpoint')}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 pr-4"><code className="bg-yellow-50 text-yellow-700 px-1.5 py-0.5 rounded text-xs font-mono">404</code></td>
+                          <td className="py-2 pr-4 text-gray-900">Not Found</td>
+                          <td className="py-2 text-gray-600">{t('developerSettings.docs.error404', 'Resource not found or not owned by your tenant')}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 pr-4"><code className="bg-yellow-50 text-yellow-700 px-1.5 py-0.5 rounded text-xs font-mono">429</code></td>
+                          <td className="py-2 pr-4 text-gray-900">Too Many Requests</td>
+                          <td className="py-2 text-gray-600">{t('developerSettings.docs.error429', 'Rate limit exceeded (100 requests per 15 minutes)')}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 pr-4"><code className="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-xs font-mono">500</code></td>
+                          <td className="py-2 pr-4 text-gray-900">Internal Error</td>
+                          <td className="py-2 text-gray-600">{t('developerSettings.docs.error500', 'Server error -- contact support if this persists')}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </Card>
             </div>
           )}
         </>

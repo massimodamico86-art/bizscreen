@@ -18,6 +18,7 @@ import {
   UtensilsCrossed,
   Video,
   X,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { useBranding, BrandingProvider } from './contexts/BrandingContext';
@@ -109,6 +110,7 @@ const SvgEditorPage = lazy(() => import('./pages/SvgEditorPage'));
 const SecurityDashboardPage = lazy(() => import('./pages/SecurityDashboardPage'));
 const TranslationDashboardPage = lazy(() => import('./pages/TranslationDashboardPage'));
 const MenuBoardsPage = lazy(() => import('./pages/MenuBoardsPage'));
+const ProofOfPlayPage = lazy(() => import('./pages/ProofOfPlayPage'));
 
 // Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
 /**
@@ -520,6 +522,7 @@ function BizScreenAppInner() {
     { id: 'schedules', label: t('nav.schedules', 'Schedules'), icon: Calendar },
     { id: 'screens', label: t('nav.screens', 'Screens'), icon: Monitor },
     { id: 'menu-boards', label: t('nav.menuBoards', 'Menu Boards'), icon: UtensilsCrossed },
+    { id: 'proof-of-play', label: t('nav.proofOfPlay', 'Proof of Play'), icon: ClipboardList },
   ];
 
   // Loading fallback component
@@ -608,6 +611,7 @@ function BizScreenAppInner() {
     'security': <Suspense fallback={<PageLoader />}><SecurityDashboardPage /></Suspense>,
     'translations': <Suspense fallback={<PageLoader />}><TranslationDashboardPage showToast={showToast} /></Suspense>,
     'menu-boards': <Suspense fallback={<PageLoader />}><MenuBoardsPage showToast={showToast} /></Suspense>,
+    'proof-of-play': <Suspense fallback={<PageLoader />}><ProofOfPlayPage showToast={showToast} /></Suspense>,
   };
 
   // Show Canva OAuth callback page
