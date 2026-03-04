@@ -61,6 +61,7 @@ export async function saveSSOProvider(config) {
     auto_create_users: config.autoCreateUsers ?? true,
     is_enabled: config.isEnabled ?? false,
     enforce_sso: config.enforceSso ?? false,
+    domains: Array.isArray(config.domains) ? config.domains : [],
     attribute_mapping: config.attributeMapping || {
       email: 'email',
       name: 'name',
@@ -208,7 +209,57 @@ export function generateRandomString(length = 32) {
 }
 
 /**
- * Initiate SSO login flow
+ * Look up an SSO provider by email domain.
+ * Calls the lookup_sso_by_domain RPC (accessible to anon for pre-login detection).
+ *
+ * @param {string} domain - Email domain (e.g., "company.com")
+ * @returns {Promise<{found: boolean, provider_id?: string, provider_name?: string, enforce_sso?: boolean, tenant_id?: string}>}
+ */
+export async function lookupSSOByDomain(domain) {
+  if (!domain) return { found: false };
+
+  const { data, error } = await supabase.rpc('lookup_sso_by_domain', {
+    p_domain: domain.toLowerCase().trim()
+  });
+
+  if (error) {
+    _logger.error('lookupSSOByDomain failed', error);
+    return { found: false };
+  }
+
+  return data || { found: false };
+}
+
+/**
+ * Sign in via SSO using Supabase GoTrue's built-in signInWithSSO.
+ * Delegates entirely to Supabase so the resulting session preserves all RLS policies.
+ *
+ * @param {string} domain - The email domain to match against a configured Supabase SSO provider
+ * @returns {Promise<{url?: string, error?: string}>}
+ */
+export async function signInWithSSO(domain) {
+  try {
+    const { data, error } = await supabase.auth.signInWithSSO({
+      domain: domain.toLowerCase().trim()
+    });
+
+    if (error) {
+      _logger.error('signInWithSSO failed', error);
+      return { error: error.message || 'SSO sign-in failed' };
+    }
+
+    return { url: data?.url };
+  } catch (err) {
+    _logger.error('signInWithSSO unexpected error', err);
+    return { error: err.message || 'An unexpected error occurred during SSO sign-in' };
+  }
+}
+
+/**
+ * @deprecated Use signInWithSSO(domain) instead. This function uses a custom SSO flow
+ * that does not produce a Supabase Auth session. Kept for backward compatibility.
+ *
+ * Initiate SSO login flow (legacy)
  */
 export async function initiateSSOLogin(tenantId) {
   // Get SSO provider
