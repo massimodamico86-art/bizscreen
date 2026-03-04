@@ -80,11 +80,11 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 ### Proof of Play
 
-- [ ] **POP-01**: Player logs content playback events (item ID, start time, duration, screen ID)
-- [ ] **POP-02**: User can view Proof of Play report with date range filter
-- [ ] **POP-03**: User can export Proof of Play data as CSV
-- [ ] **POP-04**: Proof of Play data is partitioned by month for performance
-- [ ] **POP-05**: Dashboard shows playback summary statistics
+- [x] **POP-01**: Player logs content playback events (item ID, start time, duration, screen ID)
+- [x] **POP-02**: User can view Proof of Play report with date range filter
+- [x] **POP-03**: User can export Proof of Play data as CSV
+- [x] **POP-04**: Proof of Play data is partitioned by month for performance
+- [x] **POP-05**: Dashboard shows playback summary statistics
 
 ### Canva Integration
 
@@ -176,11 +176,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | API-05 | Phase 110 | Pending |
 | API-06 | Phase 110 | Pending |
 | API-07 | Phase 110 | Pending |
-| POP-01 | Phase 110 | Pending |
-| POP-02 | Phase 110 | Pending |
-| POP-03 | Phase 110 | Pending |
-| POP-04 | Phase 110 | Pending |
-| POP-05 | Phase 110 | Pending |
+| POP-01 | Phase 110 | Complete |
+| POP-02 | Phase 110 | Complete |
+| POP-03 | Phase 110 | Complete |
+| POP-04 | Phase 110 | Complete |
+| POP-05 | Phase 110 | Complete |
 | DOC-01 | Phase 111 | Pending |
 | DOC-02 | Phase 111 | Pending |
 | DOC-03 | Phase 111 | Pending |
