@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T21:49:48.030Z"
+last_updated: "2026-03-04T21:53:28.276Z"
 progress:
   total_phases: 75
   completed_phases: 73
   total_plans: 247
-  completed_plans: 244
+  completed_plans: 245
 ---
 
 # Project State
@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 Documents & Calendar -- Phase 111 Plan 01 complete (1/4 plans)
+**Current focus:** v2.1 Documents & Calendar -- Phase 111 Plan 03 complete (3/4 plans)
 
 ## Current Position
 
 Phase: 111 of 112 (Documents & Calendar)
-Plan: 1 of 4 complete
+Plan: 3 of 4 complete
 Status: In progress
-Last activity: 2026-03-04 -- Plan 01 complete (Document upload pipeline, MIME types, doc-converter Edge Function, calendar tables migration)
+Last activity: 2026-03-04 -- Plan 03 complete (Calendar OAuth services, calendarService, calendar-proxy Edge Function)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
-- Average duration: 3.6 min
-- Total execution time: 0.85 hours
+- Total plans completed: 15
+- Average duration: 3.7 min
+- Total execution time: 0.95 hours
 
 **By Phase:**
 
@@ -45,7 +45,7 @@ Progress: [███████████████████████
 | 088-analytics-alerts | 1/3 | 2 min | 2.0 min |
 | 100-core-feature-walkthrough | 4/5 | 29 min | 7.3 min |
 | 110-enterprise-platform | 3/4 | 10 min | 3.3 min |
-| 111-documents-and-calendar | 1/4 | 3 min | 3.0 min |
+| 111-documents-and-calendar | 3/4 | 9 min | 3.0 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -58,6 +58,7 @@ Progress: [███████████████████████
 | Phase 110 P03 | 5 | 2 tasks | 5 files |
 | Phase 110 P04 | 1 | 1 tasks | 2 files |
 | Phase 111 P01 | 3 | 2 tasks | 4 files |
+| Phase 111 P03 | 6 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,8 @@ Progress: [███████████████████████
 
 **111-01:** PDF stored as single convertedPages entry (magick-wasm page splitting deferred as TODO); Office conversion via Gotenberg LibreOffice API with graceful error; removed legacy text/ MIME catch-all; shared migration 164 for calendar tables; pollConversionStatus uses exponential backoff (2s start, 15s cap, 30 max).
 
+**111-03:** Calendar OAuth callbacks return token objects (not saving to localStorage) for DB persistence via calendarService.saveCalendarSource(); calendar-proxy Edge Function handles token refresh on 401 server-side; 5-minute cache TTL on calendar_event_cache; provider-aware toast message and navigation (calendar callbacks do not redirect to media library); Google Calendar uses 'primary' as default calendarId, Outlook uses 'default'.
+
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
 - Nested playlists MUST have circular reference prevention DB trigger before any nesting UI
@@ -107,6 +110,7 @@ Key constraints for v12.0:
 - [Phase 100]: 100-02: Playwright route interception for Supabase mock data in bypass-auth mode; React fiber tree patching to override FeatureContext plan for campaigns feature gate bypass; scenes require userProfile?.id for data loading
 - [Phase 100]: 100-04: React fiber state injection via component name lookup for DataSourcesPage and MenuBoardsPage; MenuBoardsPage delete uses window.confirm; AppDetailModal uses custom fixed overlay; Apps marketplace is catalog-based
 - [Phase 110]: 110-03: Rename-and-swap partitioning strategy; 15 monthly partitions (2026-01 to 2027-03) plus DEFAULT; pg_cron on 25th creates partition 2 months ahead; media_play and scene_end event_types for completed playbacks; ClipboardList icon from lucide-react; native HTML multi-select for screen filter
+- [Phase 111]: 111-03: Calendar OAuth callbacks return token objects for DB persistence; calendar-proxy handles 401 token refresh server-side; 5-min cache TTL; provider-aware toast; Google uses 'primary', Outlook uses 'default' calendarId
 
 ### Blockers/Concerns
 
@@ -115,9 +119,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 111-01-PLAN.md (Document upload pipeline, MIME types, doc-converter Edge Function, calendar tables migration)
+Stopped at: Completed 111-03-PLAN.md (Calendar OAuth services, calendarService, calendar-proxy Edge Function)
 Resume file: None
-Next: Phase 111 Plan 02 (Document Viewer UI)
+Next: Phase 111 Plan 04 (Calendar Widget UI)
 
 ---
-*Updated: 2026-03-04 -- 111-01 complete, document upload pipeline with 7 MIME types, doc-converter Edge Function, calendar tables migration 164*
+*Updated: 2026-03-04 -- 111-03 complete, Google Calendar and Outlook OAuth with PKCE, calendarService for DB token persistence, calendar-proxy Edge Function with caching and token refresh*
