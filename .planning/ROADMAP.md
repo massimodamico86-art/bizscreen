@@ -130,10 +130,11 @@ All milestones shipped successfully (17 total).
   3. Admin can generate scoped API tokens, and external systems can read screens/playlists/media and upload media via REST endpoints with rate limiting
   4. API tokens are tenant-isolated -- a token from one tenant cannot access another tenant's data
   5. Player logs every content playback event, and users can view Proof of Play reports with date range filter and CSV export
-**Plans**: 3 plans
+**Plans**: 4 plans
 - [ ] 110-01-PLAN.md -- SAML SSO login flow: domain lookup migration, signInWithSSO integration, login page detection, enforcement
 - [ ] 110-02-PLAN.md -- Public REST API gateway: tenant-scoped RPCs, Edge Function with token validation and rate limiting, API docs tab
 - [ ] 110-03-PLAN.md -- Proof of Play reporting: monthly table partitioning, report aggregation RPCs, ProofOfPlayPage with filters/export
+- [ ] 110-04-PLAN.md -- Gap closure: fix screen name column reference in Proof of Play RPC and page (td.name -> td.device_name)
 
 ### Phase 111: Documents and Calendar
 **Goal**: Users can display PDF/Office documents and live calendar events from Google Calendar and Outlook on their screens
