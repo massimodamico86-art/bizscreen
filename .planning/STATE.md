@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T18:45:49.338Z"
+last_updated: "2026-03-04T20:37:36Z"
 progress:
   total_phases: 73
   completed_phases: 73
@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 Enterprise Platform -- Phase 110 Plan 01 complete (1/3 plans)
+**Current focus:** v2.1 Enterprise Platform -- Phase 110 Plan 04 complete (4/4 plans, gap closure done)
 
 ## Current Position
 
 Phase: 110 of 112 (Enterprise Platform)
-Plan: 3 of 3 complete
+Plan: 4 of 4 complete
 Status: In progress
-Last activity: 2026-03-04 -- Plan 03 complete (Proof of Play partitioned storage, RPCs, and reporting UI)
+Last activity: 2026-03-04 -- Plan 04 complete (Proof of Play screen name fix: td.device_name in RPC and page)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: 3.9 min
-- Total execution time: 0.78 hours
+- Total plans completed: 13
+- Average duration: 3.7 min
+- Total execution time: 0.80 hours
 
 **By Phase:**
 
@@ -44,7 +44,7 @@ Progress: [███████████████████████
 | 109-content-model | 5/5 | 18 min | 3.6 min |
 | 088-analytics-alerts | 1/3 | 2 min | 2.0 min |
 | 100-core-feature-walkthrough | 4/5 | 29 min | 7.3 min |
-| 110-enterprise-platform | 2/3 | 9 min | 4.5 min |
+| 110-enterprise-platform | 3/4 | 10 min | 3.3 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -55,6 +55,7 @@ Progress: [███████████████████████
 | Phase 110 P01 | 3 | 2 tasks | 4 files |
 | Phase 110 P02 | 6 | 2 tasks | 3 files |
 | Phase 110 P03 | 5 | 2 tasks | 5 files |
+| Phase 110 P04 | 1 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,8 @@ Progress: [███████████████████████
 
 **110-02:** Correct column names from actual schema (device_name not name, assigned_playlist_id not current_playlist_id, no device_type on tv_devices); presigned URL generation in Edge Function (not RPC) for AWS Sig V4 HMAC; rate limiter fails open on error; file_size cast BIGINT->INTEGER matching media_assets schema.
 
+**110-04:** CREATE OR REPLACE preserves existing GRANTs from migration 162 (no separate GRANT needed); comment in migration header documents the original td.name bug for audit trail.
+
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
 - Nested playlists MUST have circular reference prevention DB trigger before any nesting UI
@@ -108,9 +111,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 110-02-PLAN.md (API Gateway: 9-endpoint REST API with token auth, rate limiting, presigned S3 uploads)
+Stopped at: Completed 110-04-PLAN.md (Proof of Play screen name fix: td.device_name in RPC and page)
 Resume file: None
-Next: Phase 110 complete (all plans done)
+Next: Phase 110 complete (all 4 plans done including gap closure)
 
 ---
-*Updated: 2026-03-04 -- 110-02 complete, API gateway with 9 endpoints, token auth, rate limiting, S3 presigned uploads*
+*Updated: 2026-03-04 -- 110-04 complete, corrective migration 163 fixing td.name to td.device_name in get_proof_of_play_report RPC and ProofOfPlayPage*
