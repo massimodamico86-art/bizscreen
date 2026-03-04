@@ -29,6 +29,7 @@ import {
   Video,
   Globe,
   Presentation,
+  FileText,
 } from 'lucide-react';
 
 import {
@@ -47,6 +48,7 @@ import {
   VimeoWidget,
   WebPageWidget,
   GoogleSlidesWidget,
+  DocumentWidget,
 } from '../player/components/widgets/index.js';
 
 /**
@@ -240,6 +242,18 @@ export const WIDGET_REGISTRY = {
     icon: Presentation,
     label: 'Google Slides',
     defaultProps: { url: '', delayMs: 5000, loop: true, thumbnailUrl: '' },
+  },
+
+  document: {
+    component: DocumentWidget,
+    icon: FileText,
+    label: 'Document',
+    defaultProps: {
+      mediaId: '',
+      pageIntervalSeconds: 10,
+      loop: true,
+      transition: 'crossfade',
+    },
   },
 
   // Legacy alias for backward compatibility -- 'data' maps to DataTableWidget
