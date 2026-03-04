@@ -85,8 +85,8 @@ export default function ProofOfPlayPage({ showToast }) {
       try {
         const { data, error } = await supabase
           .from('tv_devices')
-          .select('id, name')
-          .order('name');
+          .select('id, device_name')
+          .order('device_name');
         if (!error && data) {
           setScreens(data);
         }
@@ -263,7 +263,7 @@ export default function ProofOfPlayPage({ showToast }) {
                 >
                   {screens.map(screen => (
                     <option key={screen.id} value={screen.id}>
-                      {screen.name}
+                      {screen.device_name}
                     </option>
                   ))}
                 </select>
