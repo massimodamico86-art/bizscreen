@@ -43,6 +43,7 @@ import { CountdownWidgetControls } from './CountdownWidgetControls.jsx';
 import { QRCodeWidgetControls } from './QRCodeWidgetControls.jsx';
 import { MenuBoardWidgetControls } from './MenuBoardWidgetControls';
 import { EmbedWidgetControls } from './EmbedWidgetControls.jsx';
+import { DocumentWidgetControls } from './DocumentWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -975,6 +976,11 @@ function WidgetControls({ block, onUpdate }) {
           props={props}
           onPropChange={handlePropChange}
         />
+      )}
+
+      {/* Document Widget Controls */}
+      {widgetType === 'document' && (
+        <DocumentWidgetControls props={props} onPropChange={handlePropChange} />
       )}
 
       {/* Text Color for all widgets */}

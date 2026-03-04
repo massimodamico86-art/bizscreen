@@ -30,6 +30,7 @@ import { SocialFeedWidgetControls } from '../scene-editor/SocialFeedWidgetContro
 import { CountdownWidgetControls } from '../scene-editor/CountdownWidgetControls.jsx';
 import { MenuBoardWidgetControls } from '../scene-editor/MenuBoardWidgetControls.jsx';
 import { EmbedWidgetControls } from '../scene-editor/EmbedWidgetControls.jsx';
+import { DocumentWidgetControls } from '../scene-editor/DocumentWidgetControls.jsx';
 
 // Color presets
 const COLOR_PRESETS = [
@@ -638,6 +639,11 @@ function WidgetControls({ element, onUpdate, onPropsUpdate }) {
           props={props}
           onPropChange={(key, value) => onPropsUpdate({ [key]: value })}
         />
+      )}
+
+      {/* Document Widget Controls */}
+      {widgetType === 'document' && (
+        <DocumentWidgetControls props={props} onPropChange={(key, value) => onPropsUpdate({ [key]: value })} />
       )}
 
       <ColorPicker
