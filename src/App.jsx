@@ -231,16 +231,52 @@ function BizScreenAppInner() {
       onedrive: () => import('./services/cloud/oneDriveService').then(m => m.handleOneDriveCallback(code, state)),
       sharepoint: () => import('./services/cloud/sharePointService').then(m => m.handleSharePointCallback(code, state)),
       gphotos: () => import('./services/cloud/googlePhotosService').then(m => m.handleGooglePhotosCallback(code, state)),
+      gcal: async () => {
+        const { handleGoogleCalendarCallback } = await import('./services/cloud/googleCalendarService');
+        const { saveCalendarSource } = await import('./services/calendarService');
+        const tokens = await handleGoogleCalendarCallback(code, state);
+        // Persist tokens to calendar_oauth_tokens DB table (NOT localStorage)
+        // Use 'primary' as default calendarId -- user can change in widget controls
+        await saveCalendarSource({
+          provider: 'gcal',
+          calendarId: 'primary',
+          label: 'Google Calendar',
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          tokenExpiry: tokens.expiresIn
+            ? new Date(Date.now() + tokens.expiresIn * 1000).toISOString()
+            : null,
+        });
+      },
+      outlook_cal: async () => {
+        const { handleOutlookCalendarCallback } = await import('./services/cloud/outlookCalendarService');
+        const { saveCalendarSource } = await import('./services/calendarService');
+        const tokens = await handleOutlookCalendarCallback(code, state);
+        // Persist tokens to calendar_oauth_tokens DB table (NOT localStorage)
+        await saveCalendarSource({
+          provider: 'outlook_cal',
+          calendarId: 'default',
+          label: 'Outlook Calendar',
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          tokenExpiry: tokens.expiresIn
+            ? new Date(Date.now() + tokens.expiresIn * 1000).toISOString()
+            : null,
+        });
+      },
     };
 
     const handler = callbackHandlers[cloudProvider];
     if (handler) {
       handler()
         .then(() => {
-          showToast('Connected to cloud storage!', 'success');
-          // Navigate to media library — YodeckAddMediaModal will detect the return provider via sessionStorage
+          const isCalendarProvider = cloudProvider === 'gcal' || cloudProvider === 'outlook_cal';
+          showToast(isCalendarProvider ? 'Calendar connected!' : 'Connected to cloud storage!', 'success');
           window.history.replaceState({}, '', '/app');
-          setCurrentPage('media-all');
+          if (!isCalendarProvider) {
+            // Navigate to media library -- YodeckAddMediaModal will detect the return provider via sessionStorage
+            setCurrentPage('media-all');
+          }
         })
         .catch((err) => {
           showToast(`Connection failed: ${err.message}`, 'error');
