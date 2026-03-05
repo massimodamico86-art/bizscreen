@@ -11,8 +11,8 @@
 - **Pages visited:** 36+ (interactive MCP browser navigation)
 - **Pages loaded OK:** All visited pages rendered without crashes
 - **Page crashes (error boundaries):** 0
-- **Bugs total:** 16
-- **Bugs resolved:** 16 (all)
+- **Bugs total:** 19
+- **Bugs resolved:** 19
 - **Bugs open:** 0
 
 ---
@@ -155,9 +155,31 @@ All console errors at 1920x1080 were the expected Supabase connection failures (
 
 ---
 
-## Open Issues
+## All Issues Resolved
 
-None. All 16 bugs resolved.
+All 19 bugs identified during QA walkthrough have been resolved.
+
+### [RESOLVED] BUG-17: createScreen fails under DEV_AUTH_BYPASS — OTP code never shown
+- **Page:** `screens` → Add Screen modal
+- **Resolution:** Fixed in quick task 67. `createScreen` now uses `getAuthenticatedUserId()` from devBypass.js which falls back to mock user ID under DEV_AUTH_BYPASS.
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-18: Player QR pairing polls every 3s with no backoff — console noise
+- **Page:** `/player` (PairPage in QR mode)
+- **Resolution:** Fixed in quick task 67. Polling now uses exponential backoff (3s -> 4.5s -> ... -> 30s max) with 60-retry limit (~5 minutes before stopping).
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-19: OTP code described as "6-digit" but is actually alphanumeric
+- **Pages:** PairPage manual entry
+- **Resolution:** Fixed in quick task 67. Changed "6-digit code" to "6-character code" in PairPage.
+- **Verified:** 2026-03-05
+
+### Non-bug observations from OTP/pairing walkthrough
+
+- **Player page renders correctly** at `/player` — QR code screen shows with device ID, instructions, and fallback to manual OTP entry. No crashes.
+- **Manual OTP entry UI** works well: input accepts uppercase alphanumeric, has 6-dot progress indicator, proper validation (enables button only at 6 chars), clear error messages for network/invalid/expired codes.
+- **Error messages are well-differentiated** in PairPage: network errors, invalid codes, and expired codes each get distinct user-facing messages.
+- **All console errors on player page** are expected backend-unavailable errors (503 from Supabase, ERR_CONNECTION_REFUSED for RPCs).
 
 ---
 
