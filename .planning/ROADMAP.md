@@ -87,7 +87,7 @@ All milestones shipped successfully (17 total).
 - [x] **Phase 109: Content Model** - Nested playlists with circular reference prevention, background audio tracks, and screen working hours scheduling (completed 2026-03-03)
 - [x] **Phase 110: Enterprise Platform** - SAML SSO preserving Supabase Auth, public REST API with scoped tokens, and Proof of Play reporting with partitioned storage (completed 2026-03-04)
 - [x] **Phase 111: Documents and Calendar** - Server-side document conversion for smart TV compatibility and Google/Outlook calendar widgets via OAuth (completed 2026-03-04)
-- [ ] **Phase 112: Canva and Video Wall** - Canva design import workflow and multi-screen synchronized video wall display
+- [x] **Phase 112: Canva and Video Wall** - Canva design import workflow and multi-screen synchronized video wall display (completed 2026-03-05)
 - [x] **Phase 113: Enterprise Platform Fixes** - Fix API scope mismatch and wire dashboard playback summary (gap closure from audit) (completed 2026-03-04)
 - [x] **Phase 114: Integration Pipeline Fixes** - Wire document upload conversion pipeline, add embed widget rendering to layout zones, fix build-blocking TVPreviewModal import (completed 2026-03-05)
 
@@ -198,7 +198,7 @@ All milestones shipped successfully (17 total).
 | 109. Content Model | 5/5 | Complete    | 2026-03-03 |
 | 110. Enterprise Platform | 4/4 | Complete    | 2026-03-04 |
 | 111. Documents and Calendar | 4/4 | Complete    | 2026-03-04 |
-| 112. Canva and Video Wall | 1/3 | In Progress|  |
+| 112. Canva and Video Wall | 3/3 | Complete   | 2026-03-05 |
 | 113. Enterprise Platform Fixes | 1/1 | Complete    | 2026-03-04 |
 | 114. Integration Pipeline Fixes | 2/2 | Complete    | 2026-03-05 |
 

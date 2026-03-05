@@ -90,15 +90,15 @@ Requirements for v12.0 Feature Parity milestone. Each maps to roadmap phases.
 
 - [x] **CANVA-01**: User can browse their Canva designs from within BizScreen
 - [x] **CANVA-02**: User can import a Canva design as a media asset (rendered as image)
-- [ ] **CANVA-03**: Imported Canva designs display correctly on the screen player
+- [x] **CANVA-03**: Imported Canva designs display correctly on the screen player
 - [x] **CANVA-04**: User can re-import updated Canva designs to refresh content
 
 ### Video Wall
 
 - [x] **VWALL-01**: Admin can create a video wall configuration (grid of screens)
 - [x] **VWALL-02**: Admin can define screen positions within the wall grid (rows x columns)
-- [ ] **VWALL-03**: Video wall distributes content across screens with bezel compensation
-- [ ] **VWALL-04**: Screens in a video wall synchronize content playback via Realtime (within 200ms)
+- [x] **VWALL-03**: Video wall distributes content across screens with bezel compensation
+- [x] **VWALL-04**: Screens in a video wall synchronize content playback via Realtime (within 200ms)
 
 ## Future Requirements
 
@@ -194,12 +194,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CAL-05 | Phase 111 | Complete |
 | CANVA-01 | Phase 112 | Complete |
 | CANVA-02 | Phase 112 | Complete |
-| CANVA-03 | Phase 112 | Pending |
+| CANVA-03 | Phase 112 | Complete |
 | CANVA-04 | Phase 112 | Complete |
 | VWALL-01 | Phase 112 | Complete |
 | VWALL-02 | Phase 112 | Complete |
-| VWALL-03 | Phase 112 | Pending |
-| VWALL-04 | Phase 112 | Pending |
+| VWALL-03 | Phase 112 | Complete |
+| VWALL-04 | Phase 112 | Complete |
 
 **Coverage:**
 - v12.0 requirements: 57 total

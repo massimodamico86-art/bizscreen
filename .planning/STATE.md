@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T02:34:50.119Z"
+last_updated: "2026-03-05T15:38:00Z"
 progress:
   total_phases: 76
   completed_phases: 76
@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 -- Phase 112 plan 01 complete (Canva OAuth tokens + video wall schema + canva-proxy Edge Function)
+**Current focus:** v2.1 -- Phase 112 complete (3/3 plans: backend + Canva UI + Video Wall UI)
 
 ## Current Position
 
 Phase: 112 of 114 (Canva and Video Wall)
-Plan: 1 of 3 complete (01 done)
-Status: Executing Phase 112
-Last activity: 2026-03-05 -- Plan 01 complete (migration 165 with 3 tables + canva-proxy Edge Function with 4 actions)
+Plan: 3 of 3 complete (all done)
+Status: Phase 112 Complete
+Last activity: 2026-03-05 -- Plan 03 complete (VideoWallPage + VideoWallConfigurator + VideoWallSync)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 21
 - Average duration: 3.4 min
-- Total execution time: 1.11 hours
+- Total execution time: 1.25 hours
 
 **By Phase:**
 
@@ -47,7 +47,7 @@ Progress: [███████████████████████
 | 110-enterprise-platform | 3/4 | 10 min | 3.3 min |
 | 111-documents-and-calendar | 4/4 | 16 min | 4.0 min |
 | 113-enterprise-platform-fixes | 1/1 | 2 min | 2.0 min |
-| 112-canva-and-video-wall | 1/3 | 2 min | 2.0 min |
+| 112-canva-and-video-wall | 2/3 | 6 min | 3.0 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -67,6 +67,8 @@ Progress: [███████████████████████
 | Phase 114 P01 | 1 | 2 tasks | 2 files |
 | Phase 114-integration-pipeline-fixes P02 | 3 | 2 tasks | 4 files |
 | Phase 112 P01 | 2 | 2 tasks | 2 files |
+| Phase 112 P03 | 4 | 2 tasks | 4 files |
+| Phase 112 P02 | 4 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -110,7 +112,11 @@ Progress: [███████████████████████
 
 **111-04:** CalendarWidget invokes calendar-proxy Edge Function directly (same as DocumentWidget reads Supabase directly) to avoid service-layer deps in player bundle; _lastRefresh underscore prefix for ESLint unused-var compliance; ESLint auto-removed unused isGoogleCalendarConnected/isOutlookCalendarConnected imports since source availability checked via DB query.
 
+**112-02:** All localStorage token storage removed; checkCanvaConnection() async via Edge Function; OAuth scopes read-only (design:meta:read, design:content:read, asset:read, profile:read); import pipeline: export via Edge Function -> fetch blob -> upload Storage -> insert media_assets with canva metadata; re-import updates existing record (url, file_size, updated_at); CanvaDesignBrowser lazy-loaded with Suspense.
+
 **112-01:** canva-proxy follows calendar-proxy pattern (JWT auth, corsHeaders, DB-backed tokens, 401 retry); 5-minute pre-expiry buffer for proactive token refresh; export polling returns exportId on timeout for client-side continuation; video_wall_screens RLS joins through video_walls for tenant check; tenant ID resolved server-side from user_profiles for exchange_token.
+
+**112-03:** LayoutGrid icon for video-walls nav (Grid3X3 taken); delete+insert for wall screen assignments; scale+translate CSS for bezel compensation; 200ms drift threshold for follower sync; first assigned screen auto-promoted to leader.
 
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
@@ -137,9 +143,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed 112-01-PLAN.md (Canva OAuth tokens + video wall schema + canva-proxy Edge Function)
+Stopped at: Completed 112-02-PLAN.md (Canva UI: rewired canvaService + CanvaDesignBrowser + LayoutTemplatesPage)
 Resume file: None
-Next: Phase 112 plan 02 (Canva UI integration). Backend ready with migration 165 and canva-proxy Edge Function.
+Next: Phase 112 plan 03 (Video Wall player). Canva integration complete.
 
 ---
-*Updated: 2026-03-05 -- 112-01 complete, Phase 112 in progress (1/3 plans), migration 165 + canva-proxy Edge Function*
+*Updated: 2026-03-05 -- 112-02 complete, Phase 112 in progress (2/3 plans), Canva UI integration done*
