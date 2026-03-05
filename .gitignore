@@ -35,4 +35,6 @@ screenshots/*
 # Keep QA discovery screenshots (v10.0 audit)
 !screenshots/98-*
 !screenshots/99-*
+!screenshots/56-*
+!screenshots/100-*
 !screenshots/ROUTE_MAP.md
