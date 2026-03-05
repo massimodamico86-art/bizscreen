@@ -61,6 +61,13 @@ async function authenticateRole(page, email, password, authFile, roleName) {
     return;
   }
 
+  // Double-check: if the URL redirected to /app (e.g., DEV_AUTH_BYPASS), treat as authenticated
+  if (page.url().includes('/app')) {
+    console.log(`${roleName}: Redirected to /app (dev bypass?) - saving session to ${authFile}`);
+    await page.context().storageState({ path: authFile });
+    return;
+  }
+
   console.log(`${roleName}: Login form found`);
 
   // Fill in credentials
