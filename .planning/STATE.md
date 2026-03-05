@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 54: Redo QA walkthrough using MCP Playwright
+Last activity: 2026-03-05 - Completed quick task 55: Fix BUG-06 and BUG-13: Remove duplicate create buttons on Schedules and Menu Boards pages
 
 Progress: [████████████████████████████] 100%
 
@@ -48,7 +48,7 @@ None.
 | 52 | Fix BUG-07: Dismiss error toasts on page navigation | 2026-03-05 | 73b096b | [52-bug-07-error-toast-persists-across-page-](./quick/52-bug-07-error-toast-persists-across-page-/) |
 | 53 | Fix BUG-08: Welcome and Dashboard pages render identically | 2026-03-05 | 2ef738c | [53-fix-bug-08-welcome-and-dashboard-pages-r](./quick/53-fix-bug-08-welcome-and-dashboard-pages-r/) |
 | 54 | Redo QA walkthrough using MCP Playwright | 2026-03-05 | 56d2ea9 | [54-redo-qa-walkthrough-using-mcp-playwright](./quick/54-redo-qa-walkthrough-using-mcp-playwright/) |
-| 55 | Fix BUG-06 and BUG-13: Remove duplicate create buttons from Schedules and Menu Boards | 2026-03-05 | a046d34 | [55-fix-bug-06-and-bug-13-remove-duplicate-c](./quick/55-fix-bug-06-and-bug-13-remove-duplicate-c/) |
+| 55 | Fix BUG-06 and BUG-13: Remove duplicate create buttons from Schedules and Menu Boards | 2026-03-05 | fd74f4d | [55-fix-bug-06-and-bug-13-remove-duplicate-c](./quick/55-fix-bug-06-and-bug-13-remove-duplicate-c/) |
 
 ## Session Continuity
 
