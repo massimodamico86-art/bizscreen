@@ -26,6 +26,7 @@ import {
   getBulkDownloadUrls,
   batchDeleteMediaAssets,
 } from '../../services/mediaService';
+import { isDocumentMimeType } from '../../services/documentService';
 import {
   getEffectiveLimits,
   hasReachedLimit,
@@ -260,6 +261,16 @@ export function useMediaLibrary({ showToast, filter = null } = {}) {
         uploadedFile.mediaType || uploadedFile.resourceType,
         uploadedFile.format
       );
+
+      // Documents are already saved by documentService.uploadDocument() in useS3Upload
+      // Just refresh the library and show a conversion-in-progress toast
+      if (mediaType === MEDIA_TYPES.DOCUMENT || isDocumentMimeType(uploadedFile.type)) {
+        fetchAssets();
+        setShowAddMediaModal(false);
+        showToast?.('Document uploaded — conversion in progress', 'success');
+        return;
+      }
+
       const asset = await createMediaAsset({
         name: uploadedFile.originalFilename || uploadedFile.name || `Media ${Date.now()}`,
         type: mediaType,
