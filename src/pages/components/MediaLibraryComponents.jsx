@@ -81,6 +81,15 @@ export const MEDIA_TYPE_LABELS = {
   app: 'App',
 };
 
+export const MEDIA_TYPE_PLURALS = {
+  image: 'Images',
+  video: 'Videos',
+  audio: 'Audio',
+  document: 'Documents',
+  web_page: 'Web Pages',
+  app: 'Apps',
+};
+
 // Limit warning banner
 export const LimitWarningBanner = ({ limits, onUpgrade }) => {
   if (!limits) return null;

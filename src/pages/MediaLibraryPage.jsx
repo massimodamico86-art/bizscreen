@@ -80,6 +80,7 @@ import YodeckAddMediaModal from '../components/media/YodeckAddMediaModal';
 // Extracted sub-components
 import {
   MEDIA_TYPE_LABELS,
+  MEDIA_TYPE_PLURALS,
   LimitWarningBanner,
   FolderBreadcrumbs,
   MediaListRow,
@@ -280,7 +281,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
 
   const getPageTitle = () => {
     if (!filter) return t('media.allMedia', 'All Media');
-    return MEDIA_TYPE_LABELS[filter] + 's';
+    return MEDIA_TYPE_PLURALS[filter] || MEDIA_TYPE_LABELS[filter];
   };
 
   // Calculate pagination indices for display
@@ -402,7 +403,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
             <Card className="p-6">
               <EmptyState
                 icon={<Folder size={48} className="text-gray-300" />}
-                title={`No ${MEDIA_TYPE_LABELS[filter]?.toLowerCase() || filter}s in this folder`}
+                title={`No ${MEDIA_TYPE_PLURALS[filter]?.toLowerCase() || filter} in this folder`}
                 description={`This folder doesn't contain any ${MEDIA_TYPE_LABELS[filter]?.toLowerCase() || filter} files.`}
               />
             </Card>
@@ -412,7 +413,7 @@ const MediaLibraryPage = ({ showToast, filter = null }) => {
             <Card className="p-6">
               <EmptyState
                 icon={<Image size={48} className="text-gray-300" />}
-                title={`No ${MEDIA_TYPE_LABELS[filter]?.toLowerCase() || filter}s yet`}
+                title={`No ${MEDIA_TYPE_PLURALS[filter]?.toLowerCase() || filter} yet`}
                 description={`Upload ${MEDIA_TYPE_LABELS[filter]?.toLowerCase() || filter} files to see them here.`}
                 action={
                   <Button onClick={handleAddMedia}>

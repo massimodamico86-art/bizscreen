@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 
-
 import { supabase } from '../supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
@@ -1092,7 +1091,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
         actions={
           <Button onClick={handleAddPlaylist}>
             <Plus size={18} />
-            {t('playlists.addPlaylist', 'Add Playlist')}
+            {t('playlists.addPlaylist', 'Create Playlist')}
           </Button>
         }
       />
@@ -1172,7 +1171,7 @@ const PlaylistsPage = ({ showToast, onNavigate }) => {
               </p>
 
               <Button onClick={handleAddPlaylist} className="bg-orange-500 hover:bg-orange-600">
-                Add Playlist
+                Create Playlist
               </Button>
 
               <button className="mt-4 text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">

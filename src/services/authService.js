@@ -217,7 +217,10 @@ export async function requestPasswordReset(email) {
     return { success: true, error: null };
   } catch (error) {
     logger.error('Password reset request exception', { error, email });
-    return { success: false, error: error.message };
+    const userMessage = error.message?.includes('Failed to fetch')
+      ? 'Unable to connect to the server. Please check your connection and try again.'
+      : error.message || 'An unexpected error occurred';
+    return { success: false, error: userMessage };
   }
 }
 

@@ -40,7 +40,6 @@ const BREADCRUMB_CONFIG = {
   'template-marketplace': { label: 'Template Marketplace' },
   apps: { label: 'Apps' },
   'menu-boards': { label: 'Menu Boards' },
-  listings: { label: 'Listings' },
   'data-sources': { label: 'Data Sources' },
   'social-accounts': { label: 'Social Accounts' },
 

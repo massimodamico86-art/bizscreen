@@ -43,7 +43,6 @@ import { FeatureGate, FeatureUpgradePrompt } from './components/FeatureGate';
 // Lazy load pages for better code splitting
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const WelcomePage = lazy(() => import('./pages/WelcomePage'));
-const ListingsPage = lazy(() => import('./pages/ListingsPage'));
 const MediaLibraryPage = lazy(() => import('./pages/MediaLibraryPage'));
 const AppsPage = lazy(() => import('./pages/AppsPage'));
 const PlaylistsPage = lazy(() => import('./pages/PlaylistsPage'));
@@ -610,8 +609,8 @@ function BizScreenAppInner() {
     schedules: <Suspense fallback={<PageLoader />}><SchedulesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     screens: <Suspense fallback={<PageLoader />}><ScreensPage showToast={showToast} /></Suspense>,
     'video-walls': <Suspense fallback={<PageLoader />}><VideoWallPage showToast={showToast} /></Suspense>,
-    // Legacy pages (still accessible)
-    listings: <Suspense fallback={<PageLoader />}><ListingsPage showToast={showToast} listings={listings} setListings={setListings} /></Suspense>,
+    // Legacy alias — redirects to locations
+    listings: <Suspense fallback={<PageLoader />}><LocationsPage showToast={showToast} /></Suspense>,
     settings: <Suspense fallback={<PageLoader />}><SettingsPage showToast={showToast} /></Suspense>,
     'account-plan': <Suspense fallback={<PageLoader />}><AccountPlanPage showToast={showToast} /></Suspense>,
     'admin-test': <Suspense fallback={<PageLoader />}><AdminTestPage /></Suspense>,
