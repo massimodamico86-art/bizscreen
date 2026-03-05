@@ -1,14 +1,14 @@
 ---
 gsd_state_version: 1.0
-milestone: v12.0
-milestone_name: Feature Parity
-status: complete
-last_updated: "2026-03-05T21:47:08.152Z"
+milestone: v2.1
+milestone_name: milestone
+status: unknown
+last_updated: "2026-03-05T22:20:03.689Z"
 progress:
-  total_phases: 114
-  completed_phases: 114
-  total_plans: 320
-  completed_plans: 320
+  total_phases: 70
+  completed_phases: 70
+  total_plans: 232
+  completed_plans: 232
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 61: Review welcome screen device/TV rendering at 1920x1080, check for visual bugs and console errors
+Last activity: 2026-03-05 - Completed quick task 62: Fix LAYOUT-01 mutual exclusivity, welcome teal card, breadcrumb, page title
 
 Progress: [████████████████████████████] 100%
 
@@ -37,6 +37,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-58]: Used Promise.race with .or() patterns for graceful E2E test degradation when backend unavailable
 - [Phase quick-59]: Used aside-scoped sidebar locators for Templates page navigation in E2E tests
 - [Phase quick-60]: Minimal single-line DEV_AUTH_BYPASS guard in PublicRoute redirect condition
+- [Phase quick-62]: Used conditional spread for mutual exclusivity; derived page title from slug
 
 ### Blockers/Concerns
 
@@ -59,11 +60,12 @@ None.
 | 59 | Layout-device assignment flow review and E2E tests (18 tests, 1 minor bug) | 2026-03-05 | c925d73 | [59-review-layout-device-assignment-flow-tes](./quick/59-review-layout-device-assignment-flow-tes/) |
 | 60 | Fix BUG-02 and BUG-03: Dev mode auth bypass skips PublicRoute redirect | 2026-03-05 | 561e78c | [60-fix-bug-02-and-bug-03-dev-mode-auth-rout](./quick/60-fix-bug-02-and-bug-03-dev-mode-auth-rout/) |
 | 61 | Review welcome screen device/TV rendering at 1920x1080, check for visual bugs and console errors | 2026-03-05 | 52228cf | [61-review-welcome-screen-device-tv-renderin](./quick/61-review-welcome-screen-device-tv-renderin/) |
+| 62 | Fix remaining minor issues: LAYOUT-01 mutual exclusivity, welcome teal card, breadcrumb, page title | 2026-03-05 | efa64f8 | [62-fix-remaining-minor-issues-layout-01-con](./quick/62-fix-remaining-minor-issues-layout-01-con/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 60
+Stopped at: Completed quick task 62
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
