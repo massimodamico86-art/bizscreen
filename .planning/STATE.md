@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T23:10:29.439Z"
+last_updated: "2026-03-05T23:51:01.593Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 66: Toast persistence on navigation regression test (BUG-07 fix confirmed)
+Last activity: 2026-03-05 - Completed quick task 67: Fix BUG-17/18/19 -- all 19 QA bugs now resolved, 0 open
 
 Progress: [████████████████████████████] 100%
 
@@ -41,6 +41,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-63]: Confirmed WelcomePage greeting works; identified missing placeholder substitution as BUG-Q63-01 (medium)
 - [Phase quick-64]: Skip sign-out redirect tests when DEV_AUTH_BYPASS active; filter backend connection errors as benign in E2E assertions
 - [Phase quick-66]: Distinguish page-specific mount toasts from stale carryover toasts in E2E test assertions
+- [Phase quick-67]: Only fixed createScreen auth bypass; left other supabase.auth.getUser() calls unchanged in screenService
 
 ### Blockers/Concerns
 
@@ -68,11 +69,12 @@ None.
 | 64 | Full auth flow E2E test (5 tests, 0 bugs, 2 skipped for dev bypass) | 2026-03-05 | 9a8ee9f | [64-test-full-auth-flow-via-playwright](./quick/64-test-full-auth-flow-via-playwright/) |
 | 65 | Verify Welcome vs Dashboard sidebar navigation (BUG-08 fix confirmed) | 2026-03-05 | 9ba5347 | [65-verify-welcome-vs-dashboard-sidebar-navi](./quick/65-verify-welcome-vs-dashboard-sidebar-navi/) |
 | 66 | Toast persistence on navigation regression test (BUG-07 fix confirmed) | 2026-03-05 | 727818e | [66-observe-whether-error-toasts-persist-acr](./quick/66-observe-whether-error-toasts-persist-acr/) |
+| 67 | Fix BUG-17, BUG-18, BUG-19: createScreen auth bypass, polling backoff, OTP label | 2026-03-05 | ede0029 | [67-fix-all-3-open-bugs-bug-17-createscreen-](./quick/67-fix-all-3-open-bugs-bug-17-createscreen-/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 66
+Stopped at: Completed quick task 67
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
