@@ -89,7 +89,7 @@ All milestones shipped successfully (17 total).
 - [x] **Phase 111: Documents and Calendar** - Server-side document conversion for smart TV compatibility and Google/Outlook calendar widgets via OAuth (completed 2026-03-04)
 - [ ] **Phase 112: Canva and Video Wall** - Canva design import workflow and multi-screen synchronized video wall display
 - [x] **Phase 113: Enterprise Platform Fixes** - Fix API scope mismatch and wire dashboard playback summary (gap closure from audit) (completed 2026-03-04)
-- [ ] **Phase 114: Integration Pipeline Fixes** - Wire document upload conversion pipeline, add embed widget rendering to layout zones, fix build-blocking TVPreviewModal import
+- [x] **Phase 114: Integration Pipeline Fixes** - Wire document upload conversion pipeline, add embed widget rendering to layout zones, fix build-blocking TVPreviewModal import (completed 2026-03-05)
 
 ## Phase Details
 
@@ -197,7 +197,7 @@ All milestones shipped successfully (17 total).
 | 111. Documents and Calendar | 4/4 | Complete    | 2026-03-04 |
 | 112. Canva and Video Wall | 0/TBD | Not started | - |
 | 113. Enterprise Platform Fixes | 1/1 | Complete    | 2026-03-04 |
-| 114. Integration Pipeline Fixes | 1/2 | In Progress|  |
+| 114. Integration Pipeline Fixes | 2/2 | Complete   | 2026-03-05 |
 
 ## Progress Summary
 
