@@ -168,9 +168,11 @@ export default function MenuBoardsPage({ showToast }) {
             Create and manage digital menu boards for your screens
           </p>
         </div>
-        <Button icon={<Plus size={16} />} onClick={handleCreate}>
-          New Menu Board
-        </Button>
+        {!loading && menuBoards.length > 0 && (
+          <Button icon={<Plus size={16} />} onClick={handleCreate}>
+            New Menu Board
+          </Button>
+        )}
       </div>
 
       {/* Loading skeleton */}

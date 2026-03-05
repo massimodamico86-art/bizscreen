@@ -392,17 +392,6 @@ const SchedulesPage = ({ showToast, onNavigate }) => {
         </Card>
       )}
 
-      {/* Footer Actions */}
-      <div className="flex items-center gap-4 pt-4">
-        <Button onClick={handleAddSchedule}>
-          <Plus size={18} />
-          Add Schedule
-        </Button>
-        <Button variant="outline">
-          Actions
-        </Button>
-      </div>
-
       {/* Create Schedule Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
