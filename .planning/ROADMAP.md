@@ -159,7 +159,10 @@ All milestones shipped successfully (17 total).
   2. User can re-import an updated Canva design to refresh previously imported content
   3. Admin can create a video wall configuration defining a grid of screens with row/column positions and bezel compensation
   4. Screens in a video wall synchronize content playback within 200ms via Supabase Realtime
-**Plans**: TBD
+**Plans**: 3 plans
+- [ ] 112-01-PLAN.md -- Database migration (Canva tokens + video wall tables) and canva-proxy Edge Function
+- [ ] 112-02-PLAN.md -- Canva service rewire to Edge Function proxy, CanvaDesignBrowser modal, LayoutTemplatesPage integration
+- [ ] 112-03-PLAN.md -- Video wall admin page with grid configurator, player sync hook with bezel compensation
 
 ### Phase 113: Enterprise Platform Fixes
 **Goal**: Fix API scope mismatch on screen assignment endpoint and wire playback summary stats to the main dashboard
@@ -195,7 +198,7 @@ All milestones shipped successfully (17 total).
 | 109. Content Model | 5/5 | Complete    | 2026-03-03 |
 | 110. Enterprise Platform | 4/4 | Complete    | 2026-03-04 |
 | 111. Documents and Calendar | 4/4 | Complete    | 2026-03-04 |
-| 112. Canva and Video Wall | 0/TBD | Not started | - |
+| 112. Canva and Video Wall | 0/3 | In progress | - |
 | 113. Enterprise Platform Fixes | 1/1 | Complete    | 2026-03-04 |
 | 114. Integration Pipeline Fixes | 2/2 | Complete    | 2026-03-05 |
 
