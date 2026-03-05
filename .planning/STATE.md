@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T15:38:00Z"
+last_updated: "2026-03-05T15:39:44.710Z"
 progress:
-  total_phases: 76
-  completed_phases: 76
-  total_plans: 250
-  completed_plans: 250
+  total_phases: 77
+  completed_phases: 77
+  total_plans: 253
+  completed_plans: 253
 ---
 
 # Project State
@@ -135,6 +135,7 @@ Key constraints for v12.0:
 - [Phase 113]: 113-01: screens:write scope follows read/write pair convention; PlaybackSummarySection after StatsGrid before PendingApprovalsWidget; playback fetch uses non-blocking fire-and-forget pattern
 - [Phase 114]: Document interception placed BEFORE setCurrentFile/metadata-gather in useS3Upload loop; double guard in useMediaLibrary for document type detection; fetchAssets() for refresh instead of optimistic state prepend
 - [Phase 114]: ZonePlayer widget branch uses getWidgetComponent() registry pattern; widget items carry widgetType + widgetProps/config; analytics itemType='widget'; ScaledStage is default export from src/ScaledStage.jsx; default exports added to listing modals alongside named exports
+- [Phase 112-03]: LayoutGrid icon for video-walls nav; delete+insert for wall screen assignments; scale+translate CSS for bezel compensation; 200ms drift threshold for follower sync
 
 ### Blockers/Concerns
 
