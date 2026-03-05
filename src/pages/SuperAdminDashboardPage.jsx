@@ -11,20 +11,20 @@ import {
   createClientUser
 } from '../services/adminService';
 import {
-  Shield,
-  FileText,
   Activity,
-  Server,
-  Wrench,
   Building2,
-  Flag,
-  Play,
-  UserCheck,
-  LayoutTemplate,
   ChevronRight,
-  X,
   Eye,
   EyeOff,
+  FileText,
+  Flag,
+  LayoutTemplate,
+  Play,
+  Server,
+  Shield,
+  UserCheck,
+  Wrench,
+  X,
 } from 'lucide-react';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
@@ -218,6 +218,12 @@ export default function SuperAdminDashboardPage({ onNavigate }) {
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
           <p className="text-gray-600">Super admin access required to view this page.</p>
+          <button
+            onClick={() => window.location.hash = '#/app/dashboard'}
+            className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
+          >
+            Go to Dashboard
+          </button>
         </div>
       </div>
     );

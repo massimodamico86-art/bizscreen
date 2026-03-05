@@ -21,22 +21,22 @@ import {
 } from '../services/billingService';
 
 import {
-  CheckCircle,
-  Clock,
+  AlertTriangle,
   Ban,
   Building2,
-  CreditCard,
   Calendar,
-  Loader2,
-  AlertTriangle,
-  RefreshCw,
-  Search,
-  Filter,
-  MoreVertical,
+  CheckCircle,
+  Clock,
+  CreditCard,
   Eye,
+  Filter,
+  Loader2,
+  MoreVertical,
   Pause,
   Play,
+  RefreshCw,
   RotateCcw,
+  Search,
   XCircle,
 } from 'lucide-react';
 import {
@@ -293,6 +293,12 @@ export default function TenantAdminPage({ showToast }) {
               </div>
               <h2 className="text-xl font-bold text-gray-900 mb-2">{t('common.accessDenied', 'Access Denied')}</h2>
               <p className="text-gray-600">{t('tenantAdmin.superAdminRequired', 'Super admin access required to view this page.')}</p>
+              <button
+                onClick={() => window.location.hash = '#/app/dashboard'}
+                className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
+              >
+                Go to Dashboard
+              </button>
             </div>
           </div>
         </PageContent>

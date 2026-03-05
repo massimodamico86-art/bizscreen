@@ -77,6 +77,12 @@ export default function AdminAuditLogsPage({ tenantId, tenantName, onBack, _show
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900">Access Denied</h2>
           <p className="text-gray-500 mt-2">Admin access required to view audit logs</p>
+          <button
+            onClick={() => window.location.hash = '#/app/dashboard'}
+            className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
+          >
+            Go to Dashboard
+          </button>
         </div>
       </div>
     );

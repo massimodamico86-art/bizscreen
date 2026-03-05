@@ -121,6 +121,12 @@ export default function AdminTestPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
           <p className="text-gray-600 mt-2">Only super admins can access this page.</p>
+          <button
+            onClick={() => window.location.hash = '#/app/dashboard'}
+            className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
+          >
+            Go to Dashboard
+          </button>
         </div>
       </div>
     );

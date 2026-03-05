@@ -10,12 +10,12 @@
 
 import { useAuth } from '../contexts/AuthContext';
 import {
+  Bug,
   Flag,
   FlaskConical,
-  MessageSquare,
-  Megaphone,
-  Bug,
   Loader2,
+  Megaphone,
+  MessageSquare,
 } from 'lucide-react';
 import {
   PageLayout,
@@ -85,6 +85,14 @@ export default function FeatureFlagsPage() {
           <Alert variant="error" title="Access Denied">
             You do not have permission to access this page.
           </Alert>
+          <div className="mt-4">
+            <button
+              onClick={() => window.location.hash = '#/app/dashboard'}
+              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
+            >
+              Go to Dashboard
+            </button>
+          </div>
         </PageContent>
       </PageLayout>
     );

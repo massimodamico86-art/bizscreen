@@ -25,7 +25,7 @@ import {
   applyCustomizationToScene,
   getTemplateUsageCounts,
 } from '../services/marketplaceService';
-import { PageLayout } from '../design-system';
+import { PageLayout, PageHeader } from '../design-system';
 import TemplateSidebar from '../components/templates/TemplateSidebar';
 import TemplateGrid from '../components/templates/TemplateGrid';
 import StarterPacksRow from '../components/templates/StarterPacksRow';
@@ -329,10 +329,11 @@ export default function TemplateMarketplacePage() {
   };
 
   return (
-    <PageLayout
-      title="Template Marketplace"
-      description="Browse and install professional scene templates"
-    >
+    <PageLayout>
+      <PageHeader
+        title="Template Marketplace"
+        description="Browse and install professional scene templates"
+      />
       {/* Prominent Search Bar */}
       <div className="mb-6">
         <div className="relative w-full max-w-2xl mx-auto">

@@ -19,18 +19,16 @@ import {
   Modal,
 } from '../design-system';
 import {
-  Users,
   Building2,
-  UserCheck,
+  Download,
   ExternalLink,
+  FileText,
   Plus,
   Upload,
-  FileText,
-  Download,
+  UserCheck,
+  Users,
 } from 'lucide-react';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-
-
 
 /**
  *
@@ -331,6 +329,12 @@ export default function AdminDashboardPage({ _onNavigate }) {
               </div>
               <h2 className="text-xl font-bold text-gray-900 mb-2">{t('common.accessDenied', 'Access Denied')}</h2>
               <p className="text-gray-600">{t('admin.adminAccessRequired', 'Admin access required to view this page.')}</p>
+              <button
+                onClick={() => window.location.hash = '#/app/dashboard'}
+                className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
+              >
+                Go to Dashboard
+              </button>
             </div>
           </div>
         </PageContent>

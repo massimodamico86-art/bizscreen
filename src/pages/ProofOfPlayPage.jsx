@@ -180,15 +180,17 @@ export default function ProofOfPlayPage({ showToast }) {
               <RefreshCw className={`w-4 h-4 mr-1.5 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExport}
-              disabled={loading || reportData.length === 0}
-            >
-              <Download className="w-4 h-4 mr-1.5" />
-              Export CSV
-            </Button>
+            <div title={reportData.length === 0 ? 'No data available to export' : undefined}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExport}
+                disabled={loading || reportData.length === 0}
+              >
+                <Download className="w-4 h-4 mr-1.5" />
+                Export CSV
+              </Button>
+            </div>
           </div>
         }
       />
