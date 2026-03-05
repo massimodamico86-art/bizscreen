@@ -586,9 +586,9 @@ const TemplatesPage = ({ showToast }) => {
               disabled={loading}
               role="tab"
               aria-selected={activeType === 'pack' && !showFavorites}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-50 ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-50 ${
                 activeType === 'pack' && !showFavorites
-                  ? 'bg-green-600 text-white'
+                  ? 'bg-brand-600 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
@@ -649,7 +649,7 @@ const TemplatesPage = ({ showToast }) => {
             {packs.length > 0 && (
               <section className="space-y-4 mb-8" aria-labelledby="packs-heading">
                 <div className="flex items-center gap-2">
-                  <Package size={20} className="text-green-600" aria-hidden="true" />
+                  <Package size={20} className="text-brand-600" aria-hidden="true" />
                   <h2 id="packs-heading" className="text-lg font-semibold text-gray-900">{t('templates.starterPacks', 'Starter Packs')}</h2>
                   <span className="text-sm text-gray-500">
                     {t('templates.starterPacksDescription', 'Complete setups with playlists, layouts, and schedules')}
@@ -824,8 +824,8 @@ const TemplatesPage = ({ showToast }) => {
           <Modal isOpen onClose={() => setSuccessModal(null)} size="lg">
             <ModalHeader>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center" aria-hidden="true">
-                  <Check size={24} className="text-green-600" />
+                <div className="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center" aria-hidden="true">
+                  <Check size={24} className="text-brand-600" />
                 </div>
                 <div>
                   <ModalTitle>{t('templates.templateApplied', 'Template Applied!')}</ModalTitle>
