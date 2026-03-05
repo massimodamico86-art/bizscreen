@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 52: Fix BUG-07 error toast persists across page navigation
+Last activity: 2026-03-05 - Completed quick task 53: Fix BUG-08 Welcome and Dashboard pages render identically
 
 Progress: [████████████████████████████] 100%
 
@@ -46,11 +46,12 @@ None.
 | 50 | Fix Service Quality page broken layout - Grid icon import collision | 2026-03-05 | 219c325 | [50-fix-service-quality-page-broken-layout-b](./quick/50-fix-service-quality-page-broken-layout-b/) |
 | 51 | Fix BUG-05: Replace teal/emerald/green colors with brand palette on Templates/Layouts pages | 2026-03-05 | 2dbdc88 | [51-fix-bug-05-templates-layouts-pages-use-t](./quick/51-fix-bug-05-templates-layouts-pages-use-t/) |
 | 52 | Fix BUG-07: Dismiss error toasts on page navigation | 2026-03-05 | 73b096b | [52-bug-07-error-toast-persists-across-page-](./quick/52-bug-07-error-toast-persists-across-page-/) |
+| 53 | Fix BUG-08: Welcome and Dashboard pages render identically | 2026-03-05 | 9fc1aa1 | [53-fix-bug-08-welcome-and-dashboard-pages-r](./quick/53-fix-bug-08-welcome-and-dashboard-pages-r/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 52
+Stopped at: Completed quick task 53
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
