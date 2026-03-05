@@ -331,6 +331,11 @@ function BizScreenAppInner() {
     }
   }, []);
 
+  // Dismiss any visible toast when navigating to a new page
+  useEffect(() => {
+    setToast(null);
+  }, [currentPage]);
+
   /**
    * Fetch user data and set up real-time subscriptions
    *
