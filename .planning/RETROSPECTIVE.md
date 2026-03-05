@@ -141,6 +141,54 @@
 
 ---
 
+## Milestone: v12.0 — Feature Parity
+
+**Shipped:** 2026-03-05
+**Phases:** 7 | **Plans:** 21 | **Commits:** 106
+
+### What Was Built
+- Embed widgets: YouTube, Vimeo, web page, Google Slides with offline fallback thumbnails and editor controls
+- Content model: nested playlists with DB-level circular reference prevention, background audio, working hours scheduling
+- Enterprise platform: SAML SSO preserving RLS, 9-endpoint REST API gateway, Proof of Play with monthly partitioning
+- Documents: PDF/Office server-side conversion via Gotenberg Edge Function for smart TV compatibility
+- Calendars: Google/Outlook OAuth with server-side token refresh via calendar-proxy Edge Function
+- Canva: design import via PKCE OAuth flow through canva-proxy Edge Function
+- Video wall: leader/follower Realtime Broadcast sync with bezel-compensated CSS transforms
+- Gap closure: 2 integration fixes (document upload pipeline, embed rendering in ZonePlayer) + build fix
+
+### What Worked
+- **Edge Function proxy pattern**: canva-proxy, calendar-proxy, doc-converter all follow the same pattern (JWT auth, CORS headers, DB-backed tokens, 401 retry) — establishing the pattern in calendar-proxy made the next two trivial
+- **DB-level safety for nested playlists**: Circular reference prevention trigger + RPC pre-check ensures data integrity regardless of UI bugs — impossible to create a circular reference
+- **Milestone audit + gap closure phases**: Running `/gsd:audit-milestone` mid-milestone caught 2 integration gaps (document upload not wired, embed widgets not rendering in ZonePlayer) and 1 build blocker that would have been embarrassing to ship
+- **Widget registry pattern for ZonePlayer**: Adding a single `getWidgetComponent()` branch made all 17+ widget types auto-supported in layout zones with zero per-widget code
+- **Server-side document conversion**: Gotenberg approach ensures WebOS/Tizen devices never see raw documents — eliminates an entire category of smart TV rendering bugs
+
+### What Was Inefficient
+- **Stale audit blocking completion**: The audit was created before Phase 112 was executed, so its `gaps_found` status required manual reasoning to determine it was stale — workflow should auto-detect stale audits
+- **SUMMARY files still lack one_liner field**: Same issue across v7.0, v8.0, v11.0, v12.0 — accomplishment extraction requires manual reading of frontmatter
+- **Phase 109 expanded from 4 to 5 plans**: Plan 05 added mid-execution for playlist tab in editor library panel — not captured in original roadmap plan count
+
+### Patterns Established
+- **Edge Function proxy pattern**: JWT auth, CORS headers, DB-backed OAuth tokens, 401 retry with proactive refresh — used for calendar-proxy, canva-proxy, doc-converter
+- **Server-side conversion for smart TV**: Convert documents to images before player rendering — Gotenberg for Office, direct rendering for PDF
+- **Widget registry in ZonePlayer**: `getWidgetComponent()` lookup enables automatic support for any registered widget type
+- **Leader/follower Realtime sync**: Supabase Broadcast for multi-device coordination with drift threshold
+- **DB trigger + RPC pre-check**: Trigger ensures data integrity, RPC enables UI-level validation messages
+
+### Key Lessons
+1. **Edge Function proxy pattern scales across integrations** — once established, new third-party integrations follow the same auth/proxy/cache template
+2. **DB-level constraints prevent entire bug categories** — circular reference prevention trigger makes it impossible to create bad data
+3. **Gap closure phases should be standard** — mid-milestone audit revealed integration gaps invisible during per-phase development
+4. **Widget registry pattern delivers compound returns** — one code change (ZonePlayer branch) supports all current and future widget types
+5. **57 requirements in 3 days is achievable** — clear requirements + established patterns + parallel-safe architecture enables high velocity
+
+### Cost Observations
+- Model mix: ~70% opus (execution, planning), ~25% sonnet (quick tasks), ~5% haiku (research)
+- Sessions: ~6 sessions over 3 days
+- Notable: Highest requirement-per-day velocity of any milestone (19 requirements/day average)
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -150,6 +198,7 @@
 | v7.0 | 83 | 11 | Quick executor for audit plans, milestone audit before ship |
 | v8.0 | 12 | 2 | Screenshot infrastructure + auth tests, shipped at 11% with gaps |
 | v11.0 | 30 | 4 | Root cause analysis across 6 crashes, service-level fallback pattern, 1-day execution |
+| v12.0 | 106 | 7 | Edge Function proxy pattern, widget registry auto-extensibility, gap closure as standard practice |
 
 ### Cumulative Quality
 
@@ -158,6 +207,7 @@
 | v7.0 | 57 | 100% | 11/11 passed |
 | v8.0 | 18/157 | 100% (completed) | 8/8 plans passed |
 | v11.0 | 18/18 | 100% | 4/4 phases, 5/5 E2E flows |
+| v12.0 | 57/57 | 100% | 7/7 phases, audit + gap closure |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -168,3 +218,5 @@
 5. Shipping incomplete milestones is acceptable when foundation is solid and gaps are documented
 6. Root cause analysis pays compound dividends — one fix can resolve multiple independent bug reports
 7. Visual QA audit + stability pass is an effective two-milestone pattern — find bugs systematically, then fix them all
+8. Edge Function proxy pattern scales across integrations — establish once, apply to all third-party APIs
+9. Gap closure phases should be standard practice — mid-milestone audits catch integration gaps invisible during per-phase development

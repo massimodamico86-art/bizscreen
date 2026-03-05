@@ -2,7 +2,7 @@
 
 ## What This Is
 
-BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists, design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, display live data from Google Sheets/CSV/RSS feeds/social media on screens, play video content with HLS adaptive streaming, manage screen groups with tags, deploy screens in portrait or landscape orientation, display structured menu boards with realtime updates, and monitor device health with diagnostic telemetry, screenshots, and alert-driven notifications. The player self-heals from blank/frozen/crashed states, verifies it is displaying the correct published content, and reports device metrics on every heartbeat cycle. All 12 widget types are fully configurable from both the layout editor and scene editor. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices with a centralized widget registry orchestrating 12 widget types.
+BizScreen is a digital signage platform enabling businesses to manage content across distributed screens. Users create playlists (with nested sub-playlists and background audio), design scenes with a visual editor, schedule content by time/day with campaigns and priorities, browse a templates marketplace for pre-built content, manage multi-language content with device-specific delivery, display live data from Google Sheets/CSV/RSS feeds/social media on screens, embed YouTube/Vimeo videos, web pages, Google Slides, PDF/Office documents, and Google/Outlook calendars as widgets, import Canva designs, play video content with HLS adaptive streaming, manage screen groups with tags, deploy screens in portrait or landscape orientation, display structured menu boards with realtime updates, configure multi-screen video walls with synchronized playback, and monitor device health with diagnostic telemetry, screenshots, and alert-driven notifications. Enterprise features include SAML SSO, a public REST API with scoped tokens, Proof of Play compliance reporting, and per-screen working hours scheduling. The player self-heals from blank/frozen/crashed states, verifies it is displaying the correct published content, and reports device metrics on every heartbeat cycle. All 17+ widget types are fully configurable from both the layout editor and scene editor. The platform supports multi-tenant architecture with role-based access, feature-gated plans, and offline-capable player devices with a centralized widget registry.
 
 ## Core Value
 
@@ -228,27 +228,22 @@ These capabilities shipped and are production-verified:
 - ✓ SVG Editor export preview dialog with format/quality/scale options — v11.0
 - ✓ Branding save button tracks unsaved changes state — v11.0
 
+**v12.0 Feature Parity (2026-03-05):**
+- ✓ YouTube, Vimeo, web page, Google Slides embed widgets with offline fallback — v12.0
+- ✓ Nested playlists with circular reference prevention and 5-level depth limit — v12.0
+- ✓ Background audio with volume control per playlist — v12.0
+- ✓ Per-screen working hours scheduling (on/off by day of week) — v12.0
+- ✓ SAML SSO login with domain auto-detection and enforcement mode — v12.0
+- ✓ 9-endpoint REST API gateway with scoped tokens and rate limiting — v12.0
+- ✓ Proof of Play reporting with monthly partitioning and CSV export — v12.0
+- ✓ PDF/Office document upload with server-side conversion for smart TVs — v12.0
+- ✓ Google Calendar and Outlook calendar widgets via OAuth — v12.0
+- ✓ Canva design import via Edge Function proxy with PKCE flow — v12.0
+- ✓ Multi-screen video wall with Realtime broadcast sync and bezel compensation — v12.0
+
 ### Active
 
-## Current Milestone: v12.0 Feature Parity
-
-**Goal:** Close the core feature gap with Yodeck and OptiSigns by implementing 14 production-ready features spanning media types, integrations, enterprise capabilities, and player enhancements.
-
-**Target features:**
-- Document display (PDF/Word/PPT/Excel as first-class media)
-- YouTube/Vimeo video embedding
-- Web page display widget
-- Proof of Play reporting (playback logs with compliance export)
-- SSO via SAML (enterprise authentication)
-- Public REST API with API key management
-- Nested/sub-playlists
-- Media expiration dates (auto-archive after date)
-- Working hours / screen power scheduling
-- Audio / background music support
-- Video wall support (multi-screen synchronized display)
-- Calendar widgets (Google Calendar / Outlook)
-- Google Slides integration (import and display)
-- Canva integration (OAuth import and display)
+(No active requirements -- planning next milestone)
 
 ### Out of Scope
 
@@ -267,46 +262,34 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (post v11.0):**
+**Current State (post v12.0):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- ~196,000 lines of JavaScript/JSX/CSS in src/
-- 17 milestones shipped (v1 through v11.0), 104 phases, 299 plans executed
-- Every page audited and verified (v7.0) + all 18 bugs from v10.0 visual QA audit resolved (v11.0)
-- All 6 crash pages now render successfully (EmptyState defensive icon rendering)
-- Graceful degradation on all pages when Supabase RPCs unavailable (service-level fallback pattern)
-- Shared dev bypass utility (`src/utils/devBypass.js`) for dev-mode auth
-- SVG Editor export dialog with format/quality/scale options
-- Responsive mobile filter collapse (Templates) and tablet pricing grid
-- E2E screenshot test infrastructure in place (v8.0): screenshotStep() helper, viewport projects, CI artifact upload
-- Test suite: 2,079 unit tests, 1,191 E2E tests (all skips categorized and documented)
+- ~203,800 lines of JavaScript/JSX/CSS in src/
+- 18 milestones shipped (v1 through v12.0), 114 phases, 320 plans executed
+- Every page audited and verified (v7.0) + all bugs from visual QA resolved (v11.0)
+- Graceful degradation on all pages when Supabase RPCs unavailable
+- Centralized widget registry with 17+ widget types (clock, date, weather, QR, video, data-table, RSS, social, countdown, menu-board, YouTube, Vimeo, web page, Google Slides, document, calendar, Canva)
+- 7 Edge Function proxies: Unsplash, RSS, Weather, AI Designer, doc-converter, calendar-proxy, canva-proxy
+- Enterprise features: SAML SSO, REST API gateway, Proof of Play reporting
+- Content model: nested playlists, background audio, working hours scheduling
+- Canva design import and multi-screen video wall with Realtime sync
+- Player self-healing with content version verification and alert pipeline
+- Cloud media imports: 5 providers + Canva with shared PKCE OAuth utility
+- E2E screenshot test infrastructure with CI artifact upload
 - ESLint: zero warnings, zero errors, all rules at error level with pre-commit enforcement
-- Sentry error monitoring with Slack alerting (issue + metric alerts to #sentry-alerts)
-- Player component supports web, Android, iOS, WebOS, Tizen
-- Multi-tenant with feature flags for plan differentiation
-- AWS S3 for media storage with CloudFront CDN
-- Fabric.js SVG editor: fully wired and verified
-- AI Designer: Anthropic API via Supabase Edge Function
-- Cloud media imports: 5 providers with shared PKCE OAuth utility
-- 4 Edge Function proxies: Unsplash, RSS, Weather, AI Designer
-- Centralized widget registry with 12 widget types
-- Player self-healing: blank/frozen/crash detection with progressive recovery
-- Content version verification on heartbeat with mismatch auto-retry
-- Alert pipeline: Postgres trigger for notifications, critical-only email via Resend
+- Sentry error monitoring with Slack alerting
 
 **Technical Debt (Minimal):**
-- ~900 E2E tests skipped (intentional: ~800 project-specific multi-project pattern, remainder categorized)
+- ~900 E2E tests skipped (intentional: ~800 project-specific multi-project pattern)
 - Sentry alert environment set to "all" (will narrow to "production" once environment auto-creates)
 - Unsplash offline caching: TOS may conflict with offline player requirement
-- Duplicate legacy player_heartbeat RPC in usePlayerContent (usePlayerHeartbeat now owns all reporting)
-- ViewPage passes wrong lastActivityRef to useStuckDetection (content-level instead of playback-level)
-- Orphaned test file: tests/unit/services/gdprDeletionService.test.js imports deleted service
-- ContentPerformancePage has no direct link to ContentDetailAnalyticsPage (minor UX gap)
-- canEditContent()/canEditScreens() async called sync in CampaignsPage — Promises always truthy
-- SidebarSuggestedSection returns null (intentional stub — no data source yet)
-- 3 standalone Sidebar*Section.jsx files are orphaned dead code (inline versions in TemplateSidebar.jsx are active)
-- Dormant catch block at SettingsPage.jsx:79-81 (getUserSettings now swallows errors)
-- updateUserSettings uses raw supabase.auth.getUser() — saves fail for dev-bypass users (acceptable)
-- Pre-existing: TVPreviewModal.jsx imports ScaledStage from wrong path (predates v11.0)
+- Duplicate legacy player_heartbeat RPC in usePlayerContent
+- ViewPage passes wrong lastActivityRef to useStuckDetection
+- canEditContent()/canEditScreens() async called sync in CampaignsPage
+- SidebarSuggestedSection returns null (intentional stub)
+- 3 standalone Sidebar*Section.jsx files are orphaned dead code
+- PDF stored as single convertedPages entry (magick-wasm page splitting deferred)
+- initiateSSOLogin() deprecated but not removed
 
 **Codebase Mapping:**
 - `.planning/codebase/ARCHITECTURE.md` — system design
@@ -446,5 +429,14 @@ These capabilities shipped and are production-verified:
 | sm:hidden toggle for mobile filter collapse | 640px breakpoint gives small tablets more room | ✓ Good — accessible with aria-expanded |
 | sm:grid-cols-2 lg:grid-cols-3 for pricing | Starts 2-column at 640px for better tablet use of space | ✓ Good — comfortable spacing |
 
+| Edge Function proxy pattern (canva-proxy, calendar-proxy, doc-converter) | Server-side API key hiding, token refresh, CORS | ✓ Good — consistent pattern |
+| signInWithSSO for SAML login | Preserves Supabase RLS session | ✓ Good — no custom auth bypass |
+| Monthly table partitioning for Proof of Play | Performance at scale, auto-partition via pg_cron | ✓ Good — 15 partitions created |
+| Server-side document conversion via Gotenberg | Smart TV (WebOS/Tizen) cannot render raw documents | ✓ Good — image-based display |
+| Leader/follower Realtime broadcast for video wall | Simple sync model, 200ms drift threshold | ✓ Good — adequate for signage |
+| Widget registry pattern in ZonePlayer | Single branch handles all 17+ widget types | ✓ Good — auto-extensible |
+| Circular reference prevention via DB trigger | Guarantees data integrity regardless of client | ✓ Good — impossible to bypass |
+| Canva PKCE OAuth via Edge Function proxy | No client-side secrets, server-side token storage | ✓ Good — secure flow |
+
 ---
-*Last updated: 2026-03-02 after v12.0 Feature Parity milestone started*
+*Last updated: 2026-03-05 after v12.0 Feature Parity milestone*

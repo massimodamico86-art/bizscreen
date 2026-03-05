@@ -1,5 +1,37 @@
 # Project Milestones: BizScreen
 
+## v12.0 Feature Parity (Shipped: 2026-03-05)
+
+**Delivered:** Closed the core feature gap with Yodeck and OptiSigns — 14 production-ready features spanning embed widgets, content model enhancements, enterprise platform (SSO, REST API, Proof of Play), document/calendar display, Canva integration, and multi-screen video walls.
+
+**Phases completed:** 108-114 (7 phases, 21 plans)
+
+**Key accomplishments:**
+
+- Embed widgets for YouTube, Vimeo, web pages, and Google Slides with iframe rendering, editor controls, and offline fallback thumbnails cached in IndexedDB
+- Content model: nested playlists with circular reference prevention (DB trigger + RPC pre-check), background audio with volume control, and per-screen working hours scheduling
+- Enterprise platform: SAML SSO via signInWithSSO preserving RLS, 9-endpoint REST API gateway Edge Function with scoped tokens and rate limiting, Proof of Play reporting with monthly-partitioned storage and CSV export
+- Document display: PDF/Office server-side conversion via Gotenberg for smart TV compatibility, plus calendar widgets with Google/Outlook OAuth and server-side token refresh
+- Canva design import via Edge Function proxy with OAuth PKCE flow, and multi-screen video wall with leader/follower Realtime broadcast sync and bezel compensation
+- Gap closure: API scope fix (screens:write), dashboard playback summary, document upload pipeline wiring, embed widget rendering in ZonePlayer, TVPreviewModal build fix
+
+**Stats:**
+
+- 282 files modified
+- +23,773 / -478 lines
+- 7 phases, 21 plans
+- 3 days (2026-03-03 to 2026-03-05)
+- 106 commits
+- 203,805 total LOC
+
+**Git range:** `c5383e1` -> `040ceff`
+
+**Requirements:** 57/57 satisfied (EMBED-01-07, SLIDES-01-03, CAL-01-05, DOC-01-06, NEST-01-04, AUDIO-01-04, POWER-01-03, SSO-01-05, API-01-07, POP-01-05, CANVA-01-04, VWALL-01-04)
+
+**What's next:** Next milestone planning
+
+---
+
 ## v11.0 Stability Pass (Shipped: 2026-03-02)
 
 **Delivered:** Fixed all 18 bugs discovered during v10.0 Visual QA Audit — 6 critical page crashes, 3 major functionality failures, 3 dev experience issues, 2 error handling gaps, and 4 cosmetic issues. No new features; strictly targeted fixes.
