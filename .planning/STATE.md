@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 58: Device registration flow review and E2E tests
+Last activity: 2026-03-05 - Completed quick task 59: Layout-device assignment flow review and E2E tests
 
 Progress: [████████████████████████████] 100%
 
@@ -35,6 +35,7 @@ Progress: [███████████████████████
 Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-57]: Used MEDIA_TYPE_PLURALS map for extensible media type pluralization
 - [Phase quick-58]: Used Promise.race with .or() patterns for graceful E2E test degradation when backend unavailable
+- [Phase quick-59]: Used aside-scoped sidebar locators for Templates page navigation in E2E tests
 
 ### Blockers/Concerns
 
@@ -54,11 +55,12 @@ None.
 | 56 | Review auth and onboarding flow screenshots, found BUG-15 and BUG-16 | 2026-03-05 | 49ad7cb | [56-review-auth-and-onboarding-flow-screensh](./quick/56-review-auth-and-onboarding-flow-screensh/) |
 | 57 | Fix 8 QA bugs (BUG-04, BUG-09-12, BUG-14-16) | 2026-03-05 | bfe6506 | [57-fix-the-bugs-found](./quick/57-fix-the-bugs-found/) |
 | 58 | Device registration flow review and E2E tests (26 tests, 0 bugs) | 2026-03-05 | 7a11760 | [58-review-device-registration-flow-test-via](./quick/58-review-device-registration-flow-test-via/) |
+| 59 | Layout-device assignment flow review and E2E tests (18 tests, 1 minor bug) | 2026-03-05 | c925d73 | [59-review-layout-device-assignment-flow-tes](./quick/59-review-layout-device-assignment-flow-tes/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 58
+Stopped at: Completed quick task 59
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
