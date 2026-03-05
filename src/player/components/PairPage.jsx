@@ -57,7 +57,13 @@ export function PairPage() {
     const deviceId = localStorage.getItem('player_device_id');
     if (!deviceId) return;
 
-    const pollInterval = setInterval(async () => {
+    let delay = 3000;
+    const MAX_DELAY = 30000;
+    const MAX_RETRIES = 60; // ~5 minutes at max backoff
+    let retries = 0;
+    let timeoutId;
+
+    const poll = async () => {
       try {
         const { data, error } = await supabase
           .from('tv_devices')
@@ -68,15 +74,25 @@ export function PairPage() {
 
         if (data && !error) {
           localStorage.setItem(STORAGE_KEYS.screenId, data.id);
-          clearInterval(pollInterval);
           navigate('/player/view', { replace: true });
+          return;
         }
       } catch (_err) {
-        // Ignore errors, keep polling
+        // Ignore errors, continue polling with backoff
       }
-    }, 3000);
 
-    return () => clearInterval(pollInterval);
+      retries++;
+      if (retries >= MAX_RETRIES) {
+        // Stop polling — could add a "connection issue" state here in future
+        return;
+      }
+      delay = Math.min(delay * 1.5, MAX_DELAY);
+      timeoutId = setTimeout(poll, delay);
+    };
+
+    timeoutId = setTimeout(poll, delay);
+
+    return () => clearTimeout(timeoutId);
   }, [useQrPairing, navigate]);
 
   const useDemoCode = () => {
@@ -197,7 +213,7 @@ export function PairPage() {
           marginBottom: '1rem',
           fontSize: '1rem'
         }}>
-          Enter the 6-digit code from your BizScreen dashboard
+          Enter the 6-character code from your BizScreen dashboard
         </p>
 
         {/* Demo OTP hint */}
