@@ -7,6 +7,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { createScopedLogger } from '../services/loggingService.js';
+import { isDocumentMimeType, uploadDocument } from '../services/documentService';
 
 const logger = createScopedLogger('useS3Upload');
 import {
@@ -91,6 +92,45 @@ export function useS3Upload({
           setErrors(prev => [...prev, { file: file.name, errors: validation.errors }]);
           onError?.(new Error(validation.errors.join(', ')));
           continue;
+        }
+
+        // Route document files through documentService pipeline (bypasses S3)
+        if (isDocumentMimeType(file.type)) {
+          setCurrentFile(file.name);
+          try {
+            const asset = await uploadDocument(file, {
+              onStatusChange: (status) => {
+                // Map to progress for UI consistency
+                if (status === 'uploading') setProgress(Math.round(((completedFiles + 0.3) / totalFiles) * 100));
+                if (status === 'converting') setProgress(Math.round(((completedFiles + 0.7) / totalFiles) * 100));
+              },
+            });
+
+            // Build a result object matching the shape useS3Upload.onSuccess expects
+            const docResult = {
+              url: asset.url,
+              name: asset.name,
+              originalFilename: file.name,
+              type: file.type,
+              size: file.size,
+              mediaType: 'document',
+              format: file.name.split('.').pop()?.toLowerCase(),
+              resourceType: 'document',
+              // No width/height/duration for documents
+              width: null,
+              height: null,
+              duration: null,
+            };
+
+            setUploadedFiles(prev => [...prev, docResult]);
+            onSuccess?.(docResult);
+            completedFiles++;
+          } catch (error) {
+            logger.error(`Error uploading document ${file.name}:`, error);
+            setErrors(prev => [...prev, { file: file.name, errors: [error.message] }]);
+            onError?.(error);
+          }
+          continue; // Skip the S3 upload path for this file
         }
 
         setCurrentFile(file.name);
