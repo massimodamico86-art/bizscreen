@@ -11,9 +11,9 @@
 - **Pages visited:** 36+ (interactive MCP browser navigation)
 - **Pages loaded OK:** All visited pages rendered without crashes
 - **Page crashes (error boundaries):** 0
-- **Bugs total:** 14
-- **Bugs resolved:** 4 (BUG-01, BUG-05, BUG-07, BUG-08)
-- **Bugs open:** 10 (BUG-02, BUG-03, BUG-04, BUG-06, BUG-09 through BUG-14)
+- **Bugs total:** 16
+- **Bugs resolved:** 6 (BUG-01, BUG-05, BUG-06, BUG-07, BUG-08, BUG-13)
+- **Bugs open:** 10 (BUG-02, BUG-03, BUG-04, BUG-09 through BUG-12, BUG-14, BUG-15, BUG-16)
 
 ---
 
@@ -36,6 +36,18 @@
 - **Resolution:** Fixed in quick task 52. Toasts are now dismissed when navigating between pages.
 - **Verified:** 2026-03-05 via MCP interactive walkthrough - navigated between multiple pages, no stale toasts observed
 
+### [RESOLVED] BUG-06: Schedules page shows "Add Schedule" button twice
+- **Page:** `schedules`
+- **Screenshot:** `screenshots/qa/qa2-11-schedules.png`
+- **Resolution:** Fixed in quick task 55. Duplicate "Add Schedule" button removed from page header; only the empty-state button remains.
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-13: Menu Boards page has duplicate create buttons
+- **Page:** `menu-boards`
+- **Screenshot:** `screenshots/qa/qa2-14-menu-boards.png`
+- **Resolution:** Fixed in quick task 55. Duplicate "New Menu Board" button removed from page header; only the empty-state button remains.
+- **Verified:** 2026-03-05
+
 ### [RESOLVED] BUG-08: Welcome and Dashboard pages render identically
 - **Page:** `welcome` vs `dashboard`
 - **Screenshots:** `screenshots/qa/qa2-03-welcome.png`, `screenshots/qa/qa2-04-dashboard.png`
@@ -56,6 +68,7 @@
 - **Page:** `/auth/login`, `/auth/signup`
 - **Description:** Login and signup pages redirect to `/app` when dev auth bypass is on. Reset-password, update-password, and accept-invite pages do NOT redirect, creating inconsistent behavior.
 - **Severity:** Low (dev-mode only)
+- **Status:** Re-verified in task 56 auth walkthrough - still present
 
 ---
 
@@ -66,13 +79,6 @@
 - **Screenshot:** `screenshots/qa/qa2-09-media-audio.png`
 - **Description:** The heading reads "Audios" which is grammatically awkward. Should be "Audio" or "Audio Files" to match sidebar label "Audio".
 - **Severity:** Low
-
-### BUG-06: Schedules page shows "Add Schedule" button twice
-- **Page:** `schedules`
-- **Screenshot:** `screenshots/qa/qa2-11-schedules.png`
-- **Description:** Two "Add Schedule" buttons visible: one in the top-right corner and another below the error state card. The bottom one also has an "Actions" button. When error state is showing, only one button should be visible.
-- **Severity:** Low
-- **Status:** Confirmed still present in MCP walkthrough
 
 ### BUG-09: Listings and Locations pages render identically
 - **Page:** `listings` vs `locations`
@@ -96,18 +102,28 @@
 - **Description:** The Playlists page uses "Add Playlist" while other pages use different verbs. Naming should be consistent across all list pages.
 - **Severity:** Low (naming inconsistency)
 
-### BUG-13: Menu Boards page has duplicate create buttons
-- **Page:** `menu-boards`
-- **Screenshot:** `screenshots/qa/qa2-14-menu-boards.png`
-- **Description:** Menu Boards page shows both a "+ New Menu Board" button in the header AND a "+ Create Menu Board" button in the empty state card with different wording ("New" vs "Create").
-- **Severity:** Low
-- **Status:** Confirmed still present in MCP walkthrough
-
 ### BUG-14: Proof of Play "Export CSV" button appears disabled with no explanation
 - **Page:** `proof-of-play`
 - **Screenshot:** `screenshots/qa/qa2-36-proof-of-play.png`
 - **Description:** "Export CSV" button appears grayed out when there's no data. No tooltip explains why it's disabled.
 - **Severity:** Low
+
+---
+
+## Auth/Onboarding Review (Task 56)
+
+### BUG-15: Reset password error exposes raw backend URL to user
+- **Page:** `/auth/reset-password`
+- **Screenshot:** `screenshots/56-03-reset-password-submitted.png`
+- **Description:** When submitting the reset password form without a backend, the error message shows "Failed to fetch (127.0.0.1:54321)" directly to the user. The raw internal backend URL should not leak into user-facing error messages. The `authService.requestPasswordReset` catch block passes `error.message` verbatim to the UI.
+- **Severity:** Low (UX/security - information disclosure)
+
+### BUG-16: ErrorBoundary "Try Again" button uses green instead of brand colors
+- **Page:** Global (ErrorBoundary component)
+- **Screenshot:** `screenshots/56-09-login-dev-bypass-redirect.png`
+- **Description:** The ErrorBoundary component uses `bg-green-600` for its "Try Again" button. This is inconsistent with the app's orange/blue brand palette. The "Reload Page" button correctly uses blue, but "Try Again" is green.
+- **Severity:** Low (brand consistency)
+- **File:** `src/components/ErrorBoundary.jsx` line 109
 
 ---
 
@@ -169,3 +185,28 @@ All screenshots from this MCP interactive walkthrough saved to `screenshots/qa/`
 | 34 | qa2-34-usage-dashboard.png | Usage Dashboard |
 | 35 | qa2-35-video-walls.png | Video Walls |
 | 36 | qa2-36-proof-of-play.png | Proof of Play |
+
+### Auth/Onboarding Walkthrough (Task 56)
+
+Screenshots saved to `screenshots/56-{NN}-{description}.png` (18 screenshots total).
+
+| # | File | Page |
+|---|------|------|
+| 01 | 56-01-reset-password-empty.png | Reset Password (empty) |
+| 02 | 56-02-reset-password-filled.png | Reset Password (filled) |
+| 03 | 56-03-reset-password-submitted.png | Reset Password (submitted - error) |
+| 04 | 56-04-update-password-no-token.png | Update Password (no token) |
+| 05 | 56-05-accept-invite-no-token.png | Accept Invite (no token) |
+| 06 | 56-06-accept-invite-invalid-token.png | Accept Invite (invalid token) |
+| 07 | 56-07-auth-callback-processing.png | Auth Callback (blank - immediate redirect) |
+| 08 | 56-08-auth-callback-after.png | Auth Callback (after redirect) |
+| 09 | 56-09-login-dev-bypass-redirect.png | Login (dev bypass - error boundary) |
+| 10 | 56-10-signup-dev-bypass-redirect.png | Signup (dev bypass - error boundary) |
+| 11 | 56-11-welcome-page.png | Welcome page |
+| 12 | 56-12-welcome-page-buttons.png | Welcome page (buttons) |
+| 13 | 56-13-dashboard-comparison.png | Dashboard |
+| 14 | 56-14-reset-password-mobile.png | Reset Password (375px mobile) |
+| 15 | 56-15-update-password-mobile.png | Update Password (375px mobile) |
+| 16 | 56-16-accept-invite-mobile.png | Accept Invite (375px mobile) |
+| 17 | 56-17-onboarding-get-started.png | Onboarding Get Started |
+| 18 | 56-18-welcome-fullpage.png | Welcome (full page) |
