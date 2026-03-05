@@ -181,7 +181,9 @@ All milestones shipped successfully (17 total).
   1. Uploading a PDF/Office file via media library calls `documentService.uploadDocument()` and invokes server-side conversion
   2. Embed widgets (YouTube, Vimeo, Google Slides, web page) render correctly in layout zone player via `ZonePlayer`
   3. `npm run build` succeeds (TVPreviewModal import fixed)
-**Plans**: TBD
+**Plans**: 2 plans
+- [ ] 114-01-PLAN.md -- Document upload pipeline wiring (useS3Upload document interception, useMediaLibrary conversion handling)
+- [ ] 114-02-PLAN.md -- Widget rendering in ZonePlayer via registry pattern, ScaledStage import fix for build success
 
 ## Progress
 
