@@ -18,23 +18,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 -- Phase 114 plan 02 complete (ZonePlayer widget rendering + ScaledStage import fixes)
+**Current focus:** v2.1 -- Phase 112 plan 01 complete (Canva OAuth tokens + video wall schema + canva-proxy Edge Function)
 
 ## Current Position
 
-Phase: 114 of 114 (Integration Pipeline Fixes)
-Plan: 2 of 2 complete (01 done, 02 done)
-Status: Phase 114 complete (2/2 plans done)
-Last activity: 2026-03-05 -- Plan 02 complete (ZonePlayer widget registry branch, ScaledStage/listing modal import fixes, build passes)
+Phase: 112 of 114 (Canva and Video Wall)
+Plan: 1 of 3 complete (01 done)
+Status: Executing Phase 112
+Last activity: 2026-03-05 -- Plan 01 complete (migration 165 with 3 tables + canva-proxy Edge Function with 4 actions)
 
 Progress: [████████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
-- Average duration: 3.5 min
-- Total execution time: 1.08 hours
+- Total plans completed: 19
+- Average duration: 3.4 min
+- Total execution time: 1.11 hours
 
 **By Phase:**
 
@@ -47,6 +47,7 @@ Progress: [███████████████████████
 | 110-enterprise-platform | 3/4 | 10 min | 3.3 min |
 | 111-documents-and-calendar | 4/4 | 16 min | 4.0 min |
 | 113-enterprise-platform-fixes | 1/1 | 2 min | 2.0 min |
+| 112-canva-and-video-wall | 1/3 | 2 min | 2.0 min |
 
 *Updated after each plan completion*
 | Phase 109 P02 | 6 | 2 tasks | 5 files |
@@ -65,6 +66,7 @@ Progress: [███████████████████████
 | Phase 113 P01 | 2 | 2 tasks | 5 files |
 | Phase 114 P01 | 1 | 2 tasks | 2 files |
 | Phase 114-integration-pipeline-fixes P02 | 3 | 2 tasks | 4 files |
+| Phase 112 P01 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -108,6 +110,8 @@ Progress: [███████████████████████
 
 **111-04:** CalendarWidget invokes calendar-proxy Edge Function directly (same as DocumentWidget reads Supabase directly) to avoid service-layer deps in player bundle; _lastRefresh underscore prefix for ESLint unused-var compliance; ESLint auto-removed unused isGoogleCalendarConnected/isOutlookCalendarConnected imports since source availability checked via DB query.
 
+**112-01:** canva-proxy follows calendar-proxy pattern (JWT auth, corsHeaders, DB-backed tokens, 401 retry); 5-minute pre-expiry buffer for proactive token refresh; export polling returns exportId on timeout for client-side continuation; video_wall_screens RLS joins through video_walls for tenant check; tenant ID resolved server-side from user_profiles for exchange_token.
+
 Full decision log in PROJECT.md Key Decisions table.
 Key constraints for v12.0:
 - Nested playlists MUST have circular reference prevention DB trigger before any nesting UI
@@ -133,9 +137,9 @@ None. Clean start.
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed 114-02-PLAN.md (ZonePlayer widget rendering + ScaledStage import fixes)
+Stopped at: Completed 112-01-PLAN.md (Canva OAuth tokens + video wall schema + canva-proxy Edge Function)
 Resume file: None
-Next: Phase 114 complete (2/2 plans). All embed widgets render via registry in ZonePlayer. Build succeeds. Ready for next phase.
+Next: Phase 112 plan 02 (Canva UI integration). Backend ready with migration 165 and canva-proxy Edge Function.
 
 ---
-*Updated: 2026-03-05 -- 114-02 complete, Phase 114 done (2/2 plans), ZonePlayer widget registry branch + listing modal build fixes*
+*Updated: 2026-03-05 -- 112-01 complete, Phase 112 in progress (1/3 plans), migration 165 + canva-proxy Edge Function*
