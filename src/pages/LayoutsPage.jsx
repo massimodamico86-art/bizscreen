@@ -357,7 +357,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
         className={`
           ${sizeClasses[size]} flex-shrink-0 relative rounded-lg overflow-hidden
           cursor-pointer group bg-gray-100 border border-gray-200
-          hover:shadow-lg hover:border-teal-400 transition-all
+          hover:shadow-lg hover:border-brand-400 transition-all
         `}
       >
         {template.thumbnail_url || template.preview_image_url ? (
@@ -367,8 +367,8 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-100">
-            <LayoutGrid size={32} className="text-teal-300" />
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-50 to-brand-100">
+            <LayoutGrid size={32} className="text-brand-300" />
           </div>
         )}
 
@@ -397,7 +397,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
         {onViewAll && (
           <button
             onClick={onViewAll}
-            className="text-teal-600 hover:text-teal-700 text-sm font-medium"
+            className="text-brand-600 hover:text-brand-700 text-sm font-medium"
           >
             View all
           </button>
@@ -448,14 +448,14 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder='Try "Building Directory"'
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500"
             />
           </div>
 
           {/* Home Button */}
           <button
             onClick={() => handleCategoryChange('all')}
-            className="w-full py-2.5 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg transition-colors"
+            className="w-full py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors"
           >
             Home
           </button>
@@ -474,7 +474,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
             className={`
               w-full py-2.5 border font-medium rounded-lg transition-colors
               ${activeCategory === 'your-templates'
-                ? 'border-teal-500 bg-teal-50 text-teal-700'
+                ? 'border-brand-500 bg-brand-50 text-brand-700'
                 : 'border-gray-200 hover:bg-gray-50 text-gray-700'
               }
             `}
@@ -515,7 +515,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                         className={`
                           w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm text-left transition-colors
                           ${isActive
-                            ? 'bg-teal-50 text-teal-700 font-medium'
+                            ? 'bg-brand-50 text-brand-700 font-medium'
                             : 'text-gray-600 hover:bg-gray-50'
                           }
                         `}
@@ -528,7 +528,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                 {SIDEBAR_CATEGORIES.length > 10 && (
                   <button
                     onClick={() => setShowMoreCategories(!showMoreCategories)}
-                    className="text-teal-600 hover:text-teal-700 text-sm font-medium pl-2 py-1"
+                    className="text-brand-600 hover:text-brand-700 text-sm font-medium pl-2 py-1"
                   >
                     {showMoreCategories ? 'Show less' : `+ View ${SIDEBAR_CATEGORIES.length - 10} more`}
                   </button>
@@ -553,7 +553,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                   className={`
                     flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors
                     ${orientation === 'landscape'
-                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                     }
                   `}
@@ -566,7 +566,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                   className={`
                     flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors
                     ${orientation === 'portrait'
-                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                     }
                   `}
@@ -594,7 +594,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                   className={`
                     flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors
                     ${visualMode === 'static'
-                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                     }
                   `}
@@ -606,7 +606,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                   className={`
                     flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors
                     ${visualMode === 'animation'
-                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                     }
                   `}
@@ -635,7 +635,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                     className={`
                       px-3 py-1.5 rounded-full text-sm border transition-colors
                       ${activeCategory === ind.id
-                        ? 'border-teal-500 bg-teal-50 text-teal-700'
+                        ? 'border-brand-500 bg-brand-50 text-brand-700'
                         : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                       }
                     `}
@@ -653,7 +653,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
       <div className="flex-1 overflow-y-auto bg-gray-50">
         {/* Hero Section */}
         {!searchQuery && activeCategory === 'all' && (
-          <div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-8 py-12">
+          <div className="bg-gradient-to-r from-brand-500 to-brand-600 px-8 py-12">
             <div className="max-w-2xl mx-auto text-center">
               <h1 className="text-2xl font-bold text-white mb-6">
                 What Template Are You Looking For?
@@ -693,7 +693,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
               {/* AI Designer Button */}
               <button
                 onClick={() => showToast?.('AI Designer coming soon!', 'info')}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-teal-600 font-medium rounded-lg transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-brand-600 font-medium rounded-lg transition-colors shadow-sm"
               >
                 <Sparkles size={18} />
                 Try AI Designer
@@ -728,7 +728,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
         <div className="p-8">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <Loader2 className="w-8 h-8 animate-spin text-teal-500" />
+              <Loader2 className="w-8 h-8 animate-spin text-brand-500" />
             </div>
           ) : searchQuery || activeCategory !== 'all' ? (
             /* Grid View for Search/Filtered Results */
@@ -757,7 +757,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
               {activeCategory === 'your-templates' ? (
                 layoutsLoading ? (
                   <div className="flex items-center justify-center h-64">
-                    <Loader2 className="w-8 h-8 animate-spin text-teal-500" />
+                    <Loader2 className="w-8 h-8 animate-spin text-brand-500" />
                   </div>
                 ) : userDesigns.length === 0 ? (
                   <div className="text-center py-16">
@@ -768,7 +768,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                     </p>
                     <button
                       onClick={() => onNavigate?.('design-editor')}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors"
                     >
                       <Plus size={18} />
                       Create New Design
@@ -781,10 +781,10 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                         <div
                           key={layout.id}
                           onClick={() => onNavigate?.(`layout-editor-${layout.id}`)}
-                          className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-teal-400 transition-all"
+                          className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-brand-400 transition-all"
                         >
-                          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-100 p-4">
-                            <LayoutGrid size={32} className="text-teal-400 mb-2" />
+                          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-brand-50 to-brand-100 p-4">
+                            <LayoutGrid size={32} className="text-brand-400 mb-2" />
                             <span className="text-sm font-medium text-gray-700 text-center truncate w-full">
                               {layout.name}
                             </span>
@@ -841,7 +841,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                   </p>
                   <button
                     onClick={() => onNavigate?.('design-editor')}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors"
                   >
                     <Plus size={18} />
                     Create New Design
@@ -853,7 +853,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                     <div
                       key={template.id || template.slug}
                       onClick={() => handleTemplateClick(template)}
-                      className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-teal-400 transition-all"
+                      className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-brand-400 transition-all"
                     >
                       {template.thumbnail_url || template.preview_image_url ? (
                         <img
@@ -862,8 +862,8 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-100">
-                          <LayoutGrid size={32} className="text-teal-300" />
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-50 to-brand-100">
+                          <LayoutGrid size={32} className="text-brand-300" />
                         </div>
                       )}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
@@ -911,7 +911,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                     <h3 className="text-lg font-semibold text-gray-900">Holidays and Observances</h3>
                     <button
                       onClick={() => setActiveCategory('holidays')}
-                      className="text-teal-600 hover:text-teal-700 text-sm font-medium"
+                      className="text-brand-600 hover:text-brand-700 text-sm font-medium"
                     >
                       View all
                     </button>
@@ -934,7 +934,7 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                     <div
                       key={template.id || template.slug}
                       onClick={() => handleTemplateClick(template)}
-                      className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-teal-400 transition-all"
+                      className="aspect-video relative rounded-lg overflow-hidden cursor-pointer group bg-gray-100 border border-gray-200 hover:shadow-lg hover:border-brand-400 transition-all"
                     >
                       {template.thumbnail_url || template.preview_image_url ? (
                         <img
@@ -943,8 +943,8 @@ const LayoutsPage = ({ showToast, onNavigate }) => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-100">
-                          <LayoutGrid size={32} className="text-teal-300" />
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-50 to-brand-100">
+                          <LayoutGrid size={32} className="text-brand-300" />
                         </div>
                       )}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
