@@ -19,6 +19,7 @@ import {
   Video,
   X,
   ClipboardList,
+  LayoutGrid,
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { useBranding, BrandingProvider } from './contexts/BrandingContext';
@@ -110,6 +111,7 @@ const SvgEditorPage = lazy(() => import('./pages/SvgEditorPage'));
 const SecurityDashboardPage = lazy(() => import('./pages/SecurityDashboardPage'));
 const TranslationDashboardPage = lazy(() => import('./pages/TranslationDashboardPage'));
 const MenuBoardsPage = lazy(() => import('./pages/MenuBoardsPage'));
+const VideoWallPage = lazy(() => import('./pages/VideoWallPage'));
 const ProofOfPlayPage = lazy(() => import('./pages/ProofOfPlayPage'));
 
 // Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
@@ -557,6 +559,7 @@ function BizScreenAppInner() {
     { id: 'templates', label: t('nav.templates', 'Templates'), icon: LayoutTemplate },
     { id: 'schedules', label: t('nav.schedules', 'Schedules'), icon: Calendar },
     { id: 'screens', label: t('nav.screens', 'Screens'), icon: Monitor },
+    { id: 'video-walls', label: t('nav.videoWalls', 'Video Walls'), icon: LayoutGrid },
     { id: 'menu-boards', label: t('nav.menuBoards', 'Menu Boards'), icon: UtensilsCrossed },
     { id: 'proof-of-play', label: t('nav.proofOfPlay', 'Proof of Play'), icon: ClipboardList },
   ];
@@ -600,6 +603,7 @@ function BizScreenAppInner() {
     layouts: <Suspense fallback={<PageLoader />}><LayoutsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     schedules: <Suspense fallback={<PageLoader />}><SchedulesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     screens: <Suspense fallback={<PageLoader />}><ScreensPage showToast={showToast} /></Suspense>,
+    'video-walls': <Suspense fallback={<PageLoader />}><VideoWallPage showToast={showToast} /></Suspense>,
     // Legacy pages (still accessible)
     listings: <Suspense fallback={<PageLoader />}><ListingsPage showToast={showToast} listings={listings} setListings={setListings} /></Suspense>,
     settings: <Suspense fallback={<PageLoader />}><SettingsPage showToast={showToast} /></Suspense>,
