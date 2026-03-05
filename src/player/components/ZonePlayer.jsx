@@ -5,6 +5,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as analytics from '../../services/playerAnalyticsService';
 import { createScopedLogger } from '../../services/loggingService';
+import { getWidgetComponent } from '../../widgets/registry.js';
 
 const logger = createScopedLogger('Player:ZonePlayer');
 
@@ -47,7 +48,7 @@ export function ZonePlayer({ zone, timezone, screenId, tenantId, layoutId, campa
       mediaId: currentItem.mediaType !== 'app' ? currentItem.id : null,
       appId: currentItem.mediaType === 'app' ? currentItem.id : null,
       campaignId: campaignId || null,
-      itemType: currentItem.mediaType === 'app' ? 'app' : 'media',
+      itemType: currentItem.mediaType === 'app' ? 'app' : currentItem.widgetType ? 'widget' : 'media',
       itemName: currentItem.name,
     });
 
@@ -137,6 +138,28 @@ export function ZonePlayer({ zone, timezone, screenId, tenantId, layoutId, campa
         />
       ) : currentItem.mediaType === 'app' ? (
         <AppRenderer item={currentItem} timezone={timezone} />
+      ) : (currentItem.widgetType || currentItem.mediaType === 'widget') ? (
+        (() => {
+          const widgetType = currentItem.widgetType || currentItem.config?.widgetType;
+          const WidgetComp = widgetType ? getWidgetComponent(widgetType) : null;
+          if (WidgetComp) {
+            const widgetProps = currentItem.widgetProps || currentItem.config || {};
+            return <WidgetComp props={widgetProps} timezone={timezone} />;
+          }
+          return (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#1e293b',
+              color: 'white'
+            }}>
+              <p>{currentItem.name || 'Unknown widget'}</p>
+            </div>
+          );
+        })()
       ) : currentItem.mediaType === 'web_page' ? (
         <iframe
           key={currentItem.id}
