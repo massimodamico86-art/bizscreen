@@ -350,6 +350,8 @@ export function useScreensData({ showToast }) {
               ...s,
               assigned_playlist_id: playlistId || null,
               assigned_playlist: playlist ? { id: playlist.id, name: playlist.name } : null,
+              // Mutual exclusivity: assigning a playlist clears the layout
+              ...(playlistId ? { assigned_layout_id: null, assigned_layout: null } : {}),
             };
           }
           return s;
@@ -378,6 +380,8 @@ export function useScreensData({ showToast }) {
               ...s,
               assigned_layout_id: layoutId || null,
               assigned_layout: layout ? { id: layout.id, name: layout.name } : null,
+              // Mutual exclusivity: assigning a layout clears the playlist
+              ...(layoutId ? { assigned_playlist_id: null, assigned_playlist: null } : {}),
             };
           }
           return s;
