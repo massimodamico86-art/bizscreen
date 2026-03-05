@@ -48,11 +48,12 @@ None.
 | 52 | Fix BUG-07: Dismiss error toasts on page navigation | 2026-03-05 | 73b096b | [52-bug-07-error-toast-persists-across-page-](./quick/52-bug-07-error-toast-persists-across-page-/) |
 | 53 | Fix BUG-08: Welcome and Dashboard pages render identically | 2026-03-05 | 2ef738c | [53-fix-bug-08-welcome-and-dashboard-pages-r](./quick/53-fix-bug-08-welcome-and-dashboard-pages-r/) |
 | 54 | Redo QA walkthrough using MCP Playwright | 2026-03-05 | 56d2ea9 | [54-redo-qa-walkthrough-using-mcp-playwright](./quick/54-redo-qa-walkthrough-using-mcp-playwright/) |
+| 55 | Fix BUG-06 and BUG-13: Remove duplicate create buttons from Schedules and Menu Boards | 2026-03-05 | a046d34 | [55-fix-bug-06-and-bug-13-remove-duplicate-c](./quick/55-fix-bug-06-and-bug-13-remove-duplicate-c/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 53
+Stopped at: Completed quick task 55
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
