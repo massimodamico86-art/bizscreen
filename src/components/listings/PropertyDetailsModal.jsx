@@ -7,7 +7,7 @@ import { migrateToUnifiedMedia } from '../../utils/mediaMigration';
 import { DEFAULT_UNIFIED_MEDIA_STATE } from '../../types/media';
 import { useLogger } from '../../hooks/useLogger.js';
 import { Layout1, Layout2, Layout3, Layout4 } from '../../layouts';
-import { ScaledStage } from '../tv-layouts/ScaledStage';
+import ScaledStage from '../../ScaledStage';
 import { TVDeviceManagement } from './TVDeviceManagement';
 import { WelcomeMessageForm } from './WelcomeMessageForm';
 import { MediaSection } from './MediaSection';
@@ -15,7 +15,7 @@ import { QRCodeManager } from './QRCodeManager';
 import { TVPreviewModal } from './TVPreviewModal';
 import { BackgroundMusicSelector } from './BackgroundMusicSelector';
 import { ImageUploadModal } from './ImageUploadModal';
-import ImageUploadButton from '../media/ImageUploadButton';
+import ImageUploadButton from '../ImageUploadButton';
 export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, _listings }) => {
   const logger = useLogger('PropertyDetailsModal');
   // Migrate old format to unified media on init
@@ -1080,3 +1080,5 @@ export const PropertyDetailsModal = ({ listing, onClose, onSave, showToast, _lis
     </>
   );
 };
+
+export default PropertyDetailsModal;

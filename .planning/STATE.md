@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T23:18:33.142Z"
+last_updated: "2026-03-05T02:27:00.810Z"
 progress:
-  total_phases: 75
+  total_phases: 76
   completed_phases: 75
-  total_plans: 248
-  completed_plans: 248
+  total_plans: 250
+  completed_plans: 249
 ---
 
 # Project State
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v2.1 -- Phase 113 complete (1/1 plans done), API-04 and POP-05 gaps closed
+**Current focus:** v2.1 -- Phase 114 plan 01 complete (document upload pipeline wiring)
 
 ## Current Position
 
-Phase: 113 of 113 (Enterprise Platform Fixes)
+Phase: 114 of 114 (Integration Pipeline Fixes)
 Plan: 1 of 1 complete (01 done)
-Status: Phase 113 complete
-Last activity: 2026-03-04 -- Plan 01 complete (API scope fix + playback summary dashboard)
+Status: Phase 114 plan 01 complete
+Last activity: 2026-03-05 -- Plan 01 complete (document upload pipeline wiring: useS3Upload + useMediaLibrary)
 
 Progress: [████████████████████████████] 100%
 
@@ -63,6 +63,7 @@ Progress: [███████████████████████
 | Phase 111 P03 | 6 | 2 tasks | 6 files |
 | Phase 111 P04 | 4 | 2 tasks | 6 files |
 | Phase 113 P01 | 2 | 2 tasks | 5 files |
+| Phase 114 P01 | 1 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -121,6 +122,7 @@ Key constraints for v12.0:
 - [Phase 111]: 111-03: Calendar OAuth callbacks return token objects for DB persistence; calendar-proxy handles 401 token refresh server-side; 5-min cache TTL; provider-aware toast; Google uses 'primary', Outlook uses 'default' calendarId
 - [Phase 111]: 111-04: CalendarWidget invokes calendar-proxy directly in player; multi-source widget pattern with sources array, Promise.all fetch, merge+sort+slice; date grouping with Today/Tomorrow relative labels; CalendarWidgetControls with OAuth source management in both editor panels
 - [Phase 113]: 113-01: screens:write scope follows read/write pair convention; PlaybackSummarySection after StatsGrid before PendingApprovalsWidget; playback fetch uses non-blocking fire-and-forget pattern
+- [Phase 114]: Document interception placed BEFORE setCurrentFile/metadata-gather in useS3Upload loop; double guard in useMediaLibrary for document type detection; fetchAssets() for refresh instead of optimistic state prepend
 
 ### Blockers/Concerns
 
@@ -128,10 +130,10 @@ None. Clean start.
 
 ## Session Continuity
 
-Last session: 2026-03-04
-Stopped at: Completed 113-01-PLAN.md (API scope fix + playback summary dashboard)
+Last session: 2026-03-05
+Stopped at: Completed 114-01-PLAN.md (document upload pipeline wiring)
 Resume file: None
-Next: Phase 113 complete (1/1 plans done). v12.0 milestone gaps API-04 and POP-05 closed.
+Next: Phase 114 plan 01 complete. Document uploads now route through documentService.uploadDocument() triggering doc-converter Edge Function.
 
 ---
-*Updated: 2026-03-04 -- 113-01 complete, Phase 113 done (1/1), screens:write API scope fix, PlaybackSummarySection on dashboard*
+*Updated: 2026-03-05 -- 114-01 complete, Phase 114 P01 done (2 tasks, 2 files), document upload pipeline wired*
