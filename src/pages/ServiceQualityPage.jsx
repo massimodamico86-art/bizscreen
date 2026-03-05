@@ -9,7 +9,6 @@ import {
   Bell,
   BellOff,
   CheckCircle2,
-  Grid,
   Minus,
   Monitor,
   PieChart,
@@ -51,6 +50,7 @@ import {
   Inline,
   Banner,
   Alert,
+  Grid,
 } from '../design-system';
 
 // --------------------------------------------------------------------------
@@ -801,7 +801,7 @@ export default function ServiceQualityPage() {
           <TierBanner tier={subscriptionTier} config={tierConfig} />
 
           {/* SLA Overview Cards */}
-          <Grid cols={4} gap="md" className="grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+          <Grid cols={4} gap="md">
             <SlaGaugeCard
               title="Uptime"
               value={slaStatus?.uptimePercent}
@@ -838,7 +838,7 @@ export default function ServiceQualityPage() {
           </Grid>
 
           {/* Main Content Grid */}
-          <Grid cols={3} gap="lg" className="grid-cols-1 lg:grid-cols-3">
+          <Grid cols={3} gap="lg">
             <div className="lg:col-span-2">
               <AlertsFeed
                 alerts={alerts}
@@ -853,13 +853,13 @@ export default function ServiceQualityPage() {
           </Grid>
 
           {/* Charts Row */}
-          <Grid cols={2} gap="lg" className="grid-cols-1 lg:grid-cols-2">
+          <Grid cols={2} gap="lg">
             <LatencyDistributionCard metrics={metricsDashboard} />
             <ErrorBreakdownCard breakdown={errorBreakdown} />
           </Grid>
 
           {/* Usage and Trends */}
-          <Grid cols={2} gap="lg" className="grid-cols-1 lg:grid-cols-2">
+          <Grid cols={2} gap="lg">
             <UsageCountersCard counters={usageCounters} />
             <SlaBreakdownCard breakdown={slaBreakdown} />
           </Grid>
