@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 60: Fix BUG-02 and BUG-03 dev mode auth route redirect
+Last activity: 2026-03-05 - Completed quick task 61: Review welcome screen device/TV rendering at 1920x1080, check for visual bugs and console errors
 
 Progress: [████████████████████████████] 100%
 
@@ -58,6 +58,7 @@ None.
 | 58 | Device registration flow review and E2E tests (26 tests, 0 bugs) | 2026-03-05 | 7a11760 | [58-review-device-registration-flow-test-via](./quick/58-review-device-registration-flow-test-via/) |
 | 59 | Layout-device assignment flow review and E2E tests (18 tests, 1 minor bug) | 2026-03-05 | c925d73 | [59-review-layout-device-assignment-flow-tes](./quick/59-review-layout-device-assignment-flow-tes/) |
 | 60 | Fix BUG-02 and BUG-03: Dev mode auth bypass skips PublicRoute redirect | 2026-03-05 | 561e78c | [60-fix-bug-02-and-bug-03-dev-mode-auth-rout](./quick/60-fix-bug-02-and-bug-03-dev-mode-auth-rout/) |
+| 61 | Review welcome screen device/TV rendering at 1920x1080, check for visual bugs and console errors | 2026-03-05 | 52228cf | [61-review-welcome-screen-device-tv-renderin](./quick/61-review-welcome-screen-device-tv-renderin/) |
 
 ## Session Continuity
 

@@ -112,6 +112,49 @@
 
 ---
 
+## Welcome Screen / TV Device Rendering Review (Task 61)
+
+**Date:** 2026-03-05
+**Viewport:** 1920x1080 (simulated TV)
+**Method:** Playwright MCP manual review
+
+### Pages Reviewed
+
+| Route | Component | Result |
+|-------|-----------|--------|
+| `/player` | PairPage (QR pairing screen) | OK — clean dark background, centered QR code, help instructions, "Enter pairing code manually" button all render correctly at 1920x1080 |
+| `/player/view` | ViewPage | Could not test — redirects to `/player` without paired screen. Code review: "no content" empty state renders centered message with BizScreen logo |
+| `/app` → Welcome | WelcomePage + WelcomeHero + WelcomeFeatureCards | OK — Hero shows greeting ("Hi, Dev Bypass User,"), media icons, 3 feature cards (playlists, templates, tutorial) all visible and well-spaced at 1920x1080 |
+| Layout1-4 (TVPreviewModal) | TV welcome screen layouts | Could not render interactively (requires listing data from Supabase). Code review below. |
+
+### Code Review: TV Layout Rendering (Layout1-4)
+
+**Layout1** ([Layout1.jsx](src/layouts/Layout1.jsx)):
+- Background: Falls back to external Unsplash URL when no image provided (`photo-1414235077428-338989a2e8c0?w=3840`). Potential issue for offline/air-gapped TVs.
+- Welcome greeting: `text-7xl font-bold` — large, readable on TV. Guest name uses `{{first-name}} {{last-name}}` template tokens via WelcomeMessageForm.
+- Welcome message: `text-3xl leading-relaxed` — good readability.
+- Time display: `text-8xl font-bold` — excellent for TV viewing distance.
+- Gradient overlay: `from-black/75 via-black/35 to-black/55` — ensures text readability over any background.
+- QR codes: 128x128px white boxes in bottom-left — visible at TV distance.
+- All Layout1-4 use the same prop interface (`layout`, `guest`).
+
+**ScaledStage** ([ScaledStage.jsx](src/ScaledStage.jsx)):
+- Renders at fixed 1920x1080 and scales to fit container via ResizeObserver.
+- `transformOrigin: "top left"` — correct for scale-down rendering.
+
+### Observations (Not Bugs)
+
+1. **Breadcrumb shows "Dashboard" on Welcome page** — The breadcrumb in the top nav says "Home > Dashboard" even when Welcome page is active. Minor inconsistency.
+2. **Page title stays "Sign In - BizScreen"** after dev auth bypass login — Title doesn't update to reflect current page.
+3. **Layout1 Unsplash fallback** — External URL `images.unsplash.com/photo-1414235077428-338989a2e8c0` used as default background. If Unsplash is unreachable (common on air-gapped TVs), the background will be empty. Consider bundling a local fallback image.
+4. **Template card uses teal gradient** — The "Templates to get you started" card in WelcomeFeatureCards still shows teal/green color (#2dd4bf area). This was previously flagged as BUG-05 for other pages but the WelcomeFeatureCards component wasn't updated.
+
+### Console Errors
+
+All console errors at 1920x1080 were the expected Supabase connection failures (`ERR_CONNECTION_REFUSED` to `127.0.0.1:54321`). No unexpected JS errors or rendering crashes observed on any of the tested pages.
+
+---
+
 ## Open Issues
 
 None. All 16 bugs resolved.
