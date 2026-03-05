@@ -11,6 +11,7 @@ import { lazy, Suspense } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { SentryRoutes } from '../utils/errorTracking.jsx';
 import { useAuth } from '../contexts/AuthContext';
+import { DEV_AUTH_BYPASS } from '../utils/devBypass.js';
 import AuthRetryBanner from '../components/AuthRetryBanner';
 
 // Marketing pages (lazy loaded)
@@ -60,15 +61,24 @@ function RequireAuth({ children }) {
   return children;
 }
 
-// Redirect authenticated users away from public pages
-// NOTE: Does NOT block on auth loading — public pages (login, signup, homepage)
-// should render immediately even when Supabase is unreachable or retrying.
-// The AuthRetryBanner handles showing retry/error status independently.
+/**
+ * Redirect authenticated users away from public pages.
+ *
+ * NOTE: Does NOT block on auth loading — public pages (login, signup, homepage)
+ * should render immediately even when Supabase is unreachable or retrying.
+ * The AuthRetryBanner handles showing retry/error status independently.
+ *
+ * When DEV_AUTH_BYPASS is active, the redirect is skipped so developers can
+ * view and work on marketing and auth pages without being sent to /app.
+ * DEV_AUTH_BYPASS is always false in production builds, so this has no
+ * production impact.
+ */
 function PublicRoute({ children }) {
   const { user, loading } = useAuth();
 
   // Only redirect if auth has resolved AND user is authenticated
-  if (!loading && user) {
+  // Skip redirect in dev bypass mode so developers can view public pages
+  if (!loading && user && !DEV_AUTH_BYPASS) {
     return <Navigate to="/app" replace />;
   }
 
