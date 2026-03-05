@@ -29,7 +29,7 @@ import AnnouncementCenter from '../AnnouncementCenter';
 const BREADCRUMB_CONFIG = {
   // Top-level pages (Home > Page)
   dashboard: { label: 'Dashboard' },
-  welcome: { label: 'Dashboard' },
+  welcome: { label: 'Welcome' },
   screens: { label: 'Screens' },
   playlists: { label: 'Playlists' },
   layouts: { label: 'Layouts' },

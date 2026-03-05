@@ -76,7 +76,7 @@ export function WelcomeFeatureCards({
 
         {/* Template preview */}
         <div className="bg-gray-50 rounded-lg p-4 mb-4 relative">
-          <div className="aspect-video bg-gradient-to-br from-teal-400 to-teal-600 rounded flex items-center justify-center overflow-hidden">
+          <div className="aspect-video bg-gradient-to-br from-[#f26f21] to-blue-600 rounded flex items-center justify-center overflow-hidden">
             <div className="text-center text-white p-4">
               <p className="text-sm font-medium">Happy hour</p>
               <p className="text-xl font-bold">50% off</p>

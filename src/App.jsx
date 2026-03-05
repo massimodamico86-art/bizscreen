@@ -336,6 +336,12 @@ function BizScreenAppInner() {
     setToast(null);
   }, [currentPage]);
 
+  // Update document title for app pages (clears stale auth page titles)
+  useEffect(() => {
+    const label = currentPage.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    document.title = `${label} - BizScreen`;
+  }, [currentPage]);
+
   /**
    * Fetch user data and set up real-time subscriptions
    *
