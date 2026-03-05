@@ -19,7 +19,7 @@
 - [x] **v9.0 Production Polish** -- Phase 94 (shipped 2026-02-28, 20 reqs deferred)
 - [x] **v10.0 Visual QA Audit** -- Phases 98-103 (shipped 2026-03-01)
 - [x] **v11.0 Stability Pass** -- Phases 104-107 (shipped 2026-03-02)
-- [ ] **v12.0 Feature Parity** -- Phases 108-113 (in progress)
+- [ ] **v12.0 Feature Parity** -- Phases 108-114 (in progress)
 
 ## Phase History
 
@@ -89,6 +89,7 @@ All milestones shipped successfully (17 total).
 - [x] **Phase 111: Documents and Calendar** - Server-side document conversion for smart TV compatibility and Google/Outlook calendar widgets via OAuth (completed 2026-03-04)
 - [ ] **Phase 112: Canva and Video Wall** - Canva design import workflow and multi-screen synchronized video wall display
 - [x] **Phase 113: Enterprise Platform Fixes** - Fix API scope mismatch and wire dashboard playback summary (gap closure from audit) (completed 2026-03-04)
+- [ ] **Phase 114: Integration Pipeline Fixes** - Wire document upload conversion pipeline, add embed widget rendering to layout zones, fix build-blocking TVPreviewModal import
 
 ## Phase Details
 
@@ -171,9 +172,20 @@ All milestones shipped successfully (17 total).
   3. Playback summary statistics are visible on the main DashboardPage (not only ProofOfPlayPage)
 **Plans**: TBD
 
+### Phase 114: Integration Pipeline Fixes
+**Goal**: Fix cross-phase integration gaps: document upload conversion pipeline, embed widget rendering in layout zones, and build-blocking import error
+**Depends on**: Phase 111 (document service), Phase 108 (widget registry)
+**Requirements**: Fixes integration for DOC-01, DOC-02, DOC-03, DOC-06, EMBED-01–07, SLIDES-01–03
+**Gap Closure:** Closes 2 integration gaps + 2 broken E2E flows from v12.0 audit + 1 tech debt blocker
+**Success Criteria** (what must be TRUE):
+  1. Uploading a PDF/Office file via media library calls `documentService.uploadDocument()` and invokes server-side conversion
+  2. Embed widgets (YouTube, Vimeo, Google Slides, web page) render correctly in layout zone player via `ZonePlayer`
+  3. `npm run build` succeeds (TVPreviewModal import fixed)
+**Plans**: TBD
+
 ## Progress
 
-**Execution Order:** Phases execute in numeric order: 108 -> 109 -> 110 -> 111 -> 112 -> 113
+**Execution Order:** Phases execute in numeric order: 108 -> 109 -> 110 -> 111 -> 112 -> 113 -> 114
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -183,6 +195,7 @@ All milestones shipped successfully (17 total).
 | 111. Documents and Calendar | 4/4 | Complete    | 2026-03-04 |
 | 112. Canva and Video Wall | 0/TBD | Not started | - |
 | 113. Enterprise Platform Fixes | 1/1 | Complete    | 2026-03-04 |
+| 114. Integration Pipeline Fixes | 0/TBD | Not started | - |
 
 ## Progress Summary
 
@@ -205,9 +218,9 @@ All milestones shipped successfully (17 total).
 | v9.0 Production Polish | 94 | 2 | Complete | 2026-02-28 |
 | v10.0 Visual QA Audit | 98-103 | 10 | Complete | 2026-03-01 |
 | v11.0 Stability Pass | 104-107 | 8 | Complete | 2026-03-02 |
-| v12.0 Feature Parity | 108-113 | TBD | In progress | - |
+| v12.0 Feature Parity | 108-114 | TBD | In progress | - |
 
-**Total:** 108 phases (104 complete, 6 planned) | 299 plans executed | 18 milestones (17 shipped, 1 in progress)
+**Total:** 109 phases (104 complete, 7 planned) | 299 plans executed | 18 milestones (17 shipped, 1 in progress)
 
 ---
-*Last updated: 2026-03-03 -- v12.0 Feature Parity roadmap created*
+*Last updated: 2026-03-04 -- Phase 114 (Integration Pipeline Fixes) added from gap closure audit*

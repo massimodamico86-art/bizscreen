@@ -203,9 +203,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 **Coverage:**
 - v12.0 requirements: 57 total
+- Satisfied: 49 (86%)
+- Pending: 8 (Phase 112: CANVA-01–04, VWALL-01–04)
 - Mapped to phases: 57
 - Unmapped: 0
+- Integration fixes: Phase 114 (DOC-01/02/03/06, EMBED-01–07, SLIDES-01–03 pipeline wiring)
 
 ---
 *Requirements defined: 2026-03-03*
-*Last updated: 2026-03-03 after roadmap creation -- all 57 requirements mapped to phases*
+*Last updated: 2026-03-04 after gap closure audit -- Phase 114 added for integration fixes*
