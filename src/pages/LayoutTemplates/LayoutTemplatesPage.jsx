@@ -5,7 +5,7 @@
  * Provides a Yodeck-style gallery for discovering and using templates.
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
 import {
   AlertCircle,
   BarChart3,
@@ -37,6 +37,8 @@ import { Button } from '../../design-system';
 import { useLayoutTemplates } from '../../hooks/useLayoutTemplates';
 import { fetchLayouts, deleteLayoutSafely } from '../../services/layoutService';
 import { CANVA_TEMPLATE_CATEGORIES, openCanvaTemplates } from '../../services/canvaService';
+
+const CanvaDesignBrowser = lazy(() => import('../../components/canva/CanvaDesignBrowser'));
 
 /**
  * Orientation icons mapping
@@ -275,6 +277,9 @@ export default function LayoutTemplatesPage({ showToast, onNavigate }) {
   // Tab state
   const [activeTab, setActiveTab] = useState('templates');
 
+  // Canva browser modal state
+  const [showCanvaBrowser, setShowCanvaBrowser] = useState(false);
+
   // Templates hook
   const {
     templates,
@@ -371,6 +376,11 @@ export default function LayoutTemplatesPage({ showToast, onNavigate }) {
     onNavigate?.('yodeck-layout-new');
   }, [onNavigate]);
 
+  // Handle Canva design import
+  const handleCanvaImport = useCallback((_asset) => {
+    showToast?.({ type: 'success', message: 'Design imported to media library' });
+  }, [showToast]);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
@@ -378,10 +388,20 @@ export default function LayoutTemplatesPage({ showToast, onNavigate }) {
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">Layouts</h1>
-            <Button variant="primary" onClick={handleCreateNew}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Layout
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowCanvaBrowser(true)}
+                className="border-[#7d2ae8]/50 text-[#a855f7] hover:bg-[#7d2ae8]/10"
+              >
+                <Palette className="w-4 h-4 mr-2" />
+                Import from Canva
+              </Button>
+              <Button variant="primary" onClick={handleCreateNew}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Layout
+              </Button>
+            </div>
           </div>
 
           {/* Tabs */}
@@ -762,6 +782,18 @@ export default function LayoutTemplatesPage({ showToast, onNavigate }) {
           </>
         )}
       </div>
+
+      {/* Canva Design Browser Modal */}
+      {showCanvaBrowser && (
+        <Suspense fallback={null}>
+          <CanvaDesignBrowser
+            isOpen={showCanvaBrowser}
+            onClose={() => setShowCanvaBrowser(false)}
+            onImport={handleCanvaImport}
+            showToast={showToast}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
