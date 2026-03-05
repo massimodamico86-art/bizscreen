@@ -46,7 +46,7 @@ None.
 | 50 | Fix Service Quality page broken layout - Grid icon import collision | 2026-03-05 | 219c325 | [50-fix-service-quality-page-broken-layout-b](./quick/50-fix-service-quality-page-broken-layout-b/) |
 | 51 | Fix BUG-05: Replace teal/emerald/green colors with brand palette on Templates/Layouts pages | 2026-03-05 | 2dbdc88 | [51-fix-bug-05-templates-layouts-pages-use-t](./quick/51-fix-bug-05-templates-layouts-pages-use-t/) |
 | 52 | Fix BUG-07: Dismiss error toasts on page navigation | 2026-03-05 | 73b096b | [52-bug-07-error-toast-persists-across-page-](./quick/52-bug-07-error-toast-persists-across-page-/) |
-| 53 | Fix BUG-08: Welcome and Dashboard pages render identically | 2026-03-05 | 9fc1aa1 | [53-fix-bug-08-welcome-and-dashboard-pages-r](./quick/53-fix-bug-08-welcome-and-dashboard-pages-r/) |
+| 53 | Fix BUG-08: Welcome and Dashboard pages render identically | 2026-03-05 | 2ef738c | [53-fix-bug-08-welcome-and-dashboard-pages-r](./quick/53-fix-bug-08-welcome-and-dashboard-pages-r/) |
 
 ## Session Continuity
 
