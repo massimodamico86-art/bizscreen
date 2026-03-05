@@ -1,14 +1,14 @@
 ---
 gsd_state_version: 1.0
-milestone: v12.0
-milestone_name: Feature Parity
-status: complete
-last_updated: "2026-03-05T19:49:33.433Z"
+milestone: v2.1
+milestone_name: milestone
+status: unknown
+last_updated: "2026-03-05T21:47:08.152Z"
 progress:
-  total_phases: 114
-  completed_phases: 114
-  total_plans: 320
-  completed_plans: 320
+  total_phases: 70
+  completed_phases: 70
+  total_plans: 232
+  completed_plans: 232
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 59: Layout-device assignment flow review and E2E tests
+Last activity: 2026-03-05 - Completed quick task 60: Fix BUG-02 and BUG-03 dev mode auth route redirect
 
 Progress: [████████████████████████████] 100%
 
@@ -36,6 +36,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-57]: Used MEDIA_TYPE_PLURALS map for extensible media type pluralization
 - [Phase quick-58]: Used Promise.race with .or() patterns for graceful E2E test degradation when backend unavailable
 - [Phase quick-59]: Used aside-scoped sidebar locators for Templates page navigation in E2E tests
+- [Phase quick-60]: Minimal single-line DEV_AUTH_BYPASS guard in PublicRoute redirect condition
 
 ### Blockers/Concerns
 
@@ -56,11 +57,12 @@ None.
 | 57 | Fix 8 QA bugs (BUG-04, BUG-09-12, BUG-14-16) | 2026-03-05 | bfe6506 | [57-fix-the-bugs-found](./quick/57-fix-the-bugs-found/) |
 | 58 | Device registration flow review and E2E tests (26 tests, 0 bugs) | 2026-03-05 | 7a11760 | [58-review-device-registration-flow-test-via](./quick/58-review-device-registration-flow-test-via/) |
 | 59 | Layout-device assignment flow review and E2E tests (18 tests, 1 minor bug) | 2026-03-05 | c925d73 | [59-review-layout-device-assignment-flow-tes](./quick/59-review-layout-device-assignment-flow-tes/) |
+| 60 | Fix BUG-02 and BUG-03: Dev mode auth bypass skips PublicRoute redirect | 2026-03-05 | 561e78c | [60-fix-bug-02-and-bug-03-dev-mode-auth-rout](./quick/60-fix-bug-02-and-bug-03-dev-mode-auth-rout/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 59
+Stopped at: Completed quick task 60
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
