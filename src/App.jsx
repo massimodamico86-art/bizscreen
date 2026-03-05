@@ -42,6 +42,7 @@ import { FeatureGate, FeatureUpgradePrompt } from './components/FeatureGate';
 
 // Lazy load pages for better code splitting
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const WelcomePage = lazy(() => import('./pages/WelcomePage'));
 const ListingsPage = lazy(() => import('./pages/ListingsPage'));
 const MediaLibraryPage = lazy(() => import('./pages/MediaLibraryPage'));
 const AppsPage = lazy(() => import('./pages/AppsPage'));
@@ -594,7 +595,7 @@ function BizScreenAppInner() {
 
   const pages = {
     // Yodeck-exact pages
-    welcome: <Suspense fallback={<PageLoader />}><DashboardPage setCurrentPage={setCurrentPage} showToast={showToast} listings={listings} setListings={setListings} /></Suspense>,
+    welcome: <Suspense fallback={<PageLoader />}><WelcomePage setCurrentPage={setCurrentPage} showToast={showToast} /></Suspense>,
     dashboard: <Suspense fallback={<PageLoader />}><DashboardPage setCurrentPage={setCurrentPage} showToast={showToast} listings={listings} setListings={setListings} /></Suspense>,
     // Yodeck-style pages
     'media-all': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter={null} /></Suspense>,
