@@ -2,6 +2,7 @@
 import { supabase } from '../supabase';
 import { logActivity, ACTIONS, RESOURCE_TYPES } from './activityLogService';
 import { createScopedLogger } from './loggingService.js';
+import { getAuthenticatedUserId } from '../utils/devBypass.js';
 
 const logger = createScopedLogger('ScreenService');
 
@@ -229,15 +230,14 @@ export function generateOtpCode() {
  * Create a new screen with auto-generated OTP code
  */
 export async function createScreen({ name }) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('User must be authenticated');
+  const userId = await getAuthenticatedUserId();
 
   const otpCode = generateOtpCode();
 
   const { data, error } = await supabase
     .from('tv_devices')
     .insert({
-      owner_id: user.id,
+      owner_id: userId,
       device_name: name,
       otp_code: otpCode
     })
