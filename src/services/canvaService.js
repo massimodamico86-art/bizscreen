@@ -1,23 +1,25 @@
 /**
  * Canva Integration Service
  *
- * Handles OAuth flow and API interactions with Canva Connect API
+ * Handles OAuth flow and API interactions with Canva Connect API via the
+ * canva-proxy Edge Function. All token storage is server-side in the
+ * canva_oauth_tokens table -- no localStorage token storage.
+ *
+ * Token persistence path:
+ *   OAuth redirect -> Canva callback page -> handleCanvaCallback()
+ *   -> canva-proxy Edge Function (exchange_token action) writes to canva_oauth_tokens DB
+ *   -> subsequent API calls go through canva-proxy which reads/refreshes tokens
+ *
  * Documentation: https://www.canva.dev/docs/connect/
  */
 
+import { supabase } from '../supabase';
 import { createScopedLogger } from './loggingService';
 
-const _logger = createScopedLogger('CanvaService');
+const logger = createScopedLogger('CanvaService');
 
 const CANVA_CLIENT_ID = import.meta.env.VITE_CANVA_CLIENT_ID;
 const CANVA_OAUTH_URL = 'https://www.canva.com/api/oauth/authorize';
-const CANVA_TOKEN_URL = 'https://api.canva.com/rest/v1/oauth/token';
-const CANVA_API_URL = 'https://api.canva.com/rest/v1';
-
-// Storage keys
-const TOKEN_KEY = 'canva_access_token';
-const REFRESH_TOKEN_KEY = 'canva_refresh_token';
-const TOKEN_EXPIRY_KEY = 'canva_token_expiry';
 
 /**
  * Get the redirect URI, using 127.0.0.1 instead of localhost
@@ -53,8 +55,11 @@ async function generateCodeChallenge(verifier) {
     .replace(/=+$/, '');
 }
 
+// ─── OAuth Flow ──────────────────────────────────────────────────────────────
+
 /**
  * Start OAuth flow - redirect to Canva
+ * PKCE flow stays client-side (redirect to Canva OAuth page).
  */
 export async function startCanvaOAuth() {
   if (!CANVA_CLIENT_ID) {
@@ -77,7 +82,7 @@ export async function startCanvaOAuth() {
     response_type: 'code',
     client_id: CANVA_CLIENT_ID,
     redirect_uri: redirectUri,
-    scope: 'design:content:read design:content:write asset:read asset:write profile:read',
+    scope: 'design:meta:read design:content:read asset:read profile:read',
     state,
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
@@ -87,7 +92,8 @@ export async function startCanvaOAuth() {
 }
 
 /**
- * Handle OAuth callback - exchange code for tokens
+ * Handle OAuth callback - exchange code for tokens via Edge Function.
+ * Tokens are stored server-side by the Edge Function, not in the browser.
  */
 export async function handleCanvaCallback(code, state) {
   // Verify state
@@ -103,231 +109,272 @@ export async function handleCanvaCallback(code, state) {
 
   const redirectUri = getRedirectUri();
 
-  // Exchange code for tokens
-  const response = await fetch(CANVA_TOKEN_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      grant_type: 'authorization_code',
+  // Exchange code for tokens via Edge Function (tokens stored server-side)
+  const { data, error } = await supabase.functions.invoke('canva-proxy', {
+    body: {
+      action: 'exchange_token',
       code,
-      redirect_uri: redirectUri,
-      client_id: CANVA_CLIENT_ID,
-      code_verifier: codeVerifier,
-    }),
+      codeVerifier,
+      redirectUri,
+    },
   });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.error_description || 'Failed to exchange code for token');
+  if (error) {
+    logger.error('Token exchange failed', error);
+    throw new Error(error.message || 'Failed to exchange code for token');
   }
 
-  const tokens = await response.json();
-
-  // Store tokens
-  localStorage.setItem(TOKEN_KEY, tokens.access_token);
-  if (tokens.refresh_token) {
-    localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refresh_token);
-  }
-  localStorage.setItem(TOKEN_EXPIRY_KEY, Date.now() + (tokens.expires_in * 1000));
-
-  // Clean up
+  // Clean up sessionStorage
   sessionStorage.removeItem('canva_code_verifier');
   sessionStorage.removeItem('canva_oauth_state');
 
-  return tokens;
+  return data;
 }
 
-/**
- * Check if user is connected to Canva
- */
-export function isCanvaConnected() {
-  const token = localStorage.getItem(TOKEN_KEY);
-  const expiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
-
-  if (!token) return false;
-  if (expiry && Date.now() > parseInt(expiry)) return false;
-
-  return true;
-}
+// ─── Connection Status ───────────────────────────────────────────────────────
 
 /**
- * Get access token (refresh if needed)
+ * Check if user is connected to Canva (server-side token exists).
+ * @returns {Promise<boolean>}
  */
-export async function getCanvaToken() {
-  const token = localStorage.getItem(TOKEN_KEY);
-  const expiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
-  const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+export async function checkCanvaConnection() {
+  try {
+    const { data, error } = await supabase.functions.invoke('canva-proxy', {
+      body: { action: 'check_connection' },
+    });
 
-  if (!token) return null;
-
-  // Check if token is expired or about to expire (5 min buffer)
-  if (expiry && Date.now() > parseInt(expiry) - 300000) {
-    if (refreshToken) {
-      try {
-        await refreshCanvaToken();
-        return localStorage.getItem(TOKEN_KEY);
-      } catch {
-        disconnectCanva();
-        return null;
-      }
+    if (error) {
+      logger.warn('Connection check failed', error);
+      return false;
     }
-    return null;
-  }
 
-  return token;
+    return data?.connected === true;
+  } catch (err) {
+    logger.warn('Connection check error', err);
+    return false;
+  }
 }
 
 /**
- * Refresh access token
+ * Disconnect from Canva - delete the canva_oauth_tokens row for current user.
  */
-async function refreshCanvaToken() {
-  const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
-  if (!refreshToken) throw new Error('No refresh token');
+export async function disconnectCanva() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
 
-  const response = await fetch(CANVA_TOKEN_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      refresh_token: refreshToken,
-      client_id: CANVA_CLIENT_ID,
-    }),
-  });
+  const { error } = await supabase
+    .from('canva_oauth_tokens')
+    .delete()
+    .eq('user_id', user.id);
 
-  if (!response.ok) {
-    throw new Error('Failed to refresh token');
+  if (error) {
+    logger.error('Failed to disconnect Canva', error);
+    throw error;
   }
-
-  const tokens = await response.json();
-
-  localStorage.setItem(TOKEN_KEY, tokens.access_token);
-  if (tokens.refresh_token) {
-    localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refresh_token);
-  }
-  localStorage.setItem(TOKEN_EXPIRY_KEY, Date.now() + (tokens.expires_in * 1000));
-
-  return tokens;
 }
 
-/**
- * Disconnect from Canva
- */
-export function disconnectCanva() {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
-  localStorage.removeItem(TOKEN_EXPIRY_KEY);
-}
+// ─── Design Browsing & Import ────────────────────────────────────────────────
 
 /**
- * Make authenticated API request to Canva
+ * List the user's Canva designs via the Edge Function.
+ *
+ * @param {{ query?: string, continuation?: string, limit?: number }} options
+ * @returns {Promise<{ items: object[], continuation: string|null }>}
  */
-async function canvaFetch(endpoint, options = {}) {
-  const token = await getCanvaToken();
-  if (!token) {
-    throw new Error('Not authenticated with Canva');
-  }
-
-  const response = await fetch(`${CANVA_API_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      ...options.headers,
+export async function listCanvaDesigns({ query, continuation, limit } = {}) {
+  const { data, error } = await supabase.functions.invoke('canva-proxy', {
+    body: {
+      action: 'list_designs',
+      query,
+      continuation,
+      limit,
     },
   });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `Canva API error: ${response.status}`);
+  if (error) {
+    logger.error('Failed to list designs', error);
+    throw new Error(error.message || 'Failed to list Canva designs');
   }
 
-  return response.json();
+  return {
+    items: data?.items || [],
+    continuation: data?.continuation || null,
+  };
 }
 
 /**
- * Get user profile
+ * Import a Canva design as a media asset (PNG image).
+ *
+ * Steps:
+ *   1. Export design via Edge Function (PNG)
+ *   2. Download exported image
+ *   3. Upload to Supabase Storage 'media' bucket
+ *   4. Create media_assets record
+ *
+ * @param {string} designId - Canva design ID
+ * @param {string} designTitle - Design title for the media asset name
+ * @returns {Promise<object>} The created media_assets record
  */
-export async function getCanvaUser() {
-  return canvaFetch('/users/me');
-}
+export async function importCanvaDesign(designId, designTitle) {
+  // Step 1: Export design via Edge Function
+  const { data: exportData, error: exportError } = await supabase.functions.invoke('canva-proxy', {
+    body: {
+      action: 'export_design',
+      designId,
+      format: 'png',
+    },
+  });
 
-/**
- * Create a new design
- */
-export async function createDesign(options = {}) {
-  const { width = 1920, height = 1080, title = 'New Design' } = options;
+  if (exportError) {
+    logger.error('Design export failed', exportError);
+    throw new Error(exportError.message || 'Failed to export Canva design');
+  }
 
-  return canvaFetch('/designs', {
-    method: 'POST',
-    body: JSON.stringify({
-      design_type: 'Presentation',
-      title,
-      dimensions: {
-        width,
-        height,
-        units: 'px',
+  const imageUrl = exportData?.url;
+  if (!imageUrl) {
+    throw new Error('No export URL returned from Canva');
+  }
+
+  // Step 2: Download exported image
+  const imageResponse = await fetch(imageUrl);
+  if (!imageResponse.ok) {
+    throw new Error('Failed to download exported image');
+  }
+  const imageBlob = await imageResponse.blob();
+
+  // Step 3: Upload to Supabase Storage
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const filename = `canva-${designId}-${Date.now()}.png`;
+  const storagePath = `${user.id}/${filename}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('media')
+    .upload(storagePath, imageBlob, {
+      contentType: 'image/png',
+      upsert: false,
+    });
+
+  if (uploadError) {
+    logger.error('Storage upload failed', uploadError);
+    throw uploadError;
+  }
+
+  // Get public URL
+  const { data: { publicUrl } } = supabase.storage
+    .from('media')
+    .getPublicUrl(storagePath);
+
+  // Step 4: Create media_assets record
+  const { data: asset, error: insertError } = await supabase
+    .from('media_assets')
+    .insert({
+      owner_id: user.id,
+      name: designTitle || `Canva Design ${designId}`,
+      type: 'image',
+      url: publicUrl,
+      mime_type: 'image/png',
+      file_size: imageBlob.size,
+      metadata: {
+        source: 'canva',
+        canva_design_id: designId,
       },
-    }),
-  });
-}
+    })
+    .select()
+    .single();
 
-/**
- * Get design by ID
- */
-export async function getDesign(designId) {
-  return canvaFetch(`/designs/${designId}`);
-}
-
-/**
- * Export design as image
- */
-export async function exportDesign(designId, format = 'png') {
-  const response = await canvaFetch(`/designs/${designId}/exports`, {
-    method: 'POST',
-    body: JSON.stringify({
-      format: format.toUpperCase(),
-    }),
-  });
-
-  // Poll for export completion
-  const jobId = response.job.id;
-  let result;
-  let attempts = 0;
-  const maxAttempts = 30;
-
-  while (attempts < maxAttempts) {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    result = await canvaFetch(`/designs/${designId}/exports/${jobId}`);
-
-    if (result.job.status === 'success') {
-      return result;
-    }
-    if (result.job.status === 'failed') {
-      throw new Error('Export failed');
-    }
-    attempts++;
+  if (insertError) {
+    logger.error('Failed to create media_assets record', insertError);
+    throw insertError;
   }
 
-  throw new Error('Export timed out');
+  logger.info('Canva design imported', { designId, assetId: asset.id });
+  return asset;
 }
 
 /**
- * Open Canva editor for a design
+ * Re-import a Canva design, updating an existing media asset.
+ *
+ * Same as importCanvaDesign but updates the existing record instead of inserting.
+ *
+ * @param {string} designId - Canva design ID
+ * @param {string} existingAssetId - ID of the existing media_assets record to update
+ * @returns {Promise<object>} The updated media_assets record
  */
-export function openCanvaEditor(designId) {
-  window.open(`https://www.canva.com/design/${designId}/edit`, '_blank');
+export async function reimportCanvaDesign(designId, existingAssetId) {
+  // Step 1: Export design via Edge Function
+  const { data: exportData, error: exportError } = await supabase.functions.invoke('canva-proxy', {
+    body: {
+      action: 'export_design',
+      designId,
+      format: 'png',
+    },
+  });
+
+  if (exportError) {
+    logger.error('Design re-export failed', exportError);
+    throw new Error(exportError.message || 'Failed to export Canva design');
+  }
+
+  const imageUrl = exportData?.url;
+  if (!imageUrl) {
+    throw new Error('No export URL returned from Canva');
+  }
+
+  // Step 2: Download exported image
+  const imageResponse = await fetch(imageUrl);
+  if (!imageResponse.ok) {
+    throw new Error('Failed to download exported image');
+  }
+  const imageBlob = await imageResponse.blob();
+
+  // Step 3: Upload to Supabase Storage (overwrite)
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const filename = `canva-${designId}-${Date.now()}.png`;
+  const storagePath = `${user.id}/${filename}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('media')
+    .upload(storagePath, imageBlob, {
+      contentType: 'image/png',
+      upsert: false,
+    });
+
+  if (uploadError) {
+    logger.error('Storage upload failed', uploadError);
+    throw uploadError;
+  }
+
+  // Get public URL
+  const { data: { publicUrl } } = supabase.storage
+    .from('media')
+    .getPublicUrl(storagePath);
+
+  // Step 4: Update existing media_assets record
+  const { data: asset, error: updateError } = await supabase
+    .from('media_assets')
+    .update({
+      url: publicUrl,
+      file_size: imageBlob.size,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', existingAssetId)
+    .select()
+    .single();
+
+  if (updateError) {
+    logger.error('Failed to update media_assets record', updateError);
+    throw updateError;
+  }
+
+  logger.info('Canva design re-imported', { designId, assetId: asset.id });
+  return asset;
 }
 
-/**
- * Get Canva design URL for embedding
- */
-export function getCanvaDesignUrl(designId) {
-  return `https://www.canva.com/design/${designId}/view`;
-}
+// ─── Template Categories & Helpers ───────────────────────────────────────────
 
 /**
  * Canva template categories with deep links
@@ -404,6 +451,20 @@ export function openCanvaTemplates(categoryId = null) {
 
   const url = category?.url || 'https://www.canva.com/templates/';
   window.open(url, '_blank');
+}
+
+/**
+ * Open Canva editor for a design
+ */
+export function openCanvaEditor(designId) {
+  window.open(`https://www.canva.com/design/${designId}/edit`, '_blank');
+}
+
+/**
+ * Get Canva design URL for embedding
+ */
+export function getCanvaDesignUrl(designId) {
+  return `https://www.canva.com/design/${designId}/view`;
 }
 
 /**
