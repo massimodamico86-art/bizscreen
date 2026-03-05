@@ -49,7 +49,7 @@ None.
 | 53 | Fix BUG-08: Welcome and Dashboard pages render identically | 2026-03-05 | 2ef738c | [53-fix-bug-08-welcome-and-dashboard-pages-r](./quick/53-fix-bug-08-welcome-and-dashboard-pages-r/) |
 | 54 | Redo QA walkthrough using MCP Playwright | 2026-03-05 | 56d2ea9 | [54-redo-qa-walkthrough-using-mcp-playwright](./quick/54-redo-qa-walkthrough-using-mcp-playwright/) |
 | 55 | Fix BUG-06 and BUG-13: Remove duplicate create buttons from Schedules and Menu Boards | 2026-03-05 | fd74f4d | [55-fix-bug-06-and-bug-13-remove-duplicate-c](./quick/55-fix-bug-06-and-bug-13-remove-duplicate-c/) |
-| 56 | Review auth and onboarding flow screenshots, found BUG-15 and BUG-16 | 2026-03-05 | 6e72b53 | [56-review-auth-and-onboarding-flow-screensh](./quick/56-review-auth-and-onboarding-flow-screensh/) |
+| 56 | Review auth and onboarding flow screenshots, found BUG-15 and BUG-16 | 2026-03-05 | 49ad7cb | [56-review-auth-and-onboarding-flow-screensh](./quick/56-review-auth-and-onboarding-flow-screensh/) |
 
 ## Session Continuity
 
