@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T22:20:03.689Z"
+last_updated: "2026-03-05T22:28:34.752Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 62: Fix LAYOUT-01 mutual exclusivity, welcome teal card, breadcrumb, page title
+Last activity: 2026-03-05 - Completed quick task 63: Review guest name dynamic placeholders, found BUG-Q63-01
 
 Progress: [████████████████████████████] 100%
 
@@ -38,6 +38,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-59]: Used aside-scoped sidebar locators for Templates page navigation in E2E tests
 - [Phase quick-60]: Minimal single-line DEV_AUTH_BYPASS guard in PublicRoute redirect condition
 - [Phase quick-62]: Used conditional spread for mutual exclusivity; derived page title from slug
+- [Phase quick-63]: Confirmed WelcomePage greeting works; identified missing placeholder substitution as BUG-Q63-01 (medium)
 
 ### Blockers/Concerns
 
@@ -61,11 +62,12 @@ None.
 | 60 | Fix BUG-02 and BUG-03: Dev mode auth bypass skips PublicRoute redirect | 2026-03-05 | 561e78c | [60-fix-bug-02-and-bug-03-dev-mode-auth-rout](./quick/60-fix-bug-02-and-bug-03-dev-mode-auth-rout/) |
 | 61 | Review welcome screen device/TV rendering at 1920x1080, check for visual bugs and console errors | 2026-03-05 | 52228cf | [61-review-welcome-screen-device-tv-renderin](./quick/61-review-welcome-screen-device-tv-renderin/) |
 | 62 | Fix remaining minor issues: LAYOUT-01 mutual exclusivity, welcome teal card, breadcrumb, page title | 2026-03-05 | efa64f8 | [62-fix-remaining-minor-issues-layout-01-con](./quick/62-fix-remaining-minor-issues-layout-01-con/) |
+| 63 | Review guest name dynamic placeholders, found BUG-Q63-01 (missing substitution logic) | 2026-03-05 | 167d802 | [63-review-guest-name-dynamic-placeholders-o](./quick/63-review-guest-name-dynamic-placeholders-o/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 62
+Stopped at: Completed quick task 63
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
