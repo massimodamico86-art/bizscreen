@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 64: Full auth flow E2E test (5 tests, 0 bugs, 2 skipped for dev bypass)
+Last activity: 2026-03-05 - Completed quick task 65: Verify Welcome vs Dashboard sidebar navigation (BUG-08 fix confirmed)
 
 Progress: [████████████████████████████] 100%
 
@@ -65,11 +65,12 @@ None.
 | 62 | Fix remaining minor issues: LAYOUT-01 mutual exclusivity, welcome teal card, breadcrumb, page title | 2026-03-05 | efa64f8 | [62-fix-remaining-minor-issues-layout-01-con](./quick/62-fix-remaining-minor-issues-layout-01-con/) |
 | 63 | Review guest name dynamic placeholders, found BUG-Q63-01 (missing substitution logic) | 2026-03-05 | 167d802 | [63-review-guest-name-dynamic-placeholders-o](./quick/63-review-guest-name-dynamic-placeholders-o/) |
 | 64 | Full auth flow E2E test (5 tests, 0 bugs, 2 skipped for dev bypass) | 2026-03-05 | 9a8ee9f | [64-test-full-auth-flow-via-playwright](./quick/64-test-full-auth-flow-via-playwright/) |
+| 65 | Verify Welcome vs Dashboard sidebar navigation (BUG-08 fix confirmed) | 2026-03-05 | 9ba5347 | [65-verify-welcome-vs-dashboard-sidebar-navi](./quick/65-verify-welcome-vs-dashboard-sidebar-navi/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 64
+Stopped at: Completed quick task 65
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
