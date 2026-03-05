@@ -331,7 +331,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
                   }))}
                   className={`px-3 py-1.5 text-xs rounded-full transition-colors ${
                     activeFilters[filterKey] === item
-                      ? 'bg-emerald-500 text-white'
+                      ? 'bg-brand-500 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -342,7 +342,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
             {hasMore && (
               <button
                 onClick={() => toggleShowMore(filterKey)}
-                className="mt-3 text-xs text-emerald-500 hover:text-emerald-600 font-medium"
+                className="mt-3 text-xs text-brand-500 hover:text-brand-600 font-medium"
               >
                 {showAll ? '- Show less' : `+ View ${items.length - (config.defaultShow || 6)} more`}
               </button>
@@ -370,7 +370,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
     return (
       <div
         onClick={() => isUserDesign ? handleDesignClick(template) : handleTemplateClick(template)}
-        className={`${cardClass} group relative bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-emerald-400 hover:shadow-xl transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:-translate-y-1`}
+        className={`${cardClass} group relative bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-brand-400 hover:shadow-xl transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:-translate-y-1`}
       >
         {/* Thumbnail */}
         <div className="w-full h-full bg-gray-100 relative overflow-hidden">
@@ -382,8 +382,8 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100">
-              <FileType size={40} className="text-emerald-300" />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-50 to-brand-100">
+              <FileType size={40} className="text-brand-300" />
             </div>
           )}
 
@@ -439,7 +439,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
         <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
         <button
           onClick={() => handleViewAll(title)}
-          className="text-sm text-emerald-600 hover:text-emerald-700"
+          className="text-sm text-brand-600 hover:text-brand-700"
         >
           View all
         </button>
@@ -495,7 +495,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
         {/* Main content skeleton */}
         <div className="flex-1 bg-gray-50 p-6">
           {/* Header skeleton */}
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg px-8 py-10 mb-6 -mx-6 -mt-6">
+          <div className="bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg px-8 py-10 mb-6 -mx-6 -mt-6">
             <div className="h-7 bg-white/20 rounded w-80 mx-auto mb-6 animate-pulse" />
             <div className="max-w-2xl mx-auto h-12 bg-white/30 rounded-lg animate-pulse" />
           </div>
@@ -528,7 +528,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
             onClick={() => setActiveView('home')}
             className={`w-full py-2 rounded-lg font-medium text-sm transition-colors ${
               activeView === 'home'
-                ? 'bg-emerald-500 text-white'
+                ? 'bg-brand-500 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -548,7 +548,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
             onClick={() => setActiveView('your-designs')}
             className={`w-full py-2 border font-medium text-sm rounded-lg transition-colors ${
               activeView === 'your-designs'
-                ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                ? 'border-brand-500 bg-brand-50 text-brand-700'
                 : 'border-gray-200 text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -572,7 +572,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
                   }))}
                   className={`flex items-center gap-1.5 text-sm transition-colors ${
                     activeFilters.orientation === 'landscape'
-                      ? 'text-emerald-600 font-medium'
+                      ? 'text-brand-600 font-medium'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -586,7 +586,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
                   }))}
                   className={`flex items-center gap-1.5 text-sm transition-colors ${
                     activeFilters.orientation === 'portrait'
-                      ? 'text-emerald-600 font-medium'
+                      ? 'text-brand-600 font-medium'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -615,7 +615,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
                     }))}
                     className={`block w-full text-left text-sm py-0.5 transition-colors ${
                       activeFilters.category === item
-                        ? 'text-emerald-600 font-medium'
+                        ? 'text-brand-600 font-medium'
                         : 'text-gray-600 hover:text-gray-900'
                     }`}
                   >
@@ -626,7 +626,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
               {FILTER_CONFIG.categories.items.length > 6 && (
                 <button
                   onClick={() => toggleShowMore('categories')}
-                  className="mt-2 text-xs text-emerald-500 hover:text-emerald-600 font-medium"
+                  className="mt-2 text-xs text-brand-500 hover:text-brand-600 font-medium"
                 >
                   {showMoreFilters.categories
                     ? '- Show less'
@@ -645,7 +645,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
       {/* Main Content */}
       <div ref={mainContentRef} className="flex-1 overflow-y-auto bg-gray-50">
         {/* Green Header */}
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-10">
+        <div className="bg-gradient-to-r from-brand-500 to-brand-600 px-8 py-10">
           <h1 className="text-2xl font-bold text-white text-center mb-6">
             What Template Are You Looking For?
           </h1>
@@ -695,7 +695,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
                   </p>
                   <button
                     onClick={() => onNavigate?.('svg-editor')}
-                    className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                    className="px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
                   >
                     Create New Design
                   </button>
@@ -767,12 +767,12 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
               {activeFilters.orientation && (
                 <div className="mb-4 flex items-center gap-2">
                   <span className="text-sm text-gray-500">Active filters:</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-brand-100 text-brand-700 text-xs rounded-full">
                     {activeFilters.orientation === 'landscape' ? <Monitor size={12} /> : <Smartphone size={12} />}
                     {activeFilters.orientation}
                     <button
                       onClick={() => setActiveFilters(prev => ({ ...prev, orientation: null }))}
-                      className="ml-1 hover:text-emerald-900"
+                      className="ml-1 hover:text-brand-900"
                     >
                       <X size={12} />
                     </button>
@@ -792,7 +792,7 @@ export default function SvgTemplateGalleryPage({ showToast, onNavigate }) {
                   </p>
                   <button
                     onClick={() => setActiveFilters(prev => ({ ...prev, orientation: null }))}
-                    className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                    className="px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
                   >
                     Clear Filters
                   </button>
