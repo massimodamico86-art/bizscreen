@@ -21,3 +21,27 @@
 **Deferred for real-auth testing:**
 - Sign-out redirect verification requires running against a real Supabase backend (VITE_DEV_BYPASS_AUTH=false)
 - Post-signout route protection verification (cannot access /app) requires the same
+
+## QT-66: Toast Persistence on Navigation (2026-03-05)
+
+**Status:** PASS -- No stale toasts persist across page transitions
+
+**Test method:** Playwright E2E -- rapid sidebar navigation through 10 pages, checking for visible toast elements after each transition. Two passes: normal speed (300ms between clicks) and stress test (100ms between clicks, 5 pages).
+
+**Pages visited:** Dashboard, Screens, Playlists, Schedules, Templates, Apps, Menu Boards, Scenes (skipped -- feature-gated), Settings (skipped -- feature-gated), Analytics (skipped -- feature-gated)
+
+**Findings:**
+- Dashboard: PASS -- no toast visible
+- Screens: WARN -- page-specific toast "Real-time updates temporarily unavailable" (mount-effect, not stale)
+- Playlists: PASS -- Screens toast correctly dismissed on navigation
+- Schedules: PASS -- no toast visible
+- Templates: PASS -- no toast visible
+- Apps: PASS -- no toast visible
+- Menu Boards: WARN -- page-specific toast "Failed to load menu boards: TypeError: Failed to fetch (127.0.0.1:54321)" (mount-effect, not stale)
+- Rapid-fire pass (Screens -> Dashboard -> Playlists -> Templates -> Settings -> Apps): PASS -- no stale toasts after 500ms settle
+
+**Key observation:** The `useEffect(() => setToast(null), [currentPage])` fix in App.jsx (line 334-337) correctly clears toasts on navigation. The Screens and Menu Boards pages generate NEW toasts on mount due to backend connection failures (Supabase not running), but these are page-specific and do not carry over to subsequent pages.
+
+**Screenshots:** None needed -- no stale toasts detected
+
+**Related:** BUG-07 fix in quick-52 (commit 73b096b) -- added `useEffect(() => setToast(null), [currentPage])` in App.jsx
