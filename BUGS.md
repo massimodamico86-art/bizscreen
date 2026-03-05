@@ -12,8 +12,8 @@
 - **Pages loaded OK:** All visited pages rendered without crashes
 - **Page crashes (error boundaries):** 0
 - **Bugs total:** 16
-- **Bugs resolved:** 6 (BUG-01, BUG-05, BUG-06, BUG-07, BUG-08, BUG-13)
-- **Bugs open:** 10 (BUG-02, BUG-03, BUG-04, BUG-09 through BUG-12, BUG-14, BUG-15, BUG-16)
+- **Bugs resolved:** 14 (BUG-01, BUG-04, BUG-05, BUG-06, BUG-07, BUG-08, BUG-09, BUG-10, BUG-11, BUG-12, BUG-13, BUG-14, BUG-15, BUG-16)
+- **Bugs open:** 2 (BUG-02, BUG-03 -- dev-mode routing issues)
 
 ---
 
@@ -54,6 +54,52 @@
 - **Resolution:** Fixed in quick task 53. Welcome page now has a distinct onboarding experience with setup wizard, different from the Dashboard stats view.
 - **Verified:** 2026-03-05 via MCP interactive walkthrough
 
+### [RESOLVED] BUG-04: Media "Audio" page heading says "Audios"
+- **Page:** `media-audio`
+- **Screenshot:** `screenshots/qa/qa2-09-media-audio.png`
+- **Resolution:** Fixed in quick task 57. Replaced naive `+ 's'` pluralization with explicit MEDIA_TYPE_PLURALS map. Audio heading now correctly reads "Audio".
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-09: Listings and Locations pages render identically
+- **Page:** `listings` vs `locations`
+- **Resolution:** Fixed in quick task 57. Listings route now redirects to LocationsPage. Listings entry removed from navigation header.
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-10: Template Marketplace page has no heading
+- **Page:** `template-marketplace`
+- **Resolution:** Fixed in quick task 57. Added PageHeader component with title and description inside PageLayout.
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-11: Multiple pages show "Access Denied" without navigation back
+- **Page:** `admin-test`, `admin-tenants`, `admin-audit-logs`, `admin-system-events`, `tenant-admin`, `super-admin`, `admin-dashboard`, `feature-flags`
+- **Screenshot:** `screenshots/qa/qa2-25-admin-tenants.png`
+- **Resolution:** Fixed in quick task 57. Added "Go to Dashboard" button with orange brand color to all 8 Access Denied pages.
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-12: Playlists page button naming inconsistency
+- **Page:** `playlists`
+- **Screenshot:** `screenshots/qa/qa2-08-playlists.png`
+- **Resolution:** Fixed in quick task 57. Changed "Add Playlist" to "Create Playlist" in both page header and empty state buttons.
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-14: Proof of Play "Export CSV" button appears disabled with no explanation
+- **Page:** `proof-of-play`
+- **Screenshot:** `screenshots/qa/qa2-36-proof-of-play.png`
+- **Resolution:** Fixed in quick task 57. Wrapped disabled button in div with tooltip "No data available to export".
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-15: Reset password error exposes raw backend URL to user
+- **Page:** `/auth/reset-password`
+- **Screenshot:** `screenshots/56-03-reset-password-submitted.png`
+- **Resolution:** Fixed in quick task 57. Sanitized error message in authService catch block to show generic connection error instead of raw URL.
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-16: ErrorBoundary "Try Again" button uses green instead of brand colors
+- **Page:** Global (ErrorBoundary component)
+- **Screenshot:** `screenshots/56-09-login-dev-bypass-redirect.png`
+- **Resolution:** Fixed in quick task 57. Changed bg-green-600 to bg-orange-500 to match brand palette.
+- **Verified:** 2026-03-05
+
 ---
 
 ## Open Issues
@@ -69,61 +115,6 @@
 - **Description:** Login and signup pages redirect to `/app` when dev auth bypass is on. Reset-password, update-password, and accept-invite pages do NOT redirect, creating inconsistent behavior.
 - **Severity:** Low (dev-mode only)
 - **Status:** Re-verified in task 56 auth walkthrough - still present
-
----
-
-## Visual/UX Issues (Open)
-
-### BUG-04: Media "Audio" page heading says "Audios"
-- **Page:** `media-audio`
-- **Screenshot:** `screenshots/qa/qa2-09-media-audio.png`
-- **Description:** The heading reads "Audios" which is grammatically awkward. Should be "Audio" or "Audio Files" to match sidebar label "Audio".
-- **Severity:** Low
-
-### BUG-09: Listings and Locations pages render identically
-- **Page:** `listings` vs `locations`
-- **Description:** Both page IDs render the same "Locations" heading. The `listings` page ID appears to be a legacy alias that wasn't removed.
-- **Severity:** Low
-
-### BUG-10: Template Marketplace page has no heading
-- **Page:** `template-marketplace`
-- **Description:** The Template Marketplace page has no h1 heading. Shows search bar, filters, and "0 templates found" without a proper title.
-- **Severity:** Low
-
-### BUG-11: Multiple pages show "Access Denied" without navigation back
-- **Page:** `admin-test`, `admin-tenants`, `admin-audit-logs`, `admin-system-events`, `tenant-admin`
-- **Screenshot:** `screenshots/qa/qa2-25-admin-tenants.png`
-- **Description:** Admin pages show "Access Denied" with no button or link to navigate back. Should include a "Go to Dashboard" or "Go Back" button.
-- **Severity:** Low
-
-### BUG-12: Playlists page button naming inconsistency
-- **Page:** `playlists`
-- **Screenshot:** `screenshots/qa/qa2-08-playlists.png`
-- **Description:** The Playlists page uses "Add Playlist" while other pages use different verbs. Naming should be consistent across all list pages.
-- **Severity:** Low (naming inconsistency)
-
-### BUG-14: Proof of Play "Export CSV" button appears disabled with no explanation
-- **Page:** `proof-of-play`
-- **Screenshot:** `screenshots/qa/qa2-36-proof-of-play.png`
-- **Description:** "Export CSV" button appears grayed out when there's no data. No tooltip explains why it's disabled.
-- **Severity:** Low
-
----
-
-## Auth/Onboarding Review (Task 56)
-
-### BUG-15: Reset password error exposes raw backend URL to user
-- **Page:** `/auth/reset-password`
-- **Screenshot:** `screenshots/56-03-reset-password-submitted.png`
-- **Description:** When submitting the reset password form without a backend, the error message shows "Failed to fetch (127.0.0.1:54321)" directly to the user. The raw internal backend URL should not leak into user-facing error messages. The `authService.requestPasswordReset` catch block passes `error.message` verbatim to the UI.
-- **Severity:** Low (UX/security - information disclosure)
-
-### BUG-16: ErrorBoundary "Try Again" button uses green instead of brand colors
-- **Page:** Global (ErrorBoundary component)
-- **Screenshot:** `screenshots/56-09-login-dev-bypass-redirect.png`
-- **Description:** The ErrorBoundary component uses `bg-green-600` for its "Try Again" button. This is inconsistent with the app's orange/blue brand palette. The "Reload Page" button correctly uses blue, but "Try Again" is green.
-- **Severity:** Low (brand consistency)
-- **File:** `src/components/ErrorBoundary.jsx` line 109
 
 ---
 
