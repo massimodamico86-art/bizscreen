@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 -- v12.0 archived
+Last activity: 2026-03-05 - Completed quick task 49: Comprehensive QA walkthrough
 
 Progress: [████████████████████████████] 100%
 
@@ -37,6 +37,12 @@ Full decision log in PROJECT.md Key Decisions table.
 ### Blockers/Concerns
 
 None.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 49 | Comprehensive QA walkthrough - navigate app as customer, screenshot every flow, report all bugs | 2026-03-05 | pending | [49-comprehensive-qa-walkthrough-navigate-ap](./quick/49-comprehensive-qa-walkthrough-navigate-ap/) |
 
 ## Session Continuity
 
