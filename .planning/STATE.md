@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 50: Fix Service Quality page broken layout
+Last activity: 2026-03-05 - Completed quick task 51: Fix BUG-05 brand color consistency
 
 Progress: [████████████████████████████] 100%
 
@@ -44,11 +44,12 @@ None.
 |---|-------------|------|--------|-----------|
 | 49 | Comprehensive QA walkthrough - navigate app as customer, screenshot every flow, report all bugs | 2026-03-05 | 14673ed | [49-comprehensive-qa-walkthrough-navigate-ap](./quick/49-comprehensive-qa-walkthrough-navigate-ap/) |
 | 50 | Fix Service Quality page broken layout - Grid icon import collision | 2026-03-05 | 219c325 | [50-fix-service-quality-page-broken-layout-b](./quick/50-fix-service-quality-page-broken-layout-b/) |
+| 51 | Fix BUG-05: Replace teal/emerald/green colors with brand palette on Templates/Layouts pages | 2026-03-05 | 2dbdc88 | [51-fix-bug-05-templates-layouts-pages-use-t](./quick/51-fix-bug-05-templates-layouts-pages-use-t/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 50
+Stopped at: Completed quick task 51
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
