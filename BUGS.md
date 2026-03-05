@@ -12,8 +12,8 @@
 - **Pages loaded OK:** All visited pages rendered without crashes
 - **Page crashes (error boundaries):** 0
 - **Bugs total:** 16
-- **Bugs resolved:** 14 (BUG-01, BUG-04, BUG-05, BUG-06, BUG-07, BUG-08, BUG-09, BUG-10, BUG-11, BUG-12, BUG-13, BUG-14, BUG-15, BUG-16)
-- **Bugs open:** 2 (BUG-02, BUG-03 -- dev-mode routing issues)
+- **Bugs resolved:** 16 (all)
+- **Bugs open:** 0
 
 ---
 
@@ -100,21 +100,21 @@
 - **Resolution:** Fixed in quick task 57. Changed bg-green-600 to bg-orange-500 to match brand palette.
 - **Verified:** 2026-03-05
 
+### [RESOLVED] BUG-02: Homepage (`/`) inaccessible when authenticated
+- **Page:** `/` (marketing homepage)
+- **Resolution:** Fixed in quick task 60. Added `!DEV_AUTH_BYPASS` guard to PublicRoute redirect condition so homepage is accessible during dev auth bypass.
+- **Verified:** 2026-03-05
+
+### [RESOLVED] BUG-03: Auth pages inaccessible when authenticated
+- **Page:** `/auth/login`, `/auth/signup`
+- **Resolution:** Fixed in quick task 60. Same PublicRoute guard allows login/signup pages to render during dev auth bypass. Zero production impact.
+- **Verified:** 2026-03-05
+
 ---
 
 ## Open Issues
 
-### BUG-02: Homepage (`/`) inaccessible when authenticated
-- **Page:** `/` (marketing homepage)
-- **Screenshot:** `screenshots/qa/qa2-04-dashboard.png` (redirected to /app)
-- **Description:** Navigating to `/` always redirects to `/app` when dev auth bypass is active. The marketing homepage is never viewable for authenticated users. Features (`/features`) and Pricing (`/pricing`) pages remain accessible, creating inconsistency.
-- **Severity:** Medium
-
-### BUG-03: Auth pages inaccessible when authenticated
-- **Page:** `/auth/login`, `/auth/signup`
-- **Description:** Login and signup pages redirect to `/app` when dev auth bypass is on. Reset-password, update-password, and accept-invite pages do NOT redirect, creating inconsistent behavior.
-- **Severity:** Low (dev-mode only)
-- **Status:** Re-verified in task 56 auth walkthrough - still present
+None. All 16 bugs resolved.
 
 ---
 
