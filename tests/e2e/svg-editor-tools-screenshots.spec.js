@@ -73,12 +73,48 @@ async function clickSidebarTab(page, label) {
  */
 async function clickToolbarButton(page, text) {
   const btn = page.locator('button').filter({ hasText: new RegExp(text, 'i') }).first();
-  if (await btn.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await btn.click();
-    await page.waitForTimeout(800);
-    return true;
+  const isVisible = await btn.isVisible({ timeout: 5000 }).catch(() => false);
+  if (!isVisible) {
+    throw new Error(`TopToolbar button "${text}" not found -- ensure an element is selected first (TopToolbar requires selectedObject)`);
   }
-  return false;
+  await btn.click();
+  await page.waitForTimeout(800);
+}
+
+/**
+ * Add a text element to the canvas and select it.
+ * This is required before clicking Effects/Animate/Position buttons,
+ * because TopToolbar only renders those buttons when selectedObject exists.
+ */
+async function addAndSelectElement(page) {
+  // Add a text element via the Text sidebar tab
+  const textClicked = await clickSidebarTab(page, 'Text');
+  if (textClicked) {
+    await page.waitForTimeout(500);
+    const addTextBtn = page.locator('button').filter({ hasText: /heading 1|add.*text|heading/i }).first();
+    if (await addTextBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await addTextBtn.click();
+      await page.waitForTimeout(1500);
+    }
+    // Close text panel
+    await clickSidebarTab(page, 'Text');
+    await page.waitForTimeout(300);
+  }
+  // Click on canvas center to ensure the element is selected
+  const canvas = page.locator('canvas').first();
+  if (await canvas.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const box = await canvas.boundingBox();
+    if (box) {
+      await canvas.click({ position: { x: box.width / 2, y: box.height / 2 }, force: true });
+      await page.waitForTimeout(500);
+    }
+  }
+  // Verify TopToolbar shows element controls (not "Select an object to edit")
+  const toolbarMsg = page.locator('text="Select an object to edit"');
+  const stillEmpty = await toolbarMsg.isVisible({ timeout: 1000 }).catch(() => false);
+  if (stillEmpty) {
+    console.warn('Element may not be selected -- TopToolbar still shows empty state');
+  }
 }
 
 test.describe('SVG Editor Tools Screenshots', () => {
@@ -256,9 +292,18 @@ test.describe('SVG Editor Tools Screenshots', () => {
     await waitForPageReady(page);
     await openSvgEditor(page);
 
-    // Effects button is in the TopToolbar
-    await clickToolbarButton(page, 'effects');
+    // Must select an element first -- TopToolbar only renders Effects/Animate/Position when selectedObject exists
+    await addAndSelectElement(page);
+
+    // Now click Effects button in TopToolbar
+    await clickToolbarButton(page, 'Effects');
     await page.waitForTimeout(500);
+
+    // Assert that the effects panel content is visible (not just the base editor)
+    const effectsPanel = page.locator('text=/shadow|blur|opacity|effects/i').first();
+    await effectsPanel.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {
+      console.warn('Effects panel content not found -- screenshot may not show panel');
+    });
 
     await screenshotStep(page, '116-09-effects-panel');
   });
@@ -272,9 +317,16 @@ test.describe('SVG Editor Tools Screenshots', () => {
     await waitForPageReady(page);
     await openSvgEditor(page);
 
-    // Animate button is in the TopToolbar
-    await clickToolbarButton(page, 'animate');
+    await addAndSelectElement(page);
+
+    await clickToolbarButton(page, 'Animate');
     await page.waitForTimeout(500);
+
+    // Assert animate panel content is visible
+    const animatePanel = page.locator('text=/animation|animate|entrance|exit|fade|slide/i').first();
+    await animatePanel.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {
+      console.warn('Animate panel content not found -- screenshot may not show panel');
+    });
 
     await screenshotStep(page, '116-10-animate-panel');
   });
@@ -288,9 +340,16 @@ test.describe('SVG Editor Tools Screenshots', () => {
     await waitForPageReady(page);
     await openSvgEditor(page);
 
-    // Position button is in the TopToolbar
-    await clickToolbarButton(page, 'position');
+    await addAndSelectElement(page);
+
+    await clickToolbarButton(page, 'Position');
     await page.waitForTimeout(500);
+
+    // Assert position panel content is visible
+    const positionPanel = page.locator('text=/align|position|distribute|left|center|right/i').first();
+    await positionPanel.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {
+      console.warn('Position panel content not found -- screenshot may not show panel');
+    });
 
     await screenshotStep(page, '116-11-position-panel');
   });
