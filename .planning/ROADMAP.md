@@ -169,7 +169,10 @@ Plans:
   1. Running the screens E2E spec produces screenshots of screen list with status indicators, creation with pairing code, OTP flow, device diagnostics, and remote command buttons
   2. Running the screen management E2E spec produces screenshots of group management with tags, playlist/layout assignment, orientation toggle, master PIN modal, emergency push for groups, and working hours schedule
   3. All 11 screen test cases pass with screenshots captured at each step
-**Plans**: TBD (to be created via `/gsd:plan-phase 119`)
+**Plans**: 2 plans
+Plans:
+- [ ] 119-01-PLAN.md — Screens page screenshot E2E tests (list with status, creation modal, OTP pairing, diagnostics, remote commands)
+- [ ] 119-02-PLAN.md — Screen management screenshot E2E tests (group tags, playlist/layout assignment, orientation, master PIN, emergency push, working hours)
 
 ### Phase 120: Data Sources, Apps & Moderation E2E
 **Goal**: Data source configuration, apps gallery, menu board editing, and content moderation have screenshot-verified E2E coverage
@@ -254,7 +257,7 @@ Plans:
 | 116. Scenes & SVG Editor E2E | 4/4 | Complete    | 2026-03-06 |
 | 117. Playlists & Layouts E2E | 5/5 | Complete    | 2026-03-06 |
 | 118. Templates, Schedules & Campaigns E2E | 3/3 | Complete    | 2026-03-06 |
-| 119. Screens & Device Management E2E | 0/TBD | Not started | - |
+| 119. Screens & Device Management E2E | 0/2 | Not started | - |
 | 120. Data Sources, Apps & Moderation E2E | 0/TBD | Not started | - |
 | 121. Analytics, Settings & Admin E2E | 0/TBD | Not started | - |
 | 122. Responsive & Edge Cases E2E | 0/TBD | Not started | - |
@@ -264,4 +267,4 @@ Plans:
 **Total:** 124 phases | 320 plans executed | 19 milestones (18 shipped, 1 in progress)
 
 ---
-*Last updated: 2026-03-06 -- Phase 118 plans created (3 plans, 1 wave)*
+*Last updated: 2026-03-06 -- Phase 119 plans created (2 plans, 1 wave)*
