@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-06 - Completed quick task 75: Device commands pipeline QA walkthrough -- all 6 points PASS, 0 bugs
+Last activity: 2026-03-06 - Completed quick task 76: Scenes CRUD QA walkthrough -- 5/6 points PASS, 1 bug (BUG-Q76-01: Create Scene not wired)
 
 Progress: [████████████████████████████] 100%
 
@@ -49,6 +49,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-73]: All console errors traced to missing Supabase backend, reclassified as benign (0 genuine)
 - [Phase quick-74]: Used code review verification for backend-dependent screen assignment features (no Supabase)
 - [Phase quick-75]: Used code review verification for device command pipeline (no Supabase)
+- [Phase quick-76]: Classified scoped-logger errors (App, BrandThemeService) as benign; used code review for editor block operations
 
 ### Blockers/Concerns
 
@@ -85,11 +86,12 @@ None.
 | 73 | QA walkthrough Screen creation, OTP pairing, player view -- all 6 features PASS, 0 bugs | 2026-03-06 | d237ac0 | [73-qa-walkthrough-screen-creation-otp-pairi](./quick/73-qa-walkthrough-screen-creation-otp-pairi/) |
 | 74 | QA walkthrough Screen assignment of playlist, layout, schedule -- all 8 features PASS, 0 bugs | 2026-03-06 | 3a200d9 | [74-qa-walkthrough-screen-assignment-of-play](./quick/74-qa-walkthrough-screen-assignment-of-play/) |
 | 75 | QA walkthrough Device commands pipeline (reload, reboot, clear_cache, reset) -- all 6 points PASS, 0 bugs | 2026-03-06 | 85ed466 | [75-qa-walkthrough-test-device-commands-from](./quick/75-qa-walkthrough-test-device-commands-from/) |
+| 76 | QA walkthrough Scenes CRUD (list, create, editor, blocks) -- 5/6 points PASS, 1 bug (BUG-Q76-01) | 2026-03-06 | 0b64b27 | [76-qa-walkthrough-scenes-crud-create-scene-](./quick/76-qa-walkthrough-scenes-crud-create-scene-/) |
 
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed quick task 75
+Stopped at: Completed quick task 76
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
