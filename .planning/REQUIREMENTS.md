@@ -225,17 +225,162 @@ None deferred -- this milestone closes all testing and stability gaps.
 
 ## Traceability
 
-(Populated during roadmap creation)
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (to be filled) | | |
+| DASH-01 | Phase 115 | Pending |
+| DASH-02 | Phase 115 | Pending |
+| DASH-03 | Phase 115 | Pending |
+| DASH-04 | Phase 115 | Pending |
+| DASH-05 | Phase 115 | Pending |
+| MEDIA-01 | Phase 115 | Pending |
+| MEDIA-02 | Phase 115 | Pending |
+| MEDIA-03 | Phase 115 | Pending |
+| MEDIA-04 | Phase 115 | Pending |
+| MEDIA-05 | Phase 115 | Pending |
+| MEDIA-06 | Phase 115 | Pending |
+| MEDIA-07 | Phase 115 | Pending |
+| MEDIA-08 | Phase 115 | Pending |
+| MEDIA-09 | Phase 115 | Pending |
+| MEDIA-10 | Phase 115 | Pending |
+| SCENE-01 | Phase 116 | Pending |
+| SCENE-02 | Phase 116 | Pending |
+| SCENE-03 | Phase 116 | Pending |
+| SCENE-04 | Phase 116 | Pending |
+| SCENE-05 | Phase 116 | Pending |
+| SCENE-06 | Phase 116 | Pending |
+| SCENE-07 | Phase 116 | Pending |
+| SCENE-08 | Phase 116 | Pending |
+| SCENE-09 | Phase 116 | Pending |
+| SCENE-10 | Phase 116 | Pending |
+| SCENE-11 | Phase 116 | Pending |
+| SCENE-12 | Phase 116 | Pending |
+| SCENE-13 | Phase 116 | Pending |
+| SCENE-14 | Phase 116 | Pending |
+| SCENE-15 | Phase 116 | Pending |
+| SCENE-16 | Phase 116 | Pending |
+| SCENE-17 | Phase 116 | Pending |
+| PLAY-01 | Phase 117 | Pending |
+| PLAY-02 | Phase 117 | Pending |
+| PLAY-03 | Phase 117 | Pending |
+| PLAY-04 | Phase 117 | Pending |
+| PLAY-05 | Phase 117 | Pending |
+| PLAY-06 | Phase 117 | Pending |
+| PLAY-07 | Phase 117 | Pending |
+| PLAY-08 | Phase 117 | Pending |
+| LAYOUT-01 | Phase 117 | Pending |
+| LAYOUT-02 | Phase 117 | Pending |
+| LAYOUT-03 | Phase 117 | Pending |
+| LAYOUT-04 | Phase 117 | Pending |
+| LAYOUT-05 | Phase 117 | Pending |
+| LAYOUT-06 | Phase 117 | Pending |
+| LAYOUT-07 | Phase 117 | Pending |
+| LAYOUT-08 | Phase 117 | Pending |
+| TMPL-01 | Phase 118 | Pending |
+| TMPL-02 | Phase 118 | Pending |
+| TMPL-03 | Phase 118 | Pending |
+| TMPL-04 | Phase 118 | Pending |
+| TMPL-05 | Phase 118 | Pending |
+| TMPL-06 | Phase 118 | Pending |
+| TMPL-07 | Phase 118 | Pending |
+| TMPL-08 | Phase 118 | Pending |
+| SCHED-01 | Phase 118 | Pending |
+| SCHED-02 | Phase 118 | Pending |
+| SCHED-03 | Phase 118 | Pending |
+| SCHED-04 | Phase 118 | Pending |
+| SCHED-05 | Phase 118 | Pending |
+| SCHED-06 | Phase 118 | Pending |
+| CAMP-01 | Phase 118 | Pending |
+| CAMP-02 | Phase 118 | Pending |
+| CAMP-03 | Phase 118 | Pending |
+| CAMP-04 | Phase 118 | Pending |
+| CAMP-05 | Phase 118 | Pending |
+| CAMP-06 | Phase 118 | Pending |
+| CAMP-07 | Phase 118 | Pending |
+| CAMP-08 | Phase 118 | Pending |
+| CAMP-09 | Phase 118 | Pending |
+| SCRN-01 | Phase 119 | Pending |
+| SCRN-02 | Phase 119 | Pending |
+| SCRN-03 | Phase 119 | Pending |
+| SCRN-04 | Phase 119 | Pending |
+| SCRN-05 | Phase 119 | Pending |
+| SCRN-06 | Phase 119 | Pending |
+| SCRN-07 | Phase 119 | Pending |
+| SCRN-08 | Phase 119 | Pending |
+| SCRN-09 | Phase 119 | Pending |
+| SCRN-10 | Phase 119 | Pending |
+| SCRN-11 | Phase 119 | Pending |
+| DATA-01 | Phase 120 | Pending |
+| DATA-02 | Phase 120 | Pending |
+| DATA-03 | Phase 120 | Pending |
+| DATA-04 | Phase 120 | Pending |
+| DATA-05 | Phase 120 | Pending |
+| APP-01 | Phase 120 | Pending |
+| APP-02 | Phase 120 | Pending |
+| APP-03 | Phase 120 | Pending |
+| APP-04 | Phase 120 | Pending |
+| APP-05 | Phase 120 | Pending |
+| APP-06 | Phase 120 | Pending |
+| APP-07 | Phase 120 | Pending |
+| APP-08 | Phase 120 | Pending |
+| MOD-01 | Phase 120 | Pending |
+| MOD-02 | Phase 120 | Pending |
+| MOD-03 | Phase 120 | Pending |
+| MOD-04 | Phase 120 | Pending |
+| MOD-05 | Phase 120 | Pending |
+| ANLYT-01 | Phase 121 | Pending |
+| ANLYT-02 | Phase 121 | Pending |
+| ANLYT-03 | Phase 121 | Pending |
+| ANLYT-04 | Phase 121 | Pending |
+| ANLYT-05 | Phase 121 | Pending |
+| ANLYT-06 | Phase 121 | Pending |
+| ANLYT-07 | Phase 121 | Pending |
+| ANLYT-08 | Phase 121 | Pending |
+| SET-01 | Phase 121 | Pending |
+| SET-02 | Phase 121 | Pending |
+| SET-03 | Phase 121 | Pending |
+| SET-04 | Phase 121 | Pending |
+| SET-05 | Phase 121 | Pending |
+| SET-06 | Phase 121 | Pending |
+| SET-07 | Phase 121 | Pending |
+| ADMIN-01 | Phase 121 | Pending |
+| ADMIN-02 | Phase 121 | Pending |
+| ADMIN-03 | Phase 121 | Pending |
+| ADMIN-04 | Phase 121 | Pending |
+| ADMIN-05 | Phase 121 | Pending |
+| ADMIN-06 | Phase 121 | Pending |
+| ADMIN-07 | Phase 121 | Pending |
+| ADMIN-08 | Phase 121 | Pending |
+| RESP-01 | Phase 122 | Pending |
+| RESP-02 | Phase 122 | Pending |
+| RESP-03 | Phase 122 | Pending |
+| RESP-04 | Phase 122 | Pending |
+| RESP-05 | Phase 122 | Pending |
+| RESP-06 | Phase 122 | Pending |
+| RESP-07 | Phase 122 | Pending |
+| RESP-08 | Phase 122 | Pending |
+| EDGE-01 | Phase 122 | Pending |
+| EDGE-02 | Phase 122 | Pending |
+| EDGE-03 | Phase 122 | Pending |
+| EDGE-04 | Phase 122 | Pending |
+| EDGE-05 | Phase 122 | Pending |
+| EDGE-06 | Phase 122 | Pending |
+| EDGE-07 | Phase 122 | Pending |
+| EDGE-08 | Phase 122 | Pending |
+| RESIL-01 | Phase 123 | Pending |
+| RESIL-02 | Phase 123 | Pending |
+| RESIL-03 | Phase 123 | Pending |
+| UX-01 | Phase 123 | Pending |
+| UX-02 | Phase 123 | Pending |
+| UX-03 | Phase 123 | Pending |
+| CI-01 | Phase 124 | Pending |
+| CI-02 | Phase 124 | Pending |
+| CI-03 | Phase 124 | Pending |
 
 **Coverage:**
 - v13.0 requirements: 148 total
-- Mapped to phases: 0
-- Unmapped: 148
+- Mapped to phases: 148
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-06 after initial definition*
+*Last updated: 2026-03-06 after roadmap creation -- all 148 requirements mapped to phases 115-124*
