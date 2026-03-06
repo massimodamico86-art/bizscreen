@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
 
-export default function Layout3({ layout, _guest }) {
+function replacePlaceholders(text, guestData) {
+  if (!text) return text;
+  let result = text;
+  const firstName = guestData?.firstName || guestData?.first_name || '';
+  const lastName = guestData?.lastName || guestData?.last_name || '';
+  result = result.replace(/\{\{first-name\}\}/gi, firstName);
+  result = result.replace(/\{\{last-name\}\}/gi, lastName);
+  return result;
+}
+
+export default function Layout3({ layout, _guest, guestData = {} }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const {
@@ -127,10 +137,10 @@ export default function Layout3({ layout, _guest }) {
           {showWelcomeMessage && (
             <div className="mb-6">
               <h1 className={`${getGreetingFontSize(welcomeGreeting)} font-bold mb-3 leading-tight break-words`}>
-                {welcomeGreeting}
+                {replacePlaceholders(welcomeGreeting, guestData)}
               </h1>
               <p className={`${getMessageFontSize(welcomeMessage)} leading-relaxed text-white/85 break-words whitespace-normal`}>
-                {welcomeMessage ||
+                {replacePlaceholders(welcomeMessage, guestData) ||
                   "Thank you for visiting. We hope you enjoy your experience with us today."}
               </p>
             </div>

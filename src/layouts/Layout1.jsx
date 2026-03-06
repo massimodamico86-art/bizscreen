@@ -1,4 +1,14 @@
-export default function Layout1({ layout = {}, _guest = null }) {
+function replacePlaceholders(text, guestData) {
+  if (!text) return text;
+  let result = text;
+  const firstName = guestData?.firstName || guestData?.first_name || '';
+  const lastName = guestData?.lastName || guestData?.last_name || '';
+  result = result.replace(/\{\{first-name\}\}/gi, firstName);
+  result = result.replace(/\{\{last-name\}\}/gi, lastName);
+  return result;
+}
+
+export default function Layout1({ layout = {}, _guest = null, guestData = {} }) {
   const {
     showWelcomeMessage,
     welcomeGreeting = "Welcome!",
@@ -127,10 +137,10 @@ export default function Layout1({ layout = {}, _guest = null }) {
         {showWelcomeMessage && (
           <div className="mb-10">
             <h1 className="text-7xl font-bold mb-6 leading-tight drop-shadow-2xl break-words">
-              {welcomeGreeting}
+              {replacePlaceholders(welcomeGreeting, guestData)}
             </h1>
             <p className="text-3xl leading-relaxed text-white/95 drop-shadow-lg font-light break-words whitespace-normal">
-              {welcomeMessage ||
+              {replacePlaceholders(welcomeMessage, guestData) ||
                 "Thank you for visiting. We hope you enjoy your experience with us today."}
             </p>
           </div>
