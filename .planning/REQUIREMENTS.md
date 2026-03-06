@@ -83,12 +83,12 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Schedules & Campaigns (E2E)
 
-- [ ] **SCHED-01**: E2E test verifies schedule list page with create and delete actions
-- [ ] **SCHED-02**: E2E test verifies schedule creation with time range and day selection
-- [ ] **SCHED-03**: E2E test verifies schedule editor with playlist/layout assignment
-- [ ] **SCHED-04**: E2E test verifies schedule conflict detection warning
-- [ ] **SCHED-05**: E2E test verifies dayparting preset application
-- [ ] **SCHED-06**: E2E test verifies recurring schedule entry creation
+- [x] **SCHED-01**: E2E test verifies schedule list page with create and delete actions
+- [x] **SCHED-02**: E2E test verifies schedule creation with time range and day selection
+- [x] **SCHED-03**: E2E test verifies schedule editor with playlist/layout assignment
+- [x] **SCHED-04**: E2E test verifies schedule conflict detection warning
+- [x] **SCHED-05**: E2E test verifies dayparting preset application
+- [x] **SCHED-06**: E2E test verifies recurring schedule entry creation
 - [x] **CAMP-01**: E2E test verifies campaign list page with create and status indicators
 - [x] **CAMP-02**: E2E test verifies campaign creation with priority and date range
 - [x] **CAMP-03**: E2E test verifies campaign content assignment (playlist or template)
@@ -283,12 +283,12 @@ None deferred -- this milestone closes all testing and stability gaps.
 | TMPL-06 | Phase 118 | Complete |
 | TMPL-07 | Phase 118 | Complete |
 | TMPL-08 | Phase 118 | Complete |
-| SCHED-01 | Phase 118 | Pending |
-| SCHED-02 | Phase 118 | Pending |
-| SCHED-03 | Phase 118 | Pending |
-| SCHED-04 | Phase 118 | Pending |
-| SCHED-05 | Phase 118 | Pending |
-| SCHED-06 | Phase 118 | Pending |
+| SCHED-01 | Phase 118 | Complete |
+| SCHED-02 | Phase 118 | Complete |
+| SCHED-03 | Phase 118 | Complete |
+| SCHED-04 | Phase 118 | Complete |
+| SCHED-05 | Phase 118 | Complete |
+| SCHED-06 | Phase 118 | Complete |
 | CAMP-01 | Phase 118 | Complete |
 | CAMP-02 | Phase 118 | Complete |
 | CAMP-03 | Phase 118 | Complete |

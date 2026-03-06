@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
 status: unknown
-last_updated: "2026-03-06T23:48:00Z"
+last_updated: "2026-03-06T23:51:36.834Z"
 progress:
-  total_phases: 73
-  completed_phases: 73
-  total_plans: 244
-  completed_plans: 245
+  total_phases: 80
+  completed_phases: 74
+  total_plans: 247
+  completed_plans: 247
 ---
 
 # Project State
@@ -83,7 +83,10 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 118-01]: Gallery ready detection uses Promise.race with header text, empty state, or filter sidebar signals
 - [Phase 118-03]: Campaigns feature-gated -- tests capture upgrade prompt screenshot then skip gracefully
 - [Phase 118-03]: Campaign API mocking covers 10 endpoints via setupCampaignMocking function
+- [Phase 118-02]: Schedule editor mocking covers schedules, schedule_entries, playlists, layouts, scenes, devices, campaigns via page.route()
+- [Phase 118-02]: All event modal interactions use dispatchEvent/page.evaluate() to bypass .fixed.inset-0 overlay
 - [Phase 118-03]: Screenshot step numbers 20-28 for campaigns (templates 01-09, schedules 10-18)
+- [Phase 118]: Schedule editor E2E uses dispatchEvent for modal interactions, page.route() for API mocking
 
 ### Blockers/Concerns
 

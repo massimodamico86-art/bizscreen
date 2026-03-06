@@ -92,7 +92,7 @@ All 18 milestones shipped successfully.
 - [x] **Phase 115: Dashboard & Media E2E** - Screenshot tests for dashboard widgets, navigation, and full media library flows (completed 2026-03-06)
 - [x] **Phase 116: Scenes & SVG Editor E2E** - Screenshot tests for scene CRUD and all SVG editor tools/panels (completed 2026-03-06)
 - [x] **Phase 117: Playlists & Layouts E2E** - Screenshot tests for playlist editor and layout zone/widget configuration (completed 2026-03-06)
-- [ ] **Phase 118: Templates, Schedules & Campaigns E2E** - Screenshot tests for template marketplace, schedule creation, and campaign management
+- [x] **Phase 118: Templates, Schedules & Campaigns E2E** - Screenshot tests for template marketplace, schedule creation, and campaign management (completed 2026-03-06)
 - [ ] **Phase 119: Screens & Device Management E2E** - Screenshot tests for screen pairing, groups, diagnostics, and remote commands
 - [ ] **Phase 120: Data Sources, Apps & Moderation E2E** - Screenshot tests for data sources, apps gallery, menu boards, and content moderation
 - [ ] **Phase 121: Analytics, Settings & Admin E2E** - Screenshot tests for analytics dashboards, settings pages, and admin/reseller portals
@@ -253,7 +253,7 @@ Plans:
 | 115. Dashboard & Media E2E | 3/3 | Complete    | 2026-03-06 |
 | 116. Scenes & SVG Editor E2E | 4/4 | Complete    | 2026-03-06 |
 | 117. Playlists & Layouts E2E | 5/5 | Complete    | 2026-03-06 |
-| 118. Templates, Schedules & Campaigns E2E | 2/3 | In Progress|  |
+| 118. Templates, Schedules & Campaigns E2E | 3/3 | Complete   | 2026-03-06 |
 | 119. Screens & Device Management E2E | 0/TBD | Not started | - |
 | 120. Data Sources, Apps & Moderation E2E | 0/TBD | Not started | - |
 | 121. Analytics, Settings & Admin E2E | 0/TBD | Not started | - |
