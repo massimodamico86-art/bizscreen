@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T14:21:19.477Z"
+last_updated: "2026-03-06T14:56:31.516Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-06 - Completed quick task 85: QA walkthrough of Feature Flags and Clients pages (all PASS, 0 bugs)
+Last activity: 2026-03-06 - Completed quick task 86: QA walkthrough of feature-gated pages (all 10 PASS, 0 bugs)
 
 Progress: [████████████████████████████] 100%
 
@@ -57,6 +57,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-81]: Used /app entry for DEV_AUTH_BYPASS; reclassified all 130 console errors as benign; code review for backend-dependent event modal and assign screens modal
 - [Phase quick-82]: Rendered IndustrySelectionModal in BizScreenAppInner scope; used local replacePlaceholders helpers in each Layout file
 - [Phase quick-83]: Reclassified useFeatureFlags and DemoService scoped-logger errors as benign (missing Supabase backend)
+- [Phase quick-86]: Reclassified all 94 console errors as benign (ERR_CONNECTION_REFUSED + scoped-logger service errors from missing Supabase backend)
 
 ### Blockers/Concerns
 
@@ -103,11 +104,12 @@ None.
 | 83 | QA walkthrough of 9 admin-level pages -- all 9 PASS, 0 bugs | 2026-03-06 | f3dde21 | [83-qa-walkthrough-of-admin-level-pages-via-](./quick/83-qa-walkthrough-of-admin-level-pages-via-/) |
 | 84 | QA walkthrough of 3 super admin pages -- all 3 PASS, 0 bugs | 2026-03-06 | cf452a7 | [84-qa-walkthrough-of-super-admin-pages-via-](./quick/84-qa-walkthrough-of-super-admin-pages-via-/) |
 | 85 | QA walkthrough of Feature Flags and Clients pages -- all PASS, 0 bugs | 2026-03-06 | fab7a0b | [85-qa-walkthrough-feature-flags-toggle-pers](./quick/85-qa-walkthrough-feature-flags-toggle-pers/) |
+| 86 | QA walkthrough of 10 feature-gated pages -- all PASS, 0 bugs | 2026-03-06 | 3738fdb | [86-qa-walkthrough-of-feature-gated-pages-ve](./quick/86-qa-walkthrough-of-feature-gated-pages-ve/) |
 
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed quick task 85
+Stopped at: Completed quick task 86
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
