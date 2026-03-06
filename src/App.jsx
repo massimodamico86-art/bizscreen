@@ -39,6 +39,7 @@ import MobileNav from './components/layout/MobileNav';
 import Toast from './components/Toast';
 import FeedbackWidget from './components/FeedbackWidget';
 import { FeatureGate, FeatureUpgradePrompt } from './components/FeatureGate';
+import { IndustrySelectionModal } from './components/onboarding';
 
 // Lazy load pages for better code splitting
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
@@ -174,6 +175,7 @@ function BizScreenAppInner() {
   const [announcementHeight, setAnnouncementHeight] = useState(0);
   // Track emergency banner height (40px when active, 0 when not)
   const [emergencyHeight, setEmergencyHeight] = useState(0);
+  const [showIndustryModal, setShowIndustryModal] = useState(false);
 
   // Refs to hold current values for real-time handlers (avoids stale closures)
   const listingsRef = useRef(listings);
@@ -627,7 +629,7 @@ function BizScreenAppInner() {
     'team': <Suspense fallback={<PageLoader />}><TeamPage showToast={showToast} /></Suspense>,
     'analytics': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsPage showToast={showToast} /></FeatureGate></Suspense>,
     'templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'scenes': <Suspense fallback={<PageLoader />}><ScenesPage onShowToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'scenes': <Suspense fallback={<PageLoader />}><ScenesPage onShowToast={showToast} onNavigate={setCurrentPage} onShowAutoBuild={() => setShowIndustryModal(true)} /></Suspense>,
     'assistant': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.AI_ASSISTANT} fallback={<FeatureUpgradePrompt feature={Feature.AI_ASSISTANT} onNavigate={() => setCurrentPage('account-plan')} />}><ContentAssistantPage showToast={showToast} /></FeatureGate></Suspense>,
     'screen-groups': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.SCREEN_GROUPS} fallback={<FeatureUpgradePrompt feature={Feature.SCREEN_GROUPS} onNavigate={() => setCurrentPage('account-plan')} />}><ScreenGroupsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'campaigns': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.CAMPAIGNS} fallback={<FeatureUpgradePrompt feature={Feature.CAMPAIGNS} onNavigate={() => setCurrentPage('account-plan')} />}><CampaignsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
@@ -835,6 +837,16 @@ function BizScreenAppInner() {
         t={t}
         handleSignOut={handleSignOut}
         PageLoader={PageLoader}
+      />
+
+      {/* Industry Selection Modal (for Create Scene) */}
+      <IndustrySelectionModal
+        isOpen={showIndustryModal}
+        onClose={() => setShowIndustryModal(false)}
+        onSelect={(industry) => {
+          setShowIndustryModal(false);
+          showToast(`Selected industry: ${industry}`, 'success');
+        }}
       />
     </EmergencyProvider>
   );

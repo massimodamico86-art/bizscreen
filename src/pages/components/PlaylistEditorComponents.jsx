@@ -27,7 +27,6 @@ import {
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import {
-  formatPreviewLink,
   EXPIRY_PRESETS,
   getExpiryLabel,
 } from '../../services/previewService';
@@ -482,7 +481,7 @@ export const PreviewLinksModal = ({
                       <button onClick={() => handleCopyLink(link)} className="p-2 hover:bg-gray-100 rounded-lg">
                         {copiedLinkId === link.id ? <Check size={16} className="text-green-600" /> : <Copy size={16} className="text-gray-500" />}
                       </button>
-                      <a href={formatPreviewLink(link.token)} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-100 rounded-lg">
+                      <a href={link.url || `/preview/${link.token}`} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-100 rounded-lg">
                         <ExternalLink size={16} className="text-gray-500" />
                       </a>
                       <button onClick={() => handleRevokePreviewLink(link.id)} className="p-2 hover:bg-red-50 rounded-lg">
