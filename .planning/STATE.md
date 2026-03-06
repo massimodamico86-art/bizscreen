@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T00:08:10.632Z"
+last_updated: "2026-03-06T00:20:33.103Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -43,6 +43,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-66]: Distinguish page-specific mount toasts from stale carryover toasts in E2E test assertions
 - [Phase quick-67]: Only fixed createScreen auth bypass; left other supabase.auth.getUser() calls unchanged in screenService
 - [Phase quick-68]: Pre-existing auth.spec.js failures (11) are dev-bypass limitations, not regressions from quick-67
+- [Phase quick-69]: WelcomeFeatureCards uses descriptive button labels; BUG-08 fix confirmed holding
 
 ### Blockers/Concerns
 
