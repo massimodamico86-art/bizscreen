@@ -1,5 +1,37 @@
 # Bugs Tracker
 
+## QT-86: Feature-Gated Pages QA Walkthrough (2026-03-06)
+
+**Status:** PASS -- 0 bugs found, all 10 feature-gated pages render correctly
+
+**Method:** Playwright E2E script navigating to 10 feature-gated routes via `window.__setCurrentPage()`. Each page checked for: (a) page content loaded, (b) FeatureUpgradePrompt shown, or (c) blank screen/JS crash. DEV_AUTH_BYPASS defaults to FREE plan, so all feature gates show upgrade prompts as expected.
+
+### Results
+
+| # | Route Key | Feature Gate | Status | Rendered |
+|---|-----------|-------------|--------|----------|
+| 1 | `analytics` | ADVANCED_ANALYTICS | PASS | Upgrade prompt (feature gated on FREE plan) |
+| 2 | `analytics-dashboard` | ADVANCED_ANALYTICS | PASS | Upgrade prompt (feature gated on FREE plan) |
+| 3 | `content-performance` | ADVANCED_ANALYTICS | PASS | Upgrade prompt (feature gated on FREE plan) |
+| 4 | `assistant` | AI_ASSISTANT | PASS | Upgrade prompt (feature gated on FREE plan) |
+| 5 | `campaigns` | CAMPAIGNS | PASS | Upgrade prompt (feature gated on FREE plan) |
+| 6 | `screen-groups` | SCREEN_GROUPS | PASS | Upgrade prompt (feature gated on FREE plan) |
+| 7 | `developer` | API_ACCESS | PASS | Upgrade prompt (feature gated on FREE plan) |
+| 8 | `white-label` | WHITE_LABEL | PASS | Upgrade prompt (feature gated on FREE plan) |
+| 9 | `enterprise-security` | ENTERPRISE_SSO | PASS | Upgrade prompt (feature gated on FREE plan) |
+| 10 | `usage` | USAGE_DASHBOARD | PASS | Upgrade prompt (feature gated on FREE plan) |
+
+### Console Errors
+
+- **Total:** 94 errors
+- **Genuine:** 0 (all 94 are benign -- ERR_CONNECTION_REFUSED to missing Supabase backend + scoped-logger service errors from FeatureFlagService, TenantService, BrandingService, EmergencyService, DashboardService, OnboardingService, FeedbackService, errorTracking)
+
+### Bugs Found
+
+None.
+
+---
+
 ## QT-85: Feature Flags & Clients Pages QA Walkthrough (2026-03-06)
 
 **Status:** PASS -- 0 bugs found, both pages render correctly
