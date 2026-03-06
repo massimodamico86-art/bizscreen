@@ -19,6 +19,8 @@ const hasCredentials = !!(process.env.TEST_USER_EMAIL && process.env.TEST_USER_P
  * Take a named screenshot with consistent path convention.
  */
 async function screenshotStep(page, filename, options = {}) {
+  const fs = await import('fs');
+  fs.mkdirSync('screenshots/116', { recursive: true });
   const { fullPage = false, locator = null } = options;
   const path = `screenshots/116/${filename}`;
   if (locator) {
@@ -80,7 +82,17 @@ test.describe('SVG Editor Advanced Screenshots', () => {
 
     // Screenshot the canvas controls area showing undo/redo buttons (right-side floating controls)
     // The CanvasControls component has undo/redo buttons with title="Undo (Ctrl+Z)" and title="Redo (Ctrl+Y)"
-    await screenshotStep(page, '116-12-undo-redo-toolbar-desktop.png');
+    // Use a locator-based screenshot cropped to the controls area so it is distinct from base state
+    const undoBtn = page.locator('button[title="Undo (Ctrl+Z)"]').first();
+    const undoVisible = await undoBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    if (undoVisible) {
+      // Screenshot the parent container that holds both undo/redo
+      const controlsContainer = undoBtn.locator('..').locator('..');
+      await screenshotStep(page, '116-12-undo-redo-toolbar-desktop.png', { locator: controlsContainer });
+    } else {
+      // Fallback: full page screenshot
+      await screenshotStep(page, '116-12-undo-redo-toolbar-desktop.png');
+    }
 
     // Add a text element to canvas by clicking the "Add Text" button in the EditorToolbar (left sidebar w-14)
     const addTextBtn = page.locator('button[title="Add Text"]').first();
@@ -225,11 +237,27 @@ test.describe('SVG Editor Advanced Screenshots', () => {
     // Screenshot the cloud import panel showing providers (Google Drive, Dropbox, OneDrive, etc.)
     await screenshotStep(page, '116-16-cloud-import-panel-desktop.png');
 
-    // Check if cloud providers are visible
-    const gdriveBtn = page.locator('button:has-text("Google Drive")').first();
-    const gdriveCount = await gdriveBtn.count();
-    if (gdriveCount > 0 && await gdriveBtn.isVisible()) {
+    // Click a provider button to show a distinct state from the base cloud panel
+    const gdriveBtn = page.locator('button').filter({ hasText: 'Google Drive' }).first();
+    const gdriveVisible = await gdriveBtn.isVisible({ timeout: 3000 }).catch(() => false);
+    if (gdriveVisible) {
+      await gdriveBtn.click();
+      await page.waitForTimeout(1500);
+      // The CloudFilePicker modal should now be open -- this is a distinct state
       await screenshotStep(page, '116-16-cloud-providers-desktop.png');
+      // Close the modal if it opened
+      const closeModalBtn = page.locator('[role="dialog"] button:has(svg.lucide-x), .fixed button:has(svg.lucide-x)').first();
+      if (await closeModalBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await closeModalBtn.click();
+      }
+    } else {
+      // Fallback: try clicking any provider button
+      const anyProvider = page.locator('button').filter({ hasText: /Dropbox|OneDrive|SharePoint/i }).first();
+      if (await anyProvider.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await anyProvider.click();
+        await page.waitForTimeout(1500);
+        await screenshotStep(page, '116-16-cloud-providers-desktop.png');
+      }
     }
   });
 
