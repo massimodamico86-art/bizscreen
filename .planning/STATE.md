@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 117 of 124 (Playlists & Layouts E2E)
-Plan: 2 of 2 complete (+ gap closure 117-04)
+Plan: 2 of 2 complete (+ gap closures 117-03, 117-04)
 Status: Complete
-Last activity: 2026-03-06 -- Completed 117-04 (Fix layout editor navigation and video widget test)
+Last activity: 2026-03-06 -- Completed 117-03 (Fix playlist editor E2E via API mocking)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -74,6 +74,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - Data table config captured via Data Sources page create modal
 - Screenshot step numbers 10+ for layouts to avoid collision with playlist screenshots (01-09)
 - [Phase 117]: Used dispatchEvent to bypass modal overlay interception for Create Playlist button click
+- [Phase 117-03]: Used page.route() to mock Supabase REST API for playlist editor E2E tests when backend unavailable
+- [Phase 117-03]: Element-level locator.screenshot() for settings dropdown to ensure distinct PLAY-05/07 screenshots
 
 ### Blockers/Concerns
 
@@ -82,9 +84,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed 117-04-PLAN.md (Fix layout editor navigation and video widget test)
+Stopped at: Completed 117-03-PLAN.md (Fix playlist editor E2E via API mocking)
 Resume file: None
 Next: Execute next phase
 
 ---
-*Updated: 2026-03-06 -- Phase 117 complete (2/2 plans + gap closure 117-04)*
+*Updated: 2026-03-06 -- Phase 117 complete (2/2 plans + gap closures 117-03, 117-04)*
