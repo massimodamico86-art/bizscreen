@@ -48,16 +48,71 @@ async function navigateToTemplates(page) {
 
 /**
  * Navigate to the Layout Editor page.
- * The editor requires a layoutId, so we navigate via __setCurrentPage.
+ * The editor route requires a layout ID suffix: 'layout-editor-{uuid}'.
+ * Strategy:
+ * 1. Try to navigate to Templates page and click a user layout from "Your Designs"
+ * 2. If no user layouts exist, create one via layoutService in the browser context
+ * 3. Fallback: use a placeholder UUID (will show "Layout not found" but correct route)
  */
 async function navigateToLayoutEditor(page) {
-  await page.evaluate(() => {
-    if (typeof window.__setCurrentPage === 'function') {
-      window.__setCurrentPage('layout-editor');
-    }
-  });
+  // Strategy 1: Try to create a layout via Supabase in the browser context
+  let layoutId = null;
+
+  try {
+    layoutId = await page.evaluate(async () => {
+      // Access the app's supabase client from the window or module scope
+      const { supabase } = await import('/src/supabase.js');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      // Check for existing layouts first
+      const { data: existing } = await supabase
+        .from('layouts')
+        .select('id')
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        return existing[0].id;
+      }
+
+      // Create a new layout
+      const { data: created } = await supabase
+        .from('layouts')
+        .insert({
+          owner_id: user.id,
+          name: 'E2E Test Layout',
+          description: 'Created for E2E screenshot tests',
+        })
+        .select()
+        .single();
+
+      return created?.id || null;
+    });
+  } catch {
+    // Dynamic import may not work in evaluate context
+    layoutId = null;
+  }
+
+  // Strategy 2: If supabase worked, navigate to that layout
+  if (layoutId) {
+    await page.evaluate((id) => {
+      if (typeof window.__setCurrentPage === 'function') {
+        window.__setCurrentPage('layout-editor-' + id);
+      }
+    }, layoutId);
+  } else {
+    // Strategy 3: Fallback - use a placeholder UUID
+    // This will render LayoutEditorPage in its "Layout not found" state,
+    // which is still the correct component (not "Page not found")
+    await page.evaluate(() => {
+      if (typeof window.__setCurrentPage === 'function') {
+        window.__setCurrentPage('layout-editor-00000000-0000-0000-0000-000000000000');
+      }
+    });
+  }
+
   await waitForPageReady(page);
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(1500);
 }
 
 /**
@@ -443,20 +498,40 @@ test.describe('Layouts & Template Gallery Screenshots', () => {
         await dismissAnyModals(page);
       }
     } else {
-      // Fallback: navigate to Apps and look for Video app
+      // Fallback: navigate to Apps and search for video-related app
+      // Use "Stream" app (RTSP/HLS video streams) instead of "Video" which
+      // matches "Video Wall" and navigates to the wrong page
       await navigateToApps(page);
       await page.waitForTimeout(1500);
       await waitForPageReady(page);
 
-      const videoApp = page.locator('text=Video').first();
-      const videoCount = await videoApp.count();
-      if (videoCount > 0 && (await videoApp.isVisible().catch(() => false))) {
-        await videoApp.click();
+      // Use the search input to filter for video-related apps
+      const searchInput = page.locator('input[placeholder*="Search"], input[type="search"]').first();
+      const searchCount = await searchInput.count();
+      if (searchCount > 0 && (await searchInput.isVisible().catch(() => false))) {
+        await searchInput.fill('Stream');
         await page.waitForTimeout(1000);
-        await screenshotStep(page, '117', '17-video-widget-config');
-        await dismissAnyModals(page);
+        await screenshotStep(page, '117', '17-video-stream-search');
+
+        // Try to click the Stream app card
+        const streamApp = page.locator('text=Stream').first();
+        if (await streamApp.count() > 0 && (await streamApp.isVisible().catch(() => false))) {
+          await streamApp.click();
+          await page.waitForTimeout(1000);
+          await screenshotStep(page, '117', '17-video-widget-config');
+          await dismissAnyModals(page);
+        }
       } else {
-        await screenshotStep(page, '117', '17-video-apps-fallback');
+        // No search input - try YouTube as alternative (won't navigate away)
+        const youtubeApp = page.locator('text=YouTube').first();
+        if (await youtubeApp.count() > 0 && (await youtubeApp.isVisible().catch(() => false))) {
+          await youtubeApp.click();
+          await page.waitForTimeout(1000);
+          await screenshotStep(page, '117', '17-video-widget-config');
+          await dismissAnyModals(page);
+        } else {
+          await screenshotStep(page, '117', '17-video-apps-fallback');
+        }
       }
     }
   });
