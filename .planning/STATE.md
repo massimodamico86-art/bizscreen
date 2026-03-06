@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T00:20:33.103Z"
+last_updated: "2026-03-06T00:31:22.647Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-06 - Completed quick task 69: Investigate Welcome vs Dashboard sidebar pages - confirm rendering differences and WelcomeHero wiring
+Last activity: 2026-03-06 - Completed quick task 70: Re-verify toast persistence fix (BUG-07) after recent code changes -- PASS
 
 Progress: [████████████████████████████] 100%
 
@@ -44,6 +44,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-67]: Only fixed createScreen auth bypass; left other supabase.auth.getUser() calls unchanged in screenService
 - [Phase quick-68]: Pre-existing auth.spec.js failures (11) are dev-bypass limitations, not regressions from quick-67
 - [Phase quick-69]: WelcomeFeatureCards uses descriptive button labels; BUG-08 fix confirmed holding
+- [Phase quick-70]: Reused existing toast-persistence.spec.js plus manual Playwright script; distinguished mount toasts from stale toasts
 
 ### Blockers/Concerns
 
@@ -74,11 +75,12 @@ None.
 | 67 | Fix BUG-17, BUG-18, BUG-19: createScreen auth bypass, polling backoff, OTP label | 2026-03-05 | ede0029 | [67-fix-all-3-open-bugs-bug-17-createscreen-](./quick/67-fix-all-3-open-bugs-bug-17-createscreen-/) |
 | 68 | Auth flow regression test after quick-67 fixes -- no regressions | 2026-03-05 | 20ac3a5 | [68-test-auth-flow-via-playwright-login-veri](./quick/68-test-auth-flow-via-playwright-login-veri/) |
 | 69 | Investigate Welcome vs Dashboard sidebar pages - confirm rendering differences and WelcomeHero wiring | 2026-03-06 | 50b86a0 | [69-investigate-welcome-vs-dashboard-sidebar](./quick/69-investigate-welcome-vs-dashboard-sidebar/) |
+| 70 | Re-verify toast persistence fix (BUG-07) after recent code changes -- PASS | 2026-03-06 | 298af31 | [70-observe-whether-error-toasts-persist-acr](./quick/70-observe-whether-error-toasts-persist-acr/) |
 
 ## Session Continuity
 
-Last session: 2026-03-05
-Stopped at: Completed quick task 68
+Last session: 2026-03-06
+Stopped at: Completed quick task 70
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
