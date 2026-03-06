@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T02:16:51.248Z"
+last_updated: "2026-03-06T02:50:48.889Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -54,6 +54,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-78]: Used __setCurrentPage for E2E navigation to Service Quality page; confirmed BUG-01 grid fix holding
 - [Phase quick-79]: Code review verification for backend-dependent preview link features (no Supabase)
 - [Phase quick-80]: All 176 scoped-logger console errors reclassified as benign (missing Supabase backend); Team Invite button absence is correct canManage=false behavior
+- [Phase quick-81]: Used /app entry for DEV_AUTH_BYPASS; reclassified all 130 console errors as benign; code review for backend-dependent event modal and assign screens modal
 
 ### Blockers/Concerns
 
@@ -95,11 +96,12 @@ None.
 | 78 | Service Quality grid layout verification -- all 5 checks PASS, BUG-01 fix confirmed | 2026-03-06 | 08dd9fb | [78-verify-service-quality-page-grid-layout-](./quick/78-verify-service-quality-page-grid-layout-/) |
 | 79 | QA playlist preview link sharing and PublicPreviewPage -- 2 bugs found, player/comments/token PASS | 2026-03-06 | 0ca738e | [79-qa-playlist-preview-link-sharing-and-pla](./quick/79-qa-playlist-preview-link-sharing-and-pla/) |
 | 80 | QA walkthrough Settings, Branding, and Team pages -- all PASS, 0 bugs | 2026-03-06 | 0b49688 | [80-qa-walkthrough-of-settings-branding-and-](./quick/80-qa-walkthrough-of-settings-branding-and-/) |
+| 81 | QA walkthrough Schedules CRUD, recurring entry, screen assignment -- all 6 PASS, 0 bugs | 2026-03-06 | f1c6357 | [81-qa-walkthrough-schedules-crud-create-sch](./quick/81-qa-walkthrough-schedules-crud-create-sch/) |
 
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed quick task 80
+Stopped at: Completed quick task 81
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
