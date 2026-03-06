@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 117 of 124 (Playlists & Layouts E2E)
-Plan: 1 of 2 complete
-Status: In progress
-Last activity: 2026-03-06 -- Completed 117-01 (Playlists E2E screenshot tests)
+Plan: 2 of 2 complete (+ gap closure 117-04)
+Status: Complete
+Last activity: 2026-03-06 -- Completed 117-04 (Fix layout editor navigation and video widget test)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -68,7 +68,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - Gap closure: clickToolbarButton throws on missing buttons, addAndSelectElement helper for TopToolbar-dependent tests
 - SCENE-12 uses locator screenshot cropped to undo/redo controls; SCENE-16 clicks Google Drive for distinct modal state
 
-- Layout editor requires layoutId; used __setCurrentPage('layout-editor') for navigation
+- Layout editor requires layoutId; route format is 'layout-editor-{uuid}' (bare 'layout-editor' falls through to Page not found)
+- LAYOUT-08 video test uses search for 'Stream' app to avoid ambiguous 'Video' text matching Video Wall
 - Widget configs (clock, weather) captured via Apps page since zone editor has no dedicated widget config UI
 - Data table config captured via Data Sources page create modal
 - Screenshot step numbers 10+ for layouts to avoid collision with playlist screenshots (01-09)
@@ -81,9 +82,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed 117-01-PLAN.md (Playlists E2E screenshot tests)
+Stopped at: Completed 117-04-PLAN.md (Fix layout editor navigation and video widget test)
 Resume file: None
-Next: Execute 117-02 (Layouts E2E screenshot tests)
+Next: Execute next phase
 
 ---
-*Updated: 2026-03-06 -- Phase 117 in progress (1/2 plans complete)*
+*Updated: 2026-03-06 -- Phase 117 complete (2/2 plans + gap closure 117-04)*
