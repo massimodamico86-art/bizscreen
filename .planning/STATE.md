@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T14:56:31.516Z"
+last_updated: "2026-03-06T15:10:27.994Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -58,6 +58,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-82]: Rendered IndustrySelectionModal in BizScreenAppInner scope; used local replacePlaceholders helpers in each Layout file
 - [Phase quick-83]: Reclassified useFeatureFlags and DemoService scoped-logger errors as benign (missing Supabase backend)
 - [Phase quick-86]: Reclassified all 94 console errors as benign (ERR_CONNECTION_REFUSED + scoped-logger service errors from missing Supabase backend)
+- [Phase quick-87]: Used code review for Generate Licenses and Add Tenant modals since RESELLER_PORTAL feature gate blocks E2E access on FREE plan
 
 ### Blockers/Concerns
 
@@ -105,11 +106,12 @@ None.
 | 84 | QA walkthrough of 3 super admin pages -- all 3 PASS, 0 bugs | 2026-03-06 | cf452a7 | [84-qa-walkthrough-of-super-admin-pages-via-](./quick/84-qa-walkthrough-of-super-admin-pages-via-/) |
 | 85 | QA walkthrough of Feature Flags and Clients pages -- all PASS, 0 bugs | 2026-03-06 | fab7a0b | [85-qa-walkthrough-feature-flags-toggle-pers](./quick/85-qa-walkthrough-feature-flags-toggle-pers/) |
 | 86 | QA walkthrough of 10 feature-gated pages -- all PASS, 0 bugs | 2026-03-06 | 3738fdb | [86-qa-walkthrough-of-feature-gated-pages-ve](./quick/86-qa-walkthrough-of-feature-gated-pages-ve/) |
+| 87 | QA walkthrough of Reseller Dashboard and Billing -- all PASS, 0 bugs | 2026-03-06 | 7a09671 | [87-qa-walkthrough-of-reseller-dashboard-and](./quick/87-qa-walkthrough-of-reseller-dashboard-and/) |
 
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed quick task 86
+Stopped at: Completed quick task 87
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
