@@ -1,5 +1,35 @@
 # Bugs Tracker
 
+## QT-70: Toast Persistence Re-verification (2026-03-06)
+
+**Status:** PASS
+
+**Test method:** Playwright E2E tests (toast-persistence.spec.js) -- 9 tests across 3 browser contexts (client, admin, superadmin). Additionally, manual Playwright script for screenshot capture with rapid sidebar navigation through 6 pages and rapid-fire stress pass.
+
+**Pages visited:** Dashboard, Screens, Playlists, Templates, Apps, Menu Boards
+
+**Findings:**
+- Dashboard: PASS -- no toast visible
+- Screens: PASS -- no toast visible (note: in some runs, page-specific "Real-time updates temporarily unavailable" mount toast appears; this is expected when backend is down, not stale)
+- Playlists: PASS -- no toast visible (Screens toast correctly dismissed on navigation)
+- Templates: PASS -- no toast visible
+- Apps: PASS -- no toast visible
+- Menu Boards: WARN -- page-specific toast "Failed to load menu boards: TypeError: Failed to fetch (127.0.0.1:54321)" (mount-effect, not stale)
+- Rapid-fire pass (Dashboard -> Screens -> Playlists -> Templates -> Apps at 100ms intervals): PASS -- no stale toasts after 500ms settle
+
+**Key observation:** The `useEffect(() => setToast(null), [currentPage])` fix in App.jsx (lines 334-337) continues to hold after all code changes from quick-67 through quick-69. No stale toasts carry over between pages. All 9 E2E test cases pass across 3 browser contexts. The only toasts observed are page-specific mount toasts (Menu Boards backend fetch failure) which are expected when Supabase is not running.
+
+**Screenshots:**
+- screenshots/70-01-dashboard.png
+- screenshots/70-02-screens.png
+- screenshots/70-03-playlists.png
+- screenshots/70-04-templates.png
+- screenshots/70-05-apps.png
+- screenshots/70-06-menu-boards.png
+- screenshots/70-07-rapid-fire-final.png
+
+**Related:** BUG-07 fix in quick-52 (commit 73b096b), previously verified in QT-66 (PASS)
+
 ## QT-69: Welcome vs Dashboard Sidebar Investigation (2026-03-05)
 
 **Status:** PASS
