@@ -1,5 +1,58 @@
 # Bugs Tracker
 
+## QT-85: Feature Flags & Clients Pages QA Walkthrough (2026-03-06)
+
+**Status:** PASS -- 0 bugs found, both pages render correctly
+
+**Method:** Playwright E2E script navigating to Feature Flags and Clients pages via `window.__setCurrentPage()`, checking for crashes, blank renders, modals, form fields, and console errors. Feature Flags tabs verified via code review (access gate blocks non-super_admin users).
+
+### Results
+
+| # | Check | Page | Status | Notes |
+|---|-------|------|--------|-------|
+| 1 | Page load & access check | Feature Flags | PASS | Access Denied (expected -- dev bypass user has role=client, not super_admin). Gate renders Alert + "Go to Dashboard" button |
+| 1a | Access gate UI elements | Feature Flags | PASS | Alert component + navigation button present |
+| 2 | Tab switching (5 tabs) | Feature Flags | PASS (code review) | 5 tabs defined: Feature Flags, Experiments, Feedback, Announcements, Debug. Each renders conditional on activeTab with bg-white shadow-sm active styling |
+| 3 | Feature Flags tab interactions | Feature Flags | PASS (code review) | Search input, category filter, "Add Flag" Button, ToggleLeft/ToggleRight toggle, Pencil edit, Trash2 delete per flag card. Handlers wired correctly |
+| 4 | Experiments tab interactions | Feature Flags | PASS (code review) | "New Experiment" Button, experiment cards with status badges, variant display, Start/Pause/End controls. ExperimentModal with Key/Name/Description/Variants form |
+| 5 | Announcements tab interactions | Feature Flags | PASS (code review) | "New Announcement" Button, type badge, active/inactive toggle, edit/delete. AnnouncementModal with Title/Message/Type/Audience/CTA/Priority/Dismissible/Active fields |
+| 6 | Debug tab | Feature Flags | PASS (code review) | FeatureFlagsDebug component imported and conditionally rendered. No crash conditions |
+| 7 | Page load | Clients | PASS | "Clients" heading renders correctly with icon and description |
+| 7a | Add Client button | Clients | PASS | "Add Client" button present in header with Plus icon |
+| 8 | Empty state or table | Clients | PASS | Empty state shown ("No clients yet") -- expected without Supabase backend. Includes Users icon, description text, and secondary "Add Client" button |
+| 9 | Search input | Clients | PASS | Search input present with "Search clients by name, email, or business..." placeholder |
+| 10 | Create Client modal | Clients | PASS | Modal opens with "Add New Client" heading. All form fields present: Email, Contact Name, Business Name, Temporary Password, Create demo checkbox. Cancel + Create Client buttons |
+| 11 | Client action menu | Clients | SKIP (code review) | No table rows (no Supabase). Code review: MoreVertical button opens dropdown with Impersonate (UserCheck), Edit (Edit2), View Plan & Limits (CreditCard) |
+| 12 | Edit Client modal | Clients | SKIP (code review) | No clients to test. Code review: EditClientModal has disabled email, editable Contact Name + Business Name, Cancel + Save Changes buttons |
+
+### Console Errors
+
+- **Total:** 90 errors
+- **Benign (missing Supabase backend):** 90 (all ERR_CONNECTION_REFUSED, scoped-logger service errors from FeatureFlagService, TenantService, BrandingService, FeedbackService, DashboardService, OnboardingService, EmergencyService, errorTracking)
+- **Genuine:** 0
+
+**Note:** All 90 console errors trace back to missing Supabase backend (no local database running). Every error is either `net::ERR_CONNECTION_REFUSED` or a scoped-logger `[ERROR]` from a service attempting RPC calls. Reclassified as benign per established pattern (quick-73, quick-80, quick-83).
+
+### Feature Flags Page - Code Review Details
+
+Since the dev bypass user has `role: 'client'` (not `super_admin`), the access gate correctly blocks access. Behind the gate, code review confirms:
+
+- **5 Tab Components:** FeatureFlagsTab, ExperimentsTab, FeedbackTab, AnnouncementsTab, FeatureFlagsDebug (each in separate files under `src/components/feature-flags/`)
+- **3 Modal Components:** FlagModal (create/edit flag with key, name, description, rollout strategy, percentage, allowed plans, category, enabled toggle), ExperimentModal (create experiment with key, name, description, variants with weights), AnnouncementModal (create announcement with title, message, type, audience, CTA, priority, dismissible, active)
+- **State Management:** useFeatureFlags hook manages all state (activeTab, flags, experiments, feedback, announcements, loading, error, modals, CRUD handlers)
+- **Toggle Persistence:** handleToggleFlag handler in useFeatureFlags hook calls service to update flag enabled state
+
+### Clients Page - Live Test Details
+
+- Page renders without access gate (no role check -- accessible to all authenticated users)
+- Header shows Users icon, "Clients" heading, "Manage your client accounts" description, "Add Client" button
+- Search input functional with filtering logic (by business_name, full_name, email)
+- Empty state renders correctly with icon, heading, description, and secondary add button
+- CreateClientModal form validation: requires email, fullName, password (min 8 chars)
+- Table columns defined: Client, Plan, Status, Screens, Media, Actions (verified in code; not rendered due to no data)
+
+---
+
 ## QT-84: Super Admin Pages QA Walkthrough (2026-03-06)
 
 **Status:** PASS -- 0 bugs found, all 3 super admin pages render correctly
