@@ -41,12 +41,12 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 - [x] **SCENE-09**: E2E test verifies effects panel (shadow, blur, opacity)
 - [x] **SCENE-10**: E2E test verifies animation panel with preset animations
 - [x] **SCENE-11**: E2E test verifies position/alignment panel
-- [ ] **SCENE-12**: E2E test verifies undo/redo keyboard shortcuts
-- [ ] **SCENE-13**: E2E test verifies save with success feedback
-- [ ] **SCENE-14**: E2E test verifies export dialog with format/quality options
-- [ ] **SCENE-15**: E2E test verifies context menu on right-click
-- [ ] **SCENE-16**: E2E test verifies cloud import panel (Google Drive, Dropbox)
-- [ ] **SCENE-17**: E2E test verifies AI Designer panel generates layout from prompt
+- [x] **SCENE-12**: E2E test verifies undo/redo keyboard shortcuts
+- [x] **SCENE-13**: E2E test verifies save with success feedback
+- [x] **SCENE-14**: E2E test verifies export dialog with format/quality options
+- [x] **SCENE-15**: E2E test verifies context menu on right-click
+- [x] **SCENE-16**: E2E test verifies cloud import panel (Google Drive, Dropbox)
+- [x] **SCENE-17**: E2E test verifies AI Designer panel generates layout from prompt
 
 ### Playlists (E2E)
 
@@ -253,12 +253,12 @@ None deferred -- this milestone closes all testing and stability gaps.
 | SCENE-09 | Phase 116 | Complete |
 | SCENE-10 | Phase 116 | Complete |
 | SCENE-11 | Phase 116 | Complete |
-| SCENE-12 | Phase 116 | Pending |
-| SCENE-13 | Phase 116 | Pending |
-| SCENE-14 | Phase 116 | Pending |
-| SCENE-15 | Phase 116 | Pending |
-| SCENE-16 | Phase 116 | Pending |
-| SCENE-17 | Phase 116 | Pending |
+| SCENE-12 | Phase 116 | Complete |
+| SCENE-13 | Phase 116 | Complete |
+| SCENE-14 | Phase 116 | Complete |
+| SCENE-15 | Phase 116 | Complete |
+| SCENE-16 | Phase 116 | Complete |
+| SCENE-17 | Phase 116 | Complete |
 | PLAY-01 | Phase 117 | Pending |
 | PLAY-02 | Phase 117 | Pending |
 | PLAY-03 | Phase 117 | Pending |

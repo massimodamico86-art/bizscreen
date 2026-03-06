@@ -90,7 +90,7 @@ All 18 milestones shipped successfully.
 ### v13.0 Full Stability Pass
 
 - [x] **Phase 115: Dashboard & Media E2E** - Screenshot tests for dashboard widgets, navigation, and full media library flows (completed 2026-03-06)
-- [ ] **Phase 116: Scenes & SVG Editor E2E** - Screenshot tests for scene CRUD and all SVG editor tools/panels
+- [x] **Phase 116: Scenes & SVG Editor E2E** - Screenshot tests for scene CRUD and all SVG editor tools/panels (completed 2026-03-06)
 - [ ] **Phase 117: Playlists & Layouts E2E** - Screenshot tests for playlist editor and layout zone/widget configuration
 - [ ] **Phase 118: Templates, Schedules & Campaigns E2E** - Screenshot tests for template marketplace, schedule creation, and campaign management
 - [ ] **Phase 119: Screens & Device Management E2E** - Screenshot tests for screen pairing, groups, diagnostics, and remote commands
@@ -272,7 +272,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 115. Dashboard & Media E2E | 3/3 | Complete    | 2026-03-06 |
-| 116. Scenes & SVG Editor E2E | 2/3 | In Progress|  |
+| 116. Scenes & SVG Editor E2E | 3/3 | Complete   | 2026-03-06 |
 | 117. Playlists & Layouts E2E | 0/TBD | Not started | - |
 | 118. Templates, Schedules & Campaigns E2E | 0/TBD | Not started | - |
 | 119. Screens & Device Management E2E | 0/TBD | Not started | - |
