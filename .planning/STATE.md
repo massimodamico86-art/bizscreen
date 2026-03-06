@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 68: Auth flow regression test after quick-67 fixes -- no regressions
+Last activity: 2026-03-06 - Completed quick task 69: Investigate Welcome vs Dashboard sidebar pages - confirm rendering differences and WelcomeHero wiring
 
 Progress: [████████████████████████████] 100%
 
@@ -73,6 +73,7 @@ None.
 | 66 | Toast persistence on navigation regression test (BUG-07 fix confirmed) | 2026-03-05 | 727818e | [66-observe-whether-error-toasts-persist-acr](./quick/66-observe-whether-error-toasts-persist-acr/) |
 | 67 | Fix BUG-17, BUG-18, BUG-19: createScreen auth bypass, polling backoff, OTP label | 2026-03-05 | ede0029 | [67-fix-all-3-open-bugs-bug-17-createscreen-](./quick/67-fix-all-3-open-bugs-bug-17-createscreen-/) |
 | 68 | Auth flow regression test after quick-67 fixes -- no regressions | 2026-03-05 | 20ac3a5 | [68-test-auth-flow-via-playwright-login-veri](./quick/68-test-auth-flow-via-playwright-login-veri/) |
+| 69 | Investigate Welcome vs Dashboard sidebar pages - confirm rendering differences and WelcomeHero wiring | 2026-03-06 | 50b86a0 | [69-investigate-welcome-vs-dashboard-sidebar](./quick/69-investigate-welcome-vs-dashboard-sidebar/) |
 
 ## Session Continuity
 
