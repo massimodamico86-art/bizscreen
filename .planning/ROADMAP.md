@@ -155,7 +155,11 @@ Plans:
   1. Running the templates E2E spec produces screenshots of gallery browse, search, card hover animation, one-click editor open, quick customize panel, Your Designs tab, orientation filter, and industry categories
   2. Running the schedules E2E spec produces screenshots of list CRUD, time/day creation, playlist/layout assignment, conflict detection, dayparting, and recurring entries
   3. Running the campaigns E2E spec produces screenshots of list with status, creation with priority/dates, content assignment, screen targeting, emergency push, analytics, rotation controls, seasonal picker, and template picker
-**Plans**: TBD (to be created via `/gsd:plan-phase 118`)
+**Plans**: 3 plans
+Plans:
+- [ ] 118-01-PLAN.md — Templates gallery screenshot E2E tests (browse, search, hover, editor open, customize, Your Designs, orientation, industries)
+- [ ] 118-02-PLAN.md — Schedules screenshot E2E tests (list CRUD, time/day creation, editor assignment, conflict detection, dayparting, recurring)
+- [ ] 118-03-PLAN.md — Campaigns screenshot E2E tests (list with status, creation, content/screen targeting, emergency push, analytics, rotation, seasonal, template picker)
 
 ### Phase 119: Screens & Device Management E2E
 **Goal**: Screen pairing, group management, diagnostics, and remote commands have screenshot-verified E2E coverage
@@ -249,7 +253,7 @@ Plans:
 | 115. Dashboard & Media E2E | 3/3 | Complete    | 2026-03-06 |
 | 116. Scenes & SVG Editor E2E | 4/4 | Complete    | 2026-03-06 |
 | 117. Playlists & Layouts E2E | 5/5 | Complete    | 2026-03-06 |
-| 118. Templates, Schedules & Campaigns E2E | 0/TBD | Not started | - |
+| 118. Templates, Schedules & Campaigns E2E | 0/3 | Not started | - |
 | 119. Screens & Device Management E2E | 0/TBD | Not started | - |
 | 120. Data Sources, Apps & Moderation E2E | 0/TBD | Not started | - |
 | 121. Analytics, Settings & Admin E2E | 0/TBD | Not started | - |
@@ -260,4 +264,4 @@ Plans:
 **Total:** 124 phases | 320 plans executed | 19 milestones (18 shipped, 1 in progress)
 
 ---
-*Last updated: 2026-03-06 -- Phase 117 gap closure plan 05 added*
+*Last updated: 2026-03-06 -- Phase 118 plans created (3 plans, 1 wave)*
