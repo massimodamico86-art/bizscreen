@@ -24,6 +24,199 @@ import {
   assertAppReady,
 } from './helpers/index.js';
 
+// Mock layout data for when backend is unavailable
+const MOCK_LAYOUT_ID = 'e2e-test-layout-001';
+const MOCK_LAYOUT = {
+  id: MOCK_LAYOUT_ID,
+  name: 'E2E Test Layout',
+  description: 'Two column layout for testing',
+  owner_id: 'e2e-test-user',
+  orientation: 'landscape',
+  resolution: '1920x1080',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  layout_zones: [
+    {
+      id: 'zone-001',
+      zone_name: 'Left',
+      x_percent: 0,
+      y_percent: 0,
+      width_percent: 50,
+      height_percent: 100,
+      z_index: 0,
+      assigned_playlist_id: null,
+      assigned_media_id: null,
+      playlists: null,
+      media: null,
+    },
+    {
+      id: 'zone-002',
+      zone_name: 'Right',
+      x_percent: 50,
+      y_percent: 0,
+      width_percent: 50,
+      height_percent: 100,
+      z_index: 1,
+      assigned_playlist_id: null,
+      assigned_media_id: null,
+      playlists: null,
+      media: null,
+    },
+  ],
+};
+
+/**
+ * Set up Supabase API route mocking so the layout editor can render
+ * even when the backend is unavailable.
+ *
+ * Intercepts REST API calls matching layout/zone fetch patterns and returns
+ * mock data. This allows the editor UI (zone canvas, preset buttons,
+ * properties panel, assign modal) to render for screenshot capture.
+ */
+async function setupLayoutMocking(page) {
+  // Intercept Supabase REST API calls for layouts table
+  await page.route('**/rest/v1/layouts?*', async (route) => {
+    const url = route.request().url();
+    const method = route.request().method();
+
+    if (method === 'GET') {
+      // Check if this is a single layout fetch (has id filter -- PostgREST .single())
+      if (url.includes(`id=eq.${MOCK_LAYOUT_ID}`) || url.includes('select=')) {
+        // .single() expects a plain object, not an array
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'content-range': '0-0/1',
+            'content-profile': 'public',
+          },
+          body: JSON.stringify(MOCK_LAYOUT),
+        });
+      } else {
+        // List fetch - return array
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          headers: { 'content-range': '0-0/1' },
+          body: JSON.stringify([MOCK_LAYOUT]),
+        });
+      }
+    } else if (method === 'POST') {
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify(MOCK_LAYOUT),
+      });
+    } else if (method === 'PATCH') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(MOCK_LAYOUT),
+      });
+    } else {
+      await route.continue();
+    }
+  });
+
+  // Intercept layout_zones fetch
+  await page.route('**/rest/v1/layout_zones?*', async (route) => {
+    const method = route.request().method();
+    if (method === 'GET') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'content-range': '0-1/2' },
+        body: JSON.stringify(MOCK_LAYOUT.layout_zones),
+      });
+    } else if (method === 'POST') {
+      // Creating a zone -- return a new zone object
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'zone-new-' + Date.now(),
+          zone_name: 'New Zone',
+          x_percent: 0,
+          y_percent: 0,
+          width_percent: 25,
+          height_percent: 25,
+          z_index: 2,
+          assigned_playlist_id: null,
+          assigned_media_id: null,
+        }),
+      });
+    } else if (method === 'PATCH' || method === 'DELETE') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({}),
+      });
+    } else {
+      await route.continue();
+    }
+  });
+
+  // Intercept playlists fetch (for assign content modal)
+  await page.route('**/rest/v1/playlists?*', async (route) => {
+    const method = route.request().method();
+    if (method === 'GET') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'content-range': '0-0/1' },
+        body: JSON.stringify([{ id: 'playlist-001', name: 'Test Playlist' }]),
+      });
+    } else {
+      await route.continue();
+    }
+  });
+
+  // Intercept media_assets fetch (for assign content modal)
+  await page.route('**/rest/v1/media_assets?*', async (route) => {
+    const method = route.request().method();
+    if (method === 'GET') {
+      const mockMedia = [
+        {
+          id: 'media-001',
+          name: 'Sample Image 1',
+          type: 'image',
+          url: 'https://placehold.co/400x300/orange/white?text=Sample+1',
+          thumbnail_url: 'https://placehold.co/200x150/orange/white?text=S1',
+          file_size: 102400,
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: 'media-002',
+          name: 'Sample Video',
+          type: 'video',
+          url: 'https://placehold.co/400x300/green/white?text=Video',
+          thumbnail_url: 'https://placehold.co/200x150/green/white?text=V1',
+          file_size: 1048576,
+          duration: 30,
+          created_at: new Date().toISOString(),
+        },
+      ];
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'content-range': `0-${mockMedia.length - 1}/${mockMedia.length}` },
+        body: JSON.stringify(mockMedia),
+      });
+    } else {
+      await route.continue();
+    }
+  });
+
+  // Intercept RPC calls
+  await page.route('**/rest/v1/rpc/*', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([]),
+    });
+  });
+}
+
 /**
  * Navigate to the Templates/Layouts page via sidebar.
  */
@@ -47,69 +240,16 @@ async function navigateToTemplates(page) {
 }
 
 /**
- * Navigate to the Layout Editor page.
- * The editor route requires a layout ID suffix: 'layout-editor-{uuid}'.
- * Strategy:
- * 1. Try to navigate to Templates page and click a user layout from "Your Designs"
- * 2. If no user layouts exist, create one via layoutService in the browser context
- * 3. Fallback: use a placeholder UUID (will show "Layout not found" but correct route)
+ * Navigate to the Layout Editor page using mock layout ID.
+ * Uses page.route() API mocking so the editor renders with fake data
+ * instead of showing "Layout not found".
  */
 async function navigateToLayoutEditor(page) {
-  // Strategy 1: Try to create a layout via Supabase in the browser context
-  let layoutId = null;
-
-  try {
-    layoutId = await page.evaluate(async () => {
-      // Access the app's supabase client from the window or module scope
-      const { supabase } = await import('/src/supabase.js');
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return null;
-
-      // Check for existing layouts first
-      const { data: existing } = await supabase
-        .from('layouts')
-        .select('id')
-        .limit(1);
-
-      if (existing && existing.length > 0) {
-        return existing[0].id;
-      }
-
-      // Create a new layout
-      const { data: created } = await supabase
-        .from('layouts')
-        .insert({
-          owner_id: user.id,
-          name: 'E2E Test Layout',
-          description: 'Created for E2E screenshot tests',
-        })
-        .select()
-        .single();
-
-      return created?.id || null;
-    });
-  } catch {
-    // Dynamic import may not work in evaluate context
-    layoutId = null;
-  }
-
-  // Strategy 2: If supabase worked, navigate to that layout
-  if (layoutId) {
-    await page.evaluate((id) => {
-      if (typeof window.__setCurrentPage === 'function') {
-        window.__setCurrentPage('layout-editor-' + id);
-      }
-    }, layoutId);
-  } else {
-    // Strategy 3: Fallback - use a placeholder UUID
-    // This will render LayoutEditorPage in its "Layout not found" state,
-    // which is still the correct component (not "Page not found")
-    await page.evaluate(() => {
-      if (typeof window.__setCurrentPage === 'function') {
-        window.__setCurrentPage('layout-editor-00000000-0000-0000-0000-000000000000');
-      }
-    });
-  }
+  await page.evaluate((id) => {
+    if (typeof window.__setCurrentPage === 'function') {
+      window.__setCurrentPage('layout-editor-' + id);
+    }
+  }, MOCK_LAYOUT_ID);
 
   await waitForPageReady(page);
   await page.waitForTimeout(1500);
@@ -204,6 +344,9 @@ test.describe('Layouts & Template Gallery Screenshots', () => {
   test('LAYOUT-02: layout editor with zone presets', async ({ page }) => {
     test.slow();
 
+    // Set up API mocking before navigating so the editor loads with zones
+    await setupLayoutMocking(page);
+
     // Navigate to layout editor (shows preset layouts)
     await navigateToLayoutEditor(page);
 
@@ -248,6 +391,9 @@ test.describe('Layouts & Template Gallery Screenshots', () => {
   test('LAYOUT-03: zone selection and property panel', async ({ page }) => {
     test.slow();
 
+    // Set up API mocking before navigating so zones are available
+    await setupLayoutMocking(page);
+
     await navigateToLayoutEditor(page);
 
     // Wait for page to settle
@@ -286,6 +432,9 @@ test.describe('Layouts & Template Gallery Screenshots', () => {
   test('LAYOUT-04: content assignment modal with tabs', async ({ page }) => {
     test.slow();
 
+    // Set up API mocking before navigating so zones and assign modal data are available
+    await setupLayoutMocking(page);
+
     await navigateToLayoutEditor(page);
     await page.waitForTimeout(2000);
     await waitForPageReady(page);
@@ -299,35 +448,46 @@ test.describe('Layouts & Template Gallery Screenshots', () => {
       await zones.first().click();
       await page.waitForTimeout(500);
 
-      // Look for "Assign Content" or similar button
-      const assignBtn = page.getByRole('button', { name: /assign|content/i }).first();
+      // Look for "Assign Content" button in the zone properties panel
+      const assignBtn = page.getByRole('button', { name: /assign content/i }).first();
       const assignCount = await assignBtn.count();
 
       if (assignCount > 0 && (await assignBtn.isVisible().catch(() => false))) {
         await assignBtn.click();
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(1500);
 
-        // Screenshot the assign modal
-        await screenshotStep(page, '117', '13-widget-type-selector');
+        // Wait for the assign modal to appear (it uses fixed overlay with bg-black/50)
+        const assignModal = page.locator('.fixed.inset-0.bg-black\\/50').first();
+        const modalVisible = await assignModal.waitFor({ state: 'visible', timeout: 5000 })
+          .then(() => true)
+          .catch(() => false);
 
-        // Look for Playlists and Media tabs
-        const playlistsTab = page.getByRole('button', { name: /playlists/i }).first();
-        const mediaTab = page.getByRole('button', { name: /media/i }).first();
+        if (modalVisible) {
+          // Screenshot the assign modal
+          await screenshotStep(page, '117', '13-widget-type-selector');
 
-        if (await playlistsTab.count() > 0 && (await playlistsTab.isVisible().catch(() => false))) {
-          await playlistsTab.click();
-          await page.waitForTimeout(500);
-          await screenshotStep(page, '117', '13-assign-playlists-tab');
+          // Scope tab buttons to the assign modal to avoid matching sidebar links
+          const playlistsTab = assignModal.locator('button').filter({ hasText: /Playlists/ }).first();
+          const mediaTab = assignModal.locator('button').filter({ hasText: /Media/ }).first();
+
+          if (await playlistsTab.count() > 0 && (await playlistsTab.isVisible().catch(() => false))) {
+            await playlistsTab.click();
+            await page.waitForTimeout(500);
+            await screenshotStep(page, '117', '13-assign-playlists-tab');
+          }
+
+          if (await mediaTab.count() > 0 && (await mediaTab.isVisible().catch(() => false))) {
+            await mediaTab.click();
+            await page.waitForTimeout(500);
+            await screenshotStep(page, '117', '13-assign-media-tab');
+          }
+
+          // Close the modal
+          await dismissAnyModals(page);
+        } else {
+          // Modal didn't appear - screenshot the zone properties with Assign Content button
+          await screenshotStep(page, '117', '13-assign-content-button');
         }
-
-        if (await mediaTab.count() > 0 && (await mediaTab.isVisible().catch(() => false))) {
-          await mediaTab.click();
-          await page.waitForTimeout(500);
-          await screenshotStep(page, '117', '13-assign-media-tab');
-        }
-
-        // Close the modal
-        await dismissAnyModals(page);
       } else {
         // No assign button visible - screenshot zone properties as fallback
         await screenshotStep(page, '117', '13-zone-properties-fallback');
@@ -461,6 +621,9 @@ test.describe('Layouts & Template Gallery Screenshots', () => {
   // =========================================================================
   test('LAYOUT-08: video widget configuration', async ({ page }) => {
     test.slow();
+
+    // Set up API mocking so layout editor has zones with content
+    await setupLayoutMocking(page);
 
     // Navigate to layout editor to try assigning video content to a zone
     await navigateToLayoutEditor(page);
