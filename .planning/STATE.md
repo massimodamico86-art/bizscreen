@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
 status: unknown
-last_updated: "2026-03-06T17:08:33.724Z"
+last_updated: "2026-03-06T22:16:00Z"
 progress:
   total_phases: 72
   completed_phases: 72
-  total_plans: 239
-  completed_plans: 239
+  total_plans: 241
+  completed_plans: 241
 ---
 
 # Project State
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v13.0 Full Stability Pass -- Phase 116 (Scenes & SVG Editor E2E)
+**Current focus:** v13.0 Full Stability Pass -- Phase 117 (Playlists & Layouts E2E)
 
 ## Current Position
 
-Phase: 116 of 124 (Scenes & SVG Editor E2E)
-Plan: 4 of 4 complete
-Status: Phase 116 complete (including gap closure)
-Last activity: 2026-03-06 -- Completed 116-04 (SVG editor panel screenshot gap closure)
+Phase: 117 of 124 (Playlists & Layouts E2E)
+Plan: 2 of 2 complete
+Status: Phase 117 complete
+Last activity: 2026-03-06 -- Completed 117-02 (Layouts E2E screenshot tests)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -68,6 +68,11 @@ Full decision log in PROJECT.md Key Decisions table.
 - Gap closure: clickToolbarButton throws on missing buttons, addAndSelectElement helper for TopToolbar-dependent tests
 - SCENE-12 uses locator screenshot cropped to undo/redo controls; SCENE-16 clicks Google Drive for distinct modal state
 
+- Layout editor requires layoutId; used __setCurrentPage('layout-editor') for navigation
+- Widget configs (clock, weather) captured via Apps page since zone editor has no dedicated widget config UI
+- Data table config captured via Data Sources page create modal
+- Screenshot step numbers 10+ for layouts to avoid collision with playlist screenshots (01-09)
+
 ### Blockers/Concerns
 
 None.
@@ -75,9 +80,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed 116-04-PLAN.md (SVG editor panel screenshot gap closure) -- Phase 116 fully complete
+Stopped at: Completed 117-02-PLAN.md (Layouts E2E screenshot tests) -- Phase 117 fully complete
 Resume file: None
-Next: `/gsd:plan-phase 117`
+Next: `/gsd:plan-phase 118`
 
 ---
-*Updated: 2026-03-06 -- Phase 116 complete (4/4 plans including gap closure)*
+*Updated: 2026-03-06 -- Phase 117 complete (2/2 plans)*

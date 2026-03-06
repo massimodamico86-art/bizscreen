@@ -61,14 +61,14 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Layouts & Widget Types (E2E)
 
-- [ ] **LAYOUT-01**: E2E test verifies layout list page with create and filter actions
-- [ ] **LAYOUT-02**: E2E test verifies layout creation modal with zone configuration
-- [ ] **LAYOUT-03**: E2E test verifies layout editor zone selection and property panel
-- [ ] **LAYOUT-04**: E2E test verifies widget type selector shows all 17+ widget types
-- [ ] **LAYOUT-05**: E2E test verifies clock widget configuration (12h/24h, analog/digital)
-- [ ] **LAYOUT-06**: E2E test verifies weather widget configuration (location, forecast mode)
-- [ ] **LAYOUT-07**: E2E test verifies data table widget configuration (source, columns, refresh)
-- [ ] **LAYOUT-08**: E2E test verifies video widget configuration (source, HLS, autoplay)
+- [x] **LAYOUT-01**: E2E test verifies layout list page with create and filter actions
+- [x] **LAYOUT-02**: E2E test verifies layout creation modal with zone configuration
+- [x] **LAYOUT-03**: E2E test verifies layout editor zone selection and property panel
+- [x] **LAYOUT-04**: E2E test verifies widget type selector shows all 17+ widget types
+- [x] **LAYOUT-05**: E2E test verifies clock widget configuration (12h/24h, analog/digital)
+- [x] **LAYOUT-06**: E2E test verifies weather widget configuration (location, forecast mode)
+- [x] **LAYOUT-07**: E2E test verifies data table widget configuration (source, columns, refresh)
+- [x] **LAYOUT-08**: E2E test verifies video widget configuration (source, HLS, autoplay)
 
 ### Templates Marketplace (E2E)
 
@@ -267,14 +267,14 @@ None deferred -- this milestone closes all testing and stability gaps.
 | PLAY-06 | Phase 117 | Pending |
 | PLAY-07 | Phase 117 | Pending |
 | PLAY-08 | Phase 117 | Pending |
-| LAYOUT-01 | Phase 117 | Pending |
-| LAYOUT-02 | Phase 117 | Pending |
-| LAYOUT-03 | Phase 117 | Pending |
-| LAYOUT-04 | Phase 117 | Pending |
-| LAYOUT-05 | Phase 117 | Pending |
-| LAYOUT-06 | Phase 117 | Pending |
-| LAYOUT-07 | Phase 117 | Pending |
-| LAYOUT-08 | Phase 117 | Pending |
+| LAYOUT-01 | Phase 117 | Complete |
+| LAYOUT-02 | Phase 117 | Complete |
+| LAYOUT-03 | Phase 117 | Complete |
+| LAYOUT-04 | Phase 117 | Complete |
+| LAYOUT-05 | Phase 117 | Complete |
+| LAYOUT-06 | Phase 117 | Complete |
+| LAYOUT-07 | Phase 117 | Complete |
+| LAYOUT-08 | Phase 117 | Complete |
 | TMPL-01 | Phase 118 | Pending |
 | TMPL-02 | Phase 118 | Pending |
 | TMPL-03 | Phase 118 | Pending |
