@@ -1,5 +1,39 @@
 # Bugs Tracker
 
+## QT-79: Playlist Preview Link Sharing and PublicPreviewPage QA (2026-03-06)
+
+**Status:** 2 BUGS found, 5 review areas checked
+
+### BUG-Q79-01: Missing Share/Preview Links button in playlist editor toolbar (Medium)
+
+**Component:** PlaylistEditorPage.jsx
+**Issue:** The `handleOpenPreviewModal` function is returned by `usePlaylistEditor` hook (line 1493 of usePlaylistEditor.js) but is NEVER destructured in PlaylistEditorPage.jsx (lines 44-157). The `PreviewLinksModal` component IS rendered (line 746) and receives `showPreviewModal` state, but there is no UI button anywhere in the editor toolbar to trigger `setShowPreviewModal(true)` or `handleOpenPreviewModal()`. This makes the Share/Preview Links feature completely unreachable from the playlist editor UI.
+**Impact:** Users cannot generate or manage preview links from the playlist editor. The entire preview link sharing workflow is inaccessible despite all the modal and service code being fully implemented.
+**Fix:** Add a Share/Link button to the editor header toolbar (near the Settings/Done buttons) that calls `setShowPreviewModal(true)`.
+
+### BUG-Q79-02: formatPreviewLink called with token string instead of link object (Low)
+
+**Component:** PlaylistEditorComponents.jsx, line 485
+**Issue:** The "open in new tab" anchor uses `formatPreviewLink(link.token)` where `link.token` is a string. However, `formatPreviewLink()` in previewService.js (line 215) expects a full link object with `.expires_at` and `.url` properties. When called with a string, it returns an object `{ is_expired: false, expiry_label: 'Never expires', short_url: '', ... }`. This object is used as the `href` attribute, resulting in `href="[object Object]"` which navigates to an invalid URL.
+**Fix:** Change `formatPreviewLink(link.token)` to `link.url` (the full URL is already available on the link object from `fetchPreviewLinksForResource`). Alternatively use `/preview/${link.token}` directly.
+
+### Code Review Results
+
+| # | Area | Status | Notes |
+|---|------|--------|-------|
+| 1 | Share button in PlaylistEditorPage | BUG | handleOpenPreviewModal not destructured, no button wired (BUG-Q79-01) |
+| 2 | PreviewLinksModal (PlaylistEditorComponents.jsx) | BUG | formatPreviewLink(link.token) misuse (BUG-Q79-02); create form, expiry selector, allowComments checkbox, active links list, copy/revoke actions all implemented correctly |
+| 3 | PublicPreviewPage player controls | PASS | PlaylistPreviewPlayer has play/pause toggle (lines 514-519), SkipBack/SkipForward (lines 507-527), auto-advance timer (lines 443-455), progress dots (lines 541-553), item counter overlay -- all correctly implemented |
+| 4 | CommentsSection | PASS | Renders only when allowComments=true (line 606), has author name input, message input, submit button, comment list with dates, loading/empty states -- all correctly implemented |
+| 5 | previewService.js token generation | PASS | generateToken() uses crypto.getRandomValues(24 bytes), converts to base64, replaces +/-/= for URL safety (line 36-37) -- correct and secure |
+
+### Playwright Route Test
+
+- Navigated to /preview/test-token
+- Page renders "Preview Unavailable" error state correctly (no crash)
+- Zero JavaScript errors on the page
+- Loading -> Error state transition works as expected
+
 ## QT-78: Service Quality Grid Layout Verification (2026-03-06)
 
 **Status:** PASS -- all grid layout checks pass, BUG-01 fix confirmed holding
