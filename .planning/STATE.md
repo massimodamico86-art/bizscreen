@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-06 - Completed quick task 74: Screen assignment QA walkthrough -- all 8 features PASS, 0 bugs
+Last activity: 2026-03-06 - Completed quick task 75: Device commands pipeline QA walkthrough -- all 6 points PASS, 0 bugs
 
 Progress: [████████████████████████████] 100%
 
@@ -48,6 +48,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-72]: Used __setCurrentPage for editor route navigation; code-review for backend-dependent features
 - [Phase quick-73]: All console errors traced to missing Supabase backend, reclassified as benign (0 genuine)
 - [Phase quick-74]: Used code review verification for backend-dependent screen assignment features (no Supabase)
+- [Phase quick-75]: Used code review verification for device command pipeline (no Supabase)
 
 ### Blockers/Concerns
 
@@ -83,11 +84,12 @@ None.
 | 72 | QA walkthrough Playlist CRUD, drag-drop, transitions -- all 7 features PASS, 0 bugs | 2026-03-06 | 65e2e8e | [72-qa-walkthrough-playlist-crud-drag-drop-r](./quick/72-qa-walkthrough-playlist-crud-drag-drop-r/) |
 | 73 | QA walkthrough Screen creation, OTP pairing, player view -- all 6 features PASS, 0 bugs | 2026-03-06 | d237ac0 | [73-qa-walkthrough-screen-creation-otp-pairi](./quick/73-qa-walkthrough-screen-creation-otp-pairi/) |
 | 74 | QA walkthrough Screen assignment of playlist, layout, schedule -- all 8 features PASS, 0 bugs | 2026-03-06 | 3a200d9 | [74-qa-walkthrough-screen-assignment-of-play](./quick/74-qa-walkthrough-screen-assignment-of-play/) |
+| 75 | QA walkthrough Device commands pipeline (reload, reboot, clear_cache, reset) -- all 6 points PASS, 0 bugs | 2026-03-06 | 85ed466 | [75-qa-walkthrough-test-device-commands-from](./quick/75-qa-walkthrough-test-device-commands-from/) |
 
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed quick task 74
+Stopped at: Completed quick task 75
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
