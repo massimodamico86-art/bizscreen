@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T00:31:22.647Z"
+last_updated: "2026-03-06T00:55:35.106Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-06 - Completed quick task 71: Media page QA walkthrough -- all 6 features PASS, 0 bugs
+Last activity: 2026-03-06 - Completed quick task 72: Playlist CRUD QA walkthrough -- all 7 features PASS, 0 bugs
 
 Progress: [████████████████████████████] 100%
 
@@ -45,6 +45,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-68]: Pre-existing auth.spec.js failures (11) are dev-bypass limitations, not regressions from quick-67
 - [Phase quick-69]: WelcomeFeatureCards uses descriptive button labels; BUG-08 fix confirmed holding
 - [Phase quick-70]: Reused existing toast-persistence.spec.js plus manual Playwright script; distinguished mount toasts from stale toasts
+- [Phase quick-72]: Used __setCurrentPage for editor route navigation; code-review for backend-dependent features
 
 ### Blockers/Concerns
 
@@ -77,11 +78,12 @@ None.
 | 69 | Investigate Welcome vs Dashboard sidebar pages - confirm rendering differences and WelcomeHero wiring | 2026-03-06 | 50b86a0 | [69-investigate-welcome-vs-dashboard-sidebar](./quick/69-investigate-welcome-vs-dashboard-sidebar/) |
 | 70 | Re-verify toast persistence fix (BUG-07) after recent code changes -- PASS | 2026-03-06 | 298af31 | [70-observe-whether-error-toasts-persist-acr](./quick/70-observe-whether-error-toasts-persist-acr/) |
 | 71 | QA walkthrough Media page: upload, grid/list toggle, folder, search, delete, sub-pages -- all PASS | 2026-03-06 | 1224164 | [71-qa-walkthrough-media-page-upload-grid-li](./quick/71-qa-walkthrough-media-page-upload-grid-li/) |
+| 72 | QA walkthrough Playlist CRUD, drag-drop, transitions -- all 7 features PASS, 0 bugs | 2026-03-06 | 65e2e8e | [72-qa-walkthrough-playlist-crud-drag-drop-r](./quick/72-qa-walkthrough-playlist-crud-drag-drop-r/) |
 
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed quick task 71
+Stopped at: Completed quick task 72
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
