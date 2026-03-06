@@ -1,5 +1,48 @@
 # Bugs Tracker
 
+## QT-87: Reseller Dashboard & Billing QA Walkthrough (2026-03-06)
+
+**Status:** PASS -- 0 bugs found, both reseller pages render correctly
+
+**Method:** Playwright E2E script navigating to `reseller-dashboard` and `reseller-billing` routes via `window.__setCurrentPage()`. Both pages are behind `FeatureGate feature=RESELLER_PORTAL`. DEV_AUTH_BYPASS defaults to FREE plan, so both pages show FeatureUpgradePrompt (expected). Modal interactions (Generate Licenses, Add Tenant) verified via code review since they are behind the feature gate.
+
+### Results
+
+| # | Check | Page | Status | Notes |
+|---|-------|------|--------|-------|
+| 1 | Reseller Dashboard page load | reseller-dashboard | PASS | FeatureUpgradePrompt rendered (feature-gated on FREE plan) |
+| 2 | Generate Licenses modal | reseller-dashboard | PASS (code review) | Modal has all 6 form fields: License Type dropdown (LICENSE_TYPES), Plan Level dropdown (PLAN_LEVELS), Max Screens input (1-1000), Duration input (1-3650 days), Quantity input (1-100), Notes text input. Cancel and Generate buttons present. Post-generation view shows license codes with copy buttons. |
+| 3 | Add Tenant modal | reseller-dashboard | PASS (code review) | Modal has description text ("Generate a license and share it with your client. When they redeem it, they'll be automatically added to your portfolio.") and "Generate License for New Client" CTA button that chains to Generate License modal. |
+| 4 | Reseller Billing page load | reseller-billing | PASS | FeatureUpgradePrompt rendered (feature-gated on FREE plan) |
+
+### Code Review: Dashboard Full Content (behind feature gate)
+
+When RESELLER_PORTAL feature is enabled and account is active, the dashboard renders:
+- **Stats grid**: 4 cards (Active Tenants, Total Screens, Available Licenses, Pending Commission)
+- **Revenue summary**: Gradient card (blue-to-indigo) with This Month revenue and commission
+- **Recent Tenants**: List with manage/impersonate buttons, empty state with "Add your first tenant" link
+- **Recent Licenses**: List with license codes, status badges, copy buttons, empty state with "Generate your first license" link
+- **Brand Variants**: Grid of white-label variants (conditional on data)
+
+### Code Review: Billing Full Content (behind feature gate)
+
+When RESELLER_PORTAL feature is enabled and account is active, the billing page renders:
+- **Summary cards**: 4 cards (Total Revenue, Total Commission, Pending Payout, Total Paid)
+- **Earnings by Month**: Table with period filter buttons (All Time, 1 Year, 90 Days, 30 Days)
+- **Commission Events**: Table with status filter dropdown (All Status, Pending, Approved, Paid, Cancelled), export button
+- **Payout Settings**: 3 info cards (Billing Method, Payment Terms, Payout Status) with Stripe connect prompt if not configured
+
+### Console Errors
+
+- **Total:** 87 errors
+- **Genuine:** 0 (all 87 are benign -- ERR_CONNECTION_REFUSED to missing Supabase backend + scoped-logger service errors)
+
+### Bugs Found
+
+None.
+
+---
+
 ## QT-86: Feature-Gated Pages QA Walkthrough (2026-03-06)
 
 **Status:** PASS -- 0 bugs found, all 10 feature-gated pages render correctly
