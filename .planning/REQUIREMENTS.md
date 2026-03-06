@@ -9,11 +9,11 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Dashboard & Navigation (E2E)
 
-- [ ] **DASH-01**: E2E test verifies dashboard loads with stat cards, recent activity, and quick actions
-- [ ] **DASH-02**: E2E test verifies sidebar navigation reaches all primary pages
-- [ ] **DASH-03**: E2E test verifies breadcrumb navigation shows correct path on every route
-- [ ] **DASH-04**: E2E test verifies welcome page renders differently from dashboard (onboarding flow)
-- [ ] **DASH-05**: E2E test verifies notification bell opens dropdown with alert history
+- [x] **DASH-01**: E2E test verifies dashboard loads with stat cards, recent activity, and quick actions
+- [x] **DASH-02**: E2E test verifies sidebar navigation reaches all primary pages
+- [x] **DASH-03**: E2E test verifies breadcrumb navigation shows correct path on every route
+- [x] **DASH-04**: E2E test verifies welcome page renders differently from dashboard (onboarding flow)
+- [x] **DASH-05**: E2E test verifies notification bell opens dropdown with alert history
 
 ### Media Library (E2E)
 
@@ -227,11 +227,11 @@ None deferred -- this milestone closes all testing and stability gaps.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DASH-01 | Phase 115 | Pending |
-| DASH-02 | Phase 115 | Pending |
-| DASH-03 | Phase 115 | Pending |
-| DASH-04 | Phase 115 | Pending |
-| DASH-05 | Phase 115 | Pending |
+| DASH-01 | Phase 115 | Complete |
+| DASH-02 | Phase 115 | Complete |
+| DASH-03 | Phase 115 | Complete |
+| DASH-04 | Phase 115 | Complete |
+| DASH-05 | Phase 115 | Complete |
 | MEDIA-01 | Phase 115 | Complete |
 | MEDIA-02 | Phase 115 | Complete |
 | MEDIA-03 | Phase 115 | Complete |
