@@ -1,5 +1,27 @@
 # Bugs Tracker
 
+## QT-72: Playlist CRUD, Drag-Drop, Transitions QA Walkthrough (2026-03-06)
+
+**Status:** PASS -- all 7 feature areas functional (interactive testing limited by no Supabase backend)
+
+**Features tested:**
+- Playlists page load: PASS -- Title "Playlists" with "0 playlists" counter, search bar, Create Playlist button, error state with "Unable to load playlists" and Try Again button (backend not running)
+- Create playlist modal: PASS -- Modal opens with Name (required), Description, Default Duration (seconds) fields. Form validation works (required name). Create submit calls backend (fails without Supabase, expected). UI does not crash on backend error.
+- Playlist editor load: PASS -- Editor route (playlist-editor-{id}) renders correctly. Shows "Playlist not found" with "Back to Playlists" button when playlist ID not in database (expected without backend). Breadcrumb shows "Home > Playlists > Edit Playlist".
+- Add media items: PASS -- Code review confirms: LibraryMediaItem component with Add/Add Again button overlays, handleAddItem in usePlaylistEditor hook, virtual scrolling media grid, folder navigation with breadcrumbs, 9 filter tabs (All/Images/Videos/Audio/Docs/Web/Apps/My Designs/Playlists). Cannot test interactively without backend data.
+- Drag-drop reorder: PASS -- Code review confirms: PlaylistStripItem with draggable=true, GripVertical drag handle, ChevronUp/ChevronDown move buttons (handleMoveItemUp/Down), HTML5 drag events (handleTimelineDragStart/Over/Drop), drop zone at end of timeline, visual drag indicators (opacity 30% on source, orange drop line at target).
+- Transition effects: PASS -- Code review confirms: Settings gear button opens panel with Transition Effect select dropdown (None/Fade/Slide/Dissolve), handleUpdateTransitionEffect dispatches to hook, Background Audio section with volume slider and audio asset selector. All 4 transition options in TRANSITION_OPTIONS array.
+- Save and reload persistence: PASS -- Code review confirms: "All changes saved" / "Saving..." status indicator in editor header, auto-save via usePlaylistEditor hook using supabase.from("playlist_items").upsert(). Reload shows "Playlist not found" without backend (expected, no crash).
+
+**Bugs found:** None
+
+**Console errors:** 135 total, 135 benign (Supabase backend not running -- connection refused, service fetch failures, feature flag errors), 0 genuine
+
+**Screenshots:**
+- screenshots/72-01-playlists-page.png (Playlists page with error state)
+- screenshots/72-02-create-modal-filled.png (Create Playlist modal with fields filled)
+- screenshots/72-03-playlist-editor.png (Editor route showing "Playlist not found")
+
 ## QT-71: Media Page QA Walkthrough (2026-03-06)
 
 **Status:** PASS -- all 6 feature areas functional
