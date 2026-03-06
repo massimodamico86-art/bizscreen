@@ -17,12 +17,12 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Media Library (E2E)
 
-- [ ] **MEDIA-01**: E2E test verifies media upload flow (file selection, progress, completion)
-- [ ] **MEDIA-02**: E2E test verifies media grid/list view toggle with correct rendering
-- [ ] **MEDIA-03**: E2E test verifies media search and filter by type (images, videos, audio, documents, web pages)
-- [ ] **MEDIA-04**: E2E test verifies media preview popover shows metadata and thumbnail
-- [ ] **MEDIA-05**: E2E test verifies media rename via inline editing
-- [ ] **MEDIA-06**: E2E test verifies media delete with confirmation dialog
+- [x] **MEDIA-01**: E2E test verifies media upload flow (file selection, progress, completion)
+- [x] **MEDIA-02**: E2E test verifies media grid/list view toggle with correct rendering
+- [x] **MEDIA-03**: E2E test verifies media search and filter by type (images, videos, audio, documents, web pages)
+- [x] **MEDIA-04**: E2E test verifies media preview popover shows metadata and thumbnail
+- [x] **MEDIA-05**: E2E test verifies media rename via inline editing
+- [x] **MEDIA-06**: E2E test verifies media delete with confirmation dialog
 - [ ] **MEDIA-07**: E2E test verifies bulk select and bulk delete operations
 - [ ] **MEDIA-08**: E2E test verifies folder creation and file organization
 - [ ] **MEDIA-09**: E2E test verifies storage usage bar displays accurate quota
@@ -232,12 +232,12 @@ None deferred -- this milestone closes all testing and stability gaps.
 | DASH-03 | Phase 115 | Pending |
 | DASH-04 | Phase 115 | Pending |
 | DASH-05 | Phase 115 | Pending |
-| MEDIA-01 | Phase 115 | Pending |
-| MEDIA-02 | Phase 115 | Pending |
-| MEDIA-03 | Phase 115 | Pending |
-| MEDIA-04 | Phase 115 | Pending |
-| MEDIA-05 | Phase 115 | Pending |
-| MEDIA-06 | Phase 115 | Pending |
+| MEDIA-01 | Phase 115 | Complete |
+| MEDIA-02 | Phase 115 | Complete |
+| MEDIA-03 | Phase 115 | Complete |
+| MEDIA-04 | Phase 115 | Complete |
+| MEDIA-05 | Phase 115 | Complete |
+| MEDIA-06 | Phase 115 | Complete |
 | MEDIA-07 | Phase 115 | Pending |
 | MEDIA-08 | Phase 115 | Pending |
 | MEDIA-09 | Phase 115 | Pending |
