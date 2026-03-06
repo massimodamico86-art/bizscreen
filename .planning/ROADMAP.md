@@ -91,7 +91,7 @@ All 18 milestones shipped successfully.
 
 - [x] **Phase 115: Dashboard & Media E2E** - Screenshot tests for dashboard widgets, navigation, and full media library flows (completed 2026-03-06)
 - [x] **Phase 116: Scenes & SVG Editor E2E** - Screenshot tests for scene CRUD and all SVG editor tools/panels (completed 2026-03-06)
-- [x] **Phase 117: Playlists & Layouts E2E** - Screenshot tests for playlist editor and layout zone/widget configuration (completed 2026-03-06)
+- [ ] **Phase 117: Playlists & Layouts E2E** - Screenshot tests for playlist editor and layout zone/widget configuration
 - [ ] **Phase 118: Templates, Schedules & Campaigns E2E** - Screenshot tests for template marketplace, schedule creation, and campaign management
 - [ ] **Phase 119: Screens & Device Management E2E** - Screenshot tests for screen pairing, groups, diagnostics, and remote commands
 - [ ] **Phase 120: Data Sources, Apps & Moderation E2E** - Screenshot tests for data sources, apps gallery, menu boards, and content moderation
@@ -139,12 +139,13 @@ Plans:
   1. Running the playlists E2E spec produces screenshots of list CRUD, creation modal, item addition, drag reorder, duration/transition settings, nested playlist insertion, background audio controls, and player preview
   2. Running the layouts E2E spec produces screenshots of list/filter, creation modal, zone selection, widget type selector (17+ types), and configuration panels for clock, weather, data table, and video widgets
   3. All 16 playlist/layout test cases pass with screenshots captured at each step
-**Plans**: 4 plans
+**Plans**: 5 plans
 Plans:
 - [x] 117-01-PLAN.md — Playlists E2E screenshot tests (list CRUD, creation modal, editor items, drag reorder, transitions, nested playlists, background audio, player preview)
 - [x] 117-02-PLAN.md — Layouts E2E screenshot tests (list/filter, creation modal, zone selection, widget types, clock/weather/data-table/video configs)
-- [ ] 117-03-PLAN.md — Gap closure: fix playlists tests to reach editor (PLAY-01, PLAY-03 through PLAY-08)
-- [ ] 117-04-PLAN.md — Gap closure: fix layout editor navigation and video widget test (LAYOUT-02 through LAYOUT-04, LAYOUT-08)
+- [x] 117-03-PLAN.md — Gap closure: fix playlists tests to reach editor via API mocking (PLAY-01, PLAY-03 through PLAY-08)
+- [x] 117-04-PLAN.md — Gap closure: fix layout editor navigation and video widget test (LAYOUT-08)
+- [ ] 117-05-PLAN.md — Gap closure: add layout API mocking for editor zone/widget tests (LAYOUT-02, LAYOUT-03, LAYOUT-04)
 
 ### Phase 118: Templates, Schedules & Campaigns E2E
 **Goal**: Template marketplace, schedule creation, and campaign management have screenshot-verified E2E coverage
@@ -275,7 +276,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 115. Dashboard & Media E2E | 3/3 | Complete    | 2026-03-06 |
 | 116. Scenes & SVG Editor E2E | 4/4 | Complete    | 2026-03-06 |
-| 117. Playlists & Layouts E2E | 4/4 | Complete   | 2026-03-06 |
+| 117. Playlists & Layouts E2E | 4/5 | In progress | - |
 | 118. Templates, Schedules & Campaigns E2E | 0/TBD | Not started | - |
 | 119. Screens & Device Management E2E | 0/TBD | Not started | - |
 | 120. Data Sources, Apps & Moderation E2E | 0/TBD | Not started | - |
@@ -287,4 +288,4 @@ Plans:
 **Total:** 124 phases | 320 plans executed | 19 milestones (18 shipped, 1 in progress)
 
 ---
-*Last updated: 2026-03-06 -- Phase 117 planned (2 plans)*
+*Last updated: 2026-03-06 -- Phase 117 gap closure plan 05 added*
