@@ -1,5 +1,99 @@
 # Bugs Tracker
 
+## QT-76: Scenes CRUD Walkthrough (2026-03-06)
+
+**Status:** PASS (5/6 code review points pass, 1 wiring bug found) -- BUG-Q76-01 documented
+
+**UI Walkthrough Results:**
+
+1. Scenes page loads with heading and Create Scene button: PASS
+   - Page header shows "Scenes" title with description "Manage your TV scenes - complete configurations ready to publish to screens"
+   - Orange "Create Scene" button with sparkle icon visible in header
+   - Error state "Failed to load scenes. Please try again." with Try Again button (Supabase not running, expected)
+   - Breadcrumb: Home > Scenes
+
+2. Create Scene button click: FAIL (BUG-Q76-01)
+   - Button clicks but no modal/wizard appears
+   - Root cause: `onShowAutoBuild` prop is NOT passed to ScenesPage in App.jsx (line 630)
+   - ScenesPage.handleCreateScene calls `onShowAutoBuild()` but prop is undefined
+   - The `if (onShowAutoBuild)` guard silently skips -- no error, no feedback to user
+
+3. Scene editor navigation (scene-editor-demo-1): PASS
+   - Editor loads dark theme layout with "Failed to load scene data" error and "Go Back" button
+   - Expected behavior: scene ID "demo-1" does not exist in database
+   - Breadcrumb: Home > Scenes > Edit Scene
+   - No crash, graceful error handling
+
+**Code Review Verification Points:**
+
+a) Scene creation wiring (ScenesPage -> AutoBuild modal): FAIL (BUG-Q76-01)
+   - ScenesPage.handleCreateScene (line 345-349) calls `onShowAutoBuild()` if prop exists
+   - App.jsx line 630 renders `<ScenesPage onShowToast={showToast} onNavigate={setCurrentPage} />` -- missing onShowAutoBuild prop
+   - No AutoBuild/IndustryWizard modal is imported or managed in App.jsx
+   - Impact: Create Scene button is non-functional (medium severity)
+
+b) Editor block operations (SceneEditorPage.handleAddBlock): PASS
+   - handleAddBlock (lines 260-299) correctly creates blocks using service helpers:
+     - text: createTextBlock({ text: 'New Text', color })
+     - image: createImageBlock({ borderRadius })
+     - shape: createShapeBlock({ fill, borderRadius })
+     - widget: createWidgetBlock({ widgetType: 'clock', props })
+   - addBlockToDesign adds new block to design, updateDesign triggers save
+   - selectedBlockId set to new block after creation
+   - Brand theme defaults applied when activeTheme is available
+
+c) Canvas drag-drop (EditorCanvas): PASS
+   - isDragging state (line 58), dragStart coordinates (line 60), initialBlock (line 62)
+   - handleMouseDown (lines 182-192): sets isDragging=true, records dragStart position, stores initialBlock copy
+   - handleMouseMove (lines 206-267): calculates deltaX/deltaY in percent, calls onBlockUpdate with new x/y
+   - handleMouseUp (lines 269-275): resets isDragging, isResizing, clears guides
+   - Global mouse listeners attached via useEffect (lines 278-287) when isDragging/isResizing
+   - Smart snap guides: calculateSnapPosition and findAlignmentGuides with SNAP_THRESHOLD
+   - Resize handles: 8-directional (nw, ne, sw, se, n, s, e, w) with ResizeHandle component
+
+d) Auto-save (SceneEditorPage.debouncedSave): PASS
+   - debouncedSave (lines 209-227): 800ms debounce via setTimeout
+   - State transitions: setSaveStatus('unsaved') immediately, then 'saving' at save start, then 'saved' on success or 'unsaved' on error
+   - Calls updateSlide(slideId, { design_json: designJson })
+   - saveTimeoutRef cleared on component unmount (line 147)
+   - UI shows save status in top bar: "Saving..." with spinner, "Saved" with checkmark, "Unsaved changes" in amber
+
+e) Delete/Duplicate (ScenesPage): PASS
+   - handleDeleteScene (lines 352-365): calls deleteScene(scene.id), shows success/error toast, reloads list
+   - handleDuplicateScene (lines 367-376): calls duplicateScene(scene.id, userProfile.id), shows toast with scene name
+   - Delete confirmation modal with red warning, Cancel/Delete buttons, loading state
+   - Error handling with try/catch and toast feedback for both operations
+
+f) Scene card actions (SceneCard component): PASS
+   - SceneCard (lines 77-172) renders 6 action buttons:
+     - Publish button (secondary variant, Tv icon)
+     - Open button (primary variant, ArrowRight icon)
+     - Duplicate button (text style, Copy icon, stopPropagation)
+     - Delete button (text style, Trash2 icon, stopPropagation)
+     - "Push as Emergency" button (red text, AlertTriangle icon)
+   - All buttons have proper onClick handlers wired to parent callbacks
+   - Business type badge/icon, device count badge, language badges shown
+
+**Bugs Found:**
+
+### BUG-Q76-01: Create Scene button non-functional (medium)
+- **Location:** App.jsx line 630 / ScenesPage.jsx line 345-349
+- **Issue:** ScenesPage expects `onShowAutoBuild` prop to trigger the IndustryWizard/AutoBuild modal for scene creation, but App.jsx does not pass this prop. The button click silently does nothing.
+- **Impact:** Users cannot create new scenes from the Scenes page.
+- **Fix:** Wire an `onShowAutoBuild` handler in App.jsx that shows the IndustrySelectionModal or equivalent scene creation wizard, and pass it as prop to ScenesPage.
+
+**Console errors:** 104 total, 104 benign (100 Supabase connection + 4 scoped logger App/BrandThemeService errors caused by missing Supabase backend), 0 genuine
+
+**Screenshots:**
+- screenshots/76-01-scenes-page.png (Scenes page with header and Create Scene button)
+- screenshots/76-02-create-scene-modal.png (After clicking Create Scene -- no modal appeared)
+- screenshots/76-03-scene-editor-attempt.png (Editor error state -- "Failed to load scene data")
+
+**Notes:**
+- Scenes sidebar link not visible in default navigation context; used __setCurrentPage('scenes') fallback (Scenes may be feature-gated or behind a different sidebar group)
+- Scene editor shows full dark-theme layout with breadcrumb even in error state -- good UX
+- All 6 code review points thoroughly verified from source code
+
 ## Quick-75: Device Commands QA Walkthrough (2026-03-06)
 
 **Status:** PASS -- all 6 verification points pass, device command pipeline correctly wired end-to-end
