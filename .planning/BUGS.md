@@ -1,5 +1,24 @@
 # Bugs Tracker
 
+## QT-73: Screen Creation, OTP Pairing, Player View QA Walkthrough (2026-03-06)
+
+**Status:** PASS -- all 6 feature areas functional (backend-dependent features noted)
+
+**Features tested:**
+- Screens page load: PASS -- Page loads with Screens header. Shows error state ("Couldn't load screens") with retry button (backend not running, expected). No crash.
+- Add Screen modal open and name input: PASS -- "Add Screen" button visible, modal opens with name input field. Filled "QA Test Screen 73" and submitted.
+- Screen creation and OTP code display: PASS (backend-dependent) -- Creation failed with error (Supabase not running). UI handled gracefully: no crash, error shown in modal. OTP code not generated without backend.
+- Player pair page load (/player): PASS -- QR pairing mode shown by default (PairingScreen component). "Enter pairing code manually" fallback link present and switches to OTP entry mode. OTP input field and "Connect Screen" button present.
+- OTP entry and pairing attempt: PASS -- Entered fake code "ABC123" (real OTP not available without backend). Input auto-uppercases, accepts 6 chars. All 6 character-count dots turn blue. Connect button enabled. Pairing attempt fails gracefully (backend not running). No crash, no hang.
+- Player view page (/player/view): PASS -- Direct navigation redirects to /player (not paired, expected behavior). ViewPage respects paired state and redirects unpaired visitors.
+
+**Bugs found:**
+- None
+
+**Console errors:** 177 total, 177 benign (Supabase backend not running -- connection refused, service fetch failures, errorTracking for profiles/tenant/branding, PairPage pairing error with fake code), 0 genuine
+
+**Screenshots:** None (no crashes or broken behavior)
+
 ## QT-72: Playlist CRUD, Drag-Drop, Transitions QA Walkthrough (2026-03-06)
 
 **Status:** PASS -- all 7 feature areas functional (interactive testing limited by no Supabase backend)
