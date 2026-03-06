@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T01:21:05.031Z"
+last_updated: "2026-03-06T02:01:02.001Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-06 - Completed quick task 76: Scenes CRUD QA walkthrough -- 5/6 points PASS, 1 bug (BUG-Q76-01: Create Scene not wired)
+Last activity: 2026-03-06 - Completed quick task 77: Layouts and Templates QA walkthrough -- 5/5 code review points PASS, 0 bugs
 
 Progress: [████████████████████████████] 100%
 
@@ -50,6 +50,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-74]: Used code review verification for backend-dependent screen assignment features (no Supabase)
 - [Phase quick-75]: Used code review verification for device command pipeline (no Supabase)
 - [Phase quick-76]: Classified scoped-logger errors (App, BrandThemeService) as benign; used code review for editor block operations
+- [Phase quick-77]: Reclassified scoped-logger App errors as benign; noted Templates sidebar maps to SvgTemplateGalleryPage
 
 ### Blockers/Concerns
 
@@ -87,11 +88,12 @@ None.
 | 74 | QA walkthrough Screen assignment of playlist, layout, schedule -- all 8 features PASS, 0 bugs | 2026-03-06 | 3a200d9 | [74-qa-walkthrough-screen-assignment-of-play](./quick/74-qa-walkthrough-screen-assignment-of-play/) |
 | 75 | QA walkthrough Device commands pipeline (reload, reboot, clear_cache, reset) -- all 6 points PASS, 0 bugs | 2026-03-06 | 85ed466 | [75-qa-walkthrough-test-device-commands-from](./quick/75-qa-walkthrough-test-device-commands-from/) |
 | 76 | QA walkthrough Scenes CRUD (list, create, editor, blocks) -- 5/6 points PASS, 1 bug (BUG-Q76-01) | 2026-03-06 | 0b64b27 | [76-qa-walkthrough-scenes-crud-create-scene-](./quick/76-qa-walkthrough-scenes-crud-create-scene-/) |
+| 77 | QA walkthrough Layouts and Templates (4 gallery pages, filtering, search, modals) -- 5/5 PASS, 0 bugs | 2026-03-06 | 5ce76f1 | [77-qa-walkthrough-of-layouts-and-templates-](./quick/77-qa-walkthrough-of-layouts-and-templates-/) |
 
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed quick task 76
+Stopped at: Completed quick task 77
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
