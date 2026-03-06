@@ -124,11 +124,12 @@ Plans:
   1. Running the scenes E2E spec produces screenshots of scene list CRUD (create, duplicate, delete), creation modal, and SVG editor loading
   2. Running the editor tools E2E spec produces screenshots of text/shape creation, image insertion, element manipulation, layers panel, effects panel, animation panel, position panel, undo/redo, save feedback, export dialog, context menu, cloud import panel, and AI Designer
   3. All 17 scene/editor test cases pass with screenshots captured at each step
-**Plans**: 3 plans
+**Plans**: 4 plans
 Plans:
 - [ ] 116-01-PLAN.md — Scene list CRUD, creation modal, and SVG editor loading screenshots
 - [ ] 116-02-PLAN.md — SVG editor tools and panels (text, shapes, images, element manipulation, layers, effects, animate, position)
 - [ ] 116-03-PLAN.md — SVG editor advanced features (undo/redo, save, export, context menu, cloud import, AI Designer)
+- [ ] 116-04-PLAN.md — Gap closure: fix Effects/Animate/Position panel selectors, undo/redo toolbar crop, cloud providers distinct state
 
 ### Phase 117: Playlists & Layouts E2E
 **Goal**: Playlist editing workflows and layout zone/widget configuration have screenshot-verified E2E coverage
@@ -272,7 +273,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 115. Dashboard & Media E2E | 3/3 | Complete    | 2026-03-06 |
-| 116. Scenes & SVG Editor E2E | 3/3 | Complete   | 2026-03-06 |
+| 116. Scenes & SVG Editor E2E | 3/4 | Gap closure   | 2026-03-06 |
 | 117. Playlists & Layouts E2E | 0/TBD | Not started | - |
 | 118. Templates, Schedules & Campaigns E2E | 0/TBD | Not started | - |
 | 119. Screens & Device Management E2E | 0/TBD | Not started | - |
