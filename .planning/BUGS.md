@@ -1,5 +1,24 @@
 # Bugs Tracker
 
+## QT-69: Welcome vs Dashboard Sidebar Investigation (2026-03-05)
+
+**Status:** PASS
+
+**Investigation:**
+- Welcome page content: Renders WelcomeHero greeting ("Hi, Dev Bypass User,") with add-media prompt and screen preview, followed by WelcomeFeatureCards (3 cards: playlist creation, template browsing, tutorial video)
+- Dashboard page content: Renders "Dashboard" title with analytics overview, StatsGrid, error state for backend connection (Supabase not running), retry UI
+- Pages render identically: NO -- clearly different content, titles, and components
+- WelcomeHero component wired: YES -- renders greeting with user name, add-media icon cluster, and screen preview card
+- WelcomeFeatureCards component wired: YES -- renders 3 Yodeck-style cards: "Sequence your content with playlists" (Create Your First Playlist CTA), "Templates to get you started" (Check Out All Templates CTA), "BIZSCREEN 101" tutorial video card (Watch now CTA)
+
+**Console errors:** 118 total. 36 are benign fetch/connection errors (Supabase backend not running). 82 are error-tracking logs for feature flags and profile fetching -- all caused by missing backend, not code bugs.
+
+**Screenshots:**
+- screenshots/69-01-welcome-page.png
+- screenshots/69-02-dashboard-page.png
+
+**Conclusion:** BUG-08 fix (quick-53) holds. Welcome and Dashboard are fully distinct pages. WelcomeHero renders a personalized greeting with media upload prompt. WelcomeFeatureCards renders 3 onboarding action cards (playlists, templates, tutorial). Dashboard renders analytics StatsGrid and screen overview (currently in error state due to no backend). The fix is confirmed working.
+
 ## QT-64: Full Auth Flow Test (2026-03-05)
 
 **Status:** PASS -- No bugs found (with caveats)
