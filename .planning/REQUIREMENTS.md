@@ -23,10 +23,10 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 - [x] **MEDIA-04**: E2E test verifies media preview popover shows metadata and thumbnail
 - [x] **MEDIA-05**: E2E test verifies media rename via inline editing
 - [x] **MEDIA-06**: E2E test verifies media delete with confirmation dialog
-- [ ] **MEDIA-07**: E2E test verifies bulk select and bulk delete operations
-- [ ] **MEDIA-08**: E2E test verifies folder creation and file organization
-- [ ] **MEDIA-09**: E2E test verifies storage usage bar displays accurate quota
-- [ ] **MEDIA-10**: E2E test verifies media sub-pages (Images, Videos, Audio, Documents, Web Pages) filter correctly
+- [x] **MEDIA-07**: E2E test verifies bulk select and bulk delete operations
+- [x] **MEDIA-08**: E2E test verifies folder creation and file organization
+- [x] **MEDIA-09**: E2E test verifies storage usage bar displays accurate quota
+- [x] **MEDIA-10**: E2E test verifies media sub-pages (Images, Videos, Audio, Documents, Web Pages) filter correctly
 
 ### Scenes & SVG Editor (E2E)
 
@@ -238,10 +238,10 @@ None deferred -- this milestone closes all testing and stability gaps.
 | MEDIA-04 | Phase 115 | Complete |
 | MEDIA-05 | Phase 115 | Complete |
 | MEDIA-06 | Phase 115 | Complete |
-| MEDIA-07 | Phase 115 | Pending |
-| MEDIA-08 | Phase 115 | Pending |
-| MEDIA-09 | Phase 115 | Pending |
-| MEDIA-10 | Phase 115 | Pending |
+| MEDIA-07 | Phase 115 | Complete |
+| MEDIA-08 | Phase 115 | Complete |
+| MEDIA-09 | Phase 115 | Complete |
+| MEDIA-10 | Phase 115 | Complete |
 | SCENE-01 | Phase 116 | Pending |
 | SCENE-02 | Phase 116 | Pending |
 | SCENE-03 | Phase 116 | Pending |

@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 115 of 124 (Dashboard & Media E2E)
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-03-06 -- Completed 115-02 (media screenshots E2E)
+Plan: 3 of 3 complete
+Status: Phase 115 complete
+Last activity: 2026-03-06 -- Completed 115-03 (media advanced screenshots E2E)
 
-Progress: [██░░░░░░░░] 7%
+Progress: [██░░░░░░░░] 10%
 
 ## Performance Metrics
 
@@ -41,6 +41,9 @@ Full decision log in PROJECT.md Key Decisions table.
 
 - Used screenshotStep helper with screenshots/media/ convention for media E2E tests
 - MEDIA-04/05/06 skip gracefully when no media items exist, capturing empty state screenshots
+- Media advanced tests (MEDIA-07 to MEDIA-10): bulk select, folder modal, storage bar, 5 sub-pages
+- DASH-01 handles backend-unavailable gracefully (stat cards OR error state)
+- DASH-02 sidebar nav matches actual sidebar items (no Scenes, has Menu Boards)
 
 ### Blockers/Concerns
 
@@ -49,9 +52,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed 115-02-PLAN.md (media screenshots)
+Stopped at: Completed 115-03-PLAN.md (media advanced screenshots) -- Phase 115 complete
 Resume file: None
-Next: `/gsd:execute-phase 115` (plan 03)
+Next: `/gsd:plan-phase 116`
 
 ---
-*Updated: 2026-03-06 -- 115-02 media screenshots E2E complete*
+*Updated: 2026-03-06 -- Phase 115 complete (3/3 plans)*
