@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T02:50:48.889Z"
+last_updated: "2026-03-06T03:01:22.366Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-06 - Completed quick task 80: QA walkthrough Settings, Branding, Team -- all PASS, 0 bugs
+Last activity: 2026-03-06 - Completed quick task 82: Fixed 4 QA bugs (BUG-Q76-01, BUG-Q79-01, BUG-Q79-02, BUG-Q63-01)
 
 Progress: [████████████████████████████] 100%
 
@@ -55,6 +55,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-79]: Code review verification for backend-dependent preview link features (no Supabase)
 - [Phase quick-80]: All 176 scoped-logger console errors reclassified as benign (missing Supabase backend); Team Invite button absence is correct canManage=false behavior
 - [Phase quick-81]: Used /app entry for DEV_AUTH_BYPASS; reclassified all 130 console errors as benign; code review for backend-dependent event modal and assign screens modal
+- [Phase quick-82]: Rendered IndustrySelectionModal in BizScreenAppInner scope; used local replacePlaceholders helpers in each Layout file
 
 ### Blockers/Concerns
 
@@ -97,11 +98,12 @@ None.
 | 79 | QA playlist preview link sharing and PublicPreviewPage -- 2 bugs found, player/comments/token PASS | 2026-03-06 | 0ca738e | [79-qa-playlist-preview-link-sharing-and-pla](./quick/79-qa-playlist-preview-link-sharing-and-pla/) |
 | 80 | QA walkthrough Settings, Branding, and Team pages -- all PASS, 0 bugs | 2026-03-06 | 0b49688 | [80-qa-walkthrough-of-settings-branding-and-](./quick/80-qa-walkthrough-of-settings-branding-and-/) |
 | 81 | QA walkthrough Schedules CRUD, recurring entry, screen assignment -- all 6 PASS, 0 bugs | 2026-03-06 | f1c6357 | [81-qa-walkthrough-schedules-crud-create-sch](./quick/81-qa-walkthrough-schedules-crud-create-sch/) |
+| 82 | Fix 4 known bugs: BUG-Q76-01, BUG-Q79-01, BUG-Q79-02, BUG-Q63-01 | 2026-03-06 | ac65c97 | [82-fix-known-bugs-bug-q76-01-bug-q79-01-bug](./quick/82-fix-known-bugs-bug-q76-01-bug-q79-01-bug/) |
 
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed quick task 81
+Stopped at: Completed quick task 82
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
