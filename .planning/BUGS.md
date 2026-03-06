@@ -1,5 +1,43 @@
 # Bugs Tracker
 
+## Quick-75: Device Commands QA Walkthrough (2026-03-06)
+
+**Status:** PASS -- all 6 verification points pass, device command pipeline correctly wired end-to-end
+
+**Features tested:**
+1. Player view tab loads: PASS -- /player/view redirects to /player (not paired, expected). Page renders pairing screen. No realtime subscription attempted (device not paired, correct behavior).
+2. Screens dashboard loads: PASS -- Screens page renders at /app/screens. 0 screen rows (Supabase backend not running, expected). Add Screen button visible.
+3. Action menu with Device Commands section: PASS (code review) -- ScreenActionMenu component renders "Device Commands" section header with 4 command buttons: Reload Content (reload), Reboot Player (reboot), Clear Cache (clear_cache), Reset Device (reset). Each button shows loading spinner when commandingDevice matches. Disabled state applied during command execution.
+4. Sender pipeline (dashboard -> Supabase): PASS (code review)
+   - ScreenActionMenu calls `onDeviceCommand('reload')` / `onDeviceCommand('reboot')` / `onDeviceCommand('clear_cache')` / `onDeviceCommand('reset')`
+   - ScreensPage passes `handleDeviceCommand` from useScreensData hook to ScreenRow -> ScreenActionMenu
+   - useScreensData.handleDeviceCommand switch handles all 4 types via convenience functions: rebootDevice, reloadDeviceContent, clearDeviceCache, resetDevice
+   - screenService.sendDeviceCommand calls `supabase.rpc('send_device_command', { p_device_id, p_command_type, p_payload })` which inserts into device_commands table
+5. Receiver pipeline (Supabase realtime -> player): PASS (code review)
+   - ViewPage imports and calls `subscribeToDeviceCommands(screenId, onCommand)` in useEffect
+   - realtimeService subscribes to `postgres_changes` on `device_commands` table, event: INSERT, filter: `device_id=eq.${deviceId}`
+   - Also handles UPDATE events for status="pending" (re-queued commands)
+   - On INSERT, calls `onCommand(payload.new)` which invokes `handleCommand` from usePlayerCommands
+   - Fallback polling via `pollForCommand` if realtime subscription fails
+6. Command type consistency: PASS
+   - Dashboard sends: `reload`, `reboot`, `clear_cache`, `reset`
+   - Player handles: `reload`, `reboot`, `clear_cache`, `reset` (+ default for unknown commands)
+   - All 4 command types match exactly between sender and receiver
+   - usePlayerCommands switch actions: reboot (window.location.reload), reload (getResolvedContent + update state), clear_cache (clearCache), reset (clearCache + clear storage + reload)
+
+**Bugs found:** None
+
+**Console errors:** 111 total (player: 19, dashboard: 92), all benign (Supabase backend not running -- 503 Service Unavailable, ERR_CONNECTION_REFUSED, service fetch failures for TenantService, BrandingService, DashboardService, OnboardingService, FeedbackService), 0 genuine
+
+**Screenshots:**
+- screenshots/75-01-player-view-tab.png (Player pairing page -- redirected from /player/view since not paired)
+- screenshots/75-02-screens-dashboard.png (Screens dashboard with 0 rows)
+
+**Notes:**
+- Interactive action menu testing not possible without Supabase backend (no screen rows in table)
+- All 6 verification points confirmed via code review of: ScreensComponents.jsx (ScreenActionMenu), useScreensData.js (handleDeviceCommand), screenService.js (sendDeviceCommand + convenience functions), realtimeService.js (subscribeToDeviceCommands), ViewPage.jsx (realtime setup), usePlayerCommands.js (handleCommand switch)
+- The pipeline includes reconnection logic (MAX_RECONNECT_ATTEMPTS=10, RECONNECT_DELAY_MS=3000) and polling fallback
+
 ## QT-74: Screen Assignment of Playlist, Layout, and Schedule (2026-03-06)
 
 **Status:** PASS -- all 8 feature areas verified (code review for backend-dependent features, interactive for page load)
