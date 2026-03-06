@@ -271,7 +271,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 115. Dashboard & Media E2E | 3/3 | Complete   | 2026-03-06 |
+| 115. Dashboard & Media E2E | 3/3 | Complete    | 2026-03-06 |
 | 116. Scenes & SVG Editor E2E | 0/TBD | Not started | - |
 | 117. Playlists & Layouts E2E | 0/TBD | Not started | - |
 | 118. Templates, Schedules & Campaigns E2E | 0/TBD | Not started | - |
