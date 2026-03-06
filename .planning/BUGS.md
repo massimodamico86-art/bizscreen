@@ -1,5 +1,31 @@
 # Bugs Tracker
 
+## QT-74: Screen Assignment of Playlist, Layout, and Schedule (2026-03-06)
+
+**Status:** PASS -- all 8 feature areas verified (code review for backend-dependent features, interactive for page load)
+
+**Features tested:**
+1. Screens page loads with heading: PASS -- Screens page renders with heading visible. 0 screen rows (Supabase backend not running, expected). Add Screen button visible.
+2. Edit Screen modal with Content Assignment section: PASS (code review) -- EditScreenModal component present with "Content Assignment" h4 heading, Playlist select ("No playlist" default), Layout select ("No layout" default)
+3. Playlist dropdown selection works: PASS (code review) -- Playlist select dropdown present. On selection, `if (e.target.value) setLayoutId('')` clears layout (mutual exclusivity enforced)
+4. Layout dropdown selection works (mutual exclusivity with playlist): PASS (code review) -- Layout select dropdown present. On selection, `if (e.target.value) setPlaylistId('')` clears playlist. OrientationMismatchWarning rendered when layout orientation differs from screen orientation
+5. Save Changes button submits form: PASS (code review) -- "Save Changes" button wired to form onSubmit handler. Submit calls `onSubmit()` with id, name, locationId, groupId, playlistId, layoutId, displayLanguage, orientation, workingHours
+6. InsertContentModal opens via content cell click: PASS (code review) -- ScreenRow content cell has `onClick={() => onOpenContentPicker?.(screen)}` handler. InsertContentModal imported in ScreensPage with `allowedTabs={['playlists', 'layouts']}`
+7. InsertContentModal tabs (Playlists, Layouts) load: PASS (code review) -- TABS config includes All Media, Apps, Layouts, Playlists. Each tab loads content via dedicated fetch functions (fetchPlaylists, fetchLayouts, fetchMediaAssets, fetchApps)
+8. Bulk checkbox selection shows action bar with schedule dropdown: PASS (code review) -- selectedScreenIds Set tracks selections. Bulk action bar renders "{N} screen(s) selected" with Calendar icon and "Assign Schedule..." select dropdown populated from schedules array. handleBulkAssignSchedule handler wired. toggleScreenSelection and toggleSelectAll functions present. Clear selection button present.
+
+**Bugs found:** None
+
+**Console errors:** 159 total, 159 benign (Supabase backend not running -- FeatureFlagService, DashboardService, OnboardingService, Real-time subscription, connection refused), 0 genuine
+
+**Screenshots:** None (no crashes or broken behavior)
+
+**Notes:**
+- Interactive testing limited because Supabase backend is not running -- no screen rows available in table, so Edit Screen modal and content cell click cannot be tested interactively
+- All 8 features verified via code review of ScreensPage.jsx, ScreensComponents.jsx (EditScreenModal, ScreenRow, ScreenActionMenu), and InsertContentModal.jsx
+- Mutual exclusivity logic confirmed: selecting playlist clears layout (`setLayoutId('')`) and selecting layout clears playlist (`setPlaylistId('')`)
+- InsertContentModal correctly restricted to playlists+layouts tabs when opened from Screens page
+
 ## QT-73: Screen Creation, OTP Pairing, Player View QA Walkthrough (2026-03-06)
 
 **Status:** PASS -- all 6 feature areas functional (backend-dependent features noted)
