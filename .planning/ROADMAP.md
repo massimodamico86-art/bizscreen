@@ -155,11 +155,7 @@ Plans:
   1. Running the templates E2E spec produces screenshots of gallery browse, search, card hover animation, one-click editor open, quick customize panel, Your Designs tab, orientation filter, and industry categories
   2. Running the schedules E2E spec produces screenshots of list CRUD, time/day creation, playlist/layout assignment, conflict detection, dayparting, and recurring entries
   3. Running the campaigns E2E spec produces screenshots of list with status, creation with priority/dates, content assignment, screen targeting, emergency push, analytics, rotation controls, seasonal picker, and template picker
-**Plans**: 3 plans
-Plans:
-- [ ] 115-01-PLAN.md — Dashboard screenshot E2E tests (stat cards, sidebar nav, breadcrumbs, welcome vs dashboard, notifications)
-- [ ] 115-02-PLAN.md — Media core screenshot E2E tests (upload, grid/list, type filtering, preview, rename, delete)
-- [ ] 115-03-PLAN.md — Media advanced screenshot E2E tests (bulk ops, folders, storage bar, all 5 sub-pages)
+**Plans**: TBD (to be created via `/gsd:plan-phase 118`)
 
 ### Phase 119: Screens & Device Management E2E
 **Goal**: Screen pairing, group management, diagnostics, and remote commands have screenshot-verified E2E coverage
@@ -169,11 +165,7 @@ Plans:
   1. Running the screens E2E spec produces screenshots of screen list with status indicators, creation with pairing code, OTP flow, device diagnostics, and remote command buttons
   2. Running the screen management E2E spec produces screenshots of group management with tags, playlist/layout assignment, orientation toggle, master PIN modal, emergency push for groups, and working hours schedule
   3. All 11 screen test cases pass with screenshots captured at each step
-**Plans**: 3 plans
-Plans:
-- [ ] 115-01-PLAN.md — Dashboard screenshot E2E tests (stat cards, sidebar nav, breadcrumbs, welcome vs dashboard, notifications)
-- [ ] 115-02-PLAN.md — Media core screenshot E2E tests (upload, grid/list, type filtering, preview, rename, delete)
-- [ ] 115-03-PLAN.md — Media advanced screenshot E2E tests (bulk ops, folders, storage bar, all 5 sub-pages)
+**Plans**: TBD (to be created via `/gsd:plan-phase 119`)
 
 ### Phase 120: Data Sources, Apps & Moderation E2E
 **Goal**: Data source configuration, apps gallery, menu board editing, and content moderation have screenshot-verified E2E coverage
@@ -183,11 +175,7 @@ Plans:
   1. Running the data sources E2E spec produces screenshots of source list, Google Sheets creation, CSV upload, RSS URL config, and refresh interval settings
   2. Running the apps/menu boards E2E spec produces screenshots of apps gallery, app detail modal, app install/config, menu board list, editor CRUD, drag reorder, dietary tags, and theme/currency settings
   3. Running the moderation E2E spec produces screenshots of moderation queue, approve action, reject with reason, review inbox filtering, and hashtag filter config
-**Plans**: 3 plans
-Plans:
-- [ ] 115-01-PLAN.md — Dashboard screenshot E2E tests (stat cards, sidebar nav, breadcrumbs, welcome vs dashboard, notifications)
-- [ ] 115-02-PLAN.md — Media core screenshot E2E tests (upload, grid/list, type filtering, preview, rename, delete)
-- [ ] 115-03-PLAN.md — Media advanced screenshot E2E tests (bulk ops, folders, storage bar, all 5 sub-pages)
+**Plans**: TBD (to be created via `/gsd:plan-phase 120`)
 
 ### Phase 121: Analytics, Settings & Admin E2E
 **Goal**: Analytics dashboards, all settings pages, and admin/reseller portals have screenshot-verified E2E coverage
@@ -197,11 +185,7 @@ Plans:
   1. Running the analytics E2E spec produces screenshots of analytics dashboard, content performance, activity log, alerts with severity, alert detail modal, notification settings with toggles, toggle persistence, and Proof of Play report
   2. Running the settings E2E spec produces screenshots of general settings, account/plan, branding with logo/colors, team management with invite/roles, developer API keys, white-label domain, and enterprise security settings
   3. Running the admin E2E spec produces screenshots of tenant list with search/pagination, tenant detail with usage, audit log, system events, template management, reseller dashboard, reseller billing, and feature flags with persistence
-**Plans**: 3 plans
-Plans:
-- [ ] 115-01-PLAN.md — Dashboard screenshot E2E tests (stat cards, sidebar nav, breadcrumbs, welcome vs dashboard, notifications)
-- [ ] 115-02-PLAN.md — Media core screenshot E2E tests (upload, grid/list, type filtering, preview, rename, delete)
-- [ ] 115-03-PLAN.md — Media advanced screenshot E2E tests (bulk ops, folders, storage bar, all 5 sub-pages)
+**Plans**: TBD (to be created via `/gsd:plan-phase 121`)
 
 ### Phase 122: Responsive & Edge Cases E2E
 **Goal**: Viewport responsiveness, role-based access, and error/edge states have screenshot-verified E2E coverage
@@ -211,11 +195,7 @@ Plans:
   1. Running the responsive E2E spec produces screenshots of dashboard at mobile (375px) and tablet (768px), hamburger menu collapse, media grid column adjustment, template gallery responsive layout, pricing tablet grid, schedule editor on tablet, and admin-hidden nav for non-admin users
   2. Running the edge cases E2E spec produces screenshots of 404 page, session expiry redirect, empty states on list pages, inline form validation errors, network error toast, concurrent tab behavior, deep link auth redirect, and browser back/forward state preservation
   3. All responsive tests use Playwright viewport projects (mobile/tablet/desktop) with testMatch opt-in
-**Plans**: 3 plans
-Plans:
-- [ ] 115-01-PLAN.md — Dashboard screenshot E2E tests (stat cards, sidebar nav, breadcrumbs, welcome vs dashboard, notifications)
-- [ ] 115-02-PLAN.md — Media core screenshot E2E tests (upload, grid/list, type filtering, preview, rename, delete)
-- [ ] 115-03-PLAN.md — Media advanced screenshot E2E tests (bulk ops, folders, storage bar, all 5 sub-pages)
+**Plans**: TBD (to be created via `/gsd:plan-phase 122`)
 
 ### Phase 123: Error Resilience & UX Polish
 **Goal**: The application gracefully handles errors at every level and loading states match page structure
@@ -227,11 +207,7 @@ Plans:
   3. A connection state indicator in the app header shows offline/reconnecting/online status reflecting actual network state
   4. All list pages show skeleton loaders (not spinners) on initial load, with skeleton shapes matching the page's actual layout structure (cards, tables, grids)
   5. Error states across the app show an icon, descriptive message, and actionable CTA (retry, go home, or contact support)
-**Plans**: 3 plans
-Plans:
-- [ ] 115-01-PLAN.md — Dashboard screenshot E2E tests (stat cards, sidebar nav, breadcrumbs, welcome vs dashboard, notifications)
-- [ ] 115-02-PLAN.md — Media core screenshot E2E tests (upload, grid/list, type filtering, preview, rename, delete)
-- [ ] 115-03-PLAN.md — Media advanced screenshot E2E tests (bulk ops, folders, storage bar, all 5 sub-pages)
+**Plans**: TBD (to be created via `/gsd:plan-phase 123`)
 
 ### Phase 124: CI Pipeline & Final Integration
 **Goal**: All E2E tests run reliably in CI with automated quality gates and visual regression detection
@@ -241,11 +217,7 @@ Plans:
   1. The full E2E test suite runs in GitHub Actions CI with all screenshot artifacts uploaded and retained
   2. A quality gate enforces 90% E2E pass rate with best-of-3 retry before merging
   3. A screenshot comparison report is generated after each CI run for visual regression detection
-**Plans**: 3 plans
-Plans:
-- [ ] 115-01-PLAN.md — Dashboard screenshot E2E tests (stat cards, sidebar nav, breadcrumbs, welcome vs dashboard, notifications)
-- [ ] 115-02-PLAN.md — Media core screenshot E2E tests (upload, grid/list, type filtering, preview, rename, delete)
-- [ ] 115-03-PLAN.md — Media advanced screenshot E2E tests (bulk ops, folders, storage bar, all 5 sub-pages)
+**Plans**: TBD (to be created via `/gsd:plan-phase 124`)
 
 ## Progress Summary
 
