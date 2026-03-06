@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
 status: unknown
-last_updated: "2026-03-06T23:19:56.405Z"
+last_updated: "2026-03-06T23:48:00Z"
 progress:
   total_phases: 73
   completed_phases: 73
   total_plans: 244
-  completed_plans: 244
+  completed_plans: 245
 ---
 
 # Project State
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v13.0 Full Stability Pass -- Phase 117 (Playlists & Layouts E2E)
+**Current focus:** v13.0 Full Stability Pass -- Phase 118 (Templates, Schedules & Campaigns E2E)
 
 ## Current Position
 
-Phase: 117 of 124 (Playlists & Layouts E2E)
-Plan: 2 of 2 complete (+ gap closures 117-03, 117-04, 117-05)
-Status: Complete
-Last activity: 2026-03-06 -- Completed 117-05 (Close layout editor E2E gaps via API mocking)
+Phase: 118 of 124 (Templates, Schedules & Campaigns E2E)
+Plan: 1 of 3 complete
+Status: In Progress
+Last activity: 2026-03-06 -- Completed 118-01 (Templates gallery screenshot E2E tests)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -79,6 +79,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 117-05]: Used page.route() to mock layouts/layout_zones/playlists/media_assets for layout editor E2E tests
 - [Phase 117-05]: Scoped assign modal tab locators to overlay container to prevent sidebar navigation collision
 - [Phase 117]: Used page.route() to mock layout editor Supabase APIs for E2E tests (layouts, zones, playlists, media)
+- [Phase 118-01]: Templates gallery navigation via sidebar button click; marketplace via __setCurrentPage('template-marketplace')
+- [Phase 118-01]: Gallery ready detection uses Promise.race with header text, empty state, or filter sidebar signals
 
 ### Blockers/Concerns
 
@@ -87,9 +89,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed 117-05-PLAN.md (Close layout editor E2E gaps via API mocking)
+Stopped at: Completed 118-01-PLAN.md (Templates gallery screenshot E2E tests)
 Resume file: None
-Next: Execute next phase
+Next: Execute 118-02-PLAN.md (Schedules screenshots)
 
 ---
-*Updated: 2026-03-06 -- Phase 117 complete (2/2 plans + gap closures 117-03, 117-04, 117-05)*
+*Updated: 2026-03-06 -- Phase 118 plan 1/3 complete*

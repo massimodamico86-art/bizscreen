@@ -72,14 +72,14 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Templates Marketplace (E2E)
 
-- [ ] **TMPL-01**: E2E test verifies template gallery browse with category filters
-- [ ] **TMPL-02**: E2E test verifies template search with debounced results
-- [ ] **TMPL-03**: E2E test verifies template preview hover with card lift animation
-- [ ] **TMPL-04**: E2E test verifies one-click "Use Template" opens editor
-- [ ] **TMPL-05**: E2E test verifies quick customize panel (colors, logo, text)
-- [ ] **TMPL-06**: E2E test verifies "Your Designs" tab shows user-created templates
-- [ ] **TMPL-07**: E2E test verifies portrait/landscape filter toggle
-- [ ] **TMPL-08**: E2E test verifies industry category expansion and filtering
+- [x] **TMPL-01**: E2E test verifies template gallery browse with category filters
+- [x] **TMPL-02**: E2E test verifies template search with debounced results
+- [x] **TMPL-03**: E2E test verifies template preview hover with card lift animation
+- [x] **TMPL-04**: E2E test verifies one-click "Use Template" opens editor
+- [x] **TMPL-05**: E2E test verifies quick customize panel (colors, logo, text)
+- [x] **TMPL-06**: E2E test verifies "Your Designs" tab shows user-created templates
+- [x] **TMPL-07**: E2E test verifies portrait/landscape filter toggle
+- [x] **TMPL-08**: E2E test verifies industry category expansion and filtering
 
 ### Schedules & Campaigns (E2E)
 
@@ -275,14 +275,14 @@ None deferred -- this milestone closes all testing and stability gaps.
 | LAYOUT-06 | Phase 117 | Complete |
 | LAYOUT-07 | Phase 117 | Complete |
 | LAYOUT-08 | Phase 117 | Complete |
-| TMPL-01 | Phase 118 | Pending |
-| TMPL-02 | Phase 118 | Pending |
-| TMPL-03 | Phase 118 | Pending |
-| TMPL-04 | Phase 118 | Pending |
-| TMPL-05 | Phase 118 | Pending |
-| TMPL-06 | Phase 118 | Pending |
-| TMPL-07 | Phase 118 | Pending |
-| TMPL-08 | Phase 118 | Pending |
+| TMPL-01 | Phase 118 | Complete |
+| TMPL-02 | Phase 118 | Complete |
+| TMPL-03 | Phase 118 | Complete |
+| TMPL-04 | Phase 118 | Complete |
+| TMPL-05 | Phase 118 | Complete |
+| TMPL-06 | Phase 118 | Complete |
+| TMPL-07 | Phase 118 | Complete |
+| TMPL-08 | Phase 118 | Complete |
 | SCHED-01 | Phase 118 | Pending |
 | SCHED-02 | Phase 118 | Pending |
 | SCHED-03 | Phase 118 | Pending |
