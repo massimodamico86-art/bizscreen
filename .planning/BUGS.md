@@ -1,5 +1,48 @@
 # Bugs Tracker
 
+## QT-80: Settings, Branding, and Team Pages QA Walkthrough (2026-03-06)
+
+**Status:** PASS -- 0 bugs found, all 3 pages render correctly
+
+**Method:** Playwright E2E script navigating Settings (all 7 tabs), BrandingSettingsPage (color change + persistence), and TeamPage (member list + invite UI)
+
+### Settings Page Results
+
+| # | Tab | Status | Notes |
+|---|-----|--------|-------|
+| 1 | Notifications | PASS | 4 notification toggles (email, guest check-in, PMS sync, TV offline) render correctly |
+| 2 | Display | PASS | Theme selector, language switcher, date/time format dropdowns render correctly |
+| 3 | Branding | PASS | Brand Themes section with "Import Brand" button and empty state render correctly |
+| 4 | Security | PASS | Account Security section with 2FA setup, session management, login history render correctly |
+| 5 | Privacy | PASS | Privacy toggles (activity tracking, analytics), PMS auto-sync, GDPR data privacy render correctly |
+| 6 | Activity Log | PASS | Recent Activity section renders (empty state without backend) |
+| 7 | Onboarding | PASS | Business Type, Welcome Tour, Starter Pack sections render correctly |
+
+### Branding Page Results
+
+| # | Check | Status | Notes |
+|---|-------|--------|-------|
+| 1 | Page loads with all UI elements | PASS | Logo upload, business name input, 2 color pickers, dark theme toggle, preview section all present |
+| 2 | Color change enables Save button | PASS | Changed primary from #3B82F6 to #FF5733, "Unsaved changes" indicator appeared, Save button enabled |
+| 3 | Preview reflects color change | PASS | Primary button in preview updated to rgb(255, 87, 51) matching #FF5733 |
+| 4 | Save click (no backend) | EXPECTED | Error banner shown (Supabase not connected), not a bug |
+| 5 | Page OK after reload | PASS | Branding page re-renders correctly after reload, color reverts to default (expected without persistence) |
+
+### Team Page Results
+
+| # | Check | Status | Notes |
+|---|-------|--------|-------|
+| 1 | Page loads with header | PASS | "Team" header and "Team Members" section heading present |
+| 2 | Member list section | PASS | Empty state "No active team members yet" shown (expected without backend data) |
+| 3 | Team Roles reference section | PASS | Owner, Manager, Editor, Viewer role descriptions rendered |
+| 4 | Invite Member button | N/A | Not shown because `canManage` permission is false without backend -- correct authorization behavior, not a bug |
+
+### Console Error Summary
+
+- Total console errors: 314
+- After filtering scoped-logger service errors (FeatureFlagService, TenantService, BrandingService, EmergencyService, FeedbackService, DashboardService, UserSettingsService, MfaService, GdprService, errorTracking): **0 genuine JavaScript errors**
+- All errors traced to missing Supabase backend connection (expected in dev without backend)
+
 ## QT-79: Playlist Preview Link Sharing and PublicPreviewPage QA (2026-03-06)
 
 **Status:** 2 BUGS found, 5 review areas checked
