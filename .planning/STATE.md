@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-06 - Completed quick task 79: QA playlist preview link sharing -- 2 bugs found (missing Share button, formatPreviewLink misuse), player/comments/token PASS
+Last activity: 2026-03-06 - Completed quick task 80: QA walkthrough Settings, Branding, Team -- all PASS, 0 bugs
 
 Progress: [████████████████████████████] 100%
 
@@ -53,6 +53,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-77]: Reclassified scoped-logger App errors as benign; noted Templates sidebar maps to SvgTemplateGalleryPage
 - [Phase quick-78]: Used __setCurrentPage for E2E navigation to Service Quality page; confirmed BUG-01 grid fix holding
 - [Phase quick-79]: Code review verification for backend-dependent preview link features (no Supabase)
+- [Phase quick-80]: All 176 scoped-logger console errors reclassified as benign (missing Supabase backend); Team Invite button absence is correct canManage=false behavior
 
 ### Blockers/Concerns
 
@@ -93,11 +94,12 @@ None.
 | 77 | QA walkthrough Layouts and Templates (4 gallery pages, filtering, search, modals) -- 5/5 PASS, 0 bugs | 2026-03-06 | 5ce76f1 | [77-qa-walkthrough-of-layouts-and-templates-](./quick/77-qa-walkthrough-of-layouts-and-templates-/) |
 | 78 | Service Quality grid layout verification -- all 5 checks PASS, BUG-01 fix confirmed | 2026-03-06 | 08dd9fb | [78-verify-service-quality-page-grid-layout-](./quick/78-verify-service-quality-page-grid-layout-/) |
 | 79 | QA playlist preview link sharing and PublicPreviewPage -- 2 bugs found, player/comments/token PASS | 2026-03-06 | 0ca738e | [79-qa-playlist-preview-link-sharing-and-pla](./quick/79-qa-playlist-preview-link-sharing-and-pla/) |
+| 80 | QA walkthrough Settings, Branding, and Team pages -- all PASS, 0 bugs | 2026-03-06 | 0b49688 | [80-qa-walkthrough-of-settings-branding-and-](./quick/80-qa-walkthrough-of-settings-branding-and-/) |
 
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed quick task 79
+Stopped at: Completed quick task 80
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
