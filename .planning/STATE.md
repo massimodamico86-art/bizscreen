@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v13.0 Full Stability Pass -- Phase 115 (Dashboard & Media E2E)
+**Current focus:** v13.0 Full Stability Pass -- Phase 116 (Scenes & SVG Editor E2E)
 
 ## Current Position
 
-Phase: 115 of 124 (Dashboard & Media E2E)
-Plan: 3 of 3 complete
-Status: Phase 115 complete
-Last activity: 2026-03-06 -- Completed 115-03 (media advanced screenshots E2E)
+Phase: 116 of 124 (Scenes & SVG Editor E2E)
+Plan: 2 of 3 complete
+Status: Executing phase 116
+Last activity: 2026-03-06 -- Completed 116-02 (SVG editor tools and panels screenshot E2E)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -58,6 +58,11 @@ Full decision log in PROJECT.md Key Decisions table.
 - DASH-01 handles backend-unavailable gracefully (stat cards OR error state)
 - DASH-02 sidebar nav matches actual sidebar items (no Scenes, has Menu Boards)
 
+- Used window.__setCurrentPage('scenes') for E2E navigation since Scenes is not in sidebar
+- SVG editor E2E test enters through Templates gallery, clicks New Design to open blank editor
+- SVG editor tools E2E: navigate via __setCurrentPage('svg-editor') for blank canvas, force:true for Fabric.js canvas clicks
+- Effects/Animate/Position are TopToolbar buttons (not LeftSidebar tabs)
+
 ### Blockers/Concerns
 
 None.
@@ -65,9 +70,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed 115-03-PLAN.md (media advanced screenshots) -- Phase 115 complete
+Stopped at: Completed 116-01-PLAN.md (scenes and SVG editor screenshot E2E)
 Resume file: None
-Next: `/gsd:plan-phase 116`
+Next: Execute 116-02-PLAN.md
 
 ---
-*Updated: 2026-03-06 -- Phase 115 complete (3/3 plans)*
+*Updated: 2026-03-06 -- Phase 116 in progress (1/3 plans)*

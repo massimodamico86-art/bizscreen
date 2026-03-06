@@ -30,9 +30,9 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Scenes & SVG Editor (E2E)
 
-- [ ] **SCENE-01**: E2E test verifies scene list page with create, duplicate, delete actions
-- [ ] **SCENE-02**: E2E test verifies scene creation modal with name and dimensions
-- [ ] **SCENE-03**: E2E test verifies SVG editor loads with toolbar and canvas
+- [x] **SCENE-01**: E2E test verifies scene list page with create, duplicate, delete actions
+- [x] **SCENE-02**: E2E test verifies scene creation modal with name and dimensions
+- [x] **SCENE-03**: E2E test verifies SVG editor loads with toolbar and canvas
 - [ ] **SCENE-04**: E2E test verifies text element creation and property editing
 - [ ] **SCENE-05**: E2E test verifies shape element creation (rectangle, circle, line)
 - [ ] **SCENE-06**: E2E test verifies image insertion from media library
@@ -242,9 +242,9 @@ None deferred -- this milestone closes all testing and stability gaps.
 | MEDIA-08 | Phase 115 | Complete |
 | MEDIA-09 | Phase 115 | Complete |
 | MEDIA-10 | Phase 115 | Complete |
-| SCENE-01 | Phase 116 | Pending |
-| SCENE-02 | Phase 116 | Pending |
-| SCENE-03 | Phase 116 | Pending |
+| SCENE-01 | Phase 116 | Complete |
+| SCENE-02 | Phase 116 | Complete |
+| SCENE-03 | Phase 116 | Complete |
 | SCENE-04 | Phase 116 | Pending |
 | SCENE-05 | Phase 116 | Pending |
 | SCENE-06 | Phase 116 | Pending |
