@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T23:51:01.593Z"
+last_updated: "2026-03-06T00:08:10.632Z"
 progress:
   total_phases: 70
   completed_phases: 70
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 Milestone: v12.0 Feature Parity -- SHIPPED 2026-03-05
 Status: All 18 milestones complete
-Last activity: 2026-03-05 - Completed quick task 67: Fix BUG-17/18/19 -- all 19 QA bugs now resolved, 0 open
+Last activity: 2026-03-05 - Completed quick task 68: Auth flow regression test after quick-67 fixes -- no regressions
 
 Progress: [████████████████████████████] 100%
 
@@ -42,6 +42,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase quick-64]: Skip sign-out redirect tests when DEV_AUTH_BYPASS active; filter backend connection errors as benign in E2E assertions
 - [Phase quick-66]: Distinguish page-specific mount toasts from stale carryover toasts in E2E test assertions
 - [Phase quick-67]: Only fixed createScreen auth bypass; left other supabase.auth.getUser() calls unchanged in screenService
+- [Phase quick-68]: Pre-existing auth.spec.js failures (11) are dev-bypass limitations, not regressions from quick-67
 
 ### Blockers/Concerns
 
@@ -70,11 +71,12 @@ None.
 | 65 | Verify Welcome vs Dashboard sidebar navigation (BUG-08 fix confirmed) | 2026-03-05 | 9ba5347 | [65-verify-welcome-vs-dashboard-sidebar-navi](./quick/65-verify-welcome-vs-dashboard-sidebar-navi/) |
 | 66 | Toast persistence on navigation regression test (BUG-07 fix confirmed) | 2026-03-05 | 727818e | [66-observe-whether-error-toasts-persist-acr](./quick/66-observe-whether-error-toasts-persist-acr/) |
 | 67 | Fix BUG-17, BUG-18, BUG-19: createScreen auth bypass, polling backoff, OTP label | 2026-03-05 | ede0029 | [67-fix-all-3-open-bugs-bug-17-createscreen-](./quick/67-fix-all-3-open-bugs-bug-17-createscreen-/) |
+| 68 | Auth flow regression test after quick-67 fixes -- no regressions | 2026-03-05 | 20ac3a5 | [68-test-auth-flow-via-playwright-login-veri](./quick/68-test-auth-flow-via-playwright-login-veri/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 67
+Stopped at: Completed quick task 68
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
 
