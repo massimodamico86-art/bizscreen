@@ -50,14 +50,14 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Playlists (E2E)
 
-- [ ] **PLAY-01**: E2E test verifies playlist list page with create, duplicate, delete actions
-- [ ] **PLAY-02**: E2E test verifies playlist creation modal with name input
-- [ ] **PLAY-03**: E2E test verifies playlist editor with item addition from media library
-- [ ] **PLAY-04**: E2E test verifies playlist item drag-and-drop reordering
-- [ ] **PLAY-05**: E2E test verifies playlist item duration and transition settings
-- [ ] **PLAY-06**: E2E test verifies nested playlist insertion with depth indicator
-- [ ] **PLAY-07**: E2E test verifies background audio toggle and volume control
-- [ ] **PLAY-08**: E2E test verifies playlist preview in player mode
+- [x] **PLAY-01**: E2E test verifies playlist list page with create, duplicate, delete actions
+- [x] **PLAY-02**: E2E test verifies playlist creation modal with name input
+- [x] **PLAY-03**: E2E test verifies playlist editor with item addition from media library
+- [x] **PLAY-04**: E2E test verifies playlist item drag-and-drop reordering
+- [x] **PLAY-05**: E2E test verifies playlist item duration and transition settings
+- [x] **PLAY-06**: E2E test verifies nested playlist insertion with depth indicator
+- [x] **PLAY-07**: E2E test verifies background audio toggle and volume control
+- [x] **PLAY-08**: E2E test verifies playlist preview in player mode
 
 ### Layouts & Widget Types (E2E)
 
@@ -259,14 +259,14 @@ None deferred -- this milestone closes all testing and stability gaps.
 | SCENE-15 | Phase 116 | Complete |
 | SCENE-16 | Phase 116 | Complete |
 | SCENE-17 | Phase 116 | Complete |
-| PLAY-01 | Phase 117 | Pending |
-| PLAY-02 | Phase 117 | Pending |
-| PLAY-03 | Phase 117 | Pending |
-| PLAY-04 | Phase 117 | Pending |
-| PLAY-05 | Phase 117 | Pending |
-| PLAY-06 | Phase 117 | Pending |
-| PLAY-07 | Phase 117 | Pending |
-| PLAY-08 | Phase 117 | Pending |
+| PLAY-01 | Phase 117 | Complete |
+| PLAY-02 | Phase 117 | Complete |
+| PLAY-03 | Phase 117 | Complete |
+| PLAY-04 | Phase 117 | Complete |
+| PLAY-05 | Phase 117 | Complete |
+| PLAY-06 | Phase 117 | Complete |
+| PLAY-07 | Phase 117 | Complete |
+| PLAY-08 | Phase 117 | Complete |
 | LAYOUT-01 | Phase 117 | Complete |
 | LAYOUT-02 | Phase 117 | Complete |
 | LAYOUT-03 | Phase 117 | Complete |
