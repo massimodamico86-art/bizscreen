@@ -243,7 +243,15 @@ These capabilities shipped and are production-verified:
 
 ### Active
 
-(No active requirements -- planning next milestone)
+## Current Milestone: v13.0 Full Stability Pass
+
+**Goal:** Achieve comprehensive E2E test coverage across all pages and flows, add error resilience (boundaries, backoff, connection states), implement skeleton loaders, and redesign error states.
+
+**Target features:**
+- Close 139 deferred E2E screenshot test requirements from v8.0 (dashboard, media, scenes, playlists, layouts, templates, schedules, campaigns, screens, data sources, apps, menu boards, moderation, analytics, settings, admin, reseller, responsive, edge cases)
+- Error resilience: React error boundaries on all route segments, API call backoff patterns, connection state handling
+- UX polish: skeleton loaders for page-type loading states, error state redesign with actionable messages
+- CI pipeline hardening and final integration verification
 
 ### Out of Scope
 
@@ -439,4 +447,4 @@ These capabilities shipped and are production-verified:
 | Canva PKCE OAuth via Edge Function proxy | No client-side secrets, server-side token storage | ✓ Good — secure flow |
 
 ---
-*Last updated: 2026-03-05 after v12.0 Feature Parity milestone*
+*Last updated: 2026-03-06 after v13.0 Full Stability Pass milestone started*
