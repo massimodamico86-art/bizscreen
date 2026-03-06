@@ -89,15 +89,15 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 - [ ] **SCHED-04**: E2E test verifies schedule conflict detection warning
 - [ ] **SCHED-05**: E2E test verifies dayparting preset application
 - [ ] **SCHED-06**: E2E test verifies recurring schedule entry creation
-- [ ] **CAMP-01**: E2E test verifies campaign list page with create and status indicators
-- [ ] **CAMP-02**: E2E test verifies campaign creation with priority and date range
-- [ ] **CAMP-03**: E2E test verifies campaign content assignment (playlist or template)
-- [ ] **CAMP-04**: E2E test verifies campaign screen targeting
-- [ ] **CAMP-05**: E2E test verifies emergency content push modal
-- [ ] **CAMP-06**: E2E test verifies campaign analytics display
-- [ ] **CAMP-07**: E2E test verifies campaign rotation controls (weight, order)
-- [ ] **CAMP-08**: E2E test verifies seasonal date picker
-- [ ] **CAMP-09**: E2E test verifies campaign template picker modal
+- [x] **CAMP-01**: E2E test verifies campaign list page with create and status indicators
+- [x] **CAMP-02**: E2E test verifies campaign creation with priority and date range
+- [x] **CAMP-03**: E2E test verifies campaign content assignment (playlist or template)
+- [x] **CAMP-04**: E2E test verifies campaign screen targeting
+- [x] **CAMP-05**: E2E test verifies emergency content push modal
+- [x] **CAMP-06**: E2E test verifies campaign analytics display
+- [x] **CAMP-07**: E2E test verifies campaign rotation controls (weight, order)
+- [x] **CAMP-08**: E2E test verifies seasonal date picker
+- [x] **CAMP-09**: E2E test verifies campaign template picker modal
 
 ### Screens & Device Management (E2E)
 
@@ -289,15 +289,15 @@ None deferred -- this milestone closes all testing and stability gaps.
 | SCHED-04 | Phase 118 | Pending |
 | SCHED-05 | Phase 118 | Pending |
 | SCHED-06 | Phase 118 | Pending |
-| CAMP-01 | Phase 118 | Pending |
-| CAMP-02 | Phase 118 | Pending |
-| CAMP-03 | Phase 118 | Pending |
-| CAMP-04 | Phase 118 | Pending |
-| CAMP-05 | Phase 118 | Pending |
-| CAMP-06 | Phase 118 | Pending |
-| CAMP-07 | Phase 118 | Pending |
-| CAMP-08 | Phase 118 | Pending |
-| CAMP-09 | Phase 118 | Pending |
+| CAMP-01 | Phase 118 | Complete |
+| CAMP-02 | Phase 118 | Complete |
+| CAMP-03 | Phase 118 | Complete |
+| CAMP-04 | Phase 118 | Complete |
+| CAMP-05 | Phase 118 | Complete |
+| CAMP-06 | Phase 118 | Complete |
+| CAMP-07 | Phase 118 | Complete |
+| CAMP-08 | Phase 118 | Complete |
+| CAMP-09 | Phase 118 | Complete |
 | SCRN-01 | Phase 119 | Pending |
 | SCRN-02 | Phase 119 | Pending |
 | SCRN-03 | Phase 119 | Pending |
