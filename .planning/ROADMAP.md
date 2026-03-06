@@ -126,9 +126,9 @@ Plans:
   3. All 17 scene/editor test cases pass with screenshots captured at each step
 **Plans**: 3 plans
 Plans:
-- [ ] 115-01-PLAN.md — Dashboard screenshot E2E tests (stat cards, sidebar nav, breadcrumbs, welcome vs dashboard, notifications)
-- [ ] 115-02-PLAN.md — Media core screenshot E2E tests (upload, grid/list, type filtering, preview, rename, delete)
-- [ ] 115-03-PLAN.md — Media advanced screenshot E2E tests (bulk ops, folders, storage bar, all 5 sub-pages)
+- [ ] 116-01-PLAN.md — Scene list CRUD, creation modal, and SVG editor loading screenshots
+- [ ] 116-02-PLAN.md — SVG editor tools and panels (text, shapes, images, element manipulation, layers, effects, animate, position)
+- [ ] 116-03-PLAN.md — SVG editor advanced features (undo/redo, save, export, context menu, cloud import, AI Designer)
 
 ### Phase 117: Playlists & Layouts E2E
 **Goal**: Playlist editing workflows and layout zone/widget configuration have screenshot-verified E2E coverage
@@ -272,7 +272,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 115. Dashboard & Media E2E | 3/3 | Complete    | 2026-03-06 |
-| 116. Scenes & SVG Editor E2E | 0/TBD | Not started | - |
+| 116. Scenes & SVG Editor E2E | 0/3 | Not started | - |
 | 117. Playlists & Layouts E2E | 0/TBD | Not started | - |
 | 118. Templates, Schedules & Campaigns E2E | 0/TBD | Not started | - |
 | 119. Screens & Device Management E2E | 0/TBD | Not started | - |
