@@ -33,14 +33,14 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 - [x] **SCENE-01**: E2E test verifies scene list page with create, duplicate, delete actions
 - [x] **SCENE-02**: E2E test verifies scene creation modal with name and dimensions
 - [x] **SCENE-03**: E2E test verifies SVG editor loads with toolbar and canvas
-- [ ] **SCENE-04**: E2E test verifies text element creation and property editing
-- [ ] **SCENE-05**: E2E test verifies shape element creation (rectangle, circle, line)
-- [ ] **SCENE-06**: E2E test verifies image insertion from media library
-- [ ] **SCENE-07**: E2E test verifies element selection, move, resize, and delete
-- [ ] **SCENE-08**: E2E test verifies layers panel with element ordering
-- [ ] **SCENE-09**: E2E test verifies effects panel (shadow, blur, opacity)
-- [ ] **SCENE-10**: E2E test verifies animation panel with preset animations
-- [ ] **SCENE-11**: E2E test verifies position/alignment panel
+- [x] **SCENE-04**: E2E test verifies text element creation and property editing
+- [x] **SCENE-05**: E2E test verifies shape element creation (rectangle, circle, line)
+- [x] **SCENE-06**: E2E test verifies image insertion from media library
+- [x] **SCENE-07**: E2E test verifies element selection, move, resize, and delete
+- [x] **SCENE-08**: E2E test verifies layers panel with element ordering
+- [x] **SCENE-09**: E2E test verifies effects panel (shadow, blur, opacity)
+- [x] **SCENE-10**: E2E test verifies animation panel with preset animations
+- [x] **SCENE-11**: E2E test verifies position/alignment panel
 - [ ] **SCENE-12**: E2E test verifies undo/redo keyboard shortcuts
 - [ ] **SCENE-13**: E2E test verifies save with success feedback
 - [ ] **SCENE-14**: E2E test verifies export dialog with format/quality options
@@ -245,14 +245,14 @@ None deferred -- this milestone closes all testing and stability gaps.
 | SCENE-01 | Phase 116 | Complete |
 | SCENE-02 | Phase 116 | Complete |
 | SCENE-03 | Phase 116 | Complete |
-| SCENE-04 | Phase 116 | Pending |
-| SCENE-05 | Phase 116 | Pending |
-| SCENE-06 | Phase 116 | Pending |
-| SCENE-07 | Phase 116 | Pending |
-| SCENE-08 | Phase 116 | Pending |
-| SCENE-09 | Phase 116 | Pending |
-| SCENE-10 | Phase 116 | Pending |
-| SCENE-11 | Phase 116 | Pending |
+| SCENE-04 | Phase 116 | Complete |
+| SCENE-05 | Phase 116 | Complete |
+| SCENE-06 | Phase 116 | Complete |
+| SCENE-07 | Phase 116 | Complete |
+| SCENE-08 | Phase 116 | Complete |
+| SCENE-09 | Phase 116 | Complete |
+| SCENE-10 | Phase 116 | Complete |
+| SCENE-11 | Phase 116 | Complete |
 | SCENE-12 | Phase 116 | Pending |
 | SCENE-13 | Phase 116 | Pending |
 | SCENE-14 | Phase 116 | Pending |
