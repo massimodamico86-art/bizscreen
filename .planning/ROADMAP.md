@@ -183,7 +183,11 @@ Plans:
   1. Running the data sources E2E spec produces screenshots of source list, Google Sheets creation, CSV upload, RSS URL config, and refresh interval settings
   2. Running the apps/menu boards E2E spec produces screenshots of apps gallery, app detail modal, app install/config, menu board list, editor CRUD, drag reorder, dietary tags, and theme/currency settings
   3. Running the moderation E2E spec produces screenshots of moderation queue, approve action, reject with reason, review inbox filtering, and hashtag filter config
-**Plans**: TBD (to be created via `/gsd:plan-phase 120`)
+**Plans**: 3 plans
+Plans:
+- [ ] 120-01-PLAN.md — Data sources screenshot E2E tests (list, Google Sheets, CSV, RSS, refresh interval)
+- [ ] 120-02-PLAN.md — Apps and menu boards screenshot E2E tests (gallery, detail, config, list, editor, reorder, dietary tags, theme)
+- [ ] 120-03-PLAN.md — Content moderation screenshot E2E tests (queue, approve, reject, filter, hashtag config)
 
 ### Phase 121: Analytics, Settings & Admin E2E
 **Goal**: Analytics dashboards, all settings pages, and admin/reseller portals have screenshot-verified E2E coverage
@@ -259,7 +263,7 @@ Plans:
 | 117. Playlists & Layouts E2E | 5/5 | Complete    | 2026-03-06 |
 | 118. Templates, Schedules & Campaigns E2E | 3/3 | Complete    | 2026-03-06 |
 | 119. Screens & Device Management E2E | 3/3 | Complete   | 2026-03-07 |
-| 120. Data Sources, Apps & Moderation E2E | 0/TBD | Not started | - |
+| 120. Data Sources, Apps & Moderation E2E | 0/3 | Not started | - |
 | 121. Analytics, Settings & Admin E2E | 0/TBD | Not started | - |
 | 122. Responsive & Edge Cases E2E | 0/TBD | Not started | - |
 | 123. Error Resilience & UX Polish | 0/TBD | Not started | - |
@@ -268,4 +272,4 @@ Plans:
 **Total:** 124 phases | 320 plans executed | 19 milestones (18 shipped, 1 in progress)
 
 ---
-*Last updated: 2026-03-06 -- Phase 119 plans created (2 plans, 1 wave)*
+*Last updated: 2026-03-07 -- Phase 120 plans created (3 plans, 1 wave)*
