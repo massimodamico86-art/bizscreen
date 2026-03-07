@@ -184,8 +184,8 @@ async function setupScreenManagementMocking(page) {
     }
   });
 
-  // Mock screens list
-  await page.route('**/rest/v1/screens?*', async (route) => {
+  // Mock screens list (tv_devices is the actual Supabase table name)
+  await page.route('**/rest/v1/tv_devices?*', async (route) => {
     const method = route.request().method();
     if (method === 'GET') {
       await route.fulfill({
@@ -226,12 +226,21 @@ async function setupScreenManagementMocking(page) {
     });
   });
 
-  // Mock plan limits
-  await page.route('**/rest/v1/rpc/get_plan_limits', async (route) => {
+  // Mock plan limits (get_effective_limits is the correct RPC endpoint)
+  await page.route('**/rest/v1/rpc/get_effective_limits', async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ maxScreens: 25 }),
+      body: JSON.stringify({
+        plan_slug: 'business',
+        plan_name: 'Business',
+        status: 'active',
+        max_screens: 25,
+        max_media_assets: 500,
+        max_playlists: 50,
+        max_layouts: 20,
+        max_schedules: 10,
+      }),
     });
   });
 
@@ -319,12 +328,11 @@ test.describe('Screen Management Screenshots', () => {
       test.skip(true, 'Screenshot tests run on chromium only');
     }
 
-    // Set up API mocking before login
-    await setupScreenManagementMocking(page);
-
     await loginAndPrepare(page);
     await assertAppReady(page, test);
     await dismissAnyModals(page);
+    // Set up API mocking after login/init to avoid intercepting auth calls
+    await setupScreenManagementMocking(page);
   });
 
   test('SCRN-06: screen group management with tag chips', async ({ page }) => {
