@@ -253,6 +253,27 @@ async function setupScreenManagementMocking(page) {
     });
   });
 
+  // Mock screen groups view (used by ScreensPage sidebar)
+  await page.route('**/rest/v1/v_screen_groups_with_counts?*', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(MOCK_SCREEN_GROUPS),
+    });
+  });
+
+  // Mock screen groups with scenes RPC (used by ScreenGroupsPage)
+  await page.route('**/rest/v1/rpc/get_screen_groups_with_scenes', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(MOCK_SCREEN_GROUPS.map(g => ({
+        ...g,
+        active_scene: g.active_scene_id ? { id: g.active_scene_id, name: g.active_scene_name } : null,
+      }))),
+    });
+  });
+
   // Mock all group tags
   await page.route('**/rest/v1/rpc/get_all_group_tags', async (route) => {
     await route.fulfill({
@@ -328,10 +349,31 @@ test.describe('Screen Management Screenshots', () => {
       test.skip(true, 'Screenshot tests run on chromium only');
     }
 
+    // Mock feature flags BEFORE login so FeatureFlagProvider picks them up on mount
+    await page.route('**/rest/v1/rpc/get_active_feature_flags_for_tenant', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { flag_key: 'screen_groups', flag_name: 'Screen Groups', enabled: true, source: 'override' },
+          { flag_key: 'advanced_scheduling', flag_name: 'Advanced Scheduling', enabled: true, source: 'override' },
+        ]),
+      });
+    });
+
+    // Mock profiles BEFORE login so permission checks resolve correctly
+    await page.route('**/rest/v1/profiles?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ id: '00000000-0000-0000-0000-000000000000', role: 'admin' }),
+      });
+    });
+
     await loginAndPrepare(page);
     await assertAppReady(page, test);
     await dismissAnyModals(page);
-    // Set up API mocking after login/init to avoid intercepting auth calls
+    // Set up remaining API mocking after login/init to avoid intercepting auth calls
     await setupScreenManagementMocking(page);
   });
 
@@ -361,8 +403,8 @@ test.describe('Screen Management Screenshots', () => {
     const table = page.locator('table');
     await table.waitFor({ state: 'visible', timeout: 5000 }).catch(() => null);
 
-    // Find the first screen row's action menu (MoreVertical / three-dot button)
-    const actionBtn = page.locator('table tbody tr').first().locator('button').last();
+    // Open action menu for second screen (has layout assigned, not playlist — visually distinct)
+    const actionBtn = page.locator('table tbody tr').nth(1).locator('button').last();
     const actionVisible = await actionBtn.isVisible().catch(() => false);
 
     if (actionVisible) {
@@ -415,11 +457,20 @@ test.describe('Screen Management Screenshots', () => {
         const dialog = page.locator('[role="dialog"]').first();
         await dialog.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null);
 
-        // Scroll to show orientation section if needed
+        // Scroll to show orientation section and click dropdown to show options
         const orientationLabel = page.locator('text=/Screen Orientation/i').first();
         const orientationVisible = await orientationLabel.isVisible().catch(() => false);
         if (orientationVisible) {
           await orientationLabel.scrollIntoViewIfNeeded().catch(() => null);
+          await page.waitForTimeout(200);
+
+          // Change orientation to portrait to make it visually distinct from SCRN-07
+          const orientationSelect = page.locator('select').filter({ has: page.locator('option[value="portrait"]') }).first();
+          const selectVisible = await orientationSelect.isVisible().catch(() => false);
+          if (selectVisible) {
+            await orientationSelect.selectOption('portrait');
+            await page.waitForTimeout(300);
+          }
         }
       }
     }
@@ -476,7 +527,15 @@ test.describe('Screen Management Screenshots', () => {
     const table = page.locator('table[role="table"]');
     await table.waitFor({ state: 'visible', timeout: 5000 }).catch(() => null);
 
-    // Find first group row's action menu (MoreVertical button)
+    // Click "lobby" tag filter chip to show filtered view (visually distinct from SCRN-06)
+    const lobbyChip = page.locator('button:has-text("lobby")').first();
+    const chipVisible = await lobbyChip.isVisible().catch(() => false);
+    if (chipVisible) {
+      await lobbyChip.click();
+      await page.waitForTimeout(500);
+    }
+
+    // Try to open action menu for emergency push (requires admin permissions)
     const actionBtn = page.locator('table tbody tr').first().locator('button[aria-haspopup="menu"]').first();
     const actionVisible = await actionBtn.isVisible().catch(() => false);
 
@@ -530,11 +589,11 @@ test.describe('Screen Management Screenshots', () => {
         const dialog = page.locator('[role="dialog"]').first();
         await dialog.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null);
 
-        // Scroll to Working Hours section
-        const workingHoursLabel = page.locator('text=/Working Hours/i').first();
-        const whVisible = await workingHoursLabel.isVisible().catch(() => false);
-        if (whVisible) {
-          await workingHoursLabel.scrollIntoViewIfNeeded().catch(() => null);
+        // Toggle the Enable Working Hours switch off to make it visually distinct
+        const whToggle = page.locator('button[role="switch"]').first();
+        const toggleVisible = await whToggle.isVisible().catch(() => false);
+        if (toggleVisible) {
+          await whToggle.click();
           await page.waitForTimeout(300);
         }
       }
