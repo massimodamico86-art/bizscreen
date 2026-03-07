@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
 status: unknown
-last_updated: "2026-03-06T23:54:01.157Z"
+last_updated: "2026-03-07T00:09:51.651Z"
 progress:
   total_phases: 80
   completed_phases: 74
-  total_plans: 247
-  completed_plans: 247
+  total_plans: 249
+  completed_plans: 248
 ---
 
 # Project State
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v13.0 Full Stability Pass -- Phase 118 (Templates, Schedules & Campaigns E2E)
+**Current focus:** v13.0 Full Stability Pass -- Phase 119 (Screens & Device Management E2E)
 
 ## Current Position
 
-Phase: 118 of 124 (Templates, Schedules & Campaigns E2E)
-Plan: 3 of 3 complete
+Phase: 119 of 124 (Screens & Device Management E2E)
+Plan: 2 of 2 complete
 Status: Complete
-Last activity: 2026-03-06 -- Completed 118-03 (Campaigns screenshot E2E tests)
+Last activity: 2026-03-07 -- Completed 119-02 (Screen management screenshots SCRN-06 through SCRN-11)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -87,6 +87,10 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 118-02]: All event modal interactions use dispatchEvent/page.evaluate() to bypass .fixed.inset-0 overlay
 - [Phase 118-03]: Screenshot step numbers 20-28 for campaigns (templates 01-09, schedules 10-18)
 - [Phase 118]: Schedule editor E2E uses dispatchEvent for modal interactions, page.route() for API mocking
+- [Phase 119]: Screen management E2E uses page.route() to mock screen_groups, screens, playlists, layouts, locations, and RPC endpoints
+- [Phase 119]: Master PIN modal uses .fixed.inset-0 overlay (not design system Modal), requires dispatchEvent click
+- [Phase 119]: Screen groups Push Playlist accessed via role=menuitem selector in action menu dropdown
+- [Phase 119]: Spec file already created by 119-01 with all SCRN-06 through SCRN-11 tests; 119-02 verified tests pass and screenshots produced
 
 ### Blockers/Concerns
 
@@ -94,10 +98,10 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06
-Stopped at: Completed 118-03-PLAN.md (Campaigns screenshot E2E tests)
+Last session: 2026-03-07
+Stopped at: Completed 119-02-PLAN.md (Screen management screenshots SCRN-06 through SCRN-11)
 Resume file: None
-Next: Execute next phase (119)
+Next: Execute next phase (120)
 
 ---
-*Updated: 2026-03-06 -- Phase 118 complete (3/3 plans)*
+*Updated: 2026-03-07 -- Phase 119 complete (2/2 plans)*

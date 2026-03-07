@@ -106,12 +106,12 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 - [ ] **SCRN-03**: E2E test verifies OTP pairing flow (enter code, polling, success)
 - [ ] **SCRN-04**: E2E test verifies screen detail page with device diagnostics
 - [ ] **SCRN-05**: E2E test verifies remote commands (reboot, reload, clear cache)
-- [ ] **SCRN-06**: E2E test verifies screen group management with tag chips
-- [ ] **SCRN-07**: E2E test verifies playlist/layout assignment to screen
-- [ ] **SCRN-08**: E2E test verifies screen orientation toggle (portrait/landscape)
-- [ ] **SCRN-09**: E2E test verifies master PIN modal for screen locking
-- [ ] **SCRN-10**: E2E test verifies emergency push modal for screen groups
-- [ ] **SCRN-11**: E2E test verifies working hours schedule per screen
+- [x] **SCRN-06**: E2E test verifies screen group management with tag chips
+- [x] **SCRN-07**: E2E test verifies playlist/layout assignment to screen
+- [x] **SCRN-08**: E2E test verifies screen orientation toggle (portrait/landscape)
+- [x] **SCRN-09**: E2E test verifies master PIN modal for screen locking
+- [x] **SCRN-10**: E2E test verifies emergency push modal for screen groups
+- [x] **SCRN-11**: E2E test verifies working hours schedule per screen
 
 ### Data Sources, Apps & Menu Boards (E2E)
 
@@ -303,12 +303,12 @@ None deferred -- this milestone closes all testing and stability gaps.
 | SCRN-03 | Phase 119 | Pending |
 | SCRN-04 | Phase 119 | Pending |
 | SCRN-05 | Phase 119 | Pending |
-| SCRN-06 | Phase 119 | Pending |
-| SCRN-07 | Phase 119 | Pending |
-| SCRN-08 | Phase 119 | Pending |
-| SCRN-09 | Phase 119 | Pending |
-| SCRN-10 | Phase 119 | Pending |
-| SCRN-11 | Phase 119 | Pending |
+| SCRN-06 | Phase 119 | Complete |
+| SCRN-07 | Phase 119 | Complete |
+| SCRN-08 | Phase 119 | Complete |
+| SCRN-09 | Phase 119 | Complete |
+| SCRN-10 | Phase 119 | Complete |
+| SCRN-11 | Phase 119 | Complete |
 | DATA-01 | Phase 120 | Pending |
 | DATA-02 | Phase 120 | Pending |
 | DATA-03 | Phase 120 | Pending |
