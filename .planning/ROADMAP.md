@@ -258,7 +258,7 @@ Plans:
 | 116. Scenes & SVG Editor E2E | 4/4 | Complete    | 2026-03-06 |
 | 117. Playlists & Layouts E2E | 5/5 | Complete    | 2026-03-06 |
 | 118. Templates, Schedules & Campaigns E2E | 3/3 | Complete    | 2026-03-06 |
-| 119. Screens & Device Management E2E | 2/3 | In Progress   | 2026-03-07 |
+| 119. Screens & Device Management E2E | 3/3 | Complete   | 2026-03-07 |
 | 120. Data Sources, Apps & Moderation E2E | 0/TBD | Not started | - |
 | 121. Analytics, Settings & Admin E2E | 0/TBD | Not started | - |
 | 122. Responsive & Edge Cases E2E | 0/TBD | Not started | - |
