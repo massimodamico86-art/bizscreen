@@ -215,8 +215,8 @@ const MOCK_DIAGNOSTICS = {
 // ---------------------------------------------------------------------------
 
 async function setupScreensMocking(page) {
-  // Mock screens list
-  await page.route('**/rest/v1/screens?*', async (route) => {
+  // Mock screens list (table is tv_devices in Supabase)
+  await page.route('**/rest/v1/tv_devices?*', async (route) => {
     const method = route.request().method();
     if (method === 'GET') {
       await route.fulfill({
@@ -290,17 +290,26 @@ async function setupScreensMocking(page) {
     });
   });
 
-  // Mock plan limits
-  await page.route('**/rest/v1/rpc/get_plan_limits', async (route) => {
+  // Mock plan limits (RPC endpoint)
+  await page.route('**/rest/v1/rpc/get_effective_limits', async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ maxScreens: 25 }),
+      body: JSON.stringify({
+        plan_slug: 'business',
+        plan_name: 'Business',
+        status: 'active',
+        max_screens: 25,
+        max_media_assets: 500,
+        max_playlists: 50,
+        max_layouts: 20,
+        max_schedules: 10,
+      }),
     });
   });
 
-  // Mock screen diagnostics
-  await page.route('**/rest/v1/rpc/get_screen_diagnostics*', async (route) => {
+  // Mock screen diagnostics (RPC endpoint)
+  await page.route('**/rest/v1/rpc/get_screen_diagnostics', async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -308,36 +317,9 @@ async function setupScreensMocking(page) {
     });
   });
 
-  // Mock screen_diagnostics table query
-  await page.route('**/rest/v1/screen_diagnostics?*', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify([{
-        screen_id: 'scr-001-aaaa-bbbb-cccc-ddddeeee0001',
-        cpu_percent: 23,
-        memory_percent: 64,
-        disk_percent: 42,
-        browser_version: 'Chrome 120.0.6099.109',
-        os_version: 'ChromeOS 120',
-        ip_address: '192.168.1.105',
-        resolution: '1920x1080',
-        uptime_seconds: 345600,
-        js_heap_used: 45000000,
-        js_heap_total: 100000000,
-        last_heartbeat: new Date().toISOString(),
-      }]),
-    });
-  });
-
-  // Mock master PIN status
-  await page.route('**/rest/v1/rpc/get_master_pin_status', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ isSet: true, setAt: '2025-12-01T00:00:00Z' }),
-    });
-  });
+  // Note: Master PIN status is fetched from profiles table but we do not mock it
+  // because the profiles route is also used by auth/onboarding queries. The PIN
+  // status will gracefully default to { isSet: false, setAt: null } on error.
 }
 
 // ---------------------------------------------------------------------------
@@ -351,12 +333,13 @@ test.describe('Screens Screenshots', () => {
       test.skip(true, 'Screenshot tests run on chromium only');
     }
 
-    // Set up API mocking before login
-    await setupScreensMocking(page);
-
+    // Login first, then set up API mocking to avoid intercepting auth/init queries
     await loginAndPrepare(page);
     await assertAppReady(page, test);
     await dismissAnyModals(page);
+
+    // Set up API mocking after login/init
+    await setupScreensMocking(page);
   });
 
   test('SCRN-01: screen list with status indicators', async ({ page }) => {
