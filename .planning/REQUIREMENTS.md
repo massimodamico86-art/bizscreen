@@ -101,11 +101,11 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Screens & Device Management (E2E)
 
-- [ ] **SCRN-01**: E2E test verifies screen list page with status indicators
-- [ ] **SCRN-02**: E2E test verifies screen creation with name and pairing code
-- [ ] **SCRN-03**: E2E test verifies OTP pairing flow (enter code, polling, success)
-- [ ] **SCRN-04**: E2E test verifies screen detail page with device diagnostics
-- [ ] **SCRN-05**: E2E test verifies remote commands (reboot, reload, clear cache)
+- [x] **SCRN-01**: E2E test verifies screen list page with status indicators
+- [x] **SCRN-02**: E2E test verifies screen creation with name and pairing code
+- [x] **SCRN-03**: E2E test verifies OTP pairing flow (enter code, polling, success)
+- [x] **SCRN-04**: E2E test verifies screen detail page with device diagnostics
+- [x] **SCRN-05**: E2E test verifies remote commands (reboot, reload, clear cache)
 - [x] **SCRN-06**: E2E test verifies screen group management with tag chips
 - [x] **SCRN-07**: E2E test verifies playlist/layout assignment to screen
 - [x] **SCRN-08**: E2E test verifies screen orientation toggle (portrait/landscape)
@@ -298,11 +298,11 @@ None deferred -- this milestone closes all testing and stability gaps.
 | CAMP-07 | Phase 118 | Complete |
 | CAMP-08 | Phase 118 | Complete |
 | CAMP-09 | Phase 118 | Complete |
-| SCRN-01 | Phase 119 | Pending |
-| SCRN-02 | Phase 119 | Pending |
-| SCRN-03 | Phase 119 | Pending |
-| SCRN-04 | Phase 119 | Pending |
-| SCRN-05 | Phase 119 | Pending |
+| SCRN-01 | Phase 119 | Complete |
+| SCRN-02 | Phase 119 | Complete |
+| SCRN-03 | Phase 119 | Complete |
+| SCRN-04 | Phase 119 | Complete |
+| SCRN-05 | Phase 119 | Complete |
 | SCRN-06 | Phase 119 | Complete |
 | SCRN-07 | Phase 119 | Complete |
 | SCRN-08 | Phase 119 | Complete |

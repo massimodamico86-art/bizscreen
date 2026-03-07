@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
 status: unknown
-last_updated: "2026-03-07T00:09:51.651Z"
+last_updated: "2026-03-07T00:10:54.262Z"
 progress:
   total_phases: 80
-  completed_phases: 74
+  completed_phases: 75
   total_plans: 249
-  completed_plans: 248
+  completed_plans: 249
 ---
 
 # Project State
@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 119 of 124 (Screens & Device Management E2E)
-Plan: 2 of 2 complete
-Status: Complete
-Last activity: 2026-03-07 -- Completed 119-02 (Screen management screenshots SCRN-06 through SCRN-11)
+Plan: 1 of 2 complete
+Status: In Progress
+Last activity: 2026-03-07 -- Completed 119-01 (Screens screenshot E2E tests SCRN-01 through SCRN-05)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -91,6 +91,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 119]: Master PIN modal uses .fixed.inset-0 overlay (not design system Modal), requires dispatchEvent click
 - [Phase 119]: Screen groups Push Playlist accessed via role=menuitem selector in action menu dropdown
 - [Phase 119]: Spec file already created by 119-01 with all SCRN-06 through SCRN-11 tests; 119-02 verified tests pass and screenshots produced
+- [Phase 119]: Mock tv_devices table (not screens); mock after login to avoid auth interference; use get_effective_limits RPC
 
 ### Blockers/Concerns
 
@@ -99,9 +100,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: Completed 119-02-PLAN.md (Screen management screenshots SCRN-06 through SCRN-11)
+Stopped at: Completed 119-01-PLAN.md (Screens screenshot E2E tests SCRN-01 through SCRN-05)
 Resume file: None
-Next: Execute next phase (120)
+Next: Execute 119-02-PLAN.md
 
 ---
-*Updated: 2026-03-07 -- Phase 119 complete (2/2 plans)*
+*Updated: 2026-03-07 -- Phase 119 plan 1/2 complete*
