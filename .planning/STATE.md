@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
-status: unknown
-last_updated: "2026-03-07T00:21:10Z"
+status: in-progress
+last_updated: "2026-03-08T03:23:17Z"
 progress:
   total_phases: 80
   completed_phases: 75
   total_plans: 252
-  completed_plans: 252
+  completed_plans: 253
 ---
 
 # Project State
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v13.0 Full Stability Pass -- Phase 119 (Screens & Device Management E2E)
+**Current focus:** v13.0 Full Stability Pass -- Phase 120 (Data Sources, Apps & Moderation E2E)
 
 ## Current Position
 
-Phase: 119 of 124 (Screens & Device Management E2E)
+Phase: 120 of 124 (Data Sources, Apps & Moderation E2E)
 Plan: 3 of 3 complete
 Status: Phase Complete
-Last activity: 2026-03-07 -- Completed 119-03 (Gap closure for SCRN-06 through SCRN-11 screenshots)
+Last activity: 2026-03-08 -- Completed 120-03 (Content moderation E2E screenshot tests)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -93,6 +93,9 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 119]: Spec file already created by 119-01 with all SCRN-06 through SCRN-11 tests; 119-02 verified tests pass and screenshots produced
 - [Phase 119]: Mock tv_devices table (not screens); mock after login to avoid auth interference; use get_effective_limits RPC
 - [Phase 119-03]: Gap closure fixed 3 mocking issues (table name, RPC endpoint, mocking order) to regenerate SCRN-06 through SCRN-11 screenshots
+- [Phase 120-03]: Used bg-green-50/bg-red-50 CSS class selectors to distinguish approve/reject action buttons from status filter tabs
+- [Phase 120-03]: MOD-05 captures account filter dropdown on ModerationPage (hashtag config is in SocialFeedWidgetSettings, not ModerationPage)
+- [Phase 120-03]: Mock social_feeds table (not social_feed_moderation) for getModerationQueue which uses a join query
 
 ### Blockers/Concerns
 
@@ -100,10 +103,10 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07
-Stopped at: Completed 119-03-PLAN.md (Gap closure for SCRN-06 through SCRN-11 screenshots)
+Last session: 2026-03-08
+Stopped at: Completed 120-03-PLAN.md (Content moderation E2E screenshot tests)
 Resume file: None
-Next: Execute phase 120
+Next: Execute phase 121
 
 ---
-*Updated: 2026-03-07 -- Phase 119 complete (3/3 plans)*
+*Updated: 2026-03-08 -- Phase 120 complete (3/3 plans)*

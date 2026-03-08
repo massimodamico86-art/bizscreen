@@ -131,11 +131,11 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Content Moderation (E2E)
 
-- [ ] **MOD-01**: E2E test verifies content moderation queue with pending items
-- [ ] **MOD-02**: E2E test verifies approve action moves item to approved tab
-- [ ] **MOD-03**: E2E test verifies reject action with reason input
-- [ ] **MOD-04**: E2E test verifies review inbox with filter by status
-- [ ] **MOD-05**: E2E test verifies social feed hashtag filter configuration
+- [x] **MOD-01**: E2E test verifies content moderation queue with pending items
+- [x] **MOD-02**: E2E test verifies approve action moves item to approved tab
+- [x] **MOD-03**: E2E test verifies reject action with reason input
+- [x] **MOD-04**: E2E test verifies review inbox with filter by status
+- [x] **MOD-05**: E2E test verifies social feed hashtag filter configuration
 
 ### Analytics & Alerts (E2E)
 
@@ -322,11 +322,11 @@ None deferred -- this milestone closes all testing and stability gaps.
 | APP-06 | Phase 120 | Pending |
 | APP-07 | Phase 120 | Pending |
 | APP-08 | Phase 120 | Pending |
-| MOD-01 | Phase 120 | Pending |
-| MOD-02 | Phase 120 | Pending |
-| MOD-03 | Phase 120 | Pending |
-| MOD-04 | Phase 120 | Pending |
-| MOD-05 | Phase 120 | Pending |
+| MOD-01 | Phase 120 | Complete |
+| MOD-02 | Phase 120 | Complete |
+| MOD-03 | Phase 120 | Complete |
+| MOD-04 | Phase 120 | Complete |
+| MOD-05 | Phase 120 | Complete |
 | ANLYT-01 | Phase 121 | Pending |
 | ANLYT-02 | Phase 121 | Pending |
 | ANLYT-03 | Phase 121 | Pending |
