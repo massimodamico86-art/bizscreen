@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
-status: in-progress
-last_updated: "2026-03-08T03:23:17Z"
+status: unknown
+last_updated: "2026-03-08T03:51:50.062Z"
 progress:
   total_phases: 80
-  completed_phases: 75
-  total_plans: 252
+  completed_phases: 76
+  total_plans: 253
   completed_plans: 253
 ---
 
@@ -96,6 +96,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 120-03]: Used bg-green-50/bg-red-50 CSS class selectors to distinguish approve/reject action buttons from status filter tabs
 - [Phase 120-03]: MOD-05 captures account filter dropdown on ModerationPage (hashtag config is in SocialFeedWidgetSettings, not ModerationPage)
 - [Phase 120-03]: Mock social_feeds table (not social_feed_moderation) for getModerationQueue which uses a join query
+- [Phase 88]: 8 page ID mismatches found: developer-settings->developer, usage-dashboard->usage, help-center->help, translation-dashboard->translations, alerts-center->alerts, admin-audit->admin-audit-logs, status-page->status, security-dashboard->security
 
 ### Blockers/Concerns
 
