@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
 status: unknown
-last_updated: "2026-03-08T03:51:50.062Z"
+last_updated: "2026-03-10T23:28:58.153Z"
 progress:
   total_phases: 80
   completed_phases: 76
-  total_plans: 253
-  completed_plans: 253
+  total_plans: 256
+  completed_plans: 254
 ---
 
 # Project State
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v13.0 Full Stability Pass -- Phase 120 (Data Sources, Apps & Moderation E2E)
+**Current focus:** v13.0 Full Stability Pass -- Phase 121 (Analytics, Settings & Admin E2E)
 
 ## Current Position
 
-Phase: 120 of 124 (Data Sources, Apps & Moderation E2E)
-Plan: 3 of 3 complete
-Status: Phase Complete
-Last activity: 2026-03-08 - Completed quick task 88: Full QA walkthrough of all app pages with Playwright
+Phase: 121 of 124 (Analytics, Settings & Admin E2E)
+Plan: 2 of 3 complete
+Status: In Progress
+Last activity: 2026-03-10 - Completed 121-02-PLAN.md (Settings E2E screenshot tests)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -97,6 +97,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 120-03]: MOD-05 captures account filter dropdown on ModerationPage (hashtag config is in SocialFeedWidgetSettings, not ModerationPage)
 - [Phase 120-03]: Mock social_feeds table (not social_feed_moderation) for getModerationQueue which uses a join query
 - [Phase 88]: 8 page ID mismatches found: developer-settings->developer, usage-dashboard->usage, help-center->help, translation-dashboard->translations, alerts-center->alerts, admin-audit->admin-audit-logs, status-page->status, security-dashboard->security
+- [Phase 121]: Feature-gated settings pages capture upgrade prompt screenshot as evidence
 
 ### Blockers/Concerns
 
@@ -107,13 +108,14 @@ None.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 88 | Full QA walkthrough of all app pages with Playwright - visual bugs, interactive elements, responsive checks, console errors | 2026-03-08 | f5a9eaf | [88-full-qa-walkthrough-of-all-app-pages-wit](./quick/88-full-qa-walkthrough-of-all-app-pages-wit/) |
+| Phase 121 P02 | 4min | 2 tasks | 8 files |
 
 ## Session Continuity
 
-Last session: 2026-03-08
-Stopped at: Completed 120-03-PLAN.md (Content moderation E2E screenshot tests)
+Last session: 2026-03-10
+Stopped at: Completed 121-02-PLAN.md (Settings E2E screenshot tests)
 Resume file: None
-Next: Execute phase 121
+Next: Execute 121-03-PLAN.md (Admin pages E2E)
 
 ---
 *Updated: 2026-03-08 -- Phase 120 complete (3/3 plans)*

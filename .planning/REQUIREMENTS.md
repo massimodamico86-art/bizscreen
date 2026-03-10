@@ -150,13 +150,13 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Settings (E2E)
 
-- [ ] **SET-01**: E2E test verifies general settings page with form fields
-- [ ] **SET-02**: E2E test verifies account/plan page with current plan display
-- [ ] **SET-03**: E2E test verifies branding settings with logo upload and color pickers
-- [ ] **SET-04**: E2E test verifies team management with invite and role assignment
-- [ ] **SET-05**: E2E test verifies developer settings with API key management
-- [ ] **SET-06**: E2E test verifies white-label settings with custom domain
-- [ ] **SET-07**: E2E test verifies enterprise security settings (password policy, session timeout)
+- [x] **SET-01**: E2E test verifies general settings page with form fields
+- [x] **SET-02**: E2E test verifies account/plan page with current plan display
+- [x] **SET-03**: E2E test verifies branding settings with logo upload and color pickers
+- [x] **SET-04**: E2E test verifies team management with invite and role assignment
+- [x] **SET-05**: E2E test verifies developer settings with API key management
+- [x] **SET-06**: E2E test verifies white-label settings with custom domain
+- [x] **SET-07**: E2E test verifies enterprise security settings (password policy, session timeout)
 
 ### Admin & Reseller (E2E)
 
@@ -335,13 +335,13 @@ None deferred -- this milestone closes all testing and stability gaps.
 | ANLYT-06 | Phase 121 | Pending |
 | ANLYT-07 | Phase 121 | Pending |
 | ANLYT-08 | Phase 121 | Pending |
-| SET-01 | Phase 121 | Pending |
-| SET-02 | Phase 121 | Pending |
-| SET-03 | Phase 121 | Pending |
-| SET-04 | Phase 121 | Pending |
-| SET-05 | Phase 121 | Pending |
-| SET-06 | Phase 121 | Pending |
-| SET-07 | Phase 121 | Pending |
+| SET-01 | Phase 121 | Complete |
+| SET-02 | Phase 121 | Complete |
+| SET-03 | Phase 121 | Complete |
+| SET-04 | Phase 121 | Complete |
+| SET-05 | Phase 121 | Complete |
+| SET-06 | Phase 121 | Complete |
+| SET-07 | Phase 121 | Complete |
 | ADMIN-01 | Phase 121 | Pending |
 | ADMIN-02 | Phase 121 | Pending |
 | ADMIN-03 | Phase 121 | Pending |

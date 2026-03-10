@@ -268,7 +268,7 @@ Plans:
 | 118. Templates, Schedules & Campaigns E2E | 3/3 | Complete    | 2026-03-06 |
 | 119. Screens & Device Management E2E | 3/3 | Complete   | 2026-03-07 |
 | 120. Data Sources, Apps & Moderation E2E | 3/3 | Complete   | 2026-03-08 |
-| 121. Analytics, Settings & Admin E2E | 0/TBD | Not started | - |
+| 121. Analytics, Settings & Admin E2E | 1/3 | In Progress|  |
 | 122. Responsive & Edge Cases E2E | 0/TBD | Not started | - |
 | 123. Error Resilience & UX Polish | 0/TBD | Not started | - |
 | 124. CI Pipeline & Final Integration | 0/TBD | Not started | - |
