@@ -139,14 +139,14 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Analytics & Alerts (E2E)
 
-- [ ] **ANLYT-01**: E2E test verifies analytics dashboard with summary cards
-- [ ] **ANLYT-02**: E2E test verifies content performance page with metrics
-- [ ] **ANLYT-03**: E2E test verifies activity log with filterable entries
-- [ ] **ANLYT-04**: E2E test verifies alerts center with severity indicators
-- [ ] **ANLYT-05**: E2E test verifies alert detail modal with timeline
-- [ ] **ANLYT-06**: E2E test verifies notification settings page with toggle controls
-- [ ] **ANLYT-07**: E2E test verifies notification settings persistence after toggle
-- [ ] **ANLYT-08**: E2E test verifies Proof of Play reporting page with date range and export
+- [x] **ANLYT-01**: E2E test verifies analytics dashboard with summary cards
+- [x] **ANLYT-02**: E2E test verifies content performance page with metrics
+- [x] **ANLYT-03**: E2E test verifies activity log with filterable entries
+- [x] **ANLYT-04**: E2E test verifies alerts center with severity indicators
+- [x] **ANLYT-05**: E2E test verifies alert detail modal with timeline
+- [x] **ANLYT-06**: E2E test verifies notification settings page with toggle controls
+- [x] **ANLYT-07**: E2E test verifies notification settings persistence after toggle
+- [x] **ANLYT-08**: E2E test verifies Proof of Play reporting page with date range and export
 
 ### Settings (E2E)
 
@@ -327,14 +327,14 @@ None deferred -- this milestone closes all testing and stability gaps.
 | MOD-03 | Phase 120 | Complete |
 | MOD-04 | Phase 120 | Complete |
 | MOD-05 | Phase 120 | Complete |
-| ANLYT-01 | Phase 121 | Pending |
-| ANLYT-02 | Phase 121 | Pending |
-| ANLYT-03 | Phase 121 | Pending |
-| ANLYT-04 | Phase 121 | Pending |
-| ANLYT-05 | Phase 121 | Pending |
-| ANLYT-06 | Phase 121 | Pending |
-| ANLYT-07 | Phase 121 | Pending |
-| ANLYT-08 | Phase 121 | Pending |
+| ANLYT-01 | Phase 121 | Complete |
+| ANLYT-02 | Phase 121 | Complete |
+| ANLYT-03 | Phase 121 | Complete |
+| ANLYT-04 | Phase 121 | Complete |
+| ANLYT-05 | Phase 121 | Complete |
+| ANLYT-06 | Phase 121 | Complete |
+| ANLYT-07 | Phase 121 | Complete |
+| ANLYT-08 | Phase 121 | Complete |
 | SET-01 | Phase 121 | Complete |
 | SET-02 | Phase 121 | Complete |
 | SET-03 | Phase 121 | Complete |

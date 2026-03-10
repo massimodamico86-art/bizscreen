@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
 status: unknown
-last_updated: "2026-03-10T23:30:17.885Z"
+last_updated: "2026-03-10T23:30:32.529Z"
 progress:
   total_phases: 80
   completed_phases: 77
@@ -101,6 +101,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 121-03]: Reseller pages (ADMIN-06/07) are RESELLER_PORTAL gated; captured upgrade prompt as valid evidence
 - [Phase 121-03]: Admin tenant detail uses dynamic page ID admin-tenant-tenant-001 with mocked get_tenant_detail RPC
 - [Phase 121]: Reseller pages ADMIN-06/07 RESELLER_PORTAL gated; upgrade prompt screenshots as valid evidence
+- [Phase 121]: Analytics dashboard and content performance are feature-gated (ADVANCED_ANALYTICS) -- E2E tests capture upgrade prompt as evidence
 
 ### Blockers/Concerns
 
@@ -113,6 +114,7 @@ None.
 | 88 | Full QA walkthrough of all app pages with Playwright - visual bugs, interactive elements, responsive checks, console errors | 2026-03-08 | f5a9eaf | [88-full-qa-walkthrough-of-all-app-pages-wit](./quick/88-full-qa-walkthrough-of-all-app-pages-wit/) |
 | Phase 121 P02 | 4min | 2 tasks | 8 files |
 | Phase 121 P03 | 2min | 2 tasks | 9 files |
+| Phase 121 P01 | 3min | 2 tasks | 9 files |
 
 ## Session Continuity
 
