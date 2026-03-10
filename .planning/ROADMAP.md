@@ -211,7 +211,10 @@ Plans:
   1. Running the responsive E2E spec produces screenshots of dashboard at mobile (375px) and tablet (768px), hamburger menu collapse, media grid column adjustment, template gallery responsive layout, pricing tablet grid, schedule editor on tablet, and admin-hidden nav for non-admin users
   2. Running the edge cases E2E spec produces screenshots of 404 page, session expiry redirect, empty states on list pages, inline form validation errors, network error toast, concurrent tab behavior, deep link auth redirect, and browser back/forward state preservation
   3. All responsive tests use Playwright viewport projects (mobile/tablet/desktop) with testMatch opt-in
-**Plans**: TBD (to be created via `/gsd:plan-phase 122`)
+**Plans**: 2 plans
+Plans:
+- [ ] 122-01-PLAN.md — Responsive viewport screenshot E2E tests (dashboard mobile/tablet, hamburger menu, media grid, template gallery, pricing, schedule editor, admin-hidden nav)
+- [ ] 122-02-PLAN.md — Edge cases screenshot E2E tests (404 page, session expiry, empty states, validation errors, network error toast, concurrent tabs, deep link redirect, back/forward)
 
 ### Phase 123: Error Resilience & UX Polish
 **Goal**: The application gracefully handles errors at every level and loading states match page structure
@@ -269,11 +272,11 @@ Plans:
 | 119. Screens & Device Management E2E | 3/3 | Complete   | 2026-03-07 |
 | 120. Data Sources, Apps & Moderation E2E | 3/3 | Complete   | 2026-03-08 |
 | 121. Analytics, Settings & Admin E2E | 3/3 | Complete    | 2026-03-10 |
-| 122. Responsive & Edge Cases E2E | 0/TBD | Not started | - |
+| 122. Responsive & Edge Cases E2E | 0/2 | Not started | - |
 | 123. Error Resilience & UX Polish | 0/TBD | Not started | - |
 | 124. CI Pipeline & Final Integration | 0/TBD | Not started | - |
 
 **Total:** 124 phases | 320 plans executed | 19 milestones (18 shipped, 1 in progress)
 
 ---
-*Last updated: 2026-03-07 -- Phase 120 plans created (3 plans, 1 wave)*
+*Last updated: 2026-03-10 -- Phase 122 plans created (2 plans, 1 wave)*
