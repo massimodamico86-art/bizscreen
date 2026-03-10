@@ -160,14 +160,14 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Admin & Reseller (E2E)
 
-- [ ] **ADMIN-01**: E2E test verifies admin tenant list with search and pagination
-- [ ] **ADMIN-02**: E2E test verifies admin tenant detail page with usage stats
-- [ ] **ADMIN-03**: E2E test verifies admin audit log with filterable events
-- [ ] **ADMIN-04**: E2E test verifies admin system events page
-- [ ] **ADMIN-05**: E2E test verifies admin template management
-- [ ] **ADMIN-06**: E2E test verifies reseller dashboard with client overview
-- [ ] **ADMIN-07**: E2E test verifies reseller billing page
-- [ ] **ADMIN-08**: E2E test verifies feature flags page with toggle persistence
+- [x] **ADMIN-01**: E2E test verifies admin tenant list with search and pagination
+- [x] **ADMIN-02**: E2E test verifies admin tenant detail page with usage stats
+- [x] **ADMIN-03**: E2E test verifies admin audit log with filterable events
+- [x] **ADMIN-04**: E2E test verifies admin system events page
+- [x] **ADMIN-05**: E2E test verifies admin template management
+- [x] **ADMIN-06**: E2E test verifies reseller dashboard with client overview
+- [x] **ADMIN-07**: E2E test verifies reseller billing page
+- [x] **ADMIN-08**: E2E test verifies feature flags page with toggle persistence
 
 ### Responsive & Cross-Role (E2E)
 
@@ -342,14 +342,14 @@ None deferred -- this milestone closes all testing and stability gaps.
 | SET-05 | Phase 121 | Complete |
 | SET-06 | Phase 121 | Complete |
 | SET-07 | Phase 121 | Complete |
-| ADMIN-01 | Phase 121 | Pending |
-| ADMIN-02 | Phase 121 | Pending |
-| ADMIN-03 | Phase 121 | Pending |
-| ADMIN-04 | Phase 121 | Pending |
-| ADMIN-05 | Phase 121 | Pending |
-| ADMIN-06 | Phase 121 | Pending |
-| ADMIN-07 | Phase 121 | Pending |
-| ADMIN-08 | Phase 121 | Pending |
+| ADMIN-01 | Phase 121 | Complete |
+| ADMIN-02 | Phase 121 | Complete |
+| ADMIN-03 | Phase 121 | Complete |
+| ADMIN-04 | Phase 121 | Complete |
+| ADMIN-05 | Phase 121 | Complete |
+| ADMIN-06 | Phase 121 | Complete |
+| ADMIN-07 | Phase 121 | Complete |
+| ADMIN-08 | Phase 121 | Complete |
 | RESP-01 | Phase 122 | Pending |
 | RESP-02 | Phase 122 | Pending |
 | RESP-03 | Phase 122 | Pending |

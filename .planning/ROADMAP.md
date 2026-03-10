@@ -95,7 +95,7 @@ All 18 milestones shipped successfully.
 - [x] **Phase 118: Templates, Schedules & Campaigns E2E** - Screenshot tests for template marketplace, schedule creation, and campaign management (completed 2026-03-06)
 - [x] **Phase 119: Screens & Device Management E2E** - Screenshot tests for screen pairing, groups, diagnostics, and remote commands (completed 2026-03-07)
 - [x] **Phase 120: Data Sources, Apps & Moderation E2E** - Screenshot tests for data sources, apps gallery, menu boards, and content moderation (completed 2026-03-08)
-- [ ] **Phase 121: Analytics, Settings & Admin E2E** - Screenshot tests for analytics dashboards, settings pages, and admin/reseller portals
+- [x] **Phase 121: Analytics, Settings & Admin E2E** - Screenshot tests for analytics dashboards, settings pages, and admin/reseller portals (completed 2026-03-10)
 - [ ] **Phase 122: Responsive & Edge Cases E2E** - Screenshot tests for viewport responsiveness, role-based access, and error/edge states
 - [ ] **Phase 123: Error Resilience & UX Polish** - Error boundaries on route segments, API backoff patterns, skeleton loaders, and error state redesign
 - [ ] **Phase 124: CI Pipeline & Final Integration** - CI test execution, pass rate gate, and screenshot comparison report
@@ -268,7 +268,7 @@ Plans:
 | 118. Templates, Schedules & Campaigns E2E | 3/3 | Complete    | 2026-03-06 |
 | 119. Screens & Device Management E2E | 3/3 | Complete   | 2026-03-07 |
 | 120. Data Sources, Apps & Moderation E2E | 3/3 | Complete   | 2026-03-08 |
-| 121. Analytics, Settings & Admin E2E | 1/3 | In Progress|  |
+| 121. Analytics, Settings & Admin E2E | 3/3 | Complete   | 2026-03-10 |
 | 122. Responsive & Edge Cases E2E | 0/TBD | Not started | - |
 | 123. Error Resilience & UX Polish | 0/TBD | Not started | - |
 | 124. CI Pipeline & Final Integration | 0/TBD | Not started | - |
