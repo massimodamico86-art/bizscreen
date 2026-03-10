@@ -197,7 +197,11 @@ Plans:
   1. Running the analytics E2E spec produces screenshots of analytics dashboard, content performance, activity log, alerts with severity, alert detail modal, notification settings with toggles, toggle persistence, and Proof of Play report
   2. Running the settings E2E spec produces screenshots of general settings, account/plan, branding with logo/colors, team management with invite/roles, developer API keys, white-label domain, and enterprise security settings
   3. Running the admin E2E spec produces screenshots of tenant list with search/pagination, tenant detail with usage, audit log, system events, template management, reseller dashboard, reseller billing, and feature flags with persistence
-**Plans**: TBD (to be created via `/gsd:plan-phase 121`)
+**Plans**: 3 plans
+Plans:
+- [ ] 121-01-PLAN.md — Analytics E2E screenshot tests (dashboard, content performance, activity log, alerts, alert detail, notification settings, toggle persistence, proof of play)
+- [ ] 121-02-PLAN.md — Settings E2E screenshot tests (general settings, account/plan, branding, team management, developer API keys, white-label, enterprise security)
+- [ ] 121-03-PLAN.md — Admin & reseller E2E screenshot tests (tenant list, tenant detail, audit log, system events, template management, reseller dashboard, reseller billing, feature flags)
 
 ### Phase 122: Responsive & Edge Cases E2E
 **Goal**: Viewport responsiveness, role-based access, and error/edge states have screenshot-verified E2E coverage
