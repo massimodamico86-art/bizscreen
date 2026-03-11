@@ -182,14 +182,14 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Edge Cases & Error States (E2E)
 
-- [ ] **EDGE-01**: E2E test verifies 404 page renders for unknown routes
-- [ ] **EDGE-02**: E2E test verifies session expiry redirects to login
-- [ ] **EDGE-03**: E2E test verifies empty states render with helpful messages on all list pages
-- [ ] **EDGE-04**: E2E test verifies form validation errors display inline
-- [ ] **EDGE-05**: E2E test verifies network error toast appears and auto-dismisses
-- [ ] **EDGE-06**: E2E test verifies concurrent tab behavior (no conflicts)
-- [ ] **EDGE-07**: E2E test verifies deep link navigation preserves route on auth redirect
-- [ ] **EDGE-08**: E2E test verifies browser back/forward navigation maintains state
+- [x] **EDGE-01**: E2E test verifies 404 page renders for unknown routes
+- [x] **EDGE-02**: E2E test verifies session expiry redirects to login
+- [x] **EDGE-03**: E2E test verifies empty states render with helpful messages on all list pages
+- [x] **EDGE-04**: E2E test verifies form validation errors display inline
+- [x] **EDGE-05**: E2E test verifies network error toast appears and auto-dismisses
+- [x] **EDGE-06**: E2E test verifies concurrent tab behavior (no conflicts)
+- [x] **EDGE-07**: E2E test verifies deep link navigation preserves route on auth redirect
+- [x] **EDGE-08**: E2E test verifies browser back/forward navigation maintains state
 
 ### Error Resilience
 
@@ -358,14 +358,14 @@ None deferred -- this milestone closes all testing and stability gaps.
 | RESP-06 | Phase 122 | Pending |
 | RESP-07 | Phase 122 | Pending |
 | RESP-08 | Phase 122 | Pending |
-| EDGE-01 | Phase 122 | Pending |
-| EDGE-02 | Phase 122 | Pending |
-| EDGE-03 | Phase 122 | Pending |
-| EDGE-04 | Phase 122 | Pending |
-| EDGE-05 | Phase 122 | Pending |
-| EDGE-06 | Phase 122 | Pending |
-| EDGE-07 | Phase 122 | Pending |
-| EDGE-08 | Phase 122 | Pending |
+| EDGE-01 | Phase 122 | Complete |
+| EDGE-02 | Phase 122 | Complete |
+| EDGE-03 | Phase 122 | Complete |
+| EDGE-04 | Phase 122 | Complete |
+| EDGE-05 | Phase 122 | Complete |
+| EDGE-06 | Phase 122 | Complete |
+| EDGE-07 | Phase 122 | Complete |
+| EDGE-08 | Phase 122 | Complete |
 | RESIL-01 | Phase 123 | Pending |
 | RESIL-02 | Phase 123 | Pending |
 | RESIL-03 | Phase 123 | Pending |
