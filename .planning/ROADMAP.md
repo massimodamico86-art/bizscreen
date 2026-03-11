@@ -226,7 +226,11 @@ Plans:
   3. A connection state indicator in the app header shows offline/reconnecting/online status reflecting actual network state
   4. All list pages show skeleton loaders (not spinners) on initial load, with skeleton shapes matching the page's actual layout structure (cards, tables, grids)
   5. Error states across the app show an icon, descriptive message, and actionable CTA (retry, go home, or contact support)
-**Plans**: TBD (to be created via `/gsd:plan-phase 123`)
+**Plans**: 3 plans
+Plans:
+- [ ] 123-01-PLAN.md — Per-route error boundaries and connection state indicator (RESIL-01, RESIL-03)
+- [ ] 123-02-PLAN.md — API call hook with backoff and ErrorState component (RESIL-02, UX-03)
+- [ ] 123-03-PLAN.md — Page-type skeleton loaders replacing spinners (UX-01, UX-02)
 
 ### Phase 124: CI Pipeline & Final Integration
 **Goal**: All E2E tests run reliably in CI with automated quality gates and visual regression detection
@@ -273,10 +277,10 @@ Plans:
 | 120. Data Sources, Apps & Moderation E2E | 3/3 | Complete   | 2026-03-08 |
 | 121. Analytics, Settings & Admin E2E | 3/3 | Complete    | 2026-03-10 |
 | 122. Responsive & Edge Cases E2E | 2/2 | Complete    | 2026-03-11 |
-| 123. Error Resilience & UX Polish | 0/TBD | Not started | - |
+| 123. Error Resilience & UX Polish | 0/3 | Not started | - |
 | 124. CI Pipeline & Final Integration | 0/TBD | Not started | - |
 
 **Total:** 124 phases | 320 plans executed | 19 milestones (18 shipped, 1 in progress)
 
 ---
-*Last updated: 2026-03-10 -- Phase 122 plans created (2 plans, 1 wave)*
+*Last updated: 2026-03-11 -- Phase 123 plans created (3 plans, 2 waves)*
