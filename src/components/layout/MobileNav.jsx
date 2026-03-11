@@ -5,7 +5,7 @@
  */
 import { Fragment } from 'react';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 
 export function MobileNav({
   open,
