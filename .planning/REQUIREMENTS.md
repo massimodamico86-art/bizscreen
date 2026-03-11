@@ -171,14 +171,14 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Responsive & Cross-Role (E2E)
 
-- [ ] **RESP-01**: E2E test verifies dashboard renders correctly at mobile viewport (375px)
-- [ ] **RESP-02**: E2E test verifies dashboard renders correctly at tablet viewport (768px)
-- [ ] **RESP-03**: E2E test verifies sidebar collapses to hamburger menu on mobile
-- [ ] **RESP-04**: E2E test verifies media grid adjusts columns per viewport
-- [ ] **RESP-05**: E2E test verifies template gallery responsive column layout
-- [ ] **RESP-06**: E2E test verifies pricing page tablet 2-column grid
-- [ ] **RESP-07**: E2E test verifies schedule editor is usable on tablet
-- [ ] **RESP-08**: E2E test verifies role-based navigation hides admin items for non-admin users
+- [x] **RESP-01**: E2E test verifies dashboard renders correctly at mobile viewport (375px)
+- [x] **RESP-02**: E2E test verifies dashboard renders correctly at tablet viewport (768px)
+- [x] **RESP-03**: E2E test verifies sidebar collapses to hamburger menu on mobile
+- [x] **RESP-04**: E2E test verifies media grid adjusts columns per viewport
+- [x] **RESP-05**: E2E test verifies template gallery responsive column layout
+- [x] **RESP-06**: E2E test verifies pricing page tablet 2-column grid
+- [x] **RESP-07**: E2E test verifies schedule editor is usable on tablet
+- [x] **RESP-08**: E2E test verifies role-based navigation hides admin items for non-admin users
 
 ### Edge Cases & Error States (E2E)
 
@@ -350,14 +350,14 @@ None deferred -- this milestone closes all testing and stability gaps.
 | ADMIN-06 | Phase 121 | Complete |
 | ADMIN-07 | Phase 121 | Complete |
 | ADMIN-08 | Phase 121 | Complete |
-| RESP-01 | Phase 122 | Pending |
-| RESP-02 | Phase 122 | Pending |
-| RESP-03 | Phase 122 | Pending |
-| RESP-04 | Phase 122 | Pending |
-| RESP-05 | Phase 122 | Pending |
-| RESP-06 | Phase 122 | Pending |
-| RESP-07 | Phase 122 | Pending |
-| RESP-08 | Phase 122 | Pending |
+| RESP-01 | Phase 122 | Complete |
+| RESP-02 | Phase 122 | Complete |
+| RESP-03 | Phase 122 | Complete |
+| RESP-04 | Phase 122 | Complete |
+| RESP-05 | Phase 122 | Complete |
+| RESP-06 | Phase 122 | Complete |
+| RESP-07 | Phase 122 | Complete |
+| RESP-08 | Phase 122 | Complete |
 | EDGE-01 | Phase 122 | Complete |
 | EDGE-02 | Phase 122 | Complete |
 | EDGE-03 | Phase 122 | Complete |
