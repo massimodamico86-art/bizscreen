@@ -193,9 +193,9 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Error Resilience
 
-- [ ] **RESIL-01**: React error boundaries wrap all route segments with fallback UI and "Try Again" button
+- [x] **RESIL-01**: React error boundaries wrap all route segments with fallback UI and "Try Again" button
 - [x] **RESIL-02**: All API calls use exponential backoff with max retry limit and clear error state on exhaustion
-- [ ] **RESIL-03**: Connection state indicator shows offline/reconnecting/online status in app header
+- [x] **RESIL-03**: Connection state indicator shows offline/reconnecting/online status in app header
 
 ### UX Polish
 
@@ -366,9 +366,9 @@ None deferred -- this milestone closes all testing and stability gaps.
 | EDGE-06 | Phase 122 | Complete |
 | EDGE-07 | Phase 122 | Complete |
 | EDGE-08 | Phase 122 | Complete |
-| RESIL-01 | Phase 123 | Pending |
+| RESIL-01 | Phase 123 | Complete |
 | RESIL-02 | Phase 123 | Complete |
-| RESIL-03 | Phase 123 | Pending |
+| RESIL-03 | Phase 123 | Complete |
 | UX-01 | Phase 123 | Pending |
 | UX-02 | Phase 123 | Pending |
 | UX-03 | Phase 123 | Complete |

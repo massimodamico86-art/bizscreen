@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v13.0
 milestone_name: Full Stability Pass
 status: unknown
-last_updated: "2026-03-11T19:29:37.447Z"
+last_updated: "2026-03-12T21:19:24.659Z"
 progress:
   total_phases: 80
   completed_phases: 78
-  total_plans: 258
-  completed_plans: 258
+  total_plans: 261
+  completed_plans: 260
 ---
 
 # Project State
@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 123 of 124 (Error Resilience & UX Polish)
-Plan: 2 of N in progress
+Plan: 2 of 3 in progress
 Status: Executing
-Last activity: 2026-03-12 - Completed 123-02-PLAN.md (API call hook & error state)
+Last activity: 2026-03-12 - Completed 123-01-PLAN.md (Error boundaries & connection indicator)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -108,6 +108,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 122]: Responsive spec runs on all 3 viewport projects via testMatch pattern, screenshotStep auto-detects viewport
 - [Phase 123-02]: useApiCall defaults to 3 retries / 1s base delay (faster failure for user-facing calls vs useRetryWithBackoff's 5/2s)
 - [Phase 123-02]: ErrorState compact mode omits Contact Support link for inline card/section use
+- [Phase 123]: RouteErrorBoundary uses window.__setCurrentPage for Go to Dashboard; network reconnecting uses 2s stability window
 
 ### Blockers/Concerns
 
@@ -124,6 +125,7 @@ None.
 | Phase 122 P02 | 3min | 2 tasks | 9 files |
 | Phase 122 P01 | 3min | 2 tasks | 23 files |
 | Phase 123 P02 | 2min | 2 tasks | 3 files |
+| Phase 123 P01 | 3min | 2 tasks | 5 files |
 
 ## Session Continuity
 
