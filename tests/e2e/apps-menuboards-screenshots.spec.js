@@ -534,25 +534,20 @@ test.describe('Apps & Menu Boards Screenshot Tests', () => {
     const dialog = page.locator('[role="dialog"]').last();
     await dialog.waitFor({ state: 'visible', timeout: 5000 });
 
-    // Look for an item with dietary tags -- Caesar Salad has vegetarian + gluten-free
-    // The dietary tag badges are small colored chips rendered inline
-    // Find the first item row that has dietary tag badges and screenshot it
-    const itemWithTags = dialog.locator('.border.border-gray-200.rounded-lg.p-3').filter({
-      hasText: 'Caesar Salad',
-    }).first();
+    // Click the Dietary Tags button on the first item (Caesar Salad in Starters category)
+    // Caesar Salad has dietary_tags: ['vegetarian', 'gluten-free'] so its Tag button is green
+    const tagButton = dialog.locator('button[title="Dietary tags"]').first();
+    await tagButton.waitFor({ state: 'visible', timeout: 5000 });
+    await tagButton.scrollIntoViewIfNeeded();
+    await tagButton.click();
+    await page.waitForTimeout(500);
 
-    if (await itemWithTags.isVisible().catch(() => false)) {
-      await itemWithTags.scrollIntoViewIfNeeded();
-      await page.waitForTimeout(300);
-      await itemWithTags.screenshot({
-        path: 'screenshots/120/120-12-menu-board-dietary-tags-desktop.png',
-      });
-    } else {
-      // Fallback: screenshot the whole dialog showing items with tags
-      await dialog.screenshot({
-        path: 'screenshots/120/120-12-menu-board-dietary-tags-desktop.png',
-      });
-    }
+    // The DietaryTagPicker is now expanded showing all dietary tags
+    // Vegetarian and Gluten-Free are selected (solid colored backgrounds)
+    // This is visually distinct from the base editor screenshot (120-10)
+    await dialog.screenshot({
+      path: 'screenshots/120/120-12-menu-board-dietary-tags-desktop.png',
+    });
   });
 
   test('APP-08: captures menu board theme and currency settings', async ({ page }) => {
