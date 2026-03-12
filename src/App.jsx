@@ -39,6 +39,7 @@ import MobileNav from './components/layout/MobileNav';
 import Toast from './components/Toast';
 import FeedbackWidget from './components/FeedbackWidget';
 import { FeatureGate, FeatureUpgradePrompt } from './components/FeatureGate';
+import { RouteErrorBoundary } from './components/RouteErrorBoundary';
 import { IndustrySelectionModal } from './components/onboarding';
 
 // Lazy load pages for better code splitting
@@ -602,69 +603,69 @@ function BizScreenAppInner() {
 
   const pages = {
     // Yodeck-exact pages
-    welcome: <Suspense fallback={<PageLoader />}><WelcomePage setCurrentPage={setCurrentPage} showToast={showToast} /></Suspense>,
-    dashboard: <Suspense fallback={<PageLoader />}><DashboardPage setCurrentPage={setCurrentPage} showToast={showToast} listings={listings} setListings={setListings} /></Suspense>,
+    welcome: <RouteErrorBoundary name="Welcome"><Suspense fallback={<PageLoader />}><WelcomePage setCurrentPage={setCurrentPage} showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    dashboard: <RouteErrorBoundary name="Dashboard"><Suspense fallback={<PageLoader />}><DashboardPage setCurrentPage={setCurrentPage} showToast={showToast} listings={listings} setListings={setListings} /></Suspense></RouteErrorBoundary>,
     // Yodeck-style pages
-    'media-all': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter={null} /></Suspense>,
-    'media-images': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="image" /></Suspense>,
-    'media-videos': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="video" /></Suspense>,
-    'media-audio': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="audio" /></Suspense>,
-    'media-documents': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="document" /></Suspense>,
-    'media-webpages': <Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="web_page" /></Suspense>,
-    apps: <Suspense fallback={<PageLoader />}><AppsPage showToast={showToast} /></Suspense>,
-    playlists: <Suspense fallback={<PageLoader />}><PlaylistsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    layouts: <Suspense fallback={<PageLoader />}><LayoutsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    schedules: <Suspense fallback={<PageLoader />}><SchedulesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    screens: <Suspense fallback={<PageLoader />}><ScreensPage showToast={showToast} /></Suspense>,
-    'video-walls': <Suspense fallback={<PageLoader />}><VideoWallPage showToast={showToast} /></Suspense>,
+    'media-all': <RouteErrorBoundary name="All Media"><Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter={null} /></Suspense></RouteErrorBoundary>,
+    'media-images': <RouteErrorBoundary name="Media Images"><Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="image" /></Suspense></RouteErrorBoundary>,
+    'media-videos': <RouteErrorBoundary name="Media Videos"><Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="video" /></Suspense></RouteErrorBoundary>,
+    'media-audio': <RouteErrorBoundary name="Media Audio"><Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="audio" /></Suspense></RouteErrorBoundary>,
+    'media-documents': <RouteErrorBoundary name="Media Documents"><Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="document" /></Suspense></RouteErrorBoundary>,
+    'media-webpages': <RouteErrorBoundary name="Media Web Pages"><Suspense fallback={<PageLoader />}><MediaLibraryPage showToast={showToast} filter="web_page" /></Suspense></RouteErrorBoundary>,
+    apps: <RouteErrorBoundary name="Apps"><Suspense fallback={<PageLoader />}><AppsPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    playlists: <RouteErrorBoundary name="Playlists"><Suspense fallback={<PageLoader />}><PlaylistsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    layouts: <RouteErrorBoundary name="Layouts"><Suspense fallback={<PageLoader />}><LayoutsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    schedules: <RouteErrorBoundary name="Schedules"><Suspense fallback={<PageLoader />}><SchedulesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    screens: <RouteErrorBoundary name="Screens"><Suspense fallback={<PageLoader />}><ScreensPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'video-walls': <RouteErrorBoundary name="Video Walls"><Suspense fallback={<PageLoader />}><VideoWallPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
     // Legacy alias — redirects to locations
-    listings: <Suspense fallback={<PageLoader />}><LocationsPage showToast={showToast} /></Suspense>,
-    settings: <Suspense fallback={<PageLoader />}><SettingsPage showToast={showToast} /></Suspense>,
-    'account-plan': <Suspense fallback={<PageLoader />}><AccountPlanPage showToast={showToast} /></Suspense>,
-    'admin-test': <Suspense fallback={<PageLoader />}><AdminTestPage /></Suspense>,
-    'clients': <Suspense fallback={<PageLoader />}><ClientsPage /></Suspense>,
-    'branding': <Suspense fallback={<PageLoader />}><BrandingSettingsPage /></Suspense>,
-    'activity': <Suspense fallback={<PageLoader />}><ActivityLogPage /></Suspense>,
-    'locations': <Suspense fallback={<PageLoader />}><LocationsPage showToast={showToast} /></Suspense>,
-    'team': <Suspense fallback={<PageLoader />}><TeamPage showToast={showToast} /></Suspense>,
-    'analytics': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsPage showToast={showToast} /></FeatureGate></Suspense>,
-    'templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'scenes': <Suspense fallback={<PageLoader />}><ScenesPage onShowToast={showToast} onNavigate={setCurrentPage} onShowAutoBuild={() => setShowIndustryModal(true)} /></Suspense>,
-    'assistant': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.AI_ASSISTANT} fallback={<FeatureUpgradePrompt feature={Feature.AI_ASSISTANT} onNavigate={() => setCurrentPage('account-plan')} />}><ContentAssistantPage showToast={showToast} /></FeatureGate></Suspense>,
-    'screen-groups': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.SCREEN_GROUPS} fallback={<FeatureUpgradePrompt feature={Feature.SCREEN_GROUPS} onNavigate={() => setCurrentPage('account-plan')} />}><ScreenGroupsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
-    'campaigns': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.CAMPAIGNS} fallback={<FeatureUpgradePrompt feature={Feature.CAMPAIGNS} onNavigate={() => setCurrentPage('account-plan')} />}><CampaignsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
-    'review-inbox': <Suspense fallback={<PageLoader />}><ReviewInboxPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'developer': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.API_ACCESS} fallback={<FeatureUpgradePrompt feature={Feature.API_ACCESS} onNavigate={() => setCurrentPage('account-plan')} />}><DeveloperSettingsPage showToast={showToast} /></FeatureGate></Suspense>,
-    'white-label': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.WHITE_LABEL} fallback={<FeatureUpgradePrompt feature={Feature.WHITE_LABEL} onNavigate={() => setCurrentPage('account-plan')} />}><WhiteLabelSettingsPage showToast={showToast} /></FeatureGate></Suspense>,
-    'status': <Suspense fallback={<PageLoader />}><StatusPage /></Suspense>,
-    'ops-console': <Suspense fallback={<PageLoader />}><OpsConsolePage /></Suspense>,
-    'tenant-admin': <Suspense fallback={<PageLoader />}><TenantAdminPage showToast={showToast} /></Suspense>,
-    'help': <Suspense fallback={<PageLoader />}><HelpCenterPage onNavigate={setCurrentPage} /></Suspense>,
-    'demo-tools': <Suspense fallback={<PageLoader />}><DemoToolsPage showToast={showToast} /></Suspense>,
-    'enterprise-security': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ENTERPRISE_SSO} fallback={<FeatureUpgradePrompt feature={Feature.ENTERPRISE_SSO} onNavigate={() => setCurrentPage('account-plan')} />}><EnterpriseSecurityPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
-    'reseller-dashboard': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerDashboardPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
-    'reseller-billing': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerBillingPage showToast={showToast} /></FeatureGate></Suspense>,
-    'service-quality': <Suspense fallback={<PageLoader />}><ServiceQualityPage /></Suspense>,
-    'feature-flags': <Suspense fallback={<PageLoader />}><FeatureFlagsPage /></Suspense>,
-    'usage': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.USAGE_DASHBOARD} fallback={<FeatureUpgradePrompt feature={Feature.USAGE_DASHBOARD} onNavigate={() => setCurrentPage('account-plan')} />}><UsageDashboardPage showToast={showToast} /></FeatureGate></Suspense>,
-    'admin-tenants': <Suspense fallback={<PageLoader />}><AdminTenantsListPage onNavigate={setCurrentPage} showToast={showToast} /></Suspense>,
-    'admin-audit-logs': <Suspense fallback={<PageLoader />}><AdminAuditLogsPage onBack={() => setCurrentPage('admin-tenants')} showToast={showToast} /></Suspense>,
-    'admin-system-events': <Suspense fallback={<PageLoader />}><AdminSystemEventsPage onBack={() => setCurrentPage('admin-tenants')} showToast={showToast} /></Suspense>,
-    'device-diagnostics': <Suspense fallback={<PageLoader />}><DeviceDiagnosticsPage /></Suspense>,
-    'data-sources': <Suspense fallback={<PageLoader />}><DataSourcesPage showToast={showToast} /></Suspense>,
-    'content-performance': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><ContentPerformancePage showToast={showToast} /></FeatureGate></Suspense>,
-    'analytics-dashboard': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsDashboardPage showToast={showToast} /></FeatureGate></Suspense>,
-    'template-marketplace': <Suspense fallback={<PageLoader />}><TemplateMarketplacePage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'admin-templates': <Suspense fallback={<PageLoader />}><AdminTemplatesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'social-accounts': <Suspense fallback={<PageLoader />}><SocialAccountsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'content-moderation': <Suspense fallback={<PageLoader />}><ModerationPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'alerts': <Suspense fallback={<PageLoader />}><AlertsCenterPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'notification-settings': <Suspense fallback={<PageLoader />}><NotificationSettingsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'svg-templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'security': <Suspense fallback={<PageLoader />}><SecurityDashboardPage /></Suspense>,
-    'translations': <Suspense fallback={<PageLoader />}><TranslationDashboardPage showToast={showToast} /></Suspense>,
-    'menu-boards': <Suspense fallback={<PageLoader />}><MenuBoardsPage showToast={showToast} /></Suspense>,
-    'proof-of-play': <Suspense fallback={<PageLoader />}><ProofOfPlayPage showToast={showToast} /></Suspense>,
+    listings: <RouteErrorBoundary name="Listings"><Suspense fallback={<PageLoader />}><LocationsPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    settings: <RouteErrorBoundary name="Settings"><Suspense fallback={<PageLoader />}><SettingsPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'account-plan': <RouteErrorBoundary name="Account & Plan"><Suspense fallback={<PageLoader />}><AccountPlanPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'admin-test': <RouteErrorBoundary name="Admin Test"><Suspense fallback={<PageLoader />}><AdminTestPage /></Suspense></RouteErrorBoundary>,
+    'clients': <RouteErrorBoundary name="Clients"><Suspense fallback={<PageLoader />}><ClientsPage /></Suspense></RouteErrorBoundary>,
+    'branding': <RouteErrorBoundary name="Branding"><Suspense fallback={<PageLoader />}><BrandingSettingsPage /></Suspense></RouteErrorBoundary>,
+    'activity': <RouteErrorBoundary name="Activity Log"><Suspense fallback={<PageLoader />}><ActivityLogPage /></Suspense></RouteErrorBoundary>,
+    'locations': <RouteErrorBoundary name="Locations"><Suspense fallback={<PageLoader />}><LocationsPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'team': <RouteErrorBoundary name="Team"><Suspense fallback={<PageLoader />}><TeamPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'analytics': <RouteErrorBoundary name="Analytics"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsPage showToast={showToast} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'templates': <RouteErrorBoundary name="Templates"><Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'scenes': <RouteErrorBoundary name="Scenes"><Suspense fallback={<PageLoader />}><ScenesPage onShowToast={showToast} onNavigate={setCurrentPage} onShowAutoBuild={() => setShowIndustryModal(true)} /></Suspense></RouteErrorBoundary>,
+    'assistant': <RouteErrorBoundary name="Content Assistant"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.AI_ASSISTANT} fallback={<FeatureUpgradePrompt feature={Feature.AI_ASSISTANT} onNavigate={() => setCurrentPage('account-plan')} />}><ContentAssistantPage showToast={showToast} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'screen-groups': <RouteErrorBoundary name="Screen Groups"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.SCREEN_GROUPS} fallback={<FeatureUpgradePrompt feature={Feature.SCREEN_GROUPS} onNavigate={() => setCurrentPage('account-plan')} />}><ScreenGroupsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'campaigns': <RouteErrorBoundary name="Campaigns"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.CAMPAIGNS} fallback={<FeatureUpgradePrompt feature={Feature.CAMPAIGNS} onNavigate={() => setCurrentPage('account-plan')} />}><CampaignsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'review-inbox': <RouteErrorBoundary name="Review Inbox"><Suspense fallback={<PageLoader />}><ReviewInboxPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'developer': <RouteErrorBoundary name="Developer Settings"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.API_ACCESS} fallback={<FeatureUpgradePrompt feature={Feature.API_ACCESS} onNavigate={() => setCurrentPage('account-plan')} />}><DeveloperSettingsPage showToast={showToast} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'white-label': <RouteErrorBoundary name="White Label"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.WHITE_LABEL} fallback={<FeatureUpgradePrompt feature={Feature.WHITE_LABEL} onNavigate={() => setCurrentPage('account-plan')} />}><WhiteLabelSettingsPage showToast={showToast} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'status': <RouteErrorBoundary name="System Status"><Suspense fallback={<PageLoader />}><StatusPage /></Suspense></RouteErrorBoundary>,
+    'ops-console': <RouteErrorBoundary name="Ops Console"><Suspense fallback={<PageLoader />}><OpsConsolePage /></Suspense></RouteErrorBoundary>,
+    'tenant-admin': <RouteErrorBoundary name="Tenant Admin"><Suspense fallback={<PageLoader />}><TenantAdminPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'help': <RouteErrorBoundary name="Help Center"><Suspense fallback={<PageLoader />}><HelpCenterPage onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'demo-tools': <RouteErrorBoundary name="Demo Tools"><Suspense fallback={<PageLoader />}><DemoToolsPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'enterprise-security': <RouteErrorBoundary name="Enterprise Security"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ENTERPRISE_SSO} fallback={<FeatureUpgradePrompt feature={Feature.ENTERPRISE_SSO} onNavigate={() => setCurrentPage('account-plan')} />}><EnterpriseSecurityPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'reseller-dashboard': <RouteErrorBoundary name="Reseller Dashboard"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerDashboardPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'reseller-billing': <RouteErrorBoundary name="Reseller Billing"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.RESELLER_PORTAL} fallback={<FeatureUpgradePrompt feature={Feature.RESELLER_PORTAL} onNavigate={() => setCurrentPage('account-plan')} />}><ResellerBillingPage showToast={showToast} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'service-quality': <RouteErrorBoundary name="Service Quality"><Suspense fallback={<PageLoader />}><ServiceQualityPage /></Suspense></RouteErrorBoundary>,
+    'feature-flags': <RouteErrorBoundary name="Feature Flags"><Suspense fallback={<PageLoader />}><FeatureFlagsPage /></Suspense></RouteErrorBoundary>,
+    'usage': <RouteErrorBoundary name="Usage Dashboard"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.USAGE_DASHBOARD} fallback={<FeatureUpgradePrompt feature={Feature.USAGE_DASHBOARD} onNavigate={() => setCurrentPage('account-plan')} />}><UsageDashboardPage showToast={showToast} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'admin-tenants': <RouteErrorBoundary name="Admin Tenants"><Suspense fallback={<PageLoader />}><AdminTenantsListPage onNavigate={setCurrentPage} showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'admin-audit-logs': <RouteErrorBoundary name="Admin Audit Logs"><Suspense fallback={<PageLoader />}><AdminAuditLogsPage onBack={() => setCurrentPage('admin-tenants')} showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'admin-system-events': <RouteErrorBoundary name="Admin System Events"><Suspense fallback={<PageLoader />}><AdminSystemEventsPage onBack={() => setCurrentPage('admin-tenants')} showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'device-diagnostics': <RouteErrorBoundary name="Device Diagnostics"><Suspense fallback={<PageLoader />}><DeviceDiagnosticsPage /></Suspense></RouteErrorBoundary>,
+    'data-sources': <RouteErrorBoundary name="Data Sources"><Suspense fallback={<PageLoader />}><DataSourcesPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'content-performance': <RouteErrorBoundary name="Content Performance"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><ContentPerformancePage showToast={showToast} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'analytics-dashboard': <RouteErrorBoundary name="Analytics Dashboard"><Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsDashboardPage showToast={showToast} /></FeatureGate></Suspense></RouteErrorBoundary>,
+    'template-marketplace': <RouteErrorBoundary name="Template Marketplace"><Suspense fallback={<PageLoader />}><TemplateMarketplacePage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'admin-templates': <RouteErrorBoundary name="Admin Templates"><Suspense fallback={<PageLoader />}><AdminTemplatesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'social-accounts': <RouteErrorBoundary name="Social Accounts"><Suspense fallback={<PageLoader />}><SocialAccountsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'content-moderation': <RouteErrorBoundary name="Content Moderation"><Suspense fallback={<PageLoader />}><ModerationPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'alerts': <RouteErrorBoundary name="Alerts Center"><Suspense fallback={<PageLoader />}><AlertsCenterPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'notification-settings': <RouteErrorBoundary name="Notification Settings"><Suspense fallback={<PageLoader />}><NotificationSettingsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'svg-templates': <RouteErrorBoundary name="SVG Templates"><Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense></RouteErrorBoundary>,
+    'security': <RouteErrorBoundary name="Security Dashboard"><Suspense fallback={<PageLoader />}><SecurityDashboardPage /></Suspense></RouteErrorBoundary>,
+    'translations': <RouteErrorBoundary name="Translations"><Suspense fallback={<PageLoader />}><TranslationDashboardPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'menu-boards': <RouteErrorBoundary name="Menu Boards"><Suspense fallback={<PageLoader />}><MenuBoardsPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
+    'proof-of-play': <RouteErrorBoundary name="Proof of Play"><Suspense fallback={<PageLoader />}><ProofOfPlayPage showToast={showToast} /></Suspense></RouteErrorBoundary>,
   };
 
   // Show Canva OAuth callback page
@@ -1103,110 +1104,110 @@ function ClientUILayout({
           {pages[currentPage] || (
             // Handle dynamic editor routes
             currentPage.startsWith('playlist-editor-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Playlist Editor"><Suspense fallback={<PageLoader />}>
                 <PlaylistEditorPage
                   playlistId={currentPage.replace('playlist-editor-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('layout-editor-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Layout Editor"><Suspense fallback={<PageLoader />}>
                 <LayoutEditorPage
                   layoutId={currentPage.replace('layout-editor-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('schedule-editor-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Schedule Editor"><Suspense fallback={<PageLoader />}>
                 <ScheduleEditorPage
                   scheduleId={currentPage.replace('schedule-editor-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('campaign-editor-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Campaign Editor"><Suspense fallback={<PageLoader />}>
                 <CampaignEditorPage
                   campaignId={currentPage.replace('campaign-editor-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('admin-tenant-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Admin Tenant Detail"><Suspense fallback={<PageLoader />}>
                 <AdminTenantDetailPage
                   tenantId={currentPage.replace('admin-tenant-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('scene-detail-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Scene Detail"><Suspense fallback={<PageLoader />}>
                 <SceneDetailPage
                   sceneId={currentPage.replace('scene-detail-', '')}
                   onShowToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('screen-group-detail-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Screen Group Detail"><Suspense fallback={<PageLoader />}>
                 <ScreenGroupDetailPage
                   groupId={currentPage.replace('screen-group-detail-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('scene-editor-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Scene Editor"><Suspense fallback={<PageLoader />}>
                 <SceneEditorPage
                   sceneId={currentPage.replace('scene-editor-', '')}
                   onShowToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('admin-template-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Admin Template Editor"><Suspense fallback={<PageLoader />}>
                 <AdminEditTemplatePage
                   templateId={currentPage.replace('admin-template-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('yodeck-layout-preview-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Layout Preview"><Suspense fallback={<PageLoader />}>
                 <LayoutPreviewPage
                   layoutId={currentPage.replace('yodeck-layout-preview-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('yodeck-layout-') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Yodeck Layout Editor"><Suspense fallback={<PageLoader />}>
                 <YodeckLayoutEditorPage
                   layoutId={currentPage.replace('yodeck-layout-', '')}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('design-editor') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="Design Editor"><Suspense fallback={<PageLoader />}>
                 <DesignEditorPage
                   designId={currentPage.includes('?') ? 'new' : currentPage.replace('design-editor-', '')}
                   routeString={currentPage}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : currentPage.startsWith('svg-editor') ? (
-              <Suspense fallback={<PageLoader />}>
+              <RouteErrorBoundary name="SVG Editor"><Suspense fallback={<PageLoader />}>
                 <SvgEditorPage
                   routeString={currentPage}
                   showToast={showToast}
                   onNavigate={setCurrentPage}
                 />
-              </Suspense>
+              </Suspense></RouteErrorBoundary>
             ) : (
               <div className="text-center py-12">
                 <p className="text-gray-500">Page not found: {currentPage}</p>
