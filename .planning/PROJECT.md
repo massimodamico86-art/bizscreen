@@ -241,17 +241,20 @@ These capabilities shipped and are production-verified:
 - ✓ Canva design import via Edge Function proxy with PKCE flow — v12.0
 - ✓ Multi-screen video wall with Realtime broadcast sync and bezel compensation — v12.0
 
+**v13.0 Full Stability Pass (2026-03-12):**
+- ✓ 148 E2E screenshot test requirements satisfied across all app pages — v13.0
+- ✓ React error boundaries on all route segments with fallback UI and Try Again — v13.0
+- ✓ API call hook with exponential backoff, max retries, and clear error state — v13.0
+- ✓ Connection state indicator (offline/reconnecting/online) in app header — v13.0
+- ✓ 8 skeleton loader variants replacing spinners (Dashboard, Card, Table, Grid, Form, Editor, Screens, Analytics) — v13.0
+- ✓ Error state redesign with icon, descriptive message, and actionable CTA — v13.0
+- ✓ CI pipeline with SHA-256 screenshot comparison, 90% pass rate gate, best-of-3 retry — v13.0
+- ✓ Responsive tests at 375px/768px/1440px viewports — v13.0
+- ✓ Edge case coverage: 404, session expiry, empty states, form validation, network errors — v13.0
+
 ### Active
 
-## Current Milestone: v13.0 Full Stability Pass
-
-**Goal:** Achieve comprehensive E2E test coverage across all pages and flows, add error resilience (boundaries, backoff, connection states), implement skeleton loaders, and redesign error states.
-
-**Target features:**
-- Close 139 deferred E2E screenshot test requirements from v8.0 (dashboard, media, scenes, playlists, layouts, templates, schedules, campaigns, screens, data sources, apps, menu boards, moderation, analytics, settings, admin, reseller, responsive, edge cases)
-- Error resilience: React error boundaries on all route segments, API call backoff patterns, connection state handling
-- UX polish: skeleton loaders for page-type loading states, error state redesign with actionable messages
-- CI pipeline hardening and final integration verification
+(No active requirements — planning next milestone)
 
 ### Out of Scope
 
@@ -270,11 +273,14 @@ These capabilities shipped and are production-verified:
 
 ## Context
 
-**Current State (post v12.0):**
+**Current State (post v13.0):**
 - React 19 SPA with Supabase backend (auth, database, real-time)
-- ~203,800 lines of JavaScript/JSX/CSS in src/
-- 18 milestones shipped (v1 through v12.0), 114 phases, 320 plans executed
-- Every page audited and verified (v7.0) + all bugs from visual QA resolved (v11.0)
+- ~204,700 lines of JavaScript/JSX/CSS in src/
+- 19 milestones shipped (v1 through v13.0), 125 phases, 351 plans executed
+- Every page audited (v7.0), bugs resolved (v11.0), and E2E screenshot tested (v13.0)
+- 148 E2E screenshot tests covering all pages and flows with CI artifact upload
+- Error resilience: React error boundaries on all routes, API backoff, connection state indicator
+- UX polish: 8 skeleton loader variants, redesigned error states with actionable CTAs
 - Graceful degradation on all pages when Supabase RPCs unavailable
 - Centralized widget registry with 17+ widget types (clock, date, weather, QR, video, data-table, RSS, social, countdown, menu-board, YouTube, Vimeo, web page, Google Slides, document, calendar, Canva)
 - 7 Edge Function proxies: Unsplash, RSS, Weather, AI Designer, doc-converter, calendar-proxy, canva-proxy
@@ -283,7 +289,7 @@ These capabilities shipped and are production-verified:
 - Canva design import and multi-screen video wall with Realtime sync
 - Player self-healing with content version verification and alert pipeline
 - Cloud media imports: 5 providers + Canva with shared PKCE OAuth utility
-- E2E screenshot test infrastructure with CI artifact upload
+- CI pipeline: SHA-256 screenshot comparison, 90% pass rate gate, best-of-3 retry
 - ESLint: zero warnings, zero errors, all rules at error level with pre-commit enforcement
 - Sentry error monitoring with Slack alerting
 
@@ -298,6 +304,7 @@ These capabilities shipped and are production-verified:
 - 3 standalone Sidebar*Section.jsx files are orphaned dead code
 - PDF stored as single convertedPages entry (magick-wasm page splitting deferred)
 - initiateSSOLogin() deprecated but not removed
+- 13 E2E test tech debt items from v13.0 audit (defensive fallbacks, duplicate helpers, feature-gated screenshots)
 
 **Codebase Mapping:**
 - `.planning/codebase/ARCHITECTURE.md` — system design
@@ -447,4 +454,4 @@ These capabilities shipped and are production-verified:
 | Canva PKCE OAuth via Edge Function proxy | No client-side secrets, server-side token storage | ✓ Good — secure flow |
 
 ---
-*Last updated: 2026-03-06 after v13.0 Full Stability Pass milestone started*
+*Last updated: 2026-03-12 after v13.0 milestone*
