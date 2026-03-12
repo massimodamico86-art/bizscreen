@@ -205,9 +205,9 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### CI Pipeline
 
-- [ ] **CI-01**: All E2E tests run in CI with screenshot artifact upload
-- [ ] **CI-02**: E2E test pass rate gate at 90% threshold with best-of-3 retry
-- [ ] **CI-03**: Screenshot comparison report generated for visual regression detection
+- [x] **CI-01**: All E2E tests run in CI with screenshot artifact upload
+- [x] **CI-02**: E2E test pass rate gate at 90% threshold with best-of-3 retry
+- [x] **CI-03**: Screenshot comparison report generated for visual regression detection
 
 ## Future Requirements
 
@@ -372,9 +372,9 @@ None deferred -- this milestone closes all testing and stability gaps.
 | UX-01 | Phase 123 | Complete |
 | UX-02 | Phase 123 | Complete |
 | UX-03 | Phase 123 | Complete |
-| CI-01 | Phase 124 | Pending |
-| CI-02 | Phase 124 | Pending |
-| CI-03 | Phase 124 | Pending |
+| CI-01 | Phase 124 | Complete |
+| CI-02 | Phase 124 | Complete |
+| CI-03 | Phase 124 | Complete |
 
 **Coverage:**
 - v13.0 requirements: 148 total
