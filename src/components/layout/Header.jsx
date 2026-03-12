@@ -19,6 +19,7 @@ import { fetchScenesForTenant } from '../../services/sceneService';
 import { fetchMediaAssets } from '../../services/mediaService';
 import NotificationBell from '../notifications/NotificationBell';
 import AnnouncementCenter from '../AnnouncementCenter';
+import ConnectionIndicator from './ConnectionIndicator';
 
 /**
  * Breadcrumb configuration for all app routes.
@@ -414,6 +415,9 @@ export default function Header({
               EMERGENCY
             </span>
           )}
+
+          {/* Connection Status */}
+          <ConnectionIndicator />
 
           {/* Notification Bell */}
           <NotificationBell onNavigate={setCurrentPage} />
