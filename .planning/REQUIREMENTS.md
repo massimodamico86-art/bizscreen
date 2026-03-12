@@ -194,14 +194,14 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 ### Error Resilience
 
 - [ ] **RESIL-01**: React error boundaries wrap all route segments with fallback UI and "Try Again" button
-- [ ] **RESIL-02**: All API calls use exponential backoff with max retry limit and clear error state on exhaustion
+- [x] **RESIL-02**: All API calls use exponential backoff with max retry limit and clear error state on exhaustion
 - [ ] **RESIL-03**: Connection state indicator shows offline/reconnecting/online status in app header
 
 ### UX Polish
 
 - [ ] **UX-01**: Skeleton loaders replace spinner on initial page load for all list pages
 - [ ] **UX-02**: Page-type skeleton variants match actual layout structure (cards, tables, grids)
-- [ ] **UX-03**: Error states redesigned with icon, message, and actionable CTA (retry, go home, contact support)
+- [x] **UX-03**: Error states redesigned with icon, message, and actionable CTA (retry, go home, contact support)
 
 ### CI Pipeline
 
@@ -367,11 +367,11 @@ None deferred -- this milestone closes all testing and stability gaps.
 | EDGE-07 | Phase 122 | Complete |
 | EDGE-08 | Phase 122 | Complete |
 | RESIL-01 | Phase 123 | Pending |
-| RESIL-02 | Phase 123 | Pending |
+| RESIL-02 | Phase 123 | Complete |
 | RESIL-03 | Phase 123 | Pending |
 | UX-01 | Phase 123 | Pending |
 | UX-02 | Phase 123 | Pending |
-| UX-03 | Phase 123 | Pending |
+| UX-03 | Phase 123 | Complete |
 | CI-01 | Phase 124 | Pending |
 | CI-02 | Phase 124 | Pending |
 | CI-03 | Phase 124 | Pending |

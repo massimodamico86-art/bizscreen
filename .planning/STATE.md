@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Screens reliably display the right content at the right time, even when offline
-**Current focus:** v13.0 Full Stability Pass -- Phase 122 (Responsive & Edge Cases E2E)
+**Current focus:** v13.0 Full Stability Pass -- Phase 123 (Error Resilience & UX Polish)
 
 ## Current Position
 
-Phase: 122 of 124 (Responsive & Edge Cases E2E)
-Plan: 2 of 2 complete
-Status: Phase Complete
-Last activity: 2026-03-10 - Completed 122-01-PLAN.md (Responsive viewport screenshot tests)
+Phase: 123 of 124 (Error Resilience & UX Polish)
+Plan: 2 of N in progress
+Status: Executing
+Last activity: 2026-03-12 - Completed 123-02-PLAN.md (API call hook & error state)
 
 Progress: [██░░░░░░░░] 10%
 
@@ -106,6 +106,8 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 122-01]: Responsive spec runs on all 3 viewport projects (no project skip) via testMatch /.*responsive.*\.spec\.js/
 - [Phase 122-01]: screenshotStep auto-detects viewport via detectViewport() -- 22 screenshots across mobile/tablet/desktop
 - [Phase 122]: Responsive spec runs on all 3 viewport projects via testMatch pattern, screenshotStep auto-detects viewport
+- [Phase 123-02]: useApiCall defaults to 3 retries / 1s base delay (faster failure for user-facing calls vs useRetryWithBackoff's 5/2s)
+- [Phase 123-02]: ErrorState compact mode omits Contact Support link for inline card/section use
 
 ### Blockers/Concerns
 
@@ -121,13 +123,14 @@ None.
 | Phase 121 P01 | 3min | 2 tasks | 9 files |
 | Phase 122 P02 | 3min | 2 tasks | 9 files |
 | Phase 122 P01 | 3min | 2 tasks | 23 files |
+| Phase 123 P02 | 2min | 2 tasks | 3 files |
 
 ## Session Continuity
 
-Last session: 2026-03-10
-Stopped at: Completed 122-01-PLAN.md (Responsive viewport screenshot tests)
+Last session: 2026-03-12
+Stopped at: Completed 123-02-PLAN.md (API call hook & error state)
 Resume file: None
-Next: Execute phase 123
+Next: Continue phase 123
 
 ---
-*Updated: 2026-03-10 -- Phase 122 complete (2/2 plans)*
+*Updated: 2026-03-12 -- Phase 123 plan 02 complete*
