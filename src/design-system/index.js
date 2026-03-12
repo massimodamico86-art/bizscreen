@@ -68,6 +68,9 @@ export { Alert, Banner } from './components/Alert';
 // EmptyState
 export { EmptyState, Placeholder } from './components/EmptyState';
 
+// ErrorState
+export { ErrorState } from '../components/ErrorState';
+
 // Tabs
 export { Tabs, PillTabs } from './components/Tabs';
 
