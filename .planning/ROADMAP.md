@@ -240,7 +240,9 @@ Plans:
   1. The full E2E test suite runs in GitHub Actions CI with all screenshot artifacts uploaded and retained
   2. A quality gate enforces 90% E2E pass rate with best-of-3 retry before merging
   3. A screenshot comparison report is generated after each CI run for visual regression detection
-**Plans**: TBD (to be created via `/gsd:plan-phase 124`)
+**Plans**: 1 plan
+Plans:
+- [ ] 124-01-PLAN.md — Screenshot comparison report and CI pipeline verification (CI-01, CI-02, CI-03)
 
 ## Progress Summary
 
@@ -278,9 +280,9 @@ Plans:
 | 121. Analytics, Settings & Admin E2E | 3/3 | Complete    | 2026-03-10 |
 | 122. Responsive & Edge Cases E2E | 2/2 | Complete    | 2026-03-11 |
 | 123. Error Resilience & UX Polish | 3/3 | Complete    | 2026-03-12 |
-| 124. CI Pipeline & Final Integration | 0/TBD | Not started | - |
+| 124. CI Pipeline & Final Integration | 0/1 | Not started | - |
 
 **Total:** 124 phases | 320 plans executed | 19 milestones (18 shipped, 1 in progress)
 
 ---
-*Last updated: 2026-03-11 -- Phase 123 plans created (3 plans, 2 waves)*
+*Last updated: 2026-03-12 -- Phase 124 plans created (1 plan, 1 wave)*
