@@ -115,19 +115,19 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 
 ### Data Sources, Apps & Menu Boards (E2E)
 
-- [ ] **DATA-01**: E2E test verifies data sources list with create action
-- [ ] **DATA-02**: E2E test verifies Google Sheets data source creation
-- [ ] **DATA-03**: E2E test verifies CSV file upload as data source
-- [ ] **DATA-04**: E2E test verifies RSS feed URL configuration
-- [ ] **DATA-05**: E2E test verifies data source refresh interval setting
-- [ ] **APP-01**: E2E test verifies apps gallery page with category browsing
-- [ ] **APP-02**: E2E test verifies app detail modal with configuration form
-- [ ] **APP-03**: E2E test verifies app installation and configuration saving
-- [ ] **APP-04**: E2E test verifies menu board list with create action
-- [ ] **APP-05**: E2E test verifies menu board editor with category and item CRUD
-- [ ] **APP-06**: E2E test verifies menu item drag-and-drop reordering
+- [x] **DATA-01**: E2E test verifies data sources list with create action
+- [x] **DATA-02**: E2E test verifies Google Sheets data source creation
+- [x] **DATA-03**: E2E test verifies CSV file upload as data source
+- [x] **DATA-04**: E2E test verifies RSS feed URL configuration
+- [x] **DATA-05**: E2E test verifies data source refresh interval setting
+- [x] **APP-01**: E2E test verifies apps gallery page with category browsing
+- [x] **APP-02**: E2E test verifies app detail modal with configuration form
+- [x] **APP-03**: E2E test verifies app installation and configuration saving
+- [x] **APP-04**: E2E test verifies menu board list with create action
+- [x] **APP-05**: E2E test verifies menu board editor with category and item CRUD
+- [x] **APP-06**: E2E test verifies menu item drag-and-drop reordering
 - [ ] **APP-07**: E2E test verifies dietary/allergen tag assignment
-- [ ] **APP-08**: E2E test verifies menu board theme and currency settings
+- [x] **APP-08**: E2E test verifies menu board theme and currency settings
 
 ### Content Moderation (E2E)
 
@@ -309,19 +309,19 @@ None deferred -- this milestone closes all testing and stability gaps.
 | SCRN-09 | Phase 119 | Complete |
 | SCRN-10 | Phase 119 | Complete |
 | SCRN-11 | Phase 119 | Complete |
-| DATA-01 | Phase 120 | Pending |
-| DATA-02 | Phase 120 | Pending |
-| DATA-03 | Phase 120 | Pending |
-| DATA-04 | Phase 120 | Pending |
-| DATA-05 | Phase 120 | Pending |
-| APP-01 | Phase 120 | Pending |
-| APP-02 | Phase 120 | Pending |
-| APP-03 | Phase 120 | Pending |
-| APP-04 | Phase 120 | Pending |
-| APP-05 | Phase 120 | Pending |
-| APP-06 | Phase 120 | Pending |
-| APP-07 | Phase 120 | Pending |
-| APP-08 | Phase 120 | Pending |
+| DATA-01 | Phase 120 | Complete |
+| DATA-02 | Phase 120 | Complete |
+| DATA-03 | Phase 120 | Complete |
+| DATA-04 | Phase 120 | Complete |
+| DATA-05 | Phase 120 | Complete |
+| APP-01 | Phase 120 | Complete |
+| APP-02 | Phase 120 | Complete |
+| APP-03 | Phase 120 | Complete |
+| APP-04 | Phase 120 | Complete |
+| APP-05 | Phase 120 | Complete |
+| APP-06 | Phase 120 | Complete |
+| APP-07 | Phase 125 | Pending |
+| APP-08 | Phase 120 | Complete |
 | MOD-01 | Phase 120 | Complete |
 | MOD-02 | Phase 120 | Complete |
 | MOD-03 | Phase 120 | Complete |

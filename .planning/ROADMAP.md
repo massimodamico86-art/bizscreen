@@ -20,7 +20,7 @@
 - [x] **v10.0 Visual QA Audit** -- Phases 98-103 (shipped 2026-03-01)
 - [x] **v11.0 Stability Pass** -- Phases 104-107 (shipped 2026-03-02)
 - [x] **v12.0 Feature Parity** -- Phases 108-114 (shipped 2026-03-05)
-- [ ] **v13.0 Full Stability Pass** -- Phases 115-124 (in progress)
+- [ ] **v13.0 Full Stability Pass** -- Phases 115-125 (in progress)
 
 ## Phase History
 
@@ -99,6 +99,7 @@ All 18 milestones shipped successfully.
 - [x] **Phase 122: Responsive & Edge Cases E2E** - Screenshot tests for viewport responsiveness, role-based access, and error/edge states (completed 2026-03-11)
 - [x] **Phase 123: Error Resilience & UX Polish** - Error boundaries on route segments, API backoff patterns, skeleton loaders, and error state redesign (completed 2026-03-12)
 - [x] **Phase 124: CI Pipeline & Final Integration** - CI test execution, pass rate gate, and screenshot comparison report (completed 2026-03-12)
+- [ ] **Phase 125: APP-07 Dietary Tags E2E Fix** - Fix dietary/allergen tag E2E test to capture distinct screenshot evidence
 
 ## Phase Details
 
@@ -244,6 +245,19 @@ Plans:
 Plans:
 - [ ] 124-01-PLAN.md — Screenshot comparison report and CI pipeline verification (CI-01, CI-02, CI-03)
 
+### Phase 125: APP-07 Dietary Tags E2E Fix
+**Goal**: The APP-07 dietary/allergen tag E2E test produces a visually distinct screenshot proving tag assignment works
+**Depends on**: Phase 120
+**Requirements**: APP-07
+**Gap Closure:** Closes APP-07 gap from v13.0 audit
+**Success Criteria** (what must be TRUE):
+  1. The menu board E2E test reliably locates and clicks a menu item (Caesar Salad) without falling through to fallback
+  2. Dietary/allergen tags are visually toggled and the resulting screenshot (120-12) shows distinct tag badges/checkmarks compared to the base editor screenshot (120-10)
+  3. APP-07 passes the 3-source verification check (VERIFICATION + SUMMARY + REQUIREMENTS.md)
+**Plans**: 1 plan
+Plans:
+- [ ] 125-01-PLAN.md — Fix dietary tag locator, capture distinct screenshot evidence for APP-07
+
 ## Progress Summary
 
 | Milestone | Phases | Plans | Status | Shipped |
@@ -281,8 +295,9 @@ Plans:
 | 122. Responsive & Edge Cases E2E | 2/2 | Complete    | 2026-03-11 |
 | 123. Error Resilience & UX Polish | 3/3 | Complete    | 2026-03-12 |
 | 124. CI Pipeline & Final Integration | 1/1 | Complete    | 2026-03-12 |
+| 125. APP-07 Dietary Tags E2E Fix | 0/1 | Not Started | - |
 
-**Total:** 124 phases | 320 plans executed | 19 milestones (18 shipped, 1 in progress)
+**Total:** 125 phases | 320 plans executed | 19 milestones (18 shipped, 1 in progress)
 
 ---
-*Last updated: 2026-03-12 -- Phase 124 plans created (1 plan, 1 wave)*
+*Last updated: 2026-03-12 -- Phase 125 added (gap closure for APP-07 from milestone audit)*
