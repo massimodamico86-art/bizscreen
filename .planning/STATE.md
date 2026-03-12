@@ -22,10 +22,10 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 
 ## Current Position
 
-Phase: 124 of 124 (CI Pipeline) -- COMPLETE
+Phase: 125 (Gap Closure: APP-07 Dietary Tags E2E Fix) -- COMPLETE
 Plan: 1 of 1 complete
-Status: v13.0 milestone complete -- all 80 phases, 262 plans executed
-Last activity: 2026-03-12 - Completed 124-01-PLAN.md (CI pipeline final integration)
+Status: Gap closure phase 125 complete -- APP-07 dietary tag test fixed
+Last activity: 2026-03-12 - Completed 125-01-PLAN.md (APP-07 dietary tags E2E fix)
 
 Progress: [██████████] 100%
 
@@ -114,6 +114,7 @@ Full decision log in PROJECT.md Key Decisions table.
 - [Phase 124-01]: SHA-256 hash comparison for screenshot visual regression (no external deps, informational only)
 - [Phase 124-01]: Screenshot comparison report integrated into CI as artifact with 14-day retention
 - [Phase 124]: SHA-256 hash comparison for screenshot visual regression (no external deps, informational only)
+- [Phase 125]: APP-07 gap closure -- used button[title="Dietary tags"] locator instead of compound CSS class selector; removed silent fallback
 
 ### Blockers/Concerns
 
@@ -137,9 +138,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed 124-01-PLAN.md (CI pipeline final integration)
+Stopped at: Completed 125-01-PLAN.md (APP-07 dietary tags E2E fix)
 Resume file: None
-Next: v13.0 milestone complete
+Next: All gap closures complete
 
 ---
 *Updated: 2026-03-12 -- v13.0 Full Stability Pass COMPLETE (all 80 phases, 262 plans)*

@@ -126,7 +126,7 @@ Requirements for v13.0 release. Each maps to roadmap phases.
 - [x] **APP-04**: E2E test verifies menu board list with create action
 - [x] **APP-05**: E2E test verifies menu board editor with category and item CRUD
 - [x] **APP-06**: E2E test verifies menu item drag-and-drop reordering
-- [ ] **APP-07**: E2E test verifies dietary/allergen tag assignment
+- [x] **APP-07**: E2E test verifies dietary/allergen tag assignment
 - [x] **APP-08**: E2E test verifies menu board theme and currency settings
 
 ### Content Moderation (E2E)
@@ -320,7 +320,7 @@ None deferred -- this milestone closes all testing and stability gaps.
 | APP-04 | Phase 120 | Complete |
 | APP-05 | Phase 120 | Complete |
 | APP-06 | Phase 120 | Complete |
-| APP-07 | Phase 125 | Pending |
+| APP-07 | Phase 125 | Complete |
 | APP-08 | Phase 120 | Complete |
 | MOD-01 | Phase 120 | Complete |
 | MOD-02 | Phase 120 | Complete |
