@@ -138,6 +138,10 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
+      - name: Generate screenshot comparison report
+        if: always()
+        run: node scripts/screenshot-compare.cjs
+
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
         if: always()
@@ -170,3 +174,12 @@ jobs:
           name: e2e-gate-results
           path: test-results/e2e-results.json
           retention-days: 7
+
+      - name: Upload screenshot comparison report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshot-comparison-report
+          path: test-results/screenshot-report.html
+          retention-days: 14
+          if-no-files-found: ignore
