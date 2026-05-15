@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#F8FAFC" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="320" fill="#1E40AF" data-customize-color="primary"/>
+  <image id="logo" x="60" y="60" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="200" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#BFDBFE" text-anchor="middle" data-customize-text="eyebrow">
+    BOARDROOM A · TODAY
+  </text>
+  <text id="text-headline" x="540" y="270" font-family="Helvetica, Arial, sans-serif"
+        font-size="64" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Q3 Strategy Meeting
+  </text>
+  <text id="text-row1-time" x="120" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#1E40AF" text-anchor="start"
+        data-customize-text="row1-time" data-customize-color="primary">
+    9:00 — Welcome &amp; Intro
+  </text>
+  <text id="text-row1-detail" x="120" y="555" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#475569" text-anchor="start" data-customize-text="row1-detail">
+    Sarah Mitchell, CEO
+  </text>
+  <text id="text-row2-time" x="120" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#1E40AF" text-anchor="start"
+        data-customize-text="row2-time" data-customize-color="primary">
+    9:30 — Q2 Results Review
+  </text>
+  <text id="text-row2-detail" x="120" y="755" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#475569" text-anchor="start" data-customize-text="row2-detail">
+    Marcus Lee, CFO
+  </text>
+  <text id="text-row3-time" x="120" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#1E40AF" text-anchor="start"
+        data-customize-text="row3-time" data-customize-color="primary">
+    10:30 — Product Roadmap
+  </text>
+  <text id="text-row3-detail" x="120" y="955" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#475569" text-anchor="start" data-customize-text="row3-detail">
+    Priya Singh, VP Product
+  </text>
+  <text id="text-row4-time" x="120" y="1100" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#1E40AF" text-anchor="start"
+        data-customize-text="row4-time" data-customize-color="primary">
+    11:30 — Open Discussion
+  </text>
+  <text id="text-row4-detail" x="120" y="1155" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#475569" text-anchor="start" data-customize-text="row4-detail">
+    Q&amp;A and action items
+  </text>
+  <text id="text-row5-time" x="120" y="1300" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#1E40AF" text-anchor="start"
+        data-customize-text="row5-time" data-customize-color="primary">
+    12:00 — Catered Lunch
+  </text>
+  <text id="text-row5-detail" x="120" y="1355" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#475569" text-anchor="start" data-customize-text="row5-detail">
+    Atrium dining area
+  </text>
+  <text id="text-footer" x="540" y="1800" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#94A3B8" text-anchor="middle" data-customize-text="footer">
+    Please silence devices · Notes shared post-meeting
+  </text>
+</svg>

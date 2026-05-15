@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="600" fill="#1F3A5F" data-customize-color="primary"/>
+  <image id="logo" x="60" y="80" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#F5C26B" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="accent">
+    OPEN HOUSE
+  </text>
+  <text id="text-headline" x="540" y="460" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Saturday 1–4pm
+  </text>
+  <text id="text-address1" x="540" y="780" font-family="Georgia, serif"
+        font-size="64" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="address1" data-customize-color="primary">
+    123 Maple Street
+  </text>
+  <text id="text-address2" x="540" y="870" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#666666" text-anchor="middle" data-customize-text="address2">
+    Springfield, OH 44120
+  </text>
+  <rect x="180" y="980" width="720" height="6" fill="#F5C26B" data-customize-color="accent"/>
+  <text id="text-feat1" x="540" y="1100" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1a1a1a" text-anchor="middle" data-customize-text="feature1">
+    4 Bedrooms · 3 Bathrooms
+  </text>
+  <text id="text-feat2" x="540" y="1180" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1a1a1a" text-anchor="middle" data-customize-text="feature2">
+    2,400 sq ft · Half-acre lot
+  </text>
+  <text id="text-feat3" x="540" y="1260" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1a1a1a" text-anchor="middle" data-customize-text="feature3">
+    Updated kitchen · Hardwood floors
+  </text>
+  <text id="text-price" x="540" y="1500" font-family="Georgia, serif"
+        font-size="120" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="price" data-customize-color="primary">
+    $549,000
+  </text>
+  <text id="text-agent" x="540" y="1700" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#666666" text-anchor="middle" data-customize-text="agent">
+    Jane Doe · (555) 234-1212
+  </text>
+  <text id="text-footer" x="540" y="1820" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#999999" text-anchor="middle" data-customize-text="footer">
+    Acme Realty · acmehomes.com
+  </text>
+</svg>

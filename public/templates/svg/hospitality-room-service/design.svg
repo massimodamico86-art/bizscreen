@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="120" y="120" width="1680" height="840" fill="#FAF5EE" data-customize-color="card"/>
+  <rect x="120" y="120" width="1680" height="80" fill="#3C2A21" data-customize-color="primary"/>
+  <image id="logo" x="180" y="140" width="40" height="40" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="170" font-family="Georgia, serif"
+        font-size="40" font-weight="400" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Room Service Menu · Available 24/7
+  </text>
+  <text id="text-row1-name" x="200" y="320" font-family="Georgia, serif"
+        font-size="36" fill="#3D2817" text-anchor="start"
+        data-customize-text="row1-name">
+    Continental Breakfast
+  </text>
+  <text id="text-row1-price" x="1720" y="320" font-family="Georgia, serif"
+        font-size="36" font-weight="700" fill="#3C2A21" text-anchor="end"
+        data-customize-text="row1-price" data-customize-color="primary">
+    $24
+  </text>
+  <text id="text-row2-name" x="200" y="400" font-family="Georgia, serif"
+        font-size="36" fill="#3D2817" text-anchor="start"
+        data-customize-text="row2-name">
+    Eggs Benedict
+  </text>
+  <text id="text-row2-price" x="1720" y="400" font-family="Georgia, serif"
+        font-size="36" font-weight="700" fill="#3C2A21" text-anchor="end"
+        data-customize-text="row2-price" data-customize-color="primary">
+    $28
+  </text>
+  <text id="text-row3-name" x="200" y="480" font-family="Georgia, serif"
+        font-size="36" fill="#3D2817" text-anchor="start"
+        data-customize-text="row3-name">
+    Caesar Salad
+  </text>
+  <text id="text-row3-price" x="1720" y="480" font-family="Georgia, serif"
+        font-size="36" font-weight="700" fill="#3C2A21" text-anchor="end"
+        data-customize-text="row3-price" data-customize-color="primary">
+    $22
+  </text>
+  <text id="text-row4-name" x="200" y="560" font-family="Georgia, serif"
+        font-size="36" fill="#3D2817" text-anchor="start"
+        data-customize-text="row4-name">
+    Club Sandwich · Fries
+  </text>
+  <text id="text-row4-price" x="1720" y="560" font-family="Georgia, serif"
+        font-size="36" font-weight="700" fill="#3C2A21" text-anchor="end"
+        data-customize-text="row4-price" data-customize-color="primary">
+    $26
+  </text>
+  <text id="text-row5-name" x="200" y="640" font-family="Georgia, serif"
+        font-size="36" fill="#3D2817" text-anchor="start"
+        data-customize-text="row5-name">
+    Filet Mignon · Seasonal vegetables
+  </text>
+  <text id="text-row5-price" x="1720" y="640" font-family="Georgia, serif"
+        font-size="36" font-weight="700" fill="#3C2A21" text-anchor="end"
+        data-customize-text="row5-price" data-customize-color="primary">
+    $58
+  </text>
+  <text id="text-row6-name" x="200" y="720" font-family="Georgia, serif"
+        font-size="36" fill="#3D2817" text-anchor="start"
+        data-customize-text="row6-name">
+    Cheesecake
+  </text>
+  <text id="text-row6-price" x="1720" y="720" font-family="Georgia, serif"
+        font-size="36" font-weight="700" fill="#3C2A21" text-anchor="end"
+        data-customize-text="row6-price" data-customize-color="primary">
+    $14
+  </text>
+  <text id="text-cta" x="960" y="880" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#3C2A21" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Dial 0 from your room phone
+  </text>
+  <text id="text-footer" x="960" y="930" font-family="Helvetica, Arial, sans-serif"
+        font-size="24" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    18% gratuity &amp; $5 service fee added
+  </text>
+</svg>

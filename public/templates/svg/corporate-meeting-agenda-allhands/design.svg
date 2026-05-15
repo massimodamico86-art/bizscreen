@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="640" height="1080" fill="#0F2C4D" data-customize-color="primary"/>
+  <image id="logo" x="120" y="120" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="120" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="4" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="eyebrow">
+    ALL-HANDS
+  </text>
+  <text id="text-headline" x="120" y="460" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline">
+    Today's
+  </text>
+  <text id="text-headline2" x="120" y="560" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline2">
+    Agenda
+  </text>
+  <text id="text-row1-time" x="720" y="220" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0F2C4D" text-anchor="start"
+        data-customize-text="row1-time">
+    9:00am
+  </text>
+  <text id="text-row1-detail" x="900" y="220" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row1-detail">
+    Welcome &amp; CEO Update
+  </text>
+  <text id="text-row2-time" x="720" y="340" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0F2C4D" text-anchor="start"
+        data-customize-text="row2-time">
+    9:30am
+  </text>
+  <text id="text-row2-detail" x="900" y="340" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row2-detail">
+    Q2 Financial Review
+  </text>
+  <text id="text-row3-time" x="720" y="460" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0F2C4D" text-anchor="start"
+        data-customize-text="row3-time">
+    10:15am
+  </text>
+  <text id="text-row3-detail" x="900" y="460" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row3-detail">
+    Engineering Roadmap
+  </text>
+  <text id="text-row4-time" x="720" y="580" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0F2C4D" text-anchor="start"
+        data-customize-text="row4-time">
+    11:00am
+  </text>
+  <text id="text-row4-detail" x="900" y="580" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row4-detail">
+    Sales Pipeline Deep Dive
+  </text>
+  <text id="text-row5-time" x="720" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0F2C4D" text-anchor="start"
+        data-customize-text="row5-time">
+    11:45am
+  </text>
+  <text id="text-row5-detail" x="900" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row5-detail">
+    Q&amp;A with Leadership
+  </text>
+  <text id="text-row6-time" x="720" y="820" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0F2C4D" text-anchor="start"
+        data-customize-text="row6-time">
+    12:30pm
+  </text>
+  <text id="text-row6-detail" x="900" y="820" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row6-detail">
+    Team Lunch · Atrium
+  </text>
+  <text id="text-footer" x="900" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#666666" text-anchor="start"
+        data-customize-text="footer">
+    Live stream available · Slack #all-hands
+  </text>
+</svg>

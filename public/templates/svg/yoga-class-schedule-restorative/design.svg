@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#E6DDD3" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#7A6D52" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Georgia, serif"
+        font-size="56" font-weight="400" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Restorative Yoga
+  </text>
+  <text id="text-eyebrow" x="960" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="6" fill="#7A6D52" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    SLOW · DEEP · GENTLE
+  </text>
+  <text id="text-row1-day" x="700" y="400" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#3D2817" text-anchor="end"
+        data-customize-text="row1-day">
+    Monday
+  </text>
+  <text id="text-row1-time" x="800" y="400" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#7A6D52" text-anchor="start"
+        data-customize-text="row1-time" data-customize-color="primary">
+    7:00pm — Yin Restorative
+  </text>
+  <text id="text-row2-day" x="700" y="490" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#3D2817" text-anchor="end"
+        data-customize-text="row2-day">
+    Wednesday
+  </text>
+  <text id="text-row2-time" x="800" y="490" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#7A6D52" text-anchor="start"
+        data-customize-text="row2-time" data-customize-color="primary">
+    7:00pm — Restorative Flow
+  </text>
+  <text id="text-row3-day" x="700" y="580" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#3D2817" text-anchor="end"
+        data-customize-text="row3-day">
+    Friday
+  </text>
+  <text id="text-row3-time" x="800" y="580" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#7A6D52" text-anchor="start"
+        data-customize-text="row3-time" data-customize-color="primary">
+    7:00pm — Deep Stretch
+  </text>
+  <text id="text-row4-day" x="700" y="670" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#3D2817" text-anchor="end"
+        data-customize-text="row4-day">
+    Sunday
+  </text>
+  <text id="text-row4-time" x="800" y="670" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#7A6D52" text-anchor="start"
+        data-customize-text="row4-time" data-customize-color="primary">
+    9:00am — Sound Bath Yoga
+  </text>
+  <text id="text-quote" x="960" y="850" font-family="Georgia, serif"
+        font-size="40" font-style="italic" fill="#3D2817" text-anchor="middle"
+        data-customize-text="quote">
+    Rest is productive
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#7A6D52" text-anchor="middle"
+        data-customize-text="footer">
+    All levels welcome · Props provided
+  </text>
+</svg>

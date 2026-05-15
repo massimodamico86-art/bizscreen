@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#1A1A1A" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#FF6B35" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    TIRE SPECIAL
+  </text>
+  <text id="text-eyebrow" x="960" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="8" fill="#FF6B35" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    LIMITED TIME
+  </text>
+  <text id="text-headline" x="960" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="180" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Buy 3, Get 1 Free
+  </text>
+  <text id="text-subheadline" x="960" y="580" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="subheadline">
+    On all major tire brands
+  </text>
+  <text id="text-bullet1" x="960" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FF6B35" text-anchor="middle"
+        data-customize-text="bullet1" data-customize-color="primary">
+    · Free installation &amp; balance
+  </text>
+  <text id="text-bullet2" x="960" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FF6B35" text-anchor="middle"
+        data-customize-text="bullet2" data-customize-color="primary">
+    · Free 5-year road hazard warranty
+  </text>
+  <text id="text-cta" x="960" y="930" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#FF6B35" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Schedule today · 555-AUTO-FIX
+  </text>
+  <text id="text-footer" x="960" y="1020" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#999999" text-anchor="middle"
+        data-customize-text="footer">
+    Offer ends Sunday · See dealer for eligible tires
+  </text>
+</svg>

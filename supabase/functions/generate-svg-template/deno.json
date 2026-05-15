@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "@anthropic-ai/sdk": "npm:@anthropic-ai/sdk@0.95.0",
+    "@b-fuze/deno-dom": "jsr:@b-fuze/deno-dom@^0.1.48",
+    "@resvg/resvg-wasm": "npm:@resvg/resvg-wasm@^2.6.2",
+    "@aws-sdk/client-s3": "npm:@aws-sdk/client-s3@^3.654.0",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@^2",
+    "dompurify": "npm:dompurify@^3.0.0"
+  }
+}
+

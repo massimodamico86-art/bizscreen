@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#0F0F1B" data-customize-color="background"/>
+  <circle cx="900" cy="280" r="240" fill="#10B981" opacity="0.15"
+          data-customize-color="primary"/>
+  <circle cx="180" cy="1640" r="200" fill="#3B82F6" opacity="0.15"
+          data-customize-color="accent"/>
+  <image id="logo" x="60" y="100" width="160" height="160" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#10B981" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    NOW LIVE
+  </text>
+  <text id="text-headline" x="540" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="120" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Launch Day
+  </text>
+  <text id="text-subheadline" x="540" y="840" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" fill="#A5B4FC" text-anchor="middle"
+        data-customize-text="subheadline">
+    Built by the team, for the team
+  </text>
+  <text id="text-feat1" x="540" y="1100" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#FFFFFF" text-anchor="middle" data-customize-text="feature1">
+    Faster builds
+  </text>
+  <text id="text-feat2" x="540" y="1200" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#FFFFFF" text-anchor="middle" data-customize-text="feature2">
+    Smarter analytics
+  </text>
+  <text id="text-feat3" x="540" y="1300" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#FFFFFF" text-anchor="middle" data-customize-text="feature3">
+    Built-in integrations
+  </text>
+  <rect x="180" y="1450" width="720" height="6" fill="#10B981"
+        data-customize-color="primary"/>
+  <text id="text-cta" x="540" y="1620" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#10B981" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Start your free trial
+  </text>
+  <text id="text-cta-detail" x="540" y="1700" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="middle" data-customize-text="cta-detail">
+    acme.io/launch
+  </text>
+  <text id="text-footer" x="540" y="1840" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle" data-customize-text="footer">
+    All systems operational
+  </text>
+</svg>

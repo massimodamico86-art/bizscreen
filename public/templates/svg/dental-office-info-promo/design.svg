@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#E0F4FF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#0369A1" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline-banner" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner-title">
+    New Patient Special
+  </text>
+  <text id="text-headline" x="960" y="380" font-family="Georgia, serif"
+        font-size="160" font-weight="700" fill="#0369A1" text-anchor="middle"
+        data-customize-text="headline" data-customize-color="primary">
+    $99 Cleaning
+  </text>
+  <text id="text-subheadline" x="960" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="subheadline">
+    Includes exam, cleaning &amp; x-rays
+  </text>
+  <text id="text-bullet1" x="960" y="650" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#0369A1" text-anchor="middle"
+        data-customize-text="bullet1" data-customize-color="primary">
+    · Most insurance accepted
+  </text>
+  <text id="text-bullet2" x="960" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#0369A1" text-anchor="middle"
+        data-customize-text="bullet2" data-customize-color="primary">
+    · Evening &amp; weekend availability
+  </text>
+  <text id="text-cta" x="960" y="870" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#0369A1" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Book online or call (555) 234-5678
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    Offer valid for new patients only · Expires Dec 31
+  </text>
+</svg>

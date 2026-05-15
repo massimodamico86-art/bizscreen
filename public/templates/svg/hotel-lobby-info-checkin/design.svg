@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#3C2A21" data-customize-color="background"/>
+  <rect x="120" y="120" width="1680" height="840" fill="#FFFFFF" data-customize-color="card"/>
+  <rect x="120" y="120" width="1680" height="6" fill="#C9A55C" data-customize-color="primary"/>
+  <image id="logo" x="180" y="180" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="8" fill="#C9A55C" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    WELCOME TO THE GRAND
+  </text>
+  <text id="text-headline" x="960" y="500" font-family="Georgia, serif"
+        font-size="120" font-weight="700" fill="#3C2A21" text-anchor="middle"
+        data-customize-text="headline">
+    Check-in Today
+  </text>
+  <text id="text-row1-label" x="500" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#C9A55C" text-anchor="end"
+        data-customize-text="row1-label" data-customize-color="primary">
+    Check-in
+  </text>
+  <text id="text-row1-value" x="600" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#3C2A21" text-anchor="start"
+        data-customize-text="row1-value">
+    3:00pm — Front Desk Lobby
+  </text>
+  <text id="text-row2-label" x="500" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#C9A55C" text-anchor="end"
+        data-customize-text="row2-label" data-customize-color="primary">
+    Check-out
+  </text>
+  <text id="text-row2-value" x="600" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#3C2A21" text-anchor="start"
+        data-customize-text="row2-value">
+    11:00am — Express checkout available
+  </text>
+  <text id="text-row3-label" x="500" y="860" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#C9A55C" text-anchor="end"
+        data-customize-text="row3-label" data-customize-color="primary">
+    Concierge
+  </text>
+  <text id="text-row3-value" x="600" y="860" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#3C2A21" text-anchor="start"
+        data-customize-text="row3-value">
+    Available 24/7 · ext. 0
+  </text>
+</svg>

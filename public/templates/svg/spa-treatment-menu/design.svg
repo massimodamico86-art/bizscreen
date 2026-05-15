@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F0E6DA" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="180" fill="#7C5C3F" data-customize-color="primary"/>
+  <image id="logo" x="80" y="40" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="80" font-family="Georgia, serif"
+        font-size="28" fill="#E9D7C0" text-anchor="middle" data-customize-text="eyebrow">
+    HARMONY DAY SPA
+  </text>
+  <text id="text-headline" x="960" y="140" font-family="Georgia, serif"
+        font-size="72" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Treatment Menu
+  </text>
+  <text id="text-treat1" x="240" y="350" font-family="Georgia, serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start" data-customize-text="treatment1">
+    Signature Massage (60 min)
+  </text>
+  <text id="text-treat1-price" x="1680" y="350" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#7C5C3F" text-anchor="end"
+        data-customize-text="treatment1-price" data-customize-color="primary">
+    $110
+  </text>
+  <text id="text-treat2" x="240" y="450" font-family="Georgia, serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start" data-customize-text="treatment2">
+    Hot Stone Therapy (75 min)
+  </text>
+  <text id="text-treat2-price" x="1680" y="450" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#7C5C3F" text-anchor="end"
+        data-customize-text="treatment2-price" data-customize-color="primary">
+    $145
+  </text>
+  <text id="text-treat3" x="240" y="550" font-family="Georgia, serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start" data-customize-text="treatment3">
+    Aromatherapy Facial (60 min)
+  </text>
+  <text id="text-treat3-price" x="1680" y="550" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#7C5C3F" text-anchor="end"
+        data-customize-text="treatment3-price" data-customize-color="primary">
+    $95
+  </text>
+  <text id="text-treat4" x="240" y="650" font-family="Georgia, serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start" data-customize-text="treatment4">
+    Body Wrap &amp; Polish
+  </text>
+  <text id="text-treat4-price" x="1680" y="650" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#7C5C3F" text-anchor="end"
+        data-customize-text="treatment4-price" data-customize-color="primary">
+    $125
+  </text>
+  <text id="text-treat5" x="240" y="750" font-family="Georgia, serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start" data-customize-text="treatment5">
+    Couples Retreat (90 min)
+  </text>
+  <text id="text-treat5-price" x="1680" y="750" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#7C5C3F" text-anchor="end"
+        data-customize-text="treatment5-price" data-customize-color="primary">
+    $260
+  </text>
+  <text id="text-treat6" x="240" y="850" font-family="Georgia, serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start" data-customize-text="treatment6">
+    Day Pass (sauna + steam + lounge)
+  </text>
+  <text id="text-treat6-price" x="1680" y="850" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#7C5C3F" text-anchor="end"
+        data-customize-text="treatment6-price" data-customize-color="primary">
+    $55
+  </text>
+  <text id="text-footer" x="960" y="990" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#7C5C3F" text-anchor="middle"
+        data-customize-text="footer" data-customize-color="primary">
+    Reservations recommended · 555-SPA-CALM
+  </text>
+</svg>

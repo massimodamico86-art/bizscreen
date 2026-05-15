@@ -289,6 +289,7 @@ const DashboardPage = ({ setCurrentPage, showToast }) => {
           setOnboardingNeeded(false);
           fetchData();
         }}
+        showToast={showToast}
       />
 
       <PageLayout maxWidth="wide">

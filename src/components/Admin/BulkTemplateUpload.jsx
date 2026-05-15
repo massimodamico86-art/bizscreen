@@ -9,6 +9,7 @@ import { useState, useCallback } from 'react';
 import { Upload, X, Check, Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import { autoTagSvg } from '../../services/autoTaggingService';
 import { createTemplate } from '../../services/marketplaceService';
+import { validateSvg } from '../../services/svgValidator';
 
 // File status states
 const STATUS = {
@@ -170,6 +171,24 @@ export default function BulkTemplateUpload({ onComplete, onCancel }) {
       updateFile(fileEntry.id, { status: STATUS.SAVING });
 
       try {
+        // Phase 175 TCTN-02 / TCTN-03: pre-INSERT validation gate.
+        // Blocks invalid SVGs (currentColor / var(--*), oversize, malformed
+        // XML, missing dimensions) from reaching the DB. Validator runs the
+        // SAME byte-equal DOMPurify config as templateApplyService.js (Pitfall
+        // 5), so server-side rendering won't strip anything the client
+        // accepted.
+        const validation = validateSvg(fileEntry.content);
+        if (!validation.ok) {
+          updateFile(fileEntry.id, {
+            status: STATUS.ERROR,
+            error: `Validation failed: ${validation.errors.join('; ')}`,
+          });
+          continue;
+        }
+        if (validation.warnings.length > 0) {
+          console.warn(`[validateSvg] ${fileEntry.name}:`, validation.warnings);
+        }
+
         // Convert SVG content to data URL for storage
         const svgDataUrl = fileEntry.content ? svgToDataUrl(fileEntry.content) : null;
 

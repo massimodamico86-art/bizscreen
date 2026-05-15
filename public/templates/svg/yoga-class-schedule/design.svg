@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FAF5EE" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="180" fill="#84614A" data-customize-color="primary"/>
+  <image id="logo" x="80" y="40" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="80" font-family="Georgia, serif"
+        font-size="32" fill="#F5E1C8" text-anchor="middle" data-customize-text="eyebrow">
+    SERENE STUDIO
+  </text>
+  <text id="text-headline" x="960" y="140" font-family="Georgia, serif"
+        font-size="64" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    This Week's Classes
+  </text>
+  <text id="text-row1-time" x="280" y="340" font-family="Georgia, serif"
+        font-size="44" font-weight="700" fill="#84614A" text-anchor="start"
+        data-customize-text="row1-time" data-customize-color="primary">
+    Mon &amp; Wed · 7am
+  </text>
+  <text id="text-row1-class" x="900" y="340" font-family="Georgia, serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="row1-class">
+    Sunrise Vinyasa — Anya
+  </text>
+  <text id="text-row2-time" x="280" y="450" font-family="Georgia, serif"
+        font-size="44" font-weight="700" fill="#84614A" text-anchor="start"
+        data-customize-text="row2-time" data-customize-color="primary">
+    Tue · 6pm
+  </text>
+  <text id="text-row2-class" x="900" y="450" font-family="Georgia, serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="row2-class">
+    Restorative Flow — Marcus
+  </text>
+  <text id="text-row3-time" x="280" y="560" font-family="Georgia, serif"
+        font-size="44" font-weight="700" fill="#84614A" text-anchor="start"
+        data-customize-text="row3-time" data-customize-color="primary">
+    Thu · 9am
+  </text>
+  <text id="text-row3-class" x="900" y="560" font-family="Georgia, serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="row3-class">
+    Hatha Foundations — Priya
+  </text>
+  <text id="text-row4-time" x="280" y="670" font-family="Georgia, serif"
+        font-size="44" font-weight="700" fill="#84614A" text-anchor="start"
+        data-customize-text="row4-time" data-customize-color="primary">
+    Fri · 5:30pm
+  </text>
+  <text id="text-row4-class" x="900" y="670" font-family="Georgia, serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="row4-class">
+    Yin Yoga &amp; Meditation — Sage
+  </text>
+  <text id="text-row5-time" x="280" y="780" font-family="Georgia, serif"
+        font-size="44" font-weight="700" fill="#84614A" text-anchor="start"
+        data-customize-text="row5-time" data-customize-color="primary">
+    Sat · 10am
+  </text>
+  <text id="text-row5-class" x="900" y="780" font-family="Georgia, serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="row5-class">
+    Power Yoga — Bree
+  </text>
+  <text id="text-footer" x="960" y="990" font-family="Georgia, serif"
+        font-size="32" fill="#84614A" text-anchor="middle"
+        data-customize-text="footer" data-customize-color="primary">
+    First class free · serene-studio.com
+  </text>
+</svg>

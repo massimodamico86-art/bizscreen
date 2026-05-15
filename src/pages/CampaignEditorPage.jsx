@@ -31,8 +31,9 @@ import {
   MessageSquare,
   Check,
   Loader2,
+  BarChart3,
 } from 'lucide-react';
-import { Button, Card, Badge } from '../design-system';
+import { Button, Card, Badge, ToggleChips, StatCard } from '../design-system';
 import { useTranslation } from '../i18n';
 import {
   getCampaign,
@@ -45,10 +46,12 @@ import {
   removeTarget,
   addContent,
   removeContent,
+  getCampaignStats,
   CAMPAIGN_STATUS,
   TARGET_TYPES,
   CONTENT_TYPES
 } from '../services/campaignService';
+import { formatDuration } from '../services/analyticsService';
 import { fetchScreenGroups } from '../services/screenGroupService';
 import { fetchLocations } from '../services/locationService';
 import { fetchPlaylists } from '../services/playlistService';
@@ -71,9 +74,17 @@ import {
   getExpiryLabel,
 } from '../services/previewService';
 
-const CampaignEditorPage = ({ showToast }) => {
+const DAYPART_PRESETS = [
+  { id: 'morning',    label: 'Morning (6am-12pm)',    startTime: '06:00', endTime: '12:00' },
+  { id: 'afternoon',  label: 'Afternoon (12pm-6pm)',  startTime: '12:00', endTime: '18:00' },
+  { id: 'evening',    label: 'Evening (6pm-10pm)',    startTime: '18:00', endTime: '22:00' },
+  { id: 'late_night', label: 'Late Night (10pm-12am)', startTime: '22:00', endTime: '23:59' },
+];
+
+const CampaignEditorPage = ({ showToast, campaignId: campaignIdProp }) => {
   const { t } = useTranslation();
-  const { campaignId } = useParams();
+  const { campaignId: campaignIdParam } = useParams();
+  const campaignId = campaignIdProp || campaignIdParam;
   const navigate = useNavigate();
   const { user } = useAuth();
   const isNew = campaignId === 'new';
@@ -92,6 +103,9 @@ const CampaignEditorPage = ({ showToast }) => {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [selectedPreset, setSelectedPreset] = useState(null);
+  const [campaignStats, setCampaignStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(false);
 
   // Picker data
   const [screens, setScreens] = useState([]);
@@ -127,6 +141,23 @@ const CampaignEditorPage = ({ showToast }) => {
       loadCampaign();
     }
   }, [campaignId]);
+
+  useEffect(() => {
+    if (isNew || !campaignId) return;
+    const loadStats = async () => {
+      setStatsLoading(true);
+      try {
+        const rows = await getCampaignStats();
+        const row = rows.find(r => r.campaign_id === campaignId) || null;
+        setCampaignStats(row);
+      } catch (err) {
+        console.error('Failed to load campaign stats:', err);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+    loadStats();
+  }, [campaignId, isNew]);
 
   const loadCampaign = async () => {
     try {
@@ -175,6 +206,20 @@ const CampaignEditorPage = ({ showToast }) => {
   const handleChange = (field, value) => {
     setCampaign(prev => ({ ...prev, [field]: value }));
     setHasChanges(true);
+  };
+
+  const handlePresetSelect = (presetId) => {
+    if (selectedPreset === presetId) {
+      setSelectedPreset(null);
+      return;
+    }
+    const preset = DAYPART_PRESETS.find(p => p.id === presetId);
+    if (!preset) return;
+    setSelectedPreset(presetId);
+    const existingStart = campaign.start_at ? campaign.start_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
+    const existingEnd = campaign.end_at ? campaign.end_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
+    handleChange('start_at', existingStart + 'T' + preset.startTime);
+    handleChange('end_at', existingEnd + 'T' + preset.endTime);
   };
 
   const handleSave = async () => {
@@ -602,6 +647,21 @@ const CampaignEditorPage = ({ showToast }) => {
                 />
               </div>
 
+              {canEdit && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Dayparting Presets
+                  </label>
+                  <ToggleChips
+                    options={DAYPART_PRESETS}
+                    selected={selectedPreset}
+                    onChange={handlePresetSelect}
+                    variant="primary"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Select a preset to auto-fill time ranges</p>
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -610,7 +670,7 @@ const CampaignEditorPage = ({ showToast }) => {
                   <input
                     type="datetime-local"
                     value={campaign.start_at}
-                    onChange={(e) => handleChange('start_at', e.target.value)}
+                    onChange={(e) => { handleChange('start_at', e.target.value); setSelectedPreset(null); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                     disabled={!canEdit}
                   />
@@ -623,7 +683,7 @@ const CampaignEditorPage = ({ showToast }) => {
                   <input
                     type="datetime-local"
                     value={campaign.end_at}
-                    onChange={(e) => handleChange('end_at', e.target.value)}
+                    onChange={(e) => { handleChange('end_at', e.target.value); setSelectedPreset(null); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                     disabled={!canEdit}
                   />
@@ -763,6 +823,45 @@ const CampaignEditorPage = ({ showToast }) => {
               </div>
             )}
           </Card>
+
+          {!isNew && (
+            <Card className="p-6">
+              <h2 className="text-lg font-semibold mb-1 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-blue-600" aria-hidden="true" />
+                Campaign Analytics
+              </h2>
+              <p className="text-sm text-gray-500 mb-4">Last 30 days</p>
+
+              {statsLoading ? (
+                <div className="flex justify-center py-6">
+                  <Loader2 className="w-8 h-8 text-blue-600 animate-spin" aria-hidden="true" />
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <StatCard
+                      title="Impressions"
+                      value={campaignStats?.unique_screens ?? 0}
+                      icon={<Monitor className="w-5 h-5" />}
+                    />
+                    <StatCard
+                      title="Play Counts"
+                      value={campaignStats?.play_count ?? 0}
+                      icon={<Play className="w-5 h-5" />}
+                    />
+                    <StatCard
+                      title="Duration"
+                      value={formatDuration(campaignStats?.total_playback_seconds ?? 0)}
+                      icon={<Clock className="w-5 h-5" />}
+                    />
+                  </div>
+                  {!campaignStats && (
+                    <p className="text-sm text-gray-500 text-center mt-3">No playback data yet</p>
+                  )}
+                </>
+              )}
+            </Card>
+          )}
         </div>
 
         {/* Right Column - Summary */}

@@ -65,6 +65,14 @@ jobs:
       - name: Run type check
         run: npm run typecheck --if-present
 
+      # Live Supabase integration tests are intentionally NOT run here. They
+      # are gated and executed by .github/workflows/ci.yml, which fires on the
+      # same `push: main` trigger and on every PR — so by the time deploy
+      # starts on main the live suite has already been validated. Re-running
+      # them on every deploy (including production via workflow_dispatch)
+      # would double the load on the live Supabase project for no extra
+      # signal. The default `npm test` below keeps live tests skipped via the
+      # RUN_LIVE_SUPABASE_TESTS gate.
       - name: Run unit tests
         if: ${{ github.event.inputs.skip_tests != 'true' }}
         run: npm test -- --run

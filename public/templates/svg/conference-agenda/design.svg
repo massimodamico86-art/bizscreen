@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0A0E27" data-customize-color="background"/>
+  <rect x="0" y="0" width="12" height="1080" fill="#FF6B6B" data-customize-color="primary"/>
+  <image id="logo" x="100" y="80" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="280" y="140" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#FF6B6B" text-anchor="start"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    SUMMIT 2026
+  </text>
+  <text id="text-headline" x="280" y="200" font-family="Helvetica, Arial, sans-serif"
+        font-size="72" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline">
+    Today's Agenda
+  </text>
+  <text id="text-row1-time" x="280" y="380" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#FF6B6B" text-anchor="start"
+        data-customize-text="row1-time" data-customize-color="primary">
+    9:00 — Opening Keynote
+  </text>
+  <text id="text-row1-detail" x="280" y="430" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#B8C0D9" text-anchor="start" data-customize-text="row1-detail">
+    Main Hall · Speaker: Dr. Maria Chen
+  </text>
+  <text id="text-row2-time" x="280" y="540" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#FF6B6B" text-anchor="start"
+        data-customize-text="row2-time" data-customize-color="primary">
+    10:30 — Tech Innovations Panel
+  </text>
+  <text id="text-row2-detail" x="280" y="590" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#B8C0D9" text-anchor="start" data-customize-text="row2-detail">
+    Track A · Room 201
+  </text>
+  <text id="text-row3-time" x="280" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#FF6B6B" text-anchor="start"
+        data-customize-text="row3-time" data-customize-color="primary">
+    1:00 — Lunch &amp; Networking
+  </text>
+  <text id="text-row3-detail" x="280" y="750" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#B8C0D9" text-anchor="start" data-customize-text="row3-detail">
+    Atrium · Buffet service
+  </text>
+  <text id="text-row4-time" x="280" y="860" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#FF6B6B" text-anchor="start"
+        data-customize-text="row4-time" data-customize-color="primary">
+    3:00 — Closing Remarks
+  </text>
+  <text id="text-row4-detail" x="280" y="910" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#B8C0D9" text-anchor="start" data-customize-text="row4-detail">
+    Main Hall
+  </text>
+</svg>

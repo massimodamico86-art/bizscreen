@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFD60A" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="200" fill="#001D3D" data-customize-color="primary"/>
+  <image id="logo" x="120" y="60" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="120" font-family="Helvetica, Arial, sans-serif"
+        font-size="64" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Morning Classes
+  </text>
+  <text id="text-row1-time" x="200" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#001D3D" text-anchor="start"
+        data-customize-text="row1-time" data-customize-color="primary">
+    5:30am
+  </text>
+  <text id="text-row1-class" x="500" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#001D3D" text-anchor="start"
+        data-customize-text="row1-class" data-customize-color="primary">
+    HIIT Bootcamp · Studio A
+  </text>
+  <text id="text-row2-time" x="200" y="420" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#001D3D" text-anchor="start"
+        data-customize-text="row2-time" data-customize-color="primary">
+    6:30am
+  </text>
+  <text id="text-row2-class" x="500" y="420" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#001D3D" text-anchor="start"
+        data-customize-text="row2-class" data-customize-color="primary">
+    Spin Class · Studio B
+  </text>
+  <text id="text-row3-time" x="200" y="520" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#001D3D" text-anchor="start"
+        data-customize-text="row3-time" data-customize-color="primary">
+    7:30am
+  </text>
+  <text id="text-row3-class" x="500" y="520" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#001D3D" text-anchor="start"
+        data-customize-text="row3-class" data-customize-color="primary">
+    Power Yoga · Yoga Room
+  </text>
+  <text id="text-row4-time" x="200" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#001D3D" text-anchor="start"
+        data-customize-text="row4-time" data-customize-color="primary">
+    8:30am
+  </text>
+  <text id="text-row4-class" x="500" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#001D3D" text-anchor="start"
+        data-customize-text="row4-class" data-customize-color="primary">
+    Strength Circuit · Floor 1
+  </text>
+  <text id="text-row5-time" x="200" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#001D3D" text-anchor="start"
+        data-customize-text="row5-time" data-customize-color="primary">
+    9:30am
+  </text>
+  <text id="text-row5-class" x="500" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#001D3D" text-anchor="start"
+        data-customize-text="row5-class" data-customize-color="primary">
+    Pilates Reformer · Studio C
+  </text>
+  <text id="text-row6-time" x="200" y="820" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#001D3D" text-anchor="start"
+        data-customize-text="row6-time" data-customize-color="primary">
+    10:30am
+  </text>
+  <text id="text-row6-class" x="500" y="820" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#001D3D" text-anchor="start"
+        data-customize-text="row6-class" data-customize-color="primary">
+    Senior Fitness · Studio A
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#001D3D" text-anchor="middle"
+        data-customize-text="footer">
+    Reserve via the app · Drop-ins welcome
+  </text>
+</svg>

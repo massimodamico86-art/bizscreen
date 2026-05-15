@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="100" fill="#0E7C5A" data-customize-color="primary"/>
+  <rect x="0" y="980" width="1920" height="100" fill="#0E7C5A" data-customize-color="primary"/>
+  <image id="logo" x="120" y="20" width="60" height="60" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="65" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Acme Pharmacy
+  </text>
+  <text id="text-eyebrow" x="960" y="220" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="6" fill="#0E7C5A" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    THIS WEEK
+  </text>
+  <text id="text-headline" x="960" y="380" font-family="Georgia, serif"
+        font-size="120" font-weight="700" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="headline">
+    Free Flu Shots
+  </text>
+  <text id="text-subheadline" x="960" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#666666" text-anchor="middle"
+        data-customize-text="subheadline">
+    No appointment needed · Walk-ins welcome
+  </text>
+  <text id="text-row1" x="960" y="650" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="row1">
+    Monday — Friday: 9am — 8pm
+  </text>
+  <text id="text-row2" x="960" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="row2">
+    Saturday: 10am — 6pm
+  </text>
+  <text id="text-row3" x="960" y="790" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="row3">
+    Sunday: Closed
+  </text>
+  <text id="text-banner-bottom" x="960" y="1045" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner-bottom">
+    Most insurance plans accepted
+  </text>
+</svg>

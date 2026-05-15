@@ -18,6 +18,7 @@ import { forwardRef, useState } from 'react';
 import { Plus, Loader2, LayoutTemplate, Sparkles } from 'lucide-react';
 import { Button } from './Button';
 import { Badge } from './Badge';
+import FavoriteButton from './FavoriteButton';
 
 export const TemplateCard = forwardRef(function TemplateCard(
   {
@@ -32,6 +33,8 @@ export const TemplateCard = forwardRef(function TemplateCard(
     actionLabel = 'Use Template',
     loading = false,
     featured = false,
+    isFavorited,
+    onToggleFavorite,
     className = '',
     ...props
   },
@@ -89,8 +92,25 @@ export const TemplateCard = forwardRef(function TemplateCard(
           </div>
         )}
 
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+        {/* Phase 173 — Favorite heart (only renders when caller wires favorites).
+            z-20 + pointer-events-auto keeps the heart clickable above the
+            hover overlay (TFAV-01). Without explicit z-ordering, the overlay
+            `absolute inset-0` appears above the heart on hover and intercepts
+            pointer events, making the heart unclickable. */}
+        {onToggleFavorite && (
+          <div className="absolute top-2 right-2 z-20 pointer-events-auto">
+            <FavoriteButton
+              isFavorited={!!isFavorited}
+              onToggle={onToggleFavorite}
+              onError={(err) => console.error('[TemplateCard] toggle favorite failed:', err)}
+              size={20}
+            />
+          </div>
+        )}
+
+        {/* Hover overlay — z-10 sits below the heart (z-20) so TFAV-01
+            optimistic toggle is not blocked on hover. */}
+        <div className="absolute inset-0 z-10 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
           {loading ? (
             <Loader2 className="w-8 h-8 animate-spin text-white" />
           ) : (
@@ -113,7 +133,7 @@ export const TemplateCard = forwardRef(function TemplateCard(
 
       {/* Info */}
       <div className="p-3">
-        <h3 className="font-medium text-gray-900 text-sm truncate">{title}</h3>
+        <h4 className="font-medium text-gray-900 text-sm truncate">{title}</h4>
         {description && (
           <p className="text-xs text-gray-500 mt-1 line-clamp-2">{description}</p>
         )}

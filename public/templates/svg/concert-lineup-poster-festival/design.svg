@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#FF6F00" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="500" fill="#000000" data-customize-color="primary"/>
+  <image id="logo" x="60" y="80" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" letter-spacing="8" fill="#FFD600" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="accent">
+    SUMMER FEST 2026
+  </text>
+  <text id="text-headline" x="540" y="420" font-family="Helvetica, Arial, sans-serif"
+        font-size="120" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    THREE DAYS
+  </text>
+  <text id="text-act1" x="540" y="700" font-family="Georgia, serif"
+        font-size="64" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="act1">
+    The Midnight Choir
+  </text>
+  <text id="text-act2" x="540" y="800" font-family="Georgia, serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="act2">
+    Neon Cathedral
+  </text>
+  <text id="text-act3" x="540" y="890" font-family="Georgia, serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="act3">
+    Sunset Wolves
+  </text>
+  <text id="text-act4" x="540" y="980" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="act4">
+    Coral &amp; The Tides
+  </text>
+  <text id="text-act5" x="540" y="1060" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="act5">
+    Echo Falls
+  </text>
+  <text id="text-act6" x="540" y="1140" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="act6">
+    Marina Reverb
+  </text>
+  <rect x="240" y="1280" width="600" height="6" fill="#FFD600" data-customize-color="accent"/>
+  <text id="text-date" x="540" y="1410" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="date">
+    July 18 — 20
+  </text>
+  <text id="text-venue" x="540" y="1500" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="venue">
+    Riverside Park · Portland OR
+  </text>
+  <rect x="180" y="1620" width="720" height="120" fill="#FFD600" data-customize-color="accent"/>
+  <text id="text-cta" x="540" y="1695" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#000000" text-anchor="middle"
+        data-customize-text="cta">
+    3-Day Pass: $189
+  </text>
+  <text id="text-footer" x="540" y="1830" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="footer">
+    Tickets at summerfest.example.com
+  </text>
+</svg>

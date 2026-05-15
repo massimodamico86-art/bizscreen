@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="6" fill="#3FA796" data-customize-color="primary"/>
+  <rect x="0" y="1074" width="1920" height="6" fill="#3FA796" data-customize-color="primary"/>
+  <image id="logo" x="120" y="100" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="240" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="8" fill="#3FA796" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    DAILY WELLNESS
+  </text>
+  <text id="text-headline" x="960" y="380" font-family="Georgia, serif"
+        font-size="96" font-weight="700" fill="#1B3F39" text-anchor="middle"
+        data-customize-text="headline">
+    Five Habits of Healthy Living
+  </text>
+  <text id="text-tip1" x="960" y="540" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1B3F39" text-anchor="middle"
+        data-customize-text="tip1">
+    1 · Drink 8 glasses of water daily
+  </text>
+  <text id="text-tip2" x="960" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1B3F39" text-anchor="middle"
+        data-customize-text="tip2">
+    2 · Move 30 minutes every day
+  </text>
+  <text id="text-tip3" x="960" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1B3F39" text-anchor="middle"
+        data-customize-text="tip3">
+    3 · Sleep 7 — 9 hours per night
+  </text>
+  <text id="text-tip4" x="960" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1B3F39" text-anchor="middle"
+        data-customize-text="tip4">
+    4 · Eat colorful, whole foods
+  </text>
+  <text id="text-tip5" x="960" y="860" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1B3F39" text-anchor="middle"
+        data-customize-text="tip5">
+    5 · Practice gratitude daily
+  </text>
+  <text id="text-footer" x="960" y="990" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#3FA796" text-anchor="middle"
+        data-customize-text="footer">
+    Talk to your doctor for a personalized wellness plan
+  </text>
+</svg>

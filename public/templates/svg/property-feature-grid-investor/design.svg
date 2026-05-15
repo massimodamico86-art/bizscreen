@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#1F3A5F" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Investor Snapshot
+  </text>
+  <rect x="120" y="240" width="540" height="320" fill="#F5F5F5" data-customize-color="card"/>
+  <rect x="690" y="240" width="540" height="320" fill="#F5F5F5" data-customize-color="card"/>
+  <rect x="1260" y="240" width="540" height="320" fill="#F5F5F5" data-customize-color="card"/>
+  <text id="text-stat1-value" x="390" y="400" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="stat1-value" data-customize-color="primary">
+    $2.4M
+  </text>
+  <text id="text-stat1-label" x="390" y="490" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#666666" text-anchor="middle"
+        data-customize-text="stat1-label">
+    Asking Price
+  </text>
+  <text id="text-stat2-value" x="960" y="400" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="stat2-value" data-customize-color="primary">
+    8.4%
+  </text>
+  <text id="text-stat2-label" x="960" y="490" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#666666" text-anchor="middle"
+        data-customize-text="stat2-label">
+    Cap Rate
+  </text>
+  <text id="text-stat3-value" x="1530" y="400" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="stat3-value" data-customize-color="primary">
+    98%
+  </text>
+  <text id="text-stat3-label" x="1530" y="490" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#666666" text-anchor="middle"
+        data-customize-text="stat3-label">
+    Occupancy
+  </text>
+  <text id="text-headline" x="960" y="700" font-family="Georgia, serif"
+        font-size="64" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="headline">
+    Multi-family · 24 units
+  </text>
+  <text id="text-subheadline" x="960" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#666666" text-anchor="middle"
+        data-customize-text="subheadline">
+    Class B · Stabilized · Off-market opportunity
+  </text>
+  <text id="text-cta" x="960" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    NDA required · Contact for full OM
+  </text>
+</svg>

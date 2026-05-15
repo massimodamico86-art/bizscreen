@@ -254,7 +254,7 @@ export default function BrandImporterModal({ isOpen, onClose, onThemeCreated }) 
 
   return (
     <Modal
-      isOpen={isOpen}
+      open={isOpen}
       onClose={onClose}
       title="Import Brand Identity"
       size="lg"

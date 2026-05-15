@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#0F2C4D" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Q2 Results · 2026
+  </text>
+  <rect x="200" y="320" width="500" height="320" fill="#F5F8FB" data-customize-color="card"/>
+  <rect x="710" y="320" width="500" height="320" fill="#F5F8FB" data-customize-color="card"/>
+  <rect x="1220" y="320" width="500" height="320" fill="#F5F8FB" data-customize-color="card"/>
+  <text id="text-stat1-value" x="450" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="84" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="stat1-value" data-customize-color="primary">
+    $42.6M
+  </text>
+  <text id="text-stat1-label" x="450" y="540" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#666666" text-anchor="middle"
+        data-customize-text="stat1-label">
+    Revenue (+24% YoY)
+  </text>
+  <text id="text-stat2-value" x="960" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="84" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="stat2-value" data-customize-color="primary">
+    8.4M
+  </text>
+  <text id="text-stat2-label" x="960" y="540" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#666666" text-anchor="middle"
+        data-customize-text="stat2-label">
+    Active Users
+  </text>
+  <text id="text-stat3-value" x="1470" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="84" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="stat3-value" data-customize-color="primary">
+    96%
+  </text>
+  <text id="text-stat3-label" x="1470" y="540" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#666666" text-anchor="middle"
+        data-customize-text="stat3-label">
+    Customer Satisfaction
+  </text>
+  <text id="text-headline" x="960" y="780" font-family="Georgia, serif"
+        font-size="64" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="headline">
+    Strong Quarter, Stronger Outlook
+  </text>
+  <text id="text-cta" x="960" y="930" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Investor briefing Friday · 4pm
+  </text>
+</svg>

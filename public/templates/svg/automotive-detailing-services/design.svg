@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#212529" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#0D6EFD" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Premium Auto Detailing
+  </text>
+  <text id="text-row1-name" x="200" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row1-name">
+    Express Wash · Vacuum
+  </text>
+  <text id="text-row1-price" x="1720" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0D6EFD" text-anchor="end"
+        data-customize-text="row1-price" data-customize-color="primary">
+    $35
+  </text>
+  <text id="text-row2-name" x="200" y="420" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row2-name">
+    Full Interior Detail
+  </text>
+  <text id="text-row2-price" x="1720" y="420" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0D6EFD" text-anchor="end"
+        data-customize-text="row2-price" data-customize-color="primary">
+    $145
+  </text>
+  <text id="text-row3-name" x="200" y="520" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row3-name">
+    Hand Wax · Polish
+  </text>
+  <text id="text-row3-price" x="1720" y="520" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0D6EFD" text-anchor="end"
+        data-customize-text="row3-price" data-customize-color="primary">
+    $85
+  </text>
+  <text id="text-row4-name" x="200" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row4-name">
+    Full Detail Package
+  </text>
+  <text id="text-row4-price" x="1720" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0D6EFD" text-anchor="end"
+        data-customize-text="row4-price" data-customize-color="primary">
+    $295
+  </text>
+  <text id="text-row5-name" x="200" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row5-name">
+    Ceramic Coating
+  </text>
+  <text id="text-row5-price" x="1720" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0D6EFD" text-anchor="end"
+        data-customize-text="row5-price" data-customize-color="primary">
+    $695
+  </text>
+  <text id="text-cta" x="960" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0D6EFD" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Book online · 555-DETAIL
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#999999" text-anchor="middle"
+        data-customize-text="footer">
+    Pickup &amp; drop-off available · 24-hour turn
+  </text>
+</svg>

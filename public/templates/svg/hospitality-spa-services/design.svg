@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F2EBE0" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="180" fill="#8E7B62" data-customize-color="primary"/>
+  <image id="logo" x="120" y="50" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="115" font-family="Georgia, serif"
+        font-size="56" font-weight="400" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Resort Spa Services
+  </text>
+  <text id="text-row1-name" x="200" y="320" font-family="Georgia, serif"
+        font-size="40" fill="#3D2E1F" text-anchor="start"
+        data-customize-text="row1-name">
+    Signature Massage · 60 min
+  </text>
+  <text id="text-row1-price" x="1720" y="320" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#8E7B62" text-anchor="end"
+        data-customize-text="row1-price" data-customize-color="primary">
+    $145
+  </text>
+  <text id="text-row2-name" x="200" y="420" font-family="Georgia, serif"
+        font-size="40" fill="#3D2E1F" text-anchor="start"
+        data-customize-text="row2-name">
+    Hot Stone Therapy · 90 min
+  </text>
+  <text id="text-row2-price" x="1720" y="420" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#8E7B62" text-anchor="end"
+        data-customize-text="row2-price" data-customize-color="primary">
+    $210
+  </text>
+  <text id="text-row3-name" x="200" y="520" font-family="Georgia, serif"
+        font-size="40" fill="#3D2E1F" text-anchor="start"
+        data-customize-text="row3-name">
+    Couples Suite · 90 min
+  </text>
+  <text id="text-row3-price" x="1720" y="520" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#8E7B62" text-anchor="end"
+        data-customize-text="row3-price" data-customize-color="primary">
+    $385
+  </text>
+  <text id="text-row4-name" x="200" y="620" font-family="Georgia, serif"
+        font-size="40" fill="#3D2E1F" text-anchor="start"
+        data-customize-text="row4-name">
+    Facial Treatment · 75 min
+  </text>
+  <text id="text-row4-price" x="1720" y="620" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#8E7B62" text-anchor="end"
+        data-customize-text="row4-price" data-customize-color="primary">
+    $165
+  </text>
+  <text id="text-row5-name" x="200" y="720" font-family="Georgia, serif"
+        font-size="40" fill="#3D2E1F" text-anchor="start"
+        data-customize-text="row5-name">
+    Aromatherapy Add-on
+  </text>
+  <text id="text-row5-price" x="1720" y="720" font-family="Georgia, serif"
+        font-size="40" font-weight="700" fill="#8E7B62" text-anchor="end"
+        data-customize-text="row5-price" data-customize-color="primary">
+    $25
+  </text>
+  <text id="text-cta" x="960" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#8E7B62" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Reservations · ext. 4242
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    20% off for resort guests · Quote room number
+  </text>
+</svg>

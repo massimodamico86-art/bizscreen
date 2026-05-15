@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FF0080" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="40" fill="#000000" data-customize-color="primary"/>
+  <rect x="0" y="1040" width="1920" height="40" fill="#000000" data-customize-color="primary"/>
+  <image id="logo" x="120" y="100" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="220" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" letter-spacing="8" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="eyebrow">
+    KARAOKE NIGHT
+  </text>
+  <text id="text-headline" x="960" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="240" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Sing Your Heart Out
+  </text>
+  <text id="text-subheadline" x="960" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="subheadline">
+    Friday &amp; Saturday · 9pm — 1am
+  </text>
+  <text id="text-cta" x="960" y="850" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#000000" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Half-price drinks for performers
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="footer">
+    50,000+ song catalog · No cover charge
+  </text>
+</svg>

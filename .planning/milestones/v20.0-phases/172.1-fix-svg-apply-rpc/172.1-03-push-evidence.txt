@@ -1,0 +1,109 @@
+=== Phase 172.1-03: Production push via MCP supabase tools ===
+Target project: gdxizdiltfqeugbsgtpx (BizScreen, prod)
+Push method:    mcp__supabase__apply_migration + mcp__supabase__execute_sql
+                (supabase CLI not on PATH; user authorized MCP tools path)
+Timestamp:      2026-04-22T19:06:41Z — 2026-04-22T19:19:00Z
+Ordering (D-14): 169 UPDATEs → 169 ASSERT footer → 170 RPC apply_migration
+
+===============================================================================
+=== Pre-push state                                                          ===
+===============================================================================
+SELECT COUNT(*) AS total_active,
+       COUNT(svg_content) AS with_content,
+       COUNT(*) FILTER (WHERE svg_content IS NULL) AS missing_content
+FROM svg_templates WHERE is_active = TRUE;
+→ [{"total_active":24,"with_content":0,"missing_content":24}]
+
+Matches Phase 172 regression: 0/24 active rows have svg_content.
+
+===============================================================================
+=== Migration 169 — backfill (12 UPDATEs via execute_sql, then ASSERT)      ===
+===============================================================================
+Each UPDATE sent as a separate execute_sql call with full SVG body inlined
+($svg$...$svg$ dollar-quoted). Sent in this order:
+
+   1. retail-sale           (2.4 KB) → OK
+   2. welcome-sign          (2.7 KB) → OK
+   3. corporate-welcome     (3.1 KB) → OK
+   4. holiday-sale          (3.3 KB) → OK
+   5. event-promo           (3.8 KB) → OK
+   6. fitness-promo         (4.0 KB) → OK    [mid-check: 12/24 covered]
+   7. cafe-special          (4.3 KB) → OK
+   8. happy-hour            (4.3 KB) → OK
+   9. real-estate           (5.2 KB) → OK
+  10. hotel-amenities       (6.2 KB) → OK
+  11. healthcare-info       (7.9 KB) → OK
+  12. restaurant-menu      (28.4 KB) → OK
+
+Then the self-asserting footer:
+DO $$ DECLARE v_missing INTEGER; BEGIN
+  SELECT COUNT(*) INTO v_missing FROM svg_templates
+    WHERE is_active = TRUE AND svg_content IS NULL;
+  ASSERT v_missing = 0, format('expected 0 ..., got %s', v_missing);
+END $$;
+→ no error raised → ALL 24 active rows have svg_content populated.
+
+NOTE: Migration 169 was executed via execute_sql and therefore is NOT
+registered in supabase_migrations.schema_migrations. A future
+`supabase db push --linked` from the developer's local CLI will see 169
+as unapplied and try to apply it. Because 169 is idempotent
+(WHERE svg_content IS NULL on every UPDATE) and the ASSERT passes on
+already-satisfied state, re-running is a safe no-op. Migration 170 IS
+registered (see below).
+
+===============================================================================
+=== Migration 170 — clone_svg_template_to_scene RPC (apply_migration)       ===
+===============================================================================
+mcp__supabase__apply_migration(
+  project_id: 'gdxizdiltfqeugbsgtpx',
+  name: 'clone_svg_template_to_scene',
+  query: <full 143-line migration body from supabase/migrations/170_*.sql>
+)
+→ {"success":true}
+
+Registered in schema_migrations as:
+  version: 20260422191755  name: clone_svg_template_to_scene
+
+===============================================================================
+=== Post-push smoke SELECTs (all 4 pass)                                    ===
+===============================================================================
+
+--- Smoke 1: pg_proc has clone_svg_template_to_scene ---
+SELECT proname, pronargs, prorettype::regtype::text AS returns
+FROM pg_proc WHERE proname = 'clone_svg_template_to_scene';
+→ [{"proname":"clone_svg_template_to_scene","pronargs":3,"returns":"uuid"}]
+✓ RPC exists with correct 3-arg signature returning uuid.
+
+--- Smoke 2: 168 unchanged — clone_template_with_customization still exists ---
+SELECT proname, pronargs FROM pg_proc
+WHERE proname = 'clone_template_with_customization';
+→ [{"proname":"clone_template_with_customization","pronargs":3}]
+✓ Migration 168's RPC still present (D-03 immutability confirmed).
+
+--- Smoke 3: all 24 active svg_templates rows have svg_content ---
+SELECT COUNT(*) AS total_active,
+       COUNT(svg_content) AS with_content,
+       COUNT(*) FILTER (WHERE svg_content IS NULL) AS missing_content
+FROM svg_templates WHERE is_active = TRUE;
+→ [{"total_active":24,"with_content":24,"missing_content":0}]
+✓ Backfill covered 24/24; 0 missing. D-14 contract satisfied.
+
+--- Smoke 4: GRANT EXECUTE landed for authenticated role ---
+SELECT grantee, privilege_type FROM information_schema.routine_privileges
+WHERE routine_name = 'clone_svg_template_to_scene' AND grantee = 'authenticated';
+→ [{"grantee":"authenticated","privilege_type":"EXECUTE"}]
+✓ Authenticated users can call the RPC from PostgREST.
+
+===============================================================================
+=== supabase migration list (remote, tail) — post-push                      ===
+===============================================================================
+... (truncated to last 3) ...
+  version: 167                name: gallery_templates_view_and_rls
+  version: 20260421202556     name: clone_template_with_customization (=168)
+  version: 20260422191755     name: clone_svg_template_to_scene      (=170)
+
+===============================================================================
+=== Exit status                                                             ===
+===============================================================================
+All 4 smoke SELECTs pass. No ERROR: lines in final run. D-14 ordering honored.
+Waves 3 and 4 unblocked.

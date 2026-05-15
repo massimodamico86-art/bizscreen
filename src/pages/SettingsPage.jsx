@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Bell, Eye, Globe, Shield, Activity, RotateCcw, AlertCircle, RefreshCw, Palette, Plus, Trash2, Loader2, Lock } from 'lucide-react';
 import { Card, Button } from '../design-system';
 import { getUserSettings, updateUserSettings, resetUserSettings } from '../services/userSettingsService';
@@ -65,7 +65,8 @@ const SettingsPage = ({ showToast }) => {
     try {
       setBrandLoading(true);
       const themes = await getAllBrandThemes();
-      setBrandThemes(themes || []);
+      // getAllBrandThemes returns { data: [], error } not a bare array (Rule 1 fix)
+      setBrandThemes(themes?.data || themes || []);
     } catch (error) {
       console.error('Error loading brand themes:', error);
     } finally {
@@ -73,11 +74,13 @@ const SettingsPage = ({ showToast }) => {
     }
   };
 
-  // Fetch brand themes when branding tab is selected
+  // Fetch brand themes when branding tab is selected (one-shot)
+  const fetchedBrandThemesOnceRef = useRef(false);
   useEffect(() => {
-    if (activeTab === 'branding' && brandThemes.length === 0 && !brandLoading) {
-      fetchBrandThemes();
-    }
+    if (activeTab !== 'branding') return;
+    if (fetchedBrandThemesOnceRef.current) return;
+    fetchedBrandThemesOnceRef.current = true;
+    fetchBrandThemes();
   }, [activeTab]);
 
   const handleSaveSettings = async (updates) => {
@@ -123,7 +126,7 @@ const SettingsPage = ({ showToast }) => {
 
     try {
       await deleteBrandTheme(themeId);
-      setBrandThemes(brandThemes.filter(t => t.id !== themeId));
+      setBrandThemes(brandThemes.filter(theme => theme.id !== themeId));
       showToast(t('settings.branding.themeDeleted', 'Brand theme deleted'));
     } catch (error) {
       showToast('Error deleting theme: ' + error.message, 'error');
@@ -133,9 +136,9 @@ const SettingsPage = ({ showToast }) => {
   const handleSetActiveTheme = async (themeId) => {
     try {
       await setActiveTheme(themeId);
-      setBrandThemes(brandThemes.map(t => ({
-        ...t,
-        is_active: t.id === themeId
+      setBrandThemes(brandThemes.map(theme => ({
+        ...theme,
+        is_active: theme.id === themeId
       })));
       showToast(t('settings.branding.themeActivated', 'Brand theme activated'));
     } catch (error) {

@@ -1,0 +1,903 @@
+{
+  "ranAt": "2026-05-03T20:01:19.744Z",
+  "dir": "public/templates/svg",
+  "files": [
+    {
+      "file": "public/templates/svg/abstract-geometric-cc0/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/abstract-pattern-display/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1968 -> 1868 bytes, 5.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/abstract-pattern-display-warm/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/auto-service-special/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2044 -> 1936 bytes, 5.3% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/auto-service-special-tires/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2503 -> 2341 bytes, 6.5% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/automotive-detailing-services/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3623 -> 3381 bytes, 6.7% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/automotive-financing-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1725 -> 1611 bytes, 6.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/autumn-leaf-pattern/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/bakery-product-list/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3159 -> 2973 bytes, 5.9% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/bakery-product-list-holiday/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3196 -> 2970 bytes, 7.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/banking-rates-board/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/banking-rates-board-mortgage/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3713 -> 3505 bytes, 5.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/beauty-bridal-package/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3197 -> 2971 bytes, 7.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/beauty-skincare-routine/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2311 -> 2149 bytes, 7.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/bistro-daily-special/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1770 -> 1662 bytes, 6.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/bistro-daily-special-evening/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1777 -> 1669 bytes, 6.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/boutique-storefront/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1880 -> 1772 bytes, 5.7% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/cafe-coffee-menu/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2950 -> 2780 bytes, 5.8% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/cafe-coffee-menu-seasonal/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2827 -> 2633 bytes, 6.9% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/cafe-special/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (4058 -> 3844 bytes, 5.3% drift); review for stripped script/event/javascript: content",
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/city-skyline-silhouette/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/class-schedule-board/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/class-schedule-board-spring/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3922 -> 3664 bytes, 6.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/clinic-hours-info/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2549 -> 2403 bytes, 5.7% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/clinic-hours-info-pediatric/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3204 -> 2994 bytes, 6.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/concert-lineup-poster/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3050 -> 2886 bytes, 5.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/concert-lineup-poster-festival/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3365 -> 3151 bytes, 6.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/conference-agenda/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2959 -> 2797 bytes, 5.5% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/conference-agenda-techday/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3005 -> 2843 bytes, 5.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/corporate-meeting-agenda/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3653 -> 3467 bytes, 5.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/corporate-meeting-agenda-allhands/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (4108 -> 3818 bytes, 7.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/corporate-quarterly-results/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2980 -> 2820 bytes, 5.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/corporate-team-photo-board/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3452 -> 3266 bytes, 5.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/corporate-welcome/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2868 -> 2682 bytes, 6.5% drift); review for stripped script/event/javascript: content",
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/dealership-promo-banner/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2151 -> 2013 bytes, 6.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/dental-office-info/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3102 -> 2946 bytes, 5.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/dental-office-info-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2288 -> 2142 bytes, 6.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/education-graduation-ceremony/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2038 -> 1914 bytes, 6.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/education-tutoring-services/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2448 -> 2286 bytes, 6.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/entertainment-karaoke-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1840 -> 1732 bytes, 5.9% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/entertainment-trivia-night/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2019 -> 1895 bytes, 6.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/event-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3584 -> 3378 bytes, 5.7% drift); review for stripped script/event/javascript: content",
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/events-charity-gala/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2089 -> 1965 bytes, 5.9% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/events-product-launch/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1741 -> 1627 bytes, 6.5% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/executive-suite-info/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2095 -> 1949 bytes, 7.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/finance-credit-card-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1764 -> 1650 bytes, 6.5% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/finance-investment-tips/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2677 -> 2499 bytes, 6.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/financial-advisor-intro/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2731 -> 2593 bytes, 5.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/fitness-personal-training/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2219 -> 2073 bytes, 6.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/fitness-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/fitness-supplement-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1861 -> 1753 bytes, 5.8% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/flash-sale-banner/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1500 -> 1402 bytes, 6.5% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/flash-sale-banner-weekend/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1681 -> 1567 bytes, 6.8% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/food-illustration-pattern/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/food-truck-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1742 -> 1628 bytes, 6.5% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/gym-class-times/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3474 -> 3256 bytes, 6.3% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/gym-class-times-morning/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (4061 -> 3803 bytes, 6.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/happy-hour/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/healthcare-flu-shot-clinic/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2207 -> 2061 bytes, 6.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/healthcare-info/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/healthcare-wellness-tips/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2462 -> 2306 bytes, 6.3% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/holiday-sale/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3133 -> 2890 bytes, 7.8% drift); review for stripped script/event/javascript: content",
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/holiday-snowflake-pattern/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/hospitality-room-service/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (4019 -> 3751 bytes, 6.7% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/hospitality-spa-services/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3492 -> 3250 bytes, 6.9% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/hotel-amenities/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/hotel-lobby-info/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2549 -> 2403 bytes, 5.7% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/hotel-lobby-info-checkin/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2566 -> 2410 bytes, 6.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/library-hours-display/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3215 -> 3011 bytes, 6.3% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/minimal-line-art-cc0/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/minimal-quote-display/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1464 -> 1368 bytes, 6.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/minimal-quote-display-typography/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1851 -> 1721 bytes, 7.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/movie-night-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/movie-night-promo-newrelease/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2049 -> 1925 bytes, 6.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/nature-pattern-cc0/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/office-welcome-board/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1523 -> 1431 bytes, 6.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/office-welcome-board-quarterly/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2266 -> 2126 bytes, 6.2% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/open-house-listing/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/open-house-listing-luxury/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3265 -> 3067 bytes, 6.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/outlet-clearance-promo/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1857 -> 1749 bytes, 5.8% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/pharmacy-info-board/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2432 -> 2276 bytes, 6.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/property-feature-grid/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/property-feature-grid-investor/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3161 -> 2985 bytes, 5.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/real-estate/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (5006 -> 4723 bytes, 5.7% drift); review for stripped script/event/javascript: content",
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/real-estate-mortgage-rates/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2853 -> 2681 bytes, 6.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/real-estate-neighborhood-info/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2529 -> 2351 bytes, 7.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/resort-pool-hours/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2897 -> 2735 bytes, 5.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/resort-pool-hours-evening/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1863 -> 1733 bytes, 7.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/restaurant-brunch-board/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2255 -> 2115 bytes, 6.2% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/restaurant-dessert-menu/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3164 -> 2960 bytes, 6.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/restaurant-menu/menu-design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/restaurant-pizza-menu/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3273 -> 3047 bytes, 6.9% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/retail-buy-one-get-one/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (1795 -> 1687 bytes, 6.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/retail-loyalty-card/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2789 -> 2617 bytes, 6.2% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/retail-sale/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2210 -> 2027 bytes, 8.3% drift); review for stripped script/event/javascript: content",
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/salon-services-menu/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/salon-services-menu-hair/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (4991 -> 4637 bytes, 7.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/spa-treatment-menu/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3900 -> 3682 bytes, 5.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/spring-floral-pattern/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/startup-launch-board/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2750 -> 2600 bytes, 5.5% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/startup-launch-board-funding/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3178 -> 2968 bytes, 6.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/summer-beach-pattern/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/sushi-restaurant-menu/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2172 -> 2032 bytes, 6.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/tech-product-launch/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/tech-product-launch-mobile/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2065 -> 1941 bytes, 6.0% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/technology-app-features/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3464 -> 3238 bytes, 6.5% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/tradeshow-booth-info/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2680 -> 2540 bytes, 5.2% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/tradeshow-booth-info-evening/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2681 -> 2509 bytes, 6.4% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/university-event-board/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3025 -> 2871 bytes, 5.1% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/university-event-board-fall/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3292 -> 3088 bytes, 6.2% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/wedding-venue-info/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2076 -> 1958 bytes, 5.7% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/welcome-sign/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (2502 -> 2330 bytes, 6.9% drift); review for stripped script/event/javascript: content",
+        "No customization anchors found (id=\"logo\", id^=\"text-\", or [data-customize-*]) — QuickCustomize will offer no edit targets"
+      ]
+    },
+    {
+      "file": "public/templates/svg/winter-pine-pattern/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "file": "public/templates/svg/yoga-class-schedule/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3438 -> 3244 bytes, 5.6% drift); review for stripped script/event/javascript: content"
+      ]
+    },
+    {
+      "file": "public/templates/svg/yoga-class-schedule-restorative/design.svg",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "DOMPurify altered SVG (3298 -> 3072 bytes, 6.9% drift); review for stripped script/event/javascript: content"
+      ]
+    }
+  ],
+  "totals": {
+    "total": 115,
+    "passed": 115,
+    "failed": 0,
+    "warned": 97
+  }
+}

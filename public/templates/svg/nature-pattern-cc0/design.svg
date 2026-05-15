@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#E8F5E9" data-customize-color="background"/>
+  <circle cx="240" cy="220" r="80" fill="#66BB6A" data-customize-color="primary"/>
+  <circle cx="640" cy="160" r="60" fill="#43A047" data-customize-color="primary"/>
+  <circle cx="1080" cy="240" r="100" fill="#2E7D32" data-customize-color="primary"/>
+  <circle cx="1480" cy="180" r="70" fill="#66BB6A" data-customize-color="primary"/>
+  <circle cx="1760" cy="260" r="90" fill="#43A047" data-customize-color="primary"/>
+  <circle cx="160" cy="900" r="100" fill="#43A047" data-customize-color="primary"/>
+  <circle cx="540" cy="940" r="70" fill="#2E7D32" data-customize-color="primary"/>
+  <circle cx="940" cy="900" r="80" fill="#66BB6A" data-customize-color="primary"/>
+  <circle cx="1320" cy="940" r="60" fill="#43A047" data-customize-color="primary"/>
+  <circle cx="1700" cy="900" r="80" fill="#2E7D32" data-customize-color="primary"/>
+  <rect x="380" y="420" width="1160" height="280" fill="#FFFFFF" data-customize-color="card"/>
+  <image id="logo" x="940" y="450" width="40" height="40" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="560" font-family="Georgia, serif"
+        font-size="72" font-weight="700" fill="#1B5E20" text-anchor="middle"
+        data-customize-text="headline">
+    Grow Together
+  </text>
+  <text id="text-subheadline" x="960" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#2E7D32" text-anchor="middle"
+        data-customize-text="subheadline">
+    Add your seasonal message
+  </text>
+</svg>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F8F0E5" data-customize-color="background"/>
+  <rect x="120" y="120" width="1680" height="840" fill="#FFFFFF" stroke="#A0826D" stroke-width="4" data-customize-color="card"/>
+  <rect x="120" y="120" width="1680" height="80" fill="#A0826D" data-customize-color="primary"/>
+  <image id="logo" x="180" y="140" width="40" height="40" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="380" font-family="Georgia, serif"
+        font-size="120" font-weight="400" fill="#3D2817" text-anchor="middle"
+        data-customize-text="headline">
+    Curated Style
+  </text>
+  <text id="text-subheadline" x="960" y="500" font-family="Georgia, serif"
+        font-size="56" font-style="italic" fill="#A0826D" text-anchor="middle"
+        data-customize-text="subheadline" data-customize-color="primary">
+    Hand-picked pieces for the modern wardrobe
+  </text>
+  <text id="text-eyebrow" x="960" y="680" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="6" fill="#3D2817" text-anchor="middle"
+        data-customize-text="eyebrow">
+    NEW SPRING COLLECTION
+  </text>
+  <text id="text-cta" x="960" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#A0826D" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Visit our showroom today
+  </text>
+  <text id="text-footer" x="960" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    25 Garden Lane · Open Tues-Sun 11-7
+  </text>
+</svg>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFF8F0" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="200" fill="#FF8FAB" data-customize-color="primary"/>
+  <image id="logo" x="120" y="60" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline-banner" x="960" y="125" font-family="Helvetica, Arial, sans-serif"
+        font-size="64" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner-title">
+    Pediatric Clinic Hours
+  </text>
+  <text id="text-row1-day" x="600" y="350" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#FF8FAB" text-anchor="end"
+        data-customize-text="row1-day" data-customize-color="primary">
+    Monday — Thursday
+  </text>
+  <text id="text-row1-hours" x="700" y="350" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#3D2817" text-anchor="start"
+        data-customize-text="row1-hours">
+    7:30am — 6:00pm
+  </text>
+  <text id="text-row2-day" x="600" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#FF8FAB" text-anchor="end"
+        data-customize-text="row2-day" data-customize-color="primary">
+    Friday
+  </text>
+  <text id="text-row2-hours" x="700" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#3D2817" text-anchor="start"
+        data-customize-text="row2-hours">
+    7:30am — 4:00pm
+  </text>
+  <text id="text-row3-day" x="600" y="550" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#FF8FAB" text-anchor="end"
+        data-customize-text="row3-day" data-customize-color="primary">
+    Saturday
+  </text>
+  <text id="text-row3-hours" x="700" y="550" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#3D2817" text-anchor="start"
+        data-customize-text="row3-hours">
+    8:00am — 12:00pm (sick visits)
+  </text>
+  <text id="text-row4-day" x="600" y="650" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#FF8FAB" text-anchor="end"
+        data-customize-text="row4-day" data-customize-color="primary">
+    Sunday
+  </text>
+  <text id="text-row4-hours" x="700" y="650" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#3D2817" text-anchor="start"
+        data-customize-text="row4-hours">
+    Closed (urgent care line open)
+  </text>
+  <text id="text-cta" x="960" y="850" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#FF8FAB" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Same-day appointments available
+  </text>
+  <text id="text-footer" x="960" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    Call (555) 123-4567 · After hours: nurse line ext. 2
+  </text>
+</svg>

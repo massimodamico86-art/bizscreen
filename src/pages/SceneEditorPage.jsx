@@ -30,10 +30,12 @@ import {
   Wand2,
   Eye,
   Edit3,
+  LayoutTemplate,
   MonitorPlay,
   X,
   Database,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchScene } from '../services/sceneService';
 import {
@@ -86,6 +88,7 @@ const BUSINESS_TYPE_LABELS = {
 
 export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
   const { userProfile } = useAuth();
+  const navigate = useNavigate();
 
   // Scene and slides state
   const [scene, setScene] = useState(null);
@@ -384,6 +387,31 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
     onNavigate?.(`scene-detail-${sceneId}`);
   }
 
+  /**
+   * Phase 174 D-03 + D-04: open the template gallery in editorReturn mode.
+   *
+   * Two-step navigation (RESEARCH §Pattern 1 / Pitfall 1):
+   *   1. navigate(...) writes URL params into the browser location so
+   *      useSearchParams() in TemplateGalleryPage reads them on mount.
+   *   2. onNavigate('templates') flips App.jsx currentPage to render
+   *      TemplateGalleryPage. (Note: 'templates' is the page-key in App.jsx:549;
+   *      the URL params travel via the browser URL, not the page-key string.)
+   *
+   * The slideId param is included so apply_template_to_active_slide can
+   * target the user's currently-selected slide on round-trip return
+   * (Open Question 1 resolution — slideId is part of the URL contract).
+   */
+  function handleBrowseTemplates() {
+    const activeSlideId = slides?.[activeSlideIndex]?.id ?? '';
+    const params = new URLSearchParams({
+      editorReturn: '1',
+      returnSceneId: sceneId ?? '',
+      slideId: activeSlideId,
+    });
+    navigate(`?${params.toString()}`, { replace: true });
+    onNavigate?.('templates');
+  }
+
   function handlePreview() {
     setShowPreviewPanel(!showPreviewPanel);
   }
@@ -526,6 +554,18 @@ export default function SceneEditorPage({ sceneId, onNavigate, onShowToast }) {
 
           <Button variant="ghost" size="sm" onClick={() => setShowAiPanel(!showAiPanel)} className={showAiPanel ? 'text-purple-400' : 'text-gray-400'}>
             <Sparkles className="w-4 h-4" />
+          </Button>
+
+          {/* Phase 174 D-03 — Browse Templates entry to gallery in editorReturn mode */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleBrowseTemplates}
+            className="text-gray-400"
+            title="Browse Templates"
+          >
+            <LayoutTemplate className="w-4 h-4 mr-1" />
+            Browse Templates
           </Button>
 
           <Button

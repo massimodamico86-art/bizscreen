@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#1a1a1a" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="6" fill="#E63946" data-customize-color="primary"/>
+  <rect x="0" y="1074" width="1920" height="6" fill="#E63946" data-customize-color="primary"/>
+  <image id="logo" x="120" y="100" width="140" height="140" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="200" font-family="Georgia, serif"
+        font-size="40" fill="#E63946" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    OMAKASE
+  </text>
+  <text id="text-headline" x="960" y="320" font-family="Georgia, serif"
+        font-size="96" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Tonight's Sushi Selection
+  </text>
+  <text id="text-row1" x="960" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#F5F5F5" text-anchor="middle"
+        data-customize-text="row1">
+    Bluefin Tuna Sashimi · $24
+  </text>
+  <text id="text-row2" x="960" y="580" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#F5F5F5" text-anchor="middle"
+        data-customize-text="row2">
+    Hokkaido Scallop Nigiri · $18
+  </text>
+  <text id="text-row3" x="960" y="660" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#F5F5F5" text-anchor="middle"
+        data-customize-text="row3">
+    Yellowtail with Jalapeno · $22
+  </text>
+  <text id="text-row4" x="960" y="740" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#F5F5F5" text-anchor="middle"
+        data-customize-text="row4">
+    Uni Hand Roll · $16
+  </text>
+  <text id="text-footer" x="960" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#999999" text-anchor="middle"
+        data-customize-text="footer">
+    Chef's selection · 9-course tasting available
+  </text>
+</svg>

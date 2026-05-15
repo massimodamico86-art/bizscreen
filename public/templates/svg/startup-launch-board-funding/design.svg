@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="600" fill="#6366F1" data-customize-color="primary"/>
+  <image id="logo" x="60" y="80" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="8" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="eyebrow">
+    SERIES B ANNOUNCEMENT
+  </text>
+  <text id="text-headline" x="540" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="120" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    $42M Raised
+  </text>
+  <text id="text-subheadline" x="540" y="800" font-family="Georgia, serif"
+        font-size="56" font-weight="700" fill="#1F1F2E" text-anchor="middle"
+        data-customize-text="subheadline">
+    To scale our platform to 1M users
+  </text>
+  <text id="text-stat1-value" x="540" y="1000" font-family="Helvetica, Arial, sans-serif"
+        font-size="84" font-weight="700" fill="#6366F1" text-anchor="middle"
+        data-customize-text="stat1-value" data-customize-color="primary">
+    50+
+  </text>
+  <text id="text-stat1-label" x="540" y="1070" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#666666" text-anchor="middle"
+        data-customize-text="stat1-label">
+    New roles opening
+  </text>
+  <text id="text-stat2-value" x="540" y="1200" font-family="Helvetica, Arial, sans-serif"
+        font-size="84" font-weight="700" fill="#6366F1" text-anchor="middle"
+        data-customize-text="stat2-value" data-customize-color="primary">
+    3
+  </text>
+  <text id="text-stat2-label" x="540" y="1270" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#666666" text-anchor="middle"
+        data-customize-text="stat2-label">
+    New international offices
+  </text>
+  <text id="text-stat3-value" x="540" y="1400" font-family="Helvetica, Arial, sans-serif"
+        font-size="84" font-weight="700" fill="#6366F1" text-anchor="middle"
+        data-customize-text="stat3-value" data-customize-color="primary">
+    100×
+  </text>
+  <text id="text-stat3-label" x="540" y="1470" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#666666" text-anchor="middle"
+        data-customize-text="stat3-label">
+    Capacity expansion
+  </text>
+  <text id="text-cta" x="540" y="1700" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#6366F1" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Join us · careers.example.com
+  </text>
+  <text id="text-footer" x="540" y="1820" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    Led by Sequoia · Closed Q2 2026
+  </text>
+</svg>

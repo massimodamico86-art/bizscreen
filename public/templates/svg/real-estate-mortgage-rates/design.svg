@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#1F3A5F" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Buyer Financing Snapshot
+  </text>
+  <text id="text-eyebrow" x="960" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="6" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    BASED ON $400,000 LOAN
+  </text>
+  <text id="text-rate1-label" x="500" y="430" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#666666" text-anchor="middle"
+        data-customize-text="rate1-label">
+    30-Year Fixed
+  </text>
+  <text id="text-rate1-value" x="500" y="540" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="rate1-value" data-customize-color="primary">
+    $2,460/mo
+  </text>
+  <text id="text-rate2-label" x="1420" y="430" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#666666" text-anchor="middle"
+        data-customize-text="rate2-label">
+    15-Year Fixed
+  </text>
+  <text id="text-rate2-value" x="1420" y="540" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="rate2-value" data-customize-color="primary">
+    $3,310/mo
+  </text>
+  <rect x="120" y="660" width="1680" height="2" fill="#CCCCCC" data-customize-color="card"/>
+  <text id="text-bullet1" x="960" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="bullet1" data-customize-color="primary">
+    · Get pre-approved in under 24 hours
+  </text>
+  <text id="text-bullet2" x="960" y="850" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="bullet2" data-customize-color="primary">
+    · First-time buyer programs available
+  </text>
+  <text id="text-cta" x="960" y="970" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#1F3A5F" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Talk with our preferred lender
+  </text>
+</svg>

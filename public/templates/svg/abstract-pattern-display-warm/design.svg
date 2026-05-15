@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFE5B4" data-customize-color="background"/>
+  <circle cx="200" cy="200" r="160" fill="#E76F51" data-customize-color="primary"/>
+  <circle cx="400" cy="800" r="220" fill="#F4A261" data-customize-color="accent"/>
+  <circle cx="1600" cy="280" r="180" fill="#E76F51" data-customize-color="primary"/>
+  <circle cx="1700" cy="900" r="140" fill="#F4A261" data-customize-color="accent"/>
+  <rect x="700" y="380" width="520" height="320" fill="#FFFFFF" data-customize-color="card"/>
+  <image id="logo" x="940" y="430" width="40" height="40" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="540" font-family="Georgia, serif"
+        font-size="64" font-weight="700" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="headline">
+    Warm &amp; Welcoming
+  </text>
+  <text id="text-subheadline" x="960" y="620" font-family="Georgia, serif"
+        font-size="32" font-style="italic" fill="#666666" text-anchor="middle"
+        data-customize-text="subheadline">
+    Add your own message
+  </text>
+  <text id="text-footer" x="960" y="970" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#7B4422" text-anchor="middle"
+        data-customize-text="footer">
+    Customize all colors and text in seconds
+  </text>
+</svg>

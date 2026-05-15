@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FCE4EC" data-customize-color="background"/>
+  <circle cx="220" cy="200" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="180" cy="160" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="260" cy="160" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="180" cy="240" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="260" cy="240" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="220" cy="200" r="20" fill="#FFEB3B" data-customize-color="accent"/>
+  <circle cx="1700" cy="220" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="1660" cy="180" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="1740" cy="180" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="1660" cy="260" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="1740" cy="260" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="1700" cy="220" r="20" fill="#FFEB3B" data-customize-color="accent"/>
+  <circle cx="220" cy="900" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="180" cy="860" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="260" cy="860" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="180" cy="940" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="260" cy="940" r="40" fill="#CE93D8" data-customize-color="primary"/>
+  <circle cx="220" cy="900" r="20" fill="#FFEB3B" data-customize-color="accent"/>
+  <circle cx="1700" cy="900" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="1660" cy="860" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="1740" cy="860" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="1660" cy="940" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="1740" cy="940" r="40" fill="#F48FB1" data-customize-color="primary"/>
+  <circle cx="1700" cy="900" r="20" fill="#FFEB3B" data-customize-color="accent"/>
+  <rect x="540" y="380" width="840" height="320" fill="#FFFFFF" data-customize-color="card"/>
+  <image id="logo" x="940" y="420" width="40" height="40" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="540" font-family="Georgia, serif"
+        font-size="80" font-weight="400" fill="#880E4F" text-anchor="middle"
+        data-customize-text="headline">
+    Spring Bloom
+  </text>
+  <text id="text-subheadline" x="960" y="630" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#AD1457" text-anchor="middle"
+        data-customize-text="subheadline">
+    Customize for your season
+  </text>
+</svg>

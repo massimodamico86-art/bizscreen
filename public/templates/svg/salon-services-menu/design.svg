@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#FBF4EE" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="380" fill="#C77B89" data-customize-color="primary"/>
+  <image id="logo" x="60" y="60" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="200" font-family="Georgia, serif"
+        font-size="32" fill="#FBF4EE" text-anchor="middle" data-customize-text="eyebrow">
+    BLOOM SALON &amp; SPA
+  </text>
+  <text id="text-headline" x="540" y="300" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Services Menu
+  </text>
+  <text id="text-svc1" x="120" y="540" font-family="Georgia, serif"
+        font-size="48" fill="#1a1a1a" text-anchor="start" data-customize-text="service1">
+    Haircut &amp; Style
+  </text>
+  <text id="text-svc1-price" x="960" y="540" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#C77B89" text-anchor="end"
+        data-customize-text="service1-price" data-customize-color="primary">
+    $65
+  </text>
+  <line x1="120" y1="580" x2="960" y2="580" stroke="#E8D5D0" stroke-width="2"/>
+  <text id="text-svc2" x="120" y="700" font-family="Georgia, serif"
+        font-size="48" fill="#1a1a1a" text-anchor="start" data-customize-text="service2">
+    Color &amp; Highlights
+  </text>
+  <text id="text-svc2-price" x="960" y="700" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#C77B89" text-anchor="end"
+        data-customize-text="service2-price" data-customize-color="primary">
+    $140
+  </text>
+  <line x1="120" y1="740" x2="960" y2="740" stroke="#E8D5D0" stroke-width="2"/>
+  <text id="text-svc3" x="120" y="860" font-family="Georgia, serif"
+        font-size="48" fill="#1a1a1a" text-anchor="start" data-customize-text="service3">
+    Manicure
+  </text>
+  <text id="text-svc3-price" x="960" y="860" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#C77B89" text-anchor="end"
+        data-customize-text="service3-price" data-customize-color="primary">
+    $45
+  </text>
+  <line x1="120" y1="900" x2="960" y2="900" stroke="#E8D5D0" stroke-width="2"/>
+  <text id="text-svc4" x="120" y="1020" font-family="Georgia, serif"
+        font-size="48" fill="#1a1a1a" text-anchor="start" data-customize-text="service4">
+    Pedicure
+  </text>
+  <text id="text-svc4-price" x="960" y="1020" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#C77B89" text-anchor="end"
+        data-customize-text="service4-price" data-customize-color="primary">
+    $55
+  </text>
+  <line x1="120" y1="1060" x2="960" y2="1060" stroke="#E8D5D0" stroke-width="2"/>
+  <text id="text-svc5" x="120" y="1180" font-family="Georgia, serif"
+        font-size="48" fill="#1a1a1a" text-anchor="start" data-customize-text="service5">
+    Facial Treatment
+  </text>
+  <text id="text-svc5-price" x="960" y="1180" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#C77B89" text-anchor="end"
+        data-customize-text="service5-price" data-customize-color="primary">
+    $95
+  </text>
+  <line x1="120" y1="1220" x2="960" y2="1220" stroke="#E8D5D0" stroke-width="2"/>
+  <text id="text-svc6" x="120" y="1340" font-family="Georgia, serif"
+        font-size="48" fill="#1a1a1a" text-anchor="start" data-customize-text="service6">
+    Deep Tissue Massage
+  </text>
+  <text id="text-svc6-price" x="960" y="1340" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#C77B89" text-anchor="end"
+        data-customize-text="service6-price" data-customize-color="primary">
+    $120
+  </text>
+  <text id="text-footer" x="540" y="1700" font-family="Georgia, serif"
+        font-size="32" fill="#888888" text-anchor="middle" data-customize-text="footer">
+    Walk-ins welcome · Book online at bloomspa.com
+  </text>
+</svg>

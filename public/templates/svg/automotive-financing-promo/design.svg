@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="540" fill="#1A1A1A" data-customize-color="primary"/>
+  <image id="logo" x="120" y="80" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="240" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" letter-spacing="8" fill="#FFB703" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="accent">
+    SPECIAL FINANCING
+  </text>
+  <text id="text-headline" x="960" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="200" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    0% APR for 60 mo.
+  </text>
+  <text id="text-subheadline" x="960" y="700" font-family="Georgia, serif"
+        font-size="56" font-weight="700" fill="#1A1A1A" text-anchor="middle"
+        data-customize-text="subheadline">
+    On select 2026 models
+  </text>
+  <text id="text-row1" x="960" y="820" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1A1A1A" text-anchor="middle"
+        data-customize-text="row1">
+    Plus $1,500 cash back · Trade-ins welcome
+  </text>
+  <text id="text-cta" x="960" y="970" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#1A1A1A" text-anchor="middle"
+        data-customize-text="cta">
+    Visit our showroom · Open 7 days a week
+  </text>
+</svg>

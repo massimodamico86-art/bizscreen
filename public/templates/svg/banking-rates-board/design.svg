@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#003D6B" data-customize-color="primary"/>
+  <image id="logo" x="80" y="30" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="105" font-family="Helvetica, Arial, sans-serif"
+        font-size="64" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Today's Rates
+  </text>
+  <text id="text-row1-label" x="200" y="340" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="row1-label">
+    30-Year Fixed Mortgage
+  </text>
+  <text id="text-row1-value" x="1720" y="340" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#003D6B" text-anchor="end"
+        data-customize-text="row1-value" data-customize-color="primary">
+    6.45%
+  </text>
+  <line x1="200" y1="380" x2="1720" y2="380" stroke="#E0E0E0" stroke-width="2"/>
+  <text id="text-row2-label" x="200" y="480" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="row2-label">
+    15-Year Fixed Mortgage
+  </text>
+  <text id="text-row2-value" x="1720" y="480" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#003D6B" text-anchor="end"
+        data-customize-text="row2-value" data-customize-color="primary">
+    5.78%
+  </text>
+  <line x1="200" y1="520" x2="1720" y2="520" stroke="#E0E0E0" stroke-width="2"/>
+  <text id="text-row3-label" x="200" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="row3-label">
+    High-Yield Savings
+  </text>
+  <text id="text-row3-value" x="1720" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#003D6B" text-anchor="end"
+        data-customize-text="row3-value" data-customize-color="primary">
+    4.25% APY
+  </text>
+  <line x1="200" y1="660" x2="1720" y2="660" stroke="#E0E0E0" stroke-width="2"/>
+  <text id="text-row4-label" x="200" y="760" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="row4-label">
+    12-Month CD
+  </text>
+  <text id="text-row4-value" x="1720" y="760" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#003D6B" text-anchor="end"
+        data-customize-text="row4-value" data-customize-color="primary">
+    4.85% APY
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#888888" text-anchor="middle" data-customize-text="footer">
+    Rates as of today · APR/APY · Subject to change · Member FDIC
+  </text>
+</svg>

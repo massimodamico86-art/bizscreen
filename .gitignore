@@ -26,3 +26,15 @@ dist-ssr
 
 # Performance reports (generated)
 perf-reports/
+
+# Test artifacts (Playwright, Vitest coverage)
+playwright-report/
+test-results/
+coverage/
+.playwright-mcp/
+
+# Supabase CLI scratch
+supabase/.temp/
+
+# Local agent/plugin scratch
+.claude/

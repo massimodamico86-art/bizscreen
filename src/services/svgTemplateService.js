@@ -5,6 +5,16 @@
  * Integrates with Fabric.js for canvas serialization.
  */
 import { supabase } from '../supabase';
+import { fetchGalleryTemplates } from './templateGalleryService';
+
+/**
+ * PHASE 170 NOTES (v20.0 Templates Reimagined):
+ *   - Hardcoded template array removed (D-19); 12 entries live in svg_templates seed.
+ *   - fetchSvgTemplates now delegates to templateGalleryService (D-20).
+ *   - fetchSvgTemplateById queries DB by slug or UUID (Pitfall 2).
+ *   - Phase 171 replaces the legacy SVG gallery page with TemplateGalleryPage;
+ *     fetchSvgTemplates is slated for removal in a follow-up cleanup pass.
+ */
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -110,318 +120,66 @@ function normalizeSignageDimensions(width, height, orientation) {
   return { width: newWidth, height: newHeight };
 }
 
-/**
- * Local SVG templates configuration
- * Templates stored in public/templates/svg/
- */
-export const LOCAL_SVG_TEMPLATES = [
-  {
-    id: 'restaurant-menu-1',
-    name: 'Restaurant Menu',
-    description: 'Elegant restaurant menu template with sections for starters, mains, desserts and drinks',
-    category: 'Restaurant',
-    orientation: 'landscape',
-    thumbnail: '/templates/svg/restaurant-menu/menu-design.svg',
-    svgUrl: '/templates/svg/restaurant-menu/menu-design.svg',
-    width: 1920,
-    height: 1080,
-    tags: ['menu', 'restaurant', 'food', 'dining'],
-    isFeatured: true,
-  },
-  {
-    id: 'cafe-special-1',
-    name: 'Cafe Daily Special',
-    description: 'Coffee shop daily special board with pricing',
-    category: 'Restaurant',
-    orientation: 'portrait',
-    thumbnail: '/templates/svg/cafe-special/design.svg',
-    svgUrl: '/templates/svg/cafe-special/design.svg',
-    width: 1080,
-    height: 1920,
-    tags: ['cafe', 'coffee', 'special', 'daily'],
-  },
-  {
-    id: 'retail-sale-1',
-    name: 'Retail Sale Banner',
-    description: 'Eye-catching sale promotion banner for retail displays',
-    category: 'Retail',
-    orientation: 'landscape',
-    thumbnail: '/templates/svg/retail-sale/design.svg',
-    svgUrl: '/templates/svg/retail-sale/design.svg',
-    width: 1920,
-    height: 1080,
-    tags: ['sale', 'retail', 'promotion', 'discount'],
-  },
-  {
-    id: 'welcome-sign-1',
-    name: 'Welcome Display',
-    description: 'Professional welcome sign for lobbies and entrances',
-    category: 'Corporate',
-    orientation: 'landscape',
-    thumbnail: '/templates/svg/welcome-sign/design.svg',
-    svgUrl: '/templates/svg/welcome-sign/design.svg',
-    width: 1920,
-    height: 1080,
-    tags: ['welcome', 'corporate', 'lobby', 'entrance'],
-  },
-  {
-    id: 'holiday-sale-1',
-    name: 'Holiday Sale',
-    description: 'Festive holiday sale promotion with discount badge and call-to-action',
-    category: 'Retail',
-    orientation: 'landscape',
-    thumbnail: '/templates/svg/holiday-sale/design.svg',
-    svgUrl: '/templates/svg/holiday-sale/design.svg',
-    width: 1920,
-    height: 1080,
-    tags: ['holiday', 'sale', 'christmas', 'promotion', 'seasonal'],
-    isFeatured: true,
-  },
-  {
-    id: 'real-estate-1',
-    name: 'Real Estate Listing',
-    description: 'Professional property listing display with features, price, and agent info',
-    category: 'Real Estate',
-    orientation: 'landscape',
-    thumbnail: '/templates/svg/real-estate/design.svg',
-    svgUrl: '/templates/svg/real-estate/design.svg',
-    width: 1920,
-    height: 1080,
-    tags: ['real estate', 'property', 'listing', 'home', 'sale'],
-    isFeatured: true,
-  },
-  {
-    id: 'healthcare-info-1',
-    name: 'Healthcare Services',
-    description: 'Medical center services display with departments, hours, and contact info',
-    category: 'Healthcare',
-    orientation: 'landscape',
-    thumbnail: '/templates/svg/healthcare-info/design.svg',
-    svgUrl: '/templates/svg/healthcare-info/design.svg',
-    width: 1920,
-    height: 1080,
-    tags: ['healthcare', 'medical', 'hospital', 'clinic', 'services'],
-  },
-  {
-    id: 'corporate-welcome-1',
-    name: 'Corporate Welcome',
-    description: 'Modern corporate welcome display for lobbies and meeting rooms',
-    category: 'Corporate',
-    orientation: 'landscape',
-    thumbnail: '/templates/svg/corporate-welcome/design.svg',
-    svgUrl: '/templates/svg/corporate-welcome/design.svg',
-    width: 1920,
-    height: 1080,
-    tags: ['corporate', 'welcome', 'meeting', 'lobby', 'business'],
-  },
-  {
-    id: 'happy-hour-1',
-    name: 'Happy Hour Specials',
-    description: 'Bar and restaurant happy hour promotion with drink specials',
-    category: 'Restaurant',
-    orientation: 'portrait',
-    thumbnail: '/templates/svg/happy-hour/design.svg',
-    svgUrl: '/templates/svg/happy-hour/design.svg',
-    width: 1080,
-    height: 1920,
-    tags: ['happy hour', 'bar', 'drinks', 'specials', 'restaurant'],
-    isFeatured: true,
-  },
-  {
-    id: 'fitness-promo-1',
-    name: 'Fitness Gym Promo',
-    description: 'Dynamic gym membership promotion with pricing and features',
-    category: 'Fitness',
-    orientation: 'landscape',
-    thumbnail: '/templates/svg/fitness-promo/design.svg',
-    svgUrl: '/templates/svg/fitness-promo/design.svg',
-    width: 1920,
-    height: 1080,
-    tags: ['fitness', 'gym', 'membership', 'promotion', 'health'],
-  },
-  {
-    id: 'hotel-amenities-1',
-    name: 'Hotel Amenities',
-    description: 'Hotel guest information display with amenities, dining hours, and services',
-    category: 'Hospitality',
-    orientation: 'portrait',
-    thumbnail: '/templates/svg/hotel-amenities/design.svg',
-    svgUrl: '/templates/svg/hotel-amenities/design.svg',
-    width: 1080,
-    height: 1920,
-    tags: ['hotel', 'amenities', 'hospitality', 'guest', 'services'],
-  },
-  {
-    id: 'event-promo-1',
-    name: 'Event Promotion',
-    description: 'Vibrant event promotion display for concerts, festivals, and live events',
-    category: 'Events',
-    orientation: 'landscape',
-    thumbnail: '/templates/svg/event-promo/design.svg',
-    svgUrl: '/templates/svg/event-promo/design.svg',
-    width: 1920,
-    height: 1080,
-    tags: ['event', 'concert', 'festival', 'music', 'entertainment'],
-    isFeatured: true,
-  },
-];
 
 /**
- * Fetch all available SVG templates (local + database + template_library)
- * @param {Object} options - Filter options
- * @returns {Promise<Array>} List of templates
+ * Fetch SVG-only templates through the unified gallery VIEW.
+ *
+ * Phase 170 D-20: delegates to templateGalleryService.fetchGalleryTemplates
+ * with editorType='svg'. Shape is preserved for remaining legacy callers
+ * still using this service surface (Phase 171 migrated the gallery page to
+ * templateGalleryService directly; cleanup pass will remove this shim).
+ *
+ * @param {Object} [options]
+ * @param {string} [options.category]    — 'all' means no filter
+ * @param {string} [options.orientation] — 'all' means no filter
+ * @param {string} [options.search]
+ * @returns {Promise<Array<object>>} templates (empty array on error)
  */
 export async function fetchSvgTemplates(options = {}) {
-  const { category, orientation, search, includeLocal = true } = options;
-
-  let templates = [];
-
-  // Add local templates
-  if (includeLocal) {
-    templates = [...LOCAL_SVG_TEMPLATES];
+  const { category, orientation, search } = options;
+  const { data, error } = await fetchGalleryTemplates({
+    category: category && category !== 'all' ? category : undefined,
+    orientation: orientation && orientation !== 'all' ? orientation : undefined,
+    search: search || undefined,
+    editorType: 'svg',
+  });
+  if (error) {
+    console.warn('fetchSvgTemplates: DB error', error.message || error);
+    return [];
   }
-
-  // Fetch from svg_templates table
-  try {
-    let query = supabase
-      .from('svg_templates')
-      .select('*')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false });
-
-    if (category && category !== 'all') {
-      query = query.ilike('category', `%${category}%`);
-    }
-
-    if (orientation && orientation !== 'all') {
-      query = query.eq('orientation', orientation);
-    }
-
-    if (search) {
-      // Search in name, description, category, and tags
-      query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%,category.ilike.%${search}%`);
-    }
-
-    const { data, error } = await query;
-
-    if (!error && data) {
-      templates = [...templates, ...data];
-    }
-  } catch (err) {
-    console.warn('Could not fetch SVG templates from database:', err.message);
-  }
-
-  // Also fetch from template_library (admin-uploaded templates)
-  try {
-    let libraryQuery = supabase
-      .from('template_library')
-      .select('*')
-      .eq('is_active', true)
-      .order('is_featured', { ascending: false })
-      .order('created_at', { ascending: false });
-
-    const { data: libraryData, error: libraryError } = await libraryQuery;
-
-    if (!libraryError && libraryData) {
-      // Transform template_library format to match SVG template format
-      const transformedTemplates = libraryData.map(t => {
-        // Get orientation and raw dimensions from metadata
-        const rawWidth = t.metadata?.width || 1920;
-        const rawHeight = t.metadata?.height || 1080;
-        const orientation = t.metadata?.orientation || (rawHeight > rawWidth ? 'portrait' : 'landscape');
-
-        // Normalize dimensions for digital signage (scale up small SVGs)
-        const normalizedDims = normalizeSignageDimensions(rawWidth, rawHeight, orientation);
-
-        // Generate data URL from SVG content if no thumbnail exists
-        const svgContent = t.metadata?.svgContent;
-        let thumbnailDataUrl = null;
-        if (!t.thumbnail_url && svgContent) {
-          try {
-            // Use encodeURIComponent for UTF-8 safe encoding
-            thumbnailDataUrl = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
-          } catch (e) {
-            console.warn('Failed to create data URL from SVG content:', e);
-          }
-        }
-
-        const thumbnailUrl = t.thumbnail_url || thumbnailDataUrl;
-
-        return {
-          id: t.id,
-          name: t.name,
-          description: t.description,
-          category: t.industry || 'General',
-          orientation,
-          width: normalizedDims.width,
-          height: normalizedDims.height,
-          // Store original dimensions for SVG scaling reference
-          originalWidth: rawWidth,
-          originalHeight: rawHeight,
-          thumbnail: thumbnailUrl,
-          thumbnailUrl: thumbnailUrl,
-          svgUrl: t.preview_url || t.thumbnail_url || thumbnailDataUrl,
-          svgContent: svgContent, // Original SVG content for editing
-          tags: t.tags || [],
-          isFeatured: t.is_featured,
-          license: t.license,
-          createdAt: t.created_at,
-          source: 'library', // Mark as from template_library
-        };
-      });
-      templates = [...templates, ...transformedTemplates];
-    }
-  } catch (err) {
-    console.warn('Could not fetch templates from template_library:', err.message);
-  }
-
-  // Apply filters to all templates (including local and library)
-  if (category && category !== 'all') {
-    templates = templates.filter(t =>
-      t.category?.toLowerCase().includes(category.toLowerCase())
-    );
-  }
-
-  if (orientation && orientation !== 'all') {
-    templates = templates.filter(t => t.orientation === orientation);
-  }
-
-  if (search) {
-    const searchLower = search.toLowerCase();
-    templates = templates.filter(t =>
-      t.name?.toLowerCase().includes(searchLower) ||
-      t.description?.toLowerCase().includes(searchLower) ||
-      t.category?.toLowerCase().includes(searchLower) ||
-      t.tags?.some(tag => tag.toLowerCase().includes(searchLower))
-    );
-  }
-
-  return templates;
+  return data;
 }
 
 /**
- * Fetch a single SVG template by ID
- * @param {string} templateId - Template ID
- * @returns {Promise<Object>} Template data
+ * Fetch a single SVG template by id or slug.
+ *
+ * Phase 170 D-19 / Pitfall 2: hardcoded array .find() fallback removed.
+ * The string slugs used by legacy callers (e.g. 'restaurant-menu-1') now
+ * resolve via the `slug` column in svg_templates. Callers passing UUIDs
+ * still hit the `id = ?` branch.
+ *
+ * @param {string} templateIdOrSlug
+ * @returns {Promise<object|null>} template row or null if not found
  */
-export async function fetchSvgTemplateById(templateId) {
-  // Check local templates first
-  const localTemplate = LOCAL_SVG_TEMPLATES.find(t => t.id === templateId);
-  if (localTemplate) {
-    return localTemplate;
-  }
+export async function fetchSvgTemplateById(templateIdOrSlug) {
+  if (!templateIdOrSlug) return null;
 
-  // Fetch from database
+  // Detect UUID vs slug (UUID v4/v5 = 36 chars, hyphenated, lowercase hex)
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    templateIdOrSlug
+  );
+
+  const column = isUuid ? 'id' : 'slug';
   const { data, error } = await supabase
     .from('svg_templates')
     .select('*')
-    .eq('id', templateId)
-    .single();
+    .eq(column, templateIdOrSlug)
+    .maybeSingle();
 
   if (error) {
-    throw error;
+    console.warn('fetchSvgTemplateById: DB error', error.message || error);
+    return null;
   }
-
   return data;
 }
 
@@ -738,5 +496,4 @@ export default {
   fetchUserSvgDesigns,
   deleteUserSvgDesign,
   getSvgTemplateCategories,
-  LOCAL_SVG_TEMPLATES,
 };

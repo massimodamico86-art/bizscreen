@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#2C2418" data-customize-color="background"/>
+  <rect x="100" y="100" width="1720" height="880" fill="#3D3526" data-customize-color="card"/>
+  <image id="logo" x="160" y="160" width="160" height="160" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="280" font-family="Georgia, serif"
+        font-size="40" fill="#C9A86A" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    Welcome, Guests
+  </text>
+  <text id="text-headline" x="960" y="450" font-family="Georgia, serif"
+        font-size="120" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Grand Hotel Lobby
+  </text>
+  <text id="text-am1" x="500" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#C9A86A" text-anchor="middle"
+        data-customize-text="amenity1" data-customize-color="primary">
+    Restaurant
+  </text>
+  <text id="text-am1-detail" x="500" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#FFFFFF" text-anchor="middle" data-customize-text="amenity1-detail">
+    6:30am – 10:30pm
+  </text>
+  <text id="text-am2" x="960" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#C9A86A" text-anchor="middle"
+        data-customize-text="amenity2" data-customize-color="primary">
+    Spa &amp; Pool
+  </text>
+  <text id="text-am2-detail" x="960" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#FFFFFF" text-anchor="middle" data-customize-text="amenity2-detail">
+    7:00am – 9:00pm
+  </text>
+  <text id="text-am3" x="1420" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#C9A86A" text-anchor="middle"
+        data-customize-text="amenity3" data-customize-color="primary">
+    Concierge
+  </text>
+  <text id="text-am3-detail" x="1420" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#FFFFFF" text-anchor="middle" data-customize-text="amenity3-detail">
+    24 Hours
+  </text>
+  <text id="text-footer" x="960" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#999999" text-anchor="middle" data-customize-text="footer">
+    Front Desk: dial 0 from any room phone
+  </text>
+</svg>

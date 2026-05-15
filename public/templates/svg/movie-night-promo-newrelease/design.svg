@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0A0A0A" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="6" fill="#FF1744" data-customize-color="primary"/>
+  <rect x="0" y="1074" width="1920" height="6" fill="#FF1744" data-customize-color="primary"/>
+  <image id="logo" x="120" y="100" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="220" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="12" fill="#FF1744" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    NOW SHOWING
+  </text>
+  <text id="text-headline" x="960" y="450" font-family="Georgia, serif"
+        font-size="180" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    The Final Reel
+  </text>
+  <text id="text-subheadline" x="960" y="570" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-style="italic" fill="#CCCCCC" text-anchor="middle"
+        data-customize-text="subheadline">
+    A new mystery thriller
+  </text>
+  <text id="text-row1" x="960" y="730" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="row1">
+    Showtimes: 1:00 · 4:00 · 7:00 · 9:45
+  </text>
+  <text id="text-row2" x="960" y="810" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#CCCCCC" text-anchor="middle"
+        data-customize-text="row2">
+    Premium Seats Available · IMAX
+  </text>
+  <text id="text-cta" x="960" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FF1744" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Tickets at the box office
+  </text>
+</svg>

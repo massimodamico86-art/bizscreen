@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F4EFE6" data-customize-color="background"/>
+  <rect x="120" y="120" width="1680" height="840" fill="#FFFFFF" data-customize-color="card"/>
+  <rect x="120" y="120" width="6" height="840" fill="#5C4033" data-customize-color="primary"/>
+  <image id="logo" x="180" y="180" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="180" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="6" fill="#5C4033" text-anchor="start"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    OPEN TO ALL
+  </text>
+  <text id="text-headline" x="180" y="450" font-family="Georgia, serif"
+        font-size="96" font-weight="700" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="headline">
+    Library Hours
+  </text>
+  <text id="text-row1-day" x="180" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#5C4033" text-anchor="start"
+        data-customize-text="row1-day" data-customize-color="primary">
+    Mon — Thu
+  </text>
+  <text id="text-row1-hours" x="640" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row1-hours">
+    8:00am — 11:00pm
+  </text>
+  <text id="text-row2-day" x="180" y="680" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#5C4033" text-anchor="start"
+        data-customize-text="row2-day" data-customize-color="primary">
+    Friday
+  </text>
+  <text id="text-row2-hours" x="640" y="680" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row2-hours">
+    8:00am — 9:00pm
+  </text>
+  <text id="text-row3-day" x="180" y="760" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#5C4033" text-anchor="start"
+        data-customize-text="row3-day" data-customize-color="primary">
+    Saturday
+  </text>
+  <text id="text-row3-hours" x="640" y="760" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row3-hours">
+    10:00am — 8:00pm
+  </text>
+  <text id="text-row4-day" x="180" y="840" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#5C4033" text-anchor="start"
+        data-customize-text="row4-day" data-customize-color="primary">
+    Sunday
+  </text>
+  <text id="text-row4-hours" x="640" y="840" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row4-hours">
+    12:00pm — 6:00pm
+  </text>
+  <text id="text-footer" x="960" y="940" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    24/7 study lounge access with student ID
+  </text>
+</svg>

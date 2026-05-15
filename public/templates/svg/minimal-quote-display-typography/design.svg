@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0F0F0F" data-customize-color="background"/>
+  <rect x="120" y="120" width="6" height="840" fill="#FFFFFF" data-customize-color="primary"/>
+  <image id="logo" x="200" y="140" width="40" height="40" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="280" y="240" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="8" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="eyebrow">
+    QUOTE OF THE DAY
+  </text>
+  <text id="text-headline" x="280" y="480" font-family="Georgia, serif"
+        font-size="120" font-weight="400" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline">
+    The way to get
+  </text>
+  <text id="text-headline2" x="280" y="610" font-family="Georgia, serif"
+        font-size="120" font-weight="400" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline2">
+    started is to quit
+  </text>
+  <text id="text-headline3" x="280" y="740" font-family="Georgia, serif"
+        font-size="120" font-weight="400" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline3">
+    talking and begin
+  </text>
+  <text id="text-headline4" x="280" y="870" font-family="Georgia, serif"
+        font-size="120" font-weight="400" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline4">
+    doing.
+  </text>
+  <text id="text-author" x="280" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" font-style="italic" fill="#888888" text-anchor="start"
+        data-customize-text="author">
+    — Walt Disney
+  </text>
+</svg>

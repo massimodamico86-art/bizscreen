@@ -1,4 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
  * Playwright E2E Test Configuration
@@ -65,6 +68,12 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:5173',
     reuseExistingServer: true,
-    timeout: 120 * 1000
+    timeout: 120 * 1000,
+    // Phase 173 — expose VITE_E2E_TEST_MODE to the dev server so App.jsx
+    // registers its test-mode CustomEvent listener (B-3 fix). Without this,
+    // tests/e2e/admin-starter-packs.spec.js cannot dispatch 'test:setCurrentPage'
+    // to navigate to admin-only pages that the super-admin dashboard
+    // intentionally does NOT link from its hardcoded admin-tools grid.
+    env: { ...process.env, VITE_E2E_TEST_MODE: '1' }
   }
 });

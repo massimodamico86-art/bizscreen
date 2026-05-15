@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#1A1A2E" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="500" fill="#0F3460" data-customize-color="primary"/>
+  <image id="logo" x="60" y="80" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="240" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="6" fill="#E94560" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="accent">
+    EVENING DEMO
+  </text>
+  <text id="text-headline" x="540" y="380" font-family="Helvetica, Arial, sans-serif"
+        font-size="92" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Booth #427
+  </text>
+  <text id="text-subheadline" x="540" y="700" font-family="Georgia, serif"
+        font-size="64" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="subheadline">
+    Live Product Demo
+  </text>
+  <text id="text-time" x="540" y="820" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" fill="#E94560" text-anchor="middle"
+        data-customize-text="time" data-customize-color="accent">
+    7:00pm Tonight
+  </text>
+  <text id="text-row1" x="540" y="1100" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="row1">
+    See our newest platform live
+  </text>
+  <text id="text-row2" x="540" y="1180" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="row2">
+    Drinks &amp; appetizers served
+  </text>
+  <text id="text-row3" x="540" y="1260" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="row3">
+    Demo prizes for attendees
+  </text>
+  <rect x="240" y="1450" width="600" height="120" fill="#E94560" data-customize-color="accent"/>
+  <text id="text-cta" x="540" y="1525" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="cta">
+    Stop By &amp; Say Hi
+  </text>
+  <text id="text-footer" x="540" y="1750" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#A0A0BD" text-anchor="middle"
+        data-customize-text="footer">
+    Hall C · Booth 427 · @yourcompany
+  </text>
+</svg>

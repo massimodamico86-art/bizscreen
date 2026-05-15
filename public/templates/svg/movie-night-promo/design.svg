@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#1a0033" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="1080" fill="#000000" opacity="0.3"/>
+  <circle cx="1700" cy="200" r="80" fill="#FFD93D" data-customize-color="accent"/>
+  <circle cx="220" cy="900" r="120" fill="#FF4081" opacity="0.4" data-customize-color="primary"/>
+  <image id="logo" x="120" y="120" width="140" height="140" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="340" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#FFD93D" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="accent">
+    THIS FRIDAY · 8:00 PM
+  </text>
+  <text id="text-headline" x="960" y="540" font-family="Georgia, serif"
+        font-size="180" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Movie Night
+  </text>
+  <text id="text-subheadline" x="960" y="680" font-family="Georgia, serif"
+        font-size="80" fill="#FF4081" text-anchor="middle"
+        data-customize-text="subheadline" data-customize-color="primary">
+    Outdoor Cinema
+  </text>
+  <text id="text-detail" x="960" y="820" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#CCCCCC" text-anchor="middle" data-customize-text="detail">
+    Free popcorn · Bring a blanket · All ages
+  </text>
+  <text id="text-footer" x="960" y="970" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#999999" text-anchor="middle" data-customize-text="footer">
+    Community Park · Rain date Saturday
+  </text>
+</svg>

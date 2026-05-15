@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFF4E0" data-customize-color="background"/>
+  <ellipse cx="200" cy="180" rx="60" ry="100" fill="#D2691E" transform="rotate(35 200 180)" data-customize-color="primary"/>
+  <ellipse cx="450" cy="240" rx="50" ry="90" fill="#A0522D" transform="rotate(70 450 240)" data-customize-color="accent"/>
+  <ellipse cx="1500" cy="180" rx="60" ry="100" fill="#CD853F" transform="rotate(-25 1500 180)" data-customize-color="primary"/>
+  <ellipse cx="1740" cy="280" rx="50" ry="90" fill="#D2691E" transform="rotate(45 1740 280)" data-customize-color="primary"/>
+  <ellipse cx="180" cy="900" rx="60" ry="100" fill="#A0522D" transform="rotate(-40 180 900)" data-customize-color="accent"/>
+  <ellipse cx="1740" cy="900" rx="60" ry="100" fill="#CD853F" transform="rotate(60 1740 900)" data-customize-color="primary"/>
+  <rect x="540" y="380" width="840" height="320" fill="#FFFFFF" data-customize-color="card"/>
+  <image id="logo" x="940" y="420" width="40" height="40" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="540" font-family="Georgia, serif"
+        font-size="80" font-weight="700" fill="#5C2E0E" text-anchor="middle"
+        data-customize-text="headline">
+    Hello Autumn
+  </text>
+  <text id="text-subheadline" x="960" y="630" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#8B4513" text-anchor="middle"
+        data-customize-text="subheadline">
+    Add your fall message here
+  </text>
+</svg>

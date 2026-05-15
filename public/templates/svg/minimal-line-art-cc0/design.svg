@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <line x1="120" y1="180" x2="1800" y2="180" stroke="#1A1A1A" stroke-width="3" data-customize-color="primary"/>
+  <line x1="120" y1="900" x2="1800" y2="900" stroke="#1A1A1A" stroke-width="3" data-customize-color="primary"/>
+  <line x1="120" y1="180" x2="120" y2="900" stroke="#1A1A1A" stroke-width="3" data-customize-color="primary"/>
+  <line x1="1800" y1="180" x2="1800" y2="900" stroke="#1A1A1A" stroke-width="3" data-customize-color="primary"/>
+  <circle cx="960" cy="540" r="220" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3" data-customize-color="card"/>
+  <line x1="740" y1="540" x2="1180" y2="540" stroke="#1A1A1A" stroke-width="3"/>
+  <line x1="960" y1="320" x2="960" y2="760" stroke="#1A1A1A" stroke-width="3"/>
+  <image id="logo" x="940" y="120" width="40" height="40" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="990" font-family="Georgia, serif"
+        font-size="56" font-weight="400" fill="#1A1A1A" text-anchor="middle"
+        data-customize-text="headline">
+    Less is more
+  </text>
+</svg>

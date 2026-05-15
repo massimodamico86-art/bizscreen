@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#3D2817" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#A0522D" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="100" font-family="Georgia, serif"
+        font-size="64" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Seasonal Coffee Menu
+  </text>
+  <text id="text-row1-name" x="200" y="320" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#F5DEB3" text-anchor="start"
+        data-customize-text="row1-name">
+    Pumpkin Spice Latte
+  </text>
+  <text id="text-row1-price" x="1720" y="320" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#A0522D" text-anchor="end"
+        data-customize-text="row1-price" data-customize-color="primary">
+    $5.50
+  </text>
+  <text id="text-row2-name" x="200" y="450" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#F5DEB3" text-anchor="start"
+        data-customize-text="row2-name">
+    Maple Cinnamon Mocha
+  </text>
+  <text id="text-row2-price" x="1720" y="450" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#A0522D" text-anchor="end"
+        data-customize-text="row2-price" data-customize-color="primary">
+    $5.75
+  </text>
+  <text id="text-row3-name" x="200" y="580" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#F5DEB3" text-anchor="start"
+        data-customize-text="row3-name">
+    Caramel Apple Macchiato
+  </text>
+  <text id="text-row3-price" x="1720" y="580" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#A0522D" text-anchor="end"
+        data-customize-text="row3-price" data-customize-color="primary">
+    $5.50
+  </text>
+  <text id="text-row4-name" x="200" y="710" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#F5DEB3" text-anchor="start"
+        data-customize-text="row4-name">
+    Hot Toddy Cold Brew
+  </text>
+  <text id="text-row4-price" x="1720" y="710" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#A0522D" text-anchor="end"
+        data-customize-text="row4-price" data-customize-color="primary">
+    $5.95
+  </text>
+  <text id="text-footer" x="960" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#F5DEB3" text-anchor="middle"
+        data-customize-text="footer">
+    Available through November
+  </text>
+</svg>

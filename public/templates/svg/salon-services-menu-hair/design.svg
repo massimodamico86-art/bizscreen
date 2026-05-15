@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#FCE4EC" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="320" fill="#AD1457" data-customize-color="primary"/>
+  <image id="logo" x="60" y="80" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="180" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="8" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="eyebrow">
+    HAIR SERVICES
+  </text>
+  <text id="text-headline" x="540" y="270" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Salon Menu
+  </text>
+  <text id="text-row1-name" x="120" y="500" font-family="Georgia, serif"
+        font-size="48" fill="#3D1B2E" text-anchor="start"
+        data-customize-text="row1-name">
+    Women's Cut &amp; Style
+  </text>
+  <text id="text-row1-price" x="960" y="500" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#AD1457" text-anchor="end"
+        data-customize-text="row1-price" data-customize-color="primary">
+    $85
+  </text>
+  <text id="text-row2-name" x="120" y="640" font-family="Georgia, serif"
+        font-size="48" fill="#3D1B2E" text-anchor="start"
+        data-customize-text="row2-name">
+    Men's Cut
+  </text>
+  <text id="text-row2-price" x="960" y="640" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#AD1457" text-anchor="end"
+        data-customize-text="row2-price" data-customize-color="primary">
+    $45
+  </text>
+  <text id="text-row3-name" x="120" y="780" font-family="Georgia, serif"
+        font-size="48" fill="#3D1B2E" text-anchor="start"
+        data-customize-text="row3-name">
+    Single Color
+  </text>
+  <text id="text-row3-price" x="960" y="780" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#AD1457" text-anchor="end"
+        data-customize-text="row3-price" data-customize-color="primary">
+    $120+
+  </text>
+  <text id="text-row4-name" x="120" y="920" font-family="Georgia, serif"
+        font-size="48" fill="#3D1B2E" text-anchor="start"
+        data-customize-text="row4-name">
+    Highlights / Balayage
+  </text>
+  <text id="text-row4-price" x="960" y="920" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#AD1457" text-anchor="end"
+        data-customize-text="row4-price" data-customize-color="primary">
+    $200+
+  </text>
+  <text id="text-row5-name" x="120" y="1060" font-family="Georgia, serif"
+        font-size="48" fill="#3D1B2E" text-anchor="start"
+        data-customize-text="row5-name">
+    Brazilian Blowout
+  </text>
+  <text id="text-row5-price" x="960" y="1060" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#AD1457" text-anchor="end"
+        data-customize-text="row5-price" data-customize-color="primary">
+    $300
+  </text>
+  <text id="text-row6-name" x="120" y="1200" font-family="Georgia, serif"
+        font-size="48" fill="#3D1B2E" text-anchor="start"
+        data-customize-text="row6-name">
+    Bridal Updo
+  </text>
+  <text id="text-row6-price" x="960" y="1200" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#AD1457" text-anchor="end"
+        data-customize-text="row6-price" data-customize-color="primary">
+    $150
+  </text>
+  <text id="text-row7-name" x="120" y="1340" font-family="Georgia, serif"
+        font-size="48" fill="#3D1B2E" text-anchor="start"
+        data-customize-text="row7-name">
+    Deep Conditioning
+  </text>
+  <text id="text-row7-price" x="960" y="1340" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#AD1457" text-anchor="end"
+        data-customize-text="row7-price" data-customize-color="primary">
+    $40
+  </text>
+  <text id="text-row8-name" x="120" y="1480" font-family="Georgia, serif"
+        font-size="48" fill="#3D1B2E" text-anchor="start"
+        data-customize-text="row8-name">
+    Beard Trim
+  </text>
+  <text id="text-row8-price" x="960" y="1480" font-family="Georgia, serif"
+        font-size="48" font-weight="700" fill="#AD1457" text-anchor="end"
+        data-customize-text="row8-price" data-customize-color="primary">
+    $25
+  </text>
+  <text id="text-cta" x="540" y="1700" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#AD1457" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Book online at our website
+  </text>
+  <text id="text-footer" x="540" y="1820" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#3D1B2E" text-anchor="middle"
+        data-customize-text="footer">
+    By appointment · 555-321-4242
+  </text>
+</svg>

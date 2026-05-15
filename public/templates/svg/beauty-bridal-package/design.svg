@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#FFF7F4" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="320" fill="#C97D7D" data-customize-color="primary"/>
+  <image id="logo" x="60" y="80" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="180" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="8" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="eyebrow">
+    BRIDAL PACKAGE
+  </text>
+  <text id="text-headline" x="540" y="270" font-family="Georgia, serif"
+        font-size="84" font-weight="400" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Wedding Day
+  </text>
+  <text id="text-subheadline" x="540" y="500" font-family="Georgia, serif"
+        font-size="48" font-style="italic" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="subheadline">
+    Look radiant on your big day
+  </text>
+  <text id="text-row1" x="540" y="660" font-family="Georgia, serif"
+        font-size="40" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row1">
+    · Bridal makeup trial
+  </text>
+  <text id="text-row2" x="540" y="740" font-family="Georgia, serif"
+        font-size="40" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row2">
+    · Day-of makeup &amp; touch-ups
+  </text>
+  <text id="text-row3" x="540" y="820" font-family="Georgia, serif"
+        font-size="40" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row3">
+    · Updo styling for the bride
+  </text>
+  <text id="text-row4" x="540" y="900" font-family="Georgia, serif"
+        font-size="40" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row4">
+    · Trial &amp; on-site service
+  </text>
+  <text id="text-row5" x="540" y="980" font-family="Georgia, serif"
+        font-size="40" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row5">
+    · Champagne &amp; chocolates
+  </text>
+  <text id="text-price" x="540" y="1280" font-family="Georgia, serif"
+        font-size="160" font-weight="700" fill="#C97D7D" text-anchor="middle"
+        data-customize-text="price" data-customize-color="primary">
+    $850
+  </text>
+  <text id="text-subprice" x="540" y="1380" font-family="Georgia, serif"
+        font-size="40" font-style="italic" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="subprice">
+    Bridal party packages from $250
+  </text>
+  <text id="text-cta" x="540" y="1640" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#C97D7D" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Book your trial today
+  </text>
+  <text id="text-footer" x="540" y="1820" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="footer">
+    By appointment · 4 weeks notice required
+  </text>
+</svg>

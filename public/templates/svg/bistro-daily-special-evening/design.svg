@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0d1b2a" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="20" fill="#FFB703" data-customize-color="primary"/>
+  <rect x="0" y="1060" width="1920" height="20" fill="#FFB703" data-customize-color="primary"/>
+  <image id="logo" x="120" y="100" width="180" height="180" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FFB703" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    After 6pm Tonight
+  </text>
+  <text id="text-headline" x="960" y="500" font-family="Georgia, serif"
+        font-size="140" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Evening Special
+  </text>
+  <text id="text-subheadline" x="960" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#CCCCCC" text-anchor="middle"
+        data-customize-text="subheadline">
+    Braised short ribs with red wine reduction
+  </text>
+  <text id="text-price" x="960" y="800" font-family="Georgia, serif"
+        font-size="120" font-weight="700" fill="#FFB703" text-anchor="middle"
+        data-customize-text="price" data-customize-color="primary">
+    $32
+  </text>
+  <text id="text-footer" x="960" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#999999" text-anchor="middle"
+        data-customize-text="footer">
+    Reservations recommended
+  </text>
+</svg>

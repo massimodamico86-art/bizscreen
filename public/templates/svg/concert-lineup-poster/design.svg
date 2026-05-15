@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#000000" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="320" fill="#DC2626" data-customize-color="primary"/>
+  <image id="logo" x="60" y="60" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="180" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FECACA" text-anchor="middle" data-customize-text="eyebrow">
+    SUMMER MUSIC FESTIVAL
+  </text>
+  <text id="text-headline" x="540" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="100" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    LIVE TONIGHT
+  </text>
+  <text id="text-act1" x="540" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="120" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="act1">
+    THE WAVES
+  </text>
+  <text id="text-act1-time" x="540" y="680" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#DC2626" text-anchor="middle"
+        data-customize-text="act1-time" data-customize-color="primary">
+    Headlining 10:00 PM
+  </text>
+  <text id="text-act2" x="540" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="80" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="act2">
+    VELVET ECHO
+  </text>
+  <text id="text-act2-time" x="540" y="970" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FECACA" text-anchor="middle" data-customize-text="act2-time">
+    8:30 PM
+  </text>
+  <text id="text-act3" x="540" y="1180" font-family="Helvetica, Arial, sans-serif"
+        font-size="60" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="act3">
+    NEON DRIFT
+  </text>
+  <text id="text-act3-time" x="540" y="1240" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FECACA" text-anchor="middle" data-customize-text="act3-time">
+    7:00 PM
+  </text>
+  <rect x="180" y="1400" width="720" height="6" fill="#DC2626" data-customize-color="primary"/>
+  <text id="text-venue" x="540" y="1540" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#FFFFFF" text-anchor="middle" data-customize-text="venue">
+    Riverside Amphitheater
+  </text>
+  <text id="text-cta" x="540" y="1680" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#DC2626" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Tickets at door · $35
+  </text>
+  <text id="text-footer" x="540" y="1820" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#888888" text-anchor="middle" data-customize-text="footer">
+    All ages · Doors 6:30pm
+  </text>
+</svg>

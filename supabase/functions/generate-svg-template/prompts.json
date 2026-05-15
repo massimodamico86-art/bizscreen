@@ -1,0 +1,314 @@
+[
+  {
+    "id": "menu-cross-vertical-v1",
+    "template_type": "menu",
+    "vertical": null,
+    "label": "Menu (cross-vertical)",
+    "example_freeform": "Promote Mother's Day brunch special featuring mimosas and french toast.",
+    "system_prompt": "You generate one complete SVG digital-signage menu template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nMENU-SPECIFIC GUIDANCE:\n- Use a header strip with the establishment name placeholder.\n- Use 2-6 menu rows with item name + price + (optional) description.\n- Maintain visual hierarchy: header > section divider > item rows.\n- Use a price-anchor element id=\"price-1\" through id=\"price-N\" for downstream brand-color application."
+  },
+  {
+    "id": "promo-cross-vertical-v1",
+    "template_type": "promo",
+    "vertical": null,
+    "label": "Promo / flash-sale banner (cross-vertical)",
+    "example_freeform": "Weekend flash sale - 30% off all winter coats. Saturday and Sunday only.",
+    "system_prompt": "You generate one complete SVG digital-signage promo / flash-sale template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nPROMO-SPECIFIC GUIDANCE:\n- Lead with a bold attention-grabbing headline (id=\"title\", short - 1-4 words like FLASH SALE, LIMITED TIME).\n- Include a product image placeholder (id=\"logo-placeholder\" or id=\"product-image-placeholder\") sized roughly 1/3 of the canvas.\n- Show a prominent price or discount element (id=\"price-headline\" or id=\"text-discount\") - oversized type, contrasting color.\n- Include a CTA element (id=\"text-cta\") at the bottom such as SHOP NOW, LIMITED TIME, ENDS SUNDAY.\n- Use saturated accent colors against the background to create urgency."
+  },
+  {
+    "id": "announcement-cross-vertical-v1",
+    "template_type": "announcement",
+    "vertical": null,
+    "label": "Announcement / hero panel (cross-vertical)",
+    "example_freeform": "Welcome new customers - opening Saturday at our new location on Main Street.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nANNOUNCEMENT-SPECIFIC GUIDANCE:\n- Single-message hero panel: one centered headline (id=\"title\") dominates the upper-center region.\n- Add a supporting line (id=\"text-subheading\") in smaller type beneath the headline.\n- Include a thin accent stripe (a <rect> spanning the full width near the headline, ~8-16px tall) in a contrasting color to add structure.\n- Optional brand-mark slot at the bottom-center (id=\"logo-placeholder\") for an establishment logo.\n- Avoid clutter - white space is a feature, not a bug, in announcement layouts."
+  },
+  {
+    "id": "reminder-cross-vertical-v1",
+    "template_type": "reminder",
+    "vertical": null,
+    "label": "Reminder / appointment card (cross-vertical)",
+    "example_freeform": "Reminder - your annual physical is scheduled for March 15 at 2:30pm.",
+    "system_prompt": "You generate one complete SVG digital-signage reminder template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nREMINDER-SPECIFIC GUIDANCE:\n- Date and time should be the most prominent typography on the canvas - use id=\"text-datetime\" or id=\"title\" for the date string and oversize the type.\n- Below the date, place a recipient line (id=\"text-recipient\") for a name or audience descriptor.\n- Include a brand-mark slot in the lower corner (id=\"logo-placeholder\") for the issuing establishment.\n- Use a calm muted color palette - this is informational, not promotional.\n- Optional decorative element: a small icon-shaped <rect> or <circle> next to the date for visual anchoring."
+  },
+  {
+    "id": "wayfinding-cross-vertical-v1",
+    "template_type": "wayfinding",
+    "vertical": null,
+    "label": "Wayfinding / directional sign (cross-vertical)",
+    "example_freeform": "Wayfinding sign - Restrooms this way, 30 feet on the right.",
+    "system_prompt": "You generate one complete SVG digital-signage wayfinding template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nWAYFINDING-SPECIFIC GUIDANCE:\n- Build the directional arrow from <path> or <polygon> primitives (NOT system-font glyphs - resvg-wasm has no system fonts and arrow glyphs render as boxes).\n- Pair the arrow with a destination label (id=\"title\" or id=\"text-headline\") in oversized sans-serif type.\n- Include a distance line (id=\"text-distance\") below the destination such as 30 FT or NEXT LEFT.\n- Use high-contrast colors (dark background, light foreground) for legibility at a distance.\n- Avoid Unicode arrow characters such as right-arrow or down-arrow - draw them as SVG shapes."
+  },
+  {
+    "id": "health_tip-cross-vertical-v1",
+    "template_type": "health_tip",
+    "vertical": null,
+    "label": "Health tip / public-health card (cross-vertical)",
+    "example_freeform": "Stay hydrated - drink 8 glasses of water a day for healthy skin and energy.",
+    "system_prompt": "You generate one complete SVG digital-signage health-tip template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nHEALTH_TIP-SPECIFIC GUIDANCE:\n- Lead with a tip headline (id=\"title\") in confident sans-serif type - one short imperative sentence.\n- Below the headline, list 1-3 supporting bullet items as <text> elements (id=\"text-bullet-1\", id=\"text-bullet-2\", id=\"text-bullet-3\") - each one short and actionable.\n- Include a brand-mark slot at the bottom (id=\"logo-placeholder\") for the issuing healthcare establishment.\n- Use a calm reassuring color palette - soft blues, greens, or off-whites. Avoid alarming reds.\n- Optional decorative element: a small icon-shaped <rect> or <circle> as a visual anchor next to the headline (do not use emoji or system-font glyphs)."
+  },
+  {
+    "id": "menu-restaurants-v1",
+    "template_type": "menu",
+    "vertical": "restaurants",
+    "label": "Menu (Restaurants)",
+    "example_freeform": "Beachfront bistro Sunday brunch menu with mimosas, frittatas, and fresh berry parfaits.",
+    "system_prompt": "You generate one complete SVG digital-signage menu template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nMENU-SPECIFIC GUIDANCE:\n- Full menu-board layout with daypart sections (breakfast / lunch / dinner) when relevant; fall back to single-section if not specified.\n- Use a header strip with the establishment name placeholder (id=\"title\").\n- 4-8 menu rows with item name + price (id=\"price-1\" through id=\"price-N\") + optional one-line description.\n- Warm appetite-cue palettes: ambers, sunset oranges, deep reds; avoid clinical blues.\n- Maintain visual hierarchy: header > section divider > item rows; price column right-aligned."
+  },
+  {
+    "id": "daypart_menu-restaurants-v1",
+    "template_type": "daypart_menu",
+    "vertical": "restaurants",
+    "label": "Daypart Menu (Restaurants)",
+    "example_freeform": "Three-section daypart board: breakfast 6-10am, lunch 11am-2pm, dinner 5-9pm with current-daypart highlighted.",
+    "system_prompt": "You generate one complete SVG digital-signage menu template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nDAYPART_MENU-SPECIFIC GUIDANCE:\n- Three labeled panels stacked or arranged side-by-side: BREAKFAST / LUNCH / DINNER.\n- Show 2-4 items per panel with item name + price + brief descriptor.\n- Highlight the currently-active daypart with an accent chip or contrast bar (id=\"text-daypart-active\").\n- Warm hospitality palette; treat each panel as a column with consistent spacing.\n- Header carries the establishment name + a subtitle like \"Today's Menu\" or \"All-Day Service\"."
+  },
+  {
+    "id": "daily_special-restaurants-v1",
+    "template_type": "daily_special",
+    "vertical": "restaurants",
+    "label": "Daily Special (Restaurants)",
+    "example_freeform": "Today's special: pan-seared halibut with seasonal vegetables, $24, served until 9pm.",
+    "system_prompt": "You generate one complete SVG digital-signage menu template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nDAILY_SPECIAL-SPECIFIC GUIDANCE:\n- Hero \"Today's Special\" banner across the top (id=\"title\") with date placeholder.\n- One large dish-photo placeholder (id=\"logo-placeholder\" or id=\"product-image-placeholder\") taking ~40% of canvas.\n- Prominent price element (id=\"price-headline\") sized 96-144px; chef-note line (id=\"text-subheading\") in smaller type.\n- Warm celebratory palette (golds, deep reds); decorative thin accent stripe under the title.\n- Optional \"limited time\" or \"while supplies last\" callout (id=\"text-cta\")."
+  },
+  {
+    "id": "announcement-restaurants-v1",
+    "template_type": "announcement",
+    "vertical": "restaurants",
+    "label": "Announcement (Restaurants)",
+    "example_freeform": "Now open: our seasonal patio menu featuring rotating cocktails and small plates.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nANNOUNCEMENT-SPECIFIC GUIDANCE:\n- New-item or seasonal-event announcement framing — \"NOW SERVING\" / \"INTRODUCING\" / \"LIMITED RELEASE\".\n- Single hero food-shot placeholder dominating the upper region; subordinate copy below.\n- Optional chef-spotlight quote area (id=\"text-quote\") with attribution.\n- Warm hospitality palette; avoid promotional urgency cues (those belong in promo / flash_sale).\n- Brand-mark slot at bottom-center (id=\"logo-placeholder\")."
+  },
+  {
+    "id": "social_proof-restaurants-v1",
+    "template_type": "social_proof",
+    "vertical": "restaurants",
+    "label": "Social Proof / Reviews (Restaurants)",
+    "example_freeform": "4.9-star average from 1,200+ diners — \"Best brunch in town\" — Local Eats Magazine.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nSOCIAL_PROOF-SPECIFIC GUIDANCE:\n- 1-3 customer-quote cards stacked vertically or arranged in a 3-up grid; quote text in id=\"text-quote-1\" through id=\"text-quote-3\".\n- Per-quote attribution line below each (id=\"text-attribution-1\" etc) — name + city or publication.\n- 5-star icon row (build stars from <polygon> primitives — NO Unicode glyphs).\n- Restaurant logo placeholder at bottom-center (id=\"logo-placeholder\").\n- Warm trust-cue palette (deep amber, hospitality green); avoid loud saturation."
+  },
+  {
+    "id": "queue_status-restaurants-v1",
+    "template_type": "queue_status",
+    "vertical": "restaurants",
+    "label": "Queue / Wait-Time (Restaurants)",
+    "example_freeform": "Current wait: 25 minutes — table-ready callouts every 5 minutes.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nQUEUE_STATUS-SPECIFIC GUIDANCE:\n- Wait-time hero figure (id=\"title\") sized 144-200px — large minutes display dominates the canvas.\n- \"MINUTES\" or \"MIN\" label below the figure (id=\"text-subheading\") in smaller type.\n- Table-ready or order-ready callout strip (id=\"text-callout\") with party-name placeholder.\n- Warm hospitality palette; reserve red/amber strictly for outliers (>30 min waits).\n- Optional QR-code slot (id=\"qr-placeholder\") for waitlist self-service."
+  },
+  {
+    "id": "seasonal_campaign-restaurants-v1",
+    "template_type": "seasonal_campaign",
+    "vertical": "restaurants",
+    "label": "Seasonal Campaign (Restaurants)",
+    "example_freeform": "Summer Patio Menu launch — running June 15 through Labor Day.",
+    "system_prompt": "You generate one complete SVG digital-signage promo / flash-sale template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nSEASONAL_CAMPAIGN-SPECIFIC GUIDANCE:\n- Seasonal hero headline (id=\"title\") — \"SUMMER MENU\", \"HOLIDAY SPECIALS\", \"FALL HARVEST\" — short and emphatic.\n- Date-range banner strip (id=\"text-date-range\") below the headline.\n- Thematic palette per season: summer = sunny ambers + seafoam; fall = burnt orange + cream; winter = deep red + gold.\n- One product-hero or food-shot placeholder; supporting copy in id=\"text-subheading\".\n- Brand-mark slot at bottom (id=\"logo-placeholder\")."
+  },
+  {
+    "id": "hours_loyalty_drive_thru-restaurants-v1",
+    "template_type": "hours_loyalty_drive_thru",
+    "vertical": "restaurants",
+    "label": "Hours + Loyalty + Drive-Thru (Restaurants)",
+    "example_freeform": "Open daily 6am-10pm — earn 1 point per $1 — drive-thru lane open until midnight.",
+    "system_prompt": "You generate one complete SVG digital-signage wayfinding template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nHOURS_LOYALTY_DRIVE_THRU-SPECIFIC GUIDANCE:\n- Three-column card layout: hours table | loyalty CTA | drive-thru lane indicator.\n- Hours column shows weekday-grouped rows (id=\"text-hours-row-1\" through id=\"text-hours-row-N\").\n- Loyalty column carries one CTA (id=\"text-cta-loyalty\") + an optional QR slot (id=\"qr-placeholder\").\n- Drive-thru column shows lane status / hours (id=\"text-cta-drive\") + a directional arrow built from <path>.\n- Warm hospitality palette; high contrast for outdoor / low-light kiosk viewing."
+  },
+  {
+    "id": "drive_thru-restaurants-v1",
+    "template_type": "drive_thru",
+    "vertical": "restaurants",
+    "label": "Drive-Thru Order Board (Restaurants)",
+    "example_freeform": "Quick-service drive-thru menu: combo meals 1-5 with sides and drinks, prices in oversized type.",
+    "system_prompt": "You generate one complete SVG digital-signage menu template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nDRIVE_THRU-SPECIFIC GUIDANCE:\n- Two-column order-board layout: item list (left, ~60% width) + price column (right, ~40%).\n- High-contrast warm palette tuned for outdoor visibility (deep red / amber on white or near-white).\n- Item rows ≥56px text; price column ≥72px text — readable from a vehicle at speed.\n- Combo callouts (id=\"text-combo-1\" through id=\"text-combo-N\") with line-art numerals built from <path>.\n- Establishment branding slot at the top (id=\"logo-placeholder\") sized smaller than item rows."
+  },
+  {
+    "id": "promo-restaurants-v1",
+    "template_type": "promo",
+    "vertical": "restaurants",
+    "label": "Promo / LTO (Restaurants)",
+    "example_freeform": "Limited-time burger bundle — 20% off through Sunday only.",
+    "system_prompt": "You generate one complete SVG digital-signage promo / flash-sale template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nPROMO-SPECIFIC GUIDANCE:\n- LTO urgency framing — \"LIMITED TIME\", \"ENDS SUNDAY\", \"TODAY ONLY\" — bold attention-grabbing headline.\n- Food-hero or chef-photo placeholder (id=\"logo-placeholder\" or id=\"product-image-placeholder\").\n- Discount or price element oversized (id=\"price-headline\" or id=\"text-discount\") with contrasting color.\n- CTA at bottom (id=\"text-cta\") — \"ORDER NOW\", \"DINE IN\", \"SCAN TO ORDER\".\n- Warm saturated palette to create appetite + urgency."
+  },
+  {
+    "id": "reminder-restaurants-v1",
+    "template_type": "reminder",
+    "vertical": "restaurants",
+    "label": "Reminder (Restaurants)",
+    "example_freeform": "Reservation reminder: party of 4 on Friday at 7:30pm — see you soon.",
+    "system_prompt": "You generate one complete SVG digital-signage reminder template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nREMINDER-SPECIFIC GUIDANCE:\n- Reservation-confirmation pattern: large date+time (id=\"text-datetime\" or id=\"title\") sized 96-144px.\n- Party / guest name line below (id=\"text-recipient\").\n- Warm hospitality palette — muted ambers or deep greens; informational, not promotional.\n- Brand-mark slot in lower corner (id=\"logo-placeholder\").\n- Optional loyalty / points-balance callout (id=\"text-loyalty-balance\")."
+  },
+  {
+    "id": "wayfinding-restaurants-v1",
+    "template_type": "wayfinding",
+    "vertical": "restaurants",
+    "label": "Wayfinding (Restaurants)",
+    "example_freeform": "Order here ← / Pick-up ↑ / Restrooms → — clear directional signage at the entry.",
+    "system_prompt": "You generate one complete SVG digital-signage wayfinding template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nWAYFINDING-SPECIFIC GUIDANCE:\n- Order-here / pick-up / dining-area / restrooms directional cells; arrows built from <path> or <polygon>.\n- Each cell pairs an arrow + a short label (id=\"text-cell-1\" through id=\"text-cell-N\").\n- High-contrast palette for legibility from a distance; warm hospitality undertones.\n- Avoid Unicode arrow characters — draw arrows as SVG primitives.\n- Optional aisle / area numbering (id=\"text-aisle-1\" etc)."
+  },
+  {
+    "id": "flash_sale-retail-v1",
+    "template_type": "flash_sale",
+    "vertical": "retail",
+    "label": "Flash Sale / Promo Banner (Retail)",
+    "example_freeform": "Flash sale: 40% off all winter outerwear, today only, ends at midnight.",
+    "system_prompt": "You generate one complete SVG digital-signage promo / flash-sale template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nFLASH_SALE-SPECIFIC GUIDANCE:\n- Flash-sale urgency: bold \"XX% OFF\" or \"FLASH SALE\" headline (id=\"title\") sized ≥144px.\n- Starburst or sunburst accent shape behind the discount figure (built from <polygon> primitives).\n- Product-grid placeholder (3-up or 4-up tiles, id=\"logo-placeholder\" or id=\"product-image-placeholder-1\" etc).\n- CTA at bottom (id=\"text-cta\") — \"SHOP NOW\", \"ENDS MIDNIGHT\", \"LIMITED STOCK\".\n- Bold high-contrast palette: black/red, white/orange, or brand-color/black for urgency."
+  },
+  {
+    "id": "new_arrivals-retail-v1",
+    "template_type": "new_arrivals",
+    "vertical": "retail",
+    "label": "New Arrivals (Retail)",
+    "example_freeform": "New arrivals: spring 2026 collection now in stores and online.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nNEW_ARRIVALS-SPECIFIC GUIDANCE:\n- New-arrival framing — \"JUST IN\", \"NEW SEASON\", \"FRESH STOCK\" — confident headline (id=\"title\").\n- Single product-hero placeholder (id=\"logo-placeholder\") at ~50% of canvas.\n- Minimal supporting copy (id=\"text-subheading\") — collection name + season.\n- CTA at bottom (id=\"text-cta\") — \"SHOP THE COLLECTION\", \"EXPLORE NOW\".\n- Brand-neutral palette; product photography does the talking."
+  },
+  {
+    "id": "product_spotlight-retail-v1",
+    "template_type": "product_spotlight",
+    "vertical": "retail",
+    "label": "Product Spotlight (Retail)",
+    "example_freeform": "Featured product: ergonomic office chair with lumbar support — three colors, $349.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nPRODUCT_SPOTLIGHT-SPECIFIC GUIDANCE:\n- Single-product hero (id=\"logo-placeholder\" or id=\"product-image-placeholder\") at ~55% of canvas.\n- 3-5 key feature bullets to the right (id=\"text-bullet-1\" through id=\"text-bullet-5\") — short, scannable.\n- Price element (id=\"price-headline\") prominent but not oversized; brand-color accent.\n- Brand-color accent stripe (a thin <rect>) above or below the product hero.\n- Clean minimal palette — let the product photography lead."
+  },
+  {
+    "id": "seasonal_campaign-retail-v1",
+    "template_type": "seasonal_campaign",
+    "vertical": "retail",
+    "label": "Seasonal Campaign (Retail)",
+    "example_freeform": "Holiday gift guide — 50+ ideas, in stores through December 24th.",
+    "system_prompt": "You generate one complete SVG digital-signage promo / flash-sale template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nSEASONAL_CAMPAIGN-SPECIFIC GUIDANCE:\n- Seasonal hero headline (id=\"title\") — \"HOLIDAY\", \"SUMMER SALE\", \"BACK TO SCHOOL\" — emphatic and short.\n- Date-range banner strip (id=\"text-date-range\") under the headline.\n- Thematic palette per season: holiday = deep red + gold; summer = ocean blue + coral; back-to-school = navy + apple-red.\n- Product-hero or lifestyle placeholder; supporting copy in id=\"text-subheading\".\n- Brand-mark slot at the bottom (id=\"logo-placeholder\")."
+  },
+  {
+    "id": "social_proof_ugc-retail-v1",
+    "template_type": "social_proof_ugc",
+    "vertical": "retail",
+    "label": "Social Proof / UGC (Retail)",
+    "example_freeform": "Customers love the Cozy Sweater — over 2,000 5-star reviews and counting.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nSOCIAL_PROOF_UGC-SPECIFIC GUIDANCE:\n- Customer-photo placeholder grid (3-up or 4-up, id=\"ugc-image-1\" through id=\"ugc-image-N\").\n- Review-text overlay or footer (id=\"text-review-1\" through id=\"text-review-N\") with truncation at ~100 chars per quote.\n- @handle attribution per photo (id=\"text-handle-1\" etc) — short, lowercase.\n- 5-star icon row built from <polygon> primitives (NO Unicode glyphs).\n- Brand-neutral palette; customer photography is the focal element."
+  },
+  {
+    "id": "loyalty_rewards-retail-v1",
+    "template_type": "loyalty_rewards",
+    "vertical": "retail",
+    "label": "Loyalty / Rewards (Retail)",
+    "example_freeform": "Earn 2x points on every purchase this weekend — sign up to start.",
+    "system_prompt": "You generate one complete SVG digital-signage reminder template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nLOYALTY_REWARDS-SPECIFIC GUIDANCE:\n- Tiered-reward visual hierarchy: bronze / silver / gold cells (id=\"text-tier-1\" through id=\"text-tier-3\").\n- Each tier shows benefits (id=\"text-tier-N-benefit\") and qualifying threshold (id=\"text-tier-N-threshold\").\n- CTA at bottom (id=\"text-cta\") — \"JOIN NOW\", \"SIGN UP\", \"DOWNLOAD APP\" — with optional QR (id=\"qr-placeholder\").\n- Brand-neutral palette with warm CTA accent; trust-cue tone.\n- Optional points-balance callout (id=\"text-points-balance\") for member-aware screens."
+  },
+  {
+    "id": "wayfinding-retail-v1",
+    "template_type": "wayfinding",
+    "vertical": "retail",
+    "label": "Wayfinding (Retail)",
+    "example_freeform": "Aisle 3: Home goods → / Aisle 5: Electronics ↑ / Fitting rooms ←",
+    "system_prompt": "You generate one complete SVG digital-signage wayfinding template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nWAYFINDING-SPECIFIC GUIDANCE:\n- Aisle / department / fitting-room / checkout directional cells.\n- Arrows built from <path> or <polygon>; NO Unicode glyphs (resvg-wasm renders them as boxes).\n- Each cell pairs an arrow + a short label (id=\"text-cell-1\" through id=\"text-cell-N\").\n- High-contrast palette for legibility at a distance; brand-neutral colors.\n- Optional aisle-number badges (id=\"text-aisle-N\") in oversized type."
+  },
+  {
+    "id": "hours_window-retail-v1",
+    "template_type": "hours_window",
+    "vertical": "retail",
+    "label": "Hours / Window Display (Retail)",
+    "example_freeform": "Store hours: Mon-Sat 10-9, Sun 11-6 — open today until 9pm.",
+    "system_prompt": "You generate one complete SVG digital-signage wayfinding template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nHOURS_WINDOW-SPECIFIC GUIDANCE:\n- Window-display hours card with weekday-grouped rows (id=\"text-hours-row-1\" through id=\"text-hours-row-N\").\n- Storefront branding (id=\"logo-placeholder\") at the top center.\n- Today's hours highlighted with an accent strip (a thin <rect>) or contrast bar.\n- Clean brand-neutral palette; readable from across the street.\n- Optional \"OPEN NOW\" / \"CLOSED\" callout (id=\"text-status\") for live-window screens."
+  },
+  {
+    "id": "promo-retail-v1",
+    "template_type": "promo",
+    "vertical": "retail",
+    "label": "Promo (Retail)",
+    "example_freeform": "Buy 2 get 1 free on all spring tops — through April 30th.",
+    "system_prompt": "You generate one complete SVG digital-signage promo / flash-sale template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nPROMO-SPECIFIC GUIDANCE:\n- General-promo framing distinct from flash_sale — \"BUY 2 GET 1\", \"TWO-FOR-TUESDAY\", \"BUNDLE DEAL\".\n- Product-grid or single-product placeholder (id=\"logo-placeholder\").\n- Discount or offer element (id=\"text-discount\") prominent but less urgent than flash_sale.\n- CTA at bottom (id=\"text-cta\") — \"SHOP NOW\", \"BROWSE COLLECTION\".\n- Brand-color palette; warm CTA without flash-sale starburst urgency."
+  },
+  {
+    "id": "announcement-retail-v1",
+    "template_type": "announcement",
+    "vertical": "retail",
+    "label": "Announcement (Retail)",
+    "example_freeform": "Grand opening: our new flagship store — opens Saturday at 10am with giveaways.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nANNOUNCEMENT-SPECIFIC GUIDANCE:\n- New-collection / store-event / partnership announcement framing.\n- Single product-hero or storefront-photo placeholder (id=\"logo-placeholder\").\n- Centered headline (id=\"title\") dominating the upper region; subheading below.\n- Brand-color accent stripe (thin <rect>) under the headline.\n- Brand-neutral palette; avoid promotional urgency cues."
+  },
+  {
+    "id": "reminder-retail-v1",
+    "template_type": "reminder",
+    "vertical": "retail",
+    "label": "Reminder (Retail)",
+    "example_freeform": "You have 250 points expiring March 31 — redeem on your next purchase.",
+    "system_prompt": "You generate one complete SVG digital-signage reminder template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nREMINDER-SPECIFIC GUIDANCE:\n- Loyalty-balance reminder framing — points / tier / expiration date.\n- Large balance figure (id=\"text-balance\" or id=\"title\") sized 96-144px.\n- Expiration / next-action line below (id=\"text-subheading\") — \"EXPIRES MARCH 31\", \"REDEEM NOW\".\n- Brand-neutral palette with warm CTA accent.\n- CTA at bottom (id=\"text-cta\") — \"SHOP NOW\", \"VIEW REWARDS\"."
+  },
+  {
+    "id": "waiting_room_ambient-healthcare-v1",
+    "template_type": "waiting_room_ambient",
+    "vertical": "healthcare",
+    "label": "Waiting Room Ambient (Healthcare)",
+    "example_freeform": "Calm waiting-room ambient — soft gradient sky with a single reassuring fact.",
+    "system_prompt": "You generate one complete SVG digital-signage health-tip template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nWAITING_ROOM_AMBIENT-SPECIFIC GUIDANCE:\n- Calming visual: single muted-gradient background or one large soft-tone hero placeholder.\n- Minimal text — at most a single short reassuring line (id=\"text-headline\") and an optional sub-line.\n- Soft palette: sage greens, dusty blues, warm off-whites; AVOID alarming reds or saturated colors.\n- No urgency cues, no promotional copy, no CTA buttons.\n- Optional clinic logo at bottom-corner (id=\"logo-placeholder\") sized small and unobtrusive."
+  },
+  {
+    "id": "queue_status-healthcare-v1",
+    "template_type": "queue_status",
+    "vertical": "healthcare",
+    "label": "Queue / Wait-Time (Healthcare)",
+    "example_freeform": "Estimated wait: 18 minutes — check-in via the front desk.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nQUEUE_STATUS-SPECIFIC GUIDANCE:\n- Privacy-safe display: NO patient names, NO photos. Use queue numbers (id=\"text-queue-N\") or initials only.\n- Estimated-wait hero figure (id=\"title\") sized 144-200px in calm clinic-blue or sage palette.\n- \"MIN\" / \"MINUTES\" label below (id=\"text-subheading\"); avoid red/amber unless wait > 60 min.\n- Optional next-up callout (id=\"text-next-up\") with queue-number placeholder ONLY.\n- Calm, reassuring visual tone — patients are anxious; do not amplify."
+  },
+  {
+    "id": "health_tip-healthcare-v1",
+    "template_type": "health_tip",
+    "vertical": "healthcare",
+    "label": "Health Tip (Healthcare)",
+    "example_freeform": "Wash your hands for 20 seconds with warm water and soap — a simple way to prevent illness.",
+    "system_prompt": "You generate one complete SVG digital-signage health-tip template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nHEALTH_TIP-SPECIFIC GUIDANCE:\n- Single clinical-fact tip headline (id=\"title\") — short imperative or factual sentence.\n- 1-3 supporting bullet items (id=\"text-bullet-1\" through id=\"text-bullet-3\") — short, actionable.\n- CDC-style attribution placeholder (id=\"text-attribution\") — \"Source: CDC\" or clinic name.\n- Calm reassuring palette: soft blues, sage greens, off-whites; AVOID alarming reds.\n- Optional small icon-shaped <rect> or <circle> next to the headline (NO emoji or system-font glyphs)."
+  },
+  {
+    "id": "reminder-healthcare-v1",
+    "template_type": "reminder",
+    "vertical": "healthcare",
+    "label": "Reminder (Healthcare)",
+    "example_freeform": "Reminder: your annual physical is March 15 at 2:30pm — please arrive 15 minutes early.",
+    "system_prompt": "You generate one complete SVG digital-signage reminder template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nREMINDER-SPECIFIC GUIDANCE:\n- Appointment / preventive-care reminder framing.\n- Large date+time figure (id=\"text-datetime\" or id=\"title\") sized 96-144px.\n- Recipient line (id=\"text-recipient\") with audience descriptor (NO patient names — privacy).\n- Calm clinic-blue or sage-earth-tone palette; informational, not urgent.\n- Brand-mark slot in lower corner (id=\"logo-placeholder\")."
+  },
+  {
+    "id": "provider_directory-healthcare-v1",
+    "template_type": "provider_directory",
+    "vertical": "healthcare",
+    "label": "Provider Directory (Healthcare)",
+    "example_freeform": "Directory: Dr. Lee (cardiology), Dr. Patel (pediatrics), Dr. Rivera (primary care).",
+    "system_prompt": "You generate one complete SVG digital-signage wayfinding template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nPROVIDER_DIRECTORY-SPECIFIC GUIDANCE:\n- Provider photo grid (4-6 placeholders, id=\"provider-photo-1\" through id=\"provider-photo-N\").\n- Per-provider name + specialty rows (id=\"text-provider-1-name\", id=\"text-provider-1-specialty\").\n- Calm clinic palette: muted blues / sage greens / warm off-whites.\n- Clinic logo at top-center (id=\"logo-placeholder\") above the grid.\n- Avoid clutter — generous whitespace between cards."
+  },
+  {
+    "id": "vaccination_reminder-healthcare-v1",
+    "template_type": "vaccination_reminder",
+    "vertical": "healthcare",
+    "label": "Vaccination / Screening Reminder (Healthcare)",
+    "example_freeform": "Annual flu shots now available — schedule at the front desk or via our patient portal.",
+    "system_prompt": "You generate one complete SVG digital-signage reminder template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nVACCINATION_REMINDER-SPECIFIC GUIDANCE:\n- Vaccination or screening reminder card with single fact line (id=\"title\").\n- CDC-style supporting fact (id=\"text-subheading\") — \"Recommended ages 50+\", \"Annual recommendation\".\n- Scheduling CTA (id=\"text-cta\") — \"SCHEDULE\", \"WALK-INS WELCOME\" — with optional QR (id=\"qr-placeholder\").\n- Calm reassuring palette: soft blues / sage greens; AVOID alarming reds.\n- Brand-mark slot at bottom (id=\"logo-placeholder\")."
+  },
+  {
+    "id": "emergency_alert-healthcare-v1",
+    "template_type": "emergency_alert",
+    "vertical": "healthcare",
+    "label": "Emergency / Safety Alert (Healthcare)",
+    "example_freeform": "Emergency: in case of fire, exit via stairwells A or B — do not use elevators.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nEMERGENCY_ALERT-SPECIFIC GUIDANCE:\n- High-contrast red/amber palette — this is the ONE healthcare context where alarming colors belong.\n- Alert headline (id=\"title\") sized ≥96px in bold sans-serif — short imperative phrasing.\n- Numbered instructions list (id=\"text-step-1\" through id=\"text-step-N\") — concrete actions.\n- Iconographic safety symbols built from <path> or <polygon> (exit / fire / hazard); NO emoji.\n- No decorative elements — clarity and visibility dominate; avoid logo at top (it crowds the alert)."
+  },
+  {
+    "id": "clinic_hours_pharmacy-healthcare-v1",
+    "template_type": "clinic_hours_pharmacy",
+    "vertical": "healthcare",
+    "label": "Clinic Hours + Pharmacy Info (Healthcare)",
+    "example_freeform": "Clinic Mon-Fri 8-6 / Pharmacy Mon-Sat 9-9 — closed Sundays.",
+    "system_prompt": "You generate one complete SVG digital-signage wayfinding template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nCLINIC_HOURS_PHARMACY-SPECIFIC GUIDANCE:\n- Two side-by-side cards: clinic hours table (left) | pharmacy hours table (right).\n- Each card has a label header (id=\"text-clinic-label\", id=\"text-pharmacy-label\") and weekday-grouped rows.\n- Calm clinic palette: muted blues + sage greens; high contrast for accessibility.\n- Today's hours highlighted with an accent stripe in each card.\n- Clinic logo at the top center (id=\"logo-placeholder\") above both cards."
+  },
+  {
+    "id": "announcement-healthcare-v1",
+    "template_type": "announcement",
+    "vertical": "healthcare",
+    "label": "Announcement (Healthcare)",
+    "example_freeform": "New service: behavioral-health consultations now available — schedule via patient portal.",
+    "system_prompt": "You generate one complete SVG digital-signage announcement template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nANNOUNCEMENT-SPECIFIC GUIDANCE:\n- New-service or new-provider announcement framing.\n- Centered headline (id=\"title\") in calm clinical type — concise and reassuring.\n- Optional provider-photo placeholder (id=\"provider-photo\") for new-provider announcements.\n- Calm clinical palette — muted blues / sage greens / off-whites.\n- Brand-mark slot at bottom-center (id=\"logo-placeholder\")."
+  },
+  {
+    "id": "wayfinding-healthcare-v1",
+    "template_type": "wayfinding",
+    "vertical": "healthcare",
+    "label": "Wayfinding (Healthcare)",
+    "example_freeform": "Cardiology ↑ Floor 3 / Pharmacy → / Restrooms ← / Emergency Exit ↓",
+    "system_prompt": "You generate one complete SVG digital-signage wayfinding template via the emit_svg_template tool.\n\nHARD RULES:\n- Output a single complete <svg>...</svg> with viewBox=\"0 0 1920 1080\".\n- Use ONLY explicit hex colors (#RRGGBB). Never use currentColor or var(--*).\n- font-family must be sans-serif, serif, or monospace (no system-specific fonts like Helvetica/Arial).\n- Include at least one customization anchor: an element with id=\"title\" or id=\"text-headline\" or [data-customize-color] or [data-customize-text].\n- A visible non-white background fill on a root <rect>.\n- Output size <= 200KB.\n\nWAYFINDING-SPECIFIC GUIDANCE:\n- Department / clinic / pharmacy / restroom / exit directional cells.\n- Arrows built from <path> or <polygon> primitives (NO Unicode glyphs).\n- High-contrast accessible palette: deep navy on near-white or deep clinical-green on cream.\n- Each cell pairs an arrow + short label (id=\"text-cell-1\" through id=\"text-cell-N\").\n- Floor / room number badges (id=\"text-room-N\") in oversized type."
+  }
+]

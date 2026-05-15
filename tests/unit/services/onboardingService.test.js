@@ -33,8 +33,9 @@ describe('onboardingService', () => {
   });
 
   describe('ONBOARDING_STEPS constant', () => {
-    it('contains all 6 steps', () => {
-      expect(ONBOARDING_STEPS).toHaveLength(6);
+    it('contains all 7 steps', () => {
+      // Phase 174 TONB-01 — added starter_pack step (D-07)
+      expect(ONBOARDING_STEPS).toHaveLength(7);
     });
 
     it('has correct step IDs', () => {
@@ -45,6 +46,21 @@ describe('onboardingService', () => {
       expect(stepIds).toContain('first_playlist');
       expect(stepIds).toContain('first_screen');
       expect(stepIds).toContain('screen_pairing');
+    });
+
+    it('has starter_pack step between logo and first_media (D-07)', () => {
+      const ids = ONBOARDING_STEPS.map((s) => s.id);
+      const logoIdx = ids.indexOf('logo');
+      const packIdx = ids.indexOf('starter_pack');
+      const mediaIdx = ids.indexOf('first_media');
+      expect(packIdx).toBe(logoIdx + 1);
+      expect(mediaIdx).toBe(packIdx + 1);
+    });
+
+    it('starter_pack step has no navigateTo (stays inside wizard per D-08)', () => {
+      const step = ONBOARDING_STEPS.find((s) => s.id === 'starter_pack');
+      expect(step).toBeDefined();
+      expect(step.navigateTo).toBeUndefined();
     });
 
     it('has required properties for each step', () => {
@@ -108,10 +124,28 @@ describe('onboardingService', () => {
       expect(nextStep.id).toBe('logo');
     });
 
-    it('returns first_media step when welcome and logo are complete', () => {
+    it('returns starter_pack step when welcome and logo are complete (Phase 174 D-07)', () => {
       const progress = {
         completedWelcome: true,
         completedLogo: true,
+        completedStarterPack: false,
+        completedFirstMedia: false,
+        completedFirstPlaylist: false,
+        completedFirstScreen: false,
+        completedScreenPairing: false,
+        isComplete: false,
+        skippedAt: null,
+      };
+
+      const nextStep = getNextStep(progress);
+      expect(nextStep.id).toBe('starter_pack');
+    });
+
+    it('returns first_media step when welcome, logo, and starter_pack are complete (Phase 174 D-07)', () => {
+      const progress = {
+        completedWelcome: true,
+        completedLogo: true,
+        completedStarterPack: true,
         completedFirstMedia: false,
         completedFirstPlaylist: false,
         completedFirstScreen: false,
@@ -254,10 +288,11 @@ describe('onboardingService', () => {
       expect(getProgressPercent(progress)).toBe(0);
     });
 
-    it('returns approximately 17% for 1 of 6 steps', () => {
+    it('returns approximately 14% for 1 of 7 steps (Phase 174 — denominator now 7)', () => {
       const progress = {
         completedWelcome: true,
         completedLogo: false,
+        completedStarterPack: false,
         completedFirstMedia: false,
         completedFirstPlaylist: false,
         completedFirstScreen: false,
@@ -265,26 +300,28 @@ describe('onboardingService', () => {
       };
 
       const percent = getProgressPercent(progress);
-      expect(percent).toBe(17); // 1/6 = 16.67%, rounded to 17
+      expect(percent).toBe(14); // 1/7 = 14.29%, rounded to 14
     });
 
-    it('returns 50% for 3 of 6 steps', () => {
+    it('returns approximately 43% for 3 of 7 steps (Phase 174 — denominator now 7)', () => {
       const progress = {
         completedWelcome: true,
         completedLogo: true,
+        completedStarterPack: false,
         completedFirstMedia: true,
         completedFirstPlaylist: false,
         completedFirstScreen: false,
         completedScreenPairing: false,
       };
 
-      expect(getProgressPercent(progress)).toBe(50);
+      expect(getProgressPercent(progress)).toBe(43); // 3/7 = 42.86%, rounded to 43
     });
 
-    it('returns 100% when all steps are complete', () => {
+    it('returns 100% when all 7 steps are complete (Phase 174 — denominator now 7)', () => {
       const progress = {
         completedWelcome: true,
         completedLogo: true,
+        completedStarterPack: true,
         completedFirstMedia: true,
         completedFirstPlaylist: true,
         completedFirstScreen: true,

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F8FAFC" data-customize-color="background"/>
+  <rect x="0" y="0" width="640" height="1080" fill="#1E293B" data-customize-color="primary"/>
+  <image id="logo" x="120" y="120" width="200" height="200" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="320" y="540" font-family="Georgia, serif"
+        font-size="36" fill="#94A3B8" text-anchor="middle" data-customize-text="eyebrow">
+    Wealth Strategy
+  </text>
+  <text id="text-name" x="320" y="640" font-family="Georgia, serif"
+        font-size="64" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="name">
+    Sarah Mitchell
+  </text>
+  <text id="text-title" x="320" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#94A3B8" text-anchor="middle" data-customize-text="title">
+    CFP®, Senior Advisor
+  </text>
+  <text id="text-headline" x="1280" y="280" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#1E293B" text-anchor="middle"
+        data-customize-text="headline" data-customize-color="primary">
+    Plan With Purpose
+  </text>
+  <text id="text-subheadline" x="1280" y="400" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#475569" text-anchor="middle" data-customize-text="subheadline">
+    Personalized financial guidance
+  </text>
+  <text id="text-svc1" x="1280" y="560" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#1a1a1a" text-anchor="middle" data-customize-text="service1">
+    Retirement planning
+  </text>
+  <text id="text-svc2" x="1280" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#1a1a1a" text-anchor="middle" data-customize-text="service2">
+    Investment portfolio review
+  </text>
+  <text id="text-svc3" x="1280" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#1a1a1a" text-anchor="middle" data-customize-text="service3">
+    Estate &amp; tax strategy
+  </text>
+  <text id="text-cta" x="1280" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#1E293B" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Schedule a free consultation
+  </text>
+  <text id="text-footer" x="1280" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#64748B" text-anchor="middle" data-customize-text="footer">
+    advisors.example.com · 555-PLAN
+  </text>
+</svg>

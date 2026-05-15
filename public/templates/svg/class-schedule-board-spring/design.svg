@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F8F9FA" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="180" fill="#7B68EE" data-customize-color="primary"/>
+  <image id="logo" x="120" y="50" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="115" font-family="Georgia, serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Spring Semester Schedule
+  </text>
+  <text id="text-row1-time" x="200" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#7B68EE" text-anchor="start"
+        data-customize-text="row1-time" data-customize-color="primary">
+    8:00 — 9:30
+  </text>
+  <text id="text-row1-detail" x="600" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row1-detail">
+    Calculus II · Room 204
+  </text>
+  <text id="text-row2-time" x="200" y="420" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#7B68EE" text-anchor="start"
+        data-customize-text="row2-time" data-customize-color="primary">
+    9:45 — 11:15
+  </text>
+  <text id="text-row2-detail" x="600" y="420" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row2-detail">
+    World History · Lecture Hall A
+  </text>
+  <text id="text-row3-time" x="200" y="520" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#7B68EE" text-anchor="start"
+        data-customize-text="row3-time" data-customize-color="primary">
+    11:30 — 1:00
+  </text>
+  <text id="text-row3-detail" x="600" y="520" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row3-detail">
+    Lunch Period
+  </text>
+  <text id="text-row4-time" x="200" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#7B68EE" text-anchor="start"
+        data-customize-text="row4-time" data-customize-color="primary">
+    1:00 — 2:30
+  </text>
+  <text id="text-row4-detail" x="600" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row4-detail">
+    Biology Lab · Science Wing
+  </text>
+  <text id="text-row5-time" x="200" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#7B68EE" text-anchor="start"
+        data-customize-text="row5-time" data-customize-color="primary">
+    2:45 — 4:15
+  </text>
+  <text id="text-row5-detail" x="600" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row5-detail">
+    English Literature · Room 312
+  </text>
+  <text id="text-row6-time" x="200" y="820" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#7B68EE" text-anchor="start"
+        data-customize-text="row6-time" data-customize-color="primary">
+    4:30 — 6:00
+  </text>
+  <text id="text-row6-detail" x="600" y="820" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#1a1a1a" text-anchor="start"
+        data-customize-text="row6-detail">
+    Study Hall (optional)
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    Effective Jan 8 — May 18 · See registrar for changes
+  </text>
+</svg>

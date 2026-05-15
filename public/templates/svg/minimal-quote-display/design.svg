@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F5F2EB" data-customize-color="background"/>
+  <image id="logo" x="80" y="80" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text x="960" y="380" font-family="Georgia, serif" font-size="200" font-weight="700"
+        fill="#3F3F3F" text-anchor="middle" opacity="0.2" data-customize-color="accent">
+    &#8220;
+  </text>
+  <text id="text-headline" x="960" y="560" font-family="Georgia, serif"
+        font-size="80" font-weight="400" fill="#1a1a1a" text-anchor="middle"
+        font-style="italic" data-customize-text="headline">
+    Simplicity is the ultimate sophistication.
+  </text>
+  <line x1="860" y1="700" x2="1060" y2="700" stroke="#3F3F3F" stroke-width="3"
+        data-customize-color="primary"/>
+  <text id="text-attribution" x="960" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#3F3F3F" text-anchor="middle"
+        data-customize-text="attribution" data-customize-color="primary">
+    — Leonardo da Vinci
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#999999" text-anchor="middle" data-customize-text="footer">
+    Daily inspiration
+  </text>
+</svg>

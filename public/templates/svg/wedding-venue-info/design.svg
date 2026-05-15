@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FBF8F3" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="6" fill="#C9B79C" data-customize-color="primary"/>
+  <rect x="0" y="1074" width="1920" height="6" fill="#C9B79C" data-customize-color="primary"/>
+  <image id="logo" x="120" y="120" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="280" font-family="Georgia, serif"
+        font-size="36" font-style="italic" fill="#C9B79C" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    Today We Celebrate
+  </text>
+  <text id="text-headline" x="960" y="500" font-family="Georgia, serif"
+        font-size="160" font-weight="400" fill="#3D2C1F" text-anchor="middle"
+        data-customize-text="headline">
+    Sarah &amp; Michael
+  </text>
+  <text id="text-date" x="960" y="640" font-family="Georgia, serif"
+        font-size="56" font-style="italic" fill="#3D2C1F" text-anchor="middle"
+        data-customize-text="date">
+    September 14th, 2026
+  </text>
+  <rect x="780" y="720" width="360" height="2" fill="#C9B79C" data-customize-color="primary"/>
+  <text id="text-row1" x="960" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#3D2C1F" text-anchor="middle"
+        data-customize-text="row1">
+    Ceremony 4:00pm · Garden Terrace
+  </text>
+  <text id="text-row2" x="960" y="870" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#3D2C1F" text-anchor="middle"
+        data-customize-text="row2">
+    Reception 6:00pm · Grand Ballroom
+  </text>
+  <text id="text-footer" x="960" y="990" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#999999" text-anchor="middle"
+        data-customize-text="footer">
+    Wishing you a lifetime of happiness
+  </text>
+</svg>

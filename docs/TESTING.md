@@ -51,8 +51,16 @@ npm run test:watch
 # Run only unit tests
 npm run test:unit
 
-# Run only integration tests
+# Run only integration tests (skips live Supabase tests by default)
 npm run test:integration
+
+# Run integration tests INCLUDING live Supabase tests
+# Requires Supabase credentials (VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
+# and any test-specific keys like ANTHROPIC_API_KEY) in .env.local or the env.
+# CI MUST use this script in jobs that have those secrets wired up; the default
+# `test:integration` keeps live tests gated by RUN_LIVE_SUPABASE_TESTS=1 so local
+# runs without credentials stay green.
+npm run test:integration:live
 
 # Run tests with coverage report
 npm run test:coverage

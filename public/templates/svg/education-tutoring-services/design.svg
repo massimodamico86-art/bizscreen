@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFAF0" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#5B5EA6" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Free Tutoring Available
+  </text>
+  <text id="text-eyebrow" x="960" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="6" fill="#5B5EA6" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    PEER &amp; FACULTY-LED
+  </text>
+  <text id="text-row1" x="960" y="430" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1B1B1B" text-anchor="middle"
+        data-customize-text="row1">
+    Math · Mon &amp; Wed 6 — 8pm · Room 220
+  </text>
+  <text id="text-row2" x="960" y="510" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1B1B1B" text-anchor="middle"
+        data-customize-text="row2">
+    Writing · Tues &amp; Thurs 5 — 7pm · Library
+  </text>
+  <text id="text-row3" x="960" y="590" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1B1B1B" text-anchor="middle"
+        data-customize-text="row3">
+    Sciences · Fri 4 — 6pm · Lab Wing
+  </text>
+  <text id="text-row4" x="960" y="670" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1B1B1B" text-anchor="middle"
+        data-customize-text="row4">
+    Languages · Sun 2 — 4pm · Online
+  </text>
+  <text id="text-cta" x="960" y="850" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#5B5EA6" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Walk in or sign up online
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    Open to all enrolled students · No appointment needed
+  </text>
+</svg>

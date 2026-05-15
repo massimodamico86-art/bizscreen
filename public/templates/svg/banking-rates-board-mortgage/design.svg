@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#003D6B" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Today's Mortgage Rates
+  </text>
+  <text id="text-eyebrow" x="960" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="4" fill="#003D6B" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    EFFECTIVE TODAY
+  </text>
+  <rect x="200" y="380" width="500" height="240" fill="#F5F8FB" data-customize-color="card"/>
+  <rect x="710" y="380" width="500" height="240" fill="#F5F8FB" data-customize-color="card"/>
+  <rect x="1220" y="380" width="500" height="240" fill="#F5F8FB" data-customize-color="card"/>
+  <text id="text-rate1-label" x="450" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#003D6B" text-anchor="middle"
+        data-customize-text="rate1-label" data-customize-color="primary">
+    30-Year Fixed
+  </text>
+  <text id="text-rate1-value" x="450" y="560" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="rate1-value">
+    6.25%
+  </text>
+  <text id="text-rate2-label" x="960" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#003D6B" text-anchor="middle"
+        data-customize-text="rate2-label" data-customize-color="primary">
+    15-Year Fixed
+  </text>
+  <text id="text-rate2-value" x="960" y="560" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="rate2-value">
+    5.75%
+  </text>
+  <text id="text-rate3-label" x="1470" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#003D6B" text-anchor="middle"
+        data-customize-text="rate3-label" data-customize-color="primary">
+    5/1 ARM
+  </text>
+  <text id="text-rate3-value" x="1470" y="560" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="rate3-value">
+    5.40%
+  </text>
+  <text id="text-bullet1" x="960" y="730" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#003D6B" text-anchor="middle"
+        data-customize-text="bullet1" data-customize-color="primary">
+    · Pre-approval in under 24 hours
+  </text>
+  <text id="text-bullet2" x="960" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#003D6B" text-anchor="middle"
+        data-customize-text="bullet2" data-customize-color="primary">
+    · No origination fee through Q3
+  </text>
+  <text id="text-cta" x="960" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#003D6B" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Speak with a loan officer today
+  </text>
+  <text id="text-footer" x="960" y="1030" font-family="Helvetica, Arial, sans-serif"
+        font-size="24" fill="#999999" text-anchor="middle"
+        data-customize-text="footer">
+    APR varies based on credit · Member FDIC
+  </text>
+</svg>

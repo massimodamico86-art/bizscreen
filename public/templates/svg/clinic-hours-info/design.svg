@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F4F8FB" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="180" fill="#0E7C5A" data-customize-color="primary"/>
+  <image id="logo" x="80" y="40" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="115" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="eyebrow">
+    HealthFirst Clinic
+  </text>
+  <text id="text-headline" x="960" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="84" font-weight="700" fill="#0E7C5A" text-anchor="middle"
+        data-customize-text="headline" data-customize-color="primary">
+    Hours of Operation
+  </text>
+  <text id="text-mon-fri" x="600" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#1a1a1a" text-anchor="end" data-customize-text="line1">
+    Monday – Friday
+  </text>
+  <text id="text-mon-fri-hours" x="640" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#0E7C5A" text-anchor="start"
+        data-customize-text="line1-hours" data-customize-color="primary">
+    7:00 AM – 7:00 PM
+  </text>
+  <text id="text-sat" x="600" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#1a1a1a" text-anchor="end" data-customize-text="line2">
+    Saturday
+  </text>
+  <text id="text-sat-hours" x="640" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#0E7C5A" text-anchor="start"
+        data-customize-text="line2-hours" data-customize-color="primary">
+    9:00 AM – 3:00 PM
+  </text>
+  <text id="text-sun" x="600" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#1a1a1a" text-anchor="end" data-customize-text="line3">
+    Sunday
+  </text>
+  <text id="text-sun-hours" x="640" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#888888" text-anchor="start" data-customize-text="line3-hours">
+    Closed
+  </text>
+  <text id="text-footer" x="960" y="940" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#0E7C5A" text-anchor="middle"
+        data-customize-text="footer" data-customize-color="primary">
+    Emergency: (555) 123-4567
+  </text>
+</svg>

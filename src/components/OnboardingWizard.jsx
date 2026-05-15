@@ -22,9 +22,12 @@ import {
   X,
   Loader2,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  Package
 } from 'lucide-react';
 import Button from './Button';
+import PackCard from './template-gallery/PackCard';
+import { fetchStarterPacks, applyStarterPack } from '../services/marketplaceService';
 import {
   ONBOARDING_STEPS,
   getOnboardingProgress,
@@ -41,6 +44,7 @@ import {
 const STEP_ICONS = {
   welcome: Sparkles,
   logo: Image,
+  starter_pack: Package,   // Phase 174 D-08
   first_media: Upload,
   first_playlist: List,
   first_screen: Monitor,
@@ -50,7 +54,7 @@ const STEP_ICONS = {
 /**
  * OnboardingWizard - Main wizard component
  */
-const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
+const OnboardingWizard = ({ isOpen, onClose, onComplete, showToast }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(null);
@@ -98,6 +102,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
     const mapping = {
       welcome: progress.completedWelcome,
       logo: progress.completedLogo,
+      starter_pack: progress.completedStarterPack,   // Phase 174 D-15
       first_media: progress.completedFirstMedia,
       first_playlist: progress.completedFirstPlaylist,
       first_screen: progress.completedFirstScreen,
@@ -153,6 +158,56 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
       setError('Failed to skip onboarding. Please try again.');
     } finally {
       setIsSkipping(false);
+    }
+  };
+
+  /**
+   * Phase 174 D-11: step-level Skip on starter_pack step.
+   * Marks the column TRUE and advances; does NOT call skipOnboarding (which
+   * would write skipped_at and short-circuit the entire wizard).
+   */
+  const handleStepSkip = async () => {
+    if (!currentStep || isUpdating) return;
+    setIsUpdating(true);
+    setError(null);
+    try {
+      await updateOnboardingStep(currentStep.id, true);
+      const newProgress = await getOnboardingProgress();
+      setProgress(newProgress);
+      if (currentStepIndex < ONBOARDING_STEPS.length - 1) {
+        setCurrentStepIndex(currentStepIndex + 1);
+      } else {
+        onComplete?.();
+        onClose();
+      }
+    } catch (err) {
+      console.error('Failed to skip step:', err);
+      setError('Failed to save progress. Please try again.');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  /**
+   * Phase 174 D-10: post-apply behaviour.
+   * Toast → mark complete → auto-advance to next wizard step (first_media).
+   */
+  const handlePackApplySuccess = async (pack) => {
+    const count = pack.member_count ?? pack.template_count ?? 'all';
+    showToast?.(`Added ${count} templates from ${pack.name}`, 'success');
+    try {
+      await updateOnboardingStep('starter_pack', true);
+      const newProgress = await getOnboardingProgress();
+      setProgress(newProgress);
+      if (currentStepIndex < ONBOARDING_STEPS.length - 1) {
+        setCurrentStepIndex(currentStepIndex + 1);
+      } else {
+        onComplete?.();
+        onClose();
+      }
+    } catch (err) {
+      console.error('Failed to advance after pack apply:', err);
+      setError('Saved your pack, but couldn\'t advance the wizard. Try clicking Continue.');
     }
   };
 
@@ -292,6 +347,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
                 step={currentStep}
                 isComplete={isStepComplete(currentStep?.id)}
                 onNavigate={handleNavigateToStep}
+                onPackApplySuccess={handlePackApplySuccess}
               />
 
               {/* Inline error message */}
@@ -319,37 +375,39 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
 
                 <div className="flex gap-2">
                   <button
-                    onClick={handleSkip}
-                    disabled={isSkipping}
+                    onClick={currentStep?.id === 'starter_pack' ? handleStepSkip : handleSkip}
+                    disabled={isSkipping || isUpdating}
                     className="text-sm text-gray-500 hover:text-gray-700 px-3 py-2"
                   >
                     {isSkipping ? 'Skipping...' : 'Skip for now'}
                   </button>
 
-                  {currentStep?.navigateTo ? (
-                    <Button onClick={handleNavigateToStep}>
-                      Go to {currentStep.title.replace(/^(Set Up|Create|Add|Upload|Pair)\s+/i, '')}
-                      <ChevronRight size={16} />
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={handleCompleteStep}
-                      disabled={isUpdating}
-                    >
-                      {isUpdating ? (
-                        <Loader2 className="animate-spin" size={16} />
-                      ) : currentStepIndex < ONBOARDING_STEPS.length - 1 ? (
-                        <>
-                          Continue
-                          <ChevronRight size={16} />
-                        </>
-                      ) : (
-                        <>
-                          Finish
-                          <Check size={16} />
-                        </>
-                      )}
-                    </Button>
+                  {currentStep?.id !== 'starter_pack' && (
+                    currentStep?.navigateTo ? (
+                      <Button onClick={handleNavigateToStep}>
+                        Go to {currentStep.title.replace(/^(Set Up|Create|Add|Upload|Pair)\s+/i, '')}
+                        <ChevronRight size={16} />
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleCompleteStep}
+                        disabled={isUpdating}
+                      >
+                        {isUpdating ? (
+                          <Loader2 className="animate-spin" size={16} />
+                        ) : currentStepIndex < ONBOARDING_STEPS.length - 1 ? (
+                          <>
+                            Continue
+                            <ChevronRight size={16} />
+                          </>
+                        ) : (
+                          <>
+                            Finish
+                            <Check size={16} />
+                          </>
+                        )}
+                      </Button>
+                    )
                   )}
                 </div>
               </div>
@@ -364,7 +422,7 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete }) => {
 /**
  * Step-specific content component
  */
-const StepContent = ({ step, isComplete, onNavigate }) => {
+const StepContent = ({ step, isComplete, onNavigate, onPackApplySuccess }) => {
   if (!step) return null;
 
   const content = {
@@ -381,6 +439,7 @@ const StepContent = ({ step, isComplete, onNavigate }) => {
         </p>
       </div>
     ),
+    starter_pack: <StarterPackStep onApplySuccess={onPackApplySuccess} />,
     logo: (
       <div className="text-center py-4">
         {isComplete ? (
@@ -524,6 +583,102 @@ const StepContent = ({ step, isComplete, onNavigate }) => {
   };
 
   return content[step.id] || null;
+};
+
+/**
+ * Phase 174 D-08 / D-09 / D-10: embedded starter-pack picker for the
+ * onboarding wizard. Fetches top-6 packs by display_order ASC, renders a
+ * 2x3 grid of PackCard. Card click triggers applyStarterPack and reports
+ * success/failure to the parent OnboardingWizard.
+ */
+const StarterPackStep = ({ onApplySuccess }) => {
+  const [packs, setPacks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [applying, setApplying] = useState(null);   // packId currently applying
+  const [applyError, setApplyError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchStarterPacks({ activeOnly: true })
+      .then((all) => {
+        if (!mounted) return;
+        setPacks(Array.isArray(all) ? all.slice(0, 6) : []);   // D-09: top 6
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        console.error('[StarterPackStep] fetchStarterPacks failed:', err);
+        setPacks([]);
+      })
+      .finally(() => { if (mounted) setLoading(false); });
+    return () => { mounted = false; };
+  }, []);
+
+  const handlePackClick = async (pack) => {
+    if (applying) return;   // ignore clicks while another apply is in flight
+    setApplying(pack.id);
+    setApplyError(null);
+    try {
+      await applyStarterPack(pack.id);
+      await onApplySuccess?.(pack);
+      // onApplySuccess advances the wizard; no further state update needed here
+    } catch (err) {
+      console.error('[StarterPackStep] applyStarterPack failed:', err);
+      setApplyError(err?.message || 'Couldn\'t apply pack. Try again.');
+      setApplying(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12" role="status" aria-live="polite">
+        <Loader2 className="animate-spin text-blue-600" size={32} />
+        <span className="sr-only">Loading starter packs</span>
+      </div>
+    );
+  }
+
+  if (packs.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        <Package size={32} className="mx-auto mb-3 text-gray-400" />
+        <p className="text-sm">No starter packs available right now.</p>
+        <p className="text-xs mt-1">Click "Skip for now" to continue.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {applyError && (
+        <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-start gap-2">
+          <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <span>{applyError}</span>
+            <button
+              onClick={() => setApplyError(null)}
+              className="ml-2 underline hover:no-underline"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
+        {packs.map((pack) => (
+          <div
+            key={pack.id}
+            onClick={(e) => e.stopPropagation()}   // Pitfall 4 — prevent bubbling to wizard footer
+          >
+            <PackCard
+              pack={pack}
+              onSelect={() => handlePackClick(pack)}
+              isLoading={applying === pack.id}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default OnboardingWizard;

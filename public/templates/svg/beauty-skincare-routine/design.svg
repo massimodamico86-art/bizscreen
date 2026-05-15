@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFF7F4" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#D8A7B1" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Georgia, serif"
+        font-size="56" font-weight="400" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Daily Skincare Routine
+  </text>
+  <text id="text-row1" x="960" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row1">
+    1 · Cleanse · 30 seconds
+  </text>
+  <text id="text-row2" x="960" y="420" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row2">
+    2 · Tone · Pat, don't rub
+  </text>
+  <text id="text-row3" x="960" y="520" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row3">
+    3 · Serum · 2 drops, dab
+  </text>
+  <text id="text-row4" x="960" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row4">
+    4 · Moisturize · Pea-sized
+  </text>
+  <text id="text-row5" x="960" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#3D2C2C" text-anchor="middle"
+        data-customize-text="row5">
+    5 · SPF 30+ · Every morning
+  </text>
+  <text id="text-cta" x="960" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#D8A7B1" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Free skin consult · Book now
+  </text>
+  <text id="text-footer" x="960" y="990" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    All product samples included
+  </text>
+</svg>

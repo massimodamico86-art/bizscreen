@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#1E293B" data-customize-color="background"/>
+  <rect x="0" y="0" width="8" height="1080" fill="#D4AF37" data-customize-color="primary"/>
+  <image id="logo" x="160" y="120" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="160" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="6" fill="#D4AF37" text-anchor="start"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    EXECUTIVE SUITE
+  </text>
+  <text id="text-headline" x="160" y="440" font-family="Georgia, serif"
+        font-size="128" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline">
+    Floor 32
+  </text>
+  <text id="text-subheadline" x="160" y="540" font-family="Georgia, serif"
+        font-size="48" font-style="italic" fill="#94A3B8" text-anchor="start"
+        data-customize-text="subheadline">
+    By appointment only
+  </text>
+  <text id="text-row1" x="160" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row1">
+    Conference Room A — North Wing
+  </text>
+  <text id="text-row2" x="160" y="770" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row2">
+    Conference Room B — South Wing
+  </text>
+  <text id="text-row3" x="160" y="840" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row3">
+    Reception Lounge — Center
+  </text>
+  <text id="text-footer" x="160" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#94A3B8" text-anchor="start"
+        data-customize-text="footer">
+    Reception (32-A): ext. 3201
+  </text>
+</svg>

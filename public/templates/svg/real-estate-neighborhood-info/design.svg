@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F4EFE6" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="200" fill="#5C7A55" data-customize-color="primary"/>
+  <image id="logo" x="120" y="60" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="8" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="eyebrow">
+    NEIGHBORHOOD GUIDE
+  </text>
+  <text id="text-banner" x="960" y="160" font-family="Georgia, serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Maple Heights
+  </text>
+  <text id="text-headline" x="960" y="350" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#2D3D26" text-anchor="middle"
+        data-customize-text="headline">
+    What makes it special
+  </text>
+  <text id="text-row1" x="960" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#2D3D26" text-anchor="middle"
+        data-customize-text="row1">
+    · Top-rated public schools
+  </text>
+  <text id="text-row2" x="960" y="570" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#2D3D26" text-anchor="middle"
+        data-customize-text="row2">
+    · 2 farmers markets nearby
+  </text>
+  <text id="text-row3" x="960" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#2D3D26" text-anchor="middle"
+        data-customize-text="row3">
+    · 4-mile greenway trail
+  </text>
+  <text id="text-row4" x="960" y="710" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#2D3D26" text-anchor="middle"
+        data-customize-text="row4">
+    · Walk score: 88
+  </text>
+  <text id="text-row5" x="960" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#2D3D26" text-anchor="middle"
+        data-customize-text="row5">
+    · Median home price: $425k
+  </text>
+  <text id="text-cta" x="960" y="940" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#5C7A55" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Schedule a neighborhood tour
+  </text>
+</svg>

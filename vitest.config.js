@@ -7,6 +7,15 @@ export default defineConfig({
     // Test environment
     environment: 'jsdom',
 
+    // jsdom URL must be set so localStorage has a non-opaque origin.
+    // Without this, `window.localStorage` throws SecurityError on any access
+    // (jsdom blocks storage for opaque origins per HTML spec).
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost/',
+      },
+    },
+
     // Setup files
     setupFiles: ['./tests/setup.js'],
 

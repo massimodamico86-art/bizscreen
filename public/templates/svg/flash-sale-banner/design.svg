@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FF1744" data-customize-color="background"/>
+  <rect x="80" y="80" width="1760" height="920" fill="#FFFFFF" data-customize-color="card"/>
+  <image id="logo" x="160" y="160" width="160" height="160" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FF1744" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    LIMITED TIME ONLY
+  </text>
+  <text id="text-headline" x="960" y="560" font-family="Helvetica, Arial, sans-serif"
+        font-size="240" font-weight="900" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="headline">
+    FLASH SALE
+  </text>
+  <text id="text-subheadline" x="960" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="100" font-weight="700" fill="#FF1744" text-anchor="middle"
+        data-customize-text="subheadline" data-customize-color="primary">
+    UP TO 70% OFF
+  </text>
+  <text id="text-cta" x="960" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#1a1a1a" text-anchor="middle"
+        data-customize-text="cta">
+    Today Only — In Store &amp; Online
+  </text>
+</svg>

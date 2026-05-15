@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0F2C4D" data-customize-color="background"/>
+  <rect x="0" y="0" width="640" height="1080" fill="#1A4373" data-customize-color="accent"/>
+  <image id="logo" x="160" y="120" width="320" height="320" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="800" y="380" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#7FB3FF" text-anchor="start"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    Welcome to
+  </text>
+  <text id="text-headline" x="800" y="540" font-family="Helvetica, Arial, sans-serif"
+        font-size="140" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline">
+    Acme Corp
+  </text>
+  <text id="text-subheadline" x="800" y="660" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" fill="#B0C7E5" text-anchor="start"
+        data-customize-text="subheadline">
+    Reception Floor 3
+  </text>
+  <rect x="800" y="780" width="200" height="6" fill="#7FB3FF" data-customize-color="primary"/>
+  <text id="text-footer" x="800" y="880" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="footer">
+    Please sign in at the front desk
+  </text>
+</svg>

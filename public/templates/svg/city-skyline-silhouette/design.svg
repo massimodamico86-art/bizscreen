@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#1A2B4D" data-customize-color="background"/>
+  <rect x="0" y="700" width="80" height="380" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="80" y="600" width="120" height="480" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="200" y="560" width="80" height="520" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="280" y="640" width="100" height="440" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="380" y="540" width="140" height="540" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="520" y="600" width="80" height="480" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="600" y="500" width="120" height="580" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="720" y="580" width="80" height="500" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="800" y="640" width="100" height="440" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="900" y="520" width="140" height="560" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="1040" y="600" width="80" height="480" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="1120" y="540" width="120" height="540" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="1240" y="640" width="80" height="440" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="1320" y="560" width="100" height="520" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="1420" y="600" width="120" height="480" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="1540" y="540" width="80" height="540" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="1620" y="640" width="140" height="440" fill="#0F1A30" data-customize-color="primary"/>
+  <rect x="1760" y="600" width="160" height="480" fill="#0F1A30" data-customize-color="primary"/>
+  <circle cx="1660" cy="240" r="80" fill="#FFC93C" data-customize-color="accent"/>
+  <image id="logo" x="120" y="120" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="280" y="180" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="6" fill="#FFC93C" text-anchor="start"
+        data-customize-text="eyebrow" data-customize-color="accent">
+    YOUR CITY · YOUR STORY
+  </text>
+  <text id="text-headline" x="280" y="320" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline">
+    Welcome Downtown
+  </text>
+  <text id="text-subheadline" x="280" y="420" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="subheadline">
+    Customize your local message
+  </text>
+</svg>

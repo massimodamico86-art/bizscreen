@@ -1,0 +1,859 @@
+=== Playwright run: tests/e2e/preview-apply.spec.js ===
+2026-04-22T19:44:18Z
+[dotenv@17.2.3] injecting env (24) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+
+Running 7 tests using 6 workers
+
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+  ✓  5 [chromium] › tests/e2e/preview-apply.spec.js:329:3 › Preview + Apply (Phase 172) › Escape key closes modal (TPRV-01 a11y) (2.8s)
+  ✓  2 [chromium] › tests/e2e/preview-apply.spec.js:194:3 › Preview + Apply (Phase 172) › ArrowRight advances template — toolbar name changes (TPRV-01 keyboard nav) (3.0s)
+  ✘  1 [chromium] › tests/e2e/preview-apply.spec.js:171:3 › Preview + Apply (Phase 172) › opens modal from gallery card click; toolbar shows Apply to new scene CTA and nav counter (TPRV-01) (7.8s)
+  ✘  3 [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) (7.8s)
+  ✘  6 [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) (13.1s)
+  ✘  4 [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) (13.2s)
+  ✘  7 [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) (17.5s)
+
+
+  1) [chromium] › tests/e2e/preview-apply.spec.js:171:3 › Preview + Apply (Phase 172) › opens modal from gallery card click; toolbar shows Apply to new scene CTA and nav counter (TPRV-01) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('[role="alert"]')
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('[role="alert"]')[22m
+    [2m    9 × locator resolved to 1 element[22m
+    [2m      - unexpected value "1"[22m
+
+
+      189 |
+      190 |     // No error alerts on the happy path.
+    > 191 |     await expect(page.locator('[role="alert"]')).toHaveCount(0);
+          |                                                  ^
+      192 |   });
+      193 |
+      194 |   test('ArrowRight advances template — toolbar name changes (TPRV-01 keyboard nav)', async ({
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:191:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-abac3-TA-and-nav-counter-TPRV-01--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-abac3-TA-and-nav-counter-TPRV-01--chromium/error-context.md
+
+  2) [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  getByRole('dialog')
+    Expected: not visible
+    Received: visible
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "not toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for getByRole('dialog')[22m
+    [2m    14 × locator resolved to <div role="dialog" aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center p-4">…</div>[22m
+    [2m       - unexpected value "visible"[22m
+
+
+      233 |
+      234 |     // Modal closes on success (TemplatePreviewModal.handleApply calls onClose).
+    > 235 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+          |                                                ^
+      236 |
+      237 |     // Read the App's currentPage state — it must now match the expected
+      238 |     // post-Apply route regex. `svg-editor?sceneId=<uuid>` for SVG templates,
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:235:48
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-2f4d2-tor-sceneId-…-TPRV-04-D-15--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-2f4d2-tor-sceneId-…-TPRV-04-D-15--chromium/error-context.md
+
+  3) [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  getByRole('dialog')
+    Expected: not visible
+    Received: visible
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "not toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for getByRole('dialog')[22m
+    [2m    14 × locator resolved to <div role="dialog" aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center p-4">…</div>[22m
+    [2m       - unexpected value "visible"[22m
+
+
+      282 |     // Apply and wait for the modal to close.
+      283 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+    > 284 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+          |                                                ^
+      285 |
+      286 |     // Post-Apply: the entire Phase 172 contract is that no sessionStorage
+      287 |     // handoff exists. This assertion is the runtime proof of D-14 / TPRV-06.
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:284:48
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-e36d7-ed-in-page-context-TPRV-06--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-e36d7-ed-in-page-context-TPRV-06--chromium/error-context.md
+
+  4) [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('[role="alert"]')
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('[role="alert"]')[22m
+    [2m    9 × locator resolved to 1 element[22m
+    [2m      - unexpected value "1"[22m
+
+
+      301 |
+      302 |     // Modal is open, no alert should appear yet (no error condition triggered).
+    > 303 |     await expect(page.locator('[role="alert"]')).toHaveCount(0);
+          |                                                  ^
+      304 |
+      305 |     // Apply and confirm no alert appears on the editor page either.
+      306 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:303:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-7f940-t-toHaveCount-0-structural--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-7f940-t-toHaveCount-0-structural--chromium/error-context.md
+
+  5) [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  getByRole('dialog')
+    Expected: not visible
+    Received: visible
+    Timeout:  15000ms
+
+    Call log:
+    [2m  - Expect "not toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('dialog')[22m
+    [2m    19 × locator resolved to <div role="dialog" aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center p-4">…</div>[22m
+    [2m       - unexpected value "visible"[22m
+
+
+      369 |
+      370 |     // Allow the intercepted RPC to resolve naturally — modal should close.
+    > 371 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 15000 });
+          |                                                ^
+      372 |   });
+      373 | });
+      374 |
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:371:48
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-e9d37--request-Pitfall-2-runtime--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-e9d37--request-Pitfall-2-runtime--chromium/error-context.md
+
+  5 failed
+    [chromium] › tests/e2e/preview-apply.spec.js:171:3 › Preview + Apply (Phase 172) › opens modal from gallery card click; toolbar shows Apply to new scene CTA and nav counter (TPRV-01) 
+    [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) 
+    [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) 
+    [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) 
+    [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) 
+  2 passed (21.1s)
+=== exit code: 1 ===
+2026-04-22T19:44:40Z
+
+==============================================================================
+=== Re-run after fix: TRIM applied to all 24 rows on live DB               ===
+==============================================================================
+2026-04-22T19:47:17Z
+[dotenv@17.2.3] injecting env (24) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+
+Running 7 tests using 6 workers
+
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+  ✓  1 [chromium] › tests/e2e/preview-apply.spec.js:194:3 › Preview + Apply (Phase 172) › ArrowRight advances template — toolbar name changes (TPRV-01 keyboard nav) (3.3s)
+  ✓  3 [chromium] › tests/e2e/preview-apply.spec.js:329:3 › Preview + Apply (Phase 172) › Escape key closes modal (TPRV-01 a11y) (3.3s)
+  ✘  4 [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) (8.1s)
+  ✘  6 [chromium] › tests/e2e/preview-apply.spec.js:171:3 › Preview + Apply (Phase 172) › opens modal from gallery card click; toolbar shows Apply to new scene CTA and nav counter (TPRV-01) (8.4s)
+  ✘  5 [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) (13.3s)
+  ✘  2 [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) (13.4s)
+  ✘  7 [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) (17.2s)
+
+
+  1) [chromium] › tests/e2e/preview-apply.spec.js:171:3 › Preview + Apply (Phase 172) › opens modal from gallery card click; toolbar shows Apply to new scene CTA and nav counter (TPRV-01) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('[role="alert"]')
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('[role="alert"]')[22m
+    [2m    9 × locator resolved to 1 element[22m
+    [2m      - unexpected value "1"[22m
+
+
+      189 |
+      190 |     // No error alerts on the happy path.
+    > 191 |     await expect(page.locator('[role="alert"]')).toHaveCount(0);
+          |                                                  ^
+      192 |   });
+      193 |
+      194 |   test('ArrowRight advances template — toolbar name changes (TPRV-01 keyboard nav)', async ({
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:191:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-abac3-TA-and-nav-counter-TPRV-01--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-abac3-TA-and-nav-counter-TPRV-01--chromium/error-context.md
+
+  2) [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  getByRole('dialog')
+    Expected: not visible
+    Received: visible
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "not toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for getByRole('dialog')[22m
+    [2m    14 × locator resolved to <div role="dialog" aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center p-4">…</div>[22m
+    [2m       - unexpected value "visible"[22m
+
+
+      233 |
+      234 |     // Modal closes on success (TemplatePreviewModal.handleApply calls onClose).
+    > 235 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+          |                                                ^
+      236 |
+      237 |     // Read the App's currentPage state — it must now match the expected
+      238 |     // post-Apply route regex. `svg-editor?sceneId=<uuid>` for SVG templates,
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:235:48
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-2f4d2-tor-sceneId-…-TPRV-04-D-15--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-2f4d2-tor-sceneId-…-TPRV-04-D-15--chromium/error-context.md
+
+  3) [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  getByRole('dialog')
+    Expected: not visible
+    Received: visible
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "not toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for getByRole('dialog')[22m
+    [2m    14 × locator resolved to <div role="dialog" aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center p-4">…</div>[22m
+    [2m       - unexpected value "visible"[22m
+
+
+      282 |     // Apply and wait for the modal to close.
+      283 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+    > 284 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+          |                                                ^
+      285 |
+      286 |     // Post-Apply: the entire Phase 172 contract is that no sessionStorage
+      287 |     // handoff exists. This assertion is the runtime proof of D-14 / TPRV-06.
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:284:48
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-e36d7-ed-in-page-context-TPRV-06--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-e36d7-ed-in-page-context-TPRV-06--chromium/error-context.md
+
+  4) [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('[role="alert"]')
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('[role="alert"]')[22m
+    [2m    9 × locator resolved to 1 element[22m
+    [2m      - unexpected value "1"[22m
+
+
+      301 |
+      302 |     // Modal is open, no alert should appear yet (no error condition triggered).
+    > 303 |     await expect(page.locator('[role="alert"]')).toHaveCount(0);
+          |                                                  ^
+      304 |
+      305 |     // Apply and confirm no alert appears on the editor page either.
+      306 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:303:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-7f940-t-toHaveCount-0-structural--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-7f940-t-toHaveCount-0-structural--chromium/error-context.md
+
+  5) [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  getByRole('dialog')
+    Expected: not visible
+    Received: visible
+    Timeout:  15000ms
+
+    Call log:
+    [2m  - Expect "not toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for getByRole('dialog')[22m
+    [2m    19 × locator resolved to <div role="dialog" aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center p-4">…</div>[22m
+    [2m       - unexpected value "visible"[22m
+
+
+      369 |
+      370 |     // Allow the intercepted RPC to resolve naturally — modal should close.
+    > 371 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 15000 });
+          |                                                ^
+      372 |   });
+      373 | });
+      374 |
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:371:48
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-e9d37--request-Pitfall-2-runtime--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-e9d37--request-Pitfall-2-runtime--chromium/error-context.md
+
+  5 failed
+    [chromium] › tests/e2e/preview-apply.spec.js:171:3 › Preview + Apply (Phase 172) › opens modal from gallery card click; toolbar shows Apply to new scene CTA and nav counter (TPRV-01) 
+    [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) 
+    [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) 
+    [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) 
+    [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) 
+  2 passed (21.4s)
+=== exit code: 1 ===
+2026-04-22T19:47:39Z
+
+==============================================================================
+=== Re-run after fix: migrations 169+170 applied to LOCAL Supabase          ==
+=== Root cause: app .env.local points to 127.0.0.1:54321, not the linked   ==
+=== remote project (gdxizdiltfqeugbsgtpx). Previous attempts applied to    ==
+=== remote only.                                                           ==
+==============================================================================
+2026-04-22T19:50:55Z
+[dotenv@17.2.3] injecting env (24) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+
+Running 7 tests using 6 workers
+
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+  ✓  4 [chromium] › tests/e2e/preview-apply.spec.js:171:3 › Preview + Apply (Phase 172) › opens modal from gallery card click; toolbar shows Apply to new scene CTA and nav counter (TPRV-01) (5.8s)
+  ✓  3 [chromium] › tests/e2e/preview-apply.spec.js:329:3 › Preview + Apply (Phase 172) › Escape key closes modal (TPRV-01 a11y) (5.9s)
+  ✓  6 [chromium] › tests/e2e/preview-apply.spec.js:194:3 › Preview + Apply (Phase 172) › ArrowRight advances template — toolbar name changes (TPRV-01 keyboard nav) (5.9s)
+  ✘  1 [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) (30.1s)
+  ✘  2 [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) (30.1s)
+  ✘  5 [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) (30.1s)
+  ✘  7 [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) (30.1s)
+
+
+  1) [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /Apply to new scene/i })[22m
+    [2m    - locator resolved to <button type="button" aria-busy="false" class="inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed select-none active:scale-[0.97] disabled:active:scale-100 px-5 py-2.5 text-base bg-[#f26f21] text-white hover:bg-[#e05a10] active:bg-[#d04d08] focus-visible:ring-[#f26f21] disabled:bg-gray-200 disabled:text-gray-400 shadow-sm w-full">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    47 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - element is outside of the viewport[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      230 |
+      231 |     // Click Apply to new scene. The RPC resolves to a UUID; onNavigate fires.
+    > 232 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+          |                                                                     ^
+      233 |
+      234 |     // Modal closes on success (TemplatePreviewModal.handleApply calls onClose).
+      235 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:232:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-2f4d2-tor-sceneId-…-TPRV-04-D-15--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-2f4d2-tor-sceneId-…-TPRV-04-D-15--chromium/error-context.md
+
+  2) [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /Apply to new scene/i })[22m
+    [2m    - locator resolved to <button type="button" aria-busy="false" class="inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed select-none active:scale-[0.97] disabled:active:scale-100 px-5 py-2.5 text-base bg-[#f26f21] text-white hover:bg-[#e05a10] active:bg-[#d04d08] focus-visible:ring-[#f26f21] disabled:bg-gray-200 disabled:text-gray-400 shadow-sm w-full">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    47 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - element is outside of the viewport[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      281 |
+      282 |     // Apply and wait for the modal to close.
+    > 283 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+          |                                                                     ^
+      284 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+      285 |
+      286 |     // Post-Apply: the entire Phase 172 contract is that no sessionStorage
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:283:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-e36d7-ed-in-page-context-TPRV-06--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-e36d7-ed-in-page-context-TPRV-06--chromium/error-context.md
+
+  3) [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /Apply to new scene/i })[22m
+    [2m    - locator resolved to <button type="button" aria-busy="false" class="inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed select-none active:scale-[0.97] disabled:active:scale-100 px-5 py-2.5 text-base bg-[#f26f21] text-white hover:bg-[#e05a10] active:bg-[#d04d08] focus-visible:ring-[#f26f21] disabled:bg-gray-200 disabled:text-gray-400 shadow-sm w-full">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    47 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - element is outside of the viewport[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      304 |
+      305 |     // Apply and confirm no alert appears on the editor page either.
+    > 306 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+          |                                                                     ^
+      307 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+      308 |
+      309 |     // Wait for the App's currentPage state to leave the gallery (editor has
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:306:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-7f940-t-toHaveCount-0-structural--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-7f940-t-toHaveCount-0-structural--chromium/error-context.md
+
+  4) [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /Apply to new scene/i })[22m
+    [2m    - locator resolved to <button type="button" aria-busy="false" class="inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed select-none active:scale-[0.97] disabled:active:scale-100 px-5 py-2.5 text-base bg-[#f26f21] text-white hover:bg-[#e05a10] active:bg-[#d04d08] focus-visible:ring-[#f26f21] disabled:bg-gray-200 disabled:text-gray-400 shadow-sm w-full">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is not stable[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is not stable[22m
+    [2m  2 × retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m      - waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m  53 × retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m       - waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - element is outside of the viewport[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting 500ms[22m
+
+
+      359 |
+      360 |     const applyButton = page.getByRole('button', { name: /Apply to new scene/i });
+    > 361 |     await applyButton.click();
+          |                       ^
+      362 |
+      363 |     // Within the delay window the button must be disabled and relabel to
+      364 |     // "Applying…" (TemplatePreviewModal line 286 + Button disabled={loading}).
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:361:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-e9d37--request-Pitfall-2-runtime--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-e9d37--request-Pitfall-2-runtime--chromium/error-context.md
+
+  4 failed
+    [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) 
+    [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) 
+    [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) 
+    [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) 
+  3 passed (36.8s)
+=== exit code: 1 ===
+2026-04-22T19:51:32Z
+
+==============================================================================
+=== Re-run after fix: local DB migrated + stray Vite killed                 ==
+=== Playwright webServer config auto-starts fresh Vite on :5173             ==
+==============================================================================
+2026-04-22T19:55:36Z
+[dotenv@17.2.3] injecting env (24) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+[WebServer] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+Running 7 tests using 6 workers
+
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+  ✓  6 [chromium] › tests/e2e/preview-apply.spec.js:329:3 › Preview + Apply (Phase 172) › Escape key closes modal (TPRV-01 a11y) (3.3s)
+  ✓  4 [chromium] › tests/e2e/preview-apply.spec.js:171:3 › Preview + Apply (Phase 172) › opens modal from gallery card click; toolbar shows Apply to new scene CTA and nav counter (TPRV-01) (3.3s)
+  ✓  2 [chromium] › tests/e2e/preview-apply.spec.js:194:3 › Preview + Apply (Phase 172) › ArrowRight advances template — toolbar name changes (TPRV-01 keyboard nav) (3.4s)
+  ✘  3 [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) (30.1s)
+  ✘  1 [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) (30.1s)
+  ✘  5 [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) (30.1s)
+  ✘  7 [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) (30.1s)
+
+
+  1) [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /Apply to new scene/i })[22m
+    [2m    - locator resolved to <button type="button" aria-busy="false" class="inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed select-none active:scale-[0.97] disabled:active:scale-100 px-5 py-2.5 text-base bg-[#f26f21] text-white hover:bg-[#e05a10] active:bg-[#d04d08] focus-visible:ring-[#f26f21] disabled:bg-gray-200 disabled:text-gray-400 shadow-sm w-full">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is not stable[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    52 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - element is outside of the viewport[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      230 |
+      231 |     // Click Apply to new scene. The RPC resolves to a UUID; onNavigate fires.
+    > 232 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+          |                                                                     ^
+      233 |
+      234 |     // Modal closes on success (TemplatePreviewModal.handleApply calls onClose).
+      235 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:232:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-2f4d2-tor-sceneId-…-TPRV-04-D-15--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-2f4d2-tor-sceneId-…-TPRV-04-D-15--chromium/error-context.md
+
+  2) [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /Apply to new scene/i })[22m
+    [2m    - locator resolved to <button type="button" aria-busy="false" class="inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed select-none active:scale-[0.97] disabled:active:scale-100 px-5 py-2.5 text-base bg-[#f26f21] text-white hover:bg-[#e05a10] active:bg-[#d04d08] focus-visible:ring-[#f26f21] disabled:bg-gray-200 disabled:text-gray-400 shadow-sm w-full">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is not stable[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is not stable[22m
+    [2m  2 × retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m      - waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m  50 × retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m       - waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - element is outside of the viewport[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting 500ms[22m
+
+
+      281 |
+      282 |     // Apply and wait for the modal to close.
+    > 283 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+          |                                                                     ^
+      284 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+      285 |
+      286 |     // Post-Apply: the entire Phase 172 contract is that no sessionStorage
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:283:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-e36d7-ed-in-page-context-TPRV-06--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-e36d7-ed-in-page-context-TPRV-06--chromium/error-context.md
+
+  3) [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /Apply to new scene/i })[22m
+    [2m    - locator resolved to <button type="button" aria-busy="false" class="inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed select-none active:scale-[0.97] disabled:active:scale-100 px-5 py-2.5 text-base bg-[#f26f21] text-white hover:bg-[#e05a10] active:bg-[#d04d08] focus-visible:ring-[#f26f21] disabled:bg-gray-200 disabled:text-gray-400 shadow-sm w-full">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is not stable[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is visible, enabled and stable[22m
+    [2m    - scrolling into view if needed[22m
+    [2m    - done scrolling[22m
+    [2m    - element is outside of the viewport[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    52 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - element is outside of the viewport[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      304 |
+      305 |     // Apply and confirm no alert appears on the editor page either.
+    > 306 |     await page.getByRole('button', { name: /Apply to new scene/i }).click();
+          |                                                                     ^
+      307 |     await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 10000 });
+      308 |
+      309 |     // Wait for the App's currentPage state to leave the gallery (editor has
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:306:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-7f940-t-toHaveCount-0-structural--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-7f940-t-toHaveCount-0-structural--chromium/error-context.md
+
+  4) [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: /Apply to new scene/i })[22m
+    [2m    - locator resolved to <button type="button" aria-busy="false" class="inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed select-none active:scale-[0.97] disabled:active:scale-100 px-5 py-2.5 text-base bg-[#f26f21] text-white hover:bg-[#e05a10] active:bg-[#d04d08] focus-visible:ring-[#f26f21] disabled:bg-gray-200 disabled:text-gray-400 shadow-sm w-full">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is not stable[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is not stable[22m
+    [2m  2 × retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m      - waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - element is outside of the viewport[22m
+    [2m  53 × retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m       - waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - element is outside of the viewport[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting 500ms[22m
+
+
+      359 |
+      360 |     const applyButton = page.getByRole('button', { name: /Apply to new scene/i });
+    > 361 |     await applyButton.click();
+          |                       ^
+      362 |
+      363 |     // Within the delay window the button must be disabled and relabel to
+      364 |     // "Applying…" (TemplatePreviewModal line 286 + Button disabled={loading}).
+        at /Users/massimodamico/bizscreen/tests/e2e/preview-apply.spec.js:361:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/preview-apply-Preview-Appl-e9d37--request-Pitfall-2-runtime--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preview-apply-Preview-Appl-e9d37--request-Pitfall-2-runtime--chromium/error-context.md
+
+  4 failed
+    [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) 
+    [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) 
+    [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) 
+    [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) 
+  3 passed (34.7s)
+=== exit code: 1 ===
+2026-04-22T19:56:11Z
+
+==============================================================================
+=== Re-run after modal height fix: h-full → h-[calc(100vh-2rem)] sm:h-[90vh] ==
+=== Root cause: Modal panel had max-h-90vh but no fixed height, so child's  ==
+=== h-full percentage fell back to content-size (828px), pushing Apply     ==
+=== button below viewport. Explicit height constraint restores flex/sticky.==
+==============================================================================
+2026-04-22T20:03:16Z
+[dotenv@17.2.3] injecting env (24) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+[WebServer] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+Running 7 tests using 6 workers
+
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+  ✓  2 [chromium] › tests/e2e/preview-apply.spec.js:171:3 › Preview + Apply (Phase 172) › opens modal from gallery card click; toolbar shows Apply to new scene CTA and nav counter (TPRV-01) (3.5s)
+  ✓  6 [chromium] › tests/e2e/preview-apply.spec.js:329:3 › Preview + Apply (Phase 172) › Escape key closes modal (TPRV-01 a11y) (3.6s)
+  ✓  5 [chromium] › tests/e2e/preview-apply.spec.js:194:3 › Preview + Apply (Phase 172) › ArrowRight advances template — toolbar name changes (TPRV-01 keyboard nav) (3.8s)
+  ✓  3 [chromium] › tests/e2e/preview-apply.spec.js:223:3 › Preview + Apply (Phase 172) › Click Apply to new scene lands on svg-editor?sceneId=… (TPRV-04 / D-15) (4.1s)
+  ✓  4 [chromium] › tests/e2e/preview-apply.spec.js:270:3 › Preview + Apply (Phase 172) › after Apply, sessionStorage has no pendingTemplate key — evaluated in page context (TPRV-06) (4.1s)
+  ✓  1 [chromium] › tests/e2e/preview-apply.spec.js:294:3 › Preview + Apply (Phase 172) › no error alerts appear during happy path — structural assertion page.locator([role="alert"]).toHaveCount(0) (structural) (4.2s)
+  ✓  7 [chromium] › tests/e2e/preview-apply.spec.js:340:3 › Preview + Apply (Phase 172) › Apply button stays disabled during in-flight request (Pitfall 2 runtime) (2.8s)
+
+  7 passed (7.9s)
+=== exit code: 0 ===
+2026-04-22T20:03:25Z
+
+=== Phase 172 Deferred UAT Closure ===
+The following Phase 172 VERIFICATION.md §Human Verification items are closed by this run:
+  - "Apply to SVG template — scene persists with customized svgContent"
+    (covered by Test 3 of preview-apply.spec.js exercising SVG Apply + Test 4 sessionStorage=null)
+The remaining Phase 172 human-verify items (visual polish, native color picker,
+keyboard-only focus trap) are out of scope for 172.1 and remain open in
+.planning/phases/172-preview-apply-flow/VERIFICATION.md.

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#1B998B" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="40" fill="#F46036" data-customize-color="primary"/>
+  <rect x="0" y="1040" width="1920" height="40" fill="#F46036" data-customize-color="primary"/>
+  <image id="logo" x="120" y="100" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" letter-spacing="8" fill="#F46036" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    OUTLET CLEARANCE
+  </text>
+  <text id="text-headline" x="960" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="200" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Up to 70% Off
+  </text>
+  <text id="text-subheadline" x="960" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="subheadline">
+    Final markdowns on past-season styles
+  </text>
+  <text id="text-cta" x="960" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#F46036" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Everything Must Go
+  </text>
+  <text id="text-footer" x="960" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="footer">
+    All sales final · While supplies last
+  </text>
+</svg>

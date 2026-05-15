@@ -78,6 +78,9 @@ export { SearchBar } from './components/SearchBar';
 // Template Components
 export { TemplateCard, TemplateCardGrid, TemplateCardSkeleton } from './components/TemplateCard';
 
+// Favorites (Phase 173)
+export { default as FavoriteButton } from './components/FavoriteButton';
+
 // Layout Creation
 export { CreateLayoutModal, ORIENTATION_PRESETS } from './components/CreateLayoutModal';
 

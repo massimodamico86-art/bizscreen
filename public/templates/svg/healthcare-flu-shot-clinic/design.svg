@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#E8F5E9" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="200" fill="#0E7C5A" data-customize-color="primary"/>
+  <image id="logo" x="120" y="60" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="120" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Free Flu Shot Clinic
+  </text>
+  <text id="text-eyebrow" x="960" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="6" fill="#0E7C5A" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    THIS SATURDAY
+  </text>
+  <text id="text-headline" x="960" y="500" font-family="Georgia, serif"
+        font-size="160" font-weight="700" fill="#1B3F2C" text-anchor="middle"
+        data-customize-text="headline">
+    9am — 4pm
+  </text>
+  <text id="text-row1" x="960" y="660" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1B3F2C" text-anchor="middle"
+        data-customize-text="row1">
+    Walk-ins welcome · No appointment needed
+  </text>
+  <text id="text-row2" x="960" y="730" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1B3F2C" text-anchor="middle"
+        data-customize-text="row2">
+    Bring your insurance card if you have one
+  </text>
+  <text id="text-row3" x="960" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#0E7C5A" text-anchor="middle"
+        data-customize-text="row3" data-customize-color="primary">
+    No insurance? Still free.
+  </text>
+  <text id="text-cta" x="960" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0E7C5A" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Community Center · 1820 Oak Avenue
+  </text>
+</svg>

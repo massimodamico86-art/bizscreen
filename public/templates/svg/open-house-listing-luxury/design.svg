@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#0A0A0A" data-customize-color="background"/>
+  <rect x="0" y="0" width="1080" height="700" fill="#1F1F1F" data-customize-color="card"/>
+  <rect x="0" y="0" width="1080" height="6" fill="#D4AF37" data-customize-color="primary"/>
+  <image id="logo" x="60" y="80" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="540" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="12" fill="#D4AF37" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    LUXURY ESTATE
+  </text>
+  <text id="text-headline" x="540" y="500" font-family="Georgia, serif"
+        font-size="84" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Private Showing
+  </text>
+  <text id="text-subheadline" x="540" y="600" font-family="Georgia, serif"
+        font-size="44" font-style="italic" fill="#D4AF37" text-anchor="middle"
+        data-customize-text="subheadline" data-customize-color="primary">
+    By appointment only
+  </text>
+  <text id="text-address1" x="540" y="900" font-family="Georgia, serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="address1">
+    1820 Hillcrest Drive
+  </text>
+  <text id="text-address2" x="540" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#A0A0A0" text-anchor="middle"
+        data-customize-text="address2">
+    Beverly Hills, CA 90210
+  </text>
+  <rect x="240" y="1080" width="600" height="4" fill="#D4AF37" data-customize-color="primary"/>
+  <text id="text-feat1" x="540" y="1180" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="feature1">
+    6 Bedrooms · 7 Bathrooms
+  </text>
+  <text id="text-feat2" x="540" y="1260" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="feature2">
+    8,400 sq ft · 1.5-acre estate
+  </text>
+  <text id="text-feat3" x="540" y="1340" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="feature3">
+    Wine cellar · Home theater · Pool
+  </text>
+  <text id="text-price" x="540" y="1580" font-family="Georgia, serif"
+        font-size="100" font-weight="700" fill="#D4AF37" text-anchor="middle"
+        data-customize-text="price" data-customize-color="primary">
+    $8,500,000
+  </text>
+  <text id="text-agent" x="540" y="1740" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#A0A0A0" text-anchor="middle"
+        data-customize-text="agent">
+    Sarah Lin · Luxury Properties Group
+  </text>
+  <text id="text-footer" x="540" y="1840" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    (555) 999-2000 · luxprops.com
+  </text>
+</svg>

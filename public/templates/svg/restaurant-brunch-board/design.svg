@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFE8D6" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="40" fill="#7D4F50" data-customize-color="primary"/>
+  <rect x="0" y="1040" width="1920" height="40" fill="#7D4F50" data-customize-color="primary"/>
+  <image id="logo" x="120" y="100" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="220" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" letter-spacing="8" fill="#7D4F50" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    SAT &amp; SUN · 10AM - 2PM
+  </text>
+  <text id="text-headline" x="960" y="400" font-family="Georgia, serif"
+        font-size="160" font-weight="400" fill="#3D2817" text-anchor="middle"
+        data-customize-text="headline">
+    Brunch
+  </text>
+  <text id="text-row1" x="960" y="580" font-family="Georgia, serif"
+        font-size="40" fill="#3D2817" text-anchor="middle"
+        data-customize-text="row1">
+    Eggs Benedict · Avocado Toast · French Toast
+  </text>
+  <text id="text-row2" x="960" y="660" font-family="Georgia, serif"
+        font-size="40" fill="#3D2817" text-anchor="middle"
+        data-customize-text="row2">
+    Buttermilk Pancakes · Shakshuka · Frittata
+  </text>
+  <text id="text-row3" x="960" y="740" font-family="Georgia, serif"
+        font-size="40" fill="#3D2817" text-anchor="middle"
+        data-customize-text="row3">
+    Smoked Salmon Bagel · Steak &amp; Eggs
+  </text>
+  <text id="text-cta" x="960" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#7D4F50" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Bottomless mimosas · $25 with entrée
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#7D4F50" text-anchor="middle"
+        data-customize-text="footer">
+    Reservations recommended for 4+
+  </text>
+</svg>

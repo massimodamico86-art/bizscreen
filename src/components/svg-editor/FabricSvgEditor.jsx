@@ -22,7 +22,8 @@ import AnimatePanel from './AnimatePanel';
 import PositionPanel from './PositionPanel';
 import ContextMenu from './ContextMenu';
 import FiltersPanel from './FiltersPanel';
-import { loadSvgContent, LOCAL_SVG_TEMPLATES } from '../../services/svgTemplateService';
+import { loadSvgContent } from '../../services/svgTemplateService';
+import { fetchGalleryTemplates } from '../../services/templateGalleryService';
 import {
   Loader2,
   AlertCircle,
@@ -81,6 +82,42 @@ export default function FabricSvgEditor({
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sidebarTemplates, setSidebarTemplates] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchGalleryTemplates({ editorType: 'svg', limit: 100 })
+      .then(({ data, error: fetchError }) => {
+        if (cancelled) return;
+        if (fetchError) {
+          console.warn('FabricSvgEditor: failed to load sidebar templates', fetchError.message || fetchError);
+          return;
+        }
+        // Map VIEW rows (snake_case) to the shape LeftSidebar expects
+        // (legacy camelCase shape — svgUrl, isFeatured).
+        const mapped = (data || []).map((row) => ({
+          id: row.id,
+          slug: row.slug,
+          name: row.name,
+          description: row.description,
+          category: row.category,
+          orientation: row.orientation,
+          thumbnail: row.thumbnail,
+          svgUrl: row.svg_url,
+          width: row.width,
+          height: row.height,
+          tags: row.tags || [],
+          isFeatured: !!row.is_featured,
+        }));
+        setSidebarTemplates(mapped);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.warn('FabricSvgEditor: template fetch threw', err?.message || err);
+        }
+      });
+    return () => { cancelled = true; };
+  }, []);
   const [selectedObject, setSelectedObject] = useState(null);
   const [zoom, setZoom] = useState(1);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -2487,7 +2524,7 @@ export default function FabricSvgEditor({
             onAddWidget={handleAddWidget}
             onSelectTemplate={handleSelectTemplate}
             onSaveAsTemplate={handleSaveAsTemplate}
-            templates={LOCAL_SVG_TEMPLATES}
+            templates={sidebarTemplates}
           />
         )}
 

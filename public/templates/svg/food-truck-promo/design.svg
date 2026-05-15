@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FF4500" data-customize-color="background"/>
+  <rect x="0" y="900" width="1920" height="180" fill="#1a1a1a" data-customize-color="primary"/>
+  <image id="logo" x="120" y="100" width="160" height="160" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="240" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#FFD700" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="accent">
+    STREET EATS
+  </text>
+  <text id="text-headline" x="960" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="180" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Find Us Today
+  </text>
+  <text id="text-subheadline" x="960" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="subheadline">
+    Tacos · Burritos · Quesadillas
+  </text>
+  <text id="text-location" x="960" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FFD700" text-anchor="middle"
+        data-customize-text="location" data-customize-color="accent">
+    11am-3pm @ City Park
+  </text>
+  <text id="text-footer" x="960" y="1000" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="footer">
+    Follow @yourtruck for daily updates
+  </text>
+</svg>

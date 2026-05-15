@@ -18,6 +18,8 @@ import { supabase } from '../supabase';
  * @property {boolean} completedFirstPlaylist - First playlist created
  * @property {boolean} completedFirstMedia - First media uploaded
  * @property {boolean} completedScreenPairing - Screen paired
+ * @property {boolean} completedStarterPack - Starter pack step done (chosen or skipped) — Phase 174 D-12/D-15
+ * @property {boolean} completedGalleryTour - First-visit gallery tour seen (D-16) — does NOT count toward isComplete
  * @property {boolean} isComplete - All steps complete
  * @property {string} currentStep - Current step name
  * @property {string|null} completedAt - When completed
@@ -40,6 +42,13 @@ export const ONBOARDING_STEPS = [
     description: 'Add your brand logo to personalize your screens.',
     icon: 'Image',
     navigateTo: 'branding-settings'
+  },
+  {
+    id: 'starter_pack',
+    title: 'Choose a Starter Pack',
+    description: 'Apply a curated set of templates to jumpstart your screens.',
+    icon: 'Package'
+    // Phase 174 D-08: no navigateTo — step stays inside the wizard.
   },
   {
     id: 'first_media',
@@ -132,6 +141,8 @@ export async function getOnboardingProgress() {
       completedFirstPlaylist: status.hasPlaylists,
       completedFirstMedia: status.hasMedia,
       completedScreenPairing: false,
+      completedStarterPack: false,
+      completedGalleryTour: false,
       isComplete: !status.isFirstRun,
       currentStep: 'welcome',
       completedAt: null,
@@ -148,6 +159,8 @@ export async function getOnboardingProgress() {
     completedFirstPlaylist: row?.completed_first_playlist || false,
     completedFirstMedia: row?.completed_first_media || false,
     completedScreenPairing: row?.completed_screen_pairing || false,
+    completedStarterPack: row?.completed_starter_pack || false,
+    completedGalleryTour: row?.completed_gallery_tour || false,
     isComplete: row?.is_complete || false,
     currentStep: row?.current_step || 'welcome',
     completedAt: row?.completed_at,
@@ -217,6 +230,7 @@ export function getNextStep(progress) {
   const stepChecks = [
     { id: 'welcome', check: progress.completedWelcome },
     { id: 'logo', check: progress.completedLogo },
+    { id: 'starter_pack', check: progress.completedStarterPack },   // Phase 174 D-07
     { id: 'first_media', check: progress.completedFirstMedia },
     { id: 'first_playlist', check: progress.completedFirstPlaylist },
     { id: 'first_screen', check: progress.completedFirstScreen },
@@ -241,10 +255,13 @@ export function getCompletedCount(progress) {
   let count = 0;
   if (progress.completedWelcome) count++;
   if (progress.completedLogo) count++;
+  if (progress.completedStarterPack) count++;   // Phase 174 D-15
   if (progress.completedFirstMedia) count++;
   if (progress.completedFirstPlaylist) count++;
   if (progress.completedFirstScreen) count++;
   if (progress.completedScreenPairing) count++;
+  // Note (Phase 174 Pitfall 3): completedGalleryTour is intentionally NOT counted —
+  // gallery_tour is a separate single-shot affordance, not a wizard step.
   return count;
 }
 
@@ -307,3 +324,33 @@ export async function syncOnboardingProgress() {
 
   return getOnboardingProgress();
 }
+
+/**
+ * Phase 174 D-17 / D-19: Mark the first-visit gallery tour as seen.
+ *
+ * Reuses update_onboarding_step('gallery_tour', true). The Phase 174
+ * migration (Plan 02) added 'gallery_tour' to the RPC's allowlist; the
+ * dynamic SQL writes onboarding_progress.completed_gallery_tour. Because
+ * gallery_tour is intentionally OUT of the is_complete AND chain
+ * (Pitfall 3), marking it seen does NOT advance/complete the wizard.
+ *
+ * Non-throwing: a failed mark must NOT break the gallery UX. Errors are
+ * logged but swallowed — at worst the user sees the tour again on next
+ * visit, which is harmless.
+ *
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function markGalleryTourSeen() {
+  const { data, error } = await supabase.rpc('update_onboarding_step', {
+    p_step: 'gallery_tour',
+    p_completed: true
+  });
+
+  if (error) {
+    console.error('[onboardingService] markGalleryTourSeen failed:', error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: data?.success || false };
+}
+

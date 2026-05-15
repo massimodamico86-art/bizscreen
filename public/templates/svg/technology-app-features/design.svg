@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="640" height="1080" fill="#0066FF" data-customize-color="primary"/>
+  <image id="logo" x="80" y="80" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="80" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="6" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="eyebrow">
+    WHAT'S NEW
+  </text>
+  <text id="text-headline" x="80" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="96" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline">
+    Version 4.0
+  </text>
+  <text id="text-headline2" x="80" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="96" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline2">
+    is here
+  </text>
+  <text id="text-feat1-name" x="720" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#0066FF" text-anchor="start"
+        data-customize-text="feat1-name" data-customize-color="primary">
+    AI Assistant
+  </text>
+  <text id="text-feat1-detail" x="720" y="340" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#1A1A1A" text-anchor="start"
+        data-customize-text="feat1-detail">
+    Smart suggestions in your workflow
+  </text>
+  <text id="text-feat2-name" x="720" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#0066FF" text-anchor="start"
+        data-customize-text="feat2-name" data-customize-color="primary">
+    Real-time Sync
+  </text>
+  <text id="text-feat2-detail" x="720" y="510" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#1A1A1A" text-anchor="start"
+        data-customize-text="feat2-detail">
+    Instant collaboration across devices
+  </text>
+  <text id="text-feat3-name" x="720" y="620" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#0066FF" text-anchor="start"
+        data-customize-text="feat3-name" data-customize-color="primary">
+    Dark Mode
+  </text>
+  <text id="text-feat3-detail" x="720" y="680" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#1A1A1A" text-anchor="start"
+        data-customize-text="feat3-detail">
+    Easy on the eyes, all day
+  </text>
+  <text id="text-feat4-name" x="720" y="790" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#0066FF" text-anchor="start"
+        data-customize-text="feat4-name" data-customize-color="primary">
+    Custom Workflows
+  </text>
+  <text id="text-feat4-detail" x="720" y="850" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#1A1A1A" text-anchor="start"
+        data-customize-text="feat4-detail">
+    Automate your routine in minutes
+  </text>
+  <text id="text-cta" x="720" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#0066FF" text-anchor="start"
+        data-customize-text="cta" data-customize-color="primary">
+    Update now · It's free
+  </text>
+</svg>

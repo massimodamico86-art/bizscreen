@@ -130,6 +130,7 @@ export const PLANS = {
       'webhooks',
       'priority_support',
       'usage_dashboard',
+      'social_feed',
     ],
     displayOrder: 3,
     recommended: true,
@@ -174,6 +175,7 @@ export const PLANS = {
       'dedicated_support',
       'pms_integration',
       'usage_dashboard',
+      'social_feed',
     ],
     displayOrder: 4,
     recommended: false,
@@ -217,6 +219,7 @@ export const PLANS = {
       'custom_domains',
       'priority_support',
       'usage_dashboard',
+      'social_feed',
     ],
     displayOrder: 5,
     recommended: false,
@@ -251,6 +254,7 @@ export const Feature = {
   API_ACCESS: 'api_access',
   WEBHOOKS: 'webhooks',
   PRIORITY_SUPPORT: 'priority_support',
+  SOCIAL_FEED: 'social_feed',
 
   // Enterprise features
   ENTERPRISE_SSO: 'enterprise_sso',
@@ -509,6 +513,11 @@ export const FEATURE_METADATA = {
     name: 'Usage Dashboard',
     description: 'View usage analytics and quota status',
     category: 'analytics',
+  },
+  [Feature.SOCIAL_FEED]: {
+    name: 'Social Feed Moderation',
+    description: 'Approve or reject pending social feed posts before they appear on your screens',
+    category: 'marketing',
   },
 };
 

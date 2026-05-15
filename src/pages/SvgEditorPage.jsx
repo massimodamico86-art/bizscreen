@@ -14,6 +14,7 @@ import {
   loadUserSvgDesign,
   saveUserSvgDesign,
 } from '../services/svgTemplateService';
+import { supabase } from '../supabase';
 import { Loader2 } from 'lucide-react';
 
 /**
@@ -24,7 +25,7 @@ function parseQueryParams(routeString) {
     const queryString = routeString.split('?')[1];
     const params = new URLSearchParams(queryString);
     return {
-      templateId: params.get('templateId'),
+      sceneId: params.get('sceneId'),
       designId: params.get('designId'),
     };
   }
@@ -52,7 +53,7 @@ export default function SvgEditorPage({
 
   // Parse query parameters
   const queryParams = useMemo(() => parseQueryParams(routeString), [routeString]);
-  const { designId: urlDesignId, templateId: urlTemplateId } = queryParams;
+  const { designId: urlDesignId, sceneId: urlSceneId } = queryParams;
 
   // Load template or design
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function SvgEditorPage({
       setLoading(true);
       setError(null);
 
-      console.log('SvgEditorPage loadContent - designId:', urlDesignId, 'templateId:', urlTemplateId);
+      console.log('SvgEditorPage loadContent - designId:', urlDesignId, 'sceneId:', urlSceneId);
 
       try {
         // Check for existing design ID
@@ -80,42 +81,40 @@ export default function SvgEditorPage({
             canvasHeight: design.height,
           });
         }
-        // Check for template ID - load from sessionStorage
-        else if (urlTemplateId) {
-          try {
-            const storedTemplate = sessionStorage.getItem('pendingTemplate');
-            if (!storedTemplate) {
-              throw new Error('Template data not found');
-            }
-            const templateData = JSON.parse(storedTemplate);
-            console.log('Loading template:', templateData.name);
+        // Phase 172 (D-15): load a scene by ID — the Apply flow writes scenes +
+        // scene_slides atomically via clone_template_with_customization. We
+        // read slide.design_json.svgContent directly; no svg_designs row exists.
+        else if (urlSceneId) {
+          const { data: scene, error: sceneErr } = await supabase
+            .from('scenes')
+            .select('id, name, settings')
+            .eq('id', urlSceneId)
+            .single();
+          if (sceneErr) throw sceneErr;
 
-            // Clear the stored template
-            sessionStorage.removeItem('pendingTemplate');
+          const { data: slides, error: slidesErr } = await supabase
+            .from('scene_slides')
+            .select('design_json')
+            .eq('scene_id', urlSceneId)
+            .order('position', { ascending: true })
+            .limit(1);
+          if (slidesErr) throw slidesErr;
 
-            // Determine SVG URL - use svgContent if available (from template_library),
-            // otherwise fall back to svgUrl
-            let svgUrl = templateData.svgUrl;
-            if (templateData.svgContent) {
-              // Convert SVG content to data URL for the editor
-              const encoded = btoa(unescape(encodeURIComponent(templateData.svgContent)));
-              svgUrl = `data:image/svg+xml;base64,${encoded}`;
-            }
+          const svgContent = slides?.[0]?.design_json?.svgContent;
+          const svgUrl = svgContent
+            ? `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`
+            : null;
 
-            if (cancelled) return;
-            setEditorConfig({
-              svgUrl,
-              templateId: templateData.id,
-              templateName: templateData.name || 'New Design',
-              initialJson: null,
-              designId: null,
-              canvasWidth: templateData.width || 1920,
-              canvasHeight: templateData.height || 1080,
-            });
-          } catch (e) {
-            console.error('Failed to load template:', e);
-            if (!cancelled) setError('Template not found. Please select a template again.');
-          }
+          if (cancelled) return;
+          setEditorConfig({
+            svgUrl,
+            templateId: null,
+            templateName: scene.name,
+            initialJson: null,
+            designId: null,
+            canvasWidth: scene.settings?.width || 1920,
+            canvasHeight: scene.settings?.height || 1080,
+          });
         }
         // New blank design
         else {
@@ -144,7 +143,7 @@ export default function SvgEditorPage({
     return () => {
       cancelled = true;
     };
-  }, [urlDesignId, urlTemplateId]);
+  }, [urlDesignId, urlSceneId]);
 
   // Handle save
   const handleSave = async (designData) => {

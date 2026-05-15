@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#101010" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#FF3D3D" data-customize-color="primary"/>
+  <image id="logo" x="80" y="30" width="100" height="100" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="105" font-family="Helvetica, Arial, sans-serif"
+        font-size="72" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    GYM CLASS SCHEDULE
+  </text>
+  <text id="text-row1-time" x="320" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FF3D3D" text-anchor="start"
+        data-customize-text="row1-time" data-customize-color="primary">
+    6:00 AM
+  </text>
+  <text id="text-row1-class" x="700" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row1-class">
+    HIIT — Coach Maya
+  </text>
+  <text id="text-row2-time" x="320" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FF3D3D" text-anchor="start"
+        data-customize-text="row2-time" data-customize-color="primary">
+    9:30 AM
+  </text>
+  <text id="text-row2-class" x="700" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row2-class">
+    Spin Cycle — Coach Drew
+  </text>
+  <text id="text-row3-time" x="320" y="580" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FF3D3D" text-anchor="start"
+        data-customize-text="row3-time" data-customize-color="primary">
+    12:00 PM
+  </text>
+  <text id="text-row3-class" x="700" y="580" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row3-class">
+    Power Yoga — Coach Lin
+  </text>
+  <text id="text-row4-time" x="320" y="710" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FF3D3D" text-anchor="start"
+        data-customize-text="row4-time" data-customize-color="primary">
+    5:30 PM
+  </text>
+  <text id="text-row4-class" x="700" y="710" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row4-class">
+    Strength Circuit — Coach Sam
+  </text>
+  <text id="text-row5-time" x="320" y="840" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FF3D3D" text-anchor="start"
+        data-customize-text="row5-time" data-customize-color="primary">
+    7:00 PM
+  </text>
+  <text id="text-row5-class" x="700" y="840" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="row5-class">
+    Boxing Bootcamp — Coach Rio
+  </text>
+  <text id="text-footer" x="960" y="1000" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#888888" text-anchor="middle" data-customize-text="footer">
+    Reserve your spot in the app
+  </text>
+</svg>

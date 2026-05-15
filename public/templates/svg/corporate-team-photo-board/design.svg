@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F0F4F8" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="200" fill="#1E40AF" data-customize-color="primary"/>
+  <image id="logo" x="120" y="60" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="120" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Welcome New Teammates
+  </text>
+  <rect x="160" y="320" width="380" height="380" fill="#FFFFFF" data-customize-color="card"/>
+  <rect x="580" y="320" width="380" height="380" fill="#FFFFFF" data-customize-color="card"/>
+  <rect x="1000" y="320" width="380" height="380" fill="#FFFFFF" data-customize-color="card"/>
+  <rect x="1420" y="320" width="380" height="380" fill="#FFFFFF" data-customize-color="card"/>
+  <text id="text-name1" x="350" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="name1">
+    Mia Chen
+  </text>
+  <text id="text-role1" x="350" y="650" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#1E40AF" text-anchor="middle"
+        data-customize-text="role1" data-customize-color="primary">
+    Senior Engineer
+  </text>
+  <text id="text-name2" x="770" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="name2">
+    Diego Marco
+  </text>
+  <text id="text-role2" x="770" y="650" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#1E40AF" text-anchor="middle"
+        data-customize-text="role2" data-customize-color="primary">
+    Product Designer
+  </text>
+  <text id="text-name3" x="1190" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="name3">
+    Priya Nair
+  </text>
+  <text id="text-role3" x="1190" y="650" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#1E40AF" text-anchor="middle"
+        data-customize-text="role3" data-customize-color="primary">
+    Customer Success
+  </text>
+  <text id="text-name4" x="1610" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="name4">
+    Jordan Lee
+  </text>
+  <text id="text-role4" x="1610" y="650" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#1E40AF" text-anchor="middle"
+        data-customize-text="role4" data-customize-color="primary">
+    Data Analyst
+  </text>
+  <text id="text-headline" x="960" y="850" font-family="Georgia, serif"
+        font-size="56" font-weight="700" fill="#0F2C4D" text-anchor="middle"
+        data-customize-text="headline">
+    Stop by &amp; say hi this week
+  </text>
+  <text id="text-footer" x="960" y="970" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#666666" text-anchor="middle"
+        data-customize-text="footer">
+    Coffee &amp; pastries · Wednesday 10am · Atrium
+  </text>
+</svg>

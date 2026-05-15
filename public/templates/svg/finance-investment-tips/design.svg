@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#FFFFFF" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="160" fill="#003D6B" data-customize-color="primary"/>
+  <image id="logo" x="120" y="40" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-banner" x="960" y="100" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="banner">
+    Investment Insights
+  </text>
+  <text id="text-eyebrow" x="960" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="8" fill="#003D6B" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    THIS QUARTER · ADVISOR PICKS
+  </text>
+  <text id="text-tip1" x="960" y="430" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1A1A1A" text-anchor="middle"
+        data-customize-text="tip1">
+    1 · Diversify across asset classes
+  </text>
+  <text id="text-tip2" x="960" y="510" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1A1A1A" text-anchor="middle"
+        data-customize-text="tip2">
+    2 · Rebalance quarterly, not daily
+  </text>
+  <text id="text-tip3" x="960" y="590" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1A1A1A" text-anchor="middle"
+        data-customize-text="tip3">
+    3 · Max your retirement contributions
+  </text>
+  <text id="text-tip4" x="960" y="670" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1A1A1A" text-anchor="middle"
+        data-customize-text="tip4">
+    4 · Hold an emergency cash buffer
+  </text>
+  <text id="text-tip5" x="960" y="750" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#1A1A1A" text-anchor="middle"
+        data-customize-text="tip5">
+    5 · Review your plan annually
+  </text>
+  <text id="text-cta" x="960" y="920" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#003D6B" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Schedule a free portfolio review
+  </text>
+  <text id="text-footer" x="960" y="1020" font-family="Helvetica, Arial, sans-serif"
+        font-size="24" fill="#999999" text-anchor="middle"
+        data-customize-text="footer">
+    Not investment advice · Consult an advisor for your situation
+  </text>
+</svg>

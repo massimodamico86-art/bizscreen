@@ -47,6 +47,46 @@ jobs:
       - name: Run unit & integration tests
         run: npm test -- --run
 
+      # =============================================================================
+      # LIVE SUPABASE INTEGRATION TESTS
+      # =============================================================================
+      # The default `npm test` run above keeps live integration tests skipped
+      # (RUN_LIVE_SUPABASE_TESTS is unset). This step opts in to the live suite
+      # when the required Supabase secrets are configured. The live suite
+      # includes service-role-backed tests, so we gate on the full set of
+      # Supabase credentials (URL, anon key, and service role key).
+      # Test-specific extras (ANTHROPIC_API_KEY, TEST_NON_ADMIN_*, etc.) are
+      # passed through; tests that need them skip themselves individually if
+      # absent, so they are not part of the gate.
+      # =============================================================================
+      - name: Check for live Supabase secrets
+        id: check_live_secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ] && [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "Live Supabase secrets not configured; skipping live integration tests."
+          fi
+
+      - name: Run live Supabase integration tests
+        if: steps.check_live_secrets.outputs.available == 'true'
+        run: npm run test:integration:live
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          TEST_NON_ADMIN_EMAIL: ${{ secrets.TEST_NON_ADMIN_EMAIL }}
+          TEST_NON_ADMIN_PASSWORD: ${{ secrets.TEST_NON_ADMIN_PASSWORD }}
+
   # =============================================================================
   # JOB 2: E2E TESTS (includes smoke tests)
   # =============================================================================

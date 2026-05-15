@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#3D2817" data-customize-color="background"/>
+  <rect x="80" y="80" width="1760" height="920" fill="#F5EBD7" data-customize-color="card"/>
+  <image id="logo" x="160" y="160" width="160" height="160" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="240" font-family="Georgia, serif"
+        font-size="40" fill="#3D2817" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    BREW HOUSE COFFEE
+  </text>
+  <text id="text-headline" x="960" y="360" font-family="Georgia, serif"
+        font-size="100" font-weight="700" fill="#3D2817" text-anchor="middle"
+        data-customize-text="headline" data-customize-color="primary">
+    Coffee Menu
+  </text>
+  <text id="text-item1" x="240" y="540" font-family="Georgia, serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="item1">
+    Espresso
+  </text>
+  <text id="text-item1-price" x="1680" y="540" font-family="Georgia, serif"
+        font-size="44" font-weight="700" fill="#3D2817" text-anchor="end"
+        data-customize-text="item1-price" data-customize-color="primary">
+    $3.50
+  </text>
+  <text id="text-item2" x="240" y="640" font-family="Georgia, serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="item2">
+    Cappuccino
+  </text>
+  <text id="text-item2-price" x="1680" y="640" font-family="Georgia, serif"
+        font-size="44" font-weight="700" fill="#3D2817" text-anchor="end"
+        data-customize-text="item2-price" data-customize-color="primary">
+    $4.50
+  </text>
+  <text id="text-item3" x="240" y="740" font-family="Georgia, serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="item3">
+    Latte (vanilla, hazelnut, caramel)
+  </text>
+  <text id="text-item3-price" x="1680" y="740" font-family="Georgia, serif"
+        font-size="44" font-weight="700" fill="#3D2817" text-anchor="end"
+        data-customize-text="item3-price" data-customize-color="primary">
+    $5.25
+  </text>
+  <text id="text-item4" x="240" y="840" font-family="Georgia, serif"
+        font-size="44" fill="#1a1a1a" text-anchor="start" data-customize-text="item4">
+    Cold Brew
+  </text>
+  <text id="text-item4-price" x="1680" y="840" font-family="Georgia, serif"
+        font-size="44" font-weight="700" fill="#3D2817" text-anchor="end"
+        data-customize-text="item4-price" data-customize-color="primary">
+    $4.75
+  </text>
+  <text id="text-footer" x="960" y="960" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#3D2817" text-anchor="middle" data-customize-text="footer">
+    Oat, almond &amp; soy milk available · Free WiFi
+  </text>
+</svg>

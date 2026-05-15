@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#1c1c1c" data-customize-color="background"/>
+  <rect x="0" y="0" width="1920" height="80" fill="#FFB200" data-customize-color="primary"/>
+  <rect x="0" y="1000" width="1920" height="80" fill="#FFB200" data-customize-color="primary"/>
+  <image id="logo" x="120" y="160" width="160" height="160" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="240" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#FFB200" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    THIS MONTH ONLY
+  </text>
+  <text id="text-headline" x="960" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="160" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    OIL CHANGE
+  </text>
+  <text id="text-subheadline" x="960" y="560" font-family="Helvetica, Arial, sans-serif"
+        font-size="64" fill="#FFB200" text-anchor="middle"
+        data-customize-text="subheadline" data-customize-color="primary">
+    +  Multi-point Inspection
+  </text>
+  <text id="text-price" x="960" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="200" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="price">
+    $39.99
+  </text>
+  <text id="text-detail" x="960" y="880" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#CCCCCC" text-anchor="middle" data-customize-text="detail">
+    Most makes &amp; models · Synthetic blend included
+  </text>
+  <text id="text-footer" x="960" y="970" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#1c1c1c" text-anchor="middle" data-customize-text="footer">
+    AutoCare Garage · 555-AUTO · Mon–Sat
+  </text>
+</svg>

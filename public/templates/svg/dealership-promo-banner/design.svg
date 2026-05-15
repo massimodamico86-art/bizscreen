@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0E1525" data-customize-color="background"/>
+  <rect x="0" y="0" width="640" height="1080" fill="#DA0F1A" data-customize-color="primary"/>
+  <image id="logo" x="120" y="120" width="200" height="200" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="320" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="eyebrow">
+    YEAR-END EVENT
+  </text>
+  <text id="text-eyebrow2" x="320" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="80" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="eyebrow2">
+    2026
+  </text>
+  <text id="text-headline" x="1280" y="400" font-family="Helvetica, Arial, sans-serif"
+        font-size="120" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    0% APR
+  </text>
+  <text id="text-subheadline" x="1280" y="540" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" font-weight="700" fill="#DA0F1A" text-anchor="middle"
+        data-customize-text="subheadline" data-customize-color="primary">
+    For 60 Months
+  </text>
+  <text id="text-subheadline2" x="1280" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#CCCCCC" text-anchor="middle"
+        data-customize-text="subheadline2">
+    On select new models
+  </text>
+  <text id="text-cta" x="1280" y="850" font-family="Helvetica, Arial, sans-serif"
+        font-size="48" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="cta">
+    Visit AcmeAuto Today
+  </text>
+  <text id="text-footer" x="1280" y="950" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#999999" text-anchor="middle" data-customize-text="footer">
+    See dealer for details · Offer ends Dec 31
+  </text>
+</svg>

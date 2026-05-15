@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0B0F1A" data-customize-color="background"/>
+  <circle cx="320" cy="240" r="180" fill="#FF6B6B" opacity="0.6"
+          data-customize-color="primary"/>
+  <circle cx="540" cy="380" r="120" fill="#4ECDC4" opacity="0.6"
+          data-customize-color="accent"/>
+  <circle cx="1620" cy="220" r="220" fill="#FFE66D" opacity="0.5"
+          data-customize-color="accent"/>
+  <circle cx="1700" cy="900" r="160" fill="#FF6B6B" opacity="0.5"
+          data-customize-color="primary"/>
+  <circle cx="220" cy="900" r="140" fill="#4ECDC4" opacity="0.6"
+          data-customize-color="accent"/>
+  <rect x="800" y="640" width="320" height="6" fill="#FFFFFF"/>
+  <image id="logo" x="120" y="120" width="120" height="120" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="450" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#FFE66D" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="accent">
+    DAILY · ART · DESIGN
+  </text>
+  <text id="text-headline" x="960" y="580" font-family="Helvetica, Arial, sans-serif"
+        font-size="160" font-weight="900" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Bold Ideas
+  </text>
+  <text id="text-subheadline" x="960" y="780" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#CCCCCC" text-anchor="middle"
+        data-customize-text="subheadline">
+    A canvas for what comes next
+  </text>
+  <text id="text-footer" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" fill="#888888" text-anchor="middle" data-customize-text="footer">
+    Customize anything · brand colors, logo, copy
+  </text>
+</svg>

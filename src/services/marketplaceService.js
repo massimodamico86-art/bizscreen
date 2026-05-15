@@ -180,26 +180,6 @@ export async function verifyTemplatePermissions(templateId) {
 }
 
 // ============================================================================
-// INSTALL TEMPLATE
-// ============================================================================
-
-/**
- * Install a template as a new scene
- * @param {string} templateId - Template UUID
- * @param {string} [sceneName] - Optional custom scene name
- * @returns {Promise<string>} New scene ID
- */
-export async function installTemplateAsScene(templateId, sceneName = null) {
-  const { data, error } = await supabase.rpc('clone_template_to_scene', {
-    p_template_id: templateId,
-    p_scene_name: sceneName,
-  });
-
-  if (error) throw error;
-  return data;
-}
-
-// ============================================================================
 // ADMIN FUNCTIONS
 // ============================================================================
 
@@ -522,4 +502,165 @@ export async function uploadTemplatePreview(templateId, file) {
   await updateTemplate(templateId, { previewUrl: urlData.publicUrl });
 
   return urlData.publicUrl;
+}
+
+// ============================================================================
+// STARTER PACKS (Phase 173)
+// ============================================================================
+
+/**
+ * Fetch packs with optional filters; single-query read that the gallery strip consumes.
+ * @param {{ activeOnly?: boolean, tenantId?: string|null }} opts
+ * @returns {Promise<Array>}
+ */
+export async function fetchStarterPacks({ activeOnly = true, tenantId = null } = {}) {
+  let q = supabase
+    .from('template_packs')
+    .select('id, slug, name, description, industry, thumbnail_url, display_order, is_active, tenant_id')
+    .order('display_order', { ascending: true })
+    .order('name',          { ascending: true });
+
+  if (activeOnly)        q = q.eq('is_active', true);
+  if (tenantId !== null) q = q.eq('tenant_id', tenantId);
+
+  const { data, error } = await q;
+  if (error) throw error;
+  return data ?? [];
+}
+
+/**
+ * Fetch pack detail + ordered member rows joined against gallery_templates so
+ * callers get full template metadata (name, thumbnail, editor_type, ...) in
+ * one round-trip. Drops orphan junction rows (Pattern 2 — polymorphic
+ * existence is best-effort at read time).
+ *
+ * @param {string} packId
+ * @returns {Promise<{ id, name, ..., members: Array }>}
+ */
+export async function fetchPackDetail(packId) {
+  const { data: pack, error: packErr } = await supabase
+    .from('template_packs').select('*').eq('id', packId).single();
+  if (packErr) throw packErr;
+
+  const { data: items, error: itemsErr } = await supabase
+    .from('template_pack_items')
+    .select('template_id, editor_type, position')
+    .eq('pack_id', packId)
+    .order('position', { ascending: true });
+  if (itemsErr) throw itemsErr;
+
+  if (!items || items.length === 0) return { ...pack, members: [] };
+
+  const ids = items.map((i) => i.template_id);
+  const { data: templates, error: tErr } = await supabase
+    .from('gallery_templates').select('*').in('id', ids);
+  if (tErr) throw tErr;
+
+  const byId = new Map((templates ?? []).map((t) => [t.id, t]));
+  const members = items
+    .map((i) => {
+      const tpl = byId.get(i.template_id);
+      if (!tpl) return null;  // drop orphans
+      return { ...tpl, position: i.position, editor_type: i.editor_type };
+    })
+    .filter(Boolean);
+
+  return { ...pack, members };
+}
+
+export async function createPack(pack) {
+  const { data, error } = await supabase
+    .from('template_packs').insert(pack).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updatePack(packId, updates) {
+  const { data, error } = await supabase
+    .from('template_packs').update(updates).eq('id', packId).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deletePack(packId) {
+  const { error } = await supabase.from('template_packs').delete().eq('id', packId);
+  if (error) throw error;
+}
+
+export async function addPackItem(packId, templateId, editorType, position = 0) {
+  const { data, error } = await supabase
+    .from('template_pack_items')
+    .insert({ pack_id: packId, template_id: templateId, editor_type: editorType, position })
+    .select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function removePackItem(packId, templateId, editorType) {
+  const { error } = await supabase
+    .from('template_pack_items')
+    .delete()
+    .eq('pack_id', packId).eq('template_id', templateId).eq('editor_type', editorType);
+  if (error) throw error;
+}
+
+/**
+ * Parallel single-row UPDATEs. Safe because template_pack_items PK is
+ * (pack_id, template_id, editor_type), NOT (pack_id, position) — no
+ * unique-collision risk during reorder (RESEARCH Pitfall 4).
+ *
+ * @param {string} packId
+ * @param {Array<{ templateId: string, editorType: 'svg'|'polotno', position: number }>} orderedItems
+ */
+export async function reorderPackItems(packId, orderedItems) {
+  await Promise.all(orderedItems.map((item) =>
+    supabase.from('template_pack_items')
+      .update({ position: item.position })
+      .eq('pack_id', packId)
+      .eq('template_id', item.templateId)
+      .eq('editor_type', item.editorType)
+  ));
+}
+
+/**
+ * Thin client wrapper over the atomic bulk-Apply RPC (D-07).
+ * Single round-trip; server transaction is all-or-nothing.
+ *
+ * @param {string} packId
+ * @returns {Promise<string[]>} new scene UUIDs in pack-member order
+ */
+export async function applyStarterPack(packId) {
+  const { data, error } = await supabase.rpc('apply_starter_pack', { p_pack_id: packId });
+  if (error) throw error;
+  return data ?? [];
+}
+
+/**
+ * Phase 174 D-06: Thin client wrapper over apply_template_to_active_slide RPC.
+ *
+ * Overwrites the active slide's design_json.svgContent in a single DB transaction.
+ * The RPC enforces:
+ *   - Auth: auth.uid() must be present
+ *   - Scene ownership (auth.uid() owns scene OR super_admin)
+ *   - Slide belongs to the named scene
+ *   - editor_type === 'svg' (rejects polotno per D-02)
+ *   - Template visibility per gallery_templates VIEW RLS predicate
+ *
+ * @param {string} sceneId      - UUID of origin scene (returnSceneId from URL)
+ * @param {string} slideId      - UUID of active slide to overwrite
+ * @param {string} templateId   - UUID of svg_templates row to apply
+ * @param {string} editorType   - must be 'svg' (RPC rejects others server-side)
+ * @returns {Promise<string>} updated slide UUID (RPC return value)
+ * @throws {Error} on any RPC error including: not authenticated, ownership
+ *   denied, slide-not-in-scene, polotno rejection, template not found, no SVG body
+ */
+export async function applyTemplateToActiveSlide(sceneId, slideId, templateId, editorType) {
+  const { data, error } = await supabase.rpc('apply_template_to_active_slide', {
+    p_scene_id:    sceneId,
+    p_slide_id:    slideId,
+    p_template_id: templateId,
+    p_editor_type: editorType,
+  });
+  if (error) throw error;
+  return data;
 }

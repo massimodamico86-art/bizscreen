@@ -24,6 +24,7 @@ import {
   UserCheck,
   ChevronRight,
   LayoutTemplate,
+  Sparkles,
   X,
   Eye,
   EyeOff,
@@ -247,6 +248,7 @@ export default function SuperAdminDashboardPage({ onNavigate }) {
                 { id: 'demo-tools', label: 'Demo Tools', icon: Play, color: 'text-pink-600 bg-pink-100' },
                 { id: 'clients', label: 'Client Management', icon: UserCheck, color: 'text-teal-600 bg-teal-100' },
                 { id: 'admin-templates', label: 'Templates', icon: LayoutTemplate, color: 'text-cyan-600 bg-cyan-100' },
+                { id: 'admin-template-queue', label: 'AI Template Queue', icon: Sparkles, color: 'text-violet-600 bg-violet-100' },
               ].map(tool => {
                 const Icon = tool.icon;
                 return (

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0B1929" data-customize-color="background"/>
+  <rect x="0" y="540" width="1920" height="540" fill="#102B4A" data-customize-color="accent"/>
+  <circle cx="1700" cy="200" r="200" fill="#3B82F6" opacity="0.2" data-customize-color="primary"/>
+  <circle cx="220" cy="880" r="160" fill="#3B82F6" opacity="0.15" data-customize-color="primary"/>
+  <image id="logo" x="120" y="100" width="160" height="160" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="320" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#3B82F6" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    INTRODUCING
+  </text>
+  <text id="text-headline" x="960" y="500" font-family="Helvetica, Arial, sans-serif"
+        font-size="160" font-weight="700" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Nova X3
+  </text>
+  <text id="text-subheadline" x="960" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="56" fill="#9DB7E0" text-anchor="middle"
+        data-customize-text="subheadline">
+    The most powerful generation yet
+  </text>
+  <text id="text-feat1" x="640" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FFFFFF" text-anchor="middle" data-customize-text="feature1">
+    Lightning fast
+  </text>
+  <text id="text-feat2" x="960" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FFFFFF" text-anchor="middle" data-customize-text="feature2">
+    All-day battery
+  </text>
+  <text id="text-feat3" x="1280" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#FFFFFF" text-anchor="middle" data-customize-text="feature3">
+    Pro camera
+  </text>
+  <text id="text-cta" x="960" y="980" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#3B82F6" text-anchor="middle"
+        data-customize-text="cta" data-customize-color="primary">
+    Available October 15
+  </text>
+</svg>

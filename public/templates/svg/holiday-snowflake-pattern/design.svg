@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0E2747" data-customize-color="background"/>
+  <g stroke="#E0F2FE" stroke-width="3" fill="none" data-customize-color="primary">
+    <line x1="200" y1="160" x2="200" y2="280"/>
+    <line x1="140" y1="220" x2="260" y2="220"/>
+    <line x1="158" y1="178" x2="242" y2="262"/>
+    <line x1="158" y1="262" x2="242" y2="178"/>
+  </g>
+  <g stroke="#E0F2FE" stroke-width="3" fill="none" data-customize-color="primary">
+    <line x1="500" y1="100" x2="500" y2="200"/>
+    <line x1="450" y1="150" x2="550" y2="150"/>
+    <line x1="465" y1="115" x2="535" y2="185"/>
+    <line x1="465" y1="185" x2="535" y2="115"/>
+  </g>
+  <g stroke="#E0F2FE" stroke-width="3" fill="none" data-customize-color="primary">
+    <line x1="1500" y1="160" x2="1500" y2="280"/>
+    <line x1="1440" y1="220" x2="1560" y2="220"/>
+    <line x1="1458" y1="178" x2="1542" y2="262"/>
+    <line x1="1458" y1="262" x2="1542" y2="178"/>
+  </g>
+  <g stroke="#E0F2FE" stroke-width="3" fill="none" data-customize-color="primary">
+    <line x1="1750" y1="100" x2="1750" y2="200"/>
+    <line x1="1700" y1="150" x2="1800" y2="150"/>
+    <line x1="1715" y1="115" x2="1785" y2="185"/>
+    <line x1="1715" y1="185" x2="1785" y2="115"/>
+  </g>
+  <g stroke="#E0F2FE" stroke-width="3" fill="none" data-customize-color="primary">
+    <line x1="200" y1="800" x2="200" y2="920"/>
+    <line x1="140" y1="860" x2="260" y2="860"/>
+    <line x1="158" y1="818" x2="242" y2="902"/>
+    <line x1="158" y1="902" x2="242" y2="818"/>
+  </g>
+  <g stroke="#E0F2FE" stroke-width="3" fill="none" data-customize-color="primary">
+    <line x1="1750" y1="850" x2="1750" y2="970"/>
+    <line x1="1690" y1="910" x2="1810" y2="910"/>
+    <line x1="1708" y1="868" x2="1792" y2="952"/>
+    <line x1="1708" y1="952" x2="1792" y2="868"/>
+  </g>
+  <image id="logo" x="940" y="380" width="40" height="40" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-headline" x="960" y="560" font-family="Georgia, serif"
+        font-size="120" font-weight="400" fill="#FFFFFF" text-anchor="middle"
+        data-customize-text="headline">
+    Happy Holidays
+  </text>
+  <text id="text-subheadline" x="960" y="680" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#A8D8F0" text-anchor="middle"
+        data-customize-text="subheadline">
+    Add your seasonal greeting
+  </text>
+</svg>

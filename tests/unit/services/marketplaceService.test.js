@@ -334,3 +334,187 @@ describe('marketplaceService verifyTemplatePermissions', () => {
     await expect(verifyTemplatePermissions('template-123')).rejects.toThrow('Access check failed');
   });
 });
+
+// ============================================================================
+// Phase 173 — pack CRUD + bulk apply
+// ============================================================================
+
+import {
+  fetchStarterPacks,
+  createPack,
+  updatePack,
+  deletePack,
+  addPackItem,
+  removePackItem,
+  reorderPackItems,
+  applyStarterPack,
+  fetchPackDetail,
+} from '../../../src/services/marketplaceService';
+
+/**
+ * Restore a deep chainable implementation of `supabase.from(...)`.
+ *
+ * Earlier test blocks in this file use `supabase.from.mockReturnValue(...)`
+ * which persists across `vi.clearAllMocks()` (only call-history is cleared).
+ * Pack-CRUD fns need fresh `.insert/.update/.delete/.select.order.order` chains
+ * per test, so we re-install the factory implementation before each case.
+ */
+function installDeepFromMock() {
+  const terminalOk = { data: [], error: null };
+  const single = vi.fn().mockResolvedValue({ data: { id: 'mock' }, error: null });
+  const orderTerminal = vi.fn().mockResolvedValue(terminalOk);
+  // Chainable .select() returning { eq, order, in } with .order chainable twice
+  const selectChain = () => ({
+    eq: vi.fn(() => ({
+      single,
+      order: orderTerminal,
+      eq: vi.fn(() => ({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      })),
+    })),
+    order: vi.fn(() => ({
+      order: vi.fn(() => ({
+        eq: vi.fn(() => ({ eq: vi.fn().mockResolvedValue(terminalOk) })),
+        ...terminalOk, // PostgREST resolves on await — give it a thenable-ish data/error
+        then: (resolve) => resolve(terminalOk),
+      })),
+    })),
+    in: vi.fn().mockResolvedValue(terminalOk),
+  });
+  const insertChain = () => ({
+    select: vi.fn(() => ({ single })),
+  });
+  const updateChain = () => ({
+    eq: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      })),
+      select: vi.fn(() => ({ single })),
+    })),
+  });
+  const deleteChain = () => ({
+    eq: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      })),
+      mockResolvedValue: undefined,
+    })),
+  });
+  supabase.from.mockImplementation(() => ({
+    select: vi.fn(selectChain),
+    insert: vi.fn(insertChain),
+    update: vi.fn(updateChain),
+    delete: vi.fn(deleteChain),
+  }));
+}
+
+describe('marketplaceService pack CRUD (Phase 173)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    installDeepFromMock();
+  });
+
+  it('fetchStarterPacks calls template_packs with default activeOnly=true ordering', async () => {
+    await fetchStarterPacks();
+    // The mock's .from() returns a chainable; grab the call shape:
+    expect(supabase.from).toHaveBeenCalledWith('template_packs');
+  });
+
+  it('createPack inserts into template_packs and returns the new row', async () => {
+    const pack = await createPack({ name: 'Test', industry: 'Restaurant' });
+    expect(supabase.from).toHaveBeenCalledWith('template_packs');
+  });
+
+  it('updatePack issues update on template_packs filtered by id', async () => {
+    await updatePack('pack-uuid', { name: 'New Name' });
+    expect(supabase.from).toHaveBeenCalledWith('template_packs');
+  });
+
+  it('deletePack issues delete on template_packs filtered by id', async () => {
+    await deletePack('pack-uuid');
+    expect(supabase.from).toHaveBeenCalledWith('template_packs');
+  });
+
+  it('addPackItem inserts into template_pack_items with composite key fields', async () => {
+    await addPackItem('pack-uuid', 'tpl-uuid', 'svg', 0);
+    expect(supabase.from).toHaveBeenCalledWith('template_pack_items');
+  });
+
+  it('removePackItem deletes from template_pack_items keyed by all three columns', async () => {
+    await removePackItem('pack-uuid', 'tpl-uuid', 'svg');
+    expect(supabase.from).toHaveBeenCalledWith('template_pack_items');
+  });
+
+  it('reorderPackItems issues N parallel UPDATEs (Pitfall 4 — safe because PK is composite)', async () => {
+    await reorderPackItems('pack-uuid', [
+      { templateId: 'a', editorType: 'svg', position: 0 },
+      { templateId: 'b', editorType: 'polotno', position: 1 },
+      { templateId: 'c', editorType: 'svg', position: 2 },
+    ]);
+    // 3 .from('template_pack_items') calls in parallel
+    const packItemCalls = supabase.from.mock.calls.filter((c) => c[0] === 'template_pack_items');
+    expect(packItemCalls.length).toBe(3);
+  });
+});
+
+describe('marketplaceService applyStarterPack (Phase 173 TPCK-02)', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('calls supabase.rpc with name "apply_starter_pack" and { p_pack_id } payload', async () => {
+    supabase.rpc.mockResolvedValueOnce({ data: ['s1','s2'], error: null });
+    await applyStarterPack('pack-uuid-1');
+    expect(supabase.rpc).toHaveBeenCalledWith('apply_starter_pack', { p_pack_id: 'pack-uuid-1' });
+  });
+
+  it('returns data array from RPC', async () => {
+    supabase.rpc.mockResolvedValueOnce({ data: ['s1','s2','s3'], error: null });
+    const ids = await applyStarterPack('pack-uuid-2');
+    expect(ids).toEqual(['s1','s2','s3']);
+  });
+
+  it('returns [] when RPC returns null data (defensive default)', async () => {
+    supabase.rpc.mockResolvedValueOnce({ data: null, error: null });
+    const ids = await applyStarterPack('pack-uuid-3');
+    expect(ids).toEqual([]);
+  });
+
+  it('throws when RPC returns error (rollback contract surfaces to client)', async () => {
+    supabase.rpc.mockResolvedValueOnce({
+      data: null,
+      error: new Error('Pack not found or inactive'),
+    });
+    await expect(applyStarterPack('bad-pack')).rejects.toThrow(/Pack not found or inactive/);
+  });
+});
+
+// ============================================================================
+// Phase 174 — applyTemplateToActiveSlide (D-06)
+// ============================================================================
+
+import { applyTemplateToActiveSlide } from '../../../src/services/marketplaceService';
+
+describe('applyTemplateToActiveSlide (Phase 174 D-06)', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('calls apply_template_to_active_slide RPC with correct args (D-05 contract)', async () => {
+    supabase.rpc.mockResolvedValueOnce({ data: 'slide-id', error: null });
+    const id = await applyTemplateToActiveSlide('sc', 'sl', 'tmpl', 'svg');
+    expect(supabase.rpc).toHaveBeenCalledWith('apply_template_to_active_slide', {
+      p_scene_id: 'sc',
+      p_slide_id: 'sl',
+      p_template_id: 'tmpl',
+      p_editor_type: 'svg',
+    });
+    expect(id).toBe('slide-id');
+  });
+
+  it('throws on error', async () => {
+    supabase.rpc.mockResolvedValueOnce({
+      data: null,
+      error: new Error('Template has no SVG body'),
+    });
+    await expect(
+      applyTemplateToActiveSlide('s', 'sl', 't', 'svg'),
+    ).rejects.toThrow(/Template has no SVG body/);
+  });
+});

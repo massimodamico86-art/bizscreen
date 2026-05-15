@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0F1419" data-customize-color="background"/>
+  <rect x="120" y="120" width="1680" height="840" fill="#1A1F26" data-customize-color="card"/>
+  <rect x="120" y="120" width="6" height="840" fill="#A8E6A1" data-customize-color="primary"/>
+  <image id="logo" x="180" y="180" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="180" y="350" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="8" fill="#A8E6A1" text-anchor="start"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    PRO SHOP SPECIAL
+  </text>
+  <text id="text-headline" x="180" y="540" font-family="Helvetica, Arial, sans-serif"
+        font-size="120" font-weight="700" fill="#FFFFFF" text-anchor="start"
+        data-customize-text="headline">
+    20% Off Whey Protein
+  </text>
+  <text id="text-subheadline" x="180" y="660" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#9CA3AF" text-anchor="start"
+        data-customize-text="subheadline">
+    All flavors · 2lb &amp; 5lb tubs
+  </text>
+  <text id="text-row1" x="180" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#A8E6A1" text-anchor="start"
+        data-customize-text="row1" data-customize-color="primary">
+    · Members save an additional 10%
+  </text>
+  <text id="text-row2" x="180" y="870" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#A8E6A1" text-anchor="start"
+        data-customize-text="row2" data-customize-color="primary">
+    · Free protein scoop sample on request
+  </text>
+</svg>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0891B2" data-customize-color="background"/>
+  <rect x="80" y="80" width="1760" height="920" fill="#F0FDFA" data-customize-color="card"/>
+  <image id="logo" x="160" y="160" width="160" height="160" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="960" y="280" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" fill="#0891B2" text-anchor="middle"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    AZURE RESORT &amp; SPA
+  </text>
+  <text id="text-headline" x="960" y="430" font-family="Georgia, serif"
+        font-size="100" font-weight="700" fill="#0F172A" text-anchor="middle"
+        data-customize-text="headline">
+    Pool &amp; Activities
+  </text>
+  <text id="text-row1-label" x="320" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#0891B2" text-anchor="start"
+        data-customize-text="row1-label" data-customize-color="primary">
+    Main Pool
+  </text>
+  <text id="text-row1-detail" x="1600" y="600" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#0F172A" text-anchor="end" data-customize-text="row1-detail">
+    7:00 AM – 10:00 PM
+  </text>
+  <text id="text-row2-label" x="320" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#0891B2" text-anchor="start"
+        data-customize-text="row2-label" data-customize-color="primary">
+    Hot Tub
+  </text>
+  <text id="text-row2-detail" x="1600" y="700" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#0F172A" text-anchor="end" data-customize-text="row2-detail">
+    8:00 AM – 11:00 PM
+  </text>
+  <text id="text-row3-label" x="320" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#0891B2" text-anchor="start"
+        data-customize-text="row3-label" data-customize-color="primary">
+    Yoga on the Lawn
+  </text>
+  <text id="text-row3-detail" x="1600" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#0F172A" text-anchor="end" data-customize-text="row3-detail">
+    9:00 AM Daily
+  </text>
+  <text id="text-row4-label" x="320" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="700" fill="#0891B2" text-anchor="start"
+        data-customize-text="row4-label" data-customize-color="primary">
+    Sunset Cocktails
+  </text>
+  <text id="text-row4-detail" x="1600" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="44" fill="#0F172A" text-anchor="end" data-customize-text="row4-detail">
+    5:00 PM – 7:00 PM
+  </text>
+</svg>

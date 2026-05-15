@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#1A2B3C" data-customize-color="background"/>
+  <rect x="120" y="120" width="1680" height="840" fill="#FFFFFF" data-customize-color="card"/>
+  <rect x="120" y="120" width="6" height="840" fill="#E91E63" data-customize-color="primary"/>
+  <image id="logo" x="180" y="180" width="80" height="80" xlink:href=""
+         preserveAspectRatio="xMidYMid meet" data-customize-logo="brand"/>
+  <text id="text-eyebrow" x="180" y="340" font-family="Helvetica, Arial, sans-serif"
+        font-size="32" letter-spacing="6" fill="#E91E63" text-anchor="start"
+        data-customize-text="eyebrow" data-customize-color="primary">
+    LOYALTY REWARDS
+  </text>
+  <text id="text-headline" x="180" y="500" font-family="Georgia, serif"
+        font-size="120" font-weight="700" fill="#1A2B3C" text-anchor="start"
+        data-customize-text="headline">
+    Join &amp; Earn
+  </text>
+  <text id="text-tier1" x="180" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#E91E63" text-anchor="start"
+        data-customize-text="tier1" data-customize-color="primary">
+    Tier 1
+  </text>
+  <text id="text-tier1-detail" x="380" y="640" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#1A2B3C" text-anchor="start"
+        data-customize-text="tier1-detail">
+    1 point per $1 spent
+  </text>
+  <text id="text-tier2" x="180" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#E91E63" text-anchor="start"
+        data-customize-text="tier2" data-customize-color="primary">
+    Tier 2
+  </text>
+  <text id="text-tier2-detail" x="380" y="720" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#1A2B3C" text-anchor="start"
+        data-customize-text="tier2-detail">
+    2× points after $500/year
+  </text>
+  <text id="text-tier3" x="180" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="700" fill="#E91E63" text-anchor="start"
+        data-customize-text="tier3" data-customize-color="primary">
+    Tier 3
+  </text>
+  <text id="text-tier3-detail" x="380" y="800" font-family="Helvetica, Arial, sans-serif"
+        font-size="36" fill="#1A2B3C" text-anchor="start"
+        data-customize-text="tier3-detail">
+    3× points + birthday gift
+  </text>
+  <text id="text-cta" x="180" y="900" font-family="Helvetica, Arial, sans-serif"
+        font-size="40" font-weight="700" fill="#E91E63" text-anchor="start"
+        data-customize-text="cta" data-customize-color="primary">
+    Sign up at checkout · Free
+  </text>
+</svg>

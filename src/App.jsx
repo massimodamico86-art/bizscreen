@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Home,
   LayoutDashboard,
@@ -41,7 +42,6 @@ import {
   Gauge,
   Layers,
   Database,
-  Store,
   Share2,
   Bell,
 } from 'lucide-react';
@@ -92,6 +92,7 @@ const ScreenGroupsPage = lazy(() => import('./pages/ScreenGroupsPage'));
 const CampaignsPage = lazy(() => import('./pages/CampaignsPage'));
 const CampaignEditorPage = lazy(() => import('./pages/CampaignEditorPage'));
 const ReviewInboxPage = lazy(() => import('./pages/ReviewInboxPage'));
+const SocialFeedModerationPage = lazy(() => import('./pages/SocialFeedModerationPage'));
 const DeveloperSettingsPage = lazy(() => import('./pages/DeveloperSettingsPage'));
 const WhiteLabelSettingsPage = lazy(() => import('./pages/WhiteLabelSettingsPage'));
 const StatusPage = lazy(() => import('./pages/StatusPage'));
@@ -115,9 +116,10 @@ const SceneEditorPage = lazy(() => import('./pages/SceneEditorPage'));
 const DeviceDiagnosticsPage = lazy(() => import('./pages/DeviceDiagnosticsPage'));
 const DataSourcesPage = lazy(() => import('./pages/DataSourcesPage'));
 const ContentPerformancePage = lazy(() => import('./pages/ContentPerformancePage'));
-const TemplateMarketplacePage = lazy(() => import('./pages/TemplateMarketplacePage'));
 const AdminTemplatesPage = lazy(() => import('./pages/Admin/AdminTemplatesPage'));
 const AdminEditTemplatePage = lazy(() => import('./pages/Admin/AdminEditTemplatePage'));
+const AdminStarterPacksPage = lazy(() => import('./pages/Admin/AdminStarterPacksPage'));
+const AdminTemplateQueuePage = lazy(() => import('./pages/Admin/AdminTemplateQueuePage'));
 const SocialAccountsPage = lazy(() => import('./pages/SocialAccountsPage'));
 const AlertsCenterPage = lazy(() => import('./pages/AlertsCenterPage'));
 const NotificationSettingsPage = lazy(() => import('./pages/NotificationSettingsPage'));
@@ -125,7 +127,7 @@ const YodeckLayoutEditorPage = lazy(() => import('./pages/LayoutEditor/YodeckLay
 const LayoutPreviewPage = lazy(() => import('./pages/LayoutEditor/LayoutPreviewPage'));
 const CanvaCallbackPage = lazy(() => import('./pages/CanvaCallbackPage'));
 const DesignEditorPage = lazy(() => import('./pages/DesignEditorPage'));
-const SvgTemplateGalleryPage = lazy(() => import('./pages/SvgTemplateGalleryPage'));
+const TemplateGalleryPage = lazy(() => import('./pages/TemplateGalleryPage'));
 const SvgEditorPage = lazy(() => import('./pages/SvgEditorPage'));
 
 // Main app wrapper with BrandingProvider (I18nProvider is in main.jsx)
@@ -159,6 +161,34 @@ function BizScreenAppInner() {
   ]);
 
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const location = useLocation();
+
+  // Sync URL path to currentPage for routes like /app/campaigns/new
+  useEffect(() => {
+    const path = location.pathname;
+    const campaignMatch = path.match(/^\/app\/campaigns\/(.+)$/);
+    if (campaignMatch) {
+      setCurrentPage(`campaign-editor-${campaignMatch[1]}`);
+    }
+  }, [location.pathname]);
+
+  // Phase 173 — test-mode navigation hook (B-3 fix). Production builds (MODE !== 'test')
+  // do NOT register the listener; it is a no-op outside Playwright/vitest test runs.
+  // E2E specs use: page.evaluate(() => window.dispatchEvent(new CustomEvent('test:setCurrentPage', { detail: 'admin-starter-packs' })))
+  useEffect(() => {
+    if (import.meta.env.MODE !== 'test' && !import.meta.env.VITE_E2E_TEST_MODE) {
+      return undefined;
+    }
+    const handler = (e) => {
+      const target = e?.detail;
+      if (typeof target === 'string' && target.length > 0) {
+        setCurrentPage(target);
+      }
+    };
+    window.addEventListener('test:setCurrentPage', handler);
+    return () => window.removeEventListener('test:setCurrentPage', handler);
+  }, []);
+
   const [toast, setToast] = useState(null);
   const [listings, setListings] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
@@ -234,7 +264,16 @@ function BizScreenAppInner() {
     checkAutoBuildOnboarding();
   }, [authUserProfile?.id, authUserProfile?.role, authUserProfile?.has_completed_onboarding]);
 
-  const showToast = (message, type = 'success') => {
+  const showToast = (messageOrObject, typeArg = 'success') => {
+    // BL-NEW-03 fix: tolerate both signatures.
+    // Original positional: showToast(message: string, type?: string)
+    // Object form used by Admin queue components: showToast({ variant, message })
+    // Without this, an object payload was rendered as a React child via <span>{message}</span>
+    // and crashed the entire app to ErrorBoundary on any admin toast (e.g. validator-failure
+    // path in TemplateDraftEditModal Save & Publish).
+    const isObj = messageOrObject !== null && typeof messageOrObject === 'object';
+    const message = isObj ? String(messageOrObject.message ?? '') : messageOrObject;
+    const type = isObj ? (messageOrObject.variant || messageOrObject.type || 'success') : typeArg;
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
@@ -464,6 +503,7 @@ function BizScreenAppInner() {
     { id: 'templates', label: t('nav.templates', 'Templates'), icon: LayoutTemplate },
     { id: 'schedules', label: t('nav.schedules', 'Schedules'), icon: Calendar },
     { id: 'screens', label: t('nav.screens', 'Screens'), icon: Monitor },
+    { id: 'social-moderation', label: t('nav.socialModeration', 'Social Moderation'), icon: Inbox, feature: Feature.SOCIAL_FEED },
   ];
 
   // Loading fallback component
@@ -516,12 +556,13 @@ function BizScreenAppInner() {
     'locations': <Suspense fallback={<PageLoader />}><LocationsPage showToast={showToast} /></Suspense>,
     'team': <Suspense fallback={<PageLoader />}><TeamPage showToast={showToast} /></Suspense>,
     'analytics': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><AnalyticsPage showToast={showToast} /></FeatureGate></Suspense>,
-    'templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'templates': <Suspense fallback={<PageLoader />}><TemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'scenes': <Suspense fallback={<PageLoader />}><ScenesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'assistant': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.AI_ASSISTANT} fallback={<FeatureUpgradePrompt feature={Feature.AI_ASSISTANT} onNavigate={() => setCurrentPage('account-plan')} />}><ContentAssistantPage showToast={showToast} /></FeatureGate></Suspense>,
     'screen-groups': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.SCREEN_GROUPS} fallback={<FeatureUpgradePrompt feature={Feature.SCREEN_GROUPS} onNavigate={() => setCurrentPage('account-plan')} />}><ScreenGroupsPage showToast={showToast} /></FeatureGate></Suspense>,
     'campaigns': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.CAMPAIGNS} fallback={<FeatureUpgradePrompt feature={Feature.CAMPAIGNS} onNavigate={() => setCurrentPage('account-plan')} />}><CampaignsPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'review-inbox': <Suspense fallback={<PageLoader />}><ReviewInboxPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'social-moderation': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.SOCIAL_FEED} fallback={<FeatureUpgradePrompt feature={Feature.SOCIAL_FEED} onNavigate={() => setCurrentPage('account-plan')} />}><SocialFeedModerationPage showToast={showToast} onNavigate={setCurrentPage} /></FeatureGate></Suspense>,
     'developer': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.API_ACCESS} fallback={<FeatureUpgradePrompt feature={Feature.API_ACCESS} onNavigate={() => setCurrentPage('account-plan')} />}><DeveloperSettingsPage showToast={showToast} /></FeatureGate></Suspense>,
     'white-label': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.WHITE_LABEL} fallback={<FeatureUpgradePrompt feature={Feature.WHITE_LABEL} onNavigate={() => setCurrentPage('account-plan')} />}><WhiteLabelSettingsPage showToast={showToast} /></FeatureGate></Suspense>,
     'status': <Suspense fallback={<PageLoader />}><StatusPage /></Suspense>,
@@ -541,12 +582,15 @@ function BizScreenAppInner() {
     'device-diagnostics': <Suspense fallback={<PageLoader />}><DeviceDiagnosticsPage /></Suspense>,
     'data-sources': <Suspense fallback={<PageLoader />}><DataSourcesPage showToast={showToast} /></Suspense>,
     'content-performance': <Suspense fallback={<PageLoader />}><FeatureGate feature={Feature.ADVANCED_ANALYTICS} fallback={<FeatureUpgradePrompt feature={Feature.ADVANCED_ANALYTICS} onNavigate={() => setCurrentPage('account-plan')} />}><ContentPerformancePage showToast={showToast} /></FeatureGate></Suspense>,
-    'template-marketplace': <Suspense fallback={<PageLoader />}><TemplateMarketplacePage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    // Legacy alias: 'template-marketplace' was removed in qc4 (260414); route to the SVG Templates gallery so old in-app navigation calls land somewhere sensible.
+    'template-marketplace': <Suspense fallback={<PageLoader />}><TemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'admin-templates': <Suspense fallback={<PageLoader />}><AdminTemplatesPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'admin-starter-packs': <Suspense fallback={<PageLoader />}><AdminStarterPacksPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'admin-template-queue': <Suspense fallback={<PageLoader />}><AdminTemplateQueuePage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'social-accounts': <Suspense fallback={<PageLoader />}><SocialAccountsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'alerts': <Suspense fallback={<PageLoader />}><AlertsCenterPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
     'notification-settings': <Suspense fallback={<PageLoader />}><NotificationSettingsPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
-    'svg-templates': <Suspense fallback={<PageLoader />}><SvgTemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
+    'svg-templates': <Suspense fallback={<PageLoader />}><TemplateGalleryPage showToast={showToast} onNavigate={setCurrentPage} /></Suspense>,
   };
 
   // Show Canva OAuth callback page
@@ -653,7 +697,8 @@ function BizScreenAppInner() {
   // Admin tool pages that should show sidebar even for super_admin
   const adminToolPages = [
     'admin-tenants', 'admin-audit-logs', 'admin-system-events',
-    'status', 'ops-console', 'tenant-admin', 'feature-flags', 'demo-tools', 'clients', 'admin-templates'
+    'status', 'ops-console', 'tenant-admin', 'feature-flags', 'demo-tools', 'clients', 'admin-templates', 'admin-starter-packs',
+    'admin-template-queue', // Phase 177 (TADM-04 — admin-only nav gate)
   ];
   const isAdminToolPage = adminToolPages.includes(currentPage) || currentPage.startsWith('admin-tenant-') || currentPage.startsWith('admin-template-');
 
